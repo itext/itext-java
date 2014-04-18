@@ -1,14 +1,9 @@
 package com.itextpdf.model.elements;
 
-public class Span implements IAccessibleElement {
+public class Span extends PositioningElement {
 
-    @Override
-    public ElementPosition getRequestedPosition() {
-        return null;
-    }
-
-    @Override
-    public void setRequestedPosition(ElementPosition elementPosition) {
+    public Span(String text) {
 
     }
+
 }

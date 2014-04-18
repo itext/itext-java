@@ -1,7 +1,10 @@
 package com.itextpdf.core.pdf.objects;
 
-/**
- * Created by chin on 3/28/14.
- */
+import com.itextpdf.core.pdf.PdfDocument;
+
 public class PdfIndirectReference extends PdfObject {
+
+    public PdfIndirectReference(PdfDocument doc) {
+        super(doc);
+    }
 }

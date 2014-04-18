@@ -5,14 +5,17 @@ import com.itextpdf.core.pdf.PdfDocument;
 public class PdfObject {
 
     protected PdfDocument pdfDocument;
-    protected boolean flushed = false;
+    /**
+     * If object is flushed as indirect the reference is kept here.
+     */
+    protected PdfIndirectReference flushedReference = null;
 
     public PdfObject() {
         this(null);
     }
 
     public PdfObject(PdfDocument doc) {
-
+        pdfDocument = doc;
     }
 
     /**
@@ -22,7 +25,19 @@ public class PdfObject {
      * @return the representation of flushed object. Can be direct or indirect.
      */
     public PdfObject flush() {
-        flushed = true;
+        return flush(pdfDocument);
+    }
+
+    /**
+     * Flushes the object to the document.
+     * Document automatically decides if to flush it either as direct or indirect object.
+     *
+     * @param doc
+     * @return the representation of flushed object. Can be direct or indirect.
+     */
+    public PdfObject flush(PdfDocument doc) {
+        if (flushedReference != null)
+            return flushedReference;
         return this;
     }
 
@@ -33,10 +48,29 @@ public class PdfObject {
      * @return the representation of flushed object. Can be direct or indirect depending on closeInfo.
      */
     public PdfObject flush(PdfObjectFlushInfo flushInfo) {
-        flushed = true;
+        return flush(pdfDocument, flushInfo);
+    }
+
+    /**
+     * Flushes the object to the document.
+     *
+     * @param doc
+     * @param flushInfo user may specify the extra information about flushing the object.
+     * @return the representation of flushed object. Can be direct or indirect depending on closeInfo.
+     */
+    public PdfObject flush(PdfDocument doc, PdfObjectFlushInfo flushInfo) {
+        if (flushedReference != null)
+            return flushedReference;
         return this;
     }
 
+    public PdfDocument getPdfDocument() {
+        return pdfDocument;
+    }
+
+    public PdfIndirectReference getFlushedReference() {
+        return flushedReference;
+    }
 
     public static class PdfObjectFlushInfo {
 

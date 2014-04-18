@@ -11,6 +11,14 @@ public class PdfPage extends PdfDictionary {
 
     protected PageSize pageSize = null;
 
+    public PdfPage() {
+        this(PageSize.DEFAULT);
+    }
+
+    public PdfPage(PageSize pageSize) {
+        this.pageSize = pageSize;
+    }
+
     public PdfPage(PdfDocument doc) {
         this(doc, doc.getDefaultPageSize());
     }

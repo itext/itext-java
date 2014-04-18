@@ -4,6 +4,10 @@ import com.itextpdf.core.pdf.objects.PdfDictionary;
 
 public class PdfDocumentInfo extends PdfDictionary {
 
+    protected PdfDocumentInfo() {
+        super();
+    }
+
     protected PdfDocumentInfo(PdfDocument doc) {
         super(doc);
     }

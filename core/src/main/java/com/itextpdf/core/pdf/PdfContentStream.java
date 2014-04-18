@@ -9,11 +9,11 @@ public class PdfContentStream extends PdfStream {
     }
 
     public PdfContentStream addBefore() {
-        return new PdfContentStream(pdfDocument);
+        return new PdfContentStream(getPdfDocument());
     }
 
     public PdfContentStream addAfter() {
-        return new PdfContentStream(pdfDocument);
+        return new PdfContentStream(getPdfDocument());
     }
 
 }

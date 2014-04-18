@@ -9,7 +9,7 @@ public class PdfDocument {
 
     protected List<PdfPage> pages = new ArrayList<PdfPage>();
     protected PdfPage currentPage = null;
-    protected PageSize defaultPageSize = PageSize.A4;
+    protected PageSize defaultPageSize = PageSize.DEFAULT;
 
 
     /**
@@ -118,7 +118,7 @@ public class PdfDocument {
     }
 
     public PdfDocumentInfo getInfo() {
-        return new PdfDocumentInfo(this);
+        return new PdfDocumentInfo();
     }
 
     public PageSize getDefaultPageSize() {

@@ -3,6 +3,7 @@ package com.itextpdf.core.geom;
 public class PageSize extends Rectangle {
 
     static public PageSize A4 = new PageSize(612, 792);
+    static public PageSize DEFAULT = A4;
 
     protected float leftMargin = 36;
     protected float rightMargin = 36;
