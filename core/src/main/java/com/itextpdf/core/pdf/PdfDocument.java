@@ -109,6 +109,14 @@ public class PdfDocument {
         return insertPage(page, PdfPage.LastPage);
     }
 
+    public PdfPage addNewPage() {
+        return addPage(new PdfPage(this, getDefaultPageSize()));
+    }
+
+    public PdfPage addNewPage(PageSize pageSize) {
+        return addPage(new PdfPage(this, pageSize));
+    }
+
     public int getNumOfPages() {
         return pages.size();
     }

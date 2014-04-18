@@ -49,8 +49,7 @@ public class Document {
         if (page != null) {
             page.flush();
         }
-        page = new PdfPage(pdfDocument, pageSize);
-        pdfDocument.addPage(page);
+        page = pdfDocument.addNewPage(pageSize);
         layoutMgr.setCanvas(new PdfCanvas(page.getContentStream()));
         final BoxShape boxShape = new BoxShape(pageSize);
         layoutMgr.setShapes(new ArrayList<ILayoutShape>() {{
