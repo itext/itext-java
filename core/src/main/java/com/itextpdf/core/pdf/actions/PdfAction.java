@@ -40,20 +40,20 @@ public class PdfAction extends PdfDictionary {
         return action;
     }
 
-    static public PdfAction createGotToR(String filename, int pageNum) {
-        return createGotToR(filename, pageNum, false);
+    static public PdfAction createGoToR(String filename, int pageNum) {
+        return createGoToR(filename, pageNum, false);
     }
 
-    static public PdfAction createGotToR(String filename, int pageNum, boolean newWindow) {
+    static public PdfAction createGoToR(String filename, int pageNum, boolean newWindow) {
         return createGoToR(new PdfStringFS(filename), new PdfExplicitDestination().createFitH(pageNum, 10000), newWindow);
     }
 
-    static public PdfAction createGotToR(String filename, String destination, boolean newWindow) {
+    static public PdfAction createGoToR(String filename, String destination, boolean newWindow) {
         return createGoToR(new PdfStringFS(filename), new PdfStringDestination(destination), newWindow);
     }
 
-    static public PdfAction createGotToR(String filename, String destination) {
-        return createGotToR(filename, destination, false);
+    static public PdfAction createGoToR(String filename, String destination) {
+        return createGoToR(filename, destination, false);
     }
 
     static public PdfAction createURI(String uri, boolean isMap) {
