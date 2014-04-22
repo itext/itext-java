@@ -16,7 +16,7 @@ public class Document {
 
     protected ILayoutMgr layoutMgr;
     protected PdfDocument pdfDocument;
-    protected PdfPage page;
+    protected PdfPage page = null;
 
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
@@ -26,7 +26,6 @@ public class Document {
         pdfDocument = pdfDoc;
         pdfDocument.setDefaultPageSize(pageSize);
         layoutMgr = new DefaultLayoutMgr(this);
-        newPage();
     }
 
     /**
@@ -37,6 +36,8 @@ public class Document {
     }
 
     public Document add(IElement element) {
+        if (page == null)
+            newPage();
         layoutMgr.placeElement(element);
         return this;
     }

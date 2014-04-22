@@ -30,6 +30,7 @@ public class PdfName extends PdfObject {
     public static final PdfName GoToR = new PdfName("GoToR");
     public static final PdfName IsMap = new PdfName("IsMap");
     public static final PdfName NewWindow = new PdfName("NewWindow");
+    public static final PdfName Next = new PdfName("Next");
     public static final PdfName S = new PdfName("S");
     public static final PdfName Type = new PdfName("Type");
     public static final PdfName URI = new PdfName("URI");

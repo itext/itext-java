@@ -8,7 +8,11 @@ import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.navigation.PdfStringDestination;
 import com.itextpdf.core.pdf.objects.*;
 
+import java.util.List;
+
 public class PdfAction extends PdfDictionary {
+
+    protected PdfArray nextActionsChain;
 
     public PdfAction() {
         super();
@@ -66,6 +70,29 @@ public class PdfAction extends PdfDictionary {
 
     static public PdfAction createURI(String uri) {
         return createURI(uri, false);
+    }
+
+    public PdfAction next(PdfAction action) {
+        initNextActionChain();
+        nextActionsChain.add(action);
+        return this;
+    }
+
+    public PdfAction next(List<PdfAction> actionList) {
+        initNextActionChain();
+        nextActionsChain.addAll(actionList);
+        return this;
+    }
+
+    public PdfAction next(PdfArray actionList) {
+        initNextActionChain();
+        nextActionsChain.addAll(actionList);
+        return this;
+    }
+
+    protected void initNextActionChain() {
+        if (nextActionsChain == null)
+            nextActionsChain = new PdfArray();
     }
 
 }

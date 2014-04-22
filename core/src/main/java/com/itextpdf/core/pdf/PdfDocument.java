@@ -1,15 +1,17 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.events.*;
 import com.itextpdf.core.geom.PageSize;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PdfDocument {
+public class PdfDocument implements IEventDispatcher {
 
     protected List<PdfPage> pages = new ArrayList<PdfPage>();
     protected PdfPage currentPage = null;
     protected PageSize defaultPageSize = PageSize.DEFAULT;
+    protected EventDispatcher eventDispatcher = new EventDispatcher();
 
 
     /**
@@ -17,7 +19,7 @@ public class PdfDocument {
      * @param reader
      */
     public PdfDocument(PdfReader reader) {
-
+        dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
     }
 
     /**
@@ -26,7 +28,7 @@ public class PdfDocument {
      * @param writer
      */
     public PdfDocument(PdfWriter writer) {
-
+        dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
     }
 
     /**
@@ -35,14 +37,15 @@ public class PdfDocument {
      * @param writer
      */
     public PdfDocument(PdfReader reader, PdfWriter writer) {
-
+        dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
     }
 
     /**
      * Closes the document, all open PdfPages and associated PdfWriter and PdfReader.
      */
     public void close() {
-
+        dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.CloseDocument));
+        removeAllHandlers();
     }
 
     /**
@@ -97,6 +100,7 @@ public class PdfDocument {
         } else {
             pages.add(position - 1, currentPage);
         }
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
         return currentPage;
     }
 
@@ -125,6 +129,15 @@ public class PdfDocument {
         return pages.indexOf(page) + 1;
     }
 
+    public void removePage(PdfPage page) {
+        pages.remove(page);
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.RemovePage, page));
+    }
+
+    public void removePage(int pageNum) {
+        removePage(pages.get(pageNum - 1));
+    }
+
     public PdfDocumentInfo getInfo() {
         return new PdfDocumentInfo();
     }
@@ -136,5 +149,36 @@ public class PdfDocument {
     public void setDefaultPageSize(PageSize pageSize) {
         defaultPageSize = pageSize;
     }
+
+    @Override
+    public void addEventHandler(String type, IEventHandler handler) {
+        eventDispatcher.addEventHandler(type, handler);
+    }
+
+    @Override
+    public void dispatchEvent(com.itextpdf.core.events.Event event) {
+        eventDispatcher.dispatchEvent(event);
+    }
+
+    @Override
+    public void dispatchEvent(com.itextpdf.core.events.Event event, boolean delayed) {
+        eventDispatcher.dispatchEvent(event, delayed);
+    }
+
+    @Override
+    public boolean hasEventHandler(String type) {
+        return eventDispatcher.hasEventHandler(type);
+    }
+
+    @Override
+    public void removeEventHandler(String type, IEventHandler handler) {
+        eventDispatcher.removeEventHandler(type, handler);
+    }
+
+    @Override
+    public void removeAllHandlers() {
+        eventDispatcher.removeAllHandlers();
+    }
+
 
 }

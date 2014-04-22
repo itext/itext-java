@@ -130,4 +130,8 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     public List<PdfObject> subList(int fromIndex, int toIndex) {
         return list.subList(fromIndex, toIndex);
     }
+
+    public List<PdfObject> getList() {
+        return subList(0, size());
+    }
 }

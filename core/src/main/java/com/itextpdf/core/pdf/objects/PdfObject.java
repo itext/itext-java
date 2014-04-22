@@ -8,7 +8,7 @@ public class PdfObject {
     /**
      * If object is flushed as indirect the reference is kept here.
      */
-    protected PdfIndirectReference flushedReference = null;
+    protected PdfIndirectReference indirectReference = null;
 
     public PdfObject() {
         this(null);
@@ -21,11 +21,9 @@ public class PdfObject {
     /**
      * Flushes the object to the document.
      * Document automatically decides if to flush it either as direct or indirect object.
-     *
-     * @return the representation of flushed object. Can be direct or indirect.
      */
-    public PdfObject flush() {
-        return flush(pdfDocument);
+    public void flush() {
+        flush(pdfDocument);
     }
 
     /**
@@ -33,22 +31,18 @@ public class PdfObject {
      * Document automatically decides if to flush it either as direct or indirect object.
      *
      * @param doc
-     * @return the representation of flushed object. Can be direct or indirect.
      */
-    public PdfObject flush(PdfDocument doc) {
-        if (flushedReference != null)
-            return flushedReference;
-        return this;
+    public void flush(PdfDocument doc) {
+        flush(doc, null);
     }
 
     /**
      * Flushes the object to the document.
      *
      * @param flushInfo user may specify the extra information about flushing the object.
-     * @return the representation of flushed object. Can be direct or indirect depending on closeInfo.
      */
-    public PdfObject flush(PdfObjectFlushInfo flushInfo) {
-        return flush(pdfDocument, flushInfo);
+    public void flush(PdfObjectFlushInfo flushInfo) {
+        flush(pdfDocument, flushInfo);
     }
 
     /**
@@ -56,20 +50,18 @@ public class PdfObject {
      *
      * @param doc
      * @param flushInfo user may specify the extra information about flushing the object.
-     * @return the representation of flushed object. Can be direct or indirect depending on closeInfo.
      */
-    public PdfObject flush(PdfDocument doc, PdfObjectFlushInfo flushInfo) {
-        if (flushedReference != null)
-            return flushedReference;
-        return this;
+    public void flush(PdfDocument doc, PdfObjectFlushInfo flushInfo) {
+        if (indirectReference != null)
+            indirectReference.flush(doc, flushInfo);
     }
 
     public PdfDocument getPdfDocument() {
         return pdfDocument;
     }
 
-    public PdfIndirectReference getFlushedReference() {
-        return flushedReference;
+    public PdfIndirectReference getIndirectReference() {
+        return indirectReference;
     }
 
     public static class PdfObjectFlushInfo {
