@@ -54,6 +54,8 @@ public class PdfDocument implements IEventDispatcher {
      * @return
      */
     public PdfPage getPage(int pageNum) {
+        if (pages.size() == 0)
+            pages.add(new PdfPage(this));
         if (pageNum == PdfPage.FirstPage)
             return pages.get(0);
         if (pageNum == PdfPage.LastPage)

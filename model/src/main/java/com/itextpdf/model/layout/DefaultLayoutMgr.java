@@ -3,6 +3,7 @@ package com.itextpdf.model.layout;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.elements.IElement;
+import com.itextpdf.model.elements.Paragraph;
 import com.itextpdf.model.layout.shapes.ILayoutShape;
 
 import java.util.List;
@@ -40,4 +41,9 @@ public class DefaultLayoutMgr implements ILayoutMgr {
         document.newPage();
         return placeElement(element);
     }
+
+    public static void showTextAligned(final PdfCanvas canvas, final int alignment, final Paragraph paragraph, final float x, final float y, final float rotation) {
+
+    }
+
 }

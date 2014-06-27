@@ -16,7 +16,6 @@ public class Document {
 
     protected ILayoutMgr layoutMgr;
     protected PdfDocument pdfDocument;
-    protected PdfPage page = null;
 
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
@@ -36,7 +35,7 @@ public class Document {
     }
 
     public Document add(IElement element) {
-        if (page == null)
+        if (pdfDocument.getCurrentPage() == null)
             newPage();
         layoutMgr.placeElement(element);
         return this;
@@ -47,10 +46,10 @@ public class Document {
     }
 
     public Document newPage(PageSize pageSize) {
-        if (page != null) {
-            page.flush();
+        if (pdfDocument.getCurrentPage() != null) {
+            pdfDocument.getCurrentPage().flush();
         }
-        page = pdfDocument.addNewPage(pageSize);
+        PdfPage page = pdfDocument.addNewPage(pageSize);
         layoutMgr.setCanvas(new PdfCanvas(page.getContentStream()));
         final BoxShape boxShape = new BoxShape(pageSize);
         layoutMgr.setShapes(new ArrayList<ILayoutShape>() {{
