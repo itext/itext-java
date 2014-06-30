@@ -8,6 +8,11 @@ import com.itextpdf.model.layout.shapes.ILayoutShape;
 
 import java.util.List;
 
+/**
+ * Basic implementation of layout manager.
+ *
+ * We suggest it will be used by Document class by default and it will emulate the iText 5 ColumnText behaviour.
+ */
 public class DefaultLayoutMgr implements ILayoutMgr {
 
     protected Document document;

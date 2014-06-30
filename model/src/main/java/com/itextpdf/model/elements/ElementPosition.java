@@ -4,6 +4,9 @@ import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.model.layout.ILayoutMgr;
 import com.itextpdf.model.layout.shapes.ILayoutShape;
 
+/**
+ * Together with ILayoutShape specifies the element position in document.
+ */
 public class ElementPosition {
 
     public ElementPosition() {
@@ -11,7 +14,7 @@ public class ElementPosition {
     }
 
     public ElementPosition(ILayoutShape elementPosition) {
-        this(PdfPage.CurrentPage, elementPosition, ILayoutMgr.Flowing);
+        this(PdfPage.LastPage, elementPosition, ILayoutMgr.Flowing);
     }
 
     public ElementPosition(int page, ILayoutShape elementPosition) {
@@ -23,7 +26,7 @@ public class ElementPosition {
     }
 
     public ElementPosition(ILayoutShape elementPosition, int layout) {
-        this(PdfPage.CurrentPage, elementPosition, layout);
+        this(PdfPage.LastPage, elementPosition, layout);
     }
 
 }

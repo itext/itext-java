@@ -4,6 +4,9 @@ import java.io.OutputStream;
 
 public class PdfWriter {
 
+    /**
+     * Streams are closed automatically.
+     */
     protected boolean closeStream = true;
 
     public PdfWriter(OutputStream os) {

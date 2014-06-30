@@ -16,6 +16,7 @@ public class Document {
 
     protected ILayoutMgr layoutMgr;
     protected PdfDocument pdfDocument;
+    protected PdfPage page = null;
 
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
@@ -31,23 +32,37 @@ public class Document {
      * Closes the document and associated PdfDocument.
      */
     public void close() {
-
+        pdfDocument.close();
     }
 
+    /**
+     * Adds an element to the document. The element is immediately placed with the layout manager.
+     * @param element
+     * @return
+     */
     public Document add(IElement element) {
-        if (pdfDocument.getCurrentPage() == null)
+        if (page == null)
             newPage();
         layoutMgr.placeElement(element);
         return this;
     }
 
+    /**
+     * Requests a new page with a default page size.
+     * @return
+     */
     public Document newPage() {
         return newPage(pdfDocument.getDefaultPageSize());
     }
 
+    /**
+     * Requests a new pages with a certain page size.
+     * @param pageSize
+     * @return
+     */
     public Document newPage(PageSize pageSize) {
-        if (pdfDocument.getCurrentPage() != null) {
-            pdfDocument.getCurrentPage().flush();
+        if (page != null) {
+            page.flush();
         }
         PdfPage page = pdfDocument.addNewPage(pageSize);
         layoutMgr.setCanvas(new PdfCanvas(page.getContentStream()));
@@ -58,14 +73,26 @@ public class Document {
         return this;
     }
 
+    /**
+     * Gets PDF document.
+     * @return
+     */
     public PdfDocument getPdfDocument() {
         return pdfDocument;
     }
 
+    /**
+     * Gets current layout manager.
+     * @return
+     */
     public ILayoutMgr getLayoutMgr() {
         return layoutMgr;
     }
 
+    /**
+     * Sets layout manager.
+     * @param layoutMgr
+     */
     public void setLayoutMgr(ILayoutMgr layoutMgr) {
         this.layoutMgr = layoutMgr;
     }
