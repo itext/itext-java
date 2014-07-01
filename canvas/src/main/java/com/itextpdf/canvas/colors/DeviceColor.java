@@ -1,7 +1,15 @@
 package com.itextpdf.canvas.colors;
 
-/**
- * Created by chin on 3/28/14.
- */
+import com.itextpdf.core.pdf.objects.PdfObject;
+
 public class DeviceColor extends Color {
+
+    public DeviceColor() {
+        super();
+    }
+
+    public DeviceColor(PdfObject object) {
+        super(object);
+    }
+
 }

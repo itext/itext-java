@@ -37,6 +37,7 @@ public class Document {
 
     /**
      * Adds an element to the document. The element is immediately placed with the layout manager.
+     *
      * @param element
      * @return
      */
@@ -49,6 +50,7 @@ public class Document {
 
     /**
      * Requests a new page with a default page size.
+     *
      * @return
      */
     public Document newPage() {
@@ -57,6 +59,7 @@ public class Document {
 
     /**
      * Requests a new pages with a certain page size.
+     *
      * @param pageSize
      * @return
      */
@@ -75,6 +78,7 @@ public class Document {
 
     /**
      * Gets PDF document.
+     *
      * @return
      */
     public PdfDocument getPdfDocument() {
@@ -83,6 +87,7 @@ public class Document {
 
     /**
      * Gets current layout manager.
+     *
      * @return
      */
     public ILayoutMgr getLayoutMgr() {
@@ -91,6 +96,7 @@ public class Document {
 
     /**
      * Sets layout manager.
+     *
      * @param layoutMgr
      */
     public void setLayoutMgr(ILayoutMgr layoutMgr) {

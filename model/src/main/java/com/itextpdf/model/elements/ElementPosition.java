@@ -21,6 +21,11 @@ public class ElementPosition {
         this(page, elementPosition, ILayoutMgr.Flowing);
     }
 
+    /**
+     * @param page            a page where element should be placed.
+     * @param elementPosition a position on the page where element should be placed.
+     * @param layout          either fixed or flowing.
+     */
     public ElementPosition(int page, ILayoutShape elementPosition, int layout) {
 
     }

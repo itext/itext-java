@@ -1,5 +1,7 @@
 package com.itextpdf.canvas.colors;
 
+import com.itextpdf.core.pdf.objects.PdfObject;
+
 public class DeviceRgb extends DeviceColor {
 
     static public final DeviceRgb Red = new DeviceRgb(0xFF, 0, 0);
@@ -8,6 +10,9 @@ public class DeviceRgb extends DeviceColor {
     static public final DeviceRgb White = new DeviceRgb(0xFF, 0xFF, 0xFF);
     static public final DeviceRgb Black = new DeviceRgb(0, 0, 0);
 
+    public DeviceRgb(PdfObject object) {
+        super(object);
+    }
 
     public DeviceRgb(int r, int g, int b) {
 

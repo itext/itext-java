@@ -8,6 +8,7 @@ public class PdfFormXObject extends PdfContentStream implements IPdfXObject {
 
     /**
      * Creates form XObject from page content
+     *
      * @param page
      */
     public PdfFormXObject(PdfPage page) {

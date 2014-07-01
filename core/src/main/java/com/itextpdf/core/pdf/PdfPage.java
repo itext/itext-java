@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.objects.PdfDictionary;
+import com.itextpdf.core.pdf.objects.PdfObject;
 
 public class PdfPage extends PdfDictionary {
 
@@ -26,9 +27,9 @@ public class PdfPage extends PdfDictionary {
     }
 
     @Override
-    public void flush(PdfDocument doc, PdfObjectFlushInfo flushInfo) {
+    public PdfObject flush(PdfDocument doc, PdfObjectFlushInfo flushInfo) {
         doc.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
-        super.flush(doc, flushInfo);
+        return super.flush(doc, flushInfo);
     }
 
 }

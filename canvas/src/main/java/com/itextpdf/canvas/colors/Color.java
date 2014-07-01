@@ -1,7 +1,20 @@
 package com.itextpdf.canvas.colors;
 
-/**
- * Created by chin on 3/27/14.
- */
+import com.itextpdf.core.pdf.objects.PdfObject;
+
 public class Color {
+
+    public Color() {
+
+    }
+
+    /**
+     * Constructs color from PdfObject.
+     *
+     * @param object
+     */
+    public Color(PdfObject object) {
+
+    }
+
 }

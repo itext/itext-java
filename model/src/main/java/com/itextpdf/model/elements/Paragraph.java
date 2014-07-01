@@ -1,6 +1,6 @@
 package com.itextpdf.model.elements;
 
-public class Paragraph extends PositioningElement {
+public class Paragraph extends PositioningElement implements IBlockElement {
 
     public Paragraph(String text) {
 

@@ -4,7 +4,11 @@ import com.itextpdf.core.pdf.PdfDocument;
 
 public class PdfObject {
 
+    /**
+     * PdfDocument object belongs to. For direct objects it can be null.
+     */
     protected PdfDocument pdfDocument;
+
     /**
      * If object is flushed as indirect the reference is kept here.
      */
@@ -21,9 +25,11 @@ public class PdfObject {
     /**
      * Flushes the object to the document.
      * Document automatically decides if to flush it either as direct or indirect object.
+     *
+     * @return the flushed object. It can be either object itself or indirect reference if object has been flushed as indirect reference.
      */
-    public void flush() {
-        flush(pdfDocument);
+    public PdfObject flush() {
+        return flush(pdfDocument);
     }
 
     /**
@@ -31,18 +37,21 @@ public class PdfObject {
      * Document automatically decides if to flush it either as direct or indirect object.
      *
      * @param doc
+     * @return the flushed object. It can be either object itself or indirect reference if object has been flushed as indirect reference.
      */
-    public void flush(PdfDocument doc) {
-        flush(doc, null);
+    public PdfObject flush(PdfDocument doc) {
+        return flush(doc, null);
     }
 
     /**
      * Flushes the object to the document.
      *
      * @param flushInfo user may specify the extra information about flushing the object.
+     * @return the flushed object. It can be either object itself or indirect reference if object has been flushed as indirect reference.
      */
-    public void flush(PdfObjectFlushInfo flushInfo) {
-        flush(pdfDocument, flushInfo);
+
+    public PdfObject flush(PdfObjectFlushInfo flushInfo) {
+        return flush(pdfDocument, flushInfo);
     }
 
     /**
@@ -50,10 +59,14 @@ public class PdfObject {
      *
      * @param doc
      * @param flushInfo user may specify the extra information about flushing the object.
+     * @return the flushed object. It can be either object itself or indirect reference if object has been flushed as indirect reference.
      */
-    public void flush(PdfDocument doc, PdfObjectFlushInfo flushInfo) {
+    public PdfObject flush(PdfDocument doc, PdfObjectFlushInfo flushInfo) {
         if (indirectReference != null)
-            indirectReference.flush(doc, flushInfo);
+            return indirectReference.flush(doc, flushInfo);
+        else {
+            return this;
+        }
     }
 
     public PdfDocument getPdfDocument() {
@@ -70,6 +83,12 @@ public class PdfObject {
         private int objNr = 0;
         private int genNr = 0;
         private boolean addToObjStm = false;
+
+        /**
+         * Marks object for caching.
+         * Object will be flushed to output stream but will stay in memory.
+         */
+        private boolean cacheObject = false;
 
         static public PdfObjectFlushInfo flushAsDirect() {
             return new PdfObjectFlushInfo(true, 0, 0, false);
@@ -112,6 +131,10 @@ public class PdfObject {
 
         public boolean addToObjStm() {
             return addToObjStm;
+        }
+
+        public void cacheObject() {
+            this.cacheObject = true;
         }
 
     }

@@ -8,10 +8,20 @@ public class PdfContentStream extends PdfStream {
         super(doc);
     }
 
+    /**
+     * Adds new content stream before the current one.
+     *
+     * @return newly added stream.
+     */
     public PdfContentStream addBefore() {
         return new PdfContentStream(getPdfDocument());
     }
 
+    /**
+     * Adds new content stream after the current one.
+     *
+     * @return newly added stream.
+     */
     public PdfContentStream addAfter() {
         return new PdfContentStream(getPdfDocument());
     }

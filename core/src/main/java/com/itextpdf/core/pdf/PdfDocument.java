@@ -1,6 +1,9 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.events.*;
+import com.itextpdf.core.events.EventDispatcher;
+import com.itextpdf.core.events.IEventDispatcher;
+import com.itextpdf.core.events.IEventHandler;
+import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
 
 import java.util.ArrayList;
@@ -13,9 +16,9 @@ public class PdfDocument implements IEventDispatcher {
     protected PageSize defaultPageSize = PageSize.DEFAULT;
     protected EventDispatcher eventDispatcher = new EventDispatcher();
 
-
     /**
      * Open PDF document in reading mode.
+     *
      * @param reader
      */
     public PdfDocument(PdfReader reader) {
@@ -25,6 +28,7 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Open PDF document in writing mode.
      * Document has no pages when initialized.
+     *
      * @param writer
      */
     public PdfDocument(PdfWriter writer) {
@@ -33,6 +37,7 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Open PDF document in stamping mode.
+     *
      * @param reader
      * @param writer
      */
@@ -53,6 +58,7 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Gets the page by page number.
+     *
      * @param pageNum
      * @return
      */
@@ -66,6 +72,7 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Get the first page of the document.
+     *
      * @return
      */
     public PdfPage getFirstPage() {
@@ -74,6 +81,7 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Gets the last page of the document.
+     *
      * @return
      */
     public PdfPage getLastPage() {
@@ -81,7 +89,6 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     *
      * @param page
      * @param position
      * @return added page.
@@ -98,7 +105,6 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     *
      * @param page
      * @return added page.
      */

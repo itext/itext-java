@@ -1,7 +1,13 @@
 package com.itextpdf.core.events;
 
+/**
+ * Describes abstract event.
+ */
 public class Event {
 
+    /**
+     * A type of event.
+     */
     protected String type;
 
     public Event(String type) {

@@ -6,7 +6,7 @@ import com.itextpdf.core.pdf.objects.PdfArray;
 import com.itextpdf.core.pdf.objects.PdfName;
 import com.itextpdf.core.pdf.objects.PdfNumber;
 
-public class PdfExplicitDestination extends PdfArray implements IPdfDestination  {
+public class PdfExplicitDestination extends PdfArray implements IPdfDestination {
 
     public PdfExplicitDestination() {
         super();
