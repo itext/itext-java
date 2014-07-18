@@ -5,7 +5,11 @@ import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.core.pdf.objects.PdfDictionary;
+import com.itextpdf.core.pdf.objects.PdfIndirectReference;
+import com.itextpdf.core.pdf.objects.PdfObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +19,21 @@ public class PdfDocument implements IEventDispatcher {
     protected PdfPage currentPage = null;
     protected PageSize defaultPageSize = PageSize.DEFAULT;
     protected EventDispatcher eventDispatcher = new EventDispatcher();
+    protected PdfWriter writer = null;
+    protected PdfReader reader = null;
+    protected PdfCatalog catalog = null;
+    protected PdfTrailer trailer = null;
+    protected PdfDocumentInfo info = null;
+    protected boolean closing = false;
 
     /**
      * Open PDF document in reading mode.
      *
      * @param reader
      */
-    public PdfDocument(PdfReader reader) {
+    public PdfDocument(PdfReader reader) throws IOException {
+        this.reader = reader;
+        initialize();
         dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
     }
 
@@ -31,7 +43,9 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param writer
      */
-    public PdfDocument(PdfWriter writer) {
+    public PdfDocument(PdfWriter writer) throws IOException {
+        this.writer = writer;
+        initialize();
         dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
     }
 
@@ -41,19 +55,29 @@ public class PdfDocument implements IEventDispatcher {
      * @param reader
      * @param writer
      */
-    public PdfDocument(PdfReader reader, PdfWriter writer) {
+    public PdfDocument(PdfReader reader, PdfWriter writer) throws IOException {
+        this.reader = reader;
+        this.writer = writer;
+        initialize();
         dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
     }
 
-    /**
-     * Closes the document, all open PdfPages and associated PdfWriter and PdfReader.
-     */
-    public void close() {
-        for (PdfPage page : pages) {
-            page.flush(this);
-        }
+    public void close() throws IOException {
+        closing = true;
         dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.CloseDocument));
         removeAllHandlers();
+        if (writer != null) {
+            catalog.addPages(pages);
+            catalog.flush();
+            info.flush();
+            writer.flushWaitingObjects();
+            int startxref = writer.writeXRefTable();
+            writer.writeTrailer(trailer, startxref);
+            writer.close();
+        }
+        if (reader != null)
+            reader.close();
+        closing = false;
     }
 
     /**
@@ -138,7 +162,7 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public PdfDocumentInfo getInfo() {
-        return new PdfDocumentInfo();
+        return info;
     }
 
     public PageSize getDefaultPageSize() {
@@ -179,5 +203,28 @@ public class PdfDocument implements IEventDispatcher {
         eventDispatcher.removeAllHandlers();
     }
 
+    public PdfWriter getWriter() {
+        return writer;
+    }
 
+    public PdfIndirectReference getNextIndirectReference(PdfObject object) {
+        return new PdfIndirectReference(this, writer.getNextIndirectReferenceNumber(), object);
+    }
+
+    protected void initialize() throws IOException {
+        if (writer != null) {
+            if (reader == null) {
+                catalog = new PdfCatalog(this);
+                info = new PdfDocumentInfo(this);
+                trailer = new PdfTrailer(this);
+                trailer.setCatalog(catalog);
+                trailer.setInfo(info);
+            }
+            writer.writeHeader();
+        }
+    }
+
+    public boolean isClosing() {
+        return closing;
+    }
 }

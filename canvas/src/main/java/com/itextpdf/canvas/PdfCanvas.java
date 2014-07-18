@@ -5,13 +5,16 @@ import com.itextpdf.core.fonts.Font;
 import com.itextpdf.core.pdf.IPdfXObject;
 import com.itextpdf.core.pdf.PdfContentStream;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfWriter;
 
+import java.io.IOException;
 import java.util.Stack;
 
 public class PdfCanvas {
 
     protected Stack<PdfGraphicsState> gsStack = new Stack<PdfGraphicsState>();
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
+    protected PdfContentStream contentStream;
 
     protected PdfCanvas() {
 
@@ -23,7 +26,7 @@ public class PdfCanvas {
      * @param contentStream
      */
     public PdfCanvas(PdfContentStream contentStream) {
-
+        this.contentStream = contentStream;
     }
 
     /**
@@ -33,7 +36,7 @@ public class PdfCanvas {
      * @param pageNum
      */
     public PdfCanvas(PdfDocument doc, int pageNum) {
-
+        this(doc.getPage(pageNum).getContentStream());
     }
 
     /**
@@ -150,7 +153,15 @@ public class PdfCanvas {
      * @param height
      * @return current canvas.
      */
-    public PdfCanvas rectangle(float x, float y, float width, float height) {
+    public PdfCanvas rectangle(float x, float y, float width, float height) throws IOException {
+        contentStream.getOutputStream().writeFloat(x).
+                writeChar(' ').
+                writeFloat(y).
+                writeChar(' ').
+                writeFloat(width).
+                writeChar(' ').
+                writeFloat(height).
+                writeString(" re\n");
         return this;
     }
 
@@ -173,7 +184,8 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas fill() {
+    public PdfCanvas fill() throws IOException {
+        contentStream.getOutputStream().writeString("f\n");
         return this;
     }
 

@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf.objects;
 
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 
 import java.util.*;
@@ -9,11 +10,23 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     protected List<PdfObject> list = new ArrayList<PdfObject>();
 
     public PdfArray() {
-        super();
+        super(PdfObject.Array);
     }
 
     public PdfArray(PdfDocument doc) {
-        super(doc);
+        super(doc, PdfObject.Array);
+    }
+
+    public PdfArray(Rectangle rectangle) {
+        this(null, rectangle);
+    }
+
+    public PdfArray(PdfDocument doc, Rectangle rectangle) {
+        this(doc);
+        add(new PdfNumber(rectangle.getX()));
+        add(new PdfNumber(rectangle.getY()));
+        add(new PdfNumber(rectangle.getX() + rectangle.getWidth()));
+        add(new PdfNumber(rectangle.getY() + rectangle.getHeight()));
     }
 
     @Override
@@ -131,7 +144,4 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
         return list.subList(fromIndex, toIndex);
     }
 
-    public List<PdfObject> getList() {
-        return subList(0, size());
-    }
 }

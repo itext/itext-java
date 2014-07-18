@@ -2,21 +2,19 @@ package com.itextpdf.core.pdf.objects;
 
 import com.itextpdf.core.pdf.PdfDocument;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> {
 
-    protected HashMap<PdfName, PdfObject> map = new HashMap<PdfName, PdfObject>();
+    protected TreeMap<PdfName, PdfObject> map = new TreeMap<PdfName, PdfObject>();
 
     public PdfDictionary() {
-        super();
+        super(PdfObject.Dictionary);
     }
 
     public PdfDictionary(PdfDocument doc) {
-        super(doc);
+        super(doc, PdfObject.Dictionary);
     }
 
     @Override
@@ -78,4 +76,15 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     public Set<Entry<PdfName, PdfObject>> entrySet() {
         return map.entrySet();
     }
+
+    @Override
+    public boolean flush() throws IOException {
+        super.flush();
+        if (flushed && map != null) {
+            clear();
+            map = null;
+        }
+        return flushed;
+    }
+
 }
