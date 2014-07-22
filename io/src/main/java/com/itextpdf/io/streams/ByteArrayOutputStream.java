@@ -1,4 +1,4 @@
-package com.itextpdf.core.io;
+package com.itextpdf.io.streams;
 
 public class ByteArrayOutputStream extends OutputStream {
 

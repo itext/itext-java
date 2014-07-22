@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.objects;
 
-import com.itextpdf.core.io.ByteArrayOutputStream;
+import com.itextpdf.io.streams.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfDocument;
 
 import java.io.IOException;

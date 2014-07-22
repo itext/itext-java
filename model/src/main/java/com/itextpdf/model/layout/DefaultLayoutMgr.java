@@ -6,6 +6,7 @@ import com.itextpdf.model.elements.IElement;
 import com.itextpdf.model.elements.Paragraph;
 import com.itextpdf.model.layout.shapes.ILayoutShape;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class DefaultLayoutMgr implements ILayoutMgr {
     }
 
     @Override
-    public IPlaceElementResult overflow(IElement element) {
+    public IPlaceElementResult overflow(IElement element) throws IOException {
         document.newPage();
         return placeElement(element);
     }

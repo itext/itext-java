@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.io.OutputStream;
 import com.itextpdf.core.pdf.objects.*;
+import com.itextpdf.io.streams.OutputStream;
 
 import java.io.IOException;
 import java.text.DecimalFormat;

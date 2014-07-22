@@ -14,6 +14,7 @@
     </properties>
 
     <modules>
+        <module>io</module>
         <module>core</module>
         <module>canvas</module>
         <module>utils</module>

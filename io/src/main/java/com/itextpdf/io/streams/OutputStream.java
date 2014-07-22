@@ -1,4 +1,4 @@
-package com.itextpdf.core.io;
+package com.itextpdf.io.streams;
 
 import java.io.IOException;
 

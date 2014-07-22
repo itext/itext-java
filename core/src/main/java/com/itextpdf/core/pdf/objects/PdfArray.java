@@ -29,6 +29,15 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
         add(new PdfNumber(rectangle.getY() + rectangle.getHeight()));
     }
 
+    public PdfArray(List<PdfObject> objects) {
+        this(null, objects);
+    }
+
+    public PdfArray(PdfDocument doc, List<PdfObject> objects) {
+        this(doc);
+        list = objects;
+    }
+
     @Override
     public int size() {
         return list.size();

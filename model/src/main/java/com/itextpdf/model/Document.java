@@ -10,6 +10,7 @@ import com.itextpdf.model.layout.ILayoutMgr;
 import com.itextpdf.model.layout.shapes.BoxShape;
 import com.itextpdf.model.layout.shapes.ILayoutShape;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Document {
@@ -31,7 +32,7 @@ public class Document {
     /**
      * Closes the document and associated PdfDocument.
      */
-    public void close() {
+    public void close() throws IOException {
         pdfDocument.close();
     }
 
@@ -41,7 +42,7 @@ public class Document {
      * @param element
      * @return
      */
-    public Document add(IElement element) {
+    public Document add(IElement element) throws IOException {
         if (page == null)
             newPage();
         layoutMgr.placeElement(element);
@@ -53,7 +54,7 @@ public class Document {
      *
      * @return
      */
-    public Document newPage() {
+    public Document newPage() throws IOException {
         return newPage(pdfDocument.getDefaultPageSize());
     }
 
@@ -63,7 +64,7 @@ public class Document {
      * @param pageSize
      * @return
      */
-    public Document newPage(PageSize pageSize) {
+    public Document newPage(PageSize pageSize) throws IOException {
         if (page != null) {
             page.flush();
         }

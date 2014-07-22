@@ -4,6 +4,7 @@ import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.model.elements.IElement;
 import com.itextpdf.model.layout.shapes.ILayoutShape;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ILayoutMgr {
@@ -33,7 +34,7 @@ public interface ILayoutMgr {
      * @param element
      * @return
      */
-    public IPlaceElementResult overflow(IElement element);
+    public IPlaceElementResult overflow(IElement element) throws IOException;
 
     /**
      * Sets a list of shapes for layout manager.
