@@ -22,20 +22,10 @@ public class OutputStream extends java.io.OutputStream {
         this.outputStream = outputStream;
     }
 
-    public void write(byte b) throws IOException {
-        outputStream.write(b);
-        currentPos++;
-    }
-
-    public void write(short b) throws IOException {
-        byte[] bytes = new byte[]{(byte) ((b >> 8) & 0xFF), (byte) (b & 0xFF)};
-        write(bytes);
-    }
-
     @Override
     public void write(int b) throws IOException {
-        byte[] bytes = new byte[]{(byte) ((b >> 24) & 0xFF), (byte) ((b >> 16) & 0xFF), (byte) ((b >> 8) & 0xFF), (byte) (b & 0xFF)};
-        write(bytes);
+        outputStream.write(b);
+        currentPos++;
     }
 
     @Override
@@ -75,8 +65,18 @@ public class OutputStream extends java.io.OutputStream {
         return this;
     }
 
+    public OutputStream writeByte(byte value) throws IOException {
+        write(value);
+        return this;
+    }
+
     public OutputStream writeChar(char value) throws IOException {
         write(getIsoBytes(String.valueOf(value)));
+        return this;
+    }
+
+    public OutputStream writeSpace() throws IOException {
+        write((byte)' ');
         return this;
     }
 

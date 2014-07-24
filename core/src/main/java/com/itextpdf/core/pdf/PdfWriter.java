@@ -28,6 +28,16 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected PdfObjectStream objectStream = null;
 
+    private byte[] intToBytes(int n) {
+        byte[] bytes = new byte[]{(byte) ((n >> 24) & 0xFF), (byte) ((n >> 16) & 0xFF), (byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
+        return bytes;
+    }
+
+    private byte[] shortToBytes(int n) {
+        byte[] bytes = new byte[]{(byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
+        return bytes;
+    }
+
     public PdfWriter(java.io.OutputStream os) {
         super(os);
     }
@@ -80,7 +90,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void writeToBody(PdfObject object) throws IOException {
         writeInteger(object.getIndirectReference().getObjNr()).
-                writeChar(' ').
+                writeSpace().
                 writeInteger(object.getIndirectReference().getGenNr()).writeString(" obj\n");
         write(object);
         writeString("\nendobj\n");
@@ -92,7 +102,7 @@ public class PdfWriter extends PdfOutputStream {
      * @throws IOException
      */
     protected void writeHeader() throws IOException {
-        writeChar('%').
+        writeByte((byte)'%').
                 writeString(pdfDocument.getPdfVersion().getPdfVersion()).
                 writeString("\n%\u00e2\u00e3\u00cf\u00d3\n");
     }
@@ -149,19 +159,19 @@ public class PdfWriter extends PdfOutputStream {
             }}));
             stream.put(PdfName.Info, pdfDocument.trailer.getDocumentInfo());
             stream.put(PdfName.Root, pdfDocument.trailer.getCatalog());
-            stream.getOutputStream().write((byte) 0);
-            stream.getOutputStream().write((int) 0x0000);
-            stream.getOutputStream().write((short) 0xFFFF);
+            stream.getOutputStream().write(0);
+            stream.getOutputStream().write(intToBytes(0));
+            stream.getOutputStream().write(shortToBytes(0xFFFF));
             for (PdfIndirectReference indirect : pdfDocument.getIndirects()) {
                 PdfObject refersTo = indirect.getRefersTo();
                 if (refersTo.getObjectStream() != null) {
-                    stream.getOutputStream().write((byte) 2);
-                    stream.getOutputStream().write((int)refersTo.getObjectStream().getIndirectReference().getObjNr());
-                    stream.getOutputStream().write((short) refersTo.getOffset());
+                    stream.getOutputStream().write(2);
+                    stream.getOutputStream().write(intToBytes(refersTo.getObjectStream().getIndirectReference().getObjNr()));
+                    stream.getOutputStream().write(shortToBytes(refersTo.getOffset()));
                 } else {
-                    stream.getOutputStream().write((byte) 1);
-                    stream.getOutputStream().write((int)refersTo.getOffset());
-                    stream.getOutputStream().write((short) 0);
+                    stream.getOutputStream().write(1);
+                    stream.getOutputStream().write(intToBytes(refersTo.getOffset()));
+                    stream.getOutputStream().write(shortToBytes(0));
                 }
             }
             stream.flush();

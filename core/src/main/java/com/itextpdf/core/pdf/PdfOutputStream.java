@@ -43,7 +43,7 @@ public class PdfOutputStream extends OutputStream {
     }
 
     protected void write(PdfArray array) throws IOException {
-        writeChar('[');
+        writeByte((byte)'[');
         for (int i = 0; i < array.size(); i++) {
             PdfObject value = array.get(i);
             PdfIndirectReference indirectReference = value.getIndirectReference();
@@ -53,9 +53,9 @@ public class PdfOutputStream extends OutputStream {
                 write(value);
             }
             if (i < array.size() - 1)
-                writeChar(' ');
+                writeSpace();
         }
-        writeChar(']');
+        writeByte((byte)']');
     }
 
     protected void write(PdfBoolean bool) throws IOException {
@@ -66,7 +66,7 @@ public class PdfOutputStream extends OutputStream {
         writeString("<<");
         for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
             write(entry.getKey());
-            writeChar(' ');
+            writeSpace();
             PdfObject value = entry.getValue();
             PdfIndirectReference indirectReference = value.getIndirectReference();
             if (indirectReference != null) {
@@ -80,13 +80,13 @@ public class PdfOutputStream extends OutputStream {
 
     protected void write(PdfIndirectReference indirectReference) throws IOException {
         writeInteger(indirectReference.getObjNr()).
-                writeChar(' ').
+                writeSpace().
                 writeInteger(indirectReference.getGenNr()).
                 writeString(" R");
     }
 
     protected void write(PdfName name) throws IOException {
-        writeChar('/').writeString(name.getValue());
+        writeByte((byte)'/').writeString(name.getValue());
     }
 
     protected void write(PdfNumber number) throws IOException {
@@ -103,9 +103,9 @@ public class PdfOutputStream extends OutputStream {
     }
 
     protected void write(PdfString string) throws IOException {
-        writeChar('(').
+        writeByte((byte)'(').
                 writeString(string.getValue()).
-                writeChar(')');
+                writeByte((byte)')');
     }
 
 }

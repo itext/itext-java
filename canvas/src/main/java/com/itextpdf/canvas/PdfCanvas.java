@@ -154,11 +154,11 @@ public class PdfCanvas {
      */
     public PdfCanvas rectangle(float x, float y, float width, float height) throws IOException {
         contentStream.getOutputStream().writeFloat(x).
-                writeChar(' ').
+                writeSpace().
                 writeFloat(y).
-                writeChar(' ').
+                writeSpace().
                 writeFloat(width).
-                writeChar(' ').
+                writeSpace().
                 writeFloat(height).
                 writeString(" re\n");
         return this;

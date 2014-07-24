@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -171,6 +172,10 @@ public class PdfCanvasTest {
         reader.close();
     }
 
+    static public void main() {
+
+    }
+
     @Test
     public void create1000PagesDocumentWithFullCompression() throws IOException, PdfException {
 
@@ -179,7 +184,7 @@ public class PdfCanvasTest {
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "1000PagesDocumentWithFullCompression.pdf");
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(new BufferedOutputStream(fos));
         writer.setFullCompression(true);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getInfo().setAuthor(author).
@@ -189,8 +194,7 @@ public class PdfCanvasTest {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page.getContentStream());
             canvas.rectangle(100, 100, 100, 100).fill();
-            if (i % 2 == 0)
-                page.flush();
+            page.flush();
         }
         pdfDoc.close();
 
