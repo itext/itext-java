@@ -1,10 +1,6 @@
 package com.itextpdf.core.pdf.navigation;
 
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.objects.PdfArray;
-import com.itextpdf.core.pdf.objects.PdfName;
-import com.itextpdf.core.pdf.objects.PdfNumber;
+import com.itextpdf.core.pdf.*;
 
 public class PdfExplicitDestination extends PdfArray implements IPdfDestination {
 

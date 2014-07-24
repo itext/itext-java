@@ -1,8 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.pdf.objects.*;
-
-import java.io.IOException;
 import java.util.List;
 
 public class PdfCatalog extends PdfDictionary {

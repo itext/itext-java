@@ -1,6 +1,7 @@
 package com.itextpdf.model.layout;
 
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.model.elements.IElement;
 import com.itextpdf.model.layout.shapes.ILayoutShape;
 
@@ -34,7 +35,7 @@ public interface ILayoutMgr {
      * @param element
      * @return
      */
-    public IPlaceElementResult overflow(IElement element) throws IOException;
+    public IPlaceElementResult overflow(IElement element) throws IOException, PdfException;
 
     /**
      * Sets a list of shapes for layout manager.

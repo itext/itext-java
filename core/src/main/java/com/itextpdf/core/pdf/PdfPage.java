@@ -3,10 +3,6 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.PageSize;
-import com.itextpdf.core.pdf.objects.PdfArray;
-import com.itextpdf.core.pdf.objects.PdfDictionary;
-import com.itextpdf.core.pdf.objects.PdfName;
-import com.itextpdf.core.pdf.objects.PdfObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +26,9 @@ public class PdfPage extends PdfDictionary {
 
     public PdfPage(PdfDocument doc, PageSize pageSize) {
         super(doc);
-        contentStreams = new ArrayList<PdfContentStream>() {{add(new PdfContentStream(pdfDocument));}};
+        contentStreams = new ArrayList<PdfContentStream>() {{
+            add(new PdfContentStream(pdfDocument));
+        }};
         put(PdfName.Type, PdfName.Page);
         put(PdfName.MediaBox, new PdfArray(pageSize));
         put(PdfName.Resources, new PdfDictionary());

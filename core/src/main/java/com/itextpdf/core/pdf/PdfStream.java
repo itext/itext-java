@@ -1,21 +1,17 @@
-package com.itextpdf.core.pdf.objects;
+package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.ByteArrayOutputStream;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.io.streams.OutputStream;
 
 import java.io.IOException;
 
 public class PdfStream extends PdfDictionary {
 
-    protected OutputStream outputStream = new ByteArrayOutputStream();
-
-    private PdfStream() {
-        super();
-        type = PdfObject.Stream;
-        initOutputStream();
-    }
+    /**
+     * Output stream associated with PDF stream.
+     */
+    protected OutputStream outputStream = null;
 
     public PdfStream(PdfDocument doc) {
         super(doc);
@@ -35,12 +31,22 @@ public class PdfStream extends PdfDictionary {
         return flushed;
     }
 
+    /**
+     * Gets output stream.
+     *
+     * @return output stream.
+     */
     public OutputStream getOutputStream() {
         return outputStream;
     }
 
+    /**
+     * Gets stream bytes.
+     *
+     * @return stream bytes.
+     */
     public byte[] getBytes() {
-        return ((ByteArrayOutputStream)outputStream).getBytes();
+        return ((ByteArrayOutputStream) outputStream).getBytes();
     }
 
     @Override
@@ -48,6 +54,9 @@ public class PdfStream extends PdfDictionary {
         return false;
     }
 
+    /**
+     * Initializes output stream.
+     */
     protected void initOutputStream() {
         outputStream = new ByteArrayOutputStream();
     }

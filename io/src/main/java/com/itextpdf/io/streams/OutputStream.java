@@ -28,15 +28,14 @@ public class OutputStream extends java.io.OutputStream {
     }
 
     public void write(short b) throws IOException {
-        byte[] bytes = new byte[]{(byte)((b>>8)&0xFF),(byte)(b&0xFF)};
+        byte[] bytes = new byte[]{(byte) ((b >> 8) & 0xFF), (byte) (b & 0xFF)};
         write(bytes);
-        currentPos++;
     }
 
     @Override
     public void write(int b) throws IOException {
-        outputStream.write(b);
-        currentPos++;
+        byte[] bytes = new byte[]{(byte) ((b >> 24) & 0xFF), (byte) ((b >> 16) & 0xFF), (byte) ((b >> 8) & 0xFF), (byte) (b & 0xFF)};
+        write(bytes);
     }
 
     @Override

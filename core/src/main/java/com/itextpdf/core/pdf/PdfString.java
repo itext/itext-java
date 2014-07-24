@@ -1,6 +1,4 @@
-package com.itextpdf.core.pdf.objects;
-
-import com.itextpdf.core.pdf.PdfDocument;
+package com.itextpdf.core.pdf;
 
 public class PdfString extends PdfObject {
 

@@ -1,6 +1,4 @@
-package com.itextpdf.core.pdf.objects;
-
-import com.itextpdf.core.pdf.PdfDocument;
+package com.itextpdf.core.pdf;
 
 public class PdfName extends PdfObject implements Comparable<PdfName> {
 
@@ -13,6 +11,7 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName Count = new PdfName("Count");
     public static final PdfName Creator = new PdfName("Creator");
     public static final PdfName D = new PdfName("D");
+    public static final PdfName Extends = new PdfName("Extends");
     public static final PdfName F = new PdfName("F");
     public static final PdfName First = new PdfName("First");
     public static final PdfName Fit = new PdfName("Fit");

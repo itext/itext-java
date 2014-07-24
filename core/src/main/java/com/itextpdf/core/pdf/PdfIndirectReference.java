@@ -1,8 +1,4 @@
-package com.itextpdf.core.pdf.objects;
-
-import com.itextpdf.core.pdf.PdfDocument;
-
-import java.util.Comparator;
+package com.itextpdf.core.pdf;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 

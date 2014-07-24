@@ -1,6 +1,6 @@
 package com.itextpdf.canvas.colors;
 
-import com.itextpdf.core.pdf.objects.PdfObject;
+import com.itextpdf.core.pdf.PdfObject;
 
 public class Color {
 

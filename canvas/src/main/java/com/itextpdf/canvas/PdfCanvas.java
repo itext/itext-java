@@ -5,7 +5,6 @@ import com.itextpdf.core.fonts.Font;
 import com.itextpdf.core.pdf.IPdfXObject;
 import com.itextpdf.core.pdf.PdfContentStream;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfWriter;
 
 import java.io.IOException;
 import java.util.Stack;

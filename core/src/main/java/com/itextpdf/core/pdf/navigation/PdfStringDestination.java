@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf.navigation;
 
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.objects.PdfString;
+import com.itextpdf.core.pdf.PdfString;
 
 public class PdfStringDestination extends PdfString implements IPdfDestination {
 

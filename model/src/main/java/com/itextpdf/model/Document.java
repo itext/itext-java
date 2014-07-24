@@ -1,6 +1,7 @@
 package com.itextpdf.model;
 
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
@@ -32,7 +33,7 @@ public class Document {
     /**
      * Closes the document and associated PdfDocument.
      */
-    public void close() throws IOException {
+    public void close() throws IOException, PdfException {
         pdfDocument.close();
     }
 
@@ -42,7 +43,7 @@ public class Document {
      * @param element
      * @return
      */
-    public Document add(IElement element) throws IOException {
+    public Document add(IElement element) throws IOException, PdfException {
         if (page == null)
             newPage();
         layoutMgr.placeElement(element);
@@ -54,7 +55,7 @@ public class Document {
      *
      * @return
      */
-    public Document newPage() throws IOException {
+    public Document newPage() throws IOException, PdfException {
         return newPage(pdfDocument.getDefaultPageSize());
     }
 
@@ -64,7 +65,7 @@ public class Document {
      * @param pageSize
      * @return
      */
-    public Document newPage(PageSize pageSize) throws IOException {
+    public Document newPage(PageSize pageSize) throws IOException, PdfException {
         if (page != null) {
             page.flush();
         }

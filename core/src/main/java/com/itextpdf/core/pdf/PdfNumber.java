@@ -1,6 +1,4 @@
-package com.itextpdf.core.pdf.objects;
-
-import com.itextpdf.core.pdf.PdfWriter;
+package com.itextpdf.core.pdf;
 
 public class PdfNumber extends PdfObject {
 

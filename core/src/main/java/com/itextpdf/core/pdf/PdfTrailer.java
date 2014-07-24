@@ -1,12 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.pdf.objects.PdfDictionary;
-import com.itextpdf.core.pdf.objects.PdfName;
-import com.itextpdf.core.pdf.objects.PdfNumber;
-import com.itextpdf.core.pdf.objects.PdfObject;
-
-import java.io.IOException;
-
 public class PdfTrailer extends PdfDictionary {
 
     private PdfTrailer() {
@@ -18,7 +11,7 @@ public class PdfTrailer extends PdfDictionary {
     }
 
     public PdfCatalog getCatalog() {
-        return (PdfCatalog)get(PdfName.Root);
+        return (PdfCatalog) get(PdfName.Root);
     }
 
     public void setCatalog(PdfCatalog catalog) {
@@ -26,13 +19,12 @@ public class PdfTrailer extends PdfDictionary {
     }
 
     public PdfDocumentInfo getDocumentInfo() {
-        return (PdfDocumentInfo)get(PdfName.Info);
+        return (PdfDocumentInfo) get(PdfName.Info);
     }
 
     public void setInfo(PdfDocumentInfo info) {
         put(PdfName.Info, info);
     }
-
 
 
     public void setSize(int size) {

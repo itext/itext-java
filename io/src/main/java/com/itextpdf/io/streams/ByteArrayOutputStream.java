@@ -7,7 +7,7 @@ public class ByteArrayOutputStream extends OutputStream {
     }
 
     public byte[] getBytes() {
-        return ((java.io.ByteArrayOutputStream)outputStream).toByteArray();
+        return ((java.io.ByteArrayOutputStream) outputStream).toByteArray();
     }
 
 }

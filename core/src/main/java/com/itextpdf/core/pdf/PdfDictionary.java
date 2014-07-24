@@ -1,11 +1,12 @@
-package com.itextpdf.core.pdf.objects;
+package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfWriter;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> {
 
@@ -83,10 +84,9 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     public boolean flush() throws IOException, PdfException {
         if (flushed)
             return true;
-        PdfWriter writer = pdfDocument.getWriter();
         for (PdfObject object : values()) {
             if (object.getIndirectReference() != null) {
-                writer.add(object.getIndirectReference());
+                pdfDocument.add(object.getIndirectReference());
             }
         }
         super.flush();

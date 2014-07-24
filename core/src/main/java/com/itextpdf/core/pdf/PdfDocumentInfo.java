@@ -1,9 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.pdf.objects.PdfDictionary;
-import com.itextpdf.core.pdf.objects.PdfName;
-import com.itextpdf.core.pdf.objects.PdfString;
-
 public class PdfDocumentInfo extends PdfDictionary {
 
     private PdfDocumentInfo() {

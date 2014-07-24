@@ -1,12 +1,11 @@
 package com.itextpdf.core.pdf.actions;
 
-import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.filespec.IPdfFileSpec;
 import com.itextpdf.core.pdf.filespec.PdfStringFS;
 import com.itextpdf.core.pdf.navigation.IPdfDestination;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.navigation.PdfStringDestination;
-import com.itextpdf.core.pdf.objects.*;
 
 import java.util.List;
 

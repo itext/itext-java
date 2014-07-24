@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf.annots;
 
+import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.objects.PdfDictionary;
 
 public class PdfAnnotation extends PdfDictionary {
 

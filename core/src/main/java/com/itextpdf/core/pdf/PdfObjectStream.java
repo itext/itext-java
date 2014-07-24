@@ -1,8 +1,6 @@
-package com.itextpdf.core.pdf.objects;
+package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfOutputStream;
 import com.itextpdf.io.streams.ByteArrayOutputStream;
 
 import java.io.IOException;
@@ -15,16 +13,26 @@ public class PdfObjectStream extends PdfStream {
     public static int maxObjStreamSize = 200;
 
     /**
-     * Current object stream size.
+     * Current object stream size (number of objects inside).
      */
     protected int size = 0;
 
+    /**
+     * Stream containing object indices, a heading part og object stream.
+     */
     protected ByteArrayOutputStream indexStream = new ByteArrayOutputStream();
 
     public PdfObjectStream(PdfDocument doc) {
         super(doc);
     }
 
+    /**
+     * Adds object to the object stream.
+     *
+     * @param object object to add.
+     * @throws PdfException
+     * @throws IOException
+     */
     public void addObject(PdfObject object) throws PdfException, IOException {
         if (!object.canBeInObjStm() || size == maxObjStreamSize)
             throw new PdfException(PdfException.objectCannotBeAddedToObjectStream);
@@ -39,6 +47,11 @@ public class PdfObjectStream extends PdfStream {
         size++;
     }
 
+    /**
+     * Gets object stream size (number of objects inside).
+     *
+     * @return object stream size.
+     */
     public int getSize() {
         return size;
     }

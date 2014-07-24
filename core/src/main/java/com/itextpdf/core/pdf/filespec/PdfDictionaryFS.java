@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf.filespec;
 
+import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.objects.PdfDictionary;
 
 public class PdfDictionaryFS extends PdfDictionary implements IPdfFileSpec {
 

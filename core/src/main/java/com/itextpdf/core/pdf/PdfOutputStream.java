@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.pdf.objects.*;
 import com.itextpdf.io.streams.OutputStream;
 
 import java.io.IOException;

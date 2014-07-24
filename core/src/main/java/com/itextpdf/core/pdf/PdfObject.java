@@ -1,12 +1,8 @@
-package com.itextpdf.core.pdf.objects;
+package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfWriter;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
 public class PdfObject {
 
@@ -80,7 +76,7 @@ public class PdfObject {
             return true;
         getIndirectReference();
         PdfWriter writer = pdfDocument.getWriter();
-        writer.add(indirectReference);
+        pdfDocument.add(indirectReference);
         if (writer.isFullCompression() && canBeInObjStm()) {
             PdfObjectStream objectStream = writer.getObjectStream();
             objectStream.addObject(this);
@@ -88,8 +84,7 @@ public class PdfObject {
             offset = writer.getCurrentPos();
             writer.writeToBody(this);
         }
-        flushed = true;
-        return flushed;
+        return flushed = true;
     }
 
     /**
@@ -126,6 +121,7 @@ public class PdfObject {
 
     /**
      * Gets object offset in a document.
+     * If object placed into object stream then method returns object index in ovbject stream.
      *
      * @return object offset in a document.
      */
@@ -133,14 +129,20 @@ public class PdfObject {
         return offset;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
+    /**
+     * Gets the object stream which contains current object.
+     *
+     * @return object stream if object s in object stream, null otherwise.
+     */
     public PdfObjectStream getObjectStream() {
         return objectStream;
     }
 
+    /**
+     * Indicates if the object can be placed to object stream.
+     *
+     * @return true if object can be placed to object stream, false otherwise.
+     */
     public boolean canBeInObjStm() {
         return true;
     }
