@@ -66,4 +66,9 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         }
         return (objNr > o.objNr) ? 1 : -1;
     }
+
+    @Override
+    public boolean canBeInObjStm() {
+        return false;
+    }
 }

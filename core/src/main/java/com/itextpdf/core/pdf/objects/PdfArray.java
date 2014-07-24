@@ -1,8 +1,11 @@
 package com.itextpdf.core.pdf.objects;
 
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfWriter;
 
+import java.io.IOException;
 import java.util.*;
 
 public class PdfArray extends PdfObject implements List<PdfObject> {
@@ -151,6 +154,24 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     @Override
     public List<PdfObject> subList(int fromIndex, int toIndex) {
         return list.subList(fromIndex, toIndex);
+    }
+
+    @Override
+    public boolean flush() throws IOException, PdfException {
+        if (flushed)
+            return true;
+        PdfWriter writer = pdfDocument.getWriter();
+        for (PdfObject object : this) {
+            if (object.getIndirectReference() != null) {
+                writer.add(object.getIndirectReference());
+            }
+        }
+        super.flush();
+        if (flushed && list != null) {
+            clear();
+            list = null;
+        }
+        return flushed;
     }
 
 }

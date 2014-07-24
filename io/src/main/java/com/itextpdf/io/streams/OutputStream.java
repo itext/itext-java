@@ -27,6 +27,12 @@ public class OutputStream extends java.io.OutputStream {
         currentPos++;
     }
 
+    public void write(short b) throws IOException {
+        byte[] bytes = new byte[]{(byte)((b>>8)&0xFF),(byte)(b&0xFF)};
+        write(bytes);
+        currentPos++;
+    }
+
     @Override
     public void write(int b) throws IOException {
         outputStream.write(b);
@@ -92,6 +98,10 @@ public class OutputStream extends java.io.OutputStream {
 
     public int getCurrentPos() {
         return currentPos;
+    }
+
+    public java.io.OutputStream getOutputStream() {
+        return outputStream;
     }
 
 

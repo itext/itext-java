@@ -1,5 +1,6 @@
 package com.itextpdf.canvas;
 
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfReader;
@@ -26,7 +27,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void createSimpleCanvas() throws IOException {
+    public void createSimpleCanvas() throws IOException, PdfException {
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -34,6 +35,7 @@ public class PdfCanvasTest {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "simpleCanvas.pdf");
         PdfWriter writer = new PdfWriter(fos);
+        writer.setFullCompression(true);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).

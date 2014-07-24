@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public class PdfWriterTest {
     }
 
     @Test
-    public void createEmptyDocument() throws IOException {
+    public void createEmptyDocument() throws IOException, PdfException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "emptyDocument.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);

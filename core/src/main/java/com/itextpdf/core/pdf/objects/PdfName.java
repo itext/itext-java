@@ -14,6 +14,7 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName Creator = new PdfName("Creator");
     public static final PdfName D = new PdfName("D");
     public static final PdfName F = new PdfName("F");
+    public static final PdfName First = new PdfName("First");
     public static final PdfName Fit = new PdfName("Fit");
     public static final PdfName FitB = new PdfName("FitB");
     public static final PdfName FitBH = new PdfName("FitBH");
@@ -24,14 +25,17 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName GoTo = new PdfName("GoTo");
     public static final PdfName GoToR = new PdfName("GoToR");
     public static final PdfName ID = new PdfName("ID");
+    public static final PdfName Index = new PdfName("Index");
     public static final PdfName Info = new PdfName("Info");
     public static final PdfName IsMap = new PdfName("IsMap");
     public static final PdfName Keywords = new PdfName("Keywords");
     public static final PdfName Kids = new PdfName("Kids");
     public static final PdfName Length = new PdfName("Length");
     public static final PdfName MediaBox = new PdfName("MediaBox");
+    public static final PdfName N = new PdfName("N");
     public static final PdfName NewWindow = new PdfName("NewWindow");
     public static final PdfName Next = new PdfName("Next");
+    public static final PdfName ObjStm = new PdfName("ObjStm");
     public static final PdfName Page = new PdfName("Page");
     public static final PdfName Pages = new PdfName("Pages");
     public static final PdfName Parent = new PdfName("Parent");
@@ -43,6 +47,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName Title = new PdfName("Title");
     public static final PdfName Type = new PdfName("Type");
     public static final PdfName URI = new PdfName("URI");
+    public static final PdfName W = new PdfName("W");
+    public static final PdfName XRef = new PdfName("XRef");
     public static final PdfName XYZ = new PdfName("XYZ");
 
     public PdfName(String value) {

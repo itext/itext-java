@@ -20,6 +20,11 @@ public class PdfCatalog extends PdfDictionary {
         put(PdfName.Pages, new PdfPages(pdfDocument, pages));
     }
 
+    @Override
+    public boolean canBeInObjStm() {
+        return false;
+    }
+
     class PdfPages extends PdfDictionary {
         private PdfPages() {
             super();

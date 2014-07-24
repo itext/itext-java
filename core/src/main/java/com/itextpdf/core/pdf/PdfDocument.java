@@ -4,6 +4,7 @@ import com.itextpdf.core.events.EventDispatcher;
 import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.objects.PdfDictionary;
 import com.itextpdf.core.pdf.objects.PdfIndirectReference;
@@ -25,6 +26,7 @@ public class PdfDocument implements IEventDispatcher {
     protected PdfTrailer trailer = null;
     protected PdfDocumentInfo info = null;
     protected boolean closing = false;
+    protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
 
     /**
      * Open PDF document in reading mode.
@@ -62,7 +64,7 @@ public class PdfDocument implements IEventDispatcher {
         dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
     }
 
-    public void close() throws IOException {
+    public void close() throws IOException, PdfException {
         closing = true;
         dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.CloseDocument));
         removeAllHandlers();
@@ -211,8 +213,18 @@ public class PdfDocument implements IEventDispatcher {
         return new PdfIndirectReference(this, writer.getNextIndirectReferenceNumber(), object);
     }
 
+    public PdfDocument setVersion(PdfVersion pdfVersion) {
+        this.pdfVersion = pdfVersion;
+        return this;
+    }
+
+    public PdfVersion getPdfVersion() {
+        return pdfVersion;
+    }
+
     protected void initialize() throws IOException {
         if (writer != null) {
+            writer.pdfDocument = this;
             if (reader == null) {
                 catalog = new PdfCatalog(this);
                 info = new PdfDocumentInfo(this);
@@ -220,7 +232,7 @@ public class PdfDocument implements IEventDispatcher {
                 trailer.setCatalog(catalog);
                 trailer.setInfo(info);
             }
-            writer.writeHeader();
+            writer.writeHeader(pdfVersion);
         }
     }
 

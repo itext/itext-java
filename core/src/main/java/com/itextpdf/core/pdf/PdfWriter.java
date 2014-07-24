@@ -1,26 +1,30 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.pdf.objects.*;
-import com.itextpdf.io.streams.OutputStream;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
-public class PdfWriter extends OutputStream {
+public class PdfWriter extends PdfOutputStream {
+
+    static final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
 
     protected int indirectReferenceNumber = 0;
     protected TreeSet<PdfIndirectReference> indirects = new TreeSet<PdfIndirectReference>();
-    static final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
+    protected boolean fullCompression = false;
+    protected PdfObjectStream objectStream = null;
+    protected PdfDocument pdfDocument = null;
 
     public PdfWriter(java.io.OutputStream os) {
         super(os);
     }
 
-    public void add(PdfIndirectReference indirectReference) throws IOException {
+    public void add(PdfIndirectReference indirectReference) throws IOException, PdfException {
         indirects.add(indirectReference);
     }
 
@@ -36,111 +40,32 @@ public class PdfWriter extends OutputStream {
         return ++indirectReferenceNumber;
     }
 
-    public void write(PdfObject object) throws IOException {
-        switch (object.getType()) {
-            case PdfObject.Array:
-                write((PdfArray) object);
-                break;
-            case PdfObject.Boolean:
-                write((PdfBoolean) object);
-                break;
-            case PdfObject.Dictionary:
-                write((PdfDictionary) object);
-                break;
-            case PdfObject.IndirectReference:
-                write((PdfIndirectReference) object);
-                break;
-            case PdfObject.Name:
-                write((PdfName) object);
-                break;
-            case PdfObject.Number:
-                write((PdfNumber) object);
-                break;
-            case PdfObject.Stream:
-                write((PdfStream) object);
-                break;
-            case PdfObject.String:
-                write((PdfString) object);
-                break;
-            default:
-                break;
+    public boolean isFullCompression() {
+        return fullCompression;
+    }
+
+    public void setFullCompression(boolean fullCompression) {
+        this.fullCompression = fullCompression;
+    }
+
+    public PdfObjectStream getObjectStream() throws IOException, PdfException {
+        if (objectStream == null) {
+            objectStream = new PdfObjectStream(pdfDocument);
         }
-    }
-
-    protected void write(PdfArray array) throws IOException {
-        writeChar('[');
-        for (int i = 0; i < array.size(); i++) {
-            PdfObject value = array.get(i);
-            PdfIndirectReference indirectReference = value.getIndirectReference();
-            if (indirectReference != null) {
-                indirects.add(indirectReference);
-                write(indirectReference);
-            } else {
-                write(value);
-            }
-            if (i < array.size() - 1)
-                writeChar(' ');
+        if (objectStream.getSize() == PdfObjectStream.maxObjStreamSize) {
+            objectStream.flush();
+            objectStream = new PdfObjectStream(pdfDocument);
         }
-        writeChar(']');
+        return objectStream;
     }
 
-    protected void write(PdfBoolean bool) throws IOException {
-        writeBoolean(bool.getValue());
-    }
-
-    protected void write(PdfDictionary dictionary) throws IOException {
-        writeString("<<");
-        for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
-            write(entry.getKey());
-            writeChar(' ');
-            PdfObject value = entry.getValue();
-            PdfIndirectReference indirectReference = value.getIndirectReference();
-            if (indirectReference != null) {
-                indirects.add(indirectReference);
-                write(indirectReference);
-            } else {
-                write(value);
-            }
-        }
-        writeString(">>");
-    }
-
-    protected void write(PdfIndirectReference indirectReference) throws IOException {
-        writeInteger(indirectReference.getObjNr()).
-                writeChar(' ').
-                writeInteger(indirectReference.getGenNr()).
-                writeString(" R");
-    }
-
-    protected void write(PdfName name) throws IOException {
-        writeChar('/').writeString(name.getValue());
-    }
-
-    protected void write(PdfNumber number) throws IOException {
-        write(number.getContent());
-    }
-
-    protected void write(PdfStream stream) throws IOException {
-        byte[] bytes = stream.getOutputStream().getBytes();
-        stream.put(PdfName.Length, new PdfNumber(bytes.length));
-        write((PdfDictionary) stream);
-        writeString("stream\n").
-                writeBytes(bytes).
-                writeString("\nendstream");
-    }
-
-    protected void write(PdfString string) throws IOException {
-        writeChar('(').
-                writeString(string.getValue()).
-                writeChar(')');
-    }
-
-    protected void writeHeader() throws IOException {
-        writeString("%PDF-1.7").
+    protected void writeHeader(PdfVersion pdfVersion) throws IOException {
+        writeChar('%').
+                writeString(pdfVersion.getPdfVersion()).
                 writeString("\n%\u00e2\u00e3\u00cf\u00d3\n");
     }
 
-    protected void flushWaitingObjects() throws IOException {
+    protected void flushWaitingObjects() throws IOException, PdfException {
         Iterator<PdfIndirectReference> it = indirects.iterator();
         PdfIndirectReference indirectReference = null;
         if (it.hasNext()) {
@@ -157,28 +82,66 @@ public class PdfWriter extends OutputStream {
                 }
             }
         }
+        if (objectStream != null && objectStream.getSize() > 0) {
+            objectStream.flush();
+            objectStream = null;
+        }
     }
 
-    protected int writeXRefTable() throws IOException {
+    protected int writeXRefTable() throws IOException, PdfException {
         int strtxref = currentPos;
-        writeString("xref\n").
-                writeString("0 ").
-                writeInteger(indirects.size() + 1).
-                writeString("\n0000000000 65535 f \n");
-        for (PdfIndirectReference indirect : indirects) {
-            writeString(objectOffsetFormatter.format(indirect.getRefersTo().getOffset())).
-                    writeString(" 00000 n \n");
+        if (fullCompression) {
+            PdfStream stream = new PdfStream(pdfDocument);
+            stream.put(PdfName.Type, PdfName.XRef);
+            stream.put(PdfName.Size, new PdfNumber(indirects.size() + 1));
+            stream.put(PdfName.W, new PdfArray(new ArrayList() {{
+                add(new PdfNumber(1));
+                add(new PdfNumber(2));
+                add(new PdfNumber(2));
+            }}));
+            stream.put(PdfName.Info, pdfDocument.trailer.getDocumentInfo());
+            stream.put(PdfName.Root, pdfDocument.trailer.getCatalog());
+            stream.getOutputStream().write((byte) 0);
+            stream.getOutputStream().write((short) 0x0000);
+            stream.getOutputStream().write((short) 0xFFFF);
+            for (PdfIndirectReference indirect : indirects) {
+                PdfObject refersTo = indirect.getRefersTo();
+                if (refersTo.getObjectStream() != null) {
+                    stream.getOutputStream().write((byte) 2);
+                    stream.getOutputStream().write((short) refersTo.getObjectStream().getIndirectReference().getObjNr());
+                    stream.getOutputStream().write((short) refersTo.getOffset());
+                } else {
+                    stream.getOutputStream().write((byte) 1);
+                    stream.getOutputStream().write((short) refersTo.getOffset());
+                    stream.getOutputStream().write((short) 0);
+                }
+            }
+            stream.flush();
+        } else {
+            writeString("xref\n").
+                    writeString("0 ").
+                    writeInteger(indirects.size() + 1).
+                    writeString("\n0000000000 65535 f \n");
+            for (PdfIndirectReference indirect : indirects) {
+                writeString(objectOffsetFormatter.format(indirect.getRefersTo().getOffset())).
+                        writeString(" 00000 n \n");
+            }
         }
         return strtxref;
     }
 
     protected void writeTrailer(PdfTrailer trailer, int startxref) throws IOException {
-        trailer.setSize(indirects.size() + 1);
-        writeString("trailer\n");
-        write(trailer);
+        if (fullCompression) {
+
+        } else {
+            trailer.setSize(indirects.size() + 1);
+            writeString("trailer\n");
+            write(trailer);
+        }
         writeString("\nstartxref\n").
                 writeInteger(startxref).
                 writeString("\n%%EOF\n");
+        indirects.clear();
     }
 
 }

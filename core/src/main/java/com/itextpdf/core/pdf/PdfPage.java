@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.events.PdfDocumentEvent;
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.objects.PdfArray;
 import com.itextpdf.core.pdf.objects.PdfDictionary;
@@ -54,7 +55,7 @@ public class PdfPage extends PdfDictionary {
     }
 
     @Override
-    public boolean flush() throws IOException {
+    public boolean flush() throws IOException, PdfException {
         if (contentStreams != null) {
             for (PdfContentStream contentStream : contentStreams)
                 contentStream.flush();
