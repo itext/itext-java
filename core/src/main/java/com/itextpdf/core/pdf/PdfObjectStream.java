@@ -1,8 +1,8 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
-import com.itextpdf.io.streams.ByteArrayOutputStream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class PdfObjectStream extends PdfStream {
@@ -20,7 +20,7 @@ public class PdfObjectStream extends PdfStream {
     /**
      * Stream containing object indices, a heading part og object stream.
      */
-    protected ByteArrayOutputStream indexStream = new ByteArrayOutputStream();
+    protected PdfOutputStream indexStream = new PdfOutputStream(new ByteArrayOutputStream());
 
     public PdfObjectStream(PdfDocument doc) {
         super(doc);
@@ -57,16 +57,6 @@ public class PdfObjectStream extends PdfStream {
     }
 
     @Override
-    public byte[] getBytes() {
-        byte[] indexStreamBytes = indexStream.getBytes();
-        byte[] outputStreamBytes = ((ByteArrayOutputStream) outputStream.getOutputStream()).getBytes();
-        byte[] bytes = new byte[indexStreamBytes.length + outputStreamBytes.length];
-        System.arraycopy(indexStreamBytes, 0, bytes, 0, indexStreamBytes.length);
-        System.arraycopy(outputStreamBytes, 0, bytes, indexStreamBytes.length, outputStreamBytes.length);
-        return bytes;
-    }
-
-    @Override
     public boolean flush() throws IOException, PdfException {
         if (flushed)
             return true;
@@ -81,8 +71,8 @@ public class PdfObjectStream extends PdfStream {
         return flushed;
     }
 
-    @Override
-    protected void initOutputStream() {
-        outputStream = new PdfOutputStream(new ByteArrayOutputStream());
+    public PdfOutputStream getIndexStream() {
+        return indexStream;
     }
+
 }

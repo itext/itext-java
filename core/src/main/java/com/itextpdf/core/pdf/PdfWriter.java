@@ -11,6 +11,9 @@ import java.util.NavigableSet;
 public class PdfWriter extends PdfOutputStream {
 
     static final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
+    static private final byte[] obj = getIsoBytes(" obj\n");
+    static private final byte[] endobj = getIsoBytes("\nendobj\n");
+    static private final byte[] endXRefEntry = getIsoBytes(" 00000 n \n");
 
     /**
      * Document associated with writer.
@@ -91,9 +94,9 @@ public class PdfWriter extends PdfOutputStream {
     protected void writeToBody(PdfObject object) throws IOException {
         writeInteger(object.getIndirectReference().getObjNr()).
                 writeSpace().
-                writeInteger(object.getIndirectReference().getGenNr()).writeString(" obj\n");
+                writeInteger(object.getIndirectReference().getGenNr()).writeBytes(obj);
         write(object);
-        writeString("\nendobj\n");
+        writeBytes(endobj);
     }
 
     /**
@@ -182,7 +185,7 @@ public class PdfWriter extends PdfOutputStream {
                     writeString("\n0000000000 65535 f \n");
             for (PdfIndirectReference indirect : pdfDocument.getIndirects()) {
                 writeString(objectOffsetFormatter.format(indirect.getRefersTo().getOffset())).
-                        writeString(" 00000 n \n");
+                        writeBytes(endXRefEntry);
             }
         }
         return strtxref;

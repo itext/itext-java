@@ -60,11 +60,6 @@ public class PdfDocument implements IEventDispatcher {
     protected PdfDocumentInfo info = null;
 
     /**
-     * Indicates if the document is in closing phase.
-     */
-    protected boolean closing = false;
-
-    /**
      * Document version. 1.7 by default.
      */
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
@@ -123,11 +118,9 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public void close() throws IOException, PdfException {
-        closing = true;
         dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.CloseDocument));
         removeAllHandlers();
         if (writer != null) {
-            catalog.addPages(pages);
             catalog.flush();
             info.flush();
             writer.flushWaitingObjects();
@@ -137,7 +130,6 @@ public class PdfDocument implements IEventDispatcher {
         }
         if (reader != null)
             reader.close();
-        closing = false;
     }
 
     /**
@@ -182,9 +174,9 @@ public class PdfDocument implements IEventDispatcher {
     public PdfPage insertPage(PdfPage page, int position) {
         currentPage = page;
         if (position == PdfPage.LastPage) {
-            pages.add(currentPage);
+            catalog.addPage(currentPage);
         } else {
-            pages.add(position - 1, currentPage);
+            catalog.insertPage(currentPage, position - 1);
         }
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
         return currentPage;
@@ -354,12 +346,12 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Indicates if the document is in closing phase.
+     * Gets PDF catalog.
      *
-     * @return true if document is closing, false otherwise.
+     * @return PDF catalog.
      */
-    public boolean isClosing() {
-        return closing;
+    public PdfCatalog getCatalog() {
+        return catalog;
     }
 
     /**

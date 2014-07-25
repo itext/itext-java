@@ -5,7 +5,7 @@ public class PdfNumber extends PdfObject {
     private static final byte Int = 1;
     private static final byte Float = 2;
 
-    Number value = null;
+    float value;
     byte intOrFloat = 0;
     byte[] content = null;
 
@@ -25,10 +25,10 @@ public class PdfNumber extends PdfObject {
         if (content == null) {
             switch (intOrFloat) {
                 case Int:
-                    content = PdfWriter.getIsoBytes(java.lang.String.valueOf(value.intValue()));
+                    content = PdfWriter.getIsoBytes(java.lang.String.valueOf((int)value));
                     break;
                 case Float:
-                    content = PdfWriter.getIsoBytes(java.lang.String.valueOf(value.floatValue()));
+                    content = PdfWriter.getIsoBytes(java.lang.String.valueOf(value));
                     break;
                 default:
                     content = new byte[0];

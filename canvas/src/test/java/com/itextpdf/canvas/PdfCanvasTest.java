@@ -172,10 +172,6 @@ public class PdfCanvasTest {
         reader.close();
     }
 
-    static public void main() {
-
-    }
-
     @Test
     public void create1000PagesDocumentWithFullCompression() throws IOException, PdfException {
 

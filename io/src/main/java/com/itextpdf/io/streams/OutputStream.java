@@ -4,6 +4,9 @@ import java.io.IOException;
 
 public class OutputStream extends java.io.OutputStream {
 
+    static private final byte[] booleanTrue = getIsoBytes("true");
+    static private final byte[] booleanFalse = getIsoBytes("false");
+
     protected java.io.OutputStream outputStream = null;
     protected int currentPos = 0;
 
@@ -51,18 +54,33 @@ public class OutputStream extends java.io.OutputStream {
     }
 
     public OutputStream writeInteger(int value) throws IOException {
-        write(getIsoBytes(String.valueOf(value)));
+        writeInteger(value, 8);
+        return this;
+    }
+
+    public OutputStream writeInteger(int value, int maxLen) throws IOException {
+        byte buf[] = new byte[maxLen];
+        int i = maxLen - 1;
+        for (; ; ) {
+            buf[i] = (byte) (value % 10 + 0x30);
+            value = value / 10;
+            if (value == 0)
+                break;
+            i--;
+        }
+        write(buf, i, maxLen - i);
         return this;
     }
 
     public OutputStream writeFloat(float value) throws IOException {
-        write(getIsoBytes(String.valueOf(value)));
+        int intPart = (int) value;
+        int fractalPart = (int) (value - (int) value) * 1000;
+        writeInteger(intPart, 8).writeByte((byte) '.').writeInteger(fractalPart, 4);
         return this;
     }
 
     public OutputStream writeDouble(double value) throws IOException {
-        write(getIsoBytes(String.valueOf(value)));
-        return this;
+        return writeFloat((float)value);
     }
 
     public OutputStream writeByte(byte value) throws IOException {
@@ -76,7 +94,7 @@ public class OutputStream extends java.io.OutputStream {
     }
 
     public OutputStream writeSpace() throws IOException {
-        write((byte)' ');
+        write((byte) ' ');
         return this;
     }
 
@@ -86,7 +104,7 @@ public class OutputStream extends java.io.OutputStream {
     }
 
     public OutputStream writeBoolean(boolean value) throws IOException {
-        write(getIsoBytes(String.valueOf(value)));
+        write(value ? booleanTrue : booleanFalse);
         return this;
     }
 

@@ -16,10 +16,6 @@ public class PdfPage extends PdfDictionary {
     protected PageSize pageSize = null;
     protected List<PdfContentStream> contentStreams = null;
 
-    private PdfPage() {
-        super();
-    }
-
     public PdfPage(PdfDocument doc) {
         this(doc, doc.getDefaultPageSize());
     }
@@ -54,6 +50,8 @@ public class PdfPage extends PdfDictionary {
 
     @Override
     public boolean flush() throws IOException, PdfException {
+        if (flushed)
+            return true;
         if (contentStreams != null) {
             for (PdfContentStream contentStream : contentStreams)
                 contentStream.flush();
@@ -68,9 +66,6 @@ public class PdfPage extends PdfDictionary {
             contentStreams.clear();
             contentStreams = null;
         }
-        if (pdfDocument.isClosing()) {
-            return super.flush();
-        }
-        return false;
+        return super.flush();
     }
 }
