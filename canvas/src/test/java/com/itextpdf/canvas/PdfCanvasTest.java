@@ -157,8 +157,7 @@ public class PdfCanvasTest {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page.getContentStream());
             canvas.rectangle(100, 100, 100, 100).fill();
-            if (i % 2 == 0)
-                page.flush();
+            page.flush();
         }
         pdfDoc.close();
 
@@ -180,7 +179,7 @@ public class PdfCanvasTest {
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "1000PagesDocumentWithFullCompression.pdf");
-        PdfWriter writer = new PdfWriter(new BufferedOutputStream(fos));
+        PdfWriter writer = new PdfWriter(fos);
         writer.setFullCompression(true);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getInfo().setAuthor(author).

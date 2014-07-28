@@ -68,12 +68,11 @@ public class PdfObject {
     /**
      * Flushes the object to the document.
      *
-     * @return true if the object is completely flushed to the document.
      * @throws IOException
      */
-    public boolean flush() throws IOException, PdfException {
+    public void flush() throws IOException, PdfException {
         if (flushed)
-            return true;
+            return;
         getIndirectReference();
         PdfWriter writer = pdfDocument.getWriter();
         pdfDocument.add(indirectReference);
@@ -84,7 +83,10 @@ public class PdfObject {
             offset = writer.getCurrentPos();
             writer.writeToBody(this);
         }
-        return flushed = true;
+        indirectReference.refersTo = null;
+        indirectReference.objectStream = objectStream;
+        indirectReference.offset = offset;
+        flushed = true;
     }
 
     /**

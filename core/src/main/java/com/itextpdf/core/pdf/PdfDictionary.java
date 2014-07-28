@@ -81,9 +81,9 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     }
 
     @Override
-    public boolean flush() throws IOException, PdfException {
+    public void flush() throws IOException, PdfException {
         if (flushed)
-            return true;
+            return;
         for (PdfObject object : values()) {
             if (object.getIndirectReference() != null) {
                 pdfDocument.add(object.getIndirectReference());
@@ -94,7 +94,6 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
             clear();
             map = null;
         }
-        return flushed;
     }
 
 }

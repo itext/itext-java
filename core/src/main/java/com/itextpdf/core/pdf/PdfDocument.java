@@ -8,16 +8,9 @@ import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.PageSize;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeSet;
 
 public class PdfDocument implements IEventDispatcher {
-
-    /**
-     * List of pages of current document.
-     */
-    protected List<PdfPage> pages = new ArrayList<PdfPage>();
 
     /**
      * Currently active page.
@@ -139,11 +132,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return page by page number.
      */
     public PdfPage getPage(int pageNum) {
-        if (pageNum == PdfPage.FirstPage)
-            return pages.get(0);
-        if (pageNum == PdfPage.LastPage)
-            return pages.get(pages.size() - 1);
-        return pages.get(pageNum - 1);
+        return catalog.getPage(pageNum);
     }
 
     /**
@@ -173,11 +162,7 @@ public class PdfDocument implements IEventDispatcher {
      */
     public PdfPage insertPage(PdfPage page, int position) {
         currentPage = page;
-        if (position == PdfPage.LastPage) {
-            catalog.addPage(currentPage);
-        } else {
-            catalog.insertPage(currentPage, position - 1);
-        }
+        catalog.insertPage(page, position);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
         return currentPage;
     }
@@ -189,7 +174,8 @@ public class PdfDocument implements IEventDispatcher {
      * @return added page.
      */
     public PdfPage addPage(PdfPage page) {
-        return insertPage(page, PdfPage.LastPage);
+        catalog.addPage(page);
+        return page;
     }
 
     /**
@@ -217,7 +203,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return number of pages.
      */
     public int getNumOfPages() {
-        return pages.size();
+        return catalog.getNumOfPages();
     }
 
     /**
@@ -227,7 +213,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return page number.
      */
     public int getPageNum(PdfPage page) {
-        return pages.indexOf(page) + 1;
+        return catalog.getPageNum(page);
     }
 
     /**
@@ -236,7 +222,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param page a page to remove.
      */
     public void removePage(PdfPage page) {
-        pages.remove(page);
+        catalog.removePage(page);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.RemovePage, page));
     }
 
@@ -246,7 +232,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param pageNum a number of page to remove.
      */
     public void removePage(int pageNum) {
-        removePage(pages.get(pageNum - 1));
+        catalog.removePage(pageNum);
     }
 
     /**
@@ -355,7 +341,7 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Initializs document.
+     * Initializes document.
      *
      * @throws IOException
      */

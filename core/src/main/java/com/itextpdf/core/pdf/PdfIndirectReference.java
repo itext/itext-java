@@ -34,6 +34,11 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     @Override
+    public PdfIndirectReference getIndirectReference() {
+        return this;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

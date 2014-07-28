@@ -57,9 +57,9 @@ public class PdfObjectStream extends PdfStream {
     }
 
     @Override
-    public boolean flush() throws IOException, PdfException {
+    public void flush() throws IOException, PdfException {
         if (flushed)
-            return true;
+            return;
         put(PdfName.Type, PdfName.ObjStm);
         put(PdfName.N, new PdfNumber(size));
         put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));
@@ -68,7 +68,6 @@ public class PdfObjectStream extends PdfStream {
             indexStream.close();
             indexStream = null;
         }
-        return flushed;
     }
 
     public PdfOutputStream getIndexStream() {

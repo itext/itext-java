@@ -49,9 +49,9 @@ public class PdfPage extends PdfDictionary {
     }
 
     @Override
-    public boolean flush() throws IOException, PdfException {
+    public void flush() throws IOException, PdfException {
         if (flushed)
-            return true;
+            return;
         if (contentStreams != null) {
             for (PdfContentStream contentStream : contentStreams)
                 contentStream.flush();
@@ -66,6 +66,6 @@ public class PdfPage extends PdfDictionary {
             contentStreams.clear();
             contentStreams = null;
         }
-        return super.flush();
+        super.flush();
     }
 }

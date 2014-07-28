@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 
@@ -28,6 +29,26 @@ public class PdfCatalog extends PdfDictionary {
         pages.insertPage(page, index);
     }
 
+    public PdfPage getPage(int pageNum) {
+        return pages.getPage(pageNum);
+    }
+
+    public int getNumOfPages() {
+        return pages.getNumOfPages();
+    }
+
+    public int getPageNum(PdfPage page) {
+        return pages.getPageNum(page);
+    }
+
+    public void removePage(PdfPage page) {
+        pages.removePage(page);
+    }
+
+    public void removePage(int pageNum) {
+        pages.removePage(pageNum);
+    }
+
     static class PdfPages extends PdfDictionary {
 
         protected PdfArray kids = null;
@@ -47,15 +68,33 @@ public class PdfCatalog extends PdfDictionary {
         }
 
         public void insertPage(PdfPage page, int index) {
-            page.put(PdfName.Parent, this);
-            kids.add(index, page);
-            pageCount++;
+            throw new NotImplementedException();
+        }
+
+        public PdfPage getPage(int pageNum) {
+            throw new NotImplementedException();
+        }
+
+        public int getNumOfPages() {
+            throw new NotImplementedException();
+        }
+
+        public int getPageNum(PdfPage page) {
+            throw new NotImplementedException();
+        }
+
+        public void removePage(PdfPage page) {
+            throw new NotImplementedException();
+        }
+
+        public void removePage(int pageNum) {
+            throw new NotImplementedException();
         }
 
         @Override
-        public boolean flush() throws IOException, PdfException {
+        public void flush() throws IOException, PdfException {
             put(PdfName.Count, new PdfNumber(pageCount));
-            return super.flush();
+            super.flush();
         }
     }
 

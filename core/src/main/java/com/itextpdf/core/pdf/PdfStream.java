@@ -19,15 +19,14 @@ public class PdfStream extends PdfDictionary {
     }
 
     @Override
-    public boolean flush() throws IOException, PdfException {
+    public void flush() throws IOException, PdfException {
         if (flushed)
-            return true;
+            return;
         super.flush();
         if (flushed && outputStream != null) {
             outputStream.close();
             outputStream = null;
         }
-        return flushed;
     }
 
     /**

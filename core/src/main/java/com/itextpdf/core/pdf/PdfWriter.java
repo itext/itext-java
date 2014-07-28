@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     public PdfWriter(java.io.OutputStream os) {
-        super(os);
+        super(new BufferedOutputStream(os));
     }
 
     /**
@@ -77,10 +78,8 @@ public class PdfWriter extends PdfOutputStream {
             objectStream = new PdfObjectStream(pdfDocument);
         }
         if (objectStream.getSize() == PdfObjectStream.maxObjStreamSize) {
-            PdfObjectStream oldObjStream = objectStream;
             objectStream.flush();
             objectStream = new PdfObjectStream(pdfDocument);
-            objectStream.put(PdfName.Extends, oldObjStream);
         }
         return objectStream;
     }
@@ -131,9 +130,9 @@ public class PdfWriter extends PdfOutputStream {
                 for (Object newIndirectReference : newIndirectsArray) {
                     indirectReference = (PdfIndirectReference) newIndirectReference;
                     PdfObject object = indirectReference.getRefersTo();
-                    object.flush();
+                    if (object != null)
+                        object.flush();
                 }
-
             }
         }
         if (objectStream != null && objectStream.getSize() > 0) {
@@ -166,14 +165,13 @@ public class PdfWriter extends PdfOutputStream {
             stream.getOutputStream().write(intToBytes(0));
             stream.getOutputStream().write(shortToBytes(0xFFFF));
             for (PdfIndirectReference indirect : pdfDocument.getIndirects()) {
-                PdfObject refersTo = indirect.getRefersTo();
-                if (refersTo.getObjectStream() != null) {
+                if (indirect.getObjectStream() != null) {
                     stream.getOutputStream().write(2);
-                    stream.getOutputStream().write(intToBytes(refersTo.getObjectStream().getIndirectReference().getObjNr()));
-                    stream.getOutputStream().write(shortToBytes(refersTo.getOffset()));
+                    stream.getOutputStream().write(intToBytes(indirect.getObjectStream().getIndirectReference().getObjNr()));
+                    stream.getOutputStream().write(shortToBytes(indirect.getOffset()));
                 } else {
                     stream.getOutputStream().write(1);
-                    stream.getOutputStream().write(intToBytes(refersTo.getOffset()));
+                    stream.getOutputStream().write(intToBytes(indirect.getOffset()));
                     stream.getOutputStream().write(shortToBytes(0));
                 }
             }
@@ -184,7 +182,7 @@ public class PdfWriter extends PdfOutputStream {
                     writeInteger(pdfDocument.getIndirects().size() + 1).
                     writeString("\n0000000000 65535 f \n");
             for (PdfIndirectReference indirect : pdfDocument.getIndirects()) {
-                writeString(objectOffsetFormatter.format(indirect.getRefersTo().getOffset())).
+                writeString(objectOffsetFormatter.format(indirect.getOffset())).
                         writeBytes(endXRefEntry);
             }
         }
