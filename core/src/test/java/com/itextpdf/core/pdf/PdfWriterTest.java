@@ -26,9 +26,8 @@ public class PdfWriterTest {
         pdfDoc.getInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
-        PdfPage page1 = pdfDoc.addNewPage();
-        PdfPage page2 = pdfDoc.addNewPage();
-        page2.flush();
+        PdfPage page = pdfDoc.addNewPage();
+        page.flush();
         pdfDoc.close();
     }
 

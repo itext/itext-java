@@ -166,8 +166,10 @@ public class PdfCanvasTest {
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
         Assert.assertEquals(title, info.get("Title"));
-        PdfDictionary page = reader.getPageN(1);
-        Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        for (int i = 1; i <= 1000; i++) {
+            PdfDictionary page = reader.getPageN(i);
+            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        }
         reader.close();
     }
 
@@ -198,8 +200,10 @@ public class PdfCanvasTest {
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
         Assert.assertEquals(title, info.get("Title"));
-        PdfDictionary page = reader.getPageN(1);
-        Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        for (int i = 1; i <= 1000; i++) {
+            PdfDictionary page = reader.getPageN(i);
+            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        }
         reader.close();
     }
 
