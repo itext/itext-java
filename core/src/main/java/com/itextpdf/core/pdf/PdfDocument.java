@@ -76,7 +76,7 @@ public class PdfDocument implements IEventDispatcher {
     public PdfDocument(PdfReader reader) throws IOException {
         this.reader = reader;
         initialize();
-        dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.OpenDocument, this), true);
     }
 
     /**
@@ -88,7 +88,7 @@ public class PdfDocument implements IEventDispatcher {
     public PdfDocument(PdfWriter writer) throws IOException {
         this.writer = writer;
         initialize();
-        dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.OpenDocument, this), true);
     }
 
     /**
@@ -101,7 +101,7 @@ public class PdfDocument implements IEventDispatcher {
         this.reader = reader;
         this.writer = writer;
         initialize();
-        dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.OpenDocument), true);
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.OpenDocument, this), true);
     }
 
     /**
@@ -111,7 +111,7 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public void close() throws IOException, PdfException {
-        dispatchEvent(new PdfDocumentEvent(this, PdfDocumentEvent.CloseDocument));
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.CloseDocument, this));
         removeAllHandlers();
         if (writer != null) {
             catalog.flush();

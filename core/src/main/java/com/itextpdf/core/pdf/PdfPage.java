@@ -49,7 +49,7 @@ public class PdfPage extends PdfDictionary {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    protected void flush(PdfWriter writer) throws IOException, PdfException {
         if (flushed)
             return;
         if (contentStreams != null) {
@@ -66,6 +66,6 @@ public class PdfPage extends PdfDictionary {
             contentStreams.clear();
             contentStreams = null;
         }
-        super.flush();
+        super.flush(writer);
     }
 }

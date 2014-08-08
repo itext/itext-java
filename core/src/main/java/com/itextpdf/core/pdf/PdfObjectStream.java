@@ -57,13 +57,13 @@ public class PdfObjectStream extends PdfStream {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    protected void flush(PdfWriter writer) throws IOException, PdfException {
         if (flushed)
             return;
         put(PdfName.Type, PdfName.ObjStm);
         put(PdfName.N, new PdfNumber(size));
         put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));
-        super.flush();
+        super.flush(writer);
         if (flushed && indexStream != null) {
             indexStream.close();
             indexStream = null;

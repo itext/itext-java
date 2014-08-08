@@ -41,7 +41,7 @@ public class PdfDocumentEvent extends Event {
     protected PdfPage page;
     private PdfDocument document;
 
-    public PdfDocumentEvent(PdfDocument document, String type) {
+    public PdfDocumentEvent(String type, PdfDocument document) {
         super(type);
         this.document = document;
     }

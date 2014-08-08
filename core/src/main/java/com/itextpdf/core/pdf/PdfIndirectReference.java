@@ -33,6 +33,10 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return refersTo;
     }
 
+    public void setRefersTo(PdfObject refersTo) {
+        this.refersTo = refersTo;
+    }
+
     @Override
     public PdfIndirectReference getIndirectReference() {
         return this;

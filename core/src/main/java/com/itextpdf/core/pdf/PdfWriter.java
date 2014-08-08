@@ -71,7 +71,7 @@ public class PdfWriter extends PdfOutputStream {
      * @throws IOException
      * @throws PdfException
      */
-    public PdfObjectStream getObjectStream() throws IOException, PdfException {
+    protected PdfObjectStream getObjectStream() throws IOException, PdfException {
         if (!fullCompression)
             return null;
         if (objectStream == null) {
@@ -82,6 +82,17 @@ public class PdfWriter extends PdfOutputStream {
             objectStream = new PdfObjectStream(pdfDocument);
         }
         return objectStream;
+    }
+
+    /**
+     * Flushes the object. Override this method if you want to define cusomt behaviour for object flushing.
+     *
+     * @param object object to flush.
+     * @throws IOException
+     * @throws PdfException
+     */
+    protected void flushObject(PdfObject object) throws IOException, PdfException {
+        object.flush(this);
     }
 
     /**
@@ -104,7 +115,7 @@ public class PdfWriter extends PdfOutputStream {
      * @throws IOException
      */
     protected void writeHeader() throws IOException {
-        writeByte((byte)'%').
+        writeByte((byte) '%').
                 writeString(pdfDocument.getPdfVersion().getPdfVersion()).
                 writeString("\n%\u00e2\u00e3\u00cf\u00d3\n");
     }

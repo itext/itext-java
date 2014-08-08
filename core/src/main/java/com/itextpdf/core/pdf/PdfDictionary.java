@@ -81,7 +81,7 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    protected void flush(PdfWriter writer) throws IOException, PdfException {
         if (flushed)
             return;
         for (PdfObject object : values()) {
@@ -89,7 +89,7 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
                 pdfDocument.add(object.getIndirectReference());
             }
         }
-        super.flush();
+        super.flush(writer);
         if (flushed && map != null) {
             clear();
             map = null;

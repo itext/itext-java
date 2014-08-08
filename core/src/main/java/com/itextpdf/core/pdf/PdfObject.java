@@ -70,23 +70,13 @@ public class PdfObject {
      *
      * @throws IOException
      */
-    public void flush() throws IOException, PdfException {
-        if (flushed)
+    final public void flush() throws IOException, PdfException {
+        if (pdfDocument == null)
             return;
-        getIndirectReference();
         PdfWriter writer = pdfDocument.getWriter();
-        pdfDocument.add(indirectReference);
-        if (writer.isFullCompression() && canBeInObjStm()) {
-            PdfObjectStream objectStream = writer.getObjectStream();
-            objectStream.addObject(this);
-        } else {
-            offset = writer.getCurrentPos();
-            writer.writeToBody(this);
-        }
-        indirectReference.refersTo = null;
-        indirectReference.objectStream = objectStream;
-        indirectReference.offset = offset;
-        flushed = true;
+        if (writer == null)
+            return;
+        writer.flushObject(this);
     }
 
     /**
@@ -131,6 +121,10 @@ public class PdfObject {
         return offset;
     }
 
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
     /**
      * Gets the object stream which contains current object.
      *
@@ -140,6 +134,10 @@ public class PdfObject {
         return objectStream;
     }
 
+    public void setObjectStream(PdfObjectStream objectStream) {
+        this.objectStream = objectStream;
+    }
+
     /**
      * Indicates if the object can be placed to object stream.
      *
@@ -147,6 +145,42 @@ public class PdfObject {
      */
     public boolean canBeInObjStm() {
         return true;
+    }
+
+    public boolean isFlushed() {
+        return flushed;
+    }
+
+    public void setFlushed(boolean flushed) {
+        this.flushed = flushed;
+    }
+
+    /**
+     * Flushes the object to document.
+     *
+     * @param writer PdfWriter used to flush object.
+     * @throws IOException
+     * @throws PdfException
+     */
+    protected void flush(PdfWriter writer) throws IOException, PdfException {
+        PdfIndirectReference indirectReference;
+        if (flushed || pdfDocument == null || (indirectReference = getIndirectReference()) == null)
+            return;
+        if (indirectReference == null)
+            return;
+        if (pdfDocument != null)
+            pdfDocument.add(indirectReference);
+        if (writer.isFullCompression() && canBeInObjStm()) {
+            PdfObjectStream objectStream = writer.getObjectStream();
+            objectStream.addObject(this);
+        } else {
+            offset = writer.getCurrentPos();
+            writer.writeToBody(this);
+        }
+        indirectReference.setRefersTo(null);
+        indirectReference.setObjectStream(objectStream);
+        indirectReference.setOffset(offset);
+        flushed = true;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.itextpdf.io.streams;
 
 import java.io.IOException;
-import java.util.TreeMap;
 
 public class OutputStream extends java.io.OutputStream {
 
@@ -61,7 +60,7 @@ public class OutputStream extends java.io.OutputStream {
 
     public OutputStream writeInteger(int value, int maxLen) throws IOException {
         if (value < 0)
-        write('-');
+            write('-');
         byte buf[] = new byte[maxLen];
         int i = maxLen - 1;
         for (; ; ) {

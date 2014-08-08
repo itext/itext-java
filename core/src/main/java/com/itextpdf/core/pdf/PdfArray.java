@@ -155,7 +155,7 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    protected void flush(PdfWriter writer) throws IOException, PdfException {
         if (flushed)
             return;
         for (PdfObject object : this) {
@@ -163,7 +163,7 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
                 pdfDocument.add(object.getIndirectReference());
             }
         }
-        super.flush();
+        super.flush(writer);
         if (flushed && list != null) {
             clear();
             list = null;

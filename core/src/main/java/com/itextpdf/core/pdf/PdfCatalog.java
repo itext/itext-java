@@ -92,9 +92,9 @@ public class PdfCatalog extends PdfDictionary {
         }
 
         @Override
-        public void flush() throws IOException, PdfException {
+        protected void flush(PdfWriter writer) throws IOException, PdfException {
             put(PdfName.Count, new PdfNumber(pageCount));
-            super.flush();
+            super.flush(writer);
         }
     }
 

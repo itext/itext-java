@@ -19,10 +19,10 @@ public class PdfStream extends PdfDictionary {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    protected void flush(PdfWriter writer) throws IOException, PdfException {
         if (flushed)
             return;
-        super.flush();
+        super.flush(writer);
         if (flushed && outputStream != null) {
             outputStream.close();
             outputStream = null;
