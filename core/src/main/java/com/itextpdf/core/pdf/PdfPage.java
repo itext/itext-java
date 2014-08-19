@@ -15,6 +15,7 @@ public class PdfPage extends PdfDictionary {
 
     protected PageSize pageSize = null;
     protected List<PdfContentStream> contentStreams = null;
+    protected PdfResources resources = null;
 
     public PdfPage(PdfDocument doc) {
         this(doc, doc.getDefaultPageSize());
@@ -22,12 +23,14 @@ public class PdfPage extends PdfDictionary {
 
     public PdfPage(PdfDocument doc, PageSize pageSize) {
         super(doc);
-        contentStreams = new ArrayList<PdfContentStream>() {{
-            add(new PdfContentStream(pdfDocument));
-        }};
+        resources = new PdfResources();
+        contentStreams = new ArrayList<PdfContentStream>();
+        PdfContentStream contentStream = new PdfContentStream(pdfDocument);
+        contentStream.setResources(resources);
+        contentStreams.add(contentStream);
         put(PdfName.Type, PdfName.Page);
         put(PdfName.MediaBox, new PdfArray(pageSize));
-        put(PdfName.Resources, new PdfDictionary());
+        put(PdfName.Resources, resources);
         this.pageSize = pageSize;
         doc.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
@@ -38,12 +41,14 @@ public class PdfPage extends PdfDictionary {
 
     public PdfContentStream newContentStreamBefore() {
         PdfContentStream contentStream = new PdfContentStream(pdfDocument);
+        contentStream.setResources(resources);
         contentStreams.add(0, contentStream);
         return contentStream;
     }
 
     public PdfContentStream newContentStreamAfter() {
         PdfContentStream contentStream = new PdfContentStream(pdfDocument);
+        contentStream.setResources(resources);
         contentStreams.add(contentStream);
         return contentStream;
     }

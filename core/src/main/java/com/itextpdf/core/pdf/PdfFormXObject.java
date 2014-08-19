@@ -4,6 +4,8 @@ public class PdfFormXObject extends PdfContentStream implements IPdfXObject {
 
     public PdfFormXObject(PdfDocument doc) {
         super(doc);
+        setResources(new PdfResources());
+        put(PdfName.Resources, getResources());
     }
 
     /**
