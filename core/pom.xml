@@ -28,5 +28,12 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>
