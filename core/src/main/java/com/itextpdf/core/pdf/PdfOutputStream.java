@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
 
 import java.io.ByteArrayOutputStream;
@@ -15,12 +16,16 @@ public class PdfOutputStream extends OutputStream {
     static private final byte[] endIndirect = getIsoBytes(" R");
     static private final byte[] endIndirectWithZeroGenNr = getIsoBytes(" 0 R");
 
+    /**
+     * Document associated with PDFOutputStream.
+     */
+    protected PdfDocument pdfDocument = null;
 
     public PdfOutputStream(java.io.OutputStream outputStream) {
         super(outputStream);
     }
 
-    public void write(PdfObject object) throws IOException {
+    public PdfOutputStream write(PdfObject object) throws IOException, PdfException {
         switch (object.getType()) {
             case PdfObject.Array:
                 write((PdfArray) object);
@@ -49,14 +54,15 @@ public class PdfOutputStream extends OutputStream {
             default:
                 break;
         }
+        return this;
     }
 
-    protected void write(PdfArray array) throws IOException {
+    protected void write(PdfArray array) throws IOException, PdfException {
         writeByte((byte)'[');
         for (int i = 0; i < array.size(); i++) {
             PdfObject value = array.get(i);
-            PdfIndirectReference indirectReference = value.getIndirectReference();
-            if (indirectReference != null) {
+            PdfIndirectReference indirectReference;
+            if (value.getType() != PdfObject.IndirectReference && (indirectReference = value.getIndirectReference()) != null) {
                 write(indirectReference);
             } else {
                 write(value);
@@ -71,14 +77,14 @@ public class PdfOutputStream extends OutputStream {
         writeBoolean(bool.getValue());
     }
 
-    protected void write(PdfDictionary dictionary) throws IOException {
+    protected void write(PdfDictionary dictionary) throws IOException, PdfException {
         writeBytes(openDict);
         for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
             write(entry.getKey());
             writeSpace();
             PdfObject value = entry.getValue();
-            PdfIndirectReference indirectReference = value.getIndirectReference();
-            if (indirectReference != null) {
+            PdfIndirectReference indirectReference;
+            if (value.getType() != PdfObject.IndirectReference && (indirectReference = value.getIndirectReference()) != null) {
                 write(indirectReference);
             } else {
                 write(value);
@@ -87,7 +93,9 @@ public class PdfOutputStream extends OutputStream {
         writeBytes(closeDict);
     }
 
-    protected void write(PdfIndirectReference indirectReference) throws IOException {
+    protected void write(PdfIndirectReference indirectReference) throws IOException, PdfException {
+        if (indirectReference.getRefersTo() != null)
+            pdfDocument.add(indirectReference);
         if (indirectReference.getGenNr() == 0) {
             writeInteger(indirectReference.getObjNr()).
                     writeBytes(endIndirectWithZeroGenNr);
@@ -107,7 +115,7 @@ public class PdfOutputStream extends OutputStream {
         write(number.getContent());
     }
 
-    protected void write(PdfStream stream) throws IOException {
+    protected void write(PdfStream stream) throws IOException, PdfException {
         ByteArrayOutputStream byteStream = (ByteArrayOutputStream)stream.getOutputStream().getOutputStream();
         if (stream instanceof PdfObjectStream) {
             ByteArrayOutputStream indexStream = (ByteArrayOutputStream)((PdfObjectStream)stream).getIndexStream().getOutputStream();

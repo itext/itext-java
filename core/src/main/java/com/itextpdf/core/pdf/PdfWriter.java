@@ -6,8 +6,10 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NavigableSet;
+import java.util.TreeSet;
 
 public class PdfWriter extends PdfOutputStream {
 
@@ -15,11 +17,6 @@ public class PdfWriter extends PdfOutputStream {
     static private final byte[] obj = getIsoBytes(" obj\n");
     static private final byte[] endobj = getIsoBytes("\nendobj\n");
     static private final byte[] endXRefEntry = getIsoBytes(" 00000 n \n");
-
-    /**
-     * Document associated with writer.
-     */
-    protected PdfDocument pdfDocument = null;
 
     /**
      * Indicates if to use full compression (using object streams).
@@ -101,7 +98,7 @@ public class PdfWriter extends PdfOutputStream {
      * @param object object to write.
      * @throws IOException
      */
-    protected void writeToBody(PdfObject object) throws IOException {
+    protected void writeToBody(PdfObject object) throws IOException, PdfException {
         writeInteger(object.getIndirectReference().getObjNr()).
                 writeSpace().
                 writeInteger(object.getIndirectReference().getGenNr()).writeBytes(obj);
@@ -127,25 +124,24 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected void flushWaitingObjects() throws IOException, PdfException {
-        Iterator<PdfIndirectReference> it = pdfDocument.getIndirects().iterator();
+        TreeSet<PdfIndirectReference> indirectsCopy = new TreeSet<PdfIndirectReference>();
         PdfIndirectReference indirectReference;
-        if (it.hasNext()) {
-            boolean firstRun = true;
-            indirectReference = it.next();
-            for (; ; ) {
-                NavigableSet<PdfIndirectReference> newIndirects = pdfDocument.getIndirects().subSet(indirectReference, firstRun, pdfDocument.getIndirects().last(), true);
-                firstRun = false;
-                if (newIndirects.isEmpty())
-                    break;
-                Object[] newIndirectsArray = newIndirects.toArray();
-                for (Object newIndirectReference : newIndirectsArray) {
-                    indirectReference = (PdfIndirectReference) newIndirectReference;
-                    PdfObject object = indirectReference.getRefersTo();
-                    if (object != null)
-                        object.flush();
+        for (; ; ) {
+            NavigableSet<PdfIndirectReference> indirects = pdfDocument.getIndirects();
+            if (indirects.isEmpty())
+                break;
+            Object[] indirectsArray = indirects.toArray();
+            for (Object newIndirectReference : indirectsArray) {
+                indirectReference = (PdfIndirectReference) newIndirectReference;
+                indirectsCopy.add(indirectReference);
+                PdfObject object = indirectReference.getRefersTo();
+                if (object != null) {
+                    object.flush();
                 }
             }
+            pdfDocument.getIndirects().removeAll(Arrays.asList(indirectsArray));
         }
+        pdfDocument.setIndirects(indirectsCopy);
         if (objectStream != null && objectStream.getSize() > 0) {
             objectStream.flush();
             objectStream = null;
@@ -206,7 +202,7 @@ public class PdfWriter extends PdfOutputStream {
      * @param startxref start of cross reference table.
      * @throws IOException
      */
-    protected void writeTrailer(int startxref) throws IOException {
+    protected void writeTrailer(int startxref) throws IOException, PdfException {
         if (!fullCompression) {
             pdfDocument.getTrailer().setSize(pdfDocument.getIndirects().size() + 1);
             writeString("trailer\n");
@@ -217,5 +213,4 @@ public class PdfWriter extends PdfOutputStream {
                 writeString("\n%%EOF\n");
         pdfDocument.getIndirects().clear();
     }
-
 }

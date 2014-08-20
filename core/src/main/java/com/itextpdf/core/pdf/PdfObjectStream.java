@@ -24,6 +24,7 @@ public class PdfObjectStream extends PdfStream {
 
     public PdfObjectStream(PdfDocument doc) {
         super(doc);
+        outputStream.pdfDocument = doc;
     }
 
     /**
@@ -40,7 +41,7 @@ public class PdfObjectStream extends PdfStream {
                 writeSpace().
                 writeInteger(outputStream.getCurrentPos()).
                 writeSpace();
-        ((PdfOutputStream) outputStream).write(object);
+        outputStream.write(object);
         object.offset = size;
         object.objectStream = this;
         outputStream.writeSpace();

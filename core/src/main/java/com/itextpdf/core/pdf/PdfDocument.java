@@ -379,6 +379,10 @@ public class PdfDocument implements IEventDispatcher {
         return indirects;
     }
 
+    protected void setIndirects(TreeSet<PdfIndirectReference> indirects) {
+        this.indirects = indirects;
+    }
+
     /**
      * Gets document trailer.
      *

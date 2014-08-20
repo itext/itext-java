@@ -11,7 +11,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Output stream associated with PDF stream.
      */
-    protected OutputStream outputStream = new PdfOutputStream(new ByteArrayOutputStream());
+    protected PdfOutputStream outputStream = new PdfOutputStream(new ByteArrayOutputStream());
 
     public PdfStream(PdfDocument doc) {
         super(doc);
@@ -34,7 +34,7 @@ public class PdfStream extends PdfDictionary {
      *
      * @return output stream.
      */
-    public OutputStream getOutputStream() {
+    public PdfOutputStream getOutputStream() {
         return outputStream;
     }
 

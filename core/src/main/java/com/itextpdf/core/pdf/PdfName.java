@@ -6,11 +6,13 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
 
     public static final PdfName Action = new PdfName("Action");
     public static final PdfName Author = new PdfName("Author");
+    public static final PdfName BaseFont = new PdfName("BaseFont");
     public static final PdfName Catalog = new PdfName("Catalog");
     public static final PdfName Contents = new PdfName("Contents");
     public static final PdfName Count = new PdfName("Count");
     public static final PdfName Creator = new PdfName("Creator");
     public static final PdfName D = new PdfName("D");
+    public static final PdfName Encoding = new PdfName("Encoding");
     public static final PdfName Extends = new PdfName("Extends");
     public static final PdfName F = new PdfName("F");
     public static final PdfName First = new PdfName("First");
@@ -21,6 +23,7 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName FitH = new PdfName("FitH");
     public static final PdfName FitR = new PdfName("FitR");
     public static final PdfName FitV = new PdfName("FitV");
+    public static final PdfName Font = new PdfName("Font");
     public static final PdfName GoTo = new PdfName("GoTo");
     public static final PdfName GoToR = new PdfName("GoToR");
     public static final PdfName ID = new PdfName("ID");
@@ -41,12 +44,15 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName Resources = new PdfName("Resources");
     public static final PdfName Root = new PdfName("Root");
     public static final PdfName S = new PdfName("S");
+    public static final PdfName Subtype = new PdfName("Subtype");
     public static final PdfName Size = new PdfName("Size");
     public static final PdfName Subject = new PdfName("Subject");
     public static final PdfName Title = new PdfName("Title");
     public static final PdfName Type = new PdfName("Type");
+    public static final PdfName Type1 = new PdfName("Type1");
     public static final PdfName URI = new PdfName("URI");
     public static final PdfName W = new PdfName("W");
+    public static final PdfName WinAnsiEncoding = new PdfName("WinAnsiEncoding");
     public static final PdfName XRef = new PdfName("XRef");
     public static final PdfName XYZ = new PdfName("XYZ");
 
