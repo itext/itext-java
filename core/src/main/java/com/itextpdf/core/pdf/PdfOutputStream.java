@@ -17,7 +17,7 @@ public class PdfOutputStream extends OutputStream {
     static private final byte[] endIndirectWithZeroGenNr = getIsoBytes(" 0 R");
 
     /**
-     * Document associated with PDFOutputStream.
+     * Document associated with PdfOutputStream.
      */
     protected PdfDocument pdfDocument = null;
 
