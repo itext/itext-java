@@ -1,19 +1,17 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 
 public class PdfCatalog extends PdfDictionary {
 
-    protected PdfPages pages = null;
+    protected PdfPagesTree pageTree = null;
 
     public PdfCatalog(PdfDocument doc) {
         super(doc);
-        pages = new PdfPages(doc);
+        pageTree = new PdfPagesTree(doc);
         put(PdfName.Type, PdfName.Catalog);
-        put(PdfName.Pages, pages);
     }
 
     @Override
@@ -21,81 +19,45 @@ public class PdfCatalog extends PdfDictionary {
         return false;
     }
 
-    public void addPage(PdfPage page) {
-        pages.addPage(page);
+    public void addPage(PdfPage page) throws PdfException {
+        if (page.isFlushed())
+            throw new PdfException(PdfException.flushedPageCannotBeAddedOrInserted);
+        pageTree.addPage(page);
     }
 
-    public void insertPage(PdfPage page, int index) {
-        pages.insertPage(page, index);
+    protected void addNewPage(PdfPage page) {
+        pageTree.addPage(page);
+    }
+
+    public void insertPage(PdfPage page, int index) throws PdfException {
+        pageTree.insertPage(index, page);
     }
 
     public PdfPage getPage(int pageNum) {
-        return pages.getPage(pageNum);
+        return pageTree.getPage(pageNum);
     }
 
     public int getNumOfPages() {
-        return pages.getNumOfPages();
+        return pageTree.getNumOfPages();
     }
 
     public int getPageNum(PdfPage page) {
-        return pages.getPageNum(page);
+        return pageTree.getPageNum(page);
     }
 
-    public void removePage(PdfPage page) {
-        pages.removePage(page);
+    public boolean removePage(PdfPage page) throws PdfException {
+        return pageTree.removePage(page);
     }
 
-    public void removePage(int pageNum) {
-        pages.removePage(pageNum);
+    public PdfPage removePage(int pageNum) throws PdfException {
+        return pageTree.removePage(pageNum);
     }
 
-    static class PdfPages extends PdfDictionary {
-
-        protected PdfArray kids = null;
-        protected int pageCount = 0;
-
-        public PdfPages(PdfDocument doc) {
-            super(doc);
-            kids = new PdfArray(doc);
-            put(PdfName.Type, PdfName.Pages);
-            put(PdfName.Kids, kids);
-        }
-
-        public void addPage(PdfPage page) {
-            page.put(PdfName.Parent, this);
-            kids.add(page);
-            pageCount++;
-        }
-
-        public void insertPage(PdfPage page, int index) {
-            throw new NotImplementedException();
-        }
-
-        public PdfPage getPage(int pageNum) {
-            throw new NotImplementedException();
-        }
-
-        public int getNumOfPages() {
-            throw new NotImplementedException();
-        }
-
-        public int getPageNum(PdfPage page) {
-            throw new NotImplementedException();
-        }
-
-        public void removePage(PdfPage page) {
-            throw new NotImplementedException();
-        }
-
-        public void removePage(int pageNum) {
-            throw new NotImplementedException();
-        }
-
-        @Override
-        protected void flush(PdfWriter writer) throws IOException, PdfException {
-            put(PdfName.Count, new PdfNumber(pageCount));
-            super.flush(writer);
-        }
+    @Override
+    protected void flush(PdfWriter writer) throws IOException, PdfException {
+        if (flushed)
+            return;
+        put(PdfName.Pages, pageTree.generateTree());
+        super.flush(writer);
     }
-
 }

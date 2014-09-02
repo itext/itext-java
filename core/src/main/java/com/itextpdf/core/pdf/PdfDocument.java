@@ -156,13 +156,14 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Inserts page to the document.
      *
-     * @param page     page to insert.
-     * @param position position to insert page to.
-     * @return inserted page.
+     * @param page     page to insert
+     * @param position position to insert page to
+     * @return inserted page
+     * @throws PdfException in case {@code page} is flushed
      */
-    public PdfPage insertPage(PdfPage page, int position) {
-        currentPage = page;
+    public PdfPage insertPage(PdfPage page, int position) throws PdfException {
         catalog.insertPage(page, position);
+        currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
         return currentPage;
     }
@@ -172,8 +173,9 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param page page to add.
      * @return added page.
+     * @throws PdfException in case {@code page} is flushed
      */
-    public PdfPage addPage(PdfPage page) {
+    public PdfPage addPage(PdfPage page) throws PdfException {
         catalog.addPage(page);
         return page;
     }
@@ -181,20 +183,24 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Creates and adds new page to the end of document.
      *
-     * @return added page.
+     * @return added page
      */
     public PdfPage addNewPage() {
-        return addPage(new PdfPage(this, getDefaultPageSize()));
+        PdfPage page = new PdfPage(this, getDefaultPageSize());
+        catalog.addNewPage(page);
+        return page;
     }
 
     /**
      * Creates and adds new page wit hthe specified page size.
      *
-     * @param pageSize page size of the new page.
-     * @return added page.
+     * @param pageSize page size of the new page
+     * @return added page
      */
     public PdfPage addNewPage(PageSize pageSize) {
-        return addPage(new PdfPage(this, pageSize));
+        PdfPage page = new PdfPage(this, pageSize);
+        catalog.addNewPage(page);
+        return page;
     }
 
     /**
@@ -221,9 +227,10 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param page a page to remove.
      */
-    public void removePage(PdfPage page) {
-        catalog.removePage(page);
+    public boolean removePage(PdfPage page) throws PdfException {
+        boolean result = catalog.removePage(page);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.RemovePage, page));
+        return result;
     }
 
     /**
@@ -231,8 +238,8 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param pageNum a number of page to remove.
      */
-    public void removePage(int pageNum) {
-        catalog.removePage(pageNum);
+    public PdfPage removePage(int pageNum) throws PdfException {
+        return catalog.removePage(pageNum);
     }
 
     /**
