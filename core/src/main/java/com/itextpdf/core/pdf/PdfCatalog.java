@@ -29,7 +29,7 @@ public class PdfCatalog extends PdfDictionary {
         pageTree.addPage(page);
     }
 
-    public void insertPage(PdfPage page, int index) throws PdfException {
+    public void insertPage(int index, PdfPage page) throws PdfException {
         pageTree.insertPage(index, page);
     }
 

@@ -156,13 +156,13 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Inserts page to the document.
      *
+     * @param index position to insert page to
      * @param page     page to insert
-     * @param position position to insert page to
      * @return inserted page
      * @throws PdfException in case {@code page} is flushed
      */
-    public PdfPage insertPage(PdfPage page, int position) throws PdfException {
-        catalog.insertPage(page, position);
+    public PdfPage insertPage(int index, PdfPage page) throws PdfException {
+        catalog.insertPage(index, page);
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
         return currentPage;
