@@ -90,10 +90,10 @@ public class OutputStream extends java.io.OutputStream {
         return this;
     }
 
-    public OutputStream writeChar(char value) throws IOException {
-        write(getIsoBytes(String.valueOf(value)));
-        return this;
-    }
+//    public OutputStream writeChar(char value) throws IOException {
+//        write(getIsoBytes(String.valueOf(value)));
+//        return this;
+//    }
 
     public OutputStream writeSpace() throws IOException {
         write((byte) ' ');

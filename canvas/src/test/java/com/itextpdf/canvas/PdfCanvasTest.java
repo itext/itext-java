@@ -344,15 +344,13 @@ public class PdfCanvasTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + file);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        int pageCount = 10;
+        int pageCount = 1000;
         for (int i = 0; i < pageCount; i ++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page.getContentStream());

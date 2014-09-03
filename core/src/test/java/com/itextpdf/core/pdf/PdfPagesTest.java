@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.Random;
 
 public class PdfPagesTest {
-
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfPagesTest/";
     static final PdfName PageNum = new PdfName("PageNum");
     static final com.itextpdf.text.pdf.PdfName PageNum5 = new com.itextpdf.text.pdf.PdfName("PageNum");
@@ -48,7 +47,7 @@ public class PdfPagesTest {
 
         for (int i = 111; i > 0; i--) {
             PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
-            pdfDoc.insertPage(page, 1);
+            pdfDoc.insertPage(1, page);
             page.put(PageNum, new PdfNumber(i));
             page.flush();
         }
@@ -87,7 +86,7 @@ public class PdfPagesTest {
 
         for (int i = 0; i < pages.length; i++) {
             pdfDoc.removePage(pages[i]);
-            pdfDoc.insertPage(pages[i], i + 1);
+            pdfDoc.insertPage( i + 1, pages[i]);
         }
         pdfDoc.close();
 
@@ -123,7 +122,7 @@ public class PdfPagesTest {
 
         for (int i = 0; i < pages.length; i++) {
             PdfPage page = pdfDoc.removePage(pages[i]);
-            pdfDoc.insertPage(page, i + 1);
+            pdfDoc.insertPage(i + 1, page);
         }
         pdfDoc.close();
 
@@ -139,7 +138,7 @@ public class PdfPagesTest {
         try {
             page.flush();
             pdfDoc.removePage(page);
-            pdfDoc.insertPage(page, 1);
+            pdfDoc.insertPage(1, page);
             pdfDoc.close();
         } catch (PdfException e) {
             if (e.getMessage() == PdfException.flushedPageCannotBeAddedOrInserted)

@@ -228,7 +228,7 @@ public class PdfCanvas {
      */
     private void escapeString(final byte b[]) throws IOException {
         OutputStream output = contentStream.getOutputStream();
-        output.writeChar('(');
+        output.writeByte((byte)'(');
         for (int k = 0; k < b.length; ++k) {
             byte c = b[k];
             switch (c) {
@@ -250,13 +250,13 @@ public class PdfCanvas {
                 case '(':
                 case ')':
                 case '\\':
-                    output.writeChar('\\').writeByte(c);
+                    output.writeByte((byte)'\\').writeByte(c);
                     break;
                 default:
                     output.writeByte(c);
             }
         }
-        output.writeChar(')');
+        output.writeByte((byte)')');
     }
 
 
