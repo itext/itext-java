@@ -23,6 +23,7 @@ public class PdfPage extends PdfDictionary {
 
     public PdfPage(PdfDocument doc, PageSize pageSize) {
         super(doc);
+        //NOTE: Write PdfResources as Direct Object
         resources = new PdfResources();
         contentStreams = new ArrayList<PdfContentStream>();
         PdfContentStream contentStream = new PdfContentStream(pdfDocument);

@@ -1,41 +1,102 @@
 package com.itextpdf.core.pdf;
 
-public class PdfNumber extends PdfObject {
+import com.itextpdf.core.exceptions.PdfException;
+import com.itextpdf.io.streams.OutputStream;
 
-    private static final byte Int = 1;
-    private static final byte Float = 2;
+public class PdfNumber extends PdfPrimitiveObject {
 
-    float value;
-    byte intOrFloat = 0;
-    byte[] content = null;
+    protected static final byte Int = 1;
+    protected static final byte Double = 2;
+
+    double value;
+    byte valueType = -1;
 
     public PdfNumber(int value) {
         super(PdfObject.Number);
         this.value = value;
-        this.intOrFloat = Int;
+        this.valueType = Int;
+    }
+
+    public PdfNumber(long value) {
+        super(PdfObject.Number);
+        this.value = value;
+        this.valueType = Double;
     }
 
     public PdfNumber(float value) {
         super(PdfObject.Number);
         this.value = value;
-        this.intOrFloat = Float;
+        this.valueType = Double;
     }
 
-    public byte[] getContent() {
-        if (content == null) {
-            switch (intOrFloat) {
-                case Int:
-                    content = PdfWriter.getIsoBytes(java.lang.String.valueOf((int)value));
-                    break;
-                case Float:
-                    content = PdfWriter.getIsoBytes(java.lang.String.valueOf(value));
-                    break;
-                default:
-                    content = new byte[0];
-            }
+    public PdfNumber(double value) {
+        super(PdfObject.Number);
+        this.value = value;
+        this.valueType = Double;
+    }
+
+    public PdfNumber(PdfDocument doc, int value) {
+        super(doc, PdfObject.Number);
+        this.value = value;
+        this.valueType = Int;
+    }
+
+    public PdfNumber(PdfDocument doc, long value) {
+        super(doc, PdfObject.Number);
+        this.value = value;
+        this.valueType = Int;
+    }
+
+    public PdfNumber(PdfDocument doc, float value) {
+        super(doc, PdfObject.Number);
+        this.value = value;
+        this.valueType = Double;
+    }
+
+    public PdfNumber(PdfDocument doc, double value) {
+        super(doc, PdfObject.Number);
+        this.value = value;
+        this.valueType = Double;
+    }
+
+    public double getValue() throws PdfException {
+        if(java.lang.Double.isNaN(value))
+            generateValue();
+        return value;
+    }
+
+    public float getFloatValue() throws PdfException {
+        return (float)getValue();
+    }
+
+    public long getLongValue() throws PdfException {
+        return (long)getValue();
+    }
+
+    public int getIntValue() throws PdfException {
+        return (int)getValue();
+    }
+
+    protected byte getValueType() {
+        return valueType;
+    }
+
+    @Override
+    public void generateContent() {
+        switch (valueType) {
+            case Int:
+                content = OutputStream.getIsoBytes((int)value);
+                break;
+            case Double:
+                content = OutputStream.getIsoBytes(value);
+                break;
+            default:
+                content = new byte[0];
         }
-        return content;
     }
 
+    @Override
+    protected void generateValue() throws PdfException {
 
+    }
 }

@@ -8,14 +8,16 @@ import java.util.*;
 
 public class PdfArray extends PdfObject implements List<PdfObject> {
 
-    protected List<PdfObject> list = new ArrayList<PdfObject>();
+    protected List<PdfObject> list;
 
     public PdfArray() {
         super(PdfObject.Array);
+        list = new ArrayList<PdfObject>();
     }
 
     public PdfArray(PdfDocument doc) {
         super(doc, PdfObject.Array);
+        list = new ArrayList<PdfObject>();
     }
 
     public PdfArray(Rectangle rectangle) {
@@ -23,7 +25,8 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     }
 
     public PdfArray(PdfDocument doc, Rectangle rectangle) {
-        this(doc);
+        super(doc, PdfObject.Array);
+        list = new ArrayList<PdfObject>(4);
         add(new PdfNumber(rectangle.getX()));
         add(new PdfNumber(rectangle.getY()));
         add(new PdfNumber(rectangle.getX() + rectangle.getWidth()));
@@ -35,8 +38,10 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     }
 
     public PdfArray(PdfDocument doc, List<PdfObject> objects) {
-        this(doc);
-        list = objects;
+        super(doc, PdfObject.Array);
+        list = new ArrayList<PdfObject>(objects.size());
+        for (PdfObject element : objects)
+            add(element);
     }
 
     @Override

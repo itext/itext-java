@@ -11,9 +11,10 @@ public class PdfObject {
     static public final int Dictionary = 3;
     static public final int IndirectReference = 4;
     static public final int Name = 5;
-    static public final int Number = 6;
-    static public final int Stream = 7;
-    static public final int String = 8;
+    static public final int Null = 6;
+    static public final int Number = 7;
+    static public final int Stream = 8;
+    static public final int String = 9;
 
     /**
      * Object type: Array, Boolean, Dictionary, ...

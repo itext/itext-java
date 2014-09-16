@@ -1,6 +1,23 @@
 package com.itextpdf.core.pdf;
 
-public class PdfName extends PdfObject implements Comparable<PdfName> {
+import com.itextpdf.core.exceptions.PdfException;
+import com.itextpdf.io.streams.ByteBuffer;
+import com.itextpdf.io.streams.OutputStream;
+
+public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
+
+    private static final byte[] space = OutputStream.getIsoBytes("#20");                //  ' '
+    private static final byte[] percent = OutputStream.getIsoBytes("#25");              //  '%'
+    private static final byte[] leftParenthesis = OutputStream.getIsoBytes("#28");      //  '('
+    private static final byte[] rightParenthesis = OutputStream.getIsoBytes("#29");     //  ')'
+    private static final byte[] lessThan = OutputStream.getIsoBytes("#3c");             //  '<'
+    private static final byte[] greaterThan = OutputStream.getIsoBytes("#3e");          //  '>'
+    private static final byte[] leftSquare = OutputStream.getIsoBytes("#5b");           //  '['
+    private static final byte[] rightSquare = OutputStream.getIsoBytes("#5d");          //  ']'
+    private static final byte[] leftCurlyBracket = OutputStream.getIsoBytes("#7b");     //  '{'
+    private static final byte[] rightCurlyBracket = OutputStream.getIsoBytes("#7d");    //  '}'
+    private static final byte[] solidus = OutputStream.getIsoBytes("#2f");              //  '/'
+    private static final byte[] numberSign = OutputStream.getIsoBytes("#23");           //  '#'
 
     protected String value = "";
 
@@ -73,5 +90,72 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     @Override
     public int compareTo(PdfName o) {
         return value.compareTo(o.value);
+    }
+
+    @Override
+    protected void generateValue() throws PdfException {
+
+    }
+
+    @Override
+    final protected void generateContent() {
+        int length = value.length();
+        ByteBuffer buf = new ByteBuffer(length + 20);
+        buf.append('/');
+        char c;
+        char chars[] = value.toCharArray();
+        for (int k = 0; k < length; k++) {
+            c = (char)(chars[k] & 0xff);
+            // Escape special characters
+            switch (c) {
+                case ' ':
+                    buf.append(space);
+                    break;
+                case '%':
+                    buf.append(percent);
+                    break;
+                case '(':
+                    buf.append(leftParenthesis);
+                    break;
+                case ')':
+                    buf.append(rightParenthesis);
+                    break;
+                case '<':
+                    buf.append(lessThan);
+                    break;
+                case '>':
+                    buf.append(greaterThan);
+                    break;
+                case '[':
+                    buf.append(leftSquare);
+                    break;
+                case ']':
+                    buf.append(rightSquare);
+                    break;
+                case '{':
+                    buf.append(leftCurlyBracket);
+                    break;
+                case '}':
+                    buf.append(rightCurlyBracket);
+                    break;
+                case '/':
+                    buf.append(solidus);
+                    break;
+                case '#':
+                    buf.append(numberSign);
+                    break;
+                default:
+                    if (c >= 32 && c <= 126)
+                        buf.append(c);
+                    else {
+                        buf.append('#');
+                        if (c < 16)
+                            buf.append('0');
+                        buf.append(Integer.toString(c, 16));
+                    }
+                    break;
+            }
+        }
+        content = buf.toByteArray();
     }
 }

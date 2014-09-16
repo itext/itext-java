@@ -1,8 +1,11 @@
 package com.itextpdf.core.pdf;
 
-public class PdfString extends PdfObject {
+import com.itextpdf.core.exceptions.PdfException;
+import com.itextpdf.io.streams.OutputStream;
 
-    protected String value;
+public class PdfString extends PdfPrimitiveObject {
+
+    protected String value = null;
 
     public PdfString(String value) {
         super(PdfObject.String);
@@ -14,7 +17,19 @@ public class PdfString extends PdfObject {
         this.value = value;
     }
 
-    public String getValue() {
+    public String getValue() throws PdfException {
+        if (value == null)
+            generateValue();
         return value;
+    }
+
+    @Override
+    protected void generateValue() throws PdfException {
+
+    }
+
+    @Override
+    protected void generateContent() {
+        content = OutputStream.getIsoBytes((byte)'(', value, (byte)')');
     }
 }

@@ -30,9 +30,6 @@ public class PdfOutputStream extends OutputStream {
             case PdfObject.Array:
                 write((PdfArray) object);
                 break;
-            case PdfObject.Boolean:
-                write((PdfBoolean) object);
-                break;
             case PdfObject.Dictionary:
                 write((PdfDictionary) object);
                 break;
@@ -40,16 +37,16 @@ public class PdfOutputStream extends OutputStream {
                 write((PdfIndirectReference) object);
                 break;
             case PdfObject.Name:
-                write((PdfName) object);
+            case PdfObject.Null:
+            case PdfObject.String:
+            case PdfObject.Boolean:
+                write((PdfPrimitiveObject)object);
                 break;
             case PdfObject.Number:
-                write((PdfNumber) object);
+                write((PdfNumber)object);
                 break;
             case PdfObject.Stream:
                 write((PdfStream) object);
-                break;
-            case PdfObject.String:
-                write((PdfString) object);
                 break;
             default:
                 break;
@@ -71,10 +68,6 @@ public class PdfOutputStream extends OutputStream {
                 writeSpace();
         }
         writeByte((byte)']');
-    }
-
-    protected void write(PdfBoolean bool) throws IOException {
-        writeBoolean(bool.getValue());
     }
 
     protected void write(PdfDictionary dictionary) throws IOException, PdfException {
@@ -107,12 +100,18 @@ public class PdfOutputStream extends OutputStream {
         }
     }
 
-    protected void write(PdfName name) throws IOException {
-        writeByte((byte)'/').writeString(name.getValue());
+    protected void write(PdfPrimitiveObject primitive) throws IOException {
+        write(primitive.getContent());
     }
 
-    protected void write(PdfNumber number) throws IOException {
-        write(number.getContent());
+    protected void write(PdfNumber primitive) throws IOException, PdfException {
+        if (primitive.hasContent()) {
+            write(primitive.getContent());
+        } else if(primitive.getValueType() == PdfNumber.Int) {
+            writeInteger(primitive.getIntValue());
+        } else {
+            writeDouble(primitive.getValue());
+        }
     }
 
     protected void write(PdfStream stream) throws IOException, PdfException {
@@ -133,11 +132,4 @@ public class PdfOutputStream extends OutputStream {
             writeBytes(PdfOutputStream.endstream);
         }
     }
-
-    protected void write(PdfString string) throws IOException {
-        writeByte((byte)'(').
-                writeString(string.getValue()).
-                writeByte((byte)')');
-    }
-
 }
