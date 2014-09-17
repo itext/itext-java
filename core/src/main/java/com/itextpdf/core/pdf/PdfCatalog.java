@@ -55,7 +55,7 @@ public class PdfCatalog extends PdfDictionary {
 
     @Override
     protected void flush(PdfWriter writer) throws IOException, PdfException {
-        if (flushed)
+        if (isFlushed())
             return;
         put(PdfName.Pages, pageTree.generateTree());
         super.flush(writer);

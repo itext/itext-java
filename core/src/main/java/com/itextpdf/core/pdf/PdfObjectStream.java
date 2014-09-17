@@ -42,8 +42,8 @@ public class PdfObjectStream extends PdfStream {
                 writeInteger(outputStream.getCurrentPos()).
                 writeSpace();
         outputStream.write(object);
-        object.offset = size;
-        object.objectStream = this;
+        object.getIndirectReference().setOffset(size);
+        object.getIndirectReference().setObjectStream(this);
         outputStream.writeSpace();
         size++;
     }
@@ -59,13 +59,13 @@ public class PdfObjectStream extends PdfStream {
 
     @Override
     protected void flush(PdfWriter writer) throws IOException, PdfException {
-        if (flushed)
+        if (isFlushed())
             return;
         put(PdfName.Type, PdfName.ObjStm);
         put(PdfName.N, new PdfNumber(size));
         put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));
         super.flush(writer);
-        if (flushed && indexStream != null) {
+        if (isFlushed() && indexStream != null) {
             indexStream.close();
             indexStream = null;
         }

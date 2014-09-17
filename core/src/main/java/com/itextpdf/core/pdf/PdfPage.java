@@ -56,7 +56,7 @@ public class PdfPage extends PdfDictionary {
 
     @Override
     protected void flush(PdfWriter writer) throws IOException, PdfException {
-        if (flushed)
+        if (isFlushed())
             return;
         if (contentStreams != null) {
             for (PdfContentStream contentStream : contentStreams)

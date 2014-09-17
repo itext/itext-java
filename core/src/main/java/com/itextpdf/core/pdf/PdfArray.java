@@ -161,10 +161,10 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
 
     @Override
     protected void flush(PdfWriter writer) throws IOException, PdfException {
-        if (flushed)
+        if (isFlushed())
             return;
         super.flush(writer);
-        if (flushed && list != null) {
+        if (isFlushed() && list != null) {
             clear();
             list = null;
         }

@@ -4,7 +4,23 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     protected int objNr = 0;
     protected int genNr = 0;
+
+    /**
+     * PdfObject that current PdfIndirectReference instance refers to.
+     */
     protected PdfObject refersTo = null;
+
+    /**
+     * Object stream reference containing refersTo object.
+     * If refersTo is not placed into object stream - objectStream = null.
+     */
+    protected PdfObjectStream objectStream = null;
+
+    /**
+     * Offset in a document of the <code>refersTo</code> object.
+     * If the object placed into object stream then it is an object index inside object stream.
+     */
+    protected int offset = 0;
 
     private PdfIndirectReference() {
         super(IndirectReference);
@@ -35,6 +51,33 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     public void setRefersTo(PdfObject refersTo) {
         this.refersTo = refersTo;
+    }
+
+    /**
+     * Gets the object stream which contains refersTo object.
+     *
+     * @return object stream if object s in object stream, null otherwise.
+     */
+    public PdfObjectStream getObjectStream() {
+        return objectStream;
+    }
+
+    public void setObjectStream(PdfObjectStream objectStream) {
+        this.objectStream = objectStream;
+    }
+
+    /**
+     * Gets refersTo object offset in a document.
+     * If object placed into object stream then method returns object index in object stream.
+     *
+     * @return object offset in a document.
+     */
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     @Override

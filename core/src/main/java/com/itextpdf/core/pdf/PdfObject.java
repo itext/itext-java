@@ -6,20 +6,20 @@ import java.io.IOException;
 
 public class PdfObject {
 
-    static public final int Array = 1;
-    static public final int Boolean = 2;
-    static public final int Dictionary = 3;
-    static public final int IndirectReference = 4;
-    static public final int Name = 5;
-    static public final int Null = 6;
-    static public final int Number = 7;
-    static public final int Stream = 8;
-    static public final int String = 9;
+    static public final byte Array = 1;
+    static public final byte Boolean = 2;
+    static public final byte Dictionary = 3;
+    static public final byte IndirectReference = 4;
+    static public final byte Name = 5;
+    static public final byte Null = 6;
+    static public final byte Number = 7;
+    static public final byte Stream = 8;
+    static public final byte String = 9;
 
     /**
      * Object type: Array, Boolean, Dictionary, ...
      */
-    protected int type = 0;
+    protected byte type = 0;
 
     /**
      * PdfDocument object belongs to. For direct objects it can be null.
@@ -27,32 +27,15 @@ public class PdfObject {
     protected PdfDocument pdfDocument = null;
 
     /**
-     * Indicates if the object has been flushed or not.
-     */
-    protected boolean flushed = false;
-
-    /**
-     * Object offset in a document.
-     * If the object placed into object stream then it is an object index inside object stream.
-     */
-    protected int offset = 0;
-
-    /**
      * If object is flushed the indirect reference is kept here.
      */
     protected PdfIndirectReference indirectReference = null;
 
-    /**
-     * Object stream reference containing current object.
-     * If object is not placed into object stream - objectStream = null.
-     */
-    protected PdfObjectStream objectStream = null;
-
-    public PdfObject(int type) {
+    public PdfObject(byte type) {
         this(null, type);
     }
 
-    public PdfObject(PdfDocument doc, int type) {
+    public PdfObject(PdfDocument doc, byte type) {
         pdfDocument = doc;
         this.type = type;
     }
@@ -62,7 +45,7 @@ public class PdfObject {
      *
      * @return object type.
      */
-    public int getType() {
+    public byte getType() {
         return type;
     }
 
@@ -113,33 +96,6 @@ public class PdfObject {
     }
 
     /**
-     * Gets object offset in a document.
-     * If object placed into object stream then method returns object index in ovbject stream.
-     *
-     * @return object offset in a document.
-     */
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    /**
-     * Gets the object stream which contains current object.
-     *
-     * @return object stream if object s in object stream, null otherwise.
-     */
-    public PdfObjectStream getObjectStream() {
-        return objectStream;
-    }
-
-    public void setObjectStream(PdfObjectStream objectStream) {
-        this.objectStream = objectStream;
-    }
-
-    /**
      * Indicates if the object can be placed to object stream.
      *
      * @return true if object can be placed to object stream, false otherwise.
@@ -149,11 +105,8 @@ public class PdfObject {
     }
 
     public boolean isFlushed() {
-        return flushed;
-    }
-
-    public void setFlushed(boolean flushed) {
-        this.flushed = flushed;
+        PdfIndirectReference indirectReference = getIndirectReference();
+        return (indirectReference != null && indirectReference.getRefersTo() == null);
     }
 
     /**
@@ -165,7 +118,7 @@ public class PdfObject {
      */
     protected void flush(PdfWriter writer) throws IOException, PdfException {
         PdfIndirectReference indirectReference;
-        if (flushed || pdfDocument == null || (indirectReference = getIndirectReference()) == null)
+        if (isFlushed() || pdfDocument == null || (indirectReference = getIndirectReference()) == null)
             return;
         if (indirectReference == null)
             return;
@@ -175,13 +128,10 @@ public class PdfObject {
             PdfObjectStream objectStream = writer.getObjectStream();
             objectStream.addObject(this);
         } else {
-            offset = writer.getCurrentPos();
+            indirectReference.setOffset(writer.getCurrentPos());
             writer.writeToBody(this);
         }
         indirectReference.setRefersTo(null);
-        indirectReference.setObjectStream(objectStream);
-        indirectReference.setOffset(offset);
-        flushed = true;
     }
 
 }

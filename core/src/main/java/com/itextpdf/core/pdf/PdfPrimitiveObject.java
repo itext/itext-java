@@ -6,15 +6,15 @@ abstract class PdfPrimitiveObject extends PdfObject {
 
     protected byte[] content = null;
 
-    public PdfPrimitiveObject(int type) {
+    public PdfPrimitiveObject(byte type) {
         super(type);
     }
 
-    public PdfPrimitiveObject(PdfDocument doc, int type) {
+    public PdfPrimitiveObject(PdfDocument doc, byte type) {
         super(doc, type);
     }
 
-    PdfPrimitiveObject(byte[] content, int type) {
+    PdfPrimitiveObject(byte[] content, byte type) {
         super(type);
         this.content = content;
     }

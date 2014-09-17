@@ -82,10 +82,10 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
 
     @Override
     protected void flush(PdfWriter writer) throws IOException, PdfException {
-        if (flushed)
+        if (isFlushed())
             return;
         super.flush(writer);
-        if (flushed && map != null) {
+        if (isFlushed() && map != null) {
             clear();
             map = null;
         }
