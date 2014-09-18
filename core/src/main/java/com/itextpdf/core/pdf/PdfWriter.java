@@ -28,16 +28,6 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected PdfObjectStream objectStream = null;
 
-    private byte[] intToBytes(int n) {
-        byte[] bytes = new byte[]{(byte) ((n >> 24) & 0xFF), (byte) ((n >> 16) & 0xFF), (byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
-        return bytes;
-    }
-
-    private byte[] shortToBytes(int n) {
-        byte[] bytes = new byte[]{(byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
-        return bytes;
-    }
-
     public PdfWriter(java.io.OutputStream os) {
         super(new BufferedOutputStream(os));
     }
@@ -81,14 +71,28 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     /**
-     * Flushes the object. Override this method if you want to define cusomt behaviour for object flushing.
+     * Flushes the object. Override this method if you want to define custom behaviour for object flushing.
      *
      * @param object object to flush.
      * @throws IOException
      * @throws PdfException
      */
     protected void flushObject(PdfObject object) throws IOException, PdfException {
-        object.flush(this);
+        PdfIndirectReference indirectReference;
+        if (object.isFlushed() || (indirectReference = object.getIndirectReference()) == null)
+            return;
+        if (indirectReference == null)
+            return;
+        pdfDocument.add(indirectReference);
+        if (isFullCompression() && object.canBeInObjStm()) {
+            PdfObjectStream objectStream = getObjectStream();
+            objectStream.addObject(object);
+        } else {
+            indirectReference.setOffset(getCurrentPos());
+            writeToBody(object);
+        }
+        indirectReference.flushed = true;
+        indirectReference.setRefersTo(null);
     }
 
     /**
@@ -96,6 +100,7 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @param object object to write.
      * @throws IOException
+     * @throws PdfException
      */
     protected void writeToBody(PdfObject object) throws IOException, PdfException {
         writeInteger(object.getIndirectReference().getObjNr()).
@@ -212,4 +217,15 @@ public class PdfWriter extends PdfOutputStream {
                 writeString("\n%%EOF\n");
         pdfDocument.getIndirects().clear();
     }
+
+    private byte[] intToBytes(int n) {
+        byte[] bytes = new byte[]{(byte) ((n >> 24) & 0xFF), (byte) ((n >> 16) & 0xFF), (byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
+        return bytes;
+    }
+
+    private byte[] shortToBytes(int n) {
+        byte[] bytes = new byte[]{(byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
+        return bytes;
+    }
+
 }

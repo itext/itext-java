@@ -45,14 +45,12 @@ abstract public class PdfObject {
      * Flushes the object to the document.
      *
      * @throws IOException
+     * @throws PdfException
      */
-    final public void flush() throws IOException, PdfException {
-        if (pdfDocument == null)
-            return;
-        PdfWriter writer = pdfDocument.getWriter();
-        if (writer == null)
-            return;
-        writer.flushObject(this);
+    public void flush() throws IOException, PdfException {
+        PdfWriter writer = getWriter();
+        if (writer != null)
+            writer.flushObject(this);
     }
 
     /**
@@ -98,7 +96,7 @@ abstract public class PdfObject {
 
     public boolean isFlushed() {
         PdfIndirectReference indirectReference = getIndirectReference();
-        return (indirectReference != null && indirectReference.getRefersTo() == null);
+        return (indirectReference != null && indirectReference.flushed);
     }
 
     /**
@@ -120,28 +118,11 @@ abstract public class PdfObject {
         return object;
     }
 
-    /**
-     * Flushes the object to document.
-     *
-     * @param writer PdfWriter used to flush object.
-     * @throws IOException
-     * @throws PdfException
-     */
-    protected void flush(PdfWriter writer) throws IOException, PdfException {
-        PdfIndirectReference indirectReference;
-        if (isFlushed() || pdfDocument == null || (indirectReference = getIndirectReference()) == null)
-            return;
-        if (indirectReference == null)
-            return;
-        pdfDocument.add(indirectReference);
-        if (writer.isFullCompression() && canBeInObjStm()) {
-            PdfObjectStream objectStream = writer.getObjectStream();
-            objectStream.addObject(this);
-        } else {
-            indirectReference.setOffset(writer.getCurrentPos());
-            writer.writeToBody(this);
-        }
-        indirectReference.setRefersTo(null);
+    protected PdfWriter getWriter() {
+        if (pdfDocument == null)
+            return null;
+        return pdfDocument.getWriter();
     }
+
 
 }

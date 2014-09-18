@@ -157,7 +157,7 @@ public class PdfDocument implements IEventDispatcher {
      * Inserts page to the document.
      *
      * @param index position to insert page to
-     * @param page     page to insert
+     * @param page  page to insert
      * @return inserted page
      * @throws PdfException in case {@code page} is flushed
      */
@@ -384,6 +384,11 @@ public class PdfDocument implements IEventDispatcher {
         return indirects;
     }
 
+    /**
+     * Sets list of indirect references.
+     *
+     * @param indirects list of indirect references to be set.
+     */
     protected void setIndirects(TreeSet<PdfIndirectReference> indirects) {
         this.indirects = indirects;
     }

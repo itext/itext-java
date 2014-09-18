@@ -74,10 +74,10 @@ public class PdfPages extends PdfDictionary {
     }
 
     @Override
-    protected void flush(PdfWriter writer) throws IOException, PdfException {
+    public void flush() throws IOException, PdfException {
         put(PdfName.Count, new PdfNumber(pagesCount));
         kids = null;
-        super.flush(writer);
+        super.flush();
     }
 
     @Override

@@ -24,6 +24,11 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      */
     protected int offsetOrIndex = 0;
 
+    /**
+     * Indicates if the refersTo object has been flushed.
+     */
+    protected boolean flushed = false;
+
     private PdfIndirectReference() {
         super();
     }
