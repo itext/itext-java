@@ -11,16 +11,16 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     protected PdfObject refersTo = null;
 
     /**
-     * Object stream reference containing refersTo object.
-     * If refersTo is not placed into object stream - objectStream = null.
+     * Indirect reference number of object stream containing refersTo object.
+     * If refersTo is not placed into object stream - objectStreamNumber = 0.
      */
-    protected PdfObjectStream objectStream = null;
+    protected int objectStreamNumber = 0;
 
     /**
      * Offset in a document of the <code>refersTo</code> object.
      * If the object placed into object stream then it is an object index inside object stream.
      */
-    protected int offset = 0;
+    protected int offsetOrIndex = 0;
 
     private PdfIndirectReference() {
         super(IndirectReference);
@@ -53,31 +53,38 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.refersTo = refersTo;
     }
 
-    /**
-     * Gets the object stream which contains refersTo object.
-     *
-     * @return object stream if object s in object stream, null otherwise.
-     */
-    public PdfObjectStream getObjectStream() {
-        return objectStream;
+    public int getObjectStreamNumber() {
+        return objectStreamNumber;
     }
 
-    public void setObjectStream(PdfObjectStream objectStream) {
-        this.objectStream = objectStream;
+    public void setObjectStreamNumber(int objectStreamNumber) {
+        this.objectStreamNumber = objectStreamNumber;
     }
 
     /**
      * Gets refersTo object offset in a document.
-     * If object placed into object stream then method returns object index in object stream.
      *
-     * @return object offset in a document.
+     * @return object offset in a document. If refersTo object is in object stream then 0.
      */
     public int getOffset() {
-        return offset;
+        return objectStreamNumber == 0 ? offsetOrIndex : 0;
     }
 
     public void setOffset(int offset) {
-        this.offset = offset;
+        this.offsetOrIndex = objectStreamNumber == 0 ? offset : 0;
+    }
+
+    /**
+     * Gets refersTo object index in the object stream.
+     *
+     * @return object index in a document. If refersTo object is not in object stream then 0.
+     */
+    public int getIndex() {
+        return objectStreamNumber == 0 ? 0 : offsetOrIndex;
+    }
+
+    public void setIndex(int index) {
+        this.offsetOrIndex = objectStreamNumber == 0 ? 0 : index;
     }
 
     @Override

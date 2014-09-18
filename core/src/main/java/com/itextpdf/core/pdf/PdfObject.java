@@ -122,8 +122,7 @@ public class PdfObject {
             return;
         if (indirectReference == null)
             return;
-        if (pdfDocument != null)
-            pdfDocument.add(indirectReference);
+        pdfDocument.add(indirectReference);
         if (writer.isFullCompression() && canBeInObjStm()) {
             PdfObjectStream objectStream = writer.getObjectStream();
             objectStream.addObject(this);

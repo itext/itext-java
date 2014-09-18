@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -172,14 +171,14 @@ public class PdfWriter extends PdfOutputStream {
             stream.getOutputStream().write(intToBytes(0));
             stream.getOutputStream().write(shortToBytes(0xFFFF));
             for (PdfIndirectReference indirect : pdfDocument.getIndirects()) {
-                if (indirect.getObjectStream() != null) {
-                    stream.getOutputStream().write(2);
-                    stream.getOutputStream().write(intToBytes(indirect.getObjectStream().getIndirectReference().getObjNr()));
-                    stream.getOutputStream().write(shortToBytes(indirect.getOffset()));
-                } else {
+                if (indirect.getObjectStreamNumber() == 0) {
                     stream.getOutputStream().write(1);
                     stream.getOutputStream().write(intToBytes(indirect.getOffset()));
                     stream.getOutputStream().write(shortToBytes(0));
+                } else {
+                    stream.getOutputStream().write(2);
+                    stream.getOutputStream().write(intToBytes(indirect.getObjectStreamNumber()));
+                    stream.getOutputStream().write(shortToBytes(indirect.getIndex()));
                 }
             }
             stream.flush();
