@@ -13,49 +13,49 @@ public class PdfNumber extends PdfPrimitiveObject {
     byte valueType = -1;
 
     public PdfNumber(int value) {
-        super(PdfObject.Number);
+        super();
         this.value = value;
         this.valueType = Int;
     }
 
     public PdfNumber(long value) {
-        super(PdfObject.Number);
+        super();
         this.value = value;
         this.valueType = Double;
     }
 
     public PdfNumber(float value) {
-        super(PdfObject.Number);
+        super();
         this.value = value;
         this.valueType = Double;
     }
 
     public PdfNumber(double value) {
-        super(PdfObject.Number);
+        super();
         this.value = value;
         this.valueType = Double;
     }
 
     public PdfNumber(PdfDocument doc, int value) {
-        super(doc, PdfObject.Number);
+        super(doc);
         this.value = value;
         this.valueType = Int;
     }
 
     public PdfNumber(PdfDocument doc, long value) {
-        super(doc, PdfObject.Number);
+        super(doc);
         this.value = value;
         this.valueType = Int;
     }
 
     public PdfNumber(PdfDocument doc, float value) {
-        super(doc, PdfObject.Number);
+        super(doc);
         this.value = value;
         this.valueType = Double;
     }
 
     public PdfNumber(PdfDocument doc, double value) {
-        super(doc, PdfObject.Number);
+        super(doc);
         this.value = value;
         this.valueType = Double;
     }
@@ -81,6 +81,11 @@ public class PdfNumber extends PdfPrimitiveObject {
     @Override
     public PdfObject copy() {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public byte getType() {
+        return Number;
     }
 
     protected byte getValueType() {

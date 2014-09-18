@@ -10,16 +10,21 @@ public class PdfNull extends PdfPrimitiveObject {
     private static final byte[] NullContent = OutputStream.getIsoBytes("null");
 
     public PdfNull() {
-        super(PdfObject.Null);
+        super();
     }
 
     public PdfNull(PdfDocument doc) {
-        super(doc, PdfObject.Null);
+        super(doc);
     }
 
     @Override
     public PdfObject copy() {
         return this;
+    }
+
+    @Override
+    public byte getType() {
+        return Null;
     }
 
     @Override

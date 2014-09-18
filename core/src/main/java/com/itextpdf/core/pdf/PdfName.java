@@ -75,12 +75,12 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName XYZ = new PdfName("XYZ");
 
     public PdfName(String value) {
-        super(PdfObject.Name);
+        super();
         this.value = value;
     }
 
     public PdfName(PdfDocument doc, String value) {
-        super(doc, PdfObject.Name);
+        super(doc);
         this.value = value;
     }
 
@@ -96,6 +96,11 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @Override
     public PdfObject copy() {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public byte getType() {
+        return Name;
     }
 
     @Override

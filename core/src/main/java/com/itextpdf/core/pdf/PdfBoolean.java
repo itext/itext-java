@@ -15,12 +15,12 @@ public class PdfBoolean extends PdfPrimitiveObject {
     private byte value = -1;
 
     public PdfBoolean(boolean value) {
-        super(PdfObject.Boolean);
+        super();
         this.value = value ? (byte)1 : 0;
     }
 
     public PdfBoolean(PdfDocument doc, boolean value) {
-        super(doc, PdfObject.Boolean);
+        super(doc);
         this.value = value ? (byte)1 : (byte)0;
     }
 
@@ -33,6 +33,11 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @Override
     public PdfObject copy() {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public byte getType() {
+        return Boolean;
     }
 
     @Override

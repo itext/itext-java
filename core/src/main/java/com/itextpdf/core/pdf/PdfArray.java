@@ -12,12 +12,12 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     protected List<PdfObject> list;
 
     public PdfArray() {
-        super(PdfObject.Array);
+        super();
         list = new ArrayList<PdfObject>();
     }
 
     public PdfArray(PdfDocument doc) {
-        super(doc, PdfObject.Array);
+        super(doc);
         list = new ArrayList<PdfObject>();
     }
 
@@ -26,7 +26,7 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     }
 
     public PdfArray(PdfDocument doc, Rectangle rectangle) {
-        super(doc, PdfObject.Array);
+        super(doc);
         list = new ArrayList<PdfObject>(4);
         add(new PdfNumber(rectangle.getX()));
         add(new PdfNumber(rectangle.getY()));
@@ -39,7 +39,7 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     }
 
     public PdfArray(PdfDocument doc, List<PdfObject> objects) {
-        super(doc, PdfObject.Array);
+        super(doc);
         list = new ArrayList<PdfObject>(objects.size());
         for (PdfObject element : objects)
             add(element);
@@ -163,6 +163,11 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     @Override
     public PdfObject copy() {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public byte getType() {
+        return Array;
     }
 
     @Override

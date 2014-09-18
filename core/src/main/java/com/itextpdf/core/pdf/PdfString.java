@@ -9,12 +9,12 @@ public class PdfString extends PdfPrimitiveObject {
     protected String value = null;
 
     public PdfString(String value) {
-        super(PdfObject.String);
+        super();
         this.value = value;
     }
 
     public PdfString(PdfDocument doc, String value) {
-        super(doc, PdfObject.String);
+        super(doc);
         this.value = value;
     }
 
@@ -27,6 +27,11 @@ public class PdfString extends PdfPrimitiveObject {
     @Override
     public PdfObject copy() {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public byte getType() {
+        return String;
     }
 
     @Override

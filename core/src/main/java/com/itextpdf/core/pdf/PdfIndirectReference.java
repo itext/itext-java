@@ -25,7 +25,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     protected int offsetOrIndex = 0;
 
     private PdfIndirectReference() {
-        super(IndirectReference);
+        super();
     }
 
     public PdfIndirectReference(PdfDocument doc, int objNr, PdfObject refersTo) {
@@ -33,7 +33,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     public PdfIndirectReference(PdfDocument doc, int objNr, int genNr, PdfObject refersTo) {
-        super(doc, PdfObject.IndirectReference);
+        super(doc);
         this.objNr = objNr;
         this.genNr = genNr;
         this.refersTo = refersTo;
@@ -129,4 +129,8 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         throw new NotImplementedException();
     }
 
+    @Override
+    public byte getType() {
+        return IndirectReference;
+    }
 }

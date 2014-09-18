@@ -15,7 +15,6 @@ public class PdfStream extends PdfDictionary {
 
     public PdfStream(PdfDocument doc) {
         super(doc);
-        type = PdfObject.Stream;
     }
 
     @Override
@@ -43,4 +42,8 @@ public class PdfStream extends PdfDictionary {
         return false;
     }
 
+    @Override
+    public byte getType() {
+        return Stream;
+    }
 }

@@ -14,11 +14,11 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     protected TreeMap<PdfName, PdfObject> map = new TreeMap<PdfName, PdfObject>();
 
     public PdfDictionary() {
-        super(PdfObject.Dictionary);
+        super();
     }
 
     public PdfDictionary(PdfDocument doc) {
-        super(doc, PdfObject.Dictionary);
+        super(doc);
     }
 
     @Override
@@ -84,6 +84,11 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     @Override
     public PdfObject copy() {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public byte getType() {
+        return Dictionary;
     }
 
     @Override

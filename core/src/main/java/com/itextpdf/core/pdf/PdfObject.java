@@ -17,11 +17,6 @@ abstract public class PdfObject {
     static public final byte String = 9;
 
     /**
-     * Object type: Array, Boolean, Dictionary, ...
-     */
-    protected byte type = 0;
-
-    /**
      * PdfDocument object belongs to. For direct objects it is null.
      */
     protected PdfDocument pdfDocument = null;
@@ -31,13 +26,12 @@ abstract public class PdfObject {
      */
     protected PdfIndirectReference indirectReference = null;
 
-    public PdfObject(byte type) {
-        this(null, type);
+    public PdfObject() {
+
     }
 
-    public PdfObject(PdfDocument doc, byte type) {
+    public PdfObject(PdfDocument doc) {
         pdfDocument = doc;
-        this.type = type;
     }
 
     /**
@@ -45,9 +39,7 @@ abstract public class PdfObject {
      *
      * @return object type.
      */
-    public byte getType() {
-        return type;
-    }
+    abstract public byte getType();
 
     /**
      * Flushes the object to the document.
