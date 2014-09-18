@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.ByteBuffer;
 import com.itextpdf.io.streams.OutputStream;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
@@ -90,6 +91,11 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @Override
     public int compareTo(PdfName o) {
         return value.compareTo(o.value);
+    }
+
+    @Override
+    public PdfObject copy() {
+        throw new NotImplementedException();
     }
 
     @Override

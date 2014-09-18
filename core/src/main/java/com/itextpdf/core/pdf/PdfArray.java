@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.Rectangle;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.*;
@@ -157,6 +158,11 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     @Override
     public List<PdfObject> subList(int fromIndex, int toIndex) {
         return list.subList(fromIndex, toIndex);
+    }
+
+    @Override
+    public PdfObject copy() {
+        throw new NotImplementedException();
     }
 
     @Override

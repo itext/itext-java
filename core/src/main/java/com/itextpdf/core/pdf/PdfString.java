@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfString extends PdfPrimitiveObject {
 
@@ -21,6 +22,11 @@ public class PdfString extends PdfPrimitiveObject {
         if (value == null)
             generateValue();
         return value;
+    }
+
+    @Override
+    public PdfObject copy() {
+        throw new NotImplementedException();
     }
 
     @Override

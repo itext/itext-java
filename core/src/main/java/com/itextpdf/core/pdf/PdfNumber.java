@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfNumber extends PdfPrimitiveObject {
 
@@ -77,12 +78,17 @@ public class PdfNumber extends PdfPrimitiveObject {
         return (int)getValue();
     }
 
+    @Override
+    public PdfObject copy() {
+        throw new NotImplementedException();
+    }
+
     protected byte getValueType() {
         return valueType;
     }
 
     @Override
-    public void generateContent() {
+    protected void generateContent() {
         switch (valueType) {
             case Int:
                 content = OutputStream.getIsoBytes((int)value);

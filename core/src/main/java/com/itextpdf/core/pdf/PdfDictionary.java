@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -78,6 +79,11 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     @Override
     public Set<Entry<PdfName, PdfObject>> entrySet() {
         return map.entrySet();
+    }
+
+    @Override
+    public PdfObject copy() {
+        throw new NotImplementedException();
     }
 
     @Override

@@ -370,10 +370,8 @@ public class PdfDocument implements IEventDispatcher {
      * Adds indirect reference to list of indirect objects.
      *
      * @param indirectReference indirect reference to add.
-     * @throws IOException
-     * @throws PdfException
      */
-    protected void add(PdfIndirectReference indirectReference) throws IOException, PdfException {
+    protected void add(PdfIndirectReference indirectReference) {
         getIndirects().add(indirectReference);
     }
 

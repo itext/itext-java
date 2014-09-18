@@ -4,7 +4,7 @@ import com.itextpdf.core.exceptions.PdfException;
 
 import java.io.IOException;
 
-public class PdfObject {
+abstract public class PdfObject {
 
     static public final byte Array = 1;
     static public final byte Boolean = 2;
@@ -22,7 +22,7 @@ public class PdfObject {
     protected byte type = 0;
 
     /**
-     * PdfDocument object belongs to. For direct objects it can be null.
+     * PdfDocument object belongs to. For direct objects it is null.
      */
     protected PdfDocument pdfDocument = null;
 
@@ -107,6 +107,25 @@ public class PdfObject {
     public boolean isFlushed() {
         PdfIndirectReference indirectReference = getIndirectReference();
         return (indirectReference != null && indirectReference.getRefersTo() == null);
+    }
+
+    /**
+     * Makes a copy of a current object.
+     *
+     * @return copy of a current object.
+     */
+    public abstract PdfObject copy();
+
+    /**
+     * Makes a copy of a current object to the specified document.
+     *
+     * @param doc a PdfDocument object to be copied to.
+     * @return copy of a current object.
+     */
+    public PdfObject copy(PdfDocument doc) {
+        PdfObject object = copy();
+        object.pdfDocument = doc;
+        return object;
     }
 
     /**

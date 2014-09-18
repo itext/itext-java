@@ -1,5 +1,7 @@
 package com.itextpdf.core.pdf;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
     protected int objNr = 0;
@@ -121,4 +123,10 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     public boolean canBeInObjStm() {
         return false;
     }
+
+    @Override
+    public PdfObject copy() {
+        throw new NotImplementedException();
+    }
+
 }
