@@ -88,7 +88,7 @@ public class PdfOutputStream extends OutputStream {
 
     protected void write(PdfIndirectReference indirectReference) throws IOException, PdfException {
         if (indirectReference.getRefersTo() != null)
-            pdfDocument.add(indirectReference);
+            pdfDocument.addIndirectReference(indirectReference);
         if (indirectReference.getGenNr() == 0) {
             writeInteger(indirectReference.getObjNr()).
                     writeBytes(endIndirectWithZeroGenNr);

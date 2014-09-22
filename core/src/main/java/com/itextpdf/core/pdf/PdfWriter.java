@@ -83,7 +83,7 @@ public class PdfWriter extends PdfOutputStream {
             return;
         if (indirectReference == null)
             return;
-        pdfDocument.add(indirectReference);
+        pdfDocument.addIndirectReference(indirectReference);
         if (isFullCompression() && object.canBeInObjStm()) {
             PdfObjectStream objectStream = getObjectStream();
             objectStream.addObject(object);

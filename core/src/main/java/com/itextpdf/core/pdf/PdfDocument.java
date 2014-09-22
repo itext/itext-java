@@ -371,7 +371,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param indirectReference indirect reference to add.
      */
-    protected void add(PdfIndirectReference indirectReference) {
+    protected void addIndirectReference(PdfIndirectReference indirectReference) {
         getIndirects().add(indirectReference);
     }
 
