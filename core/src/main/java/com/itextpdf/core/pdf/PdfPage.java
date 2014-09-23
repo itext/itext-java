@@ -22,11 +22,12 @@ public class PdfPage extends PdfDictionary {
     }
 
     public PdfPage(PdfDocument doc, PageSize pageSize) {
-        super(doc);
+        super();
+        makeIndirect(doc);
         //NOTE: Write PdfResources as Direct Object
         resources = new PdfResources();
         contentStreams = new ArrayList<PdfContentStream>();
-        PdfContentStream contentStream = new PdfContentStream(pdfDocument);
+        PdfContentStream contentStream = new PdfContentStream(getDocument());
         contentStream.setResources(resources);
         contentStreams.add(contentStream);
         put(PdfName.Type, PdfName.Page);
@@ -41,14 +42,14 @@ public class PdfPage extends PdfDictionary {
     }
 
     public PdfContentStream newContentStreamBefore() {
-        PdfContentStream contentStream = new PdfContentStream(pdfDocument);
+        PdfContentStream contentStream = new PdfContentStream(getDocument());
         contentStream.setResources(resources);
         contentStreams.add(0, contentStream);
         return contentStream;
     }
 
     public PdfContentStream newContentStreamAfter() {
-        PdfContentStream contentStream = new PdfContentStream(pdfDocument);
+        PdfContentStream contentStream = new PdfContentStream(getDocument());
         contentStream.setResources(resources);
         contentStreams.add(contentStream);
         return contentStream;
@@ -74,4 +75,5 @@ public class PdfPage extends PdfDictionary {
         }
         super.flush();
     }
+
 }

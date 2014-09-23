@@ -2,12 +2,8 @@ package com.itextpdf.core.pdf;
 
 public class PdfTrailer extends PdfDictionary {
 
-    private PdfTrailer() {
+    public PdfTrailer() {
         super();
-    }
-
-    public PdfTrailer(PdfDocument doc) {
-        super(doc);
     }
 
     public PdfCatalog getCatalog() {

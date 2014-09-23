@@ -1,7 +1,6 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -15,10 +14,6 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
 
     public PdfDictionary() {
         super();
-    }
-
-    public PdfDictionary(PdfDocument doc) {
-        super(doc);
     }
 
     @Override
@@ -82,11 +77,6 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     }
 
     @Override
-    public PdfObject copy() {
-        throw new NotImplementedException();
-    }
-
-    @Override
     public byte getType() {
         return Dictionary;
     }
@@ -102,4 +92,14 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
         }
     }
 
+    @Override
+    public String toString() {
+        String string = "<<";
+        for (Entry<PdfName, PdfObject> entry : entrySet()) {
+            PdfIndirectReference indirectReference = entry.getValue().getIndirectReference();
+            string = string + entry.getKey().toString() + " " + (indirectReference == null ? entry.getValue().toString() : indirectReference.toString()) + " ";
+        }
+        string += ">>";
+        return string;
+    }
 }

@@ -44,7 +44,7 @@ public class PdfWriterTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfDictionary helloWorld = new PdfDictionary(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.put(new PdfName("HelloWorld"), helloWorld);
@@ -61,7 +61,7 @@ public class PdfWriterTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfDictionary helloWorld = new PdfDictionary(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         helloWorld.flush();
         PdfPage page = pdfDoc.addNewPage();
@@ -79,7 +79,7 @@ public class PdfWriterTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfDictionary helloWorld = new PdfDictionary(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.put(new PdfName("HelloWorld"), helloWorld);
@@ -97,7 +97,7 @@ public class PdfWriterTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfDictionary helloWorld = new PdfDictionary(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.put(new PdfName("HelloWorld"), helloWorld);

@@ -358,7 +358,7 @@ public class PdfDocument implements IEventDispatcher {
             if (reader == null) {
                 catalog = new PdfCatalog(this);
                 info = new PdfDocumentInfo(this);
-                trailer = new PdfTrailer(this);
+                trailer = new PdfTrailer();
                 trailer.setCatalog(catalog);
                 trailer.setInfo(info);
             }

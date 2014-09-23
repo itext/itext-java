@@ -10,10 +10,6 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         super();
     }
 
-    public PdfLinkAnnotation(PdfDocument doc) {
-        super(doc);
-    }
-
     public PdfLinkAnnotation setDestination(IPdfDestination destination) {
         return this;
     }

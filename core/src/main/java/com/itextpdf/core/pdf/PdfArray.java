@@ -2,7 +2,6 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.Rectangle;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.*;
@@ -16,17 +15,7 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
         list = new ArrayList<PdfObject>();
     }
 
-    public PdfArray(PdfDocument doc) {
-        super(doc);
-        list = new ArrayList<PdfObject>();
-    }
-
     public PdfArray(Rectangle rectangle) {
-        this(null, rectangle);
-    }
-
-    public PdfArray(PdfDocument doc, Rectangle rectangle) {
-        super(doc);
         list = new ArrayList<PdfObject>(4);
         add(new PdfNumber(rectangle.getX()));
         add(new PdfNumber(rectangle.getY()));
@@ -35,11 +24,6 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     }
 
     public PdfArray(List<PdfObject> objects) {
-        this(null, objects);
-    }
-
-    public PdfArray(PdfDocument doc, List<PdfObject> objects) {
-        super(doc);
         list = new ArrayList<PdfObject>(objects.size());
         for (PdfObject element : objects)
             add(element);
@@ -161,11 +145,6 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     }
 
     @Override
-    public PdfObject copy() {
-        throw new NotImplementedException();
-    }
-
-    @Override
     public byte getType() {
         return Array;
     }
@@ -181,4 +160,15 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
         }
     }
 
+    @Override
+    public String toString() {
+        String string = "[";
+        for (PdfObject entry : this) {
+            PdfIndirectReference indirectReference = entry.getIndirectReference();
+            string = string + (indirectReference == null ? entry.toString() : indirectReference.toString()) + " ";
+        }
+        string += "]";
+        return string;
+
+    }
 }

@@ -2,7 +2,6 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfNumber extends PdfPrimitiveObject {
 
@@ -36,30 +35,6 @@ public class PdfNumber extends PdfPrimitiveObject {
         this.valueType = Double;
     }
 
-    public PdfNumber(PdfDocument doc, int value) {
-        super(doc);
-        this.value = value;
-        this.valueType = Int;
-    }
-
-    public PdfNumber(PdfDocument doc, long value) {
-        super(doc);
-        this.value = value;
-        this.valueType = Int;
-    }
-
-    public PdfNumber(PdfDocument doc, float value) {
-        super(doc);
-        this.value = value;
-        this.valueType = Double;
-    }
-
-    public PdfNumber(PdfDocument doc, double value) {
-        super(doc);
-        this.value = value;
-        this.valueType = Double;
-    }
-
     public double getValue() throws PdfException {
         if(java.lang.Double.isNaN(value))
             generateValue();
@@ -76,11 +51,6 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     public int getIntValue() throws PdfException {
         return (int)getValue();
-    }
-
-    @Override
-    public PdfObject copy() {
-        throw new NotImplementedException();
     }
 
     @Override
@@ -109,5 +79,13 @@ public class PdfNumber extends PdfPrimitiveObject {
     @Override
     protected void generateValue() throws PdfException {
 
+    }
+
+    @Override
+    public String toString() {
+        if (valueType == Int)
+            return Integer.toString((int)value);
+        else
+            return java.lang.Double.toString(value);
     }
 }

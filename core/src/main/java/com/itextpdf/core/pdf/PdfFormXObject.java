@@ -14,7 +14,7 @@ public class PdfFormXObject extends PdfContentStream implements IPdfXObject {
      * @param page
      */
     public PdfFormXObject(PdfPage page) {
-        this(page.getPdfDocument());
+        this(page.getDocument());
     }
 
 }

@@ -9,8 +9,17 @@ import com.itextpdf.core.pdf.PdfName;
  * We do not yet know how the font class should look like.
  */
 public class PdfFont extends PdfDictionary {
+
+    protected PdfDocument pdfDocument = null;
+
     public PdfFont(PdfDocument doc) {
-        super(doc);
+        super();
+        this.pdfDocument = doc;
         put(PdfName.Type, PdfName.Font);
+    }
+
+    @Override
+    public PdfDocument getDocument() {
+        return pdfDocument;
     }
 }

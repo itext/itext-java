@@ -9,8 +9,4 @@ public class PdfAnnotation extends PdfDictionary {
         super();
     }
 
-    public PdfAnnotation(PdfDocument doc) {
-        super(doc);
-    }
-
 }

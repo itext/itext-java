@@ -2,7 +2,6 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfBoolean extends PdfPrimitiveObject {
 
@@ -19,20 +18,10 @@ public class PdfBoolean extends PdfPrimitiveObject {
         this.value = value ? (byte)1 : 0;
     }
 
-    public PdfBoolean(PdfDocument doc, boolean value) {
-        super(doc);
-        this.value = value ? (byte)1 : (byte)0;
-    }
-
     public boolean getValue() throws PdfException {
         if (value == -1)
             generateValue();
         return value == 1;
-    }
-
-    @Override
-    public PdfObject copy() {
-        throw new NotImplementedException();
     }
 
     @Override
@@ -48,5 +37,18 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @Override
     protected void generateContent() {
         content = value == 1 ? True : False;
+    }
+
+    @Override
+    public String toString() {
+        switch (value) {
+            case 0:
+                return "false";
+            case 1:
+                return "true";
+            default:
+                return "unknown_boolean_value";
+
+        }
     }
 }

@@ -9,8 +9,4 @@ public class PdfStringDestination extends PdfString implements IPdfDestination {
         super(text);
     }
 
-    public PdfStringDestination(PdfDocument doc, String text) {
-        super(doc, text);
-    }
-
 }

@@ -16,10 +16,6 @@ abstract public class PdfObject {
     static public final byte Stream = 8;
     static public final byte String = 9;
 
-    /**
-     * PdfDocument object belongs to. For direct objects it is null.
-     */
-    protected PdfDocument pdfDocument = null;
 
     /**
      * If object is flushed the indirect reference is kept here.
@@ -28,10 +24,6 @@ abstract public class PdfObject {
 
     public PdfObject() {
 
-    }
-
-    public PdfObject(PdfDocument doc) {
-        pdfDocument = doc;
     }
 
     /**
@@ -54,15 +46,6 @@ abstract public class PdfObject {
     }
 
     /**
-     * Gets the pdf document object belongs to.
-     *
-     * @return pdf document associated object belongs to or null for direct objects.
-     */
-    public PdfDocument getPdfDocument() {
-        return pdfDocument;
-    }
-
-    /**
      * Gets the indirect reference associated with the object.
      * The indirect reference is used when flushing object to the document.
      * If no reference is associated - create a new one.
@@ -70,18 +53,18 @@ abstract public class PdfObject {
      * @return indirect reference.
      */
     public PdfIndirectReference getIndirectReference() {
-        if (indirectReference == null) {
-            if (pdfDocument != null) {
-                indirectReference = pdfDocument.getNextIndirectReference(this);
-            }
-        }
         return indirectReference;
     }
 
-    public PdfObject setIndirectReference(PdfIndirectReference indirectReference) throws PdfException {
-        if (this.indirectReference != null)
-            throw new PdfException(PdfException.indirectReferenceAlreadyAssigned);
-        this.indirectReference = indirectReference;
+    /**
+     * Marks object to be saved as indirect.
+     *
+     * @param document a document the indirect reference will belong to.
+     * @return object itself.
+     */
+    public PdfObject makeIndirect(PdfDocument document) {
+        if (document != null)
+            indirectReference = document.getNextIndirectReference(this);
         return this;
     }
 
@@ -94,35 +77,34 @@ abstract public class PdfObject {
         return true;
     }
 
+    /**
+     * Indicates is the object has been flushed or not.
+     *
+     * @return true is object has been flushed, otherwise false.
+     */
     public boolean isFlushed() {
         PdfIndirectReference indirectReference = getIndirectReference();
         return (indirectReference != null && indirectReference.flushed);
     }
 
     /**
-     * Makes a copy of a current object.
+     * Gets the document the object belongs to.
      *
-     * @return copy of a current object.
+     * @return a document the object belongs to. If object is direct return null.
      */
-    public abstract PdfObject copy();
-
-    /**
-     * Makes a copy of a current object to the specified document.
-     *
-     * @param doc a PdfDocument object to be copied to.
-     * @return copy of a current object.
-     */
-    public PdfObject copy(PdfDocument doc) {
-        PdfObject object = copy();
-        object.pdfDocument = doc;
-        return object;
+    public PdfDocument getDocument() {
+        if (indirectReference != null)
+            return indirectReference.getDocument();
+        return null;
     }
 
     protected PdfWriter getWriter() {
-        if (pdfDocument == null)
-            return null;
-        return pdfDocument.getWriter();
+        PdfDocument doc = getDocument();
+        if (doc != null)
+            return doc.getWriter();
+        return null;
     }
+
 
 
 }

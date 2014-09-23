@@ -9,8 +9,4 @@ public class PdfStringFS extends PdfString implements IPdfFileSpec {
         super(text);
     }
 
-    public PdfStringFS(PdfDocument doc, String text) {
-        super(doc, text);
-    }
-
 }

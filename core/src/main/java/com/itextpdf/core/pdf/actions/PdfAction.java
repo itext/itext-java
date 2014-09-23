@@ -18,11 +18,6 @@ public class PdfAction extends PdfDictionary {
         put(PdfName.Type, PdfName.Action);
     }
 
-    public PdfAction(PdfDocument doc) {
-        super(doc);
-        put(PdfName.Type, PdfName.Action);
-    }
-
     static public PdfAction createGoTo(IPdfDestination destination) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.GoTo);

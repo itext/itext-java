@@ -10,10 +10,6 @@ abstract class PdfPrimitiveObject extends PdfObject {
         super();
     }
 
-    public PdfPrimitiveObject(PdfDocument doc) {
-        super(doc);
-    }
-
     PdfPrimitiveObject(byte[] content) {
         this();
         this.content = content;
@@ -32,4 +28,5 @@ abstract class PdfPrimitiveObject extends PdfObject {
             generateContent();
         return content;
     }
+
 }

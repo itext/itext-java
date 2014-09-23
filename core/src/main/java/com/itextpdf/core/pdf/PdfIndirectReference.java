@@ -1,7 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
     protected int objNr = 0;
@@ -29,6 +27,11 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      */
     protected boolean flushed = false;
 
+    /**
+     * PdfDocument object belongs to. For direct objects it is null.
+     */
+    protected PdfDocument pdfDocument = null;
+
     private PdfIndirectReference() {
         super();
     }
@@ -38,7 +41,8 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     public PdfIndirectReference(PdfDocument doc, int objNr, int genNr, PdfObject refersTo) {
-        super(doc);
+        super();
+        this.pdfDocument = doc;
         this.objNr = objNr;
         this.genNr = genNr;
         this.refersTo = refersTo;
@@ -130,12 +134,17 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     @Override
-    public PdfObject copy() {
-        throw new NotImplementedException();
+    public byte getType() {
+        return IndirectReference;
     }
 
     @Override
-    public byte getType() {
-        return IndirectReference;
+    public PdfDocument getDocument() {
+        return pdfDocument;
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toString(getObjNr()) + " " + Integer.toString(getGenNr()) + " R";
     }
 }

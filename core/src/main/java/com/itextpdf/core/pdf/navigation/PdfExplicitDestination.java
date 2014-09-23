@@ -8,10 +8,6 @@ public class PdfExplicitDestination extends PdfArray implements IPdfDestination 
         super();
     }
 
-    public PdfExplicitDestination(PdfDocument doc) {
-        super(doc);
-    }
-
     static public PdfExplicitDestination createXYZ(PdfPage page, float left, float top, float zoom) {
         return create(page, PdfName.XYZ, left, Float.NaN, Float.NaN, top, zoom);
     }

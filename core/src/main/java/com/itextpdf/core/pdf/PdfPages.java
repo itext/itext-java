@@ -20,7 +20,8 @@ public class PdfPages extends PdfDictionary {
      * @param doc {@see PdfDocument}
      */
     public PdfPages(PdfDocument doc) {
-        super(doc);
+        super();
+        makeIndirect(doc);
         kids = new PdfArray();
         put(PdfName.Type, PdfName.Pages);
         put(PdfName.Kids, kids);
@@ -80,8 +81,4 @@ public class PdfPages extends PdfDictionary {
         super.flush();
     }
 
-    @Override
-    public String toString() {
-        return "PdfPages.size: " + getPagesCount();
-    }
 }

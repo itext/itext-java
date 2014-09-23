@@ -9,7 +9,8 @@ public class PdfCatalog extends PdfDictionary {
     protected PdfPagesTree pageTree = null;
 
     public PdfCatalog(PdfDocument doc) {
-        super(doc);
+        super();
+        makeIndirect(doc);
         pageTree = new PdfPagesTree(doc);
         put(PdfName.Type, PdfName.Catalog);
     }
@@ -60,4 +61,5 @@ public class PdfCatalog extends PdfDictionary {
         put(PdfName.Pages, pageTree.generateTree());
         super.flush();
     }
+
 }

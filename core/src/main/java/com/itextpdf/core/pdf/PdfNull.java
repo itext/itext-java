@@ -2,7 +2,6 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfNull extends PdfPrimitiveObject {
 
@@ -11,15 +10,6 @@ public class PdfNull extends PdfPrimitiveObject {
 
     public PdfNull() {
         super();
-    }
-
-    public PdfNull(PdfDocument doc) {
-        super(doc);
-    }
-
-    @Override
-    public PdfObject copy() {
-        return this;
     }
 
     @Override
@@ -34,5 +24,10 @@ public class PdfNull extends PdfPrimitiveObject {
     @Override
     protected void generateContent() {
         content = NullContent;
+    }
+
+    @Override
+    public String toString() {
+        return "null";
     }
 }

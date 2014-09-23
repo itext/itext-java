@@ -2,12 +2,9 @@ package com.itextpdf.core.pdf;
 
 public class PdfDocumentInfo extends PdfDictionary {
 
-    private PdfDocumentInfo() {
-        super();
-    }
-
     protected PdfDocumentInfo(PdfDocument doc) {
-        super(doc);
+        super();
+        makeIndirect(doc);
     }
 
     public PdfDocumentInfo setTitle(String title) {
@@ -39,4 +36,5 @@ public class PdfDocumentInfo extends PdfDictionary {
     public boolean canBeInObjStm() {
         return false;
     }
+
 }

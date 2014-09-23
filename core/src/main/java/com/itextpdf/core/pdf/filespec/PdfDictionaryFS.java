@@ -9,9 +9,4 @@ public class PdfDictionaryFS extends PdfDictionary implements IPdfFileSpec {
         super();
     }
 
-    public PdfDictionaryFS(PdfDocument doc) {
-        super(doc);
-    }
-
-
 }
