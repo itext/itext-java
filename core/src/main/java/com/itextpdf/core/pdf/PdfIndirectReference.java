@@ -145,6 +145,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     @Override
     public String toString() {
-        return Integer.toString(getObjNr()) + " " + Integer.toString(getGenNr()) + " R";
+        return java.lang.String.format("%d %d R", getObjNr(), getGenNr());
     }
 }

@@ -1,10 +1,11 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.ByteBuffer;
 import com.itextpdf.io.streams.OutputStream;
 
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
+
+    protected String value = null;
 
     private static final byte[] space = OutputStream.getIsoBytes("#20");                //  ' '
     private static final byte[] percent = OutputStream.getIsoBytes("#25");              //  '%'
@@ -18,8 +19,6 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     private static final byte[] rightCurlyBracket = OutputStream.getIsoBytes("#7d");    //  '}'
     private static final byte[] solidus = OutputStream.getIsoBytes("#2f");              //  '/'
     private static final byte[] numberSign = OutputStream.getIsoBytes("#23");           //  '#'
-
-    protected String value = "";
 
     public static final PdfName Action = new PdfName("Action");
     public static final PdfName Author = new PdfName("Author");
@@ -78,7 +77,18 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         this.value = value;
     }
 
+    public PdfName(byte[] content) {
+        super(content);
+    }
+
+    @Override
+    public byte getType() {
+        return Name;
+    }
+
     public String getValue() {
+        if (value == null)
+            generateValue();
         return value;
     }
 
@@ -87,18 +97,27 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         return value.compareTo(o.value);
     }
 
-    @Override
-    public byte getType() {
-        return Name;
+    protected void generateValue() {
+        StringBuilder buf = new StringBuilder();
+        try {
+            for (int k = 1; k < content.length; ++k) {
+                char c = (char)content[k];
+                if (c == '#') {
+                    byte c1 = content[k + 1];
+                    byte c2 = content[k + 2];
+                    c = (char)((ByteBuffer.getHex(c1) << 4) + ByteBuffer.getHex(c2));
+                    k += 2;
+                }
+                buf.append(c);
+            }
+        } catch (IndexOutOfBoundsException e) {
+            // empty on purpose
+        }
+        value = buf.toString();
     }
 
     @Override
-    protected void generateValue() throws PdfException {
-
-    }
-
-    @Override
-    final protected void generateContent() {
+    protected void generateContent() {
         int length = value.length();
         ByteBuffer buf = new ByteBuffer(length + 20);
         buf.append('/');
@@ -161,6 +180,6 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     @Override
     public String toString() {
-        return "/" + value;
+        return "/" + getValue();
     }
 }

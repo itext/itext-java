@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
 
 public class PdfNumber extends PdfPrimitiveObject {
@@ -9,25 +8,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     protected static final byte Double = 2;
 
     double value;
-    byte valueType = -1;
-
-    public PdfNumber(int value) {
-        super();
-        this.value = value;
-        this.valueType = Int;
-    }
-
-    public PdfNumber(long value) {
-        super();
-        this.value = value;
-        this.valueType = Double;
-    }
-
-    public PdfNumber(float value) {
-        super();
-        this.value = value;
-        this.valueType = Double;
-    }
+    byte valueType;
 
     public PdfNumber(double value) {
         super();
@@ -35,27 +16,47 @@ public class PdfNumber extends PdfPrimitiveObject {
         this.valueType = Double;
     }
 
-    public double getValue() throws PdfException {
-        if(java.lang.Double.isNaN(value))
-            generateValue();
-        return value;
+    public PdfNumber(float value) {
+        this((double)value);
     }
 
-    public float getFloatValue() throws PdfException {
-        return (float)getValue();
+    public PdfNumber(long value) {
+        this((double)value);
     }
 
-    public long getLongValue() throws PdfException {
-        return (long)getValue();
+    public PdfNumber(int value) {
+        super();
+        this.value = value;
+        this.valueType = Int;
     }
 
-    public int getIntValue() throws PdfException {
-        return (int)getValue();
+    public PdfNumber(byte[] content) {
+        super(content);
+        this.valueType = Double;
+        this.value = java.lang.Double.NaN;
     }
 
     @Override
     public byte getType() {
         return Number;
+    }
+
+    public double getValue() {
+        if(java.lang.Double.isNaN(value))
+            generateValue();
+        return value;
+    }
+
+    public float getFloatValue() {
+        return (float)getValue();
+    }
+
+    public long getLongValue() {
+        return (long)getValue();
+    }
+
+    public int getIntValue() {
+        return (int)getValue();
     }
 
     protected byte getValueType() {
@@ -76,16 +77,20 @@ public class PdfNumber extends PdfPrimitiveObject {
         }
     }
 
-    @Override
-    protected void generateValue() throws PdfException {
-
+    protected void generateValue() {
+        try {
+            value = java.lang.Double.parseDouble(new String(content));
+        } catch (NumberFormatException e) {
+            value = java.lang.Double.NaN;
+        }
+        valueType = Double;
     }
 
     @Override
     public String toString() {
         if (valueType == Int)
-            return Integer.toString((int)value);
+            return new String(OutputStream.getIsoBytes(getIntValue()));
         else
-            return java.lang.Double.toString(value);
+            return new String(OutputStream.getIsoBytes(getValue()));
     }
 }

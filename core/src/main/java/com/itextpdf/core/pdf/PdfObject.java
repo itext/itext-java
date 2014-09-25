@@ -104,7 +104,4 @@ abstract public class PdfObject {
             return doc.getWriter();
         return null;
     }
-
-
-
 }

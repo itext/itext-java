@@ -1,7 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
-
 abstract class PdfPrimitiveObject extends PdfObject {
 
     protected byte[] content = null;
@@ -10,7 +8,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
         super();
     }
 
-    PdfPrimitiveObject(byte[] content) {
+    public PdfPrimitiveObject(byte[] content) {
         this();
         this.content = content;
     }
@@ -19,8 +17,6 @@ abstract class PdfPrimitiveObject extends PdfObject {
         return content != null;
     }
 
-    protected abstract void generateValue() throws PdfException;
-
     protected abstract void generateContent();
 
     final public byte[] getContent() {
@@ -28,5 +24,4 @@ abstract class PdfPrimitiveObject extends PdfObject {
             generateContent();
         return content;
     }
-
 }

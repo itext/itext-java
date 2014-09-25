@@ -34,7 +34,6 @@ public class PdfPagesTest {
             page.flush();
         }
         pdfDoc.close();
-
         verifyPagesOrder(destinationFolder + filename);
     }
 

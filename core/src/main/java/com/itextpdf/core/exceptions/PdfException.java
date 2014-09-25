@@ -8,6 +8,11 @@ public class PdfException extends Exception {
     public static final String fontSizeTooSmall = "font.size.too.small";
     public static final String flushedPageCannotBeAddedOrInserted = "flushed.page.cannot.be.added.or.inserted";
     public static final String theDocumentHasNoPages = "the.document.has.no.pages";
+    public static final String error1AtFilePointer2 = "1.at.file.pointer.2";
+    public static final String pdfHeaderNotFound = "pdf.header.not.found";
+    public static final String pdfStartxrefNotFound = "pdf.startxref.not.found";
+    public static final String fdfStartxrefNotFound = "fdf.startxref.not.found";
+    public static final String greaterthanNotExpected = "greaterthan.not.expected";
 
     public PdfException() {
         super();

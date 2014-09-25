@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
 
 public class PdfNull extends PdfPrimitiveObject {
@@ -15,10 +14,6 @@ public class PdfNull extends PdfPrimitiveObject {
     @Override
     public byte getType() {
         return Null;
-    }
-
-    @Override
-    protected void generateValue() throws PdfException {
     }
 
     @Override
