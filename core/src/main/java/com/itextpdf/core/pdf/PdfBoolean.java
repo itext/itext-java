@@ -31,7 +31,6 @@ public class PdfBoolean extends PdfPrimitiveObject {
 
     @Override
     public String toString() {
-        return value.toString();
-    }
+        return java.lang.Boolean.toString(value);
     }
 }
