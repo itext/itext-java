@@ -46,9 +46,10 @@ public class WriteNumbersTest {
         for (int i = 0; i < 100000; i++) {
             double d = (double)rnd.nextInt(1000000)/1000000;
             d = round(d, 5);
+            if (Math.abs(d) < 0.000015) continue;
             byte[] actuals = OutputStream.getIsoBytes(d);
             byte[] expecteds = dn.format(d).getBytes();
-            String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
+            String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ " + d;
             Assert.assertArrayEquals(message, expecteds, actuals);
         }
     }
