@@ -33,7 +33,7 @@ public class RandomAccessFileOrArray implements DataInput {
     private boolean isBack = false;
 
     /**
-     * Creates an independent view of this object (with it's own file pointer and pushback queue).  Closing the new object will not close this object.
+     * Creates an independent view of this object (with it's own file pointer and push back queue).  Closing the new object will not close this object.
      * Closing this object will have adverse effect on the view.
      * @return the new view
      */
@@ -136,7 +136,7 @@ public class RandomAccessFileOrArray implements DataInput {
         long len;
         long newpos;
 
-        pos = getFilePointer();
+        pos = getPosition();
         len = length();
         newpos = pos + n;
         if (newpos > len) {
@@ -168,7 +168,7 @@ public class RandomAccessFileOrArray implements DataInput {
     }
 
     //TODO: consider changing method name to getPosition or something like that - might not be worth making a breaking change, though
-    public long getFilePointer() throws IOException {
+    public long getPosition() throws IOException {
         return byteSourcePosition - (isBack ? 1 : 0);
     }
 
@@ -206,8 +206,8 @@ public class RandomAccessFileOrArray implements DataInput {
      * The method reads two
      * bytes from this stream, starting at the current stream pointer.
      * If the two bytes read, in order, are
-     * <code>b1</code> and <code>b2</code>, where each of the two values is
-     * between <code>0</code> and <code>255</code>, inclusive, then the
+     * {@code b1} and {@code b2}, where each of the two values is
+     * between {@code 0} and {@code 255}, inclusive, then the
      * result is equal to:
      * <blockquote><pre>
      *     (short)((b2 &lt;&lt; 8) | b1)
@@ -243,8 +243,7 @@ public class RandomAccessFileOrArray implements DataInput {
      * This method reads
      * two bytes from the stream, starting at the current stream pointer.
      * If the bytes read, in order, are
-     * <code>b1</code> and <code>b2</code>, where
-     * <code>0&nbsp;&lt;=&nbsp;b1, b2&nbsp;&lt;=&nbsp;255</code>,
+     * {@code b1} and {@code b2}, where {@code 0 <= b1, b2 <= 255},
      * then the result is equal to:
      * <blockquote><pre>
      *     (b2 &lt;&lt; 8) | b1
@@ -280,8 +279,7 @@ public class RandomAccessFileOrArray implements DataInput {
      * This method reads two
      * bytes from the stream, starting at the current stream pointer.
      * If the bytes read, in order, are
-     * <code>b1</code> and <code>b2</code>, where
-     * <code>0&nbsp;&lt;=&nbsp;b1,&nbsp;b2&nbsp;&lt;=&nbsp;255</code>,
+     * {@code b1} and {@code b2}, where {@code 0 <= b1, b2 <= 255},
      * then the result is equal to:
      * <blockquote><pre>
      *     (char)((b2 &lt;&lt; 8) | b1)
@@ -317,9 +315,8 @@ public class RandomAccessFileOrArray implements DataInput {
      * Reads a signed 32-bit integer from this stream in little-endian order.
      * This method reads 4
      * bytes from the stream, starting at the current stream pointer.
-     * If the bytes read, in order, are <code>b1</code>,
-     * <code>b2</code>, <code>b3</code>, and <code>b4</code>, where
-     * <code>0&nbsp;&lt;=&nbsp;b1, b2, b3, b4&nbsp;&lt;=&nbsp;255</code>,
+     * If the bytes read, in order, are {@code b1},
+     * {@code b2}, {@code b3}, and {@code b4}, where {@code 0 <= b1, b2, b3, b4 <= 255},
      * then the result is equal to:
      * <blockquote><pre>
      *     (b4 &lt;&lt; 24) | (b3 &lt;&lt; 16) + (b2 &lt;&lt; 8) + b1
@@ -328,8 +325,7 @@ public class RandomAccessFileOrArray implements DataInput {
      * This method blocks until the four bytes are read, the end of the
      * stream is detected, or an exception is thrown.
      *
-     * @return     the next four bytes of this stream, interpreted as an
-     *             <code>int</code>.
+     * @return     the next four bytes of this stream, interpreted as an {@code int}.
      * @exception  EOFException  if this stream reaches the end before reading
      *               four bytes.
      * @exception  IOException   if an I/O error occurs.
@@ -347,9 +343,8 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * Reads an unsigned 32-bit integer from this stream. This method reads 4
      * bytes from the stream, starting at the current stream pointer.
-     * If the bytes read, in order, are <code>b1</code>,
-     * <code>b2</code>, <code>b3</code>, and <code>b4</code>, where
-     * <code>0&nbsp;&lt;=&nbsp;b1, b2, b3, b4&nbsp;&lt;=&nbsp;255</code>,
+     * If the bytes read, in order, are {@code b1},
+     * {@code b2}, {@code b3}, and {@code b4}, where {@code 0 <= b1, b2, b3, b4 <= 255},
      * then the result is equal to:
      * <blockquote><pre>
      *     (b1 &lt;&lt; 24) | (b2 &lt;&lt; 16) + (b3 &lt;&lt; 8) + b4
@@ -358,8 +353,7 @@ public class RandomAccessFileOrArray implements DataInput {
      * This method blocks until the four bytes are read, the end of the
      * stream is detected, or an exception is thrown.
      *
-     * @return     the next four bytes of this stream, interpreted as a
-     *             <code>long</code>.
+     * @return     the next four bytes of this stream, interpreted as a {@code long}.
      * @exception  EOFException  if this stream reaches the end before reading
      *               four bytes.
      * @exception  IOException   if an I/O error occurs.
@@ -423,7 +417,7 @@ public class RandomAccessFileOrArray implements DataInput {
                     break;
                 case '\r':
                     eol = true;
-                    long cur = getFilePointer();
+                    long cur = getPosition();
                     if ((read()) != '\n') {
                         seek(cur);
                     }
@@ -444,11 +438,11 @@ public class RandomAccessFileOrArray implements DataInput {
         return DataInputStream.readUTF(this);
     }
 
-    /** Reads a <CODE>String</CODE> from the font file as bytes using the given
+    /** Reads a {@code String} from the font file as bytes using the given
      *  encoding.
      * @param length the length of bytes to read
      * @param encoding the given encoding
-     * @return the <CODE>String</CODE> read
+     * @return the {@code String} read
      * @throws IOException the font file could not be read
      */
     public String readString(int length, String encoding) throws IOException {

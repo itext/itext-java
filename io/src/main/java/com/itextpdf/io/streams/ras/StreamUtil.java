@@ -51,8 +51,7 @@ public final class StreamUtil {
     /**
      * Gets the resource's inputstream.
      * @param key the full name of the resource
-     * @return the <CODE>InputStream</CODE> to get the resource or
-     * <CODE>null</CODE> if not found
+     * @return the {@code InputStream} to get the resource or {@code null} if not found
      */
     public static InputStream getResourceStream(String key) {
         return getResourceStream(key, null);
@@ -63,8 +62,7 @@ public final class StreamUtil {
      * .
      * @param key the full name of the resource
      * @param loader the ClassLoader to load the resource or null to try the ones available
-     * @return the <CODE>InputStream</CODE> to get the resource or
-     * <CODE>null</CODE> if not found
+     * @return the {@code InputStream} to get the resource or {@code null} if not found
      */
     public static InputStream getResourceStream(String key, ClassLoader loader) {
         if (key.startsWith("/"))

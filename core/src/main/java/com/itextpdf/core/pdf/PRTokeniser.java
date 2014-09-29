@@ -79,7 +79,7 @@ public class PRTokeniser {
     }
 
     public long getFilePointer() throws IOException {
-        return file.getFilePointer();
+        return file.getPosition();
     }
 
     public void close() throws IOException {
@@ -160,7 +160,7 @@ public class PRTokeniser {
     }
 
     public void throwError(String error) throws PdfException {
-        throw new PdfException(PdfException.error1AtFilePointer2); //, error, String.valueOf(file.getFilePointer()));
+        throw new PdfException(PdfException.error1AtFilePointer2); //, error, String.valueOf(file.getPosition()));
     }
 
     public int getHeaderOffset() throws PdfException, IOException {
@@ -220,7 +220,7 @@ public class PRTokeniser {
                 {
                     if (type != TokenType.Number)
                         return;
-                    ptr = file.getFilePointer();
+                    ptr = file.getPosition();
                     n1 = getByteContent();
                     ++level;
                     break;

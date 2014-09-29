@@ -42,8 +42,10 @@ class GroupedRandomAccessSource implements RandomAccessSource {
     /**
      * For a given offset, return the index of the source that contains the specified offset.
      * This is an optimization feature to help optimize the access of the correct source without having to iterate
-     * through every single source each time.  It is safe to always return 0, in which case the full set of sources will be searched.
-     * Subclasses should override this method if they are able to compute the source index more efficiently (for example {@link FileChannelRandomAccessSource} takes advantage of fixed size page buffers to compute the index)
+     * through every single source each time.  It is safe to always return 0, in which case the full set of sources
+     * will be searched.
+     * Subclasses should override this method if they are able to compute the source index more efficiently
+     * (for example {@link FileChannelRandomAccessSource} takes advantage of fixed size page buffers to compute the index)
      * @param offset the offset
      * @return the index of the input source that contains the specified offset, or 0 if unknown
      */
@@ -56,7 +58,8 @@ class GroupedRandomAccessSource implements RandomAccessSource {
 
     /**
      * Returns the SourceEntry that contains the byte at the specified offset
-     * sourceReleased is called as a notification callback so subclasses can take care of cleanup when the source is no longer the active source
+     * sourceReleased is called as a notification callback so subclasses can take care of cleanup
+     * when the source is no longer the active source
      * @param offset the offset of the byte to look for
      * @return the SourceEntry that contains the byte at the specified offset
      * @throws IOException if there is a problem with IO (usually the result of the sourceReleased() call)
@@ -72,7 +75,6 @@ class GroupedRandomAccessSource implements RandomAccessSource {
         sourceReleased(currentSourceEntry.source);
 
         int startAt = getStartingSourceIndex(offset);
-
         for(int i = startAt; i < sources.length; i++){
             if (offset >= sources[i].firstByte && offset <= sources[i].lastByte){
                 currentSourceEntry = sources[i];
@@ -80,9 +82,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
                 return currentSourceEntry;
             }
         }
-
         return null;
-
     }
 
     /**
@@ -115,7 +115,6 @@ class GroupedRandomAccessSource implements RandomAccessSource {
             return -1;
 
         return entry.source.get(entry.offsetN(position));
-
     }
 
     /**

@@ -106,8 +106,10 @@ public final class RandomAccessSourceFactory {
     /**
      * Creates a {@link RandomAccessSource} based on a filename string.
      * If the filename describes a URL, a URL based source is created
-     * If the filename describes a file on disk, the contents may be read into memory (if forceRead is true), opened using memory mapped file channel (if usePlainRandomAccess is false), or opened using {@link RandomAccessFile} access (if usePlainRandomAccess is true)
-     * This call will automatically failover to using {@link RandomAccessFile} if the memory map operation fails
+     * If the filename describes a file on disk, the contents may be read into memory (if {@code forceRead} is true),
+     * opened using memory mapped file channel (if usePlainRandomAccess is false), or
+     * opened using {@link RandomAccessFile} access (if usePlainRandomAccess is true)
+     * This call will automatically fail over to using {@link RandomAccessFile} if the memory map operation fails
      * @param filename the name of the file or resource to create the {@link RandomAccessSource} for
      * @return the newly created {@link RandomAccessSource}
      */
@@ -152,12 +154,7 @@ public final class RandomAccessSourceFactory {
             } catch (MapFailedException e){
                 return new RAFRandomAccessSource(raf);
             }
-        } catch (IOException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
-            try{
-                raf.close();
-            } catch (IOException ignore){}
-            throw e;
-        } catch (RuntimeException e){ // if we get a runtime exception during opening, we must close the RAF we created
+        } catch (IOException | RuntimeException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
             try{
                 raf.close();
             } catch (IOException ignore){}
@@ -167,7 +164,7 @@ public final class RandomAccessSourceFactory {
 
     /**
      * Creates a {@link RandomAccessSource} based on memory mapping a file channel.
-     * Unless you are explicitly working with a FileChannel already, it is better to use
+     * Unless you are explicitly working with a {@code FileChannel} already, it is better to use
      * {@link RandomAccessSourceFactory#createBestSource(String)}.
      * If the file is large, it will be opened using a paging strategy.
      * @param channel the name of the file or resource to create the {@link RandomAccessSource} for

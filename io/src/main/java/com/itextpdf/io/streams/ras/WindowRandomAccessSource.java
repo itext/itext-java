@@ -3,9 +3,8 @@ package com.itextpdf.io.streams.ras;
 import java.io.IOException;
 
 /**
- * A RandomAccessSource that wraps another RandomAccessSouce and provides a window of it at a specific offset and over
+ * A RandomAccessSource that wraps another RandomAccessSource and provides a window of it at a specific offset and over
  * a specific length.  Position 0 becomes the offset position in the underlying source.
- * @since 5.3.5
  */
 public class WindowRandomAccessSource implements RandomAccessSource {
     /**

@@ -30,7 +30,6 @@ class ArrayRandomAccessSource implements RandomAccessSource {
         System.arraycopy(array, (int)offset, bytes, off, len);
 
         return len;
-
     }
 
     public long length() {

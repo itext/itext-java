@@ -75,9 +75,8 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
      * @return true if the exception was the result of a failure to map a memory mapped file
      */
     private static boolean exceptionIsMapFailureException(IOException e){
-        if (e.getMessage() != null && e.getMessage().indexOf("Map failed") >= 0)
+        if (e.getMessage() != null && e.getMessage().contains("Map failed"))
             return true;
-
         return false;
     }
 

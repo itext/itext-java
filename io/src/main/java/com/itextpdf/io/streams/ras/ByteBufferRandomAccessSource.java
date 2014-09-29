@@ -34,7 +34,6 @@ class ByteBufferRandomAccessSource implements RandomAccessSource {
     public int get(long position) throws IOException {
         if (position > Integer.MAX_VALUE)
             throw new IllegalArgumentException("Position must be less than Integer.MAX_VALUE");
-
         try {
 
             if (position >= byteBuffer.limit())
@@ -64,7 +63,6 @@ class ByteBufferRandomAccessSource implements RandomAccessSource {
         byteBuffer.get(bytes, off, bytesFromThisBuffer);
 
         return bytesFromThisBuffer;
-
     }
 
 

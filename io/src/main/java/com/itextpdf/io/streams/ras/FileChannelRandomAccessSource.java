@@ -35,7 +35,7 @@ public class FileChannelRandomAccessSource implements RandomAccessSource {
 
     /**
      * {@inheritDoc}
-     * Cleans the mapped bytebuffers and closes the channel
+     * Cleans the mapped byte buffers and closes the channel
      */
     public void close() throws IOException {
         source.close();
