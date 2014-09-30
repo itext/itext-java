@@ -5,10 +5,7 @@ import com.itextpdf.core.exceptions.PdfException;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.NavigableSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public class PdfWriter extends PdfOutputStream {
 
@@ -83,7 +80,6 @@ public class PdfWriter extends PdfOutputStream {
             return;
         if (indirectReference == null)
             return;
-        pdfDocument.addIndirectReference(indirectReference);
         if (isFullCompression() && object.canBeInObjStm()) {
             PdfObjectStream objectStream = getObjectStream();
             objectStream.addObject(object);
@@ -128,28 +124,19 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected void flushWaitingObjects() throws IOException, PdfException {
-        TreeSet<PdfIndirectReference> indirectsCopy = new TreeSet<PdfIndirectReference>();
-        PdfIndirectReference indirectReference;
-        for (; ; ) {
-            NavigableSet<PdfIndirectReference> indirects = pdfDocument.getIndirects();
-            if (indirects.isEmpty())
-                break;
-            Object[] indirectsArray = indirects.toArray();
-            for (Object newIndirectReference : indirectsArray) {
-                indirectReference = (PdfIndirectReference) newIndirectReference;
-                indirectsCopy.add(indirectReference);
-                PdfObject object = indirectReference.getRefersTo();
-                if (object != null) {
-                    object.flush();
-                }
+        TreeSet<PdfIndirectReference> indirects = pdfDocument.getIndirects();
+        pdfDocument.setIndirects(new TreeSet<PdfIndirectReference>());
+        for (PdfIndirectReference indirectReference : indirects) {
+            PdfObject object = indirectReference.getRefersTo();
+            if (object != null) {
+                object.flush();
             }
-            pdfDocument.getIndirects().removeAll(Arrays.asList(indirectsArray));
         }
-        pdfDocument.setIndirects(indirectsCopy);
         if (objectStream != null && objectStream.getSize() > 0) {
             objectStream.flush();
             objectStream = null;
         }
+        pdfDocument.getIndirects().addAll(indirects);
     }
 
     /**

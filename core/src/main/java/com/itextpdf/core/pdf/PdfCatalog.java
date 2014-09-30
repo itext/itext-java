@@ -22,7 +22,7 @@ public class PdfCatalog extends PdfDictionary {
 
     public void addPage(PdfPage page) throws PdfException {
         if (page.isFlushed())
-            throw new PdfException(PdfException.flushedPageCannotBeAddedOrInserted);
+            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted);
         pageTree.addPage(page);
     }
 

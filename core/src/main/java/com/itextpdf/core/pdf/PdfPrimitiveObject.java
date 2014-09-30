@@ -1,5 +1,9 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
+
+import java.io.IOException;
+
 abstract class PdfPrimitiveObject extends PdfObject {
 
     protected byte[] content = null;
@@ -24,4 +28,14 @@ abstract class PdfPrimitiveObject extends PdfObject {
             generateContent();
         return content;
     }
+
+    @Override
+    public void flush() throws IOException, PdfException {
+        if (isFlushed())
+            return;
+        super.flush();
+        if (isFlushed())
+            content = null;
+    }
+
 }

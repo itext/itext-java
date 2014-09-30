@@ -59,7 +59,7 @@ public class PdfOutputStream extends OutputStream {
         for (int i = 0; i < array.size(); i++) {
             PdfObject value = array.get(i);
             PdfIndirectReference indirectReference;
-            if (value.getType() != PdfObject.IndirectReference && (indirectReference = value.getIndirectReference()) != null) {
+            if ((indirectReference = value.getIndirectReference()) != null) {
                 write(indirectReference);
             } else {
                 write(value);
@@ -77,7 +77,7 @@ public class PdfOutputStream extends OutputStream {
             writeSpace();
             PdfObject value = entry.getValue();
             PdfIndirectReference indirectReference;
-            if (value.getType() != PdfObject.IndirectReference && (indirectReference = value.getIndirectReference()) != null) {
+            if ((indirectReference = value.getIndirectReference()) != null) {
                 write(indirectReference);
             } else {
                 write(value);
@@ -87,8 +87,8 @@ public class PdfOutputStream extends OutputStream {
     }
 
     protected void write(PdfIndirectReference indirectReference) throws IOException, PdfException {
-        if (indirectReference.getRefersTo() != null)
-            pdfDocument.addIndirectReference(indirectReference);
+//        if (indirectReference.getRefersTo() != null)
+//            pdfDocument.addIndirectReference(indirectReference);
         if (indirectReference.getGenNr() == 0) {
             writeInteger(indirectReference.getObjNr()).
                     writeBytes(endIndirectWithZeroGenNr);

@@ -36,7 +36,7 @@ public class PdfObjectStream extends PdfStream {
      */
     public void addObject(PdfObject object) throws PdfException, IOException {
         if (!object.canBeInObjStm() || size == maxObjStreamSize)
-            throw new PdfException(PdfException.objectCannotBeAddedToObjectStream);
+            throw new PdfException(PdfException.ObjectCannotBeAddedToObjectStream);
         indexStream.writeInteger(object.getIndirectReference().getObjNr()).
                 writeSpace().
                 writeInteger(outputStream.getCurrentPos()).

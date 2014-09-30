@@ -76,7 +76,7 @@ class PdfPagesTree {
      */
     public void insertPage(int index, PdfPage page) throws PdfException {
         if (page.isFlushed())
-            throw new PdfException(PdfException.flushedPageCannotBeAddedOrInserted);
+            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted);
         --index;
         if (index > pages.size())
             throw new IndexOutOfBoundsException("index");
@@ -160,7 +160,7 @@ class PdfPagesTree {
      */
     protected  PdfObject generateTree() throws PdfException {
         if (pages.isEmpty())
-            throw new PdfException(PdfException.theDocumentHasNoPages);
+            throw new PdfException(PdfException.DocumentHasNoPages);
         while (parents.size() != 1) {
             ArrayList<PdfPages> nextParents = new ArrayList<PdfPages>();
             //dynamicLeafSize helps to avoid PdfPages leaf with only one page

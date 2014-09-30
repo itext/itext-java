@@ -140,7 +140,7 @@ public class PdfPagesTest {
             pdfDoc.insertPage(1, page);
             pdfDoc.close();
         } catch (PdfException e) {
-            if (e.getMessage() == PdfException.flushedPageCannotBeAddedOrInserted)
+            if (e.getMessage() == PdfException.FlushedPageCannotBeAddedOrInserted)
                 error = true;
         }
 
@@ -159,7 +159,7 @@ public class PdfPagesTest {
             pdfDoc.addPage(page);
             pdfDoc.close();
         } catch (PdfException e) {
-            if (e.getMessage() == PdfException.flushedPageCannotBeAddedOrInserted)
+            if (e.getMessage() == PdfException.FlushedPageCannotBeAddedOrInserted)
                 error = true;
         }
 

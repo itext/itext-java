@@ -63,8 +63,7 @@ abstract public class PdfObject {
      * @return object itself.
      */
     public PdfObject makeIndirect(PdfDocument document) {
-        if (document != null)
-            indirectReference = document.getNextIndirectReference(this);
+        setDocument(document);
         return this;
     }
 
@@ -98,10 +97,25 @@ abstract public class PdfObject {
         return null;
     }
 
+    /**
+     * Sets PdfDocument for the object.
+     *
+     * @param document a dPdfDocument to set.
+     */
+    public void setDocument(PdfDocument document) {
+        if (document != null && indirectReference == null) {
+            indirectReference = document.getNextIndirectReference(this);
+            document.addIndirectReference(indirectReference);
+        }
+    }
+
     protected PdfWriter getWriter() {
         PdfDocument doc = getDocument();
         if (doc != null)
             return doc.getWriter();
         return null;
     }
+
+
+
 }

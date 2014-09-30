@@ -204,14 +204,11 @@ public class PdfPrimitivesTest {
 
 
     @Test
-    public void PdfNamesTest() {
-        Date start = new Date();
+    public void pdfNamesTest() {
         RandomString rnd = new RandomString(16);
         for (int i = 0; i < 10000000; i++) {
             new PdfName(rnd.nextString());
         }
-        Date finish = new Date();
-        System.out.println(finish.getTime() - start.getTime());
     }
 
 
