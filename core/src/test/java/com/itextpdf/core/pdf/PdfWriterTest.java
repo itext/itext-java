@@ -53,7 +53,7 @@ public class PdfWriterTest {
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         page.flush();
-        pdfDoc.getCatalog().put(new PdfName("HelloWorld"), helloWorld);
+        pdfDoc.getCatalog().getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         pdfDoc.close();
 
         validateUseObjectForMultipleTimesTest(destinationFolder + "useObjectForMultipleTimes1.pdf");
@@ -71,7 +71,7 @@ public class PdfWriterTest {
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         page.flush();
-        pdfDoc.getCatalog().put(new PdfName("HelloWorld"), helloWorld);
+        pdfDoc.getCatalog().getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         pdfDoc.close();
 
         validateUseObjectForMultipleTimesTest(destinationFolder + "useObjectForMultipleTimes2.pdf");
@@ -89,7 +89,7 @@ public class PdfWriterTest {
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         page.flush();
         helloWorld.flush();
-        pdfDoc.getCatalog().put(new PdfName("HelloWorld"), helloWorld);
+        pdfDoc.getCatalog().getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         pdfDoc.close();
 
         validateUseObjectForMultipleTimesTest(destinationFolder + "useObjectForMultipleTimes3.pdf");
@@ -106,7 +106,7 @@ public class PdfWriterTest {
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         page.flush();
-        pdfDoc.getCatalog().put(new PdfName("HelloWorld"), helloWorld);
+        pdfDoc.getCatalog().getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         helloWorld.flush();
         pdfDoc.close();
 

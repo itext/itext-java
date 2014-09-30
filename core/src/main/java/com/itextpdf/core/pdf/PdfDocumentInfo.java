@@ -1,35 +1,46 @@
 package com.itextpdf.core.pdf;
 
-public class PdfDocumentInfo extends PdfDictionary {
+import com.itextpdf.core.exceptions.PdfException;
 
-    protected PdfDocumentInfo(PdfDocument doc) {
-        super();
-        makeIndirect(doc);
+import java.io.IOException;
+
+public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
+
+    public PdfDocumentInfo(PdfDictionary pdfObject) {
+        super(pdfObject);
+    }
+
+    public PdfDocumentInfo(PdfDocument pdfDocument) {
+        super(new PdfDictionary(), pdfDocument);
     }
 
     public PdfDocumentInfo setTitle(String title) {
-        put(PdfName.Title, new PdfString(title));
+        pdfObject.put(PdfName.Title, new PdfString(title));
         return this;
     }
 
     public PdfDocumentInfo setAuthor(String author) {
-        put(PdfName.Author, new PdfString(author));
+        pdfObject.put(PdfName.Author, new PdfString(author));
         return this;
     }
 
     public PdfDocumentInfo setSubject(String subject) {
-        put(PdfName.Subject, new PdfString(subject));
+        pdfObject.put(PdfName.Subject, new PdfString(subject));
         return this;
     }
 
     public PdfDocumentInfo setKeywords(String keywords) {
-        put(PdfName.Keywords, new PdfString(keywords));
+        pdfObject.put(PdfName.Keywords, new PdfString(keywords));
         return this;
     }
 
     public PdfDocumentInfo setCreator(String creator) {
-        put(PdfName.Creator, new PdfString(creator));
+        pdfObject.put(PdfName.Creator, new PdfString(creator));
         return this;
     }
 
+    @Override
+    public void flush() throws IOException, PdfException {
+        pdfObject.flush(false);
+    }
 }

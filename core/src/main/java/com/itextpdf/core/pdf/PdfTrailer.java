@@ -1,30 +1,27 @@
 package com.itextpdf.core.pdf;
 
-public class PdfTrailer extends PdfDictionary {
+public class PdfTrailer extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfTrailer() {
-        super();
+
+
+    public PdfTrailer(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
-    public PdfCatalog getCatalog() {
-        return (PdfCatalog) get(PdfName.Root);
+    public PdfTrailer() {
+        this(new PdfDictionary());
     }
 
     public void setCatalog(PdfCatalog catalog) {
-        put(PdfName.Root, catalog);
-    }
-
-    public PdfDocumentInfo getDocumentInfo() {
-        return (PdfDocumentInfo) get(PdfName.Info);
+        pdfObject.put(PdfName.Root, catalog.getPdfObject());
     }
 
     public void setInfo(PdfDocumentInfo info) {
-        put(PdfName.Info, info);
+        pdfObject.put(PdfName.Info, info.getPdfObject());
     }
 
-
     public void setSize(int size) {
-        put(PdfName.Size, new PdfNumber(size));
+        pdfObject.put(PdfName.Size, new PdfNumber(size));
     }
 
 }

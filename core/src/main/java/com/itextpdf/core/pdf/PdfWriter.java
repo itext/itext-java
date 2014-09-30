@@ -159,8 +159,8 @@ public class PdfWriter extends PdfOutputStream {
                 add(new PdfNumber(4));
                 add(new PdfNumber(2));
             }}));
-            stream.put(PdfName.Info, pdfDocument.trailer.getDocumentInfo());
-            stream.put(PdfName.Root, pdfDocument.trailer.getCatalog());
+            stream.put(PdfName.Info, pdfDocument.getDocumentInfo().getPdfObject());
+            stream.put(PdfName.Root, pdfDocument.getCatalog().getPdfObject());
             stream.getOutputStream().write(0);
             stream.getOutputStream().write(intToBytes(0));
             stream.getOutputStream().write(shortToBytes(0xFFFF));
@@ -199,7 +199,7 @@ public class PdfWriter extends PdfOutputStream {
         if (!fullCompression) {
             pdfDocument.getTrailer().setSize(pdfDocument.getIndirects().size() + 1);
             writeString("trailer\n");
-            write(pdfDocument.getTrailer());
+            write(pdfDocument.getTrailer().getPdfObject());
         }
         writeString("\nstartxref\n").
                 writeInteger(startxref).

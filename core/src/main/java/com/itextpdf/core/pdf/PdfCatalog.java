@@ -4,15 +4,18 @@ import com.itextpdf.core.exceptions.PdfException;
 
 import java.io.IOException;
 
-public class PdfCatalog extends PdfDictionary {
+public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfPagesTree pageTree = null;
 
-    public PdfCatalog(PdfDocument doc) {
-        super();
-        makeIndirect(doc);
-        pageTree = new PdfPagesTree(doc);
-        put(PdfName.Type, PdfName.Catalog);
+    public PdfCatalog(PdfDictionary pdfObject) {
+        super(pdfObject);
+    }
+
+    public PdfCatalog(PdfDocument pdfDocument) {
+        super(new PdfDictionary(), pdfDocument);
+        pageTree = new PdfPagesTree(pdfDocument);
+        pdfObject.put(PdfName.Type, PdfName.Catalog);
     }
 
     public void addPage(PdfPage page) throws PdfException {
@@ -50,11 +53,9 @@ public class PdfCatalog extends PdfDictionary {
     }
 
     @Override
-    public void flush(boolean canBeInObjStm) throws IOException, PdfException {
-        if (isFlushed())
-            return;
-        put(PdfName.Pages, pageTree.generateTree());
-        super.flush(canBeInObjStm);
+    public void flush() throws IOException, PdfException {
+        pdfObject.put(PdfName.Pages, pageTree.generateTree());
+        pdfObject.flush(false);
     }
 
 }

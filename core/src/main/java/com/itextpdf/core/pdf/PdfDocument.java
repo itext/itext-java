@@ -114,8 +114,8 @@ public class PdfDocument implements IEventDispatcher {
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.CloseDocument, this));
         removeAllHandlers();
         if (writer != null) {
-            catalog.flush(false);
-            info.flush(false);
+            catalog.flush();
+            info.flush();
             writer.flushWaitingObjects();
             int startxref = writer.writeXRefTable();
             writer.writeTrailer(startxref);
@@ -345,6 +345,15 @@ public class PdfDocument implements IEventDispatcher {
      */
     public PdfCatalog getCatalog() {
         return catalog;
+    }
+
+    /**
+     * Gets PDF document info.
+     *
+     * @return PDF document info.
+     */
+    public PdfDocumentInfo getDocumentInfo() {
+        return info;
     }
 
     /**
