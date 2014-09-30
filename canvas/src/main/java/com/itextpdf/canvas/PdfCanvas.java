@@ -65,6 +65,10 @@ public class PdfCanvas {
         this(page.getContentStream(), page.getResources());
     }
 
+    public PdfCanvas(PdfFormXObject xObj) {
+        this(xObj.getPdfObject(), xObj.getResources());
+    }
+
     /**
      * Convenience method for fast PdfCanvas creation by a certain page.
      *

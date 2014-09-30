@@ -30,10 +30,10 @@ abstract class PdfPrimitiveObject extends PdfObject {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    public void flush(boolean canBeInObjStm) throws IOException, PdfException {
         if (isFlushed())
             return;
-        super.flush();
+        super.flush(canBeInObjStm);
         if (isFlushed())
             content = null;
     }

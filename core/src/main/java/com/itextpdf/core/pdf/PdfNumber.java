@@ -12,22 +12,12 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     public PdfNumber(double value) {
         super();
-        this.value = value;
-        this.valueType = Double;
-    }
-
-    public PdfNumber(float value) {
-        this((double)value);
-    }
-
-    public PdfNumber(long value) {
-        this((double)value);
+        setValue(value);
     }
 
     public PdfNumber(int value) {
         super();
-        this.value = value;
-        this.valueType = Int;
+        setValue(value);
     }
 
     public PdfNumber(byte[] content) {
@@ -57,6 +47,16 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     public int getIntValue() {
         return (int)getValue();
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+        this.valueType = Int;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+        this.valueType = Double;
     }
 
     protected byte getValueType() {

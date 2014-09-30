@@ -18,10 +18,10 @@ public class PdfStream extends PdfDictionary {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    public void flush(boolean canBeInObjStm) throws IOException, PdfException {
         if (isFlushed())
             return;
-        super.flush();
+        super.flush(canBeInObjStm);
         if (isFlushed() && outputStream != null) {
             outputStream.close();
             outputStream = null;
@@ -35,11 +35,6 @@ public class PdfStream extends PdfDictionary {
      */
     public PdfOutputStream getOutputStream() {
         return outputStream;
-    }
-
-    @Override
-    public boolean canBeInObjStm() {
-        return false;
     }
 
     @Override

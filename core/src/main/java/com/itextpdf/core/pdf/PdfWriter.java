@@ -5,7 +5,8 @@ import com.itextpdf.core.exceptions.PdfException;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class PdfWriter extends PdfOutputStream {
 
@@ -70,17 +71,18 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Flushes the object. Override this method if you want to define custom behaviour for object flushing.
      *
-     * @param object object to flush.
+     * @param object        object to flush.
+     * @param canBeInObjStm indicates whether object can be placed into object stream.
      * @throws IOException
      * @throws PdfException
      */
-    protected void flushObject(PdfObject object) throws IOException, PdfException {
+    protected void flushObject(PdfObject object, boolean canBeInObjStm) throws IOException, PdfException {
         PdfIndirectReference indirectReference;
         if (object.isFlushed() || (indirectReference = object.getIndirectReference()) == null)
             return;
         if (indirectReference == null)
             return;
-        if (isFullCompression() && object.canBeInObjStm()) {
+        if (isFullCompression() && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
             objectStream.addObject(object);
         } else {

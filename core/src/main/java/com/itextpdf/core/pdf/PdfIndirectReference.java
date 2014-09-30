@@ -129,11 +129,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     @Override
-    public boolean canBeInObjStm() {
-        return false;
-    }
-
-    @Override
     public byte getType() {
         return IndirectReference;
     }

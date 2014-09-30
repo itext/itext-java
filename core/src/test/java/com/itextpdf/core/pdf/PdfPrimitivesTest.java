@@ -61,7 +61,7 @@ public class PdfPrimitivesTest {
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfArray array = generatePdfArrayWithFloatNumbers(null, false);
-            page.put(TestArray, array);
+            page.getPdfObject().put(TestArray, array);
             array.flush();
             page.flush();
         }
@@ -77,7 +77,7 @@ public class PdfPrimitivesTest {
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfArray array = generatePdfArrayWithIntNumbers(null, false);
-            page.put(TestArray, array);
+            page.getPdfObject().put(TestArray, array);
             array.flush();
             page.flush();
         }
@@ -93,7 +93,7 @@ public class PdfPrimitivesTest {
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfArray array = generatePdfArrayWithNames(null, false);
-            page.put(TestArray, array);
+            page.getPdfObject().put(TestArray, array);
             array.flush();
             page.flush();
         }
@@ -109,7 +109,7 @@ public class PdfPrimitivesTest {
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfArray array = generatePdfArrayWithStrings(null, false);
-            page.put(TestArray, array);
+            page.getPdfObject().put(TestArray, array);
             array.flush();
             page.flush();
         }
@@ -124,7 +124,7 @@ public class PdfPrimitivesTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.put(TestArray, generatePdfArrayWithBooleans(null, false));
+            page.getPdfObject().put(TestArray, generatePdfArrayWithBooleans(null, false));
             page.flush();
         }
         pdfDoc.close();
@@ -138,7 +138,7 @@ public class PdfPrimitivesTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.put(TestArray, generatePdfArrayWithFloatNumbers(pdfDoc, true));
+            page.getPdfObject().put(TestArray, generatePdfArrayWithFloatNumbers(pdfDoc, true));
             page.flush();
         }
         pdfDoc.close();
@@ -152,7 +152,7 @@ public class PdfPrimitivesTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.put(TestArray, generatePdfArrayWithIntNumbers(pdfDoc, true));
+            page.getPdfObject().put(TestArray, generatePdfArrayWithIntNumbers(pdfDoc, true));
             page.flush();
         }
         pdfDoc.close();
@@ -166,7 +166,7 @@ public class PdfPrimitivesTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.put(TestArray, generatePdfArrayWithStrings(pdfDoc, true));
+            page.getPdfObject().put(TestArray, generatePdfArrayWithStrings(pdfDoc, true));
             page.flush();
         }
         pdfDoc.close();
@@ -182,7 +182,7 @@ public class PdfPrimitivesTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.put(TestArray, generatePdfArrayWithNames(pdfDoc, true));
+            page.getPdfObject().put(TestArray, generatePdfArrayWithNames(pdfDoc, true));
             page.flush();
         }
         pdfDoc.close();
@@ -196,7 +196,7 @@ public class PdfPrimitivesTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.put(TestArray, generatePdfArrayWithBooleans(pdfDoc, true));
+            page.getPdfObject().put(TestArray, generatePdfArrayWithBooleans(pdfDoc, true));
             page.flush();
         }
         pdfDoc.close();

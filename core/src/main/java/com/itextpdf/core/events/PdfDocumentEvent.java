@@ -49,7 +49,7 @@ public class PdfDocumentEvent extends Event {
     public PdfDocumentEvent(String type, PdfPage page) {
         super(type);
         this.page = page;
-        this.document = page.getDocument();
+        this.document = page.getPdfObject().getDocument();
     }
 
     public PdfDocument getDocument() {

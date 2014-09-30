@@ -32,9 +32,4 @@ public class PdfDocumentInfo extends PdfDictionary {
         return this;
     }
 
-    @Override
-    public boolean canBeInObjStm() {
-        return false;
-    }
-
 }

@@ -51,7 +51,7 @@ public class PdfWriterTest {
         PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
-        page.put(new PdfName("HelloWorld"), helloWorld);
+        page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         page.flush();
         pdfDoc.getCatalog().put(new PdfName("HelloWorld"), helloWorld);
         pdfDoc.close();
@@ -69,7 +69,7 @@ public class PdfWriterTest {
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         helloWorld.flush();
         PdfPage page = pdfDoc.addNewPage();
-        page.put(new PdfName("HelloWorld"), helloWorld);
+        page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         page.flush();
         pdfDoc.getCatalog().put(new PdfName("HelloWorld"), helloWorld);
         pdfDoc.close();
@@ -86,7 +86,7 @@ public class PdfWriterTest {
         PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
-        page.put(new PdfName("HelloWorld"), helloWorld);
+        page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         page.flush();
         helloWorld.flush();
         pdfDoc.getCatalog().put(new PdfName("HelloWorld"), helloWorld);
@@ -104,7 +104,7 @@ public class PdfWriterTest {
         PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
-        page.put(new PdfName("HelloWorld"), helloWorld);
+        page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         page.flush();
         pdfDoc.getCatalog().put(new PdfName("HelloWorld"), helloWorld);
         helloWorld.flush();
@@ -145,7 +145,7 @@ public class PdfWriterTest {
             for(int i = 0; i < expectedTypes.length; i++){
                 tok.nextValidToken();
                 //System.out.println(tok.getTokenType() + " -> " + tok.getStringValue());
-                junit.framework.Assert.assertEquals("Position " + i, expectedTypes[i], tok.getTokenType());
+                Assert.assertEquals("Position " + i, expectedTypes[i], tok.getTokenType());
             }
         }
 
@@ -206,96 +206,96 @@ public class PdfWriterTest {
             PRTokeniser tok = new PRTokeniser(new RandomAccessFileOrArray(factory.createSource(data.getBytes())));
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.StartDic);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.StartDic);
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
             PdfName name = new PdfName(tok.getByteContent());
-            junit.framework.Assert.assertEquals("Size", name.getValue());
+            Assert.assertEquals("Size", name.getValue());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
             PdfNumber num = new PdfNumber(tok.getByteContent());
-            junit.framework.Assert.assertEquals("70", num.toString());
+            Assert.assertEquals("70", num.toString());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
             name = new PdfName(tok.getByteContent());
-            junit.framework.Assert.assertEquals("Value ", name.getValue());
+            Assert.assertEquals("Value ", name.getValue());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
             num = new PdfNumber(tok.getByteContent());
-            junit.framework.Assert.assertNotSame("0.1", num.toString());
+            Assert.assertNotSame("0.1", num.toString());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
             name = new PdfName(tok.getByteContent());
-            junit.framework.Assert.assertEquals("Root", name.getValue());
+            Assert.assertEquals("Root", name.getValue());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Ref);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Ref);
             PdfIndirectReference ref = new PdfIndirectReference(null, tok.getReference(), tok.getGeneration(), null);
-            junit.framework.Assert.assertEquals("46 0 R", ref.toString());
+            Assert.assertEquals("46 0 R", ref.toString());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
             name = new PdfName(tok.getByteContent());
-            junit.framework.Assert.assertEquals("Info", name.getValue());
+            Assert.assertEquals("Info", name.getValue());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Ref);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Ref);
             ref = new PdfIndirectReference(null, tok.getReference(), tok.getGeneration(), null);
-            junit.framework.Assert.assertEquals("44 0 R", ref.toString());
+            Assert.assertEquals("44 0 R", ref.toString());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
             name = new PdfName(tok.getByteContent());
-            junit.framework.Assert.assertEquals("ID", name.getValue());
+            Assert.assertEquals("ID", name.getValue());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.StartArray);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.StartArray);
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.String);
-            junit.framework.Assert.assertSame(tok.isHexString(), true);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.String);
+            Assert.assertSame(tok.isHexString(), true);
             PdfString str = new PdfString(tok.getByteContent(), tok.isHexString());
-            junit.framework.Assert.assertEquals("some hex string ", str.getValue());
+            Assert.assertEquals("some hex string ", str.getValue());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.String);
-            junit.framework.Assert.assertSame(tok.isHexString(), false);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.String);
+            Assert.assertSame(tok.isHexString(), false);
             str = new PdfString(tok.getByteContent(), tok.isHexString());
-            junit.framework.Assert.assertEquals("some simple string ", str.getValue());
+            Assert.assertEquals("some simple string ", str.getValue());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.String);
-            junit.framework.Assert.assertSame(tok.isHexString(), true);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.String);
+            Assert.assertSame(tok.isHexString(), true);
             str = new PdfString(tok.getByteContent(), tok.isHexString());
-            junit.framework.Assert.assertEquals("\u008C%GÕ\u008DKÒÆóÓ+\u0083\u000Bã%\u009D ", str.toString());
+            Assert.assertEquals("\u008C%GÕ\u008DKÒÆóÓ+\u0083\u000Bã%\u009D ", str.toString());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
             num = new PdfNumber(tok.getByteContent());
-            junit.framework.Assert.assertEquals("-70.1", num.toString());
+            Assert.assertEquals("-70.1", num.toString());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
             num = new PdfNumber(tok.getByteContent());
-            junit.framework.Assert.assertEquals("0.2", num.toString());
+            Assert.assertEquals("0.2", num.toString());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.EndArray);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.EndArray);
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
             name = new PdfName(tok.getByteContent());
-            junit.framework.Assert.assertEquals("Prev", name.getValue());
+            Assert.assertEquals("Prev", name.getValue());
 
             tok.nextValidToken();
-            junit.framework.Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
+            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
             num = new PdfNumber(tok.getByteContent());
-            junit.framework.Assert.assertEquals("-116.23", num.toString());
+            Assert.assertEquals("-116.23", num.toString());
         }
     }
 }

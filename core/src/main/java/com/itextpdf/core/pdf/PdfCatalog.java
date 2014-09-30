@@ -15,11 +15,6 @@ public class PdfCatalog extends PdfDictionary {
         put(PdfName.Type, PdfName.Catalog);
     }
 
-    @Override
-    public boolean canBeInObjStm() {
-        return false;
-    }
-
     public void addPage(PdfPage page) throws PdfException {
         if (page.isFlushed())
             throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted);
@@ -55,11 +50,11 @@ public class PdfCatalog extends PdfDictionary {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    public void flush(boolean canBeInObjStm) throws IOException, PdfException {
         if (isFlushed())
             return;
         put(PdfName.Pages, pageTree.generateTree());
-        super.flush();
+        super.flush(canBeInObjStm);
     }
 
 }

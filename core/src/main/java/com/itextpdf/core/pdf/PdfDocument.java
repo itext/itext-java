@@ -75,7 +75,7 @@ public class PdfDocument implements IEventDispatcher {
      */
     public PdfDocument(PdfReader reader) throws IOException {
         this.reader = reader;
-        initialize();
+        open();
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.OpenDocument, this), true);
     }
 
@@ -87,7 +87,7 @@ public class PdfDocument implements IEventDispatcher {
      */
     public PdfDocument(PdfWriter writer) throws IOException {
         this.writer = writer;
-        initialize();
+        open();
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.OpenDocument, this), true);
     }
 
@@ -100,7 +100,7 @@ public class PdfDocument implements IEventDispatcher {
     public PdfDocument(PdfReader reader, PdfWriter writer) throws IOException {
         this.reader = reader;
         this.writer = writer;
-        initialize();
+        open();
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.OpenDocument, this), true);
     }
 
@@ -114,8 +114,8 @@ public class PdfDocument implements IEventDispatcher {
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.CloseDocument, this));
         removeAllHandlers();
         if (writer != null) {
-            catalog.flush();
-            info.flush();
+            catalog.flush(false);
+            info.flush(false);
             writer.flushWaitingObjects();
             int startxref = writer.writeXRefTable();
             writer.writeTrailer(startxref);
@@ -352,7 +352,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @throws IOException
      */
-    protected void initialize() throws IOException {
+    protected void open() throws IOException {
         if (writer != null) {
             writer.pdfDocument = this;
             if (reader == null) {

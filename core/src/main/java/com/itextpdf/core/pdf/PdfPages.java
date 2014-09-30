@@ -11,32 +11,38 @@ import java.io.IOException;
  *
  * {@see PdfPage}
  */
-public class PdfPages extends PdfDictionary {
+public class PdfPages extends PdfObjectWrapper<PdfDictionary> {
+
     private PdfArray kids;
-    private int pagesCount;
+    private PdfNumber pageCount;
+
+    public PdfPages(PdfDictionary pdfObject) {
+        super(pdfObject);
+    }
 
     /**
      * Create new instance of {@code PdfPages}
-     * @param doc {@see PdfDocument}
+     * @param pdfDocument {@see PdfDocument}
      */
-    public PdfPages(PdfDocument doc) {
-        super();
-        makeIndirect(doc);
+    public PdfPages(PdfDocument pdfDocument) {
+        super(new PdfDictionary(), pdfDocument);
+        pdfObject.put(PdfName.Type, PdfName.Pages);
         kids = new PdfArray();
-        put(PdfName.Type, PdfName.Pages);
-        put(PdfName.Kids, kids);
+        pdfObject.put(PdfName.Kids, kids);
+        pageCount = new PdfNumber(0);
+        pdfObject.put(PdfName.Count, pageCount);
     }
 
     /**
      * Add {@see PdfPage} or {@code PdfPages} to the list of kids of this {code PdfPages}.
      * @param page {@see PdfPage} or {@see PdfPages} to add
      */
-    public void addPage(PdfObject page) {
+    public void addPage(PdfObjectWrapper page) {
         if (page instanceof PdfPage)
-            pagesCount++;
+            pageCount.setValue(pageCount.getIntValue() + 1);
         else if (page instanceof PdfPages)
-            pagesCount += ((PdfPages)page).getPagesCount();
-        kids.add(page);
+            pageCount.setValue(pageCount.getIntValue() + ((PdfPages)page).getPageCount());
+        kids.add(page.getPdfObject());
     }
 
     /**
@@ -51,8 +57,8 @@ public class PdfPages extends PdfDictionary {
      * @param page {@see PdfPage}
      */
     public void insertPage(int index, PdfPage page) {
-        pagesCount++;
-        kids.add(index, page);
+        pageCount.setValue(pageCount.getIntValue() + 1);
+        kids.add(index, page.getPdfObject());
     }
 
     /**
@@ -70,15 +76,7 @@ public class PdfPages extends PdfDictionary {
      *
      * @return the number of {@see PdfPage} in this {@code PdfPages}
      */
-    protected int getPagesCount() {
-        return pagesCount;
+    protected int getPageCount() {
+        return pageCount.getIntValue();
     }
-
-    @Override
-    public void flush() throws IOException, PdfException {
-        put(PdfName.Count, new PdfNumber(pagesCount));
-        kids = null;
-        super.flush();
-    }
-
 }

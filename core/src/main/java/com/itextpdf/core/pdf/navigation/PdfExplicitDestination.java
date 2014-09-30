@@ -74,7 +74,7 @@ public class PdfExplicitDestination extends PdfArray implements IPdfDestination 
 
     static public PdfExplicitDestination create(PdfPage page, PdfName type, float left, float bottom, float right, float top, float zoom) {
         PdfExplicitDestination dest = new PdfExplicitDestination();
-        dest.add(page);
+        dest.add(page.getPdfObject());
         dest.add(type);
         return dest.add(left).add(bottom).add(right).add(top).add(zoom);
     }

@@ -1,14 +1,18 @@
 package com.itextpdf.core.pdf;
 
-public class PdfFormXObject extends PdfStream implements IPdfXObject {
+public class PdfFormXObject extends PdfObjectWrapper<PdfStream> implements IPdfXObject {
+
+    public PdfFormXObject(PdfStream pdfObject) {
+        super(pdfObject);
+    }
 
     public PdfFormXObject(PdfDocument doc) {
-        super(doc);
-        put(PdfName.Resources, new PdfResources());
+        this(new PdfStream(doc));
+        pdfObject.put(PdfName.Resources, new PdfResources());
     }
 
     /**
-     * Creates form XObject from page content
+     * Creates form XObject from page content.
      *
      * @param page
      */
@@ -17,7 +21,7 @@ public class PdfFormXObject extends PdfStream implements IPdfXObject {
     }
 
     public PdfResources getResources() {
-        return (PdfResources)get(PdfName.Resources);
+        return (PdfResources)pdfObject.get(PdfName.Resources);
     }
 
 }

@@ -40,9 +40,20 @@ abstract public class PdfObject {
      * @throws PdfException
      */
     public void flush() throws IOException, PdfException {
+        flush(true);
+    }
+
+    /**
+     * Flushes the object to the document.
+     *
+     * @param canBeInObjStm indicates whether object can be placed into object stream.
+     * @throws IOException
+     * @throws PdfException
+     */
+    public void flush(boolean canBeInObjStm) throws IOException, PdfException {
         PdfWriter writer = getWriter();
         if (writer != null)
-            writer.flushObject(this);
+            writer.flushObject(this, getType() != Stream && getType() != IndirectReference && canBeInObjStm);
     }
 
     /**
@@ -65,15 +76,6 @@ abstract public class PdfObject {
     public PdfObject makeIndirect(PdfDocument document) {
         setDocument(document);
         return this;
-    }
-
-    /**
-     * Indicates if the object can be placed to object stream.
-     *
-     * @return true if object can be placed to object stream, false otherwise.
-     */
-    public boolean canBeInObjStm() {
-        return true;
     }
 
     /**
@@ -115,7 +117,6 @@ abstract public class PdfObject {
             return doc.getWriter();
         return null;
     }
-
 
 
 }

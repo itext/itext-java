@@ -5,74 +5,69 @@ import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.PageSize;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class PdfPage extends PdfDictionary {
+public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     public final static int FirstPage = 1;
     public final static int LastPage = Integer.MAX_VALUE;
 
-    protected PageSize pageSize = null;
-    protected List<PdfStream> contentStreams = null;
-
-    public PdfPage(PdfDocument doc) {
-        this(doc, doc.getDefaultPageSize());
+    public PdfPage(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
-    public PdfPage(PdfDocument doc, PageSize pageSize) {
-        super();
-        makeIndirect(doc);
-        //NOTE: Write PdfResources as Direct Object
-        put(PdfName.Resources, new PdfResources());
-        contentStreams = new ArrayList<PdfStream>();
-        PdfStream contentStream = new PdfStream(getDocument());
-        contentStreams.add(contentStream);
-        put(PdfName.Type, PdfName.Page);
-        put(PdfName.MediaBox, new PdfArray(pageSize));
-        this.pageSize = pageSize;
-        doc.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
+    public PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
+        super(new PdfDictionary(), pdfDocument);
+        PdfStream contentStream = new PdfStream(pdfDocument);
+        pdfObject.put(PdfName.Contents, contentStream);
+        pdfObject.put(PdfName.Resources, new PdfResources());
+        pdfObject.put(PdfName.Type, PdfName.Page);
+        pdfObject.put(PdfName.MediaBox, new PdfArray(pageSize));
+        pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
+    }
+
+    public PdfPage(PdfDocument pdfDocument) {
+        this(pdfDocument, pdfDocument.getDefaultPageSize());
     }
 
     public PdfStream getContentStream() {
-        return contentStreams.get(contentStreams.size() - 1);
+        PdfObject contents = pdfObject.get(PdfName.Contents);
+        if (contents instanceof PdfStream)
+            return (PdfStream)contents;
+        else if (contents instanceof PdfArray) {
+            PdfArray a = (PdfArray)contents;
+            return (PdfStream)a.get(a.size() - 1);
+        } else
+            return null;
     }
 
     public PdfStream newContentStreamBefore() {
-        PdfStream contentStream = new PdfStream(getDocument());
-        contentStreams.add(0, contentStream);
-        return contentStream;
+        return newContentStream(true);
     }
 
     public PdfStream newContentStreamAfter() {
-        PdfStream contentStream = new PdfStream(getDocument());
-        contentStreams.add(contentStream);
-        return contentStream;
+        return newContentStream(false);
     }
 
     public PdfResources getResources() {
-        return (PdfResources)get(PdfName.Resources);
+        return (PdfResources) pdfObject.get(PdfName.Resources);
     }
 
-    @Override
-    public void flush() throws IOException, PdfException {
-        if (isFlushed())
-            return;
-        if (contentStreams != null) {
-            for (PdfStream contentStream : contentStreams)
-                contentStream.flush();
-            if (contentStreams.size() == 1) {
-                put(PdfName.Contents, contentStreams.get(0));
-            } else {
-                ArrayList<PdfObject> streams = new ArrayList<PdfObject>();
-                for (PdfStream contentStream : contentStreams)
-                    streams.add(contentStream);
-                put(PdfName.Contents, new PdfArray(streams));
-            }
-            contentStreams.clear();
-            contentStreams = null;
+    private PdfStream newContentStream(boolean before) {
+        PdfObject contents = pdfObject.get(PdfName.Contents);
+        PdfArray a = null;
+        if (contents instanceof PdfStream) {
+            a = new PdfArray();
+            a.add(contents);
         }
-        super.flush();
+        else if (contents instanceof PdfArray) {
+            a = (PdfArray)contents;
+        }
+        PdfStream contentStream = new PdfStream(pdfObject.getDocument());
+        if (before)
+            a.add(0, contentStream);
+        else
+            a.add(contentStream);
+        return contentStream;
     }
 
 }
