@@ -30,7 +30,7 @@ public class PdfPagesTest {
 
         for (int i = 0; i < 111; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.put(PageNum, new PdfNumber(i));
+            page.getPdfObject().put(PageNum, new PdfNumber(i));
             page.flush();
         }
         pdfDoc.close();
@@ -47,7 +47,7 @@ public class PdfPagesTest {
         for (int i = 111; i > 0; i--) {
             PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
             pdfDoc.insertPage(1, page);
-            page.put(PageNum, new PdfNumber(i));
+            page.getPdfObject().put(PageNum, new PdfNumber(i));
             page.flush();
         }
         pdfDoc.close();
@@ -78,7 +78,7 @@ public class PdfPagesTest {
 
         for (int i = 0; i < indexes.length; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.put(PageNum, new PdfNumber(indexes[i]));
+            page.getPdfObject().put(PageNum, new PdfNumber(indexes[i]));
             //page.flush();
             pages[indexes[i] - 1] = page;
         }
@@ -115,7 +115,7 @@ public class PdfPagesTest {
 
         for (int i = 0; i < indexes.length; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.put(PageNum, new PdfNumber(indexes[i]));
+            page.getPdfObject().put(PageNum, new PdfNumber(indexes[i]));
             pages[indexes[i] - 1] = indexes[i];
         }
 
