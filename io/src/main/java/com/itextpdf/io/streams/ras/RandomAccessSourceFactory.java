@@ -154,7 +154,12 @@ public final class RandomAccessSourceFactory {
             } catch (MapFailedException e){
                 return new RAFRandomAccessSource(raf);
             }
-        } catch (IOException | RuntimeException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
+        } catch (IOException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
+            try{
+                raf.close();
+            } catch (IOException ignore){}
+            throw e;
+        } catch (RuntimeException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
             try{
                 raf.close();
             } catch (IOException ignore){}
