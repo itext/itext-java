@@ -1,11 +1,10 @@
 package com.itextpdf.core.pdf;
 
-public class PdfFormXObject extends PdfContentStream implements IPdfXObject {
+public class PdfFormXObject extends PdfStream implements IPdfXObject {
 
     public PdfFormXObject(PdfDocument doc) {
         super(doc);
-        setResources(new PdfResources());
-        put(PdfName.Resources, getResources());
+        put(PdfName.Resources, new PdfResources());
     }
 
     /**
@@ -15,6 +14,10 @@ public class PdfFormXObject extends PdfContentStream implements IPdfXObject {
      */
     public PdfFormXObject(PdfPage page) {
         this(page.getDocument());
+    }
+
+    public PdfResources getResources() {
+        return (PdfResources)get(PdfName.Resources);
     }
 
 }

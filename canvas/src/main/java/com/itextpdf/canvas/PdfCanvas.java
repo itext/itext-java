@@ -2,11 +2,9 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.canvas.colors.Color;
 import com.itextpdf.core.exceptions.PdfException;
-import com.itextpdf.core.fonts.PdfFont;
-import com.itextpdf.core.pdf.IPdfXObject;
-import com.itextpdf.core.pdf.PdfContentStream;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.fonts.PdfEncodings;
+import com.itextpdf.core.fonts.PdfFont;
+import com.itextpdf.core.pdf.*;
 import com.itextpdf.io.streams.OutputStream;
 
 import java.io.IOException;
@@ -45,25 +43,36 @@ public class PdfCanvas {
 
     protected Stack<PdfGraphicsState> gsStack = new Stack<PdfGraphicsState>();
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
-    protected PdfContentStream contentStream;
+    protected PdfStream contentStream;
+    protected PdfResources resources;
 
     /**
-     * Creates PdfCanvas from content stream of page, form XObject, patter etc.
+     * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
      *
-     * @param contentStream @see PdfContentStream.
+     * @param contentStream @see PdfStream.
      */
-    public PdfCanvas(PdfContentStream contentStream) {
+    public PdfCanvas(PdfStream contentStream, PdfResources resources) {
         this.contentStream = contentStream;
+        this.resources = resources;
     }
 
     /**
-     * Convenience method for fast PDfCanvas creation by a certain page.
+     * Convenience method for fast PdfCanvas creation by a certain page.
      *
-     * @param doc @see PdfDocument.
+     * @param page page to create canvas from.
+     */
+    public PdfCanvas(PdfPage page) {
+        this(page.getContentStream(), page.getResources());
+    }
+
+    /**
+     * Convenience method for fast PdfCanvas creation by a certain page.
+     *
+     * @param doc     @see PdfDocument.
      * @param pageNum page number.
      */
     public PdfCanvas(PdfDocument doc, int pageNum) {
-        this(doc.getPage(pageNum).getContentStream());
+        this(doc.getPage(pageNum));
     }
 
     /**
@@ -129,7 +138,7 @@ public class PdfCanvas {
         if (size < 0.0001f && size > -0.0001f)
             throw new PdfException(PdfException.FontSizeTooSmall);
         currentGs.size = size;
-        currentGs.fontName = contentStream.getResources().addFont(font);
+        currentGs.fontName = resources.addFont(font);
         contentStream.getOutputStream()
                 .write(currentGs.fontName)
                 .writeSpace()
@@ -228,7 +237,7 @@ public class PdfCanvas {
      */
     private void escapeString(final byte b[]) throws IOException {
         OutputStream output = contentStream.getOutputStream();
-        output.writeByte((byte)'(');
+        output.writeByte((byte) '(');
         for (int k = 0; k < b.length; ++k) {
             byte c = b[k];
             switch (c) {
@@ -250,13 +259,13 @@ public class PdfCanvas {
                 case '(':
                 case ')':
                 case '\\':
-                    output.writeByte((byte)'\\').writeByte(c);
+                    output.writeByte((byte) '\\').writeByte(c);
                     break;
                 default:
                     output.writeByte(c);
             }
         }
-        output.writeByte((byte)')');
+        output.writeByte((byte) ')');
     }
 
 
@@ -371,16 +380,16 @@ public class PdfCanvas {
      * starting at startAng degrees and covering extent degrees. Angles
      * start with 0 to the right (+x) and increase counter-clockwise.
      *
-     * @param x1 a corner of the enclosing rectangle.
-     * @param y1 a corner of the enclosing rectangle.
-     * @param x2 a corner of the enclosing rectangle.
-     * @param y2 a corner of the enclosing rectangle.
+     * @param x1       a corner of the enclosing rectangle.
+     * @param y1       a corner of the enclosing rectangle.
+     * @param x2       a corner of the enclosing rectangle.
+     * @param y2       a corner of the enclosing rectangle.
      * @param startAng starting angle in degrees.
-     * @param extent angle extent in degrees.
+     * @param extent   angle extent in degrees.
      * @return current canvas.
      */
     public PdfCanvas arc(final float x1, final float y1, final float x2, final float y2,
-                    final float startAng, final float extent) throws IOException {
+                         final float startAng, final float extent) throws IOException {
         ArrayList<float[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty())
             return this;
@@ -396,26 +405,26 @@ public class PdfCanvas {
 
     /**
      * Generates an array of bezier curves to draw an arc.
-     * <p>
+     * <p/>
      * (x1, y1) and (x2, y2) are the corners of the enclosing rectangle.
      * Angles, measured in degrees, start with 0 to the right (the positive X
      * axis) and increase counter-clockwise.  The arc extends from startAng
      * to startAng+extent.  i.e. startAng=0 and extent=180 yields an openside-down
      * semi-circle.
-     * <p>
+     * <p/>
      * The resulting coordinates are of the form float[]{x1,y1,x2,y2,x3,y3, x4,y4}
      * such that the curve goes from (x1, y1) to (x4, y4) with (x2, y2) and
      * (x3, y3) as their respective Bezier control points.
-     * <p>
+     * <p/>
      * Note: this code was taken from ReportLab (www.reportlab.org), an excellent
      * PDF generator for Python (BSD license: http://www.reportlab.org/devfaq.html#1.3 ).
      *
-     * @param x1 a corner of the enclosing rectangle.
-     * @param y1 a corner of the enclosing rectangle.
-     * @param x2 a corner of the enclosing rectangle.
-     * @param y2 a corner of the enclosing rectangle.
+     * @param x1       a corner of the enclosing rectangle.
+     * @param y1       a corner of the enclosing rectangle.
+     * @param x2       a corner of the enclosing rectangle.
+     * @param y2       a corner of the enclosing rectangle.
      * @param startAng starting angle in degrees.
-     * @param extent angle extent in degrees.
+     * @param extent   angle extent in degrees.
      * @return a list of float[] with the bezier curves.
      */
     public static ArrayList<float[]> bezierArc(float x1, float y1, float x2, float y2, final float startAng, final float extent) {
@@ -436,25 +445,24 @@ public class PdfCanvas {
         if (Math.abs(extent) <= 90f) {
             fragAngle = extent;
             Nfrag = 1;
-        }
-        else {
-            Nfrag = (int)Math.ceil(Math.abs(extent)/90f);
+        } else {
+            Nfrag = (int) Math.ceil(Math.abs(extent) / 90f);
             fragAngle = extent / Nfrag;
         }
-        float x_cen = (x1+x2)/2f;
-        float y_cen = (y1+y2)/2f;
-        float rx = (x2-x1)/2f;
-        float ry = (y2-y1)/2f;
-        float halfAng = (float)(fragAngle * Math.PI / 360.);
-        float kappa = (float)Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
+        float x_cen = (x1 + x2) / 2f;
+        float y_cen = (y1 + y2) / 2f;
+        float rx = (x2 - x1) / 2f;
+        float ry = (y2 - y1) / 2f;
+        float halfAng = (float) (fragAngle * Math.PI / 360.);
+        float kappa = (float) Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
         ArrayList<float[]> pointList = new ArrayList<float[]>();
         for (int i = 0; i < Nfrag; ++i) {
-            float theta0 = (float)((startAng + i*fragAngle) * Math.PI / 180.);
-            float theta1 = (float)((startAng + (i+1)*fragAngle) * Math.PI / 180.);
-            float cos0 = (float)Math.cos(theta0);
-            float cos1 = (float)Math.cos(theta1);
-            float sin0 = (float)Math.sin(theta0);
-            float sin1 = (float)Math.sin(theta1);
+            float theta0 = (float) ((startAng + i * fragAngle) * Math.PI / 180.);
+            float theta1 = (float) ((startAng + (i + 1) * fragAngle) * Math.PI / 180.);
+            float cos0 = (float) Math.cos(theta0);
+            float cos1 = (float) Math.cos(theta1);
+            float sin0 = (float) Math.sin(theta0);
+            float sin1 = (float) Math.sin(theta1);
             if (fragAngle > 0f) {
                 pointList.add(new float[]{x_cen + rx * cos0,
                         y_cen - ry * sin0,
@@ -464,8 +472,7 @@ public class PdfCanvas {
                         y_cen - ry * (sin1 - kappa * cos1),
                         x_cen + rx * cos1,
                         y_cen - ry * sin1});
-            }
-            else {
+            } else {
                 pointList.add(new float[]{x_cen + rx * cos0,
                         y_cen - ry * sin0,
                         x_cen + rx * (cos0 + kappa * sin0),
@@ -482,9 +489,9 @@ public class PdfCanvas {
     /**
      * Draws rectangle.
      *
-     * @param x x coordinate of the starting point.
-     * @param y y coordinate of the starting point.
-     * @param width width.
+     * @param x      x coordinate of the starting point.
+     * @param y      y coordinate of the starting point.
+     * @param width  width.
      * @param height height.
      * @return current canvas.
      */
@@ -504,9 +511,9 @@ public class PdfCanvas {
     /**
      * Draws rounded rectangle.
      *
-     * @param x x coordinate of the starting point.
-     * @param y y coordinate of the starting point.
-     * @param width width.
+     * @param x      x coordinate of the starting point.
+     * @param y      y coordinate of the starting point.
+     * @param width  width.
      * @param height height.
      * @param radius radius of the arc corner.
      * @return current canvas.
@@ -535,7 +542,8 @@ public class PdfCanvas {
         return this;
     }
 
-    /** Draws a circle. The endpoint will (x+r, y).
+    /**
+     * Draws a circle. The endpoint will (x+r, y).
      *
      * @param x x center of circle.
      * @param y y center of circle.
@@ -617,8 +625,8 @@ public class PdfCanvas {
      * Adds XObject.
      *
      * @param xObj the XObject.
-     * @param x x coordinate.
-     * @param y y coordinate.
+     * @param x    x coordinate.
+     * @param y    y coordinate.
      * @return current canvas.
      */
     public PdfCanvas addXObject(IPdfXObject xObj, float x, float y) {

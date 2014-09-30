@@ -39,7 +39,7 @@ public class PdfCanvasTest {
                 setCreator(creator).
                 setTitle(title);
         PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1.getContentStream());
+        PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
         pdfDoc.close();
 
@@ -69,7 +69,7 @@ public class PdfCanvasTest {
                 setCreator(creator).
                 setTitle(title);
         PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1.getContentStream());
+        PdfCanvas canvas = new PdfCanvas(page1);
         canvas
                 .saveState()
                 .setLineWidth(30)
@@ -145,7 +145,7 @@ public class PdfCanvasTest {
                 setCreator(creator).
                 setTitle(title);
         PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1.getContentStream());
+        PdfCanvas canvas = new PdfCanvas(page1);
         //Initialize canvas and write text to it
         canvas
                 .saveState()
@@ -227,7 +227,7 @@ public class PdfCanvasTest {
                 setCreator(creator).
                 setTitle(title);
         PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1.getContentStream());
+        PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
         page1.flush();
         pdfDoc.close();
@@ -257,7 +257,7 @@ public class PdfCanvasTest {
                 setCreator(creator).
                 setTitle(title);
         PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1.getContentStream());
+        PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
         pdfDoc.close();
 
@@ -286,7 +286,7 @@ public class PdfCanvasTest {
                 setCreator(creator).
                 setTitle(title);
         PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1.getContentStream());
+        PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
         page1.flush();
         pdfDoc.close();
@@ -317,7 +317,7 @@ public class PdfCanvasTest {
         int pageCount = 1000;
         for (int i = 0; i < pageCount; i ++) {
             PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page.getContentStream());
+            PdfCanvas canvas = new PdfCanvas(page);
             canvas.rectangle(100, 100, 100, 100).fill();
             page.flush();
         }
@@ -353,7 +353,7 @@ public class PdfCanvasTest {
         int pageCount = 1000;
         for (int i = 0; i < pageCount; i ++) {
             PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page.getContentStream());
+            PdfCanvas canvas = new PdfCanvas(page);
             canvas.saveState()
                     .beginText()
                     .moveText(36, 650)
@@ -395,7 +395,7 @@ public class PdfCanvasTest {
                 setTitle(title);
         for (int i = 0; i < 1000; i ++) {
             PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page.getContentStream());
+            PdfCanvas canvas = new PdfCanvas(page);
             canvas.rectangle(100, 100, 100, 100).fill();
             page.flush();
         }

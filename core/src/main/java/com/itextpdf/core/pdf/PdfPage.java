@@ -14,8 +14,7 @@ public class PdfPage extends PdfDictionary {
     public final static int LastPage = Integer.MAX_VALUE;
 
     protected PageSize pageSize = null;
-    protected List<PdfContentStream> contentStreams = null;
-    protected PdfResources resources = null;
+    protected List<PdfStream> contentStreams = null;
 
     public PdfPage(PdfDocument doc) {
         this(doc, doc.getDefaultPageSize());
@@ -25,34 +24,34 @@ public class PdfPage extends PdfDictionary {
         super();
         makeIndirect(doc);
         //NOTE: Write PdfResources as Direct Object
-        resources = new PdfResources();
-        contentStreams = new ArrayList<PdfContentStream>();
-        PdfContentStream contentStream = new PdfContentStream(getDocument());
-        contentStream.setResources(resources);
+        put(PdfName.Resources, new PdfResources());
+        contentStreams = new ArrayList<PdfStream>();
+        PdfStream contentStream = new PdfStream(getDocument());
         contentStreams.add(contentStream);
         put(PdfName.Type, PdfName.Page);
         put(PdfName.MediaBox, new PdfArray(pageSize));
-        put(PdfName.Resources, resources);
         this.pageSize = pageSize;
         doc.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
-    public PdfContentStream getContentStream() {
+    public PdfStream getContentStream() {
         return contentStreams.get(contentStreams.size() - 1);
     }
 
-    public PdfContentStream newContentStreamBefore() {
-        PdfContentStream contentStream = new PdfContentStream(getDocument());
-        contentStream.setResources(resources);
+    public PdfStream newContentStreamBefore() {
+        PdfStream contentStream = new PdfStream(getDocument());
         contentStreams.add(0, contentStream);
         return contentStream;
     }
 
-    public PdfContentStream newContentStreamAfter() {
-        PdfContentStream contentStream = new PdfContentStream(getDocument());
-        contentStream.setResources(resources);
+    public PdfStream newContentStreamAfter() {
+        PdfStream contentStream = new PdfStream(getDocument());
         contentStreams.add(contentStream);
         return contentStream;
+    }
+
+    public PdfResources getResources() {
+        return (PdfResources)get(PdfName.Resources);
     }
 
     @Override
@@ -60,13 +59,13 @@ public class PdfPage extends PdfDictionary {
         if (isFlushed())
             return;
         if (contentStreams != null) {
-            for (PdfContentStream contentStream : contentStreams)
+            for (PdfStream contentStream : contentStreams)
                 contentStream.flush();
             if (contentStreams.size() == 1) {
                 put(PdfName.Contents, contentStreams.get(0));
             } else {
                 ArrayList<PdfObject> streams = new ArrayList<PdfObject>();
-                for (PdfContentStream contentStream : contentStreams)
+                for (PdfStream contentStream : contentStreams)
                     streams.add(contentStream);
                 put(PdfName.Contents, new PdfArray(streams));
             }
