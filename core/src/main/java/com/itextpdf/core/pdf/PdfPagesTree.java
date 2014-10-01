@@ -35,7 +35,8 @@ class PdfPagesTree {
         PdfDictionary currentPdfPages = parents.get(parents.size() - 1);
         PdfNumber pagesCount = (PdfNumber)currentPdfPages.get(PdfName.Count);
         if (pagesCount.getIntValue() % leafSize == 0 && pages.size() != 0) {
-            parents.add(createNewPdfPages());
+            currentPdfPages = createNewPdfPages();
+            parents.add(currentPdfPages);
         }
         PdfArray pdfPagesKids = (PdfArray)currentPdfPages.get(PdfName.Kids);
         pdfPagesKids.add(page.getPdfObject());

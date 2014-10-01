@@ -2,13 +2,18 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.fonts.PdfStandardFont;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfDictionary;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,7 +78,7 @@ public class PdfCanvasTest {
         canvas
                 .saveState()
                 .setLineWidth(30)
-                .moveTo(36,700)
+                .moveTo(36, 700)
                 .lineTo(300, 300)
                 .stroke()
                 .restoreState();
@@ -315,7 +320,7 @@ public class PdfCanvasTest {
                 setCreator(creator).
                 setTitle(title);
         int pageCount = 1000;
-        for (int i = 0; i < pageCount; i ++) {
+        for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             canvas.rectangle(100, 100, 100, 100).fill();
@@ -351,14 +356,14 @@ public class PdfCanvasTest {
                 setCreator(creator).
                 setTitle(title);
         int pageCount = 1000;
-        for (int i = 0; i < pageCount; i ++) {
+        for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             canvas.saveState()
                     .beginText()
                     .moveText(36, 650)
                     .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Courier), 16)
-                    .showText("Page " + (i+1))
+                    .showText("Page " + (i + 1))
                     .endText();
 
             canvas.rectangle(100, 100, 100, 100).fill();
@@ -393,7 +398,7 @@ public class PdfCanvasTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        for (int i = 0; i < 1000; i ++) {
+        for (int i = 0; i < 1000; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             canvas.rectangle(100, 100, 100, 100).fill();
@@ -412,5 +417,116 @@ public class PdfCanvasTest {
         }
         reader.close();
     }
+
+    @Test
+    public void comparePerformanceTest() throws IOException, PdfException, DocumentException {
+        int pageCount = 100000;
+        int runCount = 10;
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        long t1 = System.currentTimeMillis();
+        for (int i = 0; i < runCount; i++) {
+            Document.compress = false;
+            Document document = new Document();
+            FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTest_iText5.pdf");
+            com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(document, fos);
+            document.addAuthor(author);
+            document.addCreator(creator);
+            document.addTitle(title);
+            document.open();
+            for (int k = 0; k < pageCount; k++) {
+                document.newPage();
+                PdfContentByte cb = writer.getDirectContent();
+                cb.rectangle(100, 100, 100, 100);
+                cb.fill();
+            }
+            document.close();
+        }
+        long t2 = System.currentTimeMillis();
+        long iText5Time = t2 - t1;
+        System.out.println(String.format("iText5 time: %dms", iText5Time));
+
+        t1 = System.currentTimeMillis();
+        for (int i = 0; i < runCount; i++) {
+            FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTest_iText6.pdf");
+            PdfWriter writer = new PdfWriter(fos);
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            pdfDoc.getInfo().setAuthor(author).
+                    setCreator(creator).
+                    setTitle(title);
+            for (int k = 0; k < pageCount; k++) {
+                PdfPage page = pdfDoc.addNewPage();
+                PdfCanvas canvas = new PdfCanvas(page);
+                canvas.rectangle(100, 100, 100, 100).fill();
+                page.flush();
+            }
+            pdfDoc.close();
+        }
+        t2 = System.currentTimeMillis();
+        long iText6Time = t2 - t1;
+        System.out.println(String.format("iText6 time: %dms", iText6Time));
+        Assert.assertTrue(iText5Time > iText6Time);
+
+    }
+
+    @Test
+    public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
+        int pageCount = 100000;
+        int runCount = 10;
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        long t1 = System.currentTimeMillis();
+        for (int i = 0; i < runCount; i++) {
+            Document.compress = false;
+            Document document = new Document();
+            FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTestFullCompression_iText5.pdf");
+            com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(document, fos);
+            writer.setFullCompression();
+            document.addAuthor(author);
+            document.addCreator(creator);
+            document.addTitle(title);
+            document.open();
+            for (int k = 0; k < pageCount; k++) {
+                document.newPage();
+                PdfContentByte cb = writer.getDirectContent();
+                cb.rectangle(100, 100, 100, 100);
+                cb.fill();
+            }
+            document.close();
+        }
+        long t2 = System.currentTimeMillis();
+        long iText5Time = t2 - t1;
+        System.out.println(String.format("iText5 time: %dms", iText5Time));
+
+        t1 = System.currentTimeMillis();
+        for (int i = 0; i < runCount; i++) {
+            FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTestFullCompression_iText6.pdf");
+            PdfWriter writer = new PdfWriter(fos);
+            writer.setFullCompression(true);
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            pdfDoc.getInfo().setAuthor(author).
+                    setCreator(creator).
+                    setTitle(title);
+            for (int k = 0; k < pageCount; k++) {
+                PdfPage page = pdfDoc.addNewPage();
+                PdfCanvas canvas = new PdfCanvas(page);
+                canvas.rectangle(100, 100, 100, 100).fill();
+                page.flush();
+            }
+            pdfDoc.close();
+        }
+        t2 = System.currentTimeMillis();
+        long iText6Time = t2 - t1;
+        System.out.println(String.format("iText6 time: %dms", iText6Time));
+        Assert.assertTrue(iText5Time > iText6Time);
+
+    }
+
 
 }
