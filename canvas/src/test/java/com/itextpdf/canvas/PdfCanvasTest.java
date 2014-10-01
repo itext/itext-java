@@ -420,12 +420,21 @@ public class PdfCanvasTest {
 
     @Test
     public void comparePerformanceTest() throws IOException, PdfException, DocumentException {
+        comparePerformance(false);
+    }
+
+    @Test
+    public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
+        comparePerformance(true);
+    }
+
+    private void comparePerformance(boolean fullCompression) throws IOException, PdfException, DocumentException {
         int pageCount = 100000;
         int runCount = 10;
 
         final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        final String creator = "iText";
+        final String title = "Empty iText Document";
 
         long t1 = System.currentTimeMillis();
         for (int i = 0; i < runCount; i++) {
@@ -433,6 +442,8 @@ public class PdfCanvasTest {
             Document document = new Document();
             FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTest_iText5.pdf");
             com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(document, fos);
+            if (fullCompression)
+                writer.setFullCompression();
             document.addAuthor(author);
             document.addCreator(creator);
             document.addTitle(title);
@@ -453,62 +464,7 @@ public class PdfCanvasTest {
         for (int i = 0; i < runCount; i++) {
             FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTest_iText6.pdf");
             PdfWriter writer = new PdfWriter(fos);
-            PdfDocument pdfDoc = new PdfDocument(writer);
-            pdfDoc.getInfo().setAuthor(author).
-                    setCreator(creator).
-                    setTitle(title);
-            for (int k = 0; k < pageCount; k++) {
-                PdfPage page = pdfDoc.addNewPage();
-                PdfCanvas canvas = new PdfCanvas(page);
-                canvas.rectangle(100, 100, 100, 100).fill();
-                page.flush();
-            }
-            pdfDoc.close();
-        }
-        t2 = System.currentTimeMillis();
-        long iText6Time = t2 - t1;
-        System.out.println(String.format("iText6 time: %dms", iText6Time));
-        Assert.assertTrue(iText5Time > iText6Time);
-
-    }
-
-    @Test
-    public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
-        int pageCount = 100000;
-        int runCount = 10;
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
-
-        long t1 = System.currentTimeMillis();
-        for (int i = 0; i < runCount; i++) {
-            Document.compress = false;
-            Document document = new Document();
-            FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTestFullCompression_iText5.pdf");
-            com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(document, fos);
-            writer.setFullCompression();
-            document.addAuthor(author);
-            document.addCreator(creator);
-            document.addTitle(title);
-            document.open();
-            for (int k = 0; k < pageCount; k++) {
-                document.newPage();
-                PdfContentByte cb = writer.getDirectContent();
-                cb.rectangle(100, 100, 100, 100);
-                cb.fill();
-            }
-            document.close();
-        }
-        long t2 = System.currentTimeMillis();
-        long iText5Time = t2 - t1;
-        System.out.println(String.format("iText5 time: %dms", iText5Time));
-
-        t1 = System.currentTimeMillis();
-        for (int i = 0; i < runCount; i++) {
-            FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTestFullCompression_iText6.pdf");
-            PdfWriter writer = new PdfWriter(fos);
-            writer.setFullCompression(true);
+            writer.setFullCompression(fullCompression);
             PdfDocument pdfDoc = new PdfDocument(writer);
             pdfDoc.getInfo().setAuthor(author).
                     setCreator(creator).
