@@ -150,17 +150,6 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
-        if (isFlushed())
-            return;
-        super.flush();
-        if (isFlushed() && list != null) {
-            clear();
-            list = null;
-        }
-    }
-
-    @Override
     public String toString() {
         String string = "[";
         for (PdfObject entry : this) {

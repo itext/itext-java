@@ -17,17 +17,6 @@ public class PdfStream extends PdfDictionary {
         makeIndirect(doc);
     }
 
-    @Override
-    public void flush(boolean canBeInObjStm) throws IOException, PdfException {
-        if (isFlushed())
-            return;
-        super.flush(canBeInObjStm);
-        if (isFlushed() && outputStream != null) {
-            outputStream.close();
-            outputStream = null;
-        }
-    }
-
     /**
      * Gets output stream.
      *

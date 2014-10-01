@@ -25,6 +25,9 @@ public class PdfObjectStream extends PdfStream {
     public PdfObjectStream(PdfDocument doc) {
         super(doc);
         outputStream.pdfDocument = doc;
+        put(PdfName.Type, PdfName.ObjStm);
+        put(PdfName.N, new PdfNumber(size));
+        put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));
     }
 
     /**
@@ -45,7 +48,8 @@ public class PdfObjectStream extends PdfStream {
         object.getIndirectReference().setObjectStreamNumber(getIndirectReference().getObjNr());
         object.getIndirectReference().setIndex(size);
         outputStream.writeSpace();
-        size++;
+        ((PdfNumber)get(PdfName.N)).setValue(++size);
+        ((PdfNumber)get(PdfName.First)).setValue(indexStream.getCurrentPos());
     }
 
     /**
@@ -55,20 +59,6 @@ public class PdfObjectStream extends PdfStream {
      */
     public int getSize() {
         return size;
-    }
-
-    @Override
-    public void flush(boolean canBeInObjStm) throws IOException, PdfException {
-        if (isFlushed())
-            return;
-        put(PdfName.Type, PdfName.ObjStm);
-        put(PdfName.N, new PdfNumber(size));
-        put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));
-        super.flush(canBeInObjStm);
-        if (isFlushed() && indexStream != null) {
-            indexStream.close();
-            indexStream = null;
-        }
     }
 
     public PdfOutputStream getIndexStream() {

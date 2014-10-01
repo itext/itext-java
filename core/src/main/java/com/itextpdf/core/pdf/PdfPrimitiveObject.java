@@ -29,13 +29,4 @@ abstract class PdfPrimitiveObject extends PdfObject {
         return content;
     }
 
-    @Override
-    public void flush(boolean canBeInObjStm) throws IOException, PdfException {
-        if (isFlushed())
-            return;
-        super.flush(canBeInObjStm);
-        if (isFlushed())
-            content = null;
-    }
-
 }

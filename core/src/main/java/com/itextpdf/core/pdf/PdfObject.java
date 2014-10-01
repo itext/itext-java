@@ -39,7 +39,7 @@ abstract public class PdfObject {
      * @throws IOException
      * @throws PdfException
      */
-    public void flush() throws IOException, PdfException {
+    final public void flush() throws IOException, PdfException {
         flush(true);
     }
 
@@ -50,7 +50,7 @@ abstract public class PdfObject {
      * @throws IOException
      * @throws PdfException
      */
-    public void flush(boolean canBeInObjStm) throws IOException, PdfException {
+    final public void flush(boolean canBeInObjStm) throws IOException, PdfException {
         PdfWriter writer = getWriter();
         if (writer != null)
             writer.flushObject(this, getType() != Stream && getType() != IndirectReference && canBeInObjStm);

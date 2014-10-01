@@ -91,6 +91,48 @@ public class PdfWriter extends PdfOutputStream {
         }
         indirectReference.flushed = true;
         indirectReference.setRefersTo(null);
+        switch (object.getType()) {
+            case PdfObject.Boolean:
+            case PdfObject.Name:
+            case PdfObject.Null:
+            case PdfObject.Number:
+            case PdfObject.String:
+                flushObject((PdfPrimitiveObject)object);
+                break;
+            case PdfObject.Array:
+                flushObject((PdfArray)object);
+                break;
+            case PdfObject.Stream:
+                flushObject((PdfStream)object);
+                break;
+            case PdfObject.Dictionary:
+                flushObject((PdfDictionary)object);
+                break;
+        }
+    }
+
+    protected void flushObject(PdfPrimitiveObject object) {
+        object.content = null;
+    }
+
+    protected void flushObject(PdfArray array) {
+        array.list.clear();
+        array.list = null;
+    }
+
+    protected void flushObject(PdfDictionary dictionary) {
+        dictionary.map.clear();
+        dictionary.map = null;
+    }
+
+    protected void flushObject(PdfStream stream) throws IOException {
+        flushObject((PdfDictionary)stream);
+        stream.outputStream.close();
+        stream.outputStream = null;
+        if (stream instanceof PdfObjectStream) {
+            ((PdfObjectStream)stream).indexStream.close();
+            ((PdfObjectStream)stream).indexStream = null;
+        }
     }
 
     /**
