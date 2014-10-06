@@ -1,8 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
-
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -10,10 +7,15 @@ import java.util.TreeMap;
 
 public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> {
 
-    protected TreeMap<PdfName, PdfObject> map = new TreeMap<PdfName, PdfObject>();
+    protected Map<PdfName, PdfObject> map = new TreeMap<PdfName, PdfObject>();
 
     public PdfDictionary() {
         super();
+    }
+
+    public PdfDictionary(Map<PdfName, PdfObject> map) {
+        for (Entry<PdfName, PdfObject> entry : map.entrySet())
+            this.map.put(entry.getKey(), entry.getValue()) ;
     }
 
     @Override
@@ -90,5 +92,18 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
         }
         string += ">>";
         return string;
+    }
+
+    @Override
+    protected PdfDictionary newInstance() {
+        return new PdfDictionary();
+    }
+
+    @Override
+    protected void copyContent(PdfObject from, PdfDocument document) {
+        PdfDictionary dictionary = (PdfDictionary)from;
+        for (Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
+            map.put(entry.getKey(), entry.getValue().copy(document));
+        }
     }
 }

@@ -32,10 +32,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      */
     protected PdfDocument pdfDocument = null;
 
-    private PdfIndirectReference() {
-        super();
-    }
-
     public PdfIndirectReference(PdfDocument doc, int objNr, PdfObject refersTo) {
         this(doc, objNr, 0, refersTo);
     }
@@ -46,6 +42,10 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.objNr = objNr;
         this.genNr = genNr;
         this.refersTo = refersTo;
+    }
+
+    private PdfIndirectReference() {
+        super();
     }
 
     public int getObjNr() {
@@ -141,5 +141,15 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     @Override
     public String toString() {
         return java.lang.String.format("%d %d R", getObjNr(), getGenNr());
+    }
+
+    @Override
+    protected PdfIndirectReference newInstance() {
+        return new PdfIndirectReference();
+    }
+
+    @Override
+    protected void copyContent(PdfObject from, PdfDocument document) {
+
     }
 }

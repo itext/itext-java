@@ -5,8 +5,6 @@ import com.itextpdf.io.streams.OutputStream;
 
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
-    protected String value = null;
-
     private static final byte[] space = OutputStream.getIsoBytes("#20");                //  ' '
     private static final byte[] percent = OutputStream.getIsoBytes("#25");              //  '%'
     private static final byte[] leftParenthesis = OutputStream.getIsoBytes("#28");      //  '('
@@ -72,6 +70,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName XRef = new PdfName("XRef");
     public static final PdfName XYZ = new PdfName("XYZ");
 
+    protected String value = null;
+
     public PdfName(String value) {
         super();
         this.value = value;
@@ -79,6 +79,10 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     public PdfName(byte[] content) {
         super(content);
+    }
+
+    private PdfName() {
+        super();
     }
 
     @Override
@@ -181,5 +185,17 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @Override
     public String toString() {
         return "/" + getValue();
+    }
+
+    @Override
+    protected PdfName newInstance() {
+        return new PdfName();
+    }
+
+    @Override
+    protected void copyContent(PdfObject from, PdfDocument document) {
+        super.copyContent(from, document);
+        PdfName name = (PdfName)from;
+        value = name.value;
     }
 }

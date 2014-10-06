@@ -21,6 +21,10 @@ public class PdfString extends PdfPrimitiveObject {
         this(content, false);
     }
 
+    private PdfString() {
+        super();
+    }
+
     @Override
     public byte getType() {
         return String;
@@ -38,6 +42,11 @@ public class PdfString extends PdfPrimitiveObject {
         if (value == null)
             generateValue();
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return getValue();
     }
 
     protected void generateValue() {
@@ -148,7 +157,15 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     @Override
-    public String toString() {
-        return getValue();
+    protected PdfString newInstance() {
+        return new PdfString();
+    }
+
+    @Override
+    protected void copyContent(PdfObject from, PdfDocument document) {
+        super.copyContent(from, document);
+        PdfString string = (PdfString)from;
+        value = string.value;
+        hexWriting = string.hexWriting;
     }
 }

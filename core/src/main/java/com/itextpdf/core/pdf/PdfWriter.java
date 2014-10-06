@@ -6,6 +6,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class PdfWriter extends PdfOutputStream {
@@ -25,6 +26,8 @@ public class PdfWriter extends PdfOutputStream {
      * Objects are written to the object stream if fullCompression set to true.
      */
     protected PdfObjectStream objectStream = null;
+
+    protected TreeMap<PdfIndirectReference, PdfIndirectReference> copiedObjects = new TreeMap<PdfIndirectReference, PdfIndirectReference>();
 
     public PdfWriter(java.io.OutputStream os) {
         super(new BufferedOutputStream(os));
@@ -133,6 +136,20 @@ public class PdfWriter extends PdfOutputStream {
             ((PdfObjectStream)stream).indexStream.close();
             ((PdfObjectStream)stream).indexStream = null;
         }
+    }
+
+    protected <T extends PdfObject> T copyObject(T object, PdfDocument document) {
+        PdfIndirectReference indirectReference = object.getIndirectReference();
+        PdfIndirectReference copiedIndirectReference = null;
+        if (indirectReference != null && (copiedIndirectReference = copiedObjects.get(indirectReference)) != null) {
+            return (T)copiedIndirectReference.getRefersTo();
+        }
+        T newObject = object.newInstance();
+        if (indirectReference != null) {
+            copiedObjects.put(indirectReference, newObject.makeIndirect(document).getIndirectReference());
+        }
+        newObject.copyContent(object, document);
+        return newObject;
     }
 
     /**

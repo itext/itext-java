@@ -17,6 +17,10 @@ public class PdfBoolean extends PdfPrimitiveObject {
         this.value = value;
     }
 
+    private PdfBoolean() {
+        super();
+    }
+
     public boolean getValue() {
         return value;
     }
@@ -25,12 +29,25 @@ public class PdfBoolean extends PdfPrimitiveObject {
         return Boolean;
     }
 
+    @Override
+    public String toString() {
+        return java.lang.Boolean.toString(value);
+    }
+
+    @Override
     protected void generateContent() {
         content = value ? True : False;
     }
 
     @Override
-    public String toString() {
-        return java.lang.Boolean.toString(value);
+    protected PdfBoolean newInstance() {
+        return new PdfBoolean();
+    }
+
+    @Override
+    protected void copyContent(PdfObject from, PdfDocument document) {
+        super.copyContent(from, document);
+        PdfBoolean bool = (PdfBoolean)from;
+        value = bool.value;
     }
 }

@@ -17,12 +17,22 @@ public class PdfNull extends PdfPrimitiveObject {
     }
 
     @Override
+    public String toString() {
+        return "null";
+    }
+
+    @Override
     protected void generateContent() {
         content = NullContent;
     }
 
     @Override
-    public String toString() {
-        return "null";
+    protected PdfNull newInstance() {
+        return PdfNull;
+    }
+
+    @Override
+    protected void copyContent(PdfObject from, PdfDocument document) {
+
     }
 }

@@ -26,6 +26,10 @@ public class PdfNumber extends PdfPrimitiveObject {
         this.value = java.lang.Double.NaN;
     }
 
+    private PdfNumber() {
+        super();
+    }
+
     @Override
     public byte getType() {
         return Number;
@@ -59,6 +63,19 @@ public class PdfNumber extends PdfPrimitiveObject {
         this.valueType = Double;
     }
 
+    @Override
+    public String toString() {
+        if (valueType == Int)
+            return new String(OutputStream.getIsoBytes(getIntValue()));
+        else
+            return new String(OutputStream.getIsoBytes(getValue()));
+    }
+
+    @Override
+    protected PdfNumber newInstance() {
+        return new PdfNumber();
+    }
+
     protected byte getValueType() {
         return valueType;
     }
@@ -87,10 +104,11 @@ public class PdfNumber extends PdfPrimitiveObject {
     }
 
     @Override
-    public String toString() {
-        if (valueType == Int)
-            return new String(OutputStream.getIsoBytes(getIntValue()));
-        else
-            return new String(OutputStream.getIsoBytes(getValue()));
+    protected void copyContent(PdfObject from, PdfDocument document) {
+        super.copyContent(from, document);
+        PdfNumber number = (PdfNumber)from;
+        value = number.value;
+        valueType = number.valueType;
     }
+
 }

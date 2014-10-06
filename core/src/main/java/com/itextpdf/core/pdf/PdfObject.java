@@ -54,6 +54,31 @@ abstract public class PdfObject {
         PdfWriter writer = getWriter();
         if (writer != null)
             writer.flushObject(this, getType() != Stream && getType() != IndirectReference && canBeInObjStm);
+
+    }
+
+    /**
+     * Copied object to a specified document.
+     *
+     * @param document document to copy object to.
+     * @return copied object.
+     */
+    public <T extends PdfObject> T copy(PdfDocument document) {
+        PdfWriter writer = getWriter();
+        if (writer != null)
+            return (T) writer.copyObject(this, document);
+        T newObject = newInstance();
+        newObject.copyContent(this, document);
+        return newObject;
+    }
+
+    /**
+     * Copies object.
+     *
+     * @return copied object.
+     */
+    public <T extends PdfObject> T copy() {
+        return copy(getDocument());
     }
 
     /**
@@ -73,9 +98,9 @@ abstract public class PdfObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public PdfObject makeIndirect(PdfDocument document) {
+    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
         setDocument(document);
-        return this;
+        return (T) this;
     }
 
     /**
@@ -111,12 +136,32 @@ abstract public class PdfObject {
         }
     }
 
+    /**
+     * Gets a PdfWriter associated with the document object belongs to.
+     *
+     * @return PdfWriter.
+     */
     protected PdfWriter getWriter() {
         PdfDocument doc = getDocument();
         if (doc != null)
             return doc.getWriter();
         return null;
     }
+
+    /**
+     * Creates new instance of object.
+     *
+     * @return new instance of object.
+     */
+    abstract protected <T extends PdfObject> T newInstance();
+
+    /**
+     * Copies object content from object 'from'.
+     *
+     * @param from object to copy content from.
+     * @param document document to copy object to.
+     */
+    abstract protected void copyContent(PdfObject from, PdfDocument document);
 
 
 }

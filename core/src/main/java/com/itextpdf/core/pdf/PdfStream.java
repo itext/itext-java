@@ -1,9 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
-
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 public class PdfStream extends PdfDictionary {
 
@@ -15,6 +12,10 @@ public class PdfStream extends PdfDictionary {
     public PdfStream(PdfDocument doc) {
         super();
         makeIndirect(doc);
+    }
+
+    private PdfStream() {
+        super();
     }
 
     /**
@@ -31,4 +32,14 @@ public class PdfStream extends PdfDictionary {
         return Stream;
     }
 
+    @Override
+    protected PdfStream newInstance() {
+        return new PdfStream();
+    }
+
+    @Override
+    protected void copyContent(PdfObject from, PdfDocument document) {
+        super.copyContent(from, document);
+
+    }
 }
