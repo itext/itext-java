@@ -53,7 +53,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    public void flush() throws PdfException {
         pdfObject.put(PdfName.Pages, pageTree.generateTree());
         pdfObject.flush(false);
     }

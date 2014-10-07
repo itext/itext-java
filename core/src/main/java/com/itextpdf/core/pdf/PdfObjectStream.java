@@ -35,21 +35,24 @@ public class PdfObjectStream extends PdfStream {
      *
      * @param object object to add.
      * @throws PdfException
-     * @throws IOException
      */
-    public void addObject(PdfObject object) throws PdfException, IOException {
+    public void addObject(PdfObject object) throws PdfException {
         if (size == maxObjStreamSize)
             throw new PdfException(PdfException.ObjectCannotBeAddedToObjectStream);
-        indexStream.writeInteger(object.getIndirectReference().getObjNr()).
-                writeSpace().
-                writeInteger(outputStream.getCurrentPos()).
-                writeSpace();
-        outputStream.write(object);
-        object.getIndirectReference().setObjectStreamNumber(getIndirectReference().getObjNr());
-        object.getIndirectReference().setIndex(size);
-        outputStream.writeSpace();
-        ((PdfNumber)get(PdfName.N)).setValue(++size);
-        ((PdfNumber)get(PdfName.First)).setValue(indexStream.getCurrentPos());
+        try {
+            indexStream.writeInteger(object.getIndirectReference().getObjNr()).
+                    writeSpace().
+                    writeInteger(outputStream.getCurrentPos()).
+                    writeSpace();
+            outputStream.write(object);
+            object.getIndirectReference().setObjectStreamNumber(getIndirectReference().getObjNr());
+            object.getIndirectReference().setIndex(size);
+            outputStream.writeSpace();
+            ((PdfNumber)get(PdfName.N)).setValue(++size);
+            ((PdfNumber)get(PdfName.First)).setValue(indexStream.getCurrentPos());
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotAddObjectToObjectstream, e, object);
+        }
     }
 
     /**

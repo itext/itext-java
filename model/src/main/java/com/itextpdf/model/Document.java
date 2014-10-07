@@ -33,7 +33,7 @@ public class Document {
     /**
      * Closes the document and associated PdfDocument.
      */
-    public void close() throws IOException, PdfException {
+    public void close() throws PdfException {
         pdfDocument.close();
     }
 
@@ -43,7 +43,7 @@ public class Document {
      * @param element
      * @return
      */
-    public Document add(IElement element) throws IOException, PdfException {
+    public Document add(IElement element) throws PdfException {
         if (page == null)
             newPage();
         layoutMgr.placeElement(element);
@@ -55,7 +55,7 @@ public class Document {
      *
      * @return
      */
-    public Document newPage() throws IOException, PdfException {
+    public Document newPage() throws PdfException {
         return newPage(pdfDocument.getDefaultPageSize());
     }
 
@@ -65,7 +65,7 @@ public class Document {
      * @param pageSize
      * @return
      */
-    public Document newPage(PageSize pageSize) throws IOException, PdfException {
+    public Document newPage(PageSize pageSize) throws PdfException {
         if (page != null) {
             page.flush();
         }

@@ -44,7 +44,7 @@ public class DefaultLayoutMgr implements ILayoutMgr {
     }
 
     @Override
-    public IPlaceElementResult overflow(IElement element) throws IOException, PdfException {
+    public IPlaceElementResult overflow(IElement element) throws PdfException {
         document.newPage();
         return placeElement(element);
     }

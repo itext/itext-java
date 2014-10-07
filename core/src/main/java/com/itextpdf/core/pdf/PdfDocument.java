@@ -73,7 +73,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param reader PDF reader.
      */
-    public PdfDocument(PdfReader reader) throws IOException {
+    public PdfDocument(PdfReader reader) throws PdfException {
         this.reader = reader;
         open();
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.OpenDocument, this), true);
@@ -85,7 +85,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param writer PDF writer
      */
-    public PdfDocument(PdfWriter writer) throws IOException {
+    public PdfDocument(PdfWriter writer) throws PdfException {
         this.writer = writer;
         open();
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.OpenDocument, this), true);
@@ -97,7 +97,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param reader PDF reader.
      * @param writer PDF writer.
      */
-    public PdfDocument(PdfReader reader, PdfWriter writer) throws IOException {
+    public PdfDocument(PdfReader reader, PdfWriter writer) throws PdfException {
         this.reader = reader;
         this.writer = writer;
         open();
@@ -107,22 +107,25 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Close PDF document.
      *
-     * @throws IOException
      * @throws PdfException
      */
-    public void close() throws IOException, PdfException {
-        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.CloseDocument, this));
-        removeAllHandlers();
-        if (writer != null) {
-            catalog.flush();
-            info.flush();
-            writer.flushWaitingObjects();
-            int startxref = writer.writeXRefTable();
-            writer.writeTrailer(startxref);
-            writer.close();
+    public void close() throws PdfException {
+        try {
+            dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.CloseDocument, this));
+            removeAllHandlers();
+            if (writer != null) {
+                catalog.flush();
+                info.flush();
+                writer.flushWaitingObjects();
+                int startxref = writer.writeXRefTable();
+                writer.writeTrailer(startxref);
+                writer.close();
+            }
+            if (reader != null)
+                reader.close();
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotCloseDocument, e, this);
         }
-        if (reader != null)
-            reader.close();
     }
 
     /**
@@ -359,19 +362,23 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Initializes document.
      *
-     * @throws IOException
+     * @throws PdfException
      */
-    protected void open() throws IOException {
-        if (writer != null) {
-            writer.pdfDocument = this;
-            if (reader == null) {
-                catalog = new PdfCatalog(this);
-                info = new PdfDocumentInfo(this);
-                trailer = new PdfTrailer();
-                trailer.setCatalog(catalog);
-                trailer.setInfo(info);
+    protected void open() throws PdfException {
+        try {
+            if (writer != null) {
+                writer.pdfDocument = this;
+                if (reader == null) {
+                    catalog = new PdfCatalog(this);
+                    info = new PdfDocumentInfo(this);
+                    trailer = new PdfTrailer();
+                    trailer.setCatalog(catalog);
+                    trailer.setInfo(info);
+                }
+                writer.writeHeader();
             }
-            writer.writeHeader();
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotOpenDocument, e, this);
         }
     }
 

@@ -21,7 +21,7 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return pdfObject;
     }
 
-    public void flush() throws IOException, PdfException {
+    public void flush() throws PdfException {
         pdfObject.flush();
     }
 

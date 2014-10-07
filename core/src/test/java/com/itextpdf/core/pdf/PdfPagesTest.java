@@ -129,7 +129,7 @@ public class PdfPagesTest {
     }
 
     @Test
-    public void insertFlushedPageTest() throws IOException {
+    public void insertFlushedPageTest() throws IOException, PdfException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfPage page = pdfDoc.addNewPage();
@@ -148,7 +148,7 @@ public class PdfPagesTest {
     }
 
     @Test
-    public void addFlushedPageTest() throws IOException {
+    public void addFlushedPageTest() throws IOException, PdfException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfPage page = pdfDoc.addNewPage();

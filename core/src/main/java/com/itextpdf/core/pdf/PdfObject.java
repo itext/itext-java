@@ -36,10 +36,9 @@ abstract public class PdfObject {
     /**
      * Flushes the object to the document.
      *
-     * @throws IOException
      * @throws PdfException
      */
-    final public void flush() throws IOException, PdfException {
+    final public void flush() throws PdfException {
         flush(true);
     }
 
@@ -47,14 +46,16 @@ abstract public class PdfObject {
      * Flushes the object to the document.
      *
      * @param canBeInObjStm indicates whether object can be placed into object stream.
-     * @throws IOException
      * @throws PdfException
      */
-    final public void flush(boolean canBeInObjStm) throws IOException, PdfException {
-        PdfWriter writer = getWriter();
-        if (writer != null)
-            writer.flushObject(this, getType() != Stream && getType() != IndirectReference && canBeInObjStm);
-
+    final public void flush(boolean canBeInObjStm) throws PdfException {
+        try {
+            PdfWriter writer = getWriter();
+            if (writer != null)
+                writer.flushObject(this, getType() != Stream && getType() != IndirectReference && canBeInObjStm);
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotFlushObject, e, this);
+        }
     }
 
     /**

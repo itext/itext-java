@@ -160,7 +160,7 @@ public class PRTokeniser {
     }
 
     public void throwError(String error) throws PdfException {
-        throw new PdfException(PdfException.error1AtFilePointer2); //, error, String.valueOf(file.getPosition()));
+        throw new PdfException(PdfException.Error1AtFilePointer2); //, error, String.valueOf(file.getPosition()));
     }
 
     public int getHeaderOffset() throws PdfException, IOException {
@@ -169,7 +169,7 @@ public class PRTokeniser {
         if (idx < 0){
             idx = str.indexOf("%FDF-");
             if (idx < 0)
-                throw new PdfException(PdfException.pdfHeaderNotFound);
+                throw new PdfException(PdfException.PdfHeaderNotFound);
         }
 
         return idx;
@@ -180,7 +180,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx != 0)
-            throw new PdfException(PdfException.pdfHeaderNotFound);
+            throw new PdfException(PdfException.PdfHeaderNotFound);
         return str.charAt(7);
     }
 
@@ -189,7 +189,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.indexOf("%FDF-");
         if (idx != 0)
-            throw new PdfException(PdfException.fdfStartxrefNotFound);
+            throw new PdfException(PdfException.FdfStartxrefNotFound);
     }
 
     public long getStartxref() throws IOException, PdfException {
@@ -204,7 +204,7 @@ public class PRTokeniser {
             if (idx >= 0) return pos + idx;
             pos = pos - arrLength + 9;                  // 9 = "startxref".length()
         }
-        throw new PdfException(PdfException.pdfStartxrefNotFound);
+        throw new PdfException(PdfException.PdfStartxrefNotFound);
     }
 
     public void nextValidToken() throws IOException, PdfException {
@@ -295,7 +295,7 @@ public class PRTokeniser {
             case '>': {
                 ch = file.read();
                 if (ch != '>')
-                    throwError(PdfException.greaterthanNotExpected);
+                    throwError(PdfException.GreaterthanNotExpected);
                 type = TokenType.EndDic;
                 break;
             }

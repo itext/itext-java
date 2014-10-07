@@ -35,7 +35,7 @@ public interface ILayoutMgr {
      * @param element
      * @return
      */
-    public IPlaceElementResult overflow(IElement element) throws IOException, PdfException;
+    public IPlaceElementResult overflow(IElement element) throws PdfException;
 
     /**
      * Sets a list of shapes for layout manager.

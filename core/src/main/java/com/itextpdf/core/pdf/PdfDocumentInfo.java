@@ -40,7 +40,7 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
     }
 
     @Override
-    public void flush() throws IOException, PdfException {
+    public void flush() throws PdfException {
         pdfObject.flush(false);
     }
 }

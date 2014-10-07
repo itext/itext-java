@@ -188,7 +188,7 @@ public class PdfWriter extends PdfOutputStream {
      * @throws IOException
      * @throws PdfException
      */
-    protected void flushWaitingObjects() throws IOException, PdfException {
+    protected void flushWaitingObjects() throws PdfException {
         TreeSet<PdfIndirectReference> indirects = pdfDocument.getIndirects();
         pdfDocument.setIndirects(new TreeSet<PdfIndirectReference>());
         for (PdfIndirectReference indirectReference : indirects) {
