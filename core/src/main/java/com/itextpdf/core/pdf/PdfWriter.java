@@ -11,7 +11,7 @@ import java.util.TreeSet;
 
 public class PdfWriter extends PdfOutputStream {
 
-    static final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
+    static private final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
     static private final byte[] obj = getIsoBytes(" obj\n");
     static private final byte[] endobj = getIsoBytes("\nendobj\n");
     static private final byte[] endXRefEntry = getIsoBytes(" 00000 n \n");

@@ -4,13 +4,13 @@ public class PdfFormXObject extends PdfObjectWrapper<PdfStream> implements IPdfX
 
     protected PdfResources resources = new PdfResources();
 
-    public PdfFormXObject(PdfStream pdfObject) {
-        super(pdfObject);
+    public PdfFormXObject(PdfDocument document) {
+        this(new PdfStream(document), document);
+        pdfObject.put(PdfName.Resources, resources.getPdfObject());
     }
 
-    public PdfFormXObject(PdfDocument doc) {
-        this(new PdfStream(doc));
-        pdfObject.put(PdfName.Resources, resources.getPdfObject());
+    public PdfFormXObject(PdfStream pdfObject, PdfDocument pdfDocument) {
+        super(pdfObject, pdfDocument);
     }
 
     /**
