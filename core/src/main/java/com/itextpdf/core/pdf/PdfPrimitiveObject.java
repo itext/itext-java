@@ -1,5 +1,7 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
+
 import java.util.Arrays;
 
 abstract class PdfPrimitiveObject extends PdfObject {
@@ -28,7 +30,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
     protected abstract void generateContent();
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
+    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         PdfPrimitiveObject object = (PdfPrimitiveObject)from;
         if (object.content != null)
             content = Arrays.copyOf(object.content, object.content.length);

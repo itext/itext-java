@@ -1,9 +1,8 @@
 package com.itextpdf.core.pdf;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import com.itextpdf.core.exceptions.PdfException;
+
+import java.util.*;
 
 public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> {
 
@@ -15,7 +14,7 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
 
     public PdfDictionary(Map<PdfName, PdfObject> map) {
         for (Entry<PdfName, PdfObject> entry : map.entrySet())
-            this.map.put(entry.getKey(), entry.getValue()) ;
+            this.map.put(entry.getKey(), entry.getValue());
     }
 
     @Override
@@ -94,14 +93,33 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
         return string;
     }
 
+    /**
+     * Copies dictionary to specified document.
+     * It's possible to pass a list of keys to exclude when copying.
+     *
+     * @param document    document to copy dictionary to.
+     * @param excludeKeys list of objects to exclude when copying dictionary.
+     * @return copied dictionary.
+     * @throws PdfException
+     */
+    public PdfDictionary copy(PdfDocument document, List<PdfName> excludeKeys) throws PdfException {
+        Map<PdfName, PdfObject> excluded = new TreeMap<PdfName, PdfObject>();
+        for (PdfName key : excludeKeys) {
+            excluded.put(key, map.remove(key));
+        }
+        PdfDictionary dictionary = copy(document);
+        map.putAll(excluded);
+        return dictionary;
+    }
+
     @Override
     protected PdfDictionary newInstance() {
         return new PdfDictionary();
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
-        PdfDictionary dictionary = (PdfDictionary)from;
+    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+        PdfDictionary dictionary = (PdfDictionary) from;
         for (Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
             map.put(entry.getKey(), entry.getValue().copy(document));
         }

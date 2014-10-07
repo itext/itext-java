@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
 
 public class PdfNumber extends PdfPrimitiveObject {
@@ -104,7 +105,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
+    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         super.copyContent(from, document);
         PdfNumber number = (PdfNumber)from;
         value = number.value;

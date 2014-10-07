@@ -63,12 +63,18 @@ abstract public class PdfObject {
      * @param document document to copy object to.
      * @return copied object.
      */
-    public <T extends PdfObject> T copy(PdfDocument document) {
+    public <T extends PdfObject> T copy(PdfDocument document) throws PdfException {
+        if (isFlushed())
+            throw new PdfException(PdfException.CannotCopyFlushedObject);
         PdfWriter writer = getWriter();
         if (writer != null)
             return (T) writer.copyObject(this, document);
         T newObject = newInstance();
-        newObject.copyContent(this, document);
+        try {
+            newObject.copyContent(this, document);
+        } catch (PdfException e) {
+            e.printStackTrace();
+        }
         return newObject;
     }
 
@@ -77,7 +83,7 @@ abstract public class PdfObject {
      *
      * @return copied object.
      */
-    public <T extends PdfObject> T copy() {
+    public <T extends PdfObject> T copy() throws PdfException {
         return copy(getDocument());
     }
 
@@ -157,11 +163,10 @@ abstract public class PdfObject {
 
     /**
      * Copies object content from object 'from'.
-     *
-     * @param from object to copy content from.
+     *  @param from object to copy content from.
      * @param document document to copy object to.
      */
-    abstract protected void copyContent(PdfObject from, PdfDocument document);
+    abstract protected void copyContent(PdfObject from, PdfDocument document) throws PdfException;
 
 
 }

@@ -1,5 +1,7 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
+
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
     protected int objNr = 0;
@@ -149,7 +151,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
+    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
 
     }
 }

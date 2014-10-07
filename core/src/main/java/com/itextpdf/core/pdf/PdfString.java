@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.ByteBuffer;
 
 public class PdfString extends PdfPrimitiveObject {
@@ -162,7 +163,7 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
+    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         super.copyContent(from, document);
         PdfString string = (PdfString)from;
         value = string.value;

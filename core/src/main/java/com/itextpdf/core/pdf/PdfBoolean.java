@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.OutputStream;
 
 public class PdfBoolean extends PdfPrimitiveObject {
@@ -45,7 +46,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
+    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         super.copyContent(from, document);
         PdfBoolean bool = (PdfBoolean)from;
         value = bool.value;

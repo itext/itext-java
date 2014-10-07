@@ -148,7 +148,11 @@ public class PdfWriter extends PdfOutputStream {
         if (indirectReference != null) {
             copiedObjects.put(indirectReference, newObject.makeIndirect(document).getIndirectReference());
         }
-        newObject.copyContent(object, document);
+        try {
+            newObject.copyContent(object, document);
+        } catch (PdfException e) {
+            e.printStackTrace();
+        }
         return newObject;
     }
 

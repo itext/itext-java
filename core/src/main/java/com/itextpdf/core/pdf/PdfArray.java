@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 
 import java.util.*;
@@ -164,7 +165,7 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
+    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         PdfArray array = (PdfArray)from;
         for (PdfObject entry : array) {
             add(entry.copy(document));

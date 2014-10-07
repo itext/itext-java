@@ -10,7 +10,7 @@ import java.util.Map;
 public class PdfOutputStream extends OutputStream {
 
     static private final byte[] stream = getIsoBytes("stream\n");
-    static private final byte[] endstream = getIsoBytes("endstream\n");
+    static private final byte[] endstream = getIsoBytes("\nendstream\n");
     static private final byte[] openDict = getIsoBytes("<<");
     static private final byte[] closeDict = getIsoBytes(">>");
     static private final byte[] endIndirect = getIsoBytes(" R");

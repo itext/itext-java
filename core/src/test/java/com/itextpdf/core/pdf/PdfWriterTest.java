@@ -1,18 +1,19 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
-import com.itextpdf.io.streams.ras.RandomAccessFileOrArray;
-import com.itextpdf.io.streams.ras.RandomAccessSourceFactory;
+import com.itextpdf.text.DocWriter;
+import com.itextpdf.text.pdf.PRIndirectReference;
+import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfReader;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class PdfWriterTest {
 
@@ -48,7 +49,7 @@ public class PdfWriterTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
@@ -65,7 +66,7 @@ public class PdfWriterTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         helloWorld.flush();
         PdfPage page = pdfDoc.addNewPage();
@@ -83,7 +84,7 @@ public class PdfWriterTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
@@ -101,7 +102,7 @@ public class PdfWriterTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfDictionary helloWorld = (PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc);
+        PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
         PdfPage page = pdfDoc.addNewPage();
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
@@ -128,174 +129,256 @@ public class PdfWriterTest {
         reader.close();
     }
 
-    public static class PRTokeniserTest {
+    /**
+     * Copying direct objects. Objects of all types are added into document catalog.
+     *
+     * @throws IOException
+     * @throws PdfException
+     */
+    @Test
+    public void copyObject1() throws IOException, PdfException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject1_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfPage page1 = pdfDoc1.addNewPage();
+        page1.flush();
+        PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
+        PdfArray aDirect = new PdfArray();
+        aDirect.add(new PdfArray(new ArrayList<PdfObject>() {{
+            add(new PdfNumber(1));
+            add(new PdfNumber(2));
+        }}));
+        aDirect.add(new PdfBoolean(true));
+        aDirect.add(new PdfDictionary(new TreeMap<PdfName, PdfObject>() {{
+            put(new PdfName("one"), new PdfNumber(1));
+            put(new PdfName("two"), new PdfNumber(2));
+        }}));
+        aDirect.add(new PdfName("name"));
+        aDirect.add(new PdfNull());
+        aDirect.add(new PdfNumber(100));
+        aDirect.add(new PdfString("string"));
+        catalog1.put(new PdfName("aDirect"), aDirect);
 
-        @Before
-        public void setUp() throws Exception {
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject1_2.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfPage page2 = pdfDoc2.addNewPage();
+        page2.flush();
+        PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
+        catalog2.put(new PdfName("aDirect"), aDirect.copy());
+
+        pdfDoc1.close();
+        pdfDoc2.close();
+
+        PdfReader reader = new PdfReader(destinationFolder + "copyObject1_2.pdf");
+        com.itextpdf.text.pdf.PdfDictionary catalog = reader.getCatalog();
+        com.itextpdf.text.pdf.PdfArray a = (com.itextpdf.text.pdf.PdfArray) catalog.get(new com.itextpdf.text.pdf.PdfName("aDirect"));
+        Assert.assertNotNull(a);
+        Assert.assertEquals(1, ((com.itextpdf.text.pdf.PdfNumber) ((com.itextpdf.text.pdf.PdfArray) a.getPdfObject(0)).getPdfObject(0)).intValue());
+        Assert.assertEquals(2, ((com.itextpdf.text.pdf.PdfNumber) ((com.itextpdf.text.pdf.PdfArray) a.getPdfObject(0)).getPdfObject(1)).intValue());
+        Assert.assertEquals(true, ((com.itextpdf.text.pdf.PdfBoolean) a.getPdfObject(1)).booleanValue());
+        Assert.assertEquals(1, ((com.itextpdf.text.pdf.PdfNumber) ((com.itextpdf.text.pdf.PdfDictionary) a.getPdfObject(2)).get(new com.itextpdf.text.pdf.PdfName("one"))).intValue());
+        Assert.assertEquals(2, ((com.itextpdf.text.pdf.PdfNumber) ((com.itextpdf.text.pdf.PdfDictionary) a.getPdfObject(2)).get(new com.itextpdf.text.pdf.PdfName("two"))).intValue());
+        Assert.assertEquals(new com.itextpdf.text.pdf.PdfName("name"), a.getPdfObject(3));
+        Assert.assertTrue(a.getPdfObject(4).isNull());
+        Assert.assertEquals(100, ((com.itextpdf.text.pdf.PdfNumber) a.getPdfObject(5)).intValue());
+        Assert.assertEquals("string", ((com.itextpdf.text.pdf.PdfString) a.getPdfObject(6)).toUnicodeString());
+        reader.close();
+
+    }
+
+    /**
+     * Copying objects, some of those are indirect. Objects of all types are added into document catalog.
+     *
+     * @throws IOException
+     * @throws PdfException
+     */
+    @Test
+    public void copyObject2() throws IOException, PdfException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject2_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        final PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfPage page1 = pdfDoc1.addNewPage();
+        page1.flush();
+        PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
+        PdfArray aDirect = new PdfArray().makeIndirect(pdfDoc1);
+        aDirect.add(new PdfArray(new ArrayList<PdfObject>() {{
+            add(new PdfNumber(1));
+            add(new PdfNumber(2).makeIndirect(pdfDoc1));
+        }}));
+        aDirect.add(new PdfBoolean(true));
+        aDirect.add(new PdfDictionary(new TreeMap<PdfName, PdfObject>() {{
+            put(new PdfName("one"), new PdfNumber(1));
+            put(new PdfName("two"), new PdfNumber(2).makeIndirect(pdfDoc1));
+        }}));
+        aDirect.add(new PdfName("name"));
+        aDirect.add(new PdfNull().makeIndirect(pdfDoc1));
+        aDirect.add(new PdfNumber(100));
+        aDirect.add(new PdfString("string"));
+        catalog1.put(new PdfName("aDirect"), aDirect);
+
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject2_2.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfPage page2 = pdfDoc2.addNewPage();
+        page2.flush();
+        PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
+        catalog2.put(new PdfName("aDirect"), aDirect.copy(pdfDoc2));
+
+        pdfDoc1.close();
+        pdfDoc2.close();
+
+        PdfReader reader = new PdfReader(destinationFolder + "copyObject2_2.pdf");
+        com.itextpdf.text.pdf.PdfDictionary catalog = reader.getCatalog();
+        Assert.assertTrue(catalog.get(new com.itextpdf.text.pdf.PdfName("aDirect")) instanceof PRIndirectReference);
+        com.itextpdf.text.pdf.PdfArray a = catalog.getAsArray(new com.itextpdf.text.pdf.PdfName("aDirect"));
+        Assert.assertNotNull(a);
+        Assert.assertEquals(1, ((com.itextpdf.text.pdf.PdfNumber) ((com.itextpdf.text.pdf.PdfArray) a.getPdfObject(0)).getPdfObject(0)).intValue());
+        Assert.assertTrue(((com.itextpdf.text.pdf.PdfArray) a.getPdfObject(0)).getPdfObject(1) instanceof PRIndirectReference);
+        Assert.assertEquals(2, ((com.itextpdf.text.pdf.PdfArray) a.getPdfObject(0)).getAsNumber(1).intValue());
+        Assert.assertEquals(true, ((com.itextpdf.text.pdf.PdfBoolean) a.getPdfObject(1)).booleanValue());
+        Assert.assertEquals(1, ((com.itextpdf.text.pdf.PdfNumber) ((com.itextpdf.text.pdf.PdfDictionary) a.getPdfObject(2)).get(new com.itextpdf.text.pdf.PdfName("one"))).intValue());
+        Assert.assertTrue(((com.itextpdf.text.pdf.PdfDictionary) a.getPdfObject(2)).get(new com.itextpdf.text.pdf.PdfName("two")) instanceof PRIndirectReference);
+        Assert.assertEquals(2, ((com.itextpdf.text.pdf.PdfDictionary) a.getPdfObject(2)).getAsNumber(new com.itextpdf.text.pdf.PdfName("two")).intValue());
+        Assert.assertEquals(new com.itextpdf.text.pdf.PdfName("name"), a.getPdfObject(3));
+        Assert.assertTrue(a.getPdfObject(4) instanceof PRIndirectReference);
+        Assert.assertTrue(a.getDirectObject(4).isNull());
+        Assert.assertEquals(100, ((com.itextpdf.text.pdf.PdfNumber) a.getPdfObject(5)).intValue());
+        Assert.assertEquals("string", ((com.itextpdf.text.pdf.PdfString) a.getPdfObject(6)).toUnicodeString());
+        reader.close();
+    }
+
+    /**
+     * Copy objects recursively.
+     *
+     * @throws IOException
+     * @throws PdfException
+     */
+    @Test
+    public void copyObject3() throws IOException, PdfException {
+        {
+            FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject3_1.pdf");
+            PdfWriter writer1 = new PdfWriter(fos1);
+            final PdfDocument pdfDoc1 = new PdfDocument(writer1);
+            PdfPage page1 = pdfDoc1.addNewPage();
+            page1.flush();
+            PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
+            PdfArray arr1 = new PdfArray().makeIndirect(pdfDoc1);
+            PdfArray arr2 = new PdfArray().makeIndirect(pdfDoc1);
+            arr1.add(arr2);
+            PdfDictionary dic1 = new PdfDictionary().makeIndirect(pdfDoc1);
+            arr2.add(dic1);
+            PdfDictionary dic2 = new PdfDictionary().makeIndirect(pdfDoc1);
+            dic1.put(new PdfName("dic2"), dic2);
+            dic2.put(new PdfName("arr1"), arr1);
+            catalog1.put(new PdfName("arr1"), arr1);
+
+            FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject3_2.pdf");
+            PdfWriter writer2 = new PdfWriter(fos2);
+            PdfDocument pdfDoc2 = new PdfDocument(writer2);
+            PdfPage page2 = pdfDoc2.addNewPage();
+            page2.flush();
+            PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
+            catalog2.put(new PdfName("arr1"), arr1.copy(pdfDoc2));
+
+            pdfDoc1.close();
+            pdfDoc2.close();
         }
 
-        @After
-        public void tearDown() throws Exception {
-        }
-
-        private void checkTokenTypes(String data, PRTokeniser.TokenType... expectedTypes) throws Exception {
-            RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
-            PRTokeniser tok = new PRTokeniser(new RandomAccessFileOrArray(factory.createSource(data.getBytes())));
-
-            for(int i = 0; i < expectedTypes.length; i++){
-                tok.nextValidToken();
-                //System.out.println(tok.getTokenType() + " -> " + tok.getStringValue());
-                Assert.assertEquals("Position " + i, expectedTypes[i], tok.getTokenType());
-            }
-        }
-
-        @Test
-        public void testOneNumber() throws Exception {
-            checkTokenTypes(
-                    "/Name1 70",
-                    PRTokeniser.TokenType.Name,
-                    PRTokeniser.TokenType.Number,
-                    PRTokeniser.TokenType.EndOfFile
-            );
-        }
-
-        @Test
-        public void testTwoNumbers() throws Exception {
-            checkTokenTypes(
-                    "/Name1 70/Name 2",
-                    PRTokeniser.TokenType.Name,
-                    PRTokeniser.TokenType.Number,
-                    PRTokeniser.TokenType.Name,
-                    PRTokeniser.TokenType.Number,
-                    PRTokeniser.TokenType.EndOfFile
-            );
-        }
-
-        @Test
-        public void tokenTypesTest() throws Exception {
-            checkTokenTypes(
-                    "<</Size 70/Root 46 0 R/Info 44 0 R/ID[<8C2547D58D4BD2C6F3D32B830BE3259D><8F69587888569A458EB681A4285D5879>]/Prev 116 >>",
-                    PRTokeniser.TokenType.StartDic,
-                    PRTokeniser.TokenType.Name,
-                    PRTokeniser.TokenType.Number,
-                    PRTokeniser.TokenType.Name,
-                    PRTokeniser.TokenType.Ref,
-                    PRTokeniser.TokenType.Name,
-                    PRTokeniser.TokenType.Ref,
-                    PRTokeniser.TokenType.Name,
-                    PRTokeniser.TokenType.StartArray,
-                    PRTokeniser.TokenType.String,
-                    PRTokeniser.TokenType.String,
-                    PRTokeniser.TokenType.EndArray,
-                    PRTokeniser.TokenType.Name,
-                    PRTokeniser.TokenType.Number,
-                    PRTokeniser.TokenType.EndDic,
-                    PRTokeniser.TokenType.EndOfFile
-            );
-        }
-
-        @Test
-        public void primitivesTest() throws Exception {
-            String data = "<</Size 70." +
-                    "/Value#20 .1" +
-                    "/Root 46 0 R" +
-                    "/Info 44 0 R" +
-                    "/ID[<736f6d652068657820737472696e672>(some simple string )<8C2547D58D4BD2C6F3D32B830BE3259D2>-70.1--0.2]" +
-                    "/Prev ---116.23 >>";
-            RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
-            PRTokeniser tok = new PRTokeniser(new RandomAccessFileOrArray(factory.createSource(data.getBytes())));
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.StartDic);
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
-            PdfName name = new PdfName(tok.getByteContent());
-            Assert.assertEquals("Size", name.getValue());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
-            PdfNumber num = new PdfNumber(tok.getByteContent());
-            Assert.assertEquals("70", num.toString());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
-            name = new PdfName(tok.getByteContent());
-            Assert.assertEquals("Value ", name.getValue());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
-            num = new PdfNumber(tok.getByteContent());
-            Assert.assertNotSame("0.1", num.toString());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
-            name = new PdfName(tok.getByteContent());
-            Assert.assertEquals("Root", name.getValue());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Ref);
-            PdfIndirectReference ref = new PdfIndirectReference(null, tok.getReference(), tok.getGeneration(), null);
-            Assert.assertEquals("46 0 R", ref.toString());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
-            name = new PdfName(tok.getByteContent());
-            Assert.assertEquals("Info", name.getValue());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Ref);
-            ref = new PdfIndirectReference(null, tok.getReference(), tok.getGeneration(), null);
-            Assert.assertEquals("44 0 R", ref.toString());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
-            name = new PdfName(tok.getByteContent());
-            Assert.assertEquals("ID", name.getValue());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.StartArray);
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.String);
-            Assert.assertSame(tok.isHexString(), true);
-            PdfString str = new PdfString(tok.getByteContent(), tok.isHexString());
-            Assert.assertEquals("some hex string ", str.getValue());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.String);
-            Assert.assertSame(tok.isHexString(), false);
-            str = new PdfString(tok.getByteContent(), tok.isHexString());
-            Assert.assertEquals("some simple string ", str.getValue());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.String);
-            Assert.assertSame(tok.isHexString(), true);
-            str = new PdfString(tok.getByteContent(), tok.isHexString());
-            Assert.assertEquals("\u008C%GÕ\u008DKÒÆóÓ+\u0083\u000Bã%\u009D ", str.toString());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
-            num = new PdfNumber(tok.getByteContent());
-            Assert.assertEquals("-70.1", num.toString());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
-            num = new PdfNumber(tok.getByteContent());
-            Assert.assertEquals("0.2", num.toString());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.EndArray);
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Name);
-            name = new PdfName(tok.getByteContent());
-            Assert.assertEquals("Prev", name.getValue());
-
-            tok.nextValidToken();
-            Assert.assertSame(tok.getTokenType(), PRTokeniser.TokenType.Number);
-            num = new PdfNumber(tok.getByteContent());
-            Assert.assertEquals("-116.23", num.toString());
+        {
+            PdfReader reader = new PdfReader(destinationFolder + "copyObject3_2.pdf");
+            com.itextpdf.text.pdf.PdfDictionary catalog = reader.getCatalog();
+            Assert.assertTrue(catalog.get(new com.itextpdf.text.pdf.PdfName("arr1")) instanceof PRIndirectReference);
+            com.itextpdf.text.pdf.PdfArray arr1 = catalog.getAsArray(new com.itextpdf.text.pdf.PdfName("arr1"));
+            Assert.assertTrue(arr1.getPdfObject(0) instanceof PRIndirectReference);
+            com.itextpdf.text.pdf.PdfArray arr2 = arr1.getAsArray(0);
+            Assert.assertTrue(arr2.getPdfObject(0) instanceof PRIndirectReference);
+            com.itextpdf.text.pdf.PdfDictionary dic1 = arr2.getAsDict(0);
+            Assert.assertTrue(dic1.get(new com.itextpdf.text.pdf.PdfName("dic2")) instanceof PRIndirectReference);
+            com.itextpdf.text.pdf.PdfDictionary dic2 = dic1.getAsDict(new com.itextpdf.text.pdf.PdfName("dic2"));
+            Assert.assertTrue(dic2.get(new com.itextpdf.text.pdf.PdfName("arr1")) instanceof PRIndirectReference);
+            Assert.assertEquals(arr1, dic2.getAsArray(new com.itextpdf.text.pdf.PdfName("arr1")));
+            reader.close();
         }
     }
+
+    /**
+     * Copies stream.
+     *
+     * @throws IOException
+     * @throws PdfException
+     */
+    @Test
+    public void copyObject4() throws IOException, PdfException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject4_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        final PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfPage page1 = pdfDoc1.addNewPage();
+        page1.flush();
+        PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
+        PdfStream stream1 = new PdfStream(pdfDoc1);
+        stream1.getOutputStream().write(new PdfArray(new ArrayList() {{
+            add(new PdfNumber(1));
+            add(new PdfNumber(2));
+            add(new PdfNumber(3));
+        }}));
+        catalog1.put(new PdfName("stream"), stream1);
+
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject4_2.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfPage page2 = pdfDoc2.addNewPage();
+        page2.flush();
+        PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
+        catalog2.put(new PdfName("stream"), stream1.copy(pdfDoc2));
+
+        pdfDoc1.close();
+        pdfDoc2.close();
+
+        PdfReader reader = new PdfReader(destinationFolder + "copyObject4_2.pdf");
+        com.itextpdf.text.pdf.PdfDictionary catalog = reader.getCatalog();
+        PRStream stream = (PRStream)catalog.getAsStream(new com.itextpdf.text.pdf.PdfName("stream"));
+        byte[] bytes = PdfReader.getStreamBytes(stream);
+        Assert.assertArrayEquals(DocWriter.getISOBytes("[1 2 3]"), bytes);
+        reader.close();
+    }
+
+    /**
+     * Copies page.
+     *
+     * @throws IOException
+     * @throws PdfException
+     */
+    @Test
+    public void copyObject5() throws IOException, PdfException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject5_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        final PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfPage page1 = pdfDoc1.addNewPage();
+        page1.getContentStream().getOutputStream().write(PdfOutputStream.getIsoBytes("%Page_1"));
+
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject5_2.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfPage page2 = page1.copy(pdfDoc2);
+        pdfDoc2.addPage(page2);
+        page2.flush();
+        page2 = pdfDoc2.addNewPage();
+        page2.getContentStream().getOutputStream().write(PdfOutputStream.getIsoBytes("%Page_2"));
+
+        page1.flush();
+        page2.flush();
+        pdfDoc1.close();
+        pdfDoc2.close();
+
+        PdfReader reader = new PdfReader(destinationFolder + "copyObject5_2.pdf");
+        Assert.assertEquals(8, reader.getTrailer().getAsNumber(com.itextpdf.text.pdf.PdfName.SIZE).intValue());
+        byte[] bytes = reader.getPageContent(1);
+        Assert.assertArrayEquals(DocWriter.getISOBytes("%Page_1"), bytes);
+        bytes = reader.getPageContent(2);
+        Assert.assertArrayEquals(DocWriter.getISOBytes("%Page_2"), bytes);
+        reader.close();
+    }
+
+
 }

@@ -2,7 +2,9 @@ package com.itextpdf.core.exceptions;
 
 public class PdfException extends Exception {
 
+    public static final String CannotCopyFlushedObject = "cannot.copy.flushed.object";
     public static final String CannotCopyObject = "cannot.copy.object";
+    public static final String CannotCopyObjectContent = "cannot.copy.object.content";
     public static final String DocumentHasNoPages = "document.has.no.pages";
     public static final String IndirectReferenceAlreadyAssigned = "indirect.reference.already.assigned";
     public static final String FlushedPageCannotBeAddedOrInserted = "flushed.page.cannot.be.added.or.inserted";
