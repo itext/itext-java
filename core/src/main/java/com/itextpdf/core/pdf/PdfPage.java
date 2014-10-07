@@ -12,6 +12,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public final static int FirstPage = 1;
     public final static int LastPage = Integer.MAX_VALUE;
 
+    protected PdfResources resources = new PdfResources();
+
     public PdfPage(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -24,7 +26,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         super(new PdfDictionary(), pdfDocument);
         PdfStream contentStream = new PdfStream(pdfDocument);
         pdfObject.put(PdfName.Contents, contentStream);
-        pdfObject.put(PdfName.Resources, new PdfResources());
+        pdfObject.put(PdfName.Resources, resources.getPdfObject());
         pdfObject.put(PdfName.Type, PdfName.Page);
         pdfObject.put(PdfName.MediaBox, new PdfArray(pageSize));
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
@@ -54,7 +56,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfResources getResources() {
-        return (PdfResources) pdfObject.get(PdfName.Resources);
+        return resources;
     }
 
     public PdfPage copy(PdfDocument document) throws PdfException {

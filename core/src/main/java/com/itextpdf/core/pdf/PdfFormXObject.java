@@ -2,13 +2,15 @@ package com.itextpdf.core.pdf;
 
 public class PdfFormXObject extends PdfObjectWrapper<PdfStream> implements IPdfXObject {
 
+    protected PdfResources resources = new PdfResources();
+
     public PdfFormXObject(PdfStream pdfObject) {
         super(pdfObject);
     }
 
     public PdfFormXObject(PdfDocument doc) {
         this(new PdfStream(doc));
-        pdfObject.put(PdfName.Resources, new PdfResources());
+        pdfObject.put(PdfName.Resources, resources.getPdfObject());
     }
 
     /**
@@ -21,7 +23,7 @@ public class PdfFormXObject extends PdfObjectWrapper<PdfStream> implements IPdfX
     }
 
     public PdfResources getResources() {
-        return (PdfResources)pdfObject.get(PdfName.Resources);
+        return resources;
     }
 
 }
