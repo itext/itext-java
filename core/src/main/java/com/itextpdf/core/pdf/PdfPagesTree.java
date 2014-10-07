@@ -53,7 +53,7 @@ class PdfPagesTree {
      * @return the {@see PdfPage} at the specified position in this list
      */
     public PdfPage getPage(int pageNum) {
-        return new PdfPage(pages.get(pageNum - 1));
+        return new PdfPage(pages.get(pageNum - 1), pdfDocument);
     }
 
     /**
@@ -131,7 +131,7 @@ class PdfPagesTree {
         --pageNum;
         PdfDictionary page = pages.get(pageNum);
         internalRemovePage(pageNum, page);
-        return new PdfPage(page);
+        return new PdfPage(page, pdfDocument);
     }
 
     /**

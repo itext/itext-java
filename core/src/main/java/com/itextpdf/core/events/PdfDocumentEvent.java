@@ -9,16 +9,6 @@ import com.itextpdf.core.pdf.PdfPage;
 public class PdfDocumentEvent extends Event {
 
     /**
-     * Dispatched after document is created
-     */
-    final static public String OpenDocument = "OpenPdfDocument";
-
-    /**
-     * Dispatched before document is closed
-     */
-    final static public String CloseDocument = "ClosePdfDocument";
-
-    /**
      * Dispatched after page is created
      */
     final static public String StartPage = "StartPdfPage";

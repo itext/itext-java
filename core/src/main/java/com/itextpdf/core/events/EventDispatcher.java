@@ -2,12 +2,10 @@ package com.itextpdf.core.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class EventDispatcher implements IEventDispatcher {
 
     protected HashMap<String, ArrayList<IEventHandler>> eventHandlers = new HashMap<String, ArrayList<IEventHandler>>();
-    protected List<Event> delayedEvents = new ArrayList<Event>();
 
     @Override
     public void addEventHandler(String type, IEventHandler handler) {
@@ -18,12 +16,6 @@ public class EventDispatcher implements IEventDispatcher {
             eventHandlers.put(type, handlers);
         }
         handlers.add(handler);
-        for (Event event : delayedEvents) {
-            if (event.getType() == type) {
-                delayedEvents.remove(event);
-                dispatchEvent(event);
-            }
-        }
     }
 
     @Override
@@ -33,14 +25,10 @@ public class EventDispatcher implements IEventDispatcher {
 
     @Override
     public void dispatchEvent(Event event, boolean delayed) {
-        if (delayed)
-            delayedEvents.add(event);
-        else {
-            ArrayList<IEventHandler> handlers = eventHandlers.get(event.getType());
-            if (handlers != null) {
-                for (IEventHandler handler : handlers) {
-                    handler.handleEvent(event);
-                }
+        ArrayList<IEventHandler> handlers = eventHandlers.get(event.getType());
+        if (handlers != null) {
+            for (IEventHandler handler : handlers) {
+                handler.handleEvent(event);
             }
         }
     }
@@ -63,7 +51,6 @@ public class EventDispatcher implements IEventDispatcher {
     @Override
     public void removeAllHandlers() {
         eventHandlers.clear();
-        delayedEvents.clear();
     }
 
 

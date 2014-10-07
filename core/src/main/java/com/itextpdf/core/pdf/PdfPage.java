@@ -4,7 +4,6 @@ import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.PageSize;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
@@ -14,12 +13,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfResources resources = new PdfResources();
 
-    public PdfPage(PdfDictionary pdfObject) {
-        super(pdfObject);
-    }
-
     public PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
+        pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
     public PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
@@ -66,6 +62,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfPage copy() throws PdfException {
         return copy(getDocument());
+    }
+
+    @Override
+    public void flush() throws PdfException {
+        getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
+        super.flush();
     }
 
     private PdfStream newContentStream(boolean before) {
