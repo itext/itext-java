@@ -57,11 +57,13 @@ public class PdfNumber extends PdfPrimitiveObject {
     public void setValue(int value) {
         this.value = value;
         this.valueType = Int;
+        this.content = null;
     }
 
     public void setValue(double value) {
         this.value = value;
         this.valueType = Double;
+        this.content = null;
     }
 
     public void increment() {
