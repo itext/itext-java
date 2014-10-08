@@ -1,5 +1,6 @@
 package com.itextpdf.core.fonts;
 
+import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 
@@ -25,12 +26,17 @@ public class PdfStandardFont extends PdfFont {
     public static final PdfName TimesBoldItalic = new PdfName("Times-BoldItalic");
     public static final PdfName ZapfDingbats = new PdfName("ZapfDingbats");
 
-    public PdfStandardFont(PdfDocument doc, PdfName fontName) {
-        super(doc);
-        put(PdfName.BaseFont, fontName);
-        put(PdfName.Subtype, PdfName.Type1);
+    public PdfStandardFont(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+        super(pdfObject, pdfDocument);
+    }
+
+    public PdfStandardFont(PdfDocument pdfDocument, PdfName fontName) {
+        super(pdfDocument);
+        pdfObject.put(PdfName.BaseFont, fontName);
+        pdfObject.put(PdfName.Subtype, PdfName.Type1);
         if (!fontName.equals(Symbol)) {
-            put(PdfName.Encoding, PdfName.WinAnsiEncoding);
+            pdfObject.put(PdfName.Encoding, PdfName.WinAnsiEncoding);
         }
     }
+
 }

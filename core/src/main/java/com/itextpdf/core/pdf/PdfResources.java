@@ -16,19 +16,19 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      */
     private HashMap<PdfFont, PdfName> fonts = new LinkedHashMap<PdfFont, PdfName>();
 
-    public PdfResources(PdfDictionary pdfObject) {
-        super(pdfObject);
-    }
-
-    public PdfResources() {
-        super(new PdfDictionary());
-    }
-
-
     /**
      * The font number counter for the fonts in the document.
      */
     private int fontNumber = 1;
+
+    public PdfResources(PdfDictionary pdfObject) {
+        super(pdfObject);
+        makeResources(pdfObject);
+    }
+
+    public PdfResources() {
+        this(new PdfDictionary());
+    }
 
     public PdfName addFont(PdfFont font){
         PdfName fontName = fonts.get(font);
@@ -39,9 +39,13 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             if (fontDictionary == null) {
                 pdfObject.put(PdfName.Font, fontDictionary = new PdfDictionary());
             }
-            fontDictionary.put(fontName, font);
+            fontDictionary.put(fontName, font.getPdfObject());
         }
         return fontName;
+    }
+
+    protected void makeResources(PdfDictionary dictionary) {
+        //TODO: Implement populating PdfResources internals from PdfDictionary.
     }
 
 }

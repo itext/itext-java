@@ -11,10 +11,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public final static int FirstPage = 1;
     public final static int LastPage = Integer.MAX_VALUE;
 
-    protected PdfResources resources = new PdfResources();
+    protected PdfResources resources = null;
 
     public PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
+        PdfDictionary resources = (PdfDictionary)pdfObject.get(PdfName.Resources);
+        if (resources != null)
+            this.resources = new PdfResources(resources);
+        else
+            this.resources = new PdfResources();
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
@@ -22,7 +27,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         super(new PdfDictionary(), pdfDocument);
         PdfStream contentStream = new PdfStream(pdfDocument);
         pdfObject.put(PdfName.Contents, contentStream);
-        pdfObject.put(PdfName.Resources, resources.getPdfObject());
+        pdfObject.put(PdfName.Resources, (resources = new PdfResources()).getPdfObject());
         pdfObject.put(PdfName.Type, PdfName.Page);
         pdfObject.put(PdfName.MediaBox, new PdfArray(pageSize));
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
@@ -35,10 +40,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfStream getContentStream() {
         PdfObject contents = pdfObject.get(PdfName.Contents);
         if (contents instanceof PdfStream)
-            return (PdfStream)contents;
+            return (PdfStream) contents;
         else if (contents instanceof PdfArray) {
-            PdfArray a = (PdfArray)contents;
-            return (PdfStream)a.get(a.size() - 1);
+            PdfArray a = (PdfArray) contents;
+            return (PdfStream) a.get(a.size() - 1);
         } else
             return null;
     }
@@ -55,11 +60,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return resources;
     }
 
-    public PdfPage copy(PdfDocument document) throws PdfException {
-        PdfDictionary dictionary = getPdfObject().copy(document, new ArrayList<PdfName>(){{add(PdfName.Parent);}});
-        return new PdfPage(dictionary, document);
+    /**
+     * Copies page to a cpecified focument.
+     *
+     * @param pdfDocument a document to copy page to.
+     * @return copied page.
+     * @throws PdfException
+     */
+    public PdfPage copy(PdfDocument pdfDocument) throws PdfException {
+        PdfDictionary dictionary = getPdfObject().copy(pdfDocument, new ArrayList<PdfName>() {{
+            add(PdfName.Parent);
+        }});
+        return new PdfPage(dictionary, pdfDocument);
     }
 
+    /**
+     * Copies a page to the same document.
+     *
+     * @return copied page.
+     * @throws PdfException
+     */
     public PdfPage copy() throws PdfException {
         return copy(getDocument());
     }
@@ -76,9 +96,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (contents instanceof PdfStream) {
             a = new PdfArray();
             a.add(contents);
-        }
-        else if (contents instanceof PdfArray) {
-            a = (PdfArray)contents;
+        } else if (contents instanceof PdfArray) {
+            a = (PdfArray) contents;
         }
         PdfStream contentStream = new PdfStream(pdfObject.getDocument());
         if (before)
