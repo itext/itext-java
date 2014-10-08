@@ -5,11 +5,14 @@ import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -426,6 +429,41 @@ public class PdfCanvasTest {
     @Test
     public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
         comparePerformance(true);
+    }
+
+    @Test
+    public void copyPagesTest() throws IOException, PdfException, DocumentException, InterruptedException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas.rectangle(100, 600, 100, 100);
+        canvas.fill();
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+        canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
+        canvas.showText("Hello World!");
+        canvas.endText();
+
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages2.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfPage page2 = page1.copy(pdfDoc2);
+        pdfDoc2.addPage(page2);
+
+        page1.flush();
+        page2.flush();
+
+        pdfDoc1.close();
+        pdfDoc2.close();
+
+        PdfReader reader = new PdfReader(destinationFolder + "copyPages2.pdf");
+        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
+        Assert.assertNotNull(page.get(PdfName.PARENT));
+        reader.close();
+        Assert.assertNull(new CompareTool(destinationFolder + "copyPages1.pdf", destinationFolder + "copyPages2.pdf").compareByContent(destinationFolder, "diff_"));
     }
 
     private void comparePerformance(boolean fullCompression) throws IOException, PdfException, DocumentException {
