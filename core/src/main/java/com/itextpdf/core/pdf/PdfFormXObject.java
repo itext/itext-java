@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-public class PdfFormXObject extends PdfObjectWrapper<PdfStream> implements IPdfXObject {
+public class PdfFormXObject extends PdfXObject {
 
     protected PdfResources resources = new PdfResources();
 

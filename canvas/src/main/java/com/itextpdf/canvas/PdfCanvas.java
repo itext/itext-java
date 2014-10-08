@@ -633,7 +633,7 @@ public class PdfCanvas {
      * @param y    y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas addXObject(IPdfXObject xObj, float x, float y) {
+    public PdfCanvas addXObject(PdfXObject xObj, float x, float y) {
         return this;
     }
 

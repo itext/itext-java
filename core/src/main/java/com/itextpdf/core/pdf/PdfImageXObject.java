@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-public class PdfImageXObject extends PdfObjectWrapper<PdfStream> implements IPdfXObject {
+public class PdfImageXObject extends PdfXObject {
 
     public PdfImageXObject(PdfDocument document) {
         this(new PdfStream(document), document);
