@@ -6,7 +6,6 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.testutils.CompareTool;
-import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfContentByte;
@@ -432,8 +431,8 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest() throws IOException, PdfException, DocumentException, InterruptedException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages1.pdf");
+    public void copyPagesTest1() throws IOException, PdfException, DocumentException, InterruptedException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages1_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
 
@@ -447,7 +446,7 @@ public class PdfCanvasTest {
         canvas.showText("Hello World!");
         canvas.endText();
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages2.pdf");
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages1_2.pdf");
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         PdfPage page2 = page1.copy(pdfDoc2);
@@ -459,11 +458,60 @@ public class PdfCanvasTest {
         pdfDoc1.close();
         pdfDoc2.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "copyPages2.pdf");
+        PdfReader reader = new PdfReader(destinationFolder + "copyPages1_2.pdf");
         com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertNotNull(page.get(PdfName.PARENT));
         reader.close();
-        Assert.assertNull(new CompareTool(destinationFolder + "copyPages1.pdf", destinationFolder + "copyPages2.pdf").compareByContent(destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "copyPages1_1.pdf", destinationFolder + "copyPages1_2.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copyPagesTest2() throws IOException, PdfException, DocumentException, InterruptedException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages2_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        for (int i = 0; i < 10; i++) {
+            PdfPage page1 = pdfDoc1.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
+            canvas.rectangle(100, 600, 100, 100);
+            canvas.fill();
+            canvas.beginText();
+            canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+            canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
+            canvas.showText(String.format("Page_%d", i + 1));
+            canvas.endText();
+        }
+
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages2_2.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        for (int i = 9; i >= 0; i--) {
+            PdfPage page2 = pdfDoc1.getPage(i + 1).copy(pdfDoc2);
+            pdfDoc2.addPage(page2);
+        }
+
+        pdfDoc1.close();
+        pdfDoc2.close();
+
+        PdfReader reader = new PdfReader(destinationFolder + "copyPages2_2.pdf");
+        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
+        Assert.assertNotNull(page.get(PdfName.PARENT));
+        reader.close();
+
+        CompareTool cmpTool = new CompareTool();
+        PdfReader reader1 = new PdfReader(destinationFolder + "copyPages2_1.pdf");
+        PdfReader reader2 = new PdfReader(destinationFolder + "copyPages2_2.pdf");
+
+        for (int i = 0; i < 10; i++) {
+            PdfDictionary page1 = reader1.getPageN(i + 1);
+            PdfDictionary page2 = reader2.getPageN(10 - i);
+            Assert.assertTrue(cmpTool.compareDictionaries(page1, page2));
+        }
+
+        reader1.close();
+        reader2.close();
+
     }
 
     private void comparePerformance(boolean fullCompression) throws IOException, PdfException, DocumentException {
