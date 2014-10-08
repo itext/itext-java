@@ -183,7 +183,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @throws PdfException
      */
-    public void close() throws IOException, PdfException {
+    public void close() throws PdfException {
         try {
             removeAllHandlers();
             if (writer != null) {

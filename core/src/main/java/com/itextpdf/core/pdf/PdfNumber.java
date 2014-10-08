@@ -64,6 +64,14 @@ public class PdfNumber extends PdfPrimitiveObject {
         this.valueType = Double;
     }
 
+    public void increment() {
+        this.value++;
+    }
+
+    public void decrement() {
+        this.value++;
+    }
+
     @Override
     public String toString() {
         if (valueType == Int)

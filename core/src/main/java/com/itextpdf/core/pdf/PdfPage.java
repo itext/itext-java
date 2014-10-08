@@ -3,7 +3,12 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.core.xmp.XMPMeta;
+import com.itextpdf.core.xmp.XMPMetaFactory;
+import com.itextpdf.core.xmp.options.SerializeOptions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
@@ -58,6 +63,29 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfResources getResources() {
         return resources;
+    }
+
+    /**
+     * Use this method to set the XMP Metadata for each page.
+     * @param xmpMetadata The xmpMetadata to set.
+     * @throws IOException
+     */
+    public void setXmpMetadata(final byte[] xmpMetadata) throws IOException {
+        PdfStream xmp = new PdfStream(getDocument());
+        xmp.getOutputStream().write(xmpMetadata);
+        xmp.put(PdfName.Type, PdfName.Metadata);
+        xmp.put(PdfName.Subtype, PdfName.XML);
+        getPdfObject().put(PdfName.Metadata, xmp);
+    }
+
+    public void setXmpMetadata(final XMPMeta xmpMeta, final SerializeOptions serializeOptions) throws XMPException, IOException {
+        setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
+    }
+
+    public void setXmpMetadata(final XMPMeta xmpMeta) throws XMPException, IOException {
+        SerializeOptions serializeOptions = new SerializeOptions();
+        serializeOptions.setPadding(2000);
+        setXmpMetadata(xmpMeta, serializeOptions);
     }
 
     /**
