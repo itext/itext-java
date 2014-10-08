@@ -1,11 +1,19 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.Version;
 import com.itextpdf.core.events.EventDispatcher;
 import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.core.xmp.PdfConst;
+import com.itextpdf.core.xmp.XMPConst;
+import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.core.xmp.XMPMeta;
+import com.itextpdf.core.xmp.XMPMetaFactory;
+import com.itextpdf.core.xmp.options.PropertyOptions;
+import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.IOException;
 import java.util.TreeSet;
@@ -36,6 +44,11 @@ public class PdfDocument implements IEventDispatcher {
      * Not null if document is opened either in reading or stamping mode.
      */
     protected PdfReader reader = null;
+
+    /**
+     * XMP Metadata for the document.
+     */
+    protected byte[] xmpMetadata = null;
 
     /**
      * Document catalog.
@@ -102,14 +115,85 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
+     * Use this method to set the XMP Metadata.
+     * @param xmpMetadata The xmpMetadata to set.
+     */
+    public void setXmpMetadata(final byte[] xmpMetadata) {
+        this.xmpMetadata = xmpMetadata;
+    }
+
+    public void setXmpMetadata(final XMPMeta xmpMeta, final SerializeOptions serializeOptions) throws XMPException {
+        setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
+    }
+
+    public void setXmpMetadata(final XMPMeta xmpMeta) throws XMPException {
+        SerializeOptions serializeOptions = new SerializeOptions();
+        serializeOptions.setPadding(2000);
+        setXmpMetadata(xmpMeta, serializeOptions);
+    }
+
+    public void setXmpMetadata() throws XMPException {
+        XMPMeta xmpMeta = XMPMetaFactory.create();
+        xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
+        xmpMeta.setObjectName("");
+        try {
+            xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
+            xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
+        } catch (XMPException xmpExc) {}
+        PdfDictionary docInfo = info.getPdfObject();
+        if (docInfo != null) {
+            PdfName key;
+            PdfObject obj;
+            String value;
+            for (PdfName pdfName : docInfo.keySet()) {
+                key = pdfName;
+                obj = docInfo.get(key);
+                if (obj == null)
+                    continue;
+                if (obj.getType() != PdfObject.String)
+                    continue;
+                value = ((PdfString) obj).toUnicodeString();
+                if (PdfName.Title.equals(key)) {
+                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+                } else if (PdfName.Author.equals(key)) {
+                    xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Creator, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
+                } else if (PdfName.Subject.equals(key)) {
+                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Description, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+                } else if (PdfName.Keywords.equals(key)) {
+                    for (String v : value.split(",|;"))
+                        if (v.trim().length() > 0)
+                            xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Subject, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
+                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
+                } else if (PdfName.Producer.equals(key)) {
+                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
+                } else if (PdfName.Creator.equals(key)) {
+                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreatorTool, value);
+                } else if (PdfName.CreationDate.equals(key)) {
+                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreateDate, PdfDate.getW3CDate(value));
+                } else if (PdfName.ModDate.equals(key)) {
+                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.ModifyDate, PdfDate.getW3CDate(value));
+                }
+            }
+        }
+        setXmpMetadata(xmpMeta);
+    }
+
+    /**
      * Close PDF document.
      *
      * @throws PdfException
      */
-    public void close() throws PdfException {
+    public void close() throws IOException, PdfException {
         try {
             removeAllHandlers();
             if (writer != null) {
+                if (xmpMetadata != null) {
+                    PdfStream xmp = new PdfStream(this);
+                    xmp.getOutputStream().write(xmpMetadata);
+                    xmp.put(PdfName.Type, PdfName.Metadata);
+                    xmp.put(PdfName.Subtype, PdfName.XML);
+                    catalog.getPdfObject().put(PdfName.Metadata, xmp);
+                }
                 catalog.flush();
                 info.flush();
                 writer.flushWaitingObjects();

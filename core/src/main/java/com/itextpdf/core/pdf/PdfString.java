@@ -3,6 +3,23 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.ByteBuffer;
 
+/**
+ * A {@code PdfString}-class is the PDF-equivalent of a
+ * JAVA-{@code String}-object.
+ * <p>
+ * A string is a sequence of characters delimited by parenthesis.
+ * If a string is too long to be conveniently placed on a single line, it may
+ * be split across multiple lines by using the backslash character (\) at the
+ * end of a line to indicate that the string continues on the following line.
+ * Within a string, the backslash character is used as an escape to specify
+ * unbalanced parenthesis, non-printing ASCII characters, and the backslash
+ * character itself. Use of the \<i>ddd</i> escape sequence is the preferred
+ * way to represent characters outside the printable ASCII character set.<br>
+ * This object is described in the 'Portable Document Format Reference Manual
+ * version 1.7' section 3.2.3 (page 53-56).
+ *
+ * @see PdfObject
+ */
 public class PdfString extends PdfPrimitiveObject {
 
     protected String value;
@@ -43,6 +60,16 @@ public class PdfString extends PdfPrimitiveObject {
         if (value == null)
             generateValue();
         return value;
+    }
+
+    /**
+     * Returns the Unicode {@code String} value of this
+     * {@code PdfString}-object.
+     *
+     * @return A {@code String}
+     */
+    public String toUnicodeString() {
+        return getValue();
     }
 
     @Override
