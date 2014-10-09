@@ -19,7 +19,9 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class PdfCanvasTest {
@@ -511,6 +513,137 @@ public class PdfCanvasTest {
 
         reader1.close();
         reader2.close();
+    }
+
+    @Test
+    public void copyPagesTest3() throws IOException, PdfException, DocumentException, InterruptedException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages3_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas.rectangle(100, 600, 100, 100);
+        canvas.fill();
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+        canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
+        canvas.showText("Hello World!!!");
+        canvas.endText();
+
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages3_2.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        for (int i = 0; i < 10; i++) {
+            PdfPage page2 = page1.copy(pdfDoc2);
+            pdfDoc2.addPage(page2);
+            if (i % 2 == 0)
+                page2.flush();
+        }
+
+        pdfDoc1.close();
+        pdfDoc2.close();
+
+
+        CompareTool cmpTool = new CompareTool();
+        PdfReader reader1 = new PdfReader(destinationFolder + "copyPages3_1.pdf");
+        PdfDictionary p1 = reader1.getPageN(1);
+        PdfReader reader2 = new PdfReader(destinationFolder + "copyPages3_2.pdf");
+        for (int i = 0; i < 10; i++) {
+            PdfDictionary p2 = reader2.getPageN(i + 1);
+            Assert.assertTrue(cmpTool.compareDictionaries(p1, p2));
+        }
+        reader1.close();
+        reader2.close();
+    }
+
+    @Test
+    public void copyPagesTest4() throws IOException, PdfException, DocumentException, InterruptedException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages4_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        for (int i = 0; i < 5; i++) {
+            PdfPage page1 = pdfDoc1.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
+            canvas.rectangle(100, 600, 100, 100);
+            canvas.fill();
+            canvas.beginText();
+            canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+            canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
+            canvas.showText(String.format("Page_%d", i + 1));
+            canvas.endText();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            FileOutputStream fos2 = new FileOutputStream(destinationFolder + String.format("copyPages4_%d.pdf", i + 2));
+            PdfWriter writer2 = new PdfWriter(fos2);
+            PdfDocument pdfDoc2 = new PdfDocument(writer2);
+            PdfPage page2 = pdfDoc1.getPage(i + 1).copy(pdfDoc2);
+            pdfDoc2.addPage(page2);
+            pdfDoc2.close();
+        }
+
+        pdfDoc1.close();
+
+
+        CompareTool cmpTool = new CompareTool();
+        PdfReader reader1 = new PdfReader(destinationFolder + "copyPages4_1.pdf");
+
+        for (int i = 0; i < 5; i++) {
+            PdfDictionary page1 = reader1.getPageN(i + 1);
+            PdfReader reader2 = new PdfReader(destinationFolder + String.format("copyPages4_%d.pdf", i + 2));
+            PdfDictionary page = reader2.getPageN(1);
+            Assert.assertTrue(cmpTool.compareDictionaries(page1, page));
+            reader2.close();
+        }
+
+        reader1.close();
+    }
+
+
+    @Test
+    public void copyPagesTest5() throws IOException, PdfException, DocumentException, InterruptedException {
+
+        List<PdfDocument> docs = new ArrayList<PdfDocument>();
+
+        for (int i = 0; i < 3; i++) {
+            FileOutputStream fos1 = new FileOutputStream(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
+            PdfWriter writer1 = new PdfWriter(fos1);
+            PdfDocument pdfDoc1 = new PdfDocument(writer1);
+            docs.add(pdfDoc1);
+            PdfPage page1 = pdfDoc1.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
+            canvas.rectangle(100, 600, 100, 100);
+            canvas.fill();
+            canvas.beginText();
+            canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+            canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
+            canvas.showText(String.format("Page_%d", i + 1));
+            canvas.endText();
+        }
+
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages5_4.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        for (int i = 0; i < 3; i++) {
+            pdfDoc2.addPage(docs.get(i).getPage(1).copy(pdfDoc2));
+        }
+
+        pdfDoc2.close();
+        for (PdfDocument doc : docs)
+            doc.close();
+
+        CompareTool cmpTool = new CompareTool();
+        for (int i = 0; i < 3; i++) {
+            PdfReader reader1 = new PdfReader(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
+            PdfReader reader2 = new PdfReader(destinationFolder + "copyPages5_4.pdf");
+            PdfDictionary page1 = reader1.getPageN(1);
+            PdfDictionary page2 = reader2.getPageN(i + 1);
+            cmpTool.compareDictionaries(page1, page2);
+            reader1.close();
+            reader2.close();
+        }
 
     }
 

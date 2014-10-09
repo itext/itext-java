@@ -99,15 +99,16 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
      *
      * @param document    document to copy dictionary to.
      * @param excludeKeys list of objects to exclude when copying dictionary.
+     * @param allowDuplicating {@link PdfObject}
      * @return copied dictionary.
      * @throws PdfException
      */
-    public PdfDictionary copy(PdfDocument document, List<PdfName> excludeKeys) throws PdfException {
+    public PdfDictionary copy(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) throws PdfException {
         Map<PdfName, PdfObject> excluded = new TreeMap<PdfName, PdfObject>();
         for (PdfName key : excludeKeys) {
             excluded.put(key, map.remove(key));
         }
-        PdfDictionary dictionary = copy(document);
+        PdfDictionary dictionary = copy(document, allowDuplicating);
         map.putAll(excluded);
         return dictionary;
     }
@@ -121,7 +122,7 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         PdfDictionary dictionary = (PdfDictionary) from;
         for (Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
-            map.put(entry.getKey(), entry.getValue().copy(document));
+            map.put(entry.getKey(), entry.getValue().copy(document, false));
         }
     }
 }

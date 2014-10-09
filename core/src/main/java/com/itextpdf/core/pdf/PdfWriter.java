@@ -6,7 +6,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.Hashtable;
 import java.util.TreeSet;
 
 public class PdfWriter extends PdfOutputStream {
@@ -27,7 +27,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected PdfObjectStream objectStream = null;
 
-    protected TreeMap<PdfIndirectReference, PdfIndirectReference> copiedObjects = new TreeMap<PdfIndirectReference, PdfIndirectReference>();
+    protected Hashtable<Integer, PdfIndirectReference> copiedObjects = new Hashtable();
 
     public PdfWriter(java.io.OutputStream os) {
         super(new BufferedOutputStream(os));
@@ -100,16 +100,16 @@ public class PdfWriter extends PdfOutputStream {
             case PdfObject.Null:
             case PdfObject.Number:
             case PdfObject.String:
-                flushObject((PdfPrimitiveObject)object);
+                flushObject((PdfPrimitiveObject) object);
                 break;
             case PdfObject.Array:
-                flushObject((PdfArray)object);
+                flushObject((PdfArray) object);
                 break;
             case PdfObject.Stream:
-                flushObject((PdfStream)object);
+                flushObject((PdfStream) object);
                 break;
             case PdfObject.Dictionary:
-                flushObject((PdfDictionary)object);
+                flushObject((PdfDictionary) object);
                 break;
         }
     }
@@ -129,30 +129,29 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     protected void flushObject(PdfStream stream) throws IOException {
-        flushObject((PdfDictionary)stream);
+        flushObject((PdfDictionary) stream);
         stream.outputStream.close();
         stream.outputStream = null;
         if (stream instanceof PdfObjectStream) {
-            ((PdfObjectStream)stream).indexStream.close();
-            ((PdfObjectStream)stream).indexStream = null;
+            ((PdfObjectStream) stream).indexStream.close();
+            ((PdfObjectStream) stream).indexStream = null;
         }
     }
 
-    protected <T extends PdfObject> T copyObject(T object, PdfDocument document) {
+    protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) throws PdfException {
         PdfIndirectReference indirectReference = object.getIndirectReference();
         PdfIndirectReference copiedIndirectReference = null;
-        if (indirectReference != null && (copiedIndirectReference = copiedObjects.get(indirectReference)) != null) {
-            return (T)copiedIndirectReference.getRefersTo();
+        int copyObjectKey = 0;
+        if (allowDuplicating == false && indirectReference != null && (copiedIndirectReference = copiedObjects.get(copyObjectKey = getCopyObjectKey(object))) != null) {
+            return copiedIndirectReference;
         }
-        T newObject = object.newInstance();
+        PdfObject newObject = object.newInstance();
         if (indirectReference != null) {
-            copiedObjects.put(indirectReference, newObject.makeIndirect(document).getIndirectReference());
+            if (copyObjectKey == 0)
+                copyObjectKey = getCopyObjectKey(object);
+            copiedObjects.put(copyObjectKey, newObject.makeIndirect(document).getIndirectReference());
         }
-        try {
-            newObject.copyContent(object, document);
-        } catch (PdfException e) {
-            e.printStackTrace();
-        }
+        newObject.copyContent(object, document);
         return newObject;
     }
 
@@ -268,6 +267,19 @@ public class PdfWriter extends PdfOutputStream {
                 writeInteger(startxref).
                 writeString("\n%%EOF\n");
         pdfDocument.getIndirects().clear();
+    }
+
+    /**
+     * Calculates hash code for object to be copied.
+     * The hash code and the copied object is the stored in @{link copiedObjects} hash map to avoid duplications.
+     *
+     * @param object object to be copied.
+     * @return calculated hash code.
+     */
+    protected int getCopyObjectKey(PdfObject object) {
+        int result = object.getIndirectReference().hashCode();
+        result = 31 * result + object.getDocument().hashCode();
+        return result;
     }
 
     private byte[] intToBytes(int n) {

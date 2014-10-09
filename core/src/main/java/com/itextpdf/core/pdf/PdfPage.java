@@ -98,7 +98,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage copy(PdfDocument pdfDocument) throws PdfException {
         PdfDictionary dictionary = getPdfObject().copy(pdfDocument, new ArrayList<PdfName>() {{
             add(PdfName.Parent);
-        }});
+        }}, true);
         return new PdfPage(dictionary, pdfDocument);
     }
 

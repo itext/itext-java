@@ -23,7 +23,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfResources(PdfDictionary pdfObject) {
         super(pdfObject);
-        makeResources(pdfObject);
+        buildResources(pdfObject);
     }
 
     public PdfResources() {
@@ -44,7 +44,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return fontName;
     }
 
-    protected void makeResources(PdfDictionary dictionary) {
+    protected void buildResources(PdfDictionary dictionary) {
         //TODO: Implement populating PdfResources internals from PdfDictionary.
     }
 

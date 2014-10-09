@@ -168,7 +168,7 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         PdfArray array = (PdfArray)from;
         for (PdfObject entry : array) {
-            add(entry.copy(document));
+            add(entry.copy(document, false));
         }
     }
 }

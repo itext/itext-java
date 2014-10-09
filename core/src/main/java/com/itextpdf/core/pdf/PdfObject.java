@@ -65,20 +65,7 @@ abstract public class PdfObject {
      * @return copied object.
      */
     public <T extends PdfObject> T copy(PdfDocument document) throws PdfException {
-        if (isFlushed())
-            throw new PdfException(PdfException.CannotCopyFlushedObject);
-        PdfWriter writer = null;
-        if (document != null)
-            writer = document.getWriter();
-        if (writer != null)
-            return (T) writer.copyObject(this, document);
-        T newObject = newInstance();
-        try {
-            newObject.copyContent(this, document);
-        } catch (PdfException e) {
-            e.printStackTrace();
-        }
-        return newObject;
+        return copy(document, true);
     }
 
     /**
@@ -146,6 +133,29 @@ abstract public class PdfObject {
     }
 
     /**
+     * Copied object to a specified document.
+     *
+     * @param document         document to copy object to.
+     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
+     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
+     * @return copied object.
+     * @throws PdfException
+     */
+    protected <T extends PdfObject> T copy(PdfDocument document, boolean allowDuplicating) throws PdfException {
+        if (isFlushed())
+            throw new PdfException(PdfException.CannotCopyFlushedObject);
+        PdfWriter writer = null;
+        if (document != null)
+            writer = document.getWriter();
+        if (writer != null)
+            return (T) writer.copyObject(this, document, allowDuplicating);
+        T newObject = newInstance();
+        newObject.copyContent(this, document);
+        return newObject;
+    }
+
+    /**
      * Gets a PdfWriter associated with the document object belongs to.
      *
      * @return PdfWriter.
@@ -166,7 +176,8 @@ abstract public class PdfObject {
 
     /**
      * Copies object content from object 'from'.
-     *  @param from object to copy content from.
+     *
+     * @param from     object to copy content from.
      * @param document document to copy object to.
      */
     abstract protected void copyContent(PdfObject from, PdfDocument document) throws PdfException;
