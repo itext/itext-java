@@ -67,7 +67,9 @@ abstract public class PdfObject {
     public <T extends PdfObject> T copy(PdfDocument document) throws PdfException {
         if (isFlushed())
             throw new PdfException(PdfException.CannotCopyFlushedObject);
-        PdfWriter writer = getWriter();
+        PdfWriter writer = null;
+        if (document != null)
+            writer = document.getWriter();
         if (writer != null)
             return (T) writer.copyObject(this, document);
         T newObject = newInstance();
