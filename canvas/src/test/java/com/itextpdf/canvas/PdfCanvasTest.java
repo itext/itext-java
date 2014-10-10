@@ -640,9 +640,60 @@ public class PdfCanvasTest {
             PdfReader reader2 = new PdfReader(destinationFolder + "copyPages5_4.pdf");
             PdfDictionary page1 = reader1.getPageN(1);
             PdfDictionary page2 = reader2.getPageN(i + 1);
-            cmpTool.compareDictionaries(page1, page2);
+            Assert.assertTrue(cmpTool.compareDictionaries(page1, page2));
             reader1.close();
             reader2.close();
+        }
+
+    }
+
+    @Test
+    public void copyPagesTest6() throws IOException, PdfException, DocumentException, InterruptedException {
+
+        List<PdfDocument> docs = new ArrayList<PdfDocument>();
+
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages6_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        docs.add(pdfDoc1);
+        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas.rectangle(100, 600, 100, 100);
+        canvas.fill();
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+        canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
+        canvas.showText("Hello World!");
+        canvas.endText();
+
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages6_2.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        pdfDoc2.addPage(pdfDoc1.getPage(1).copy(pdfDoc2));
+
+        FileOutputStream fos3 = new FileOutputStream(destinationFolder + "copyPages6_3.pdf");
+        PdfWriter writer3 = new PdfWriter(fos3);
+        PdfDocument pdfDoc3 = new PdfDocument(writer3);
+        pdfDoc3.addPage(pdfDoc2.getPage(1).copy(pdfDoc3));
+
+        pdfDoc1.addPage(pdfDoc3.getPage(1).copy(pdfDoc1));
+
+        pdfDoc1.close();
+        pdfDoc2.close();
+        pdfDoc3.close();
+
+
+        CompareTool cmpTool = new CompareTool();
+        for (int i = 0; i < 3; i++) {
+            PdfReader reader1 = new PdfReader(destinationFolder + "copyPages6_1.pdf");
+            PdfReader reader2 = new PdfReader(destinationFolder + "copyPages6_2.pdf");
+            PdfReader reader3 = new PdfReader(destinationFolder + "copyPages6_3.pdf");
+            Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(1), reader1.getPageN(2)));
+            Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(2), reader2.getPageN(1)));
+            Assert.assertTrue(cmpTool.compareDictionaries(reader2.getPageN(1), reader3.getPageN(1)));
+            reader1.close();
+            reader2.close();
+            reader3.close();
         }
 
     }

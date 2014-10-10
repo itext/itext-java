@@ -89,7 +89,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Copies page to a cpecified focument.
+     * Copies page to a specified document.
      *
      * @param pdfDocument a document to copy page to.
      * @return copied page.
