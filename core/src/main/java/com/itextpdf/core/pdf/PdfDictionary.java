@@ -113,6 +113,25 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
         return dictionary;
     }
 
+    /**
+     *
+     * @param key
+     * @param asDirect true is to extract direct object always.
+     * @return
+     * @throws PdfException
+     */
+    public PdfObject get(PdfName key, boolean asDirect) throws PdfException {
+        if (!asDirect)
+            return get(key);
+        else {
+            PdfObject obj = get(key);
+            if (obj.getType() == IndirectReference)
+                return ((PdfIndirectReference)obj).getRefersTo(true);
+            else
+                return obj;
+        }
+    }
+
     @Override
     protected PdfDictionary newInstance() {
         return new PdfDictionary();

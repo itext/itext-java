@@ -159,6 +159,25 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
         return string;
     }
 
+    /**
+     *
+     * @param index
+     * @param asDirect true is to extract direct object always.
+     * @return
+     * @throws PdfException
+     */
+    public PdfObject get(int index, boolean asDirect) throws PdfException {
+        if (!asDirect)
+            return get(index);
+        else {
+            PdfObject obj = get(index);
+            if (obj.getType() == IndirectReference)
+                return ((PdfIndirectReference)obj).getRefersTo(true);
+            else
+                return obj;
+        }
+    }
+
     @Override
     protected PdfArray newInstance() {
         return new PdfArray();

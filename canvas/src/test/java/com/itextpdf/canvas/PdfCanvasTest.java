@@ -650,12 +650,9 @@ public class PdfCanvasTest {
     @Test
     public void copyPagesTest6() throws IOException, PdfException, DocumentException, InterruptedException {
 
-        List<PdfDocument> docs = new ArrayList<PdfDocument>();
-
         FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages6_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        docs.add(pdfDoc1);
         PdfPage page1 = pdfDoc1.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 600, 100, 100);

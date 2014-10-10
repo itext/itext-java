@@ -15,6 +15,7 @@ public class PdfException extends Exception {
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "font.and.size.must.be.set.before.writing.any.text";
     public static final String FontSizeTooSmall = "font.size.too.small";
     public static final String GreaterthanNotExpected = "greaterthan.not.expected";
+    public static final String InfiniteIndirectReferenceChain = "infinite.indirect.reference.chain";
     public static final String ObjectCannotBeAddedToObjectStream = "object.cannot.be.added.to.object.stream";
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";

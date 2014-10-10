@@ -62,6 +62,21 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return refersTo;
     }
 
+    public PdfObject getRefersTo(boolean recursively) throws PdfException {
+        if (!recursively)
+            return getRefersTo();
+        else {
+            PdfObject currentRefersTo = getRefersTo();
+            for (int i = 0; i < 100; i++) {
+                if (currentRefersTo instanceof PdfIndirectReference)
+                    currentRefersTo = ((PdfIndirectReference) currentRefersTo).getRefersTo();
+                else
+                    return currentRefersTo;
+            }
+            throw new PdfException(PdfException.InfiniteIndirectReferenceChain, this);
+        }
+    }
+
     public void setRefersTo(PdfObject refersTo) {
         this.refersTo = refersTo;
     }
