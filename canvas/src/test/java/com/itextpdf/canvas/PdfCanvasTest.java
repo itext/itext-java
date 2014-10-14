@@ -750,6 +750,4 @@ public class PdfCanvasTest {
         Assert.assertTrue(iText5Time > iText6Time);
 
     }
-
-
 }

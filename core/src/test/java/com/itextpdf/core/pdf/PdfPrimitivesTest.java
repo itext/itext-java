@@ -7,7 +7,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Random;
 
 public class PdfPrimitivesTest {
@@ -213,7 +212,7 @@ public class PdfPrimitivesTest {
 
 
     private PdfArray generatePdfArrayWithFloatNumbers(PdfDocument doc, boolean indirects) {
-        PdfArray array = (PdfArray)new PdfArray().makeIndirect(doc);
+        PdfArray array = new PdfArray().makeIndirect(doc);
         Random rnd = new Random();
         for (int i = 0; i < DefaultArraySize; i++) {
             PdfNumber num = new PdfNumber(rnd.nextFloat());
@@ -225,7 +224,7 @@ public class PdfPrimitivesTest {
     }
 
     private PdfArray generatePdfArrayWithIntNumbers(PdfDocument doc, boolean indirects) {
-        PdfArray array = (PdfArray)new PdfArray().makeIndirect(doc);
+        PdfArray array = new PdfArray().makeIndirect(doc);
         Random rnd = new Random();
         for (int i = 0; i < DefaultArraySize; i++) {
             array.add(new PdfNumber(rnd.nextInt()).makeIndirect(indirects ? doc : null));
@@ -234,7 +233,7 @@ public class PdfPrimitivesTest {
     }
 
     private PdfArray generatePdfArrayWithStrings(PdfDocument doc, boolean indirects) {
-        PdfArray array = (PdfArray)new PdfArray().makeIndirect(doc);
+        PdfArray array = new PdfArray().makeIndirect(doc);
         RandomString rnd = new RandomString(16);
         for (int i = 0; i < DefaultArraySize; i++) {
             array.add(new PdfString(rnd.nextString()).makeIndirect(indirects ? doc : null));
@@ -243,7 +242,7 @@ public class PdfPrimitivesTest {
     }
 
     private PdfArray generatePdfArrayWithNames(PdfDocument doc, boolean indirects) {
-        PdfArray array = (PdfArray)new PdfArray().makeIndirect(doc);
+        PdfArray array = new PdfArray().makeIndirect(doc);
         RandomString rnd = new RandomString(6);
         for (int i = 0; i < DefaultArraySize; i++) {
             array.add(new PdfName(rnd.nextString()).makeIndirect(indirects ? doc : null));
@@ -252,7 +251,7 @@ public class PdfPrimitivesTest {
     }
 
     private PdfArray generatePdfArrayWithBooleans(PdfDocument doc, boolean indirects) {
-        PdfArray array = (PdfArray)new PdfArray().makeIndirect(doc);
+        PdfArray array = new PdfArray().makeIndirect(doc);
         Random rnd = new Random();
         for (int i = 0; i < DefaultArraySize; i++) {
             array.add(new PdfBoolean(rnd.nextBoolean()).makeIndirect(indirects ? doc : null));

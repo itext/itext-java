@@ -128,7 +128,7 @@ abstract public class PdfObject {
     public void setDocument(PdfDocument document) {
         if (document != null && indirectReference == null) {
             indirectReference = document.getNextIndirectReference(this);
-            document.addIndirectReference(indirectReference);
+            document.getXRef().add(indirectReference);
         }
     }
 

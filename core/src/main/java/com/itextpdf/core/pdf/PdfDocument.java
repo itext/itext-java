@@ -16,7 +16,6 @@ import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.IOException;
-import java.util.TreeSet;
 
 public class PdfDocument implements IEventDispatcher {
 
@@ -73,7 +72,7 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * List of indirect objects used in the document.
      */
-    protected TreeSet<PdfIndirectReference> indirects = new TreeSet<PdfIndirectReference>();
+    protected PdfXRefTable xref = new PdfXRefTable();
 
     /**
      * Current indirect reference number.
@@ -383,12 +382,21 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Gets PdfWriter associated with the document.
+     * Gets {@code PdfWriter} associated with the document.
      *
      * @return PdfWriter associated with the document.
      */
     public PdfWriter getWriter() {
         return writer;
+    }
+
+    /**
+     * Gets {@code PdfReader} associated with the document.
+     *
+     * @return PdfReader associated with the document.
+     */
+    public PdfReader getReader() {
+        return reader;
     }
 
     /**
@@ -463,30 +471,12 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Adds indirect reference to list of indirect objects.
-     *
-     * @param indirectReference indirect reference to add.
-     */
-    protected void addIndirectReference(PdfIndirectReference indirectReference) {
-        getIndirects().add(indirectReference);
-    }
-
-    /**
      * Gets list of indirect references.
      *
      * @return list of indirect references.
      */
-    protected TreeSet<PdfIndirectReference> getIndirects() {
-        return indirects;
-    }
-
-    /**
-     * Sets list of indirect references.
-     *
-     * @param indirects list of indirect references to be set.
-     */
-    protected void setIndirects(TreeSet<PdfIndirectReference> indirects) {
-        this.indirects = indirects;
+    protected PdfXRefTable getXRef() {
+        return xref;
     }
 
     /**
