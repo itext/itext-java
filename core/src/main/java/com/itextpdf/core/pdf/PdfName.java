@@ -4,6 +4,11 @@ import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.ByteBuffer;
 import com.itextpdf.io.streams.OutputStream;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     private static final byte[] space = OutputStream.getIsoBytes("#20");                //  ' '
@@ -19,67 +24,109 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     private static final byte[] solidus = OutputStream.getIsoBytes("#2f");              //  '/'
     private static final byte[] numberSign = OutputStream.getIsoBytes("#23");           //  '#'
 
-    public static final PdfName Action = new PdfName("Action");
-    public static final PdfName Author = new PdfName("Author");
-    public static final PdfName BaseFont = new PdfName("BaseFont");
-    public static final PdfName Catalog = new PdfName("Catalog");
-    public static final PdfName Contents = new PdfName("Contents");
-    public static final PdfName Count = new PdfName("Count");
-    public static final PdfName Creator = new PdfName("Creator");
-    public static final PdfName D = new PdfName("D");
-    public static final PdfName Encoding = new PdfName("Encoding");
-    public static final PdfName Extends = new PdfName("Extends");
-    public static final PdfName F = new PdfName("F");
-    public static final PdfName First = new PdfName("First");
-    public static final PdfName Fit = new PdfName("Fit");
-    public static final PdfName FitB = new PdfName("FitB");
-    public static final PdfName FitBH = new PdfName("FitBH");
-    public static final PdfName FitBV = new PdfName("FitBV");
-    public static final PdfName FitH = new PdfName("FitH");
-    public static final PdfName FitR = new PdfName("FitR");
-    public static final PdfName FitV = new PdfName("FitV");
-    public static final PdfName Font = new PdfName("Font");
-    public static final PdfName GoTo = new PdfName("GoTo");
-    public static final PdfName GoToR = new PdfName("GoToR");
-    public static final PdfName CreationDate = new PdfName("CreationDate");
-    public static final PdfName ID = new PdfName("ID");
-    public static final PdfName Index = new PdfName("Index");
-    public static final PdfName Info = new PdfName("Info");
-    public static final PdfName IsMap = new PdfName("IsMap");
-    public static final PdfName Keywords = new PdfName("Keywords");
-    public static final PdfName Kids = new PdfName("Kids");
-    public static final PdfName Length = new PdfName("Length");
-    public static final PdfName MediaBox = new PdfName("MediaBox");
-    public static final PdfName Metadata = new PdfName("Metadata");
-    public static final PdfName ModDate = new PdfName("ModDate");
-    public static final PdfName N = new PdfName("N");
-    public static final PdfName NewWindow = new PdfName("NewWindow");
-    public static final PdfName Next = new PdfName("Next");
-    public static final PdfName ObjStm = new PdfName("ObjStm");
-    public static final PdfName Page = new PdfName("Page");
-    public static final PdfName Pages = new PdfName("Pages");
-    public static final PdfName Parent = new PdfName("Parent");
-    public static final PdfName Producer = new PdfName("Producer");
-    public static final PdfName Resources = new PdfName("Resources");
-    public static final PdfName Root = new PdfName("Root");
-    public static final PdfName S = new PdfName("S");
-    public static final PdfName Subtype = new PdfName("Subtype");
-    public static final PdfName Size = new PdfName("Size");
-    public static final PdfName Subject = new PdfName("Subject");
-    public static final PdfName Title = new PdfName("Title");
-    public static final PdfName Type = new PdfName("Type");
-    public static final PdfName Type1 = new PdfName("Type1");
-    public static final PdfName URI = new PdfName("URI");
-    public static final PdfName W = new PdfName("W");
-    public static final PdfName WinAnsiEncoding = new PdfName("WinAnsiEncoding");
-    public static final PdfName XML = new PdfName("XML");
-    public static final PdfName XRef = new PdfName("XRef");
-    public static final PdfName XYZ = new PdfName("XYZ");
+    public static final PdfName Action = createDirectName("Action");
+    public static final PdfName Author = createDirectName("Author");
+    public static final PdfName BaseFont = createDirectName("BaseFont");
+    public static final PdfName Catalog = createDirectName("Catalog");
+    public static final PdfName Contents = createDirectName("Contents");
+    public static final PdfName Count = createDirectName("Count");
+    public static final PdfName Creator = createDirectName("Creator");
+    public static final PdfName D = createDirectName("D");
+    public static final PdfName Encoding = createDirectName("Encoding");
+    public static final PdfName Extends = createDirectName("Extends");
+    public static final PdfName F = createDirectName("F");
+    public static final PdfName First = createDirectName("First");
+    public static final PdfName Fit = createDirectName("Fit");
+    public static final PdfName FitB = createDirectName("FitB");
+    public static final PdfName FitBH = createDirectName("FitBH");
+    public static final PdfName FitBV = createDirectName("FitBV");
+    public static final PdfName FitH = createDirectName("FitH");
+    public static final PdfName FitR = createDirectName("FitR");
+    public static final PdfName FitV = createDirectName("FitV");
+    public static final PdfName Font = createDirectName("Font");
+    public static final PdfName GoTo = createDirectName("GoTo");
+    public static final PdfName GoToR = createDirectName("GoToR");
+    public static final PdfName CreationDate = createDirectName("CreationDate");
+    public static final PdfName ID = createDirectName("ID");
+    public static final PdfName Index = createDirectName("Index");
+    public static final PdfName Info = createDirectName("Info");
+    public static final PdfName IsMap = createDirectName("IsMap");
+    public static final PdfName Keywords = createDirectName("Keywords");
+    public static final PdfName Kids = createDirectName("Kids");
+    public static final PdfName Length = createDirectName("Length");
+    public static final PdfName MediaBox = createDirectName("MediaBox");
+    public static final PdfName Metadata = createDirectName("Metadata");
+    public static final PdfName ModDate = createDirectName("ModDate");
+    public static final PdfName N = createDirectName("N");
+    public static final PdfName Name = createDirectName("Name");
+    public static final PdfName NewWindow = createDirectName("NewWindow");
+    public static final PdfName Next = createDirectName("Next");
+    public static final PdfName ObjStm = createDirectName("ObjStm");
+    public static final PdfName Page = createDirectName("Page");
+    public static final PdfName Pages = createDirectName("Pages");
+    public static final PdfName Parent = createDirectName("Parent");
+    public static final PdfName Prev = createDirectName("Prev");
+    public static final PdfName Producer = createDirectName("Producer");
+    public static final PdfName Resources = createDirectName("Resources");
+    public static final PdfName Root = createDirectName("Root");
+    public static final PdfName S = createDirectName("S");
+    public static final PdfName Subtype = createDirectName("Subtype");
+    public static final PdfName Size = createDirectName("Size");
+    public static final PdfName Subject = createDirectName("Subject");
+    public static final PdfName Title = createDirectName("Title");
+    public static final PdfName Type = createDirectName("Type");
+    public static final PdfName Type1 = createDirectName("Type1");
+    public static final PdfName URI = createDirectName("URI");
+    public static final PdfName W = createDirectName("W");
+    public static final PdfName WinAnsiEncoding = createDirectName("WinAnsiEncoding");
+    public static final PdfName XML = createDirectName("XML");
+    public static final PdfName XRef = createDirectName("XRef");
+    public static final PdfName XRefStm = createDirectName("XRefStm");
+    public static final PdfName XYZ = createDirectName("XYZ");
 
     protected String value = null;
 
+    /**
+     * map strings to all known static names
+     */
+    public static Map<String, PdfName> staticNames;
+
+    /**
+     * Use reflection to cache all the static public final names so
+     * future <code>PdfName</code> additions don't have to be "added twice".
+     * A bit less efficient (around 50ms spent here on a 2.2ghz machine),
+     *  but Much Less error prone.
+     */
+
+    static {
+        Field fields[] = PdfName.class.getDeclaredFields();
+        staticNames = new HashMap<String, PdfName>( fields.length );
+        final int flags = Modifier.STATIC | Modifier.PUBLIC | Modifier.FINAL;
+        try {
+            for (int fldIdx = 0; fldIdx < fields.length; ++fldIdx) {
+                Field curFld = fields[fldIdx];
+                if ((curFld.getModifiers() & flags) == flags &&
+                        curFld.getType().equals( PdfName.class )) {
+                    PdfName name = (PdfName)curFld.get(null);
+                    staticNames.put(name.getValue(), name);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static PdfName createDirectName(String name){
+        return new PdfName(name, true);
+    }
+
     public PdfName(String value) {
         super();
+        this.value = value;
+    }
+
+    private PdfName(String value, boolean directOnly) {
+        super(directOnly);
         this.value = value;
     }
 
@@ -93,7 +140,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     @Override
     public byte getType() {
-        return Name;
+        return PdfObject.Name;
     }
 
     public String getValue() {
@@ -104,13 +151,13 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     @Override
     public int compareTo(PdfName o) {
-        return value.compareTo(o.value);
+        return getValue().compareTo(o.getValue());
     }
 
     protected void generateValue() {
         StringBuilder buf = new StringBuilder();
         try {
-            for (int k = 1; k < content.length; ++k) {
+            for (int k = 0; k < content.length; ++k) {
                 char c = (char)content[k];
                 if (c == '#') {
                     byte c1 = content[k + 1];
@@ -130,7 +177,6 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     protected void generateContent() {
         int length = value.length();
         ByteBuffer buf = new ByteBuffer(length + 20);
-        buf.append('/');
         char c;
         char chars[] = value.toCharArray();
         for (int k = 0; k < length; k++) {

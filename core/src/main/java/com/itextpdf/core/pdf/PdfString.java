@@ -52,8 +52,9 @@ public class PdfString extends PdfPrimitiveObject {
         return hexWriting;
     }
 
-    public void setHexWriting(boolean hexWriting) {
+    public PdfString setHexWriting(boolean hexWriting) {
         this.hexWriting = hexWriting;
+        return this;
     }
 
     public String getValue() {

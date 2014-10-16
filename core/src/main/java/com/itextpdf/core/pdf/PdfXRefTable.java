@@ -34,8 +34,10 @@ public class PdfXRefTable {
     public void add(PdfIndirectReference indirectReference) {
         if (indirectReference == null)
             return;
-        ensureSize(indirectReference.getObjNr());
-        xref[indirectReference.getObjNr()] = indirectReference;
+        int objNr = indirectReference.getObjNr();
+        this.count = Math.max(this.count, objNr);
+        ensureCount(objNr);
+        xref[objNr] = indirectReference;
     }
 
     public void addAll(Iterable<PdfIndirectReference> indirectReferences) {
@@ -55,17 +57,26 @@ public class PdfXRefTable {
 
     public PdfIndirectReference get(final int index) {
         if (index > count) {
-            throw new IndexOutOfBoundsException();
+            return null;
         }
         return xref[index];
     }
 
-    private void ensureSize(final int size) {
-        this.count = Math.max(this.count, size);
-        if (xref.length <= size) {
-            PdfIndirectReference newXref[] = new PdfIndirectReference[size*2];
-            System.arraycopy(xref, 0, newXref, 0, xref.length);
-            xref = newXref;
+    protected void setCapacity(int capacity) {
+        if (capacity > xref.length) {
+            extendXref(capacity);
         }
+    }
+
+    private void ensureCount(final int count) {
+        if (count >= xref.length) {
+            extendXref(count << 1);
+        }
+    }
+
+    private void extendXref(final int capacity) {
+        PdfIndirectReference newXref[] = new PdfIndirectReference[capacity];
+        System.arraycopy(xref, 0, newXref, 0, xref.length);
+        xref = newXref;
     }
 }

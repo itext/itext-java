@@ -142,7 +142,7 @@ public class PdfCanvas {
      */
     public PdfCanvas setFontAndSize(PdfFont font, float size) throws IOException, PdfException {
         if (size < 0.0001f && size > -0.0001f)
-            throw new PdfException(PdfException.FontSizeTooSmall);
+            throw new PdfException(PdfException.FontSizeTooSmall, size);
         currentGs.size = size;
         currentGs.fontName = resources.addFont(font);
         contentStream.getOutputStream()
@@ -231,7 +231,7 @@ public class PdfCanvas {
      */
     private void showText2(final String text) throws IOException, PdfException {
         if (currentGs.fontName == null)
-            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText);
+            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = PdfEncodings.convertToBytes(text, PdfEncodings.WINANSI);
         escapeString(b);
     }

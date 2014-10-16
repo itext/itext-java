@@ -37,6 +37,8 @@ public class PdfOutputStream extends OutputStream {
                 write((PdfIndirectReference) object);
                 break;
             case PdfObject.Name:
+                write((PdfName)object);
+                break;
             case PdfObject.Null:
             case PdfObject.String:
             case PdfObject.Boolean:
@@ -104,13 +106,18 @@ public class PdfOutputStream extends OutputStream {
         write(primitive.getContent());
     }
 
-    protected void write(PdfNumber primitive) throws IOException, PdfException {
-        if (primitive.hasContent()) {
-            write(primitive.getContent());
-        } else if(primitive.getValueType() == PdfNumber.Int) {
-            writeInteger(primitive.getIntValue());
+    protected void write(PdfName name) throws IOException, PdfException {
+        write((byte)'/');
+        write(name.getContent());
+    }
+
+    protected void write(PdfNumber number) throws IOException, PdfException {
+        if (number.hasContent()) {
+            write(number.getContent());
+        } else if(number.getValueType() == PdfNumber.Int) {
+            writeInteger(number.getIntValue());
         } else {
-            writeDouble(primitive.getValue());
+            writeDouble(number.getValue());
         }
     }
 

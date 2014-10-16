@@ -20,7 +20,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     public void addPage(PdfPage page) throws PdfException {
         if (page.isFlushed())
-            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted);
+            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
         pageTree.addPage(page);
     }
 

@@ -7,9 +7,15 @@ import java.util.Arrays;
 abstract class PdfPrimitiveObject extends PdfObject {
 
     protected byte[] content = null;
+    protected boolean directOnly;
 
     public PdfPrimitiveObject() {
         super();
+    }
+
+    public PdfPrimitiveObject(boolean directOnly) {
+        super();
+        this.directOnly = directOnly;
     }
 
     public PdfPrimitiveObject(byte[] content) {
@@ -28,6 +34,22 @@ abstract class PdfPrimitiveObject extends PdfObject {
     }
 
     protected abstract void generateContent();
+
+    @Override
+    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
+        //TODO log makingIndirect for directObjects
+        if (directOnly) return null;
+        return super.makeIndirect(document);
+    }
+
+    @Override
+    public <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
+        //TODO log setIndirect for directObjects
+        if (!directOnly) {
+            super.setIndirectReference(indirectReference);
+        }
+        return (T) this;
+    }
 
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {

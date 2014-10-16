@@ -99,6 +99,11 @@ abstract public class PdfObject {
         return (T) this;
     }
 
+    public <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
+        this.indirectReference = indirectReference;
+        return (T) this;
+    }
+
     /**
      * Indicates is the object has been flushed or not.
      *
@@ -144,7 +149,7 @@ abstract public class PdfObject {
      */
     protected <T extends PdfObject> T copy(PdfDocument document, boolean allowDuplicating) throws PdfException {
         if (isFlushed())
-            throw new PdfException(PdfException.CannotCopyFlushedObject);
+            throw new PdfException(PdfException.CannotCopyFlushedObject, this);
         PdfWriter writer = null;
         if (document != null)
             writer = document.getWriter();
@@ -164,6 +169,18 @@ abstract public class PdfObject {
         PdfDocument doc = getDocument();
         if (doc != null)
             return doc.getWriter();
+        return null;
+    }
+
+    /**
+     * Gets a PdfReader associated with the document object belongs to.
+     *
+     * @return PdfReader.
+     */
+    protected PdfReader getReader() {
+        PdfDocument doc = getDocument();
+        if (doc != null)
+            return doc.getReader();
         return null;
     }
 

@@ -4,8 +4,10 @@ import com.itextpdf.core.exceptions.PdfException;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
-    protected int objNr = 0;
-    protected int genNr = 0;
+    private static final int LengthOfIndirectsChain = 31;
+
+    protected final int objNr;
+    protected final int genNr;
 
     /**
      * PdfObject that current PdfIndirectReference instance refers to.
@@ -19,7 +21,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     protected int objectStreamNumber = 0;
 
     /**
-     * Offset in a document of the <code>refersTo</code> object.
+     * Offset in a document of the {@code refersTo} object.
      * If the object placed into object stream then it is an object index inside object stream.
      */
     protected int offsetOrIndex = 0;
@@ -46,8 +48,16 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.refersTo = refersTo;
     }
 
-    private PdfIndirectReference() {
+    // NOTE
+    // If offset = -1 -> object have to initialize.
+    // Usually this means that PdfReader found this indirect before reading it in xref table.
+    // If offset = 0 -> it means that object is not in use, marked as 'f' in xref table.
+    protected PdfIndirectReference(PdfDocument doc, int objNr, int genNr, int offset) {
         super();
+        this.pdfDocument = doc;
+        this.objNr = objNr;
+        this.genNr = genNr;
+        this.offsetOrIndex = offset;
     }
 
     public int getObjNr() {
@@ -58,22 +68,26 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return genNr;
     }
 
-    public PdfObject getRefersTo() {
+    public PdfObject getRefersTo() throws PdfException {
+        if (refersTo == null && getReader() != null) {
+            refersTo = getReader().readObject(this);
+        }
         return refersTo;
     }
 
+    // NOTE TODO
     public PdfObject getRefersTo(boolean recursively) throws PdfException {
         if (!recursively)
             return getRefersTo();
         else {
             PdfObject currentRefersTo = getRefersTo();
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < LengthOfIndirectsChain; i++) {
                 if (currentRefersTo instanceof PdfIndirectReference)
                     currentRefersTo = ((PdfIndirectReference) currentRefersTo).getRefersTo();
                 else
-                    return currentRefersTo;
+                    break;
             }
-            throw new PdfException(PdfException.InfiniteIndirectReferenceChain, this);
+            return currentRefersTo;
         }
     }
 
@@ -102,6 +116,10 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.offsetOrIndex = objectStreamNumber == 0 ? offset : 0;
     }
 
+    public boolean isInUse() {
+        return offsetOrIndex > 0;
+    }
+
     /**
      * Gets refersTo object index in the object stream.
      *
@@ -122,10 +140,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
         PdfIndirectReference that = (PdfIndirectReference) o;
 
-        if (objNr != that.objNr) return false;
-        if (genNr != that.genNr) return false;
-
-        return true;
+        return objNr == that.objNr && genNr == that.genNr;
     }
 
     @Override
@@ -162,7 +177,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     @Override
     protected PdfIndirectReference newInstance() {
-        return new PdfIndirectReference();
+        return pdfDocument.getNextIndirectReference(refersTo);
     }
 
     @Override

@@ -2,13 +2,14 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.io.streams.ByteBuffer;
+import com.itextpdf.io.streams.OutputStream;
 import com.itextpdf.io.streams.ras.RandomAccessFileOrArray;
 import com.itextpdf.io.streams.ras.RandomAccessSourceFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-public class PRTokeniser {
+public class PdfTokeniser {
 
     public enum TokenType {
         Number,
@@ -20,6 +21,8 @@ public class PRTokeniser {
         StartDic,
         EndDic,
         Ref,
+        Obj,
+        EndObj,
         Other,
         EndOfFile
     }
@@ -53,8 +56,19 @@ public class PRTokeniser {
             false, false, false, false, false, false, false};
 
 
-    private static final byte[] Obj = {'o', 'b', 'j'};
-    private static final byte[] R = {'R'};
+    protected static final byte[] Obj = OutputStream.getIsoBytes("obj");
+    protected static final byte[] Endobj = OutputStream.getIsoBytes("endobj");
+    protected static final byte[] R = OutputStream.getIsoBytes("R");
+    protected static final byte[] Xref = OutputStream.getIsoBytes("xref");
+    protected static final byte[] Startxref = OutputStream.getIsoBytes("startxref");
+    protected static final byte[] Stream = OutputStream.getIsoBytes("stream");
+    protected static final byte[] Trailer = OutputStream.getIsoBytes("trailer");
+    protected static final byte[] N = OutputStream.getIsoBytes("n");
+    protected static final byte[] F = OutputStream.getIsoBytes("f");
+    protected static final byte[] Null = OutputStream.getIsoBytes("null");
+    protected static final byte[] True = OutputStream.getIsoBytes("true");
+    protected static final byte[] False = OutputStream.getIsoBytes("false");
+
 
     private final RandomAccessFileOrArray file;
     protected TokenType type;
@@ -69,7 +83,7 @@ public class PRTokeniser {
      * as necessary to account for any junk that occurs in the byte source before the header
      * @param file the source
      */
-    public PRTokeniser(RandomAccessFileOrArray file) {
+    public PdfTokeniser(RandomAccessFileOrArray file) {
         this.file = file;
         this.outBuf = new ByteBuffer();
     }
@@ -146,11 +160,25 @@ public class PRTokeniser {
         return new String(outBuf.getInternalBuffer(), 0, outBuf.size());
     }
 
-    public int getReference() {
+    public boolean tokenValueEqualsTo(byte[] cmp) {
+        if (cmp == null)
+            return false;
+
+        int size = cmp.length;
+        if (outBuf.size() != size)
+            return false;
+
+        for (int i = 0; i < size; i++)
+            if (cmp[i] != outBuf.getInternalBuffer()[i])
+                return false;
+        return true;
+    }
+
+    public int getObjNr() {
         return reference;
     }
 
-    public int getGeneration() {
+    public int getGenNr() {
         return generation;
     }
 
@@ -159,8 +187,14 @@ public class PRTokeniser {
             file.pushBack((byte)ch);
     }
 
-    public void throwError(String error) throws PdfException {
-        throw new PdfException(PdfException.Error1AtFilePointer2); //, error, String.valueOf(file.getPosition()));
+    public void throwError(String error, Object... messageParams) throws PdfException {
+        try {
+            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
+                    .setMessageParams(file.getPosition());
+        } catch (IOException e) {
+            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
+                    .setMessageParams(error, "no position");
+        }
     }
 
     public int getHeaderOffset() throws PdfException, IOException {
@@ -169,7 +203,7 @@ public class PRTokeniser {
         if (idx < 0){
             idx = str.indexOf("%FDF-");
             if (idx < 0)
-                throw new PdfException(PdfException.PdfHeaderNotFound);
+                throw new PdfException(PdfException.PdfHeaderNotFound, this);
         }
 
         return idx;
@@ -180,7 +214,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx != 0)
-            throw new PdfException(PdfException.PdfHeaderNotFound);
+            throw new PdfException(PdfException.PdfHeaderNotFound, this);
         return str.charAt(7);
     }
 
@@ -189,7 +223,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.indexOf("%FDF-");
         if (idx != 0)
-            throw new PdfException(PdfException.FdfStartxrefNotFound);
+            throw new PdfException(PdfException.FdfStartxrefNotFound, this);
     }
 
     public long getStartxref() throws IOException, PdfException {
@@ -204,7 +238,7 @@ public class PRTokeniser {
             if (idx >= 0) return pos + idx;
             pos = pos - arrLength + 9;                  // 9 = "startxref".length()
         }
-        throw new PdfException(PdfException.PdfStartxrefNotFound);
+        throw new PdfException(PdfException.PdfStartxrefNotFound, this);
     }
 
     public void nextValidToken() throws IOException, PdfException {
@@ -239,15 +273,22 @@ public class PRTokeniser {
                 }
                 default:
                 {
-                    if (type != TokenType.Other || !Arrays.equals(R, getByteContent())) {
-                        file.seek(ptr);
-                        type = TokenType.Number;
-                        outBuf.reset().append(n1);
-                        return;
+                    if (type == TokenType.Other) {
+                        if (tokenValueEqualsTo(R)) {
+                            type = TokenType.Ref;
+                            reference = Integer.parseInt(new String(n1));
+                            generation = Integer.parseInt(new String(n2));
+                            return;
+                        } else if (tokenValueEqualsTo(Obj)) {
+                            type = TokenType.Obj;
+                            reference = Integer.parseInt(new String(n1));
+                            generation = Integer.parseInt(new String(n2));
+                            return;
+                        }
                     }
-                    type = TokenType.Ref;
-                    reference = Integer.parseInt(new String(n1));
-                    generation = Integer.parseInt(new String(n2));
+                    file.seek(ptr);
+                    type = TokenType.Number;
+                    outBuf.reset().append(n1);
                     return;
                 }
             }
@@ -281,7 +322,6 @@ public class PRTokeniser {
             }
             case '/': {
                 outBuf.reset();
-                outBuf.append('/');
                 type = TokenType.Name;
                 while (true) {
                     ch = file.read();
@@ -295,7 +335,7 @@ public class PRTokeniser {
             case '>': {
                 ch = file.read();
                 if (ch != '>')
-                    throwError(PdfException.GreaterthanNotExpected);
+                    throwError(PdfException.GtNotExpected);
                 type = TokenType.EndDic;
                 break;
             }
@@ -332,7 +372,7 @@ public class PRTokeniser {
                     v1 = file.read();
                 }
                 if (v1 < 0 || v2 < 0)
-                    throwError("error.reading.string");
+                    throwError(PdfException.ErrorReadingString);
                 break;
             }
             case '%': {
@@ -372,7 +412,7 @@ public class PRTokeniser {
                     outBuf.append(ch);
                 }
                 if (ch == -1)
-                    throwError("error.reading.string");
+                    throwError(PdfException.ErrorReadingString);
                 break;
             }
             default: {
@@ -513,7 +553,7 @@ public class PRTokeniser {
 
     public static long[] checkObjectStart(byte line[]) {
         try {
-            PRTokeniser tk = new PRTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(line)));
+            PdfTokeniser tk = new PdfTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(line)));
             if (!tk.nextToken() || tk.getTokenType() != TokenType.Number)
                 return null;
             int num = tk.intValue();

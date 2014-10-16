@@ -38,6 +38,7 @@ public class PdfObjectStream extends PdfStream {
      */
     public void addObject(PdfObject object) throws PdfException {
         if (size == maxObjStreamSize)
+            //todo verify exception, possible size should be included in message
             throw new PdfException(PdfException.ObjectCannotBeAddedToObjectStream);
         try {
             indexStream.writeInteger(object.getIndirectReference().getObjNr()).

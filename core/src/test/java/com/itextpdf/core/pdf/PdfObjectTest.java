@@ -27,7 +27,6 @@ public class PdfObjectTest {
 
     @Test
     public void indirectsChain2() throws PdfException {
-        String exceptionMessage = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument document = new PdfDocument(writer);
@@ -41,12 +40,8 @@ public class PdfObjectTest {
             object = object.makeIndirect(document).getIndirectReference();
         }
         catalog.put(new PdfName("a"), object);
-        try {
-            ((PdfIndirectReference)catalog.get(new PdfName("a"))).getRefersTo(true);
-        } catch (PdfException e) {
-            exceptionMessage = e.getMessage();
-        }
-        Assert.assertEquals(PdfException.InfiniteIndirectReferenceChain, exceptionMessage);
+        ((PdfIndirectReference)catalog.get(new PdfName("a"))).getRefersTo(true);
+        Assert.assertNotNull(((PdfIndirectReference)catalog.get(new PdfName("a"))).getRefersTo(true));
         document.close();
     }
 
@@ -61,7 +56,7 @@ public class PdfObjectTest {
             put(new PdfName("b"), new PdfName("c"));
         }});
         PdfObject object = dictionary;
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 31; i++) {
             object = object.makeIndirect(document).getIndirectReference();
         }
         catalog.put(new PdfName("a"), object);
@@ -82,7 +77,7 @@ public class PdfObjectTest {
             put(new PdfName("b"), new PdfName("c"));
         }});
         PdfObject object = dictionary;
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 31; i++) {
             object = object.makeIndirect(document).getIndirectReference();
         }
         PdfArray array = new PdfArray();

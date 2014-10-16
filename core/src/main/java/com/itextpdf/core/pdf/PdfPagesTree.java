@@ -81,7 +81,7 @@ class PdfPagesTree {
      */
     public void insertPage(int index, PdfPage page) throws PdfException {
         if (page.isFlushed())
-            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted);
+            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
         --index;
         if (index > pages.size())
             throw new IndexOutOfBoundsException("index");

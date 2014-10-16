@@ -5,8 +5,8 @@ import com.itextpdf.io.streams.OutputStream;
 
 public class PdfBoolean extends PdfPrimitiveObject {
 
-    public static final PdfBoolean PdfTrue = new PdfBoolean(true);
-    public static final PdfBoolean PdfFalse = new PdfBoolean(false);
+    public static final PdfBoolean PdfTrue = new PdfBoolean(true, true);
+    public static final PdfBoolean PdfFalse = new PdfBoolean(false, true);
 
     private static final byte[] True = OutputStream.getIsoBytes("true");
     private static final byte[] False = OutputStream.getIsoBytes("false");
@@ -14,7 +14,11 @@ public class PdfBoolean extends PdfPrimitiveObject {
     private boolean value;
 
     public PdfBoolean(boolean value) {
-        super();
+        this(value, false);
+    }
+
+    private PdfBoolean(boolean value, boolean directOnly) {
+        super(directOnly);
         this.value = value;
     }
 
