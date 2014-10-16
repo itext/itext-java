@@ -5,6 +5,8 @@ import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.fonts.PdfEncodings;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.core.pdf.xobject.PdfXObject;
 import com.itextpdf.io.streams.OutputStream;
 
 import java.io.IOException;

@@ -21,6 +21,7 @@ public class PdfException extends Exception {
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";
 
     protected Object object;
+    protected String composedMessage;
 
     public PdfException(String message) {
         super(message);
@@ -38,6 +39,14 @@ public class PdfException extends Exception {
     public PdfException(String message, Throwable cause, Object object) {
         this(message, cause);
         this.object = object;
+    }
+
+    public PdfException setMessageParams(Object... messageParams) {
+        return this;
+    }
+
+    public String getComposedMessage() {
+        return composedMessage;
     }
 
 }

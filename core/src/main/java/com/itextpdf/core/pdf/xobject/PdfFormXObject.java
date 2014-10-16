@@ -1,4 +1,6 @@
-package com.itextpdf.core.pdf;
+package com.itextpdf.core.pdf.xobject;
+
+import com.itextpdf.core.pdf.*;
 
 public class PdfFormXObject extends PdfXObject {
 
