@@ -80,7 +80,7 @@ public class PdfTokeniser {
     /**
      * Streams are closed automatically.
      */
-    private boolean closeStream;
+    private boolean closeStream = true;
 
     /**
      * Creates a PRTokeniser for the specified {@link RandomAccessFileOrArray}.
