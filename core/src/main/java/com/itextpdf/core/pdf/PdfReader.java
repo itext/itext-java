@@ -284,10 +284,6 @@ public class PdfReader {
         return trailer;
     }
 
-    protected void setPdfDocument(PdfDocument pdfDocument) {
-        this.pdfDocument = pdfDocument;
-    }
-
     public void close() {
 
     }

@@ -466,9 +466,11 @@ public class PdfDocument implements IEventDispatcher {
                 writer.writeHeader();
             }
             if (reader != null) {
-                reader.setPdfDocument(this);
+                reader.pdfDocument = this;
                 reader.readPdf();
-
+                trailer = new PdfTrailer(reader.trailer);
+                info = new PdfDocumentInfo((PdfDictionary)trailer.getPdfObject().get(PdfName.Info, true), this);
+                catalog = new PdfCatalog((PdfDictionary)trailer.getPdfObject().get(PdfName.Root, true), this);
             }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotOpenDocument, e, this);

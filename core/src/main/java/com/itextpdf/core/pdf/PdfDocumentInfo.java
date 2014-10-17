@@ -14,6 +14,10 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         super(new PdfDictionary(), pdfDocument);
     }
 
+    public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+        super(pdfObject, pdfDocument);
+    }
+
     public PdfDocumentInfo setTitle(String title) {
         pdfObject.put(PdfName.Title, new PdfString(title));
         return this;

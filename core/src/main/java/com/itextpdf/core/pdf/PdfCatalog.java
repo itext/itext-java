@@ -18,6 +18,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         pdfObject.put(PdfName.Type, PdfName.Catalog);
     }
 
+    public PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+        super(pdfObject, pdfDocument);
+        //TODO populate pages tree here
+    }
+
     public void addPage(PdfPage page) throws PdfException {
         if (page.isFlushed())
             throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
