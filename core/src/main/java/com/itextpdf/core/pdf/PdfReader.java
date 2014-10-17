@@ -46,6 +46,8 @@ public class PdfReader {
 
     protected PdfObject readObject(PdfIndirectReference reference) throws PdfException {
         try {
+            if (reference.getOffset() == 0)     //this means that object is not in use (marked in xref as 'f')
+                return null;
             tokens.seek(reference.getOffset());
             tokens.nextValidToken();
             if (tokens.getTokenType() != PdfTokeniser.TokenType.Obj

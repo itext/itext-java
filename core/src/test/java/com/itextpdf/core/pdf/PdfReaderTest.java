@@ -103,7 +103,7 @@ public class PdfReaderTest {
         Assert.assertTrue(document.getXRef().get(5).getRefersTo().getType() == PdfObject.Stream);
 
         for (int i = 6; i < document.getXRef().size(); i++)
-            Assert.assertTrue(document.getXRef().get(i).getRefersTo(true).getType() == PdfObject.Dictionary);
+            Assert.assertTrue(document.getXRef().get(i).getRefersTo().getType() == PdfObject.Dictionary);
         document.close();
     }
 
@@ -135,10 +135,10 @@ public class PdfReaderTest {
 
 
         for (int i = 6; i < 6+32; i++)
-            Assert.assertTrue(document.getXRef().get(6).getRefersTo(true).getType() == PdfObject.Dictionary);
+            Assert.assertTrue(document.getXRef().get(6).getRefersTo().getType() == PdfObject.Dictionary);
 
         for (int i = 6+32; i < document.getXRef().size(); i++)
-            Assert.assertTrue(document.getXRef().get(i).getRefersTo(true).getType() == PdfObject.IndirectReference);
+            Assert.assertTrue(document.getXRef().get(i).getRefersTo().getType() == PdfObject.IndirectReference);
         document.close();
     }
 
@@ -156,7 +156,24 @@ public class PdfReaderTest {
 
         Assert.assertTrue(document.getXRef().get(6).getRefersTo().getType() == PdfObject.Dictionary);
         for (int i = 7; i < document.getXRef().size(); i++)
-            Assert.assertTrue(document.getXRef().get(i).getRefersTo(true).getType() == PdfObject.IndirectReference);
+            Assert.assertTrue(document.getXRef().get(i).getRefersTo().getType() == PdfObject.IndirectReference);
+        document.close();
+    }
+
+    @Test
+    public void invalidIndirect() throws PdfException, IOException {
+        String filename = sourceFolder + "invalidIndirect.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        Assert.assertTrue(document.getXRef().get(1).getRefersTo().getType() == PdfObject.Dictionary);
+        Assert.assertTrue(document.getXRef().get(2).getRefersTo().getType() == PdfObject.Dictionary);
+        Assert.assertTrue(document.getXRef().get(3).getRefersTo().getType() == PdfObject.Dictionary);
+        Assert.assertTrue(document.getXRef().get(4).getRefersTo().getType() == PdfObject.Dictionary);
+        Assert.assertTrue(document.getXRef().get(5).getRefersTo().getType() == PdfObject.Stream);
+        Assert.assertTrue(document.getXRef().get(6).getRefersTo().getType() == PdfObject.Dictionary);
+        for (int i = 7; i < document.getXRef().size(); i++)
+            Assert.assertNull(document.getXRef().get(i).getRefersTo());
         document.close();
     }
 }

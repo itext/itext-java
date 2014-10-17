@@ -12,9 +12,11 @@ import java.util.TreeSet;
 public class PdfWriter extends PdfOutputStream {
 
     static private final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
+    static private final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
     static private final byte[] obj = getIsoBytes(" obj\n");
     static private final byte[] endobj = getIsoBytes("\nendobj\n");
-    static private final byte[] endXRefEntry = getIsoBytes(" 00000 n \n");
+    static private final byte[] freeXRefEntry = getIsoBytes(" f \n");
+    static private final byte[] inUseXRefEntry = getIsoBytes(" n \n");
     static public final int GenerationMax = 65535;
 
     /**
@@ -28,7 +30,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected PdfObjectStream objectStream = null;
 
-    protected Hashtable<Integer, PdfIndirectReference> copiedObjects = new Hashtable();
+    protected Hashtable<Integer, PdfIndirectReference> copiedObjects = new Hashtable<Integer, PdfIndirectReference>();
 
     public PdfWriter(java.io.OutputStream os) {
         super(new BufferedOutputStream(os));
@@ -141,7 +143,7 @@ public class PdfWriter extends PdfOutputStream {
 
     protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) throws PdfException {
         PdfIndirectReference indirectReference = object.getIndirectReference();
-        PdfIndirectReference copiedIndirectReference = null;
+        PdfIndirectReference copiedIndirectReference;
         int copyObjectKey = 0;
         if (allowDuplicating == false && indirectReference != null && (copiedIndirectReference = copiedObjects.get(copyObjectKey = getCopyObjectKey(object))) != null) {
             return copiedIndirectReference;
@@ -185,14 +187,13 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Flushes all objects which have not been flushed yet.
      *
-     * @throws IOException
      * @throws PdfException
      */
     protected void flushWaitingObjects() throws PdfException {
         TreeSet<PdfIndirectReference> indirects = pdfDocument.getXRef().toSet();
         pdfDocument.getXRef().clear();
         for (PdfIndirectReference indirectReference : indirects) {
-            PdfObject object = indirectReference.getRefersTo();
+            PdfObject object = indirectReference.getRefersTo(false);
             if (object != null) {
                 object.flush();
             }
@@ -250,7 +251,13 @@ public class PdfWriter extends PdfOutputStream {
             for (int i = 1; i < xref.size(); i++) {
                 PdfIndirectReference indirect = xref.get(i);
                 writeString(objectOffsetFormatter.format(indirect.getOffset())).
-                        writeBytes(endXRefEntry);
+                        writeSpace().
+                        writeString(objectGenerationFormatter.format(indirect.getGenNr()));
+                if (indirect.getOffset() > 0) {
+                    writeBytes(inUseXRefEntry);
+                } else {
+                    writeBytes(freeXRefEntry);
+                }
             }
         }
         return strtxref;

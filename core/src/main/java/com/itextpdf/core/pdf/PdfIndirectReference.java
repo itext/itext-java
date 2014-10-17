@@ -69,10 +69,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     public PdfObject getRefersTo() throws PdfException {
-        if (refersTo == null && getReader() != null) {
-            refersTo = getReader().readObject(this);
-        }
-        return refersTo;
+        return getRefersTo(true);
     }
 
     // NOTE
@@ -80,13 +77,16 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // But if chain of references has length of more than 32,
     // this method return 31st reference in chain.
     public PdfObject getRefersTo(boolean recursively) throws PdfException {
-        if (!recursively)
-            return getRefersTo();
-        else {
-            PdfObject currentRefersTo = getRefersTo();
+        if (!recursively) {
+            if (refersTo == null && getReader() != null) {
+                refersTo = getReader().readObject(this);
+            }
+            return refersTo;
+        } else {
+            PdfObject currentRefersTo = getRefersTo(false);
             for (int i = 0; i < LengthOfIndirectsChain; i++) {
                 if (currentRefersTo instanceof PdfIndirectReference)
-                    currentRefersTo = ((PdfIndirectReference) currentRefersTo).getRefersTo();
+                    currentRefersTo = ((PdfIndirectReference) currentRefersTo).getRefersTo(false);
                 else
                     break;
             }
