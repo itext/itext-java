@@ -380,5 +380,25 @@ public class PdfWriterTest {
         reader.close();
     }
 
+    @Test(expected = IOException.class)
+    public void closeStream1() throws IOException, PdfException {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "closeStream1.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.addNewPage();
+        pdfDoc.close();
+        fos.write(1);
+    }
+
+    @Test
+    public void closeStream2() throws IOException, PdfException {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "closeStream2.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCloseStream(false);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.addNewPage();
+        pdfDoc.close();
+        fos.write(1);
+    }
 
 }

@@ -28,7 +28,8 @@ public class OutputStream extends java.io.OutputStream {
         }
 
         public ByteUtils reset() {
-            count = 0; return this;
+            count = 0;
+            return this;
         }
 
         public byte[] toByteArray() {
@@ -53,16 +54,17 @@ public class OutputStream extends java.io.OutputStream {
     public static boolean HighPrecision = false;
 
     private static final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
-    private static final byte[] bytes = new byte[] {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
-    private static final byte[] zero = new byte[] {48};
-    private static final byte[] one = new byte[] {49};
-    private static final byte[] negOne = new byte[] {'-', 49};
+    private static final byte[] bytes = new byte[]{48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
+    private static final byte[] zero = new byte[]{48};
+    private static final byte[] one = new byte[]{49};
+    private static final byte[] negOne = new byte[]{'-', 49};
     //long=19 + max frac=6 => 26 => round to 32.
     private final ByteUtils numBuffer = new ByteUtils(32);
 
 
     protected java.io.OutputStream outputStream = null;
     protected int currentPos = 0;
+    protected boolean closeStream = true;
 
     public static byte[] getIsoBytes(String text) {
         if (text == null)
@@ -83,7 +85,7 @@ public class OutputStream extends java.io.OutputStream {
             return null;
         int len = text.length();
         int start = 0;
-        if (pre != 0)  {
+        if (pre != 0) {
             len++;
             start = 1;
         }
@@ -95,10 +97,10 @@ public class OutputStream extends java.io.OutputStream {
             b[0] = pre;
         }
         if (post != 0) {
-            b[len-1] = post;
+            b[len - 1] = post;
         }
         for (int k = 0; k < text.length(); ++k)
-            b[k+start] = (byte) text.charAt(k);
+            b[k + start] = (byte) text.charAt(k);
         return b;
     }
 
@@ -117,13 +119,13 @@ public class OutputStream extends java.io.OutputStream {
             n = -n;
         }
         int intLen = intSize(n);
-        ByteUtils buf = buffer == null ? new ByteUtils(intLen+(negative ? 1 : 0)) : buffer;
+        ByteUtils buf = buffer == null ? new ByteUtils(intLen + (negative ? 1 : 0)) : buffer;
         for (int i = 0; i < intLen; i++) {
             buf.prepend(bytes[n % 10]);
             n /= 10;
         }
         if (negative)
-            buf.prepend((byte)'-');
+            buf.prepend((byte) '-');
 
         return buffer == null ? buf.buffer : null;
     }
@@ -180,13 +182,13 @@ public class OutputStream extends java.io.OutputStream {
                 buf.prepend(bytes[v % 10]);
                 v /= 10;
             }
-            buf.prepend((byte)'.').prepend((byte)'0');
+            buf.prepend((byte) '.').prepend((byte) '0');
             if (negative) {
                 buf.prepend((byte) '-');
             }
         } else if (d <= 32767) {
             d += 0.005;
-            int v = (int)(d*100);
+            int v = (int) (d * 100);
             int intLen;
             if (v >= 1000000) {
                 intLen = 5;
@@ -210,7 +212,7 @@ public class OutputStream extends java.io.OutputStream {
             } else {
                 v /= 100;
             }
-            buf = buffer != null ? buffer : new ByteUtils(intLen+fracLen + (negative ? 1 : 0));
+            buf = buffer != null ? buffer : new ByteUtils(intLen + fracLen + (negative ? 1 : 0));
             for (int i = 0; i < fracLen - 1; i++) {     //-1 because fracLen include '.'
                 buf.prepend(bytes[v % 10]);
                 v /= 10;
@@ -229,9 +231,9 @@ public class OutputStream extends java.io.OutputStream {
             d += 0.5;
             long v = (long) d;
             int intLen = longSize(v);
-            buf = buffer == null ? new ByteUtils(intLen+(negative ? 1 : 0)) : buffer;
+            buf = buffer == null ? new ByteUtils(intLen + (negative ? 1 : 0)) : buffer;
             for (int i = 0; i < intLen; i++) {
-                buf.prepend(bytes[(int)(v % 10)]);
+                buf.prepend(bytes[(int) (v % 10)]);
                 v /= 10;
             }
             if (negative) {
@@ -293,7 +295,8 @@ public class OutputStream extends java.io.OutputStream {
 
     @Override
     public void close() throws IOException {
-        outputStream.close();
+        if (closeStream)
+            outputStream.close();
     }
 
     public OutputStream writeLong(long value) throws IOException {
@@ -323,11 +326,6 @@ public class OutputStream extends java.io.OutputStream {
         return this;
     }
 
-//    public OutputStream writeChar(char value) throws IOException {
-//        write(getIsoBytes(String.valueOf(value)));
-//        return this;
-//    }
-
     public OutputStream writeSpace() throws IOException {
         write((byte) ' ');
         return this;
@@ -349,5 +347,13 @@ public class OutputStream extends java.io.OutputStream {
 
     public java.io.OutputStream getOutputStream() {
         return outputStream;
+    }
+
+    public boolean isCloseStream() {
+        return closeStream;
+    }
+
+    public void setCloseStream(boolean closeStream) {
+        this.closeStream = closeStream;
     }
 }

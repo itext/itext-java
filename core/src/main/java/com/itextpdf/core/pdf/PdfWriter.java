@@ -142,6 +142,8 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) throws PdfException {
+        if (object instanceof PdfIndirectReference)
+            object = ((PdfIndirectReference)object).getRefersTo();
         PdfIndirectReference indirectReference = object.getIndirectReference();
         PdfIndirectReference copiedIndirectReference;
         int copyObjectKey = 0;
