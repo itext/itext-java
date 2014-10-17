@@ -78,6 +78,11 @@ public class PdfTokeniser {
     protected ByteBuffer outBuf;
 
     /**
+     * Streams are closed automatically.
+     */
+    private boolean closeStream;
+
+    /**
      * Creates a PRTokeniser for the specified {@link RandomAccessFileOrArray}.
      * The beginning of the file is read to determine the location of the header, and the data source is adjusted
      * as necessary to account for any junk that occurs in the byte source before the header
@@ -97,7 +102,8 @@ public class PdfTokeniser {
     }
 
     public void close() throws IOException {
-        file.close();
+        if (closeStream)
+            file.close();
     }
 
     public long length() throws IOException {
@@ -574,6 +580,14 @@ public class PdfTokeniser {
 
     public boolean isHexString() {
         return this.hexString;
+    }
+
+    public boolean isCloseStream() {
+        return closeStream;
+    }
+
+    public void setCloseStream(boolean closeStream) {
+        this.closeStream = closeStream;
     }
 
 }

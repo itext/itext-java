@@ -18,11 +18,6 @@ public class PdfReader {
     protected PdfDictionary trailer;
     protected PdfDocument pdfDocument;
 
-    /**
-     * Streams are closed automatically.
-     */
-    protected boolean closeStream = true;
-
     public PdfReader(InputStream is) throws IOException, PdfException {
         this(new RandomAccessSourceFactory().createSource(is));
     }
@@ -284,15 +279,15 @@ public class PdfReader {
         return trailer;
     }
 
-    public void close() {
-
+    public void close() throws IOException {
+        tokens.close();
     }
 
     public boolean isCloseStream() {
-        return closeStream;
+        return tokens.isCloseStream();
     }
 
     public void setCloseStream(boolean closeStream) {
-        this.closeStream = closeStream;
+        tokens.setCloseStream(closeStream);
     }
 }
