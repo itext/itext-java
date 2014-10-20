@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <groupId>com.itextpdf</groupId>
-    <artifactId>io</artifactId>
+    <artifactId>basics</artifactId>
     <version>1.0-SNAPSHOT</version>
     <url>http://maven.apache.org</url>
     <properties>
