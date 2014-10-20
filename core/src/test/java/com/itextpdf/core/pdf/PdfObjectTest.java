@@ -1,11 +1,10 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
+import com.itextpdf.io.PdfException;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PdfObjectTest {

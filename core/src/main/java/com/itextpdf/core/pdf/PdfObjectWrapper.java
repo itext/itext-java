@@ -1,8 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
-
-import java.io.IOException;
+import com.itextpdf.io.PdfException;
 
 public class PdfObjectWrapper<T extends PdfObject> {
 

@@ -1,7 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.io.PdfException;
 import com.itextpdf.text.pdf.PdfDictionary;
 import org.junit.Assert;
 import org.junit.BeforeClass;

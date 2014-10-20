@@ -1,7 +1,7 @@
 package com.itextpdf.model;
 
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.exceptions.PdfException;
+import com.itextpdf.io.PdfException;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
@@ -11,7 +11,6 @@ import com.itextpdf.model.layout.ILayoutMgr;
 import com.itextpdf.model.layout.shapes.BoxShape;
 import com.itextpdf.model.layout.shapes.ILayoutShape;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Document {

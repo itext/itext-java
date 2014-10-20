@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
+import com.itextpdf.io.PdfException;
 import com.itextpdf.io.streams.OutputStream;
 
 public class PdfBoolean extends PdfPrimitiveObject {

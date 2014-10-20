@@ -1,9 +1,7 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.exceptions.PdfException;
 import com.itextpdf.core.fonts.PdfFont;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 

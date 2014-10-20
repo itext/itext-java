@@ -1,4 +1,4 @@
-package com.itextpdf.core.exceptions;
+package com.itextpdf.io;
 
 public class PdfException extends Exception {
 
@@ -18,6 +18,7 @@ public class PdfException extends Exception {
     public static final String FlushedPageCannotBeAddedOrInserted = "flushed.page.cannot.be.added.or.inserted";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "font.and.size.must.be.set.before.writing.any.text";
     public static final String FontSizeTooSmall = "font.size.too.small";
+    public static final String ImageFormatCannotBeRecognized = "image.format.cannot.be.recognized";
     public static final String GtNotExpected = "gt.not.expected";
     public static final String InfiniteIndirectReferenceChain = "infinite.indirect.reference.chain";
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "invalid.cross.reference.entry.in.this.xref.subsection";
@@ -62,5 +63,4 @@ public class PdfException extends Exception {
     public String getComposedMessage() {
         return composedMessage;
     }
-
 }

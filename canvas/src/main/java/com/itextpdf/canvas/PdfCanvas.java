@@ -1,7 +1,7 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.canvas.colors.Color;
-import com.itextpdf.core.exceptions.PdfException;
+import com.itextpdf.io.PdfException;
 import com.itextpdf.core.fonts.PdfEncodings;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.pdf.*;

@@ -1,13 +1,12 @@
 package com.itextpdf.model.layout;
 
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.exceptions.PdfException;
+import com.itextpdf.io.PdfException;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.elements.IElement;
 import com.itextpdf.model.elements.Paragraph;
 import com.itextpdf.model.layout.shapes.ILayoutShape;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
