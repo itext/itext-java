@@ -42,7 +42,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.images.codec;
+package com.itextpdf.basics.codec;
 
 import com.itextpdf.basics.io.ByteBuffer;
 

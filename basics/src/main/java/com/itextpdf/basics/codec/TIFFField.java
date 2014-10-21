@@ -43,7 +43,7 @@
  * use in the design, construction, operation or maintenance of any
  * nuclear facility.
  */
-package com.itextpdf.images.codec;
+package com.itextpdf.basics.codec;
 
 import java.io.Serializable;
 

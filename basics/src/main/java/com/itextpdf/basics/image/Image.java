@@ -1,4 +1,4 @@
-package com.itextpdf.images;
+package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;

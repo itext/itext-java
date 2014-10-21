@@ -24,8 +24,6 @@
         <module>xmlsign</module>
         <module>parsing</module>
         
-        <module>fonts</module>
-        <module>images</module>
         <module>barcodes</module>
         <module>pdftest</module>
     </modules>
