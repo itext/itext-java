@@ -45,7 +45,7 @@
 // */
 //package com.itextpdf.images.codec;
 //
-//import com.itextpdf.basics.streams.ras.RandomAccessFileOrArray;
+//import com.itextpdf.basics.io.RandomAccessFileOrArray;
 //
 //import java.io.EOFException;
 //import java.io.IOException;

@@ -1,6 +1,6 @@
 package com.itextpdf.basics;
 
-import com.itextpdf.basics.streams.OutputStream;
+import com.itextpdf.basics.io.OutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 

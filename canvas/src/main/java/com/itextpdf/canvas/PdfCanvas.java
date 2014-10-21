@@ -7,7 +7,7 @@ import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
-import com.itextpdf.basics.streams.OutputStream;
+import com.itextpdf.basics.io.OutputStream;
 
 import java.io.IOException;
 import java.util.ArrayList;

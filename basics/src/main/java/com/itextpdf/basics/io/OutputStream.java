@@ -1,4 +1,4 @@
-package com.itextpdf.basics.streams;
+package com.itextpdf.basics.io;
 
 import java.io.IOException;
 import java.text.DecimalFormat;

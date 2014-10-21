@@ -1,4 +1,4 @@
-package com.itextpdf.basics.streams.ras;
+package com.itextpdf.basics.io;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

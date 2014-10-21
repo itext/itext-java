@@ -44,7 +44,7 @@
  */
 package com.itextpdf.images.codec;
 
-import com.itextpdf.basics.streams.ByteBuffer;
+import com.itextpdf.basics.io.ByteBuffer;
 
 /**
  * Encodes data in the CCITT G4 FAX format.
