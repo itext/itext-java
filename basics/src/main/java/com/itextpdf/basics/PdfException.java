@@ -1,4 +1,4 @@
-package com.itextpdf.io;
+package com.itextpdf.basics;
 
 public class PdfException extends Exception {
 

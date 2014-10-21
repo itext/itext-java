@@ -1,13 +1,13 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.canvas.colors.Color;
-import com.itextpdf.io.PdfException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.fonts.PdfEncodings;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
-import com.itextpdf.io.streams.OutputStream;
+import com.itextpdf.basics.streams.OutputStream;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.io.PdfException;
-import com.itextpdf.io.streams.ByteBuffer;
-import com.itextpdf.io.streams.OutputStream;
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.streams.ByteBuffer;
+import com.itextpdf.basics.streams.OutputStream;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.events.PdfDocumentEvent;
-import com.itextpdf.io.PdfException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;

@@ -5,7 +5,7 @@ import com.itextpdf.core.events.EventDispatcher;
 import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
-import com.itextpdf.io.PdfException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.xmp.PdfConst;
 import com.itextpdf.core.xmp.XMPConst;

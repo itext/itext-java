@@ -1,4 +1,4 @@
-package com.itextpdf.io.streams.ras;
+package com.itextpdf.basics.streams.ras;
 
 import java.io.DataInput;
 import java.io.DataInputStream;

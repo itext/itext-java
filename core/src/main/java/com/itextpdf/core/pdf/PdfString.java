@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.io.PdfException;
-import com.itextpdf.io.streams.ByteBuffer;
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.streams.ByteBuffer;
 
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a

@@ -1,7 +1,7 @@
 package com.itextpdf.model.layout;
 
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.io.PdfException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.model.elements.IElement;
 import com.itextpdf.model.layout.shapes.ILayoutShape;
 

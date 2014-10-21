@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.io.PdfException;
+import com.itextpdf.basics.PdfException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,11 +43,11 @@ public class PdfStream extends PdfDictionary {
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         super.copyContent(from, document);
-        PdfStream stream = (PdfStream)from;
+        PdfStream stream = (PdfStream) from;
         if (stream.outputStream != null && stream.outputStream.getOutputStream() != null && stream.outputStream.getOutputStream() instanceof ByteArrayOutputStream) {
             try {
                 stream.outputStream.getOutputStream().flush();
-                byte[] bytes = ((ByteArrayOutputStream)stream.outputStream.getOutputStream()).toByteArray();
+                byte[] bytes = ((ByteArrayOutputStream) stream.outputStream.getOutputStream()).toByteArray();
                 outputStream.write(bytes);
             } catch (IOException ioe) {
                 throw new PdfException(PdfException.CannotCopyObjectContent, ioe);

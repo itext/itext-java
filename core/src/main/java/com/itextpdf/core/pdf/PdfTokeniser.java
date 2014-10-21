@@ -1,10 +1,10 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.io.PdfException;
-import com.itextpdf.io.streams.ByteBuffer;
-import com.itextpdf.io.streams.OutputStream;
-import com.itextpdf.io.streams.ras.RandomAccessFileOrArray;
-import com.itextpdf.io.streams.ras.RandomAccessSourceFactory;
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.streams.ByteBuffer;
+import com.itextpdf.basics.streams.OutputStream;
+import com.itextpdf.basics.streams.ras.RandomAccessFileOrArray;
+import com.itextpdf.basics.streams.ras.RandomAccessSourceFactory;
 
 import java.io.IOException;
 import java.util.Arrays;

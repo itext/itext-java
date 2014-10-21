@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.io.PdfException;
+import com.itextpdf.basics.PdfException;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 

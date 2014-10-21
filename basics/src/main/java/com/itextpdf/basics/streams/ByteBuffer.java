@@ -1,4 +1,4 @@
-package com.itextpdf.io.streams;
+package com.itextpdf.basics.streams;
 
 public class ByteBuffer {
 
