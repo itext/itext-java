@@ -35,6 +35,7 @@ public class PdfException extends Exception {
     public static final String EolCodeWordEncounteredInBlackRun = "eol.code.word.encountered.in.black.run";
     public static final String EolCodeWordEncounteredInWhiteRun = "eol.code.word.encountered.in.white.run";
     public static final String ErrorAtFilePointer1 = "error.at.file.pointer.1";
+    public static final String ErrorReadingObjectStream = "error.reading.objstm";
     public static final String ErrorReadingString = "error.reading.string";
     public static final String ExtraSamplesAreNotSupported = "extra.samples.are.not.supported";
     public static final String FdfStartxrefNotFound = "fdf.startxref.not.found";

@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 
 import java.util.*;
 
-public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> {
+public class PdfDictionary extends PdfObject {
 
     protected Map<PdfName, PdfObject> map = new TreeMap<PdfName, PdfObject>();
 
@@ -13,67 +13,104 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     }
 
     public PdfDictionary(Map<PdfName, PdfObject> map) {
-        for (Entry<PdfName, PdfObject> entry : map.entrySet())
+        for (Map.Entry<PdfName, PdfObject> entry : map.entrySet())
             this.map.put(entry.getKey(), entry.getValue());
     }
 
-    @Override
     public int size() {
         return map.size();
     }
 
-    @Override
     public boolean isEmpty() {
         return map.isEmpty();
     }
 
-    @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(PdfName key) {
         return map.containsKey(key);
     }
 
-    @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(PdfObject value) {
         return map.containsValue(value);
     }
 
-    @Override
-    public PdfObject get(Object key) {
-        return map.get(key);
+    public PdfObject get(PdfName key) throws PdfException {
+        return get(key, true);
     }
 
-    @Override
+    public PdfArray getAsArray(PdfName key) throws PdfException {
+        PdfObject direct = get(key, true);
+        if (direct != null && direct.getType() == PdfObject.Array)
+            return (PdfArray)direct;
+        return null;
+    }
+
+    public PdfDictionary getAsDictionary(PdfName key) throws PdfException {
+        PdfObject direct = get(key, true);
+        if (direct != null && direct.getType() == PdfObject.Dictionary)
+            return (PdfDictionary)direct;
+        return null;
+    }
+
+    public PdfStream getAsStream(PdfName key) throws PdfException {
+        PdfObject direct = get(key, true);
+        if (direct != null && direct.getType() == PdfObject.Stream)
+            return (PdfStream)direct;
+        return null;
+    }
+
+    public PdfNumber getAsNumber(PdfName key) throws PdfException {
+        PdfObject direct = get(key, true);
+        if (direct != null && direct.getType() == PdfObject.Number)
+            return (PdfNumber)direct;
+        return null;
+    }
+
+    public PdfName getAsName(PdfName key) throws PdfException {
+        PdfObject direct = get(key, true);
+        if (direct != null && direct.getType() == PdfObject.Name)
+            return (PdfName)direct;
+        return null;
+    }
+
+    public PdfString getAsString(PdfName key) throws PdfException {
+        PdfObject direct = get(key, true);
+        if (direct != null && direct.getType() == PdfObject.String)
+            return (PdfString)direct;
+        return null;
+    }
+
+    public PdfBoolean getAsBoolean(PdfName key) throws PdfException {
+        PdfObject direct = get(key, true);
+        if (direct != null && direct.getType() == PdfObject.Boolean)
+            return (PdfBoolean)direct;
+        return null;
+    }
+
     public PdfObject put(PdfName key, PdfObject value) {
         return map.put(key, value);
     }
 
-    @Override
-    public PdfObject remove(Object key) {
+    public PdfObject remove(PdfName key) {
         return map.remove(key);
     }
 
-    @Override
-    public void putAll(Map<? extends PdfName, ? extends PdfObject> m) {
-        map.putAll(m);
+    public void putAll(PdfDictionary d) {
+        map.putAll(d.map);
     }
 
-    @Override
     public void clear() {
         map.clear();
     }
 
-    @Override
     public Set<PdfName> keySet() {
         return map.keySet();
     }
 
-    @Override
     public Collection<PdfObject> values() {
         return map.values();
     }
 
-    @Override
-    public Set<Entry<PdfName, PdfObject>> entrySet() {
+    public Set<Map.Entry<PdfName, PdfObject>> entrySet() {
         return map.entrySet();
     }
 
@@ -85,7 +122,7 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     @Override
     public String toString() {
         String string = "<<";
-        for (Entry<PdfName, PdfObject> entry : entrySet()) {
+        for (Map.Entry<PdfName, PdfObject> entry : entrySet()) {
             PdfIndirectReference indirectReference = entry.getValue().getIndirectReference();
             string = string + entry.getKey().toString() + " " + (indirectReference == null ? entry.getValue().toString() : indirectReference.toString()) + " ";
         }
@@ -115,17 +152,15 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
 
     /**
      *
-     * @param key
      * @param asDirect true is to extract direct object always.
-     * @return
      * @throws PdfException
      */
     public PdfObject get(PdfName key, boolean asDirect) throws PdfException {
         if (!asDirect)
-            return get(key);
+            return map.get(key);
         else {
-            PdfObject obj = get(key);
-            if (obj.getType() == IndirectReference)
+            PdfObject obj = map.get(key);
+            if (obj != null && obj.getType() == IndirectReference)
                 return ((PdfIndirectReference)obj).getRefersTo(true);
             else
                 return obj;
@@ -140,7 +175,7 @@ public class PdfDictionary extends PdfObject implements Map<PdfName, PdfObject> 
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         PdfDictionary dictionary = (PdfDictionary) from;
-        for (Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
+        for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
             map.put(entry.getKey(), entry.getValue().copy(document, false));
         }
     }

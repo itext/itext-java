@@ -66,8 +66,7 @@ public class PdfWriter extends PdfOutputStream {
             return null;
         if (objectStream == null) {
             objectStream = new PdfObjectStream(pdfDocument);
-        }
-        if (objectStream.getSize() == PdfObjectStream.maxObjStreamSize) {
+        } else if (objectStream.getSize() == PdfObjectStream.maxObjStreamSize) {
             objectStream.flush();
             objectStream = new PdfObjectStream(pdfDocument);
         }
@@ -86,13 +85,11 @@ public class PdfWriter extends PdfOutputStream {
         PdfIndirectReference indirectReference;
         if (object.isFlushed() || (indirectReference = object.getIndirectReference()) == null)
             return;
-        if (indirectReference == null)
-            return;
         if (isFullCompression() && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
             objectStream.addObject(object);
         } else {
-            indirectReference.setOffset(getCurrentPos());
+            indirectReference.setOffsetOrIndex(getCurrentPos());
             writeToBody(object);
         }
         indirectReference.flushed = true;
@@ -147,7 +144,7 @@ public class PdfWriter extends PdfOutputStream {
         PdfIndirectReference indirectReference = object.getIndirectReference();
         PdfIndirectReference copiedIndirectReference;
         int copyObjectKey = 0;
-        if (allowDuplicating == false && indirectReference != null && (copiedIndirectReference = copiedObjects.get(copyObjectKey = getCopyObjectKey(object))) != null) {
+        if (!allowDuplicating && indirectReference != null && (copiedIndirectReference = copiedObjects.get(copyObjectKey = getCopyObjectKey(object))) != null) {
             return copiedIndirectReference;
         }
         PdfObject newObject = object.newInstance();
@@ -235,7 +232,8 @@ public class PdfWriter extends PdfOutputStream {
                 PdfIndirectReference indirect = xref.get(i);
                 if (indirect.getObjectStreamNumber() == 0) {
                     stream.getOutputStream().write(1);
-                    stream.getOutputStream().write(intToBytes(indirect.getOffset()));
+                    //TODO check object stream writing in case long offsets
+                    stream.getOutputStream().write(intToBytes((int) indirect.getOffset()));
                     stream.getOutputStream().write(shortToBytes(0));
                 } else {
                     stream.getOutputStream().write(2);
@@ -296,14 +294,11 @@ public class PdfWriter extends PdfOutputStream {
         return result;
     }
 
-    private byte[] intToBytes(int n) {
-        byte[] bytes = new byte[]{(byte) ((n >> 24) & 0xFF), (byte) ((n >> 16) & 0xFF), (byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
-        return bytes;
-    }
-
     private byte[] shortToBytes(int n) {
-        byte[] bytes = new byte[]{(byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
-        return bytes;
+        return new byte[]{(byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
     }
 
+    private byte[] intToBytes(int n) {
+        return new byte[]{(byte) ((n >> 24) & 0xFF), (byte) ((n >> 16) & 0xFF), (byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
+    }
 }

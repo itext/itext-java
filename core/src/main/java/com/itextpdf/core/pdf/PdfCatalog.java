@@ -27,7 +27,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         pageTree.addPage(page);
     }
 
-    protected void addNewPage(PdfPage page) {
+    protected void addNewPage(PdfPage page) throws PdfException {
         pageTree.addPage(page);
     }
 
@@ -35,7 +35,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         pageTree.insertPage(index, page);
     }
 
-    public PdfPage getPage(int pageNum) {
+    public PdfPage getPage(int pageNum) throws PdfException {
         return pageTree.getPage(pageNum);
     }
 

@@ -63,7 +63,7 @@ public class PdfCanvas {
      *
      * @param page page to create canvas from.
      */
-    public PdfCanvas(PdfPage page) {
+    public PdfCanvas(PdfPage page) throws PdfException {
         this(page.getContentStream(), page.getResources());
     }
 
@@ -77,7 +77,7 @@ public class PdfCanvas {
      * @param doc     @see PdfDocument.
      * @param pageNum page number.
      */
-    public PdfCanvas(PdfDocument doc, int pageNum) {
+    public PdfCanvas(PdfDocument doc, int pageNum) throws PdfException {
         this(doc.getPage(pageNum));
     }
 

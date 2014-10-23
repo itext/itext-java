@@ -31,7 +31,7 @@ class PdfPagesTree {
      *
      * @param page {@see PdfPage}
      */
-    public void addPage(PdfPage page) {
+    public void addPage(PdfPage page) throws PdfException {
         PdfDictionary currentPdfPages = parents.get(parents.size() - 1);
         PdfNumber pagesCount = (PdfNumber)currentPdfPages.get(PdfName.Count);
         if (pagesCount.getIntValue() % leafSize == 0 && pages.size() != 0) {
@@ -52,7 +52,7 @@ class PdfPagesTree {
      * @param  pageNum one-based index of the element to return
      * @return the {@see PdfPage} at the specified position in this list
      */
-    public PdfPage getPage(int pageNum) {
+    public PdfPage getPage(int pageNum) throws PdfException {
         return new PdfPage(pages.get(pageNum - 1), pdfDocument);
     }
 
@@ -205,7 +205,7 @@ class PdfPagesTree {
         pages.remove(pageNum);
     }
 
-    private PdfDictionary findPageParent(PdfDictionary page) {
+    private PdfDictionary findPageParent(PdfDictionary page) throws PdfException {
         for (PdfDictionary pdfPages: parents) {
             PdfArray pdfPagesKids = (PdfArray)pdfPages.get(PdfName.Kids);
             if (pdfPagesKids.contains(page))

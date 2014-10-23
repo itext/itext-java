@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.fonts.PdfFont;
 
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         this(new PdfDictionary());
     }
 
-    public PdfName addFont(PdfFont font){
+    public PdfName addFont(PdfFont font) throws PdfException {
         PdfName fontName = fonts.get(font);
         if (fontName == null) {
             fontName = new PdfName(F + fontNumber++);

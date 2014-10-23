@@ -18,9 +18,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfResources resources = null;
 
-    public PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+    public PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
-        PdfDictionary resources = (PdfDictionary)pdfObject.get(PdfName.Resources);
+        PdfDictionary resources = pdfObject.getAsDictionary(PdfName.Resources);
         if (resources != null)
             this.resources = new PdfResources(resources);
         else
@@ -28,7 +28,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
-    public PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
+    public PdfPage(PdfDocument pdfDocument, PageSize pageSize) throws PdfException {
         super(new PdfDictionary(), pdfDocument);
         PdfStream contentStream = new PdfStream(pdfDocument);
         pdfObject.put(PdfName.Contents, contentStream);
@@ -38,11 +38,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
-    public PdfPage(PdfDocument pdfDocument) {
+    public PdfPage(PdfDocument pdfDocument) throws PdfException {
         this(pdfDocument, pdfDocument.getDefaultPageSize());
     }
 
-    public PdfStream getContentStream() {
+    public PdfStream getContentStream() throws PdfException {
         PdfObject contents = pdfObject.get(PdfName.Contents);
         if (contents instanceof PdfStream)
             return (PdfStream) contents;
@@ -53,11 +53,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             return null;
     }
 
-    public PdfStream newContentStreamBefore() {
+    public PdfStream newContentStreamBefore() throws PdfException {
         return newContentStream(true);
     }
 
-    public PdfStream newContentStreamAfter() {
+    public PdfStream newContentStreamAfter() throws PdfException {
         return newContentStream(false);
     }
 
@@ -118,7 +118,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         super.flush();
     }
 
-    private PdfStream newContentStream(boolean before) {
+    private PdfStream newContentStream(boolean before) throws PdfException {
         PdfObject contents = pdfObject.get(PdfName.Contents);
         PdfArray a = null;
         if (contents instanceof PdfStream) {

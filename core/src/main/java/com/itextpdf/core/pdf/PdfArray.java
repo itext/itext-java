@@ -5,7 +5,7 @@ import com.itextpdf.core.geom.Rectangle;
 
 import java.util.*;
 
-public class PdfArray extends PdfObject implements List<PdfObject> {
+public class PdfArray extends PdfObject implements Collection<PdfObject> {
 
     protected List<PdfObject> list;
 
@@ -78,7 +78,6 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
         return list.addAll(c);
     }
 
-    @Override
     public boolean addAll(int index, Collection<? extends PdfObject> c) {
         return list.addAll(index, c);
     }
@@ -98,47 +97,38 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
         list.clear();
     }
 
-    @Override
     public PdfObject get(int index) {
         return list.get(index);
     }
 
-    @Override
     public PdfObject set(int index, PdfObject element) {
         return list.set(index, element);
     }
 
-    @Override
     public void add(int index, PdfObject element) {
         list.add(index, element);
     }
 
-    @Override
     public PdfObject remove(int index) {
         return list.remove(index);
     }
 
-    @Override
-    public int indexOf(Object o) {
+    public int indexOf(PdfObject o) {
         return list.indexOf(o);
     }
 
-    @Override
-    public int lastIndexOf(Object o) {
+    public int lastIndexOf(PdfObject o) {
         return list.lastIndexOf(o);
     }
 
-    @Override
     public ListIterator<PdfObject> listIterator() {
         return list.listIterator();
     }
 
-    @Override
     public ListIterator<PdfObject> listIterator(int index) {
         return list.listIterator(index);
     }
 
-    @Override
     public List<PdfObject> subList(int fromIndex, int toIndex) {
         return list.subList(fromIndex, toIndex);
     }
@@ -161,9 +151,7 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
 
     /**
      *
-     * @param index
      * @param asDirect true is to extract direct object always.
-     * @return
      * @throws PdfException
      */
     public PdfObject get(int index, boolean asDirect) throws PdfException {
@@ -176,6 +164,55 @@ public class PdfArray extends PdfObject implements List<PdfObject> {
             else
                 return obj;
         }
+    }
+
+    public PdfArray getAsArray(int index) throws PdfException {
+        PdfObject direct = get(index, true);
+        if (direct != null && direct.getType() == PdfObject.Array)
+            return (PdfArray)direct;
+        return null;
+    }
+
+    public PdfDictionary getAsDictionary(int index) throws PdfException {
+        PdfObject direct = get(index, true);
+        if (direct != null && direct.getType() == PdfObject.Dictionary)
+            return (PdfDictionary)direct;
+        return null;
+    }
+
+    public PdfStream getAsStream(int index) throws PdfException {
+        PdfObject direct = get(index, true);
+        if (direct != null && direct.getType() == PdfObject.Stream)
+            return (PdfStream)direct;
+        return null;
+    }
+
+    public PdfNumber getAsNumber(int index) throws PdfException {
+        PdfObject direct = get(index, true);
+        if (direct != null && direct.getType() == PdfObject.Number)
+            return (PdfNumber)direct;
+        return null;
+    }
+
+    public PdfName getAsName(int index) throws PdfException {
+        PdfObject direct = get(index, true);
+        if (direct != null && direct.getType() == PdfObject.Name)
+            return (PdfName)direct;
+        return null;
+    }
+
+    public PdfString getAsString(int index) throws PdfException {
+        PdfObject direct = get(index, true);
+        if (direct != null && direct.getType() == PdfObject.String)
+            return (PdfString)direct;
+        return null;
+    }
+
+    public PdfBoolean getAsBoolean(int index) throws PdfException {
+        PdfObject direct = get(index, true);
+        if (direct != null && direct.getType() == PdfObject.Boolean)
+            return (PdfBoolean)direct;
+        return null;
     }
 
     @Override

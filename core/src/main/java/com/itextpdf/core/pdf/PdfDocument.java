@@ -16,6 +16,7 @@ import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class PdfDocument implements IEventDispatcher {
 
@@ -131,7 +132,7 @@ public class PdfDocument implements IEventDispatcher {
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
-    public void setXmpMetadata() throws XMPException {
+    public void setXmpMetadata() throws XMPException, PdfException {
         XMPMeta xmpMeta = XMPMetaFactory.create();
         xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
         xmpMeta.setObjectName("");
@@ -213,7 +214,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param pageNum page number.
      * @return page by page number.
      */
-    public PdfPage getPage(int pageNum) {
+    public PdfPage getPage(int pageNum) throws PdfException {
         return catalog.getPage(pageNum);
     }
 
@@ -222,7 +223,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @return first page of the document.
      */
-    public PdfPage getFirstPage() {
+    public PdfPage getFirstPage() throws PdfException {
         return getPage(PdfPage.FirstPage);
     }
 
@@ -231,7 +232,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @return last page.
      */
-    public PdfPage getLastPage() {
+    public PdfPage getLastPage() throws PdfException {
         return getPage(PdfPage.LastPage);
     }
 
@@ -267,7 +268,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @return added page
      */
-    public PdfPage addNewPage() {
+    public PdfPage addNewPage() throws PdfException {
         PdfPage page = new PdfPage(this, getDefaultPageSize());
         catalog.addNewPage(page);
         return page;
@@ -279,7 +280,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param pageSize page size of the new page
      * @return added page
      */
-    public PdfPage addNewPage(PageSize pageSize) {
+    public PdfPage addNewPage(PageSize pageSize) throws PdfException {
         PdfPage page = new PdfPage(this, pageSize);
         catalog.addNewPage(page);
         return page;

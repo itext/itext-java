@@ -5,6 +5,7 @@ import com.itextpdf.basics.PdfException;
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
     private static final int LengthOfIndirectsChain = 31;
+    protected static final int Reading = -1;
 
     protected final int objNr;
     protected final int genNr;
@@ -24,7 +25,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * Offset in a document of the {@code refersTo} object.
      * If the object placed into object stream then it is an object index inside object stream.
      */
-    protected int offsetOrIndex = 0;
+    protected long offsetOrIndex = 0;
 
     /**
      * Indicates if the refersTo object has been flushed.
@@ -52,7 +53,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // If offset = -1 -> object have to initialize.
     // Usually this means that PdfReader found this indirect before reading it in xref table.
     // If offset = 0 -> it means that object is not in use, marked as 'f' in xref table.
-    protected PdfIndirectReference(PdfDocument doc, int objNr, int genNr, int offset) {
+    protected PdfIndirectReference(PdfDocument doc, int objNr, int genNr, long offset) {
         super();
         this.pdfDocument = doc;
         this.objNr = objNr;
@@ -102,25 +103,13 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return objectStreamNumber;
     }
 
-    public void setObjectStreamNumber(int objectStreamNumber) {
-        this.objectStreamNumber = objectStreamNumber;
-    }
-
     /**
      * Gets refersTo object offset in a document.
      *
      * @return object offset in a document. If refersTo object is in object stream then 0.
      */
-    public int getOffset() {
+    public long getOffset() {
         return objectStreamNumber == 0 ? offsetOrIndex : 0;
-    }
-
-    public void setOffset(int offset) {
-        this.offsetOrIndex = objectStreamNumber == 0 ? offset : 0;
-    }
-
-    public boolean isInUse() {
-        return offsetOrIndex > 0;
     }
 
     /**
@@ -129,11 +118,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * @return object index in a document. If refersTo object is not in object stream then 0.
      */
     public int getIndex() {
-        return objectStreamNumber == 0 ? 0 : offsetOrIndex;
-    }
-
-    public void setIndex(int index) {
-        this.offsetOrIndex = objectStreamNumber == 0 ? 0 : index;
+        return objectStreamNumber == 0 ? 0 : (int)offsetOrIndex;
     }
 
     @Override
@@ -176,6 +161,28 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     @Override
     public String toString() {
         return java.lang.String.format("%d %d R", getObjNr(), getGenNr());
+    }
+
+    protected void setObjectStreamNumber(int objectStreamNumber) {
+        this.objectStreamNumber = objectStreamNumber;
+    }
+
+    protected void setOffsetOrIndex(long offsetOrIndex) {
+        this.offsetOrIndex = offsetOrIndex;
+    }
+
+    protected boolean isInUse() {
+        return offsetOrIndex > 0 || objectStreamNumber > 0;
+    }
+
+    // NOTE After this operation this indirect reference could be reused for new indirect objects.
+    protected void setFree() {
+        offsetOrIndex = 0;
+        objectStreamNumber = 0;
+        if (refersTo != null) {
+            refersTo.setIndirectReference(null);
+            refersTo = null;
+        }
     }
 
     @Override

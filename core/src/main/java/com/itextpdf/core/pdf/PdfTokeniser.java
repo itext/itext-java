@@ -69,14 +69,13 @@ public class PdfTokeniser {
     protected static final byte[] True = OutputStream.getIsoBytes("true");
     protected static final byte[] False = OutputStream.getIsoBytes("false");
 
-
-    private final RandomAccessFileOrArray file;
     protected TokenType type;
     protected int reference;
     protected int generation;
     protected boolean hexString;
     protected ByteBuffer outBuf;
 
+    private final RandomAccessFileOrArray file;
     /**
      * Streams are closed automatically.
      */
@@ -97,7 +96,11 @@ public class PdfTokeniser {
         file.seek(pos);
     }
 
-    public long getFilePointer() throws IOException {
+    public void readFully(byte[] bytes) throws IOException {
+        file.readFully(bytes);
+    }
+
+    public long getPosition() throws IOException {
         return file.getPosition();
     }
 
@@ -124,34 +127,6 @@ public class PdfTokeniser {
             buf.append((char)ch);
         }
         return buf.toString();
-    }
-
-    /**
-     * Is a certain character a whitespace? Currently checks on the following: '0', '9', '10', '12', '13', '32'.
-     * <br />The same as calling {@link #isWhitespace(int, boolean) isWhiteSpace(ch, true)}.
-     * @param ch int
-     * @return boolean
-     */
-    public static boolean isWhitespace(int ch) {
-        return isWhitespace(ch, true);
-    }
-
-    /**
-     * Checks whether a character is a whitespace. Currently checks on the following: '0', '9', '10', '12', '13', '32'.
-     * @param ch int
-     * @param isWhitespace boolean
-     * @return boolean
-     */
-    public static boolean isWhitespace(int ch, boolean isWhitespace) {
-        return ( ( isWhitespace && ch == 0 ) || ch == 9 || ch == 10 || ch == 12 || ch == 13 || ch == 32);
-    }
-
-    public static boolean isDelimiter(int ch) {
-        return (ch == '(' || ch == ')' || ch == '<' || ch == '>' || ch == '[' || ch == ']' || ch == '/' || ch == '%');
-    }
-
-    public static boolean isDelimiterWhitespace(int ch) {
-        return delims[ch + 1];
     }
 
     public TokenType getTokenType() {
@@ -191,16 +166,6 @@ public class PdfTokeniser {
     public void backOnePosition(int ch) {
         if (ch != -1)
             file.pushBack((byte)ch);
-    }
-
-    public void throwError(String error, Object... messageParams) throws PdfException {
-        try {
-            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
-                    .setMessageParams(file.getPosition());
-        } catch (IOException e) {
-            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
-                    .setMessageParams(error, "no position");
-        }
     }
 
     public int getHeaderOffset() throws PdfException, IOException {
@@ -459,11 +424,11 @@ public class PdfTokeniser {
         return true;
     }
 
-    public long longValue() {
+    public long getLongValue() {
         return Long.parseLong(getStringValue());
     }
 
-    public int intValue() {
+    public int getIntValue() {
         return Integer.parseInt(getStringValue());
     }
 
@@ -511,7 +476,7 @@ public class PdfTokeniser {
                     break;
                 case '\r':
                     eol = true;
-                    long cur = getFilePointer();
+                    long cur = getPosition();
                     if ((read()) != '\n') {
                         seek(cur);
                     }
@@ -538,7 +503,7 @@ public class PdfTokeniser {
                         break;
                     case '\r':
                         eol = true;
-                        long cur = getFilePointer();
+                        long cur = getPosition();
                         if ((read()) != '\n') {
                             seek(cur);
                         }
@@ -562,10 +527,10 @@ public class PdfTokeniser {
             PdfTokeniser tk = new PdfTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(line)));
             if (!tk.nextToken() || tk.getTokenType() != TokenType.Number)
                 return null;
-            int num = tk.intValue();
+            int num = tk.getIntValue();
             if (!tk.nextToken() || tk.getTokenType() != TokenType.Number)
                 return null;
-            int gen = tk.intValue();
+            int gen = tk.getIntValue();
             if (!tk.nextToken())
                 return null;
             if (!Arrays.equals(Obj, tk.getByteContent()))
@@ -590,4 +555,45 @@ public class PdfTokeniser {
         this.closeStream = closeStream;
     }
 
+    public RandomAccessFileOrArray getSafeFile() {
+        return file.createView();
+    }
+
+    /**
+     * Is a certain character a whitespace? Currently checks on the following: '0', '9', '10', '12', '13', '32'.
+     * <br />The same as calling {@link #isWhitespace(int, boolean) isWhiteSpace(ch, true)}.
+     * @param ch int
+     * @return boolean
+     */
+    protected static boolean isWhitespace(int ch) {
+        return isWhitespace(ch, true);
+    }
+
+    /**
+     * Checks whether a character is a whitespace. Currently checks on the following: '0', '9', '10', '12', '13', '32'.
+     * @param ch int
+     * @param isWhitespace boolean
+     * @return boolean
+     */
+    protected static boolean isWhitespace(int ch, boolean isWhitespace) {
+        return ( ( isWhitespace && ch == 0 ) || ch == 9 || ch == 10 || ch == 12 || ch == 13 || ch == 32);
+    }
+
+    protected static boolean isDelimiter(int ch) {
+        return (ch == '(' || ch == ')' || ch == '<' || ch == '>' || ch == '[' || ch == ']' || ch == '/' || ch == '%');
+    }
+
+    protected static boolean isDelimiterWhitespace(int ch) {
+        return delims[ch + 1];
+    }
+
+    protected void throwError(String error, Object... messageParams) throws PdfException {
+        try {
+            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
+                    .setMessageParams(file.getPosition());
+        } catch (IOException e) {
+            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
+                    .setMessageParams(error, "no position");
+        }
+    }
 }
