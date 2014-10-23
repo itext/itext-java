@@ -19,7 +19,7 @@ public class PdfObjectTest {
         catalog.put(new PdfName("a"), new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
             put(new PdfName("b"), new PdfName("c"));
         }}).makeIndirect(document).getIndirectReference().makeIndirect(document).getIndirectReference().makeIndirect(document));
-        PdfObject object = ((PdfIndirectReference)catalog.get(new PdfName("a"))).getRefersTo(true);
+        PdfObject object = ((PdfIndirectReference)catalog.get(new PdfName("a"), false)).getRefersTo(true);
         Assert.assertTrue(object instanceof PdfDictionary);
         document.close();
     }
