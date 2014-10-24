@@ -16,7 +16,6 @@ import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 public class PdfDocument implements IEventDispatcher {
 
@@ -73,13 +72,7 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * List of indirect objects used in the document.
      */
-    protected PdfXRefTable xref = new PdfXRefTable();
-
-    /**
-     * Current indirect reference number.
-     */
-    protected int indirectReferenceNumber = 0;
-
+    protected final PdfXRefTable xref = new PdfXRefTable();
 
     /**
      * Open PDF document in reading mode.
@@ -406,8 +399,8 @@ public class PdfDocument implements IEventDispatcher {
      * @param object an object for which indirect reference should be created.
      * @return created indirect reference.
      */
-    public PdfIndirectReference getNextIndirectReference(PdfObject object) {
-        return new PdfIndirectReference(this, ++indirectReferenceNumber, object);
+    public PdfIndirectReference createNextIndirectReference(PdfObject object) {
+        return xref.createNextIndirectReference(this, object);
     }
 
     /**

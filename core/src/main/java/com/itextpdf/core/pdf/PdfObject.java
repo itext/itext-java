@@ -94,14 +94,24 @@ abstract public class PdfObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
-        setDocument(document);
+    public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+        if (document == null || indirectReference != null) return (T) this;
+        if (reference == null) {
+            indirectReference = document.createNextIndirectReference(this);
+        } else {
+            indirectReference = reference;
+        }
         return (T) this;
     }
 
-    public <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
-        this.indirectReference = indirectReference;
-        return (T) this;
+     /**
+     * Marks object to be saved as indirect.
+     *
+     * @param document a document the indirect reference will belong to.
+     * @return object itself.
+     */
+    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
+        return makeIndirect(document, null);
     }
 
     /**
@@ -125,16 +135,9 @@ abstract public class PdfObject {
         return null;
     }
 
-    /**
-     * Sets PdfDocument for the object.
-     *
-     * @param document a dPdfDocument to set.
-     */
-    public void setDocument(PdfDocument document) {
-        if (document != null && indirectReference == null) {
-            indirectReference = document.getNextIndirectReference(this);
-            document.getXRef().add(indirectReference);
-        }
+    protected  <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
+        this.indirectReference = indirectReference;
+        return (T) this;
     }
 
     /**

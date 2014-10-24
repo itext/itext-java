@@ -7,13 +7,16 @@ public class PdfXRefTable {
     private static final int InitialCapacity = 32;
 
     PdfIndirectReference[] xref;
-    int count;
+    int count = 0;
+    int nextNumber = 0;
 
     public PdfXRefTable() {
         xref = new PdfIndirectReference[InitialCapacity];
     }
 
     public PdfXRefTable(int capacity) {
+        if (capacity < 1)
+            capacity = InitialCapacity;
         xref = new PdfIndirectReference[capacity];
     }
 
@@ -31,13 +34,14 @@ public class PdfXRefTable {
      *
      * @param indirectReference indirect reference to add.
      */
-    public void add(PdfIndirectReference indirectReference) {
+    public PdfIndirectReference add(PdfIndirectReference indirectReference) {
         if (indirectReference == null)
-            return;
+            return null;
         int objNr = indirectReference.getObjNr();
         this.count = Math.max(this.count, objNr);
         ensureCount(objNr);
         xref[objNr] = indirectReference;
+        return indirectReference;
     }
 
     public void addAll(Iterable<PdfIndirectReference> indirectReferences) {
@@ -60,6 +64,16 @@ public class PdfXRefTable {
             return null;
         }
         return xref[index];
+    }
+
+    /**
+     * Creates next available indirect reference.
+     *
+     * @param object an object for which indirect reference should be created.
+     * @return created indirect reference.
+     */
+    protected PdfIndirectReference createNextIndirectReference(PdfDocument document, PdfObject object) {
+        return add(new PdfIndirectReference(document, ++nextNumber, object));
     }
 
     protected void setCapacity(int capacity) {
