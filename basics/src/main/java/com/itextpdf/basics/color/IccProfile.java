@@ -51,20 +51,20 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
-public class ICC_Profile {
+public class IccProfile {
     protected byte[] data;
     protected int numComponents;
     private static HashMap<String, Integer> cstags = new HashMap<String, Integer>();
 
-    protected ICC_Profile() {
+    protected IccProfile() {
     }
 
-    public static ICC_Profile getInstance(byte[] data, int numComponents) throws PdfException {
+    public static IccProfile getInstance(byte[] data, int numComponents) throws PdfException {
         if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
                 || data[38] != 0x73 || data[39] != 0x70)
             throw new PdfException(PdfException.InvalidIccProfile);
         try {
-            ICC_Profile icc = new ICC_Profile();
+            IccProfile icc = new IccProfile();
             icc.data = data;
             Integer cs;
             cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
@@ -80,7 +80,7 @@ public class ICC_Profile {
         }
     }
 
-    public static ICC_Profile getInstance(byte[] data) throws PdfException {
+    public static IccProfile getInstance(byte[] data) throws PdfException {
         try {
             Integer cs;
             cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
@@ -91,7 +91,7 @@ public class ICC_Profile {
         }
     }
 
-    public static ICC_Profile getInstance(InputStream file) throws PdfException {
+    public static IccProfile getInstance(InputStream file) throws PdfException {
         try {
             byte[] head = new byte[128];
             int remain = head.length;
@@ -125,7 +125,7 @@ public class ICC_Profile {
         }
     }
 
-    public static ICC_Profile getInstance(String filename) throws PdfException {
+    public static IccProfile getInstance(String filename) throws PdfException {
         FileInputStream fs = null;
         try {
             fs = new FileInputStream(filename);

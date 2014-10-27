@@ -3,6 +3,14 @@ package com.itextpdf.basics;
 public class PdfException extends Exception {
 
     public static final String _1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor = "1.bit.samples.are.not.supported.for.horizontal.differencing.predictor";
+
+
+    public static final String _1CorruptedJfifMarker = "1.corrupted.jfif.marker";
+    public static final String _1IsNotAValidJpegFile = "1.is.not.a.valid.jpeg.file";
+    public static final String _1MustHave8BitsPerComponent = "1.must.have.8.bits.per.component";
+    public static final String _1UnsupportedJpegMarker2 = "1.unsupported.jpeg.marker.2";
+
+
     public static final String AllFillBitsPrecedingEolCodeMustBe0 = "all.fill.bits.preceding.eol.code.must.be.0";
     public static final String BadEndiannessTagNot0x4949Or0x4d4d = "bad.endianness.tag.not.0x4949.or.0x4d4d";
     public static final String BadMagicNumberShouldBe42 = "bad.magic.number.should.be.42";
@@ -47,6 +55,14 @@ public class PdfException extends Exception {
     public static final String ImageFormatCannotBeRecognized = "image.format.cannot.be.recognized";
     public static final String GtNotExpected = "gt.not.expected";
     public static final String IllegalValueForPredictorInTiffFile = "illegal.value.for.predictor.in.tiff.file";
+    public static final String ImageCanNotBeAnImageMask = "image.can.not.be.an.image.mask";
+    public static final String ImageMaskCannotContainAnotherImageMask = "image.mask.cannot.contain.another.image.mask";
+    public static final String ImageMaskIsNotAMaskDidYouDoMakeMask = "image.mask.is.not.a.mask.did.you.do.makemask";
+
+
+
+
+
     public static final String InfiniteIndirectReferenceChain = "infinite.indirect.reference.chain";
     public static final String InvalidCodeEncountered = "invalid.code.encountered";
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData = "invalid.code.encountered.while.decoding.2d.group.3.compressed.data";
@@ -66,6 +82,7 @@ public class PdfException extends Exception {
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";
     public static final String Photometric1IsNotSupported = "photometric.1.is.not.supported";
     public static final String PlanarImagesAreNotSupported = "planar.images.are.not.supported";
+    public static final String PrematureEofWhileReadingJpg = "premature.eof.while.reading.jpg";
 
 
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";

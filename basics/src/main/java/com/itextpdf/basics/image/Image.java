@@ -2,7 +2,7 @@ package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
-import com.itextpdf.basics.color.ICC_Profile;
+import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 
@@ -89,7 +89,7 @@ public class Image {
      */
     protected float rotation;
 
-    protected ICC_Profile profile;
+    protected IccProfile profile;
 
     /**
      * Holds value of property dpiX.
@@ -104,6 +104,27 @@ public class Image {
     protected int colorTransform = 1;
 
     protected boolean deflated;
+
+    /**
+     * Is this image a mask?
+     */
+    protected boolean mask = false;
+
+    /**
+     * The image that serves as a mask for this image.
+     */
+    protected Image imageMask;
+
+    /**
+     * Holds value of property smask.
+     */
+    protected boolean smask;
+
+    protected IAdditional additional;
+
+    protected Image(URL url) {
+        this.url = url;
+    }
 
     protected Image() {
 
@@ -279,11 +300,11 @@ public class Image {
         this.rotation = rotation;
     }
 
-    public ICC_Profile getProfile() {
+    public IccProfile getProfile() {
         return profile;
     }
 
-    public void setProfile(ICC_Profile profile) {
+    public void setProfile(IccProfile profile) {
         this.profile = profile;
     }
 
@@ -314,6 +335,69 @@ public class Image {
 
     public void setDeflated(boolean deflated) {
         this.deflated = deflated;
+    }
+
+    /**
+     * Returns <CODE>true</CODE> if this <CODE>Image</CODE> has the
+     * requisites to be a mask.
+     *
+     * @return <CODE>true</CODE> if this <CODE>Image</CODE> can be a mask
+     */
+    public boolean canBeMask() {
+        if (type == RAW) {
+            if (bpc > 0xff)
+                return true;
+        }
+        return colorSpace == 1;
+    }
+
+    /**
+     * Returns <CODE>true</CODE> if this <CODE>Image</CODE> is a mask.
+     *
+     * @return <CODE>true</CODE> if this <CODE>Image</CODE> is a mask
+     */
+    public boolean isMask() {
+        return mask;
+    }
+
+    public Image getImageMask() {
+        return imageMask;
+    }
+
+    public void setImageMask(Image imageMask) throws PdfException {
+        if (this.mask)
+            throw new PdfException(PdfException.ImageMaskCannotContainAnotherImageMask);
+        if (!imageMask.mask)
+            throw new PdfException(PdfException.ImageMaskIsNotAMaskDidYouDoMakeMask);
+        this.imageMask = imageMask;
+        smask = imageMask.bpc > 1 && imageMask.bpc <= 8;
+    }
+
+    public boolean isSmask() {
+        return smask;
+    }
+
+    public void setSmask(boolean smask) {
+        this.smask = smask;
+    }
+
+    /**
+     * Make this <CODE>Image</CODE> a mask.
+     *
+     * @throws com.itextpdf.basics.PdfException if this <CODE>Image</CODE> can not be a mask
+     */
+    public void makeMask() throws PdfException {
+        if (!canBeMask())
+            throw new PdfException(PdfException.ImageCanNotBeAnImageMask);
+        mask = true;
+    }
+
+    public IAdditional getAdditional() {
+        return additional;
+    }
+
+    public void setAdditional(IAdditional additional) {
+        this.additional = additional;
     }
 
     private static byte[] readImageType(InputStream inputStream) throws IOException {
@@ -414,6 +498,10 @@ public class Image {
                 return false;
         }
         return true;
+    }
+
+    public static interface IAdditional {
+
     }
 
 }
