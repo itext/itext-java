@@ -19,7 +19,6 @@ public class PdfException extends Exception {
     public static final String BitsPerSample1IsNotSupported = "bits.per.sample.1.is.not.supported";
 
 
-
     public static final String CannotAddObjectToObjectstream = "cannot.add.object.to.objectstream";
     public static final String CannotCloseDocument = "cannot.close.document";
     public static final String CannotCopyFlushedObject = "cannot.copy.flushed.object";
@@ -32,8 +31,6 @@ public class PdfException extends Exception {
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
     public static final String CannotReadTiffImage = "cannot.read.tiff.image";
     public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
-
-
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression.1.is.not.supported";
     public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "compression.jpeg.is.only.supported.with.a.single.strip.this.image.has.1.strips";
@@ -58,11 +55,6 @@ public class PdfException extends Exception {
     public static final String ImageCanNotBeAnImageMask = "image.can.not.be.an.image.mask";
     public static final String ImageMaskCannotContainAnotherImageMask = "image.mask.cannot.contain.another.image.mask";
     public static final String ImageMaskIsNotAMaskDidYouDoMakeMask = "image.mask.is.not.a.mask.did.you.do.makemask";
-
-
-
-
-
     public static final String InfiniteIndirectReferenceChain = "infinite.indirect.reference.chain";
     public static final String InvalidCodeEncountered = "invalid.code.encountered";
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData = "invalid.code.encountered.while.decoding.2d.group.3.compressed.data";
@@ -75,23 +67,17 @@ public class PdfException extends Exception {
     public static final String ObjectCannotBeAddedToObjectStream = "object.cannot.be.added.to.object.stream";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
-
-
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
     public static final String PdfStartxrefIsNotFollowedByANumber = "pdf.startxref.is.not.followed.by.a.number";
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";
     public static final String Photometric1IsNotSupported = "photometric.1.is.not.supported";
     public static final String PlanarImagesAreNotSupported = "planar.images.are.not.supported";
     public static final String PrematureEofWhileReadingJpg = "premature.eof.while.reading.jpg";
-
-
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
     public static final String TiffFillOrderTagMustBeEither1Or2 = "tiff.fill.order.tag.must.be.either.1.or.2";
     public static final String TilesAreNotSupported = "tiles.are.not.supported";
     public static final String TransparencyLengthMustBeEqualTo2WithCcittImages = "transparency.length.must.be.equal.to.2.with.ccitt.images";
-
-
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
@@ -126,5 +112,9 @@ public class PdfException extends Exception {
 
     public String getComposedMessage() {
         return composedMessage;
+    }
+
+    public Object getObject() {
+        return object;
     }
 }

@@ -2,13 +2,16 @@ package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
+import com.itextpdf.basics.codec.TiffImage;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -151,7 +154,13 @@ public class Image {
     }
 
     public static Image getInstance(String filename, boolean recoverImage) throws IOException, PdfException {
-        return getInstance(new URL(filename), recoverImage);
+        URL url = null;
+        try {
+            url = new URL(filename);
+        } catch (MalformedURLException e) {
+            url = new File(filename).toURI().toURL();
+        }
+        return getInstance(url, recoverImage);
     }
 
     /**
@@ -400,6 +409,31 @@ public class Image {
         this.additional = additional;
     }
 
+
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
+    public int getBpc() {
+        return bpc;
+    }
+
+    public void setBpc(int bpc) {
+        this.bpc = bpc;
+    }
+
     private static byte[] readImageType(InputStream inputStream) throws IOException {
         byte[] bytes = new byte[8];
         inputStream.read(bytes);
@@ -436,8 +470,12 @@ public class Image {
 //        if (imageTypeIs(imageType, gif)) {
 //            GifImage gif = new GifImage(source);
 //            return gif.getImage(1);
-//        } else if (imageTypeIs(imageType, jpeg)) {
-//            return new Jpeg(source);
+//        } else
+            if (imageTypeIs(imageType, jpeg)) {
+                if (source instanceof URL)
+                    return new JpegImage((URL)source);
+                else
+                    return new JpegImage((byte[])source);
 //        } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
 //            return new Jpeg2000(source);
 //        } else if (imageTypeIs(imageType, png)) {
@@ -446,26 +484,26 @@ public class Image {
 //            return new ImgWMF(bytes);
 //        } else if (imageTypeIs(imageType, bmp)) {
 //            return BmpImage.getImage(source);
-//        } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
-//            RandomAccessFileOrArray ra = null;
-//            try {
-//                ra = createRandomAccessSource(source);
-//                Image img = TiffImage.getTiffImage(ra, 1);
-//                setOriginalSource(img, source);
-//                return img;
-//            } catch (RuntimeException e) {
-//                if (recoverImage) {
-//                    // reruns the getTiffImage() with several error recovering workarounds in place
-//                    // not guaranteed to work with every TIFF
-//                    Image img = TiffImage.getTiffImage(ra, recoverImage, 1);
-//                    setOriginalSource(img, source);
-//                    return img;
-//                }
-//                throw e;
-//            } finally {
-//                if (ra != null)
-//                    ra.close();
-//            }
+        } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
+            RandomAccessFileOrArray ra = null;
+            try {
+                ra = createRandomAccessSource(source);
+                Image img = TiffImage.getTiffImage(ra, 1);
+                setOriginalSource(img, source);
+                return img;
+            } catch (RuntimeException e) {
+                if (recoverImage) {
+                    // reruns the getTiffImage() with several error recovering workarounds in place
+                    // not guaranteed to work with every TIFF
+                    Image img = TiffImage.getTiffImage(ra, recoverImage, 1);
+                    setOriginalSource(img, source);
+                    return img;
+                }
+                throw e;
+            } finally {
+                if (ra != null)
+                    ra.close();
+            }
 //
 //        } else if (imageTypeIs(imageType, jbig2)) {
 //            // a jbig2 file with a file header.  the header is the only way we know here.
@@ -481,7 +519,7 @@ public class Image {
 //                if (ra != null)
 //                    ra.close();
 //            }
-//        }
+        }
         throw new PdfException(PdfException.ImageFormatCannotBeRecognized);
     }
 
