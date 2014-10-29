@@ -26,6 +26,7 @@ public class PdfException extends Exception {
     public static final String CannotGetTiffImageColor = "cannot.get.tiff.image.color";
     public static final String CannotGetTiffNumberOfPages = "cannot.get.tiff.number.of.pages";
     public static final String CannotFlushObject = "cannot.flush.object";
+    public static final String CannotHandleBoxSizesHigherThan2_32 = "cannot.handle.box.sizes.higher.than.2.32";
     public static final String CannotInflateTiffImage = "cannot.inflate.tiff.image";
     public static final String CannotOpenDocument = "cannot.open.document";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
@@ -42,6 +43,14 @@ public class PdfException extends Exception {
     public static final String ErrorAtFilePointer1 = "error.at.file.pointer.1";
     public static final String ErrorReadingObjectStream = "error.reading.objstm";
     public static final String ErrorReadingString = "error.reading.string";
+    public static final String ErrorWithJpMarker = "error.with.jp.marker";
+
+    public static final String ExpectedFtypMarker = "expected.ftyp.marker";
+    public static final String ExpectedIhdrMarker = "expected.ihdr.marker";
+    public static final String ExpectedJpMarker = "expected.jp.marker";
+    public static final String ExpectedJp2hMarker = "expected.jp2h.marker";
+
+
     public static final String ExtraSamplesAreNotSupported = "extra.samples.are.not.supported";
     public static final String FdfStartxrefNotFound = "fdf.startxref.not.found";
     public static final String FilePosition0CrossReferenceEntryInThisXrefSubsection = "file.position.0.cross.reference.entry.in.this.xref.subsection";
@@ -61,6 +70,7 @@ public class PdfException extends Exception {
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData = "invalid.code.encountered.while.decoding.2d.group.4.compressed.data";
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "invalid.cross.reference.entry.in.this.xref.subsection";
     public static final String InvalidIccProfile = "invalid.icc.profile";
+    public static final String InvalidJpeg2000File = "invalid.jpeg2000.file";
     public static final String InvalidOffsetForObject1 = "invalid.offset.for.object.1";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
@@ -81,6 +91,7 @@ public class PdfException extends Exception {
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
+    public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";
     public static final String WrongNumberOfComponentsInIccProfile = "icc.profile.contains.1.components.the.image.data.contains.2.components";
     public static final String XrefSubsectionNotFound = "xref.subsection.not.found";
     public static final String XrefTableDoesntHaveSuitableItemForObject1 = "xref.table.doesn't.have.suitable.item.for.object.1";

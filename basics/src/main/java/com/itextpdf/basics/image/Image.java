@@ -471,13 +471,16 @@ public class Image {
 //            GifImage gif = new GifImage(source);
 //            return gif.getImage(1);
 //        } else
-            if (imageTypeIs(imageType, jpeg)) {
-                if (source instanceof URL)
-                    return new JpegImage((URL)source);
-                else
-                    return new JpegImage((byte[])source);
-//        } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
-//            return new Jpeg2000(source);
+        if (imageTypeIs(imageType, jpeg)) {
+            if (source instanceof URL)
+                return new JpegImage((URL) source);
+            else
+                return new JpegImage((byte[]) source);
+        } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
+            if (source instanceof URL)
+                return new Jpeg2000Image((URL) source);
+            else
+                return new Jpeg2000Image((byte[]) source);
 //        } else if (imageTypeIs(imageType, png)) {
 //            return PngImage.getImage(source);
 //        } else if (imageTypeIs(imageType, wmf)) {
