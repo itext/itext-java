@@ -1,6 +1,8 @@
 package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.codec.BmpImage;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.codec.TiffImage;
 import com.itextpdf.basics.color.IccProfile;
@@ -154,13 +156,7 @@ public class Image {
     }
 
     public static Image getInstance(String filename, boolean recoverImage) throws IOException, PdfException {
-        URL url = null;
-        try {
-            url = new URL(filename);
-        } catch (MalformedURLException e) {
-            url = new File(filename).toURI().toURL();
-        }
-        return getInstance(url, recoverImage);
+        return getInstance(Utilities.toURL(filename), recoverImage);
     }
 
     /**
@@ -485,8 +481,11 @@ public class Image {
 //            return PngImage.getImage(source);
 //        } else if (imageTypeIs(imageType, wmf)) {
 //            return new ImgWMF(bytes);
-//        } else if (imageTypeIs(imageType, bmp)) {
-//            return BmpImage.getImage(source);
+        } else if (imageTypeIs(imageType, bmp)) {
+            if (source instanceof URL)
+                return BmpImage.getImage((URL)source);
+            else
+                return BmpImage.getImage((byte[])source);
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
             RandomAccessFileOrArray ra = null;
             try {

@@ -633,6 +633,7 @@ public class TiffImage {
         }
     }
 
+    // In PDF it should look: [/Indexed /DeviceRGB color palette]
     static public class Indexed implements Image.IAdditional {
         private int color;
         private byte[] palette;

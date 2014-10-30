@@ -7,6 +7,7 @@ public class PdfException extends Exception {
 
     public static final String _1CorruptedJfifMarker = "1.corrupted.jfif.marker";
     public static final String _1IsNotAValidJpegFile = "1.is.not.a.valid.jpeg.file";
+    public static final String _1IsNotAValidPlaceableWindowsMetafile = "1.is.not.a.valid.placeable.windows.metafile";
     public static final String _1MustHave8BitsPerComponent = "1.must.have.8.bits.per.component";
     public static final String _1UnsupportedJpegMarker2 = "1.unsupported.jpeg.marker.2";
 
@@ -64,13 +65,18 @@ public class PdfException extends Exception {
     public static final String ImageCanNotBeAnImageMask = "image.can.not.be.an.image.mask";
     public static final String ImageMaskCannotContainAnotherImageMask = "image.mask.cannot.contain.another.image.mask";
     public static final String ImageMaskIsNotAMaskDidYouDoMakeMask = "image.mask.is.not.a.mask.did.you.do.makemask";
+    public static final String IncompletePalette = "incomplete.palette";
+
     public static final String InfiniteIndirectReferenceChain = "infinite.indirect.reference.chain";
+    public static final String InvalidBmpFileCompression = "invalid.bmp.file.compression";
     public static final String InvalidCodeEncountered = "invalid.code.encountered";
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData = "invalid.code.encountered.while.decoding.2d.group.3.compressed.data";
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData = "invalid.code.encountered.while.decoding.2d.group.4.compressed.data";
+
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "invalid.cross.reference.entry.in.this.xref.subsection";
     public static final String InvalidIccProfile = "invalid.icc.profile";
     public static final String InvalidJpeg2000File = "invalid.jpeg2000.file";
+    public static final String InvalidMagicValueForBmpFile = "invalid.magic.value.for.bmp.file";
     public static final String InvalidOffsetForObject1 = "invalid.offset.for.object.1";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
