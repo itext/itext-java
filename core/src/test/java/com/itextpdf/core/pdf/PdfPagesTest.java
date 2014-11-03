@@ -46,7 +46,7 @@ public class PdfPagesTest {
 
         for (int i = 111; i > 0; i--) {
             PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
-            pdfDoc.insertPage(1, page);
+            pdfDoc.addPage(1, page);
             page.getPdfObject().put(PageNum, new PdfNumber(i));
             page.flush();
         }
@@ -85,7 +85,7 @@ public class PdfPagesTest {
 
         for (int i = 0; i < pages.length; i++) {
             pdfDoc.removePage(pages[i]);
-            pdfDoc.insertPage( i + 1, pages[i]);
+            pdfDoc.addPage(i + 1, pages[i]);
         }
         pdfDoc.close();
 
@@ -121,7 +121,8 @@ public class PdfPagesTest {
 
         for (int i = 0; i < pages.length; i++) {
             PdfPage page = pdfDoc.removePage(pages[i]);
-            pdfDoc.insertPage(i + 1, page);
+            pdfDoc.addPage(i + 1, page);
+            Assert.assertTrue(pdfDoc.getCatalog().pageTree.verifyIntegrity() == -1);
         }
         pdfDoc.close();
 
@@ -137,7 +138,7 @@ public class PdfPagesTest {
         try {
             page.flush();
             pdfDoc.removePage(page);
-            pdfDoc.insertPage(1, page);
+            pdfDoc.addPage(1, page);
             pdfDoc.close();
         } catch (PdfException e) {
             if (e.getMessage() == PdfException.FlushedPageCannotBeAddedOrInserted)

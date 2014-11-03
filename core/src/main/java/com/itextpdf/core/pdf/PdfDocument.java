@@ -172,36 +172,6 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Close PDF document.
-     *
-     * @throws PdfException
-     */
-    public void close() throws PdfException {
-        try {
-            removeAllHandlers();
-            if (writer != null) {
-                if (xmpMetadata != null) {
-                    PdfStream xmp = new PdfStream(this);
-                    xmp.getOutputStream().write(xmpMetadata);
-                    xmp.put(PdfName.Type, PdfName.Metadata);
-                    xmp.put(PdfName.Subtype, PdfName.XML);
-                    catalog.getPdfObject().put(PdfName.Metadata, xmp);
-                }
-                catalog.flush();
-                info.flush();
-                writer.flushWaitingObjects();
-                int startxref = writer.writeXRefTable();
-                writer.writeTrailer(startxref);
-                writer.close();
-            }
-            if (reader != null)
-                reader.close();
-        } catch (IOException e) {
-            throw new PdfException(PdfException.CannotCloseDocument, e, this);
-        }
-    }
-
-    /**
      * Gets the page by page number.
      *
      * @param pageNum page number.
@@ -230,15 +200,48 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Inserts page to the document.
+     * Creates and adds new page to the end of document.
      *
-     * @param index position to insert page to
-     * @param page  page to insert
+     * @return added page
+     */
+    public PdfPage addNewPage() throws PdfException {
+        return addNewPage(getDefaultPageSize());
+    }
+
+    /**
+     * Creates and adds new page with the specified page size.
+     *
+     * @param pageSize page size of the new page
+     * @return added page
+     */
+    public PdfPage addNewPage(PageSize pageSize) throws PdfException {
+        PdfPage page = new PdfPage(this, pageSize);
+        catalog.addNewPage(page);
+        return page;
+    }
+
+    /**
+     * Creates and inserts new page to the document.
+     *
+     * @param index position to addPage page to
      * @return inserted page
      * @throws PdfException in case {@code page} is flushed
      */
-    public PdfPage insertPage(int index, PdfPage page) throws PdfException {
-        catalog.insertPage(index, page);
+    public PdfPage addNewPage(int index) throws PdfException {
+        return addNewPage(index, getDefaultPageSize());
+    }
+
+    /**
+     * Creates and inserts new page to the document.
+     *
+     * @param index position to addPage page to
+     * @param pageSize page size of the new page
+     * @return inserted page
+     * @throws PdfException in case {@code page} is flushed
+     */
+    public PdfPage addNewPage(int index, PageSize pageSize) throws PdfException {
+        PdfPage page = new PdfPage(this, pageSize);
+        catalog.addPage(index, page);
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
         return currentPage;
@@ -257,26 +260,18 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Creates and adds new page to the end of document.
+     * Inserts page to the document.
      *
-     * @return added page
+     * @param index position to addPage page to
+     * @param page  page to addPage
+     * @return inserted page
+     * @throws PdfException in case {@code page} is flushed
      */
-    public PdfPage addNewPage() throws PdfException {
-        PdfPage page = new PdfPage(this, getDefaultPageSize());
-        catalog.addNewPage(page);
-        return page;
-    }
-
-    /**
-     * Creates and adds new page wit hthe specified page size.
-     *
-     * @param pageSize page size of the new page
-     * @return added page
-     */
-    public PdfPage addNewPage(PageSize pageSize) throws PdfException {
-        PdfPage page = new PdfPage(this, pageSize);
-        catalog.addNewPage(page);
-        return page;
+    public PdfPage addPage(int index, PdfPage page) throws PdfException {
+        catalog.addPage(index, page);
+        currentPage = page;
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
+        return currentPage;
     }
 
     /**
@@ -442,12 +437,49 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
+     * Close PDF document.
+     *
+     * @throws PdfException
+     */
+    public void close() throws PdfException {
+        try {
+            removeAllHandlers();
+            if (writer != null) {
+                if (xmpMetadata != null) {
+                    PdfStream xmp = new PdfStream(this);
+                    xmp.getOutputStream().write(xmpMetadata);
+                    xmp.put(PdfName.Type, PdfName.Metadata);
+                    xmp.put(PdfName.Subtype, PdfName.XML);
+                    catalog.getPdfObject().put(PdfName.Metadata, xmp);
+                }
+                catalog.flush();
+                info.flush();
+                writer.flushWaitingObjects();
+                int startxref = writer.writeXRefTable();
+                writer.writeTrailer(startxref);
+                writer.close();
+            }
+            if (reader != null)
+                reader.close();
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotCloseDocument, e, this);
+        }
+    }
+
+    /**
      * Initializes document.
      *
      * @throws PdfException
      */
     protected void open() throws PdfException {
         try {
+            if (reader != null) {
+                reader.pdfDocument = this;
+                reader.readPdf();
+                trailer = new PdfTrailer(reader.trailer);
+                info = new PdfDocumentInfo((PdfDictionary)trailer.getPdfObject().get(PdfName.Info, true), this);
+                catalog = new PdfCatalog((PdfDictionary)trailer.getPdfObject().get(PdfName.Root, true), this);
+            }
             if (writer != null) {
                 writer.pdfDocument = this;
                 if (reader == null) {
@@ -458,13 +490,6 @@ public class PdfDocument implements IEventDispatcher {
                     trailer.setInfo(info);
                 }
                 writer.writeHeader();
-            }
-            if (reader != null) {
-                reader.pdfDocument = this;
-                reader.readPdf();
-                trailer = new PdfTrailer(reader.trailer);
-                info = new PdfDocumentInfo((PdfDictionary)trailer.getPdfObject().get(PdfName.Info, true), this);
-                catalog = new PdfCatalog((PdfDictionary)trailer.getPdfObject().get(PdfName.Root, true), this);
             }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotOpenDocument, e, this);

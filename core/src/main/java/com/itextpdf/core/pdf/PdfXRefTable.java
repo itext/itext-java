@@ -82,6 +82,10 @@ public class PdfXRefTable {
         }
     }
 
+    protected void setNextObjectNumber(int nextNumber) {
+        this.nextNumber = Math.max(this.nextNumber, nextNumber);
+    }
+
     private void ensureCount(final int count) {
         if (count >= xref.length) {
             extendXref(count << 1);

@@ -4,21 +4,16 @@ import com.itextpdf.basics.PdfException;
 
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
-    protected PdfPagesTree pageTree = null;
+    protected final PdfPagesTree pageTree;
 
-    public PdfCatalog(PdfDictionary pdfObject) {
-        super(pdfObject);
-    }
-
-    public PdfCatalog(PdfDocument pdfDocument) {
-        super(new PdfDictionary(), pdfDocument);
-        pageTree = new PdfPagesTree(pdfDocument);
-        pdfObject.put(PdfName.Type, PdfName.Catalog);
-    }
-
-    public PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+    protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
-        //TODO populate pages tree here
+        pdfObject.put(PdfName.Type, PdfName.Catalog);
+        pageTree = new PdfPagesTree(this);
+    }
+
+    protected PdfCatalog(PdfDocument pdfDocument) throws PdfException {
+        this(new PdfDictionary(), pdfDocument);
     }
 
     public void addPage(PdfPage page) throws PdfException {
@@ -31,8 +26,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         pageTree.addPage(page);
     }
 
-    public void insertPage(int index, PdfPage page) throws PdfException {
-        pageTree.insertPage(index, page);
+    public void addPage(int index, PdfPage page) throws PdfException {
+        pageTree.addPage(index, page);
     }
 
     public PdfPage getPage(int pageNum) throws PdfException {

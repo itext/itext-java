@@ -327,7 +327,16 @@ public class PdfCanvasTest {
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
-            canvas.rectangle(100, 100, 100, 100).fill();
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .showText(Integer.toString(i+1))
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+
             page.flush();
         }
         pdfDoc.close();
@@ -405,7 +414,15 @@ public class PdfCanvasTest {
         for (int i = 0; i < 1000; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
-            canvas.rectangle(100, 100, 100, 100).fill();
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .showText(Integer.toString(i+1))
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
             page.flush();
         }
         pdfDoc.close();
@@ -424,12 +441,12 @@ public class PdfCanvasTest {
 
     @Test
     public void comparePerformanceTest() throws IOException, PdfException, DocumentException {
-        comparePerformance(false);
+        comparePerformance(false, 1.21f);
     }
 
     @Test
     public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
-        comparePerformance(true);
+        comparePerformance(true, 1.25f);
     }
 
     @Test
@@ -695,7 +712,7 @@ public class PdfCanvasTest {
 
     }
 
-    private void comparePerformance(boolean fullCompression) throws IOException, PdfException, DocumentException {
+    private void comparePerformance(boolean fullCompression, float coef) throws IOException, PdfException, DocumentException {
         int pageCount = 100000;
         int runCount = 10;
 
@@ -725,7 +742,8 @@ public class PdfCanvasTest {
         }
         long t2 = System.currentTimeMillis();
         long iText5Time = t2 - t1;
-        System.out.println(String.format("iText5 time: %dms", iText5Time));
+        System.out.println(String.format("iText5 time: %dms\t(%s)", iText5Time,
+                fullCompression ? "compression" : "no compression"));
 
         t1 = System.currentTimeMillis();
         for (int i = 0; i < runCount; i++) {
@@ -746,8 +764,11 @@ public class PdfCanvasTest {
         }
         t2 = System.currentTimeMillis();
         long iText6Time = t2 - t1;
-        System.out.println(String.format("iText6 time: %dms", iText6Time));
-        Assert.assertTrue(iText5Time > iText6Time);
-
+        String compression = fullCompression ? "compression" : "no compression";
+        System.out.println(String.format("iText6 time: %dms\t(%s)", iText6Time, compression));
+        String message = String.format("%s: %.2f (%.2f)", compression, (double)iText5Time/iText6Time, coef);
+        Assert.assertTrue(message, iText5Time > iText6Time*coef);
+        System.out.println(message);
+        System.out.flush();
     }
 }

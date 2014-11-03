@@ -18,7 +18,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfResources resources = null;
 
-    public PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
         PdfDictionary resources = pdfObject.getAsDictionary(PdfName.Resources);
         if (resources != null)
@@ -28,7 +28,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
-    public PdfPage(PdfDocument pdfDocument, PageSize pageSize) throws PdfException {
+    protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) throws PdfException {
         super(new PdfDictionary(), pdfDocument);
         PdfStream contentStream = new PdfStream(pdfDocument);
         pdfObject.put(PdfName.Contents, contentStream);
@@ -38,7 +38,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
-    public PdfPage(PdfDocument pdfDocument) throws PdfException {
+    protected PdfPage(PdfDocument pdfDocument) throws PdfException {
         this(pdfDocument, pdfDocument.getDefaultPageSize());
     }
 
@@ -116,6 +116,17 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public void flush() throws PdfException {
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
         super.flush();
+    }
+
+    protected void release() {
+        if (pdfObject.getIndirectReference() != null) {
+            pdfObject.getIndirectReference().setFree();
+            pdfObject.remove(PdfName.Parent);
+        }
+    }
+
+    protected void makeIndirect(PdfDocument pdfDocument) {
+        pdfObject.makeIndirect(pdfDocument);
     }
 
     private PdfStream newContentStream(boolean before) throws PdfException {

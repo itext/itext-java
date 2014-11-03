@@ -71,7 +71,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     }
 
     public void decrement() {
-        this.value++;
+        this.value--;
     }
 
     @Override

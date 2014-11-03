@@ -169,7 +169,7 @@ public class PdfReader {
             case String:
                 return new PdfString(tokens.getByteContent()).setHexWriting(tokens.isHexString());
             case Name:
-                return getPdfName(readAsDirect);
+                return readPdfName(readAsDirect);
             case Ref:
                 int num = tokens.getObjNr();
                 PdfXRefTable table = pdfDocument.getXRef();
@@ -207,7 +207,7 @@ public class PdfReader {
         }
     }
 
-    protected PdfName getPdfName(boolean readAsDirect) {
+    protected PdfName readPdfName(boolean readAsDirect) {
         if (readAsDirect) {
             PdfName cachedName = PdfName.staticNames.get(tokens.getStringValue());
             if (cachedName != null)
@@ -225,7 +225,7 @@ public class PdfReader {
                 break;
             if (tokens.getTokenType() != PdfTokeniser.TokenType.Name)
                 tokens.throwError(PdfException.DictionaryKey1IsNotAName, tokens.getStringValue());
-            PdfName name = getPdfName(true);
+            PdfName name = readPdfName(true);
             PdfObject obj = readObject(true);
             if (obj == null) {
                 if (tokens.getTokenType() == PdfTokeniser.TokenType.EndDic)
@@ -333,6 +333,7 @@ public class PdfReader {
         PdfDictionary trailer = (PdfDictionary) readObject(false);
         PdfNumber xrefSize = (PdfNumber) trailer.get(PdfName.Size);
         xref.setCapacity(xrefSize.getIntValue());
+        xref.setNextObjectNumber(xrefSize.getIntValue());
 
         PdfObject xrs = trailer.get(PdfName.XRefStm);
         if (xrs != null && xrs.getType() == PdfObject.Number) {
@@ -373,6 +374,7 @@ public class PdfReader {
         }
 
         int size = ((PdfNumber)xrefStream.get(PdfName.Size)).getIntValue();
+        xref.setNextObjectNumber(size);
         PdfArray index;
         PdfObject obj = xrefStream.get(PdfName.Index);
         if (obj == null) {

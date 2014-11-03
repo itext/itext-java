@@ -1,5 +1,8 @@
 package com.itextpdf.basics;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PdfException extends Exception {
 
     public static final String _1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor = "1.bit.samples.are.not.supported.for.horizontal.differencing.predictor";
@@ -77,6 +80,9 @@ public class PdfException extends Exception {
     public static final String InvalidIccProfile = "invalid.icc.profile";
     public static final String InvalidJpeg2000File = "invalid.jpeg2000.file";
     public static final String InvalidMagicValueForBmpFile = "invalid.magic.value.for.bmp.file";
+    public static final String InvalidPageStructure1 = "invalid.page.structure.1";
+    public static final String InvalidPageStructurePagesKidsMustBePdfArray = "invalid.page.structure.pages.kids.must.be.pdfarray";
+    public static final String InvalidPageStructurePagesPagesMustBePdfDictionary = "invalid.page.structure.pages.must.be.pdfdictionary";
     public static final String InvalidOffsetForObject1 = "invalid.offset.for.object.1";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
@@ -104,6 +110,7 @@ public class PdfException extends Exception {
 
     protected Object object;
     protected String composedMessage;
+    private List<Object> messageParams;
 
     public PdfException(String message) {
         super(message);
@@ -123,7 +130,24 @@ public class PdfException extends Exception {
         this.object = object;
     }
 
+    @Override
+    public String getMessage() {
+        if (messageParams != null) {
+            StringBuilder builder = new StringBuilder(super.getMessage());
+            builder.append('+');
+            for (Object obj: messageParams) {
+                builder.append(obj.toString()).append('+');
+            }
+            return builder.substring(0, builder.length()-1);
+        }
+        return super.getMessage();
+    }
+
     public PdfException setMessageParams(Object... messageParams) {
+        this.messageParams = new ArrayList<Object>();
+        for (Object obj: messageParams) {
+            this.messageParams.add(obj);
+        }
         return this;
     }
 
