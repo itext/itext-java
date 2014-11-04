@@ -581,7 +581,7 @@ public class PdfReaderTest {
 
     @Test
     public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
-        comparePerformance(sourceFolder + "performanceTestWithCompression.pdf", "compression", 1.95f);
+        comparePerformance(sourceFolder + "performanceTestWithCompression.pdf", "compression", 1.85f);
     }
 
     @Test
