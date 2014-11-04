@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 class PdfPagesTree {
     private final int leafSize = 10;
+
     private ArrayList<PdfDictionary> pageRefs;
     private ArrayList<PdfPages> parents;
     private ArrayList<PdfPage> pages;

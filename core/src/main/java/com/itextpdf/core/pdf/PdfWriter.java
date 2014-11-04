@@ -193,7 +193,7 @@ public class PdfWriter extends PdfOutputStream {
         pdfDocument.getXRef().clear();
         for (PdfIndirectReference indirectReference : indirects) {
             PdfObject object = indirectReference.getRefersTo(false);
-            if (object != null) {
+            if (object != null && !object.equals(objectStream)) {
                 object.flush();
             }
         }

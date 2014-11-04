@@ -312,18 +312,107 @@ public class PdfCanvasTest {
 
     @Test
     public void create1000PagesDocument() throws IOException, PdfException {
+        int pageCount = 1000;
+        String filename = destinationFolder + pageCount + "PagesDocument.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "1000PagesDocument.pdf");
+        FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        int pageCount = 1000;
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .showText(Integer.toString(i+1))
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+
+            page.flush();
+        }
+        pdfDoc.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
+        HashMap<String, String> info = reader.getInfo();
+        Assert.assertEquals(author, info.get("Author"));
+        Assert.assertEquals(creator, info.get("Creator"));
+        Assert.assertEquals(title, info.get("Title"));
+        for (int i = 1; i <= pageCount; i++) {
+            PdfDictionary page = reader.getPageN(i);
+            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void create100PagesDocument() throws IOException, PdfException {
+        int pageCount = 100;
+        String filename = destinationFolder + pageCount + "PagesDocument.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .showText(Integer.toString(i+1))
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+
+            page.flush();
+        }
+        pdfDoc.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
+        HashMap<String, String> info = reader.getInfo();
+        Assert.assertEquals(author, info.get("Author"));
+        Assert.assertEquals(creator, info.get("Creator"));
+        Assert.assertEquals(title, info.get("Title"));
+        for (int i = 1; i <= pageCount; i++) {
+            PdfDictionary page = reader.getPageN(i);
+            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void create10PagesDocument() throws IOException, PdfException {
+        int pageCount = 10;
+        String filename = destinationFolder + pageCount + "PagesDocument.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -432,7 +521,139 @@ public class PdfCanvasTest {
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
         Assert.assertEquals(title, info.get("Title"));
-        for (int i = 1; i <= 1000; i++) {
+        for (int i = 1; i <= 10; i++) {
+            PdfDictionary page = reader.getPageN(i);
+            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void create100PagesDocumentWithFullCompression() throws IOException, PdfException {
+        int count = 100;
+        String filename = destinationFolder + count + "PagesDocumentWithFullCompression.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setFullCompression(true);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        for (int i = 0; i < count; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .showText(Integer.toString(i + 1))
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+            page.flush();
+        }
+        pdfDoc.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
+        HashMap<String, String> info = reader.getInfo();
+        Assert.assertEquals(author, info.get("Author"));
+        Assert.assertEquals(creator, info.get("Creator"));
+        Assert.assertEquals(title, info.get("Title"));
+        for (int i = 1; i <= count; i++) {
+            PdfDictionary page = reader.getPageN(i);
+            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void create197PagesDocumentWithFullCompression() throws IOException, PdfException {
+        int count = 197;
+        String filename = destinationFolder + count + "PagesDocumentWithFullCompression.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setFullCompression(true);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        for (int i = 0; i < count; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .showText(Integer.toString(i + 1))
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+            page.flush();
+        }
+        pdfDoc.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
+        HashMap<String, String> info = reader.getInfo();
+        Assert.assertEquals(author, info.get("Author"));
+        Assert.assertEquals(creator, info.get("Creator"));
+        Assert.assertEquals(title, info.get("Title"));
+        for (int i = 1; i <= count; i++) {
+            PdfDictionary page = reader.getPageN(i);
+            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void create10PagesDocumentWithFullCompression() throws IOException, PdfException {
+        int count = 10;
+        String filename = destinationFolder + count + "PagesDocumentWithFullCompression.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setFullCompression(true);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        for (int i = 0; i < count; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .showText(Integer.toString(i + 1))
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+            page.flush();
+        }
+        pdfDoc.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
+        HashMap<String, String> info = reader.getInfo();
+        Assert.assertEquals(author, info.get("Author"));
+        Assert.assertEquals(creator, info.get("Creator"));
+        Assert.assertEquals(title, info.get("Title"));
+        for (int i = 1; i <= count; i++) {
             PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
@@ -446,7 +667,7 @@ public class PdfCanvasTest {
 
     @Test
     public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
-        comparePerformance(true, 1.25f);
+        comparePerformance(true, 1.6f);
     }
 
     @Test
