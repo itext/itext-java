@@ -67,16 +67,18 @@ public class PdfNumber extends PdfPrimitiveObject {
     }
 
     public void increment() {
-        this.value++;
+        setValue(++value);
     }
 
     public void decrement() {
-        this.value--;
+        setValue(--value);
     }
 
     @Override
     public String toString() {
-        if (valueType == Int)
+        if (content != null)
+            return new String(content);
+        else if (valueType == Int)
             return new String(OutputStream.getIsoBytes(getIntValue()));
         else
             return new String(OutputStream.getIsoBytes(getValue()));

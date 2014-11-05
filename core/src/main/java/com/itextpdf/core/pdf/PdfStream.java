@@ -112,6 +112,22 @@ public class PdfStream extends PdfDictionary {
             } catch (IOException ioe) {
                 throw new PdfException(PdfException.CannotCopyObjectContent, ioe);
             }
+        } else if (stream.getReader() != null) {
+            try {
+                InputStream is = stream.getInputStream(false);
+                byte[] buffer = new byte[stream.getLength()];
+                is.read(buffer, 0, stream.getLength());
+                getOutputStream().write(buffer);
+                is.close();
+            } catch (IOException ioe) {
+                throw new PdfException(PdfException.CannotCopyObjectContent, ioe);
+            }
         }
     }
+
+    protected void initOutputStream() {
+        if (getOutputStream() == null)
+            outputStream = new PdfOutputStream(new ByteArrayOutputStream());
+    }
+
 }

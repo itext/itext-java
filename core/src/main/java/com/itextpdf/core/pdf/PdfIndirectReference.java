@@ -79,7 +79,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // this method return 31st reference in chain.
     public PdfObject getRefersTo(boolean recursively) throws PdfException {
         if (!recursively) {
-            if (refersTo == null && getReader() != null) {
+            if (refersTo == null && !flushed && getReader() != null) {
                 refersTo = getReader().readObject(this);
             }
             return refersTo;

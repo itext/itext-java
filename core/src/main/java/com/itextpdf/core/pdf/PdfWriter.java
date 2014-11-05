@@ -250,13 +250,19 @@ public class PdfWriter extends PdfOutputStream {
             PdfXRefTable xref = pdfDocument.getXRef();
             for (int i = 1; i < xref.size(); i++) {
                 PdfIndirectReference indirect = xref.get(i);
-                writeString(objectOffsetFormatter.format(indirect.getOffset())).
-                        writeSpace().
-                        writeString(objectGenerationFormatter.format(indirect.getGenNr()));
-                if (indirect.getOffset() > 0) {
-                    writeBytes(inUseXRefEntry);
+                if (indirect == null) {
+                    writeString(objectOffsetFormatter.format(0)).
+                            writeSpace().
+                            writeString(objectGenerationFormatter.format(0)).writeBytes(freeXRefEntry);
                 } else {
-                    writeBytes(freeXRefEntry);
+                    writeString(objectOffsetFormatter.format(indirect.getOffset())).
+                            writeSpace().
+                            writeString(objectGenerationFormatter.format(indirect.getGenNr()));
+                    if (indirect.getOffset() > 0) {
+                        writeBytes(inUseXRefEntry);
+                    } else {
+                        writeBytes(freeXRefEntry);
+                    }
                 }
             }
         }

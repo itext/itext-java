@@ -5,6 +5,7 @@ import com.itextpdf.basics.io.OutputStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 public class PdfOutputStream extends OutputStream {
@@ -122,6 +123,17 @@ public class PdfOutputStream extends OutputStream {
     }
 
     protected void write(PdfStream stream) throws IOException, PdfException {
+        //When document is opened in stamping mode the output stream can be uninitialized.
+        //We shave to initialize it and write all data from streams input to streams output.
+        if (stream.getOutputStream() == null && stream.getReader() != null) {
+            stream.initOutputStream();
+            InputStream is = stream.getInputStream(false);
+            byte[] buffer = new byte[stream.getLength()];
+            is.read(buffer, 0, stream.getLength());
+            stream.getOutputStream().write(buffer);
+            is.close();
+        }
+
         ByteArrayOutputStream byteStream = (ByteArrayOutputStream)stream.getOutputStream().getOutputStream();
         if (stream instanceof PdfObjectStream) {
             ByteArrayOutputStream indexStream = (ByteArrayOutputStream)((PdfObjectStream)stream).getIndexStream().getOutputStream();

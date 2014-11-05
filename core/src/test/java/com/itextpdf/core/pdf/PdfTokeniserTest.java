@@ -98,7 +98,7 @@ public class PdfTokeniserTest {
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokeniser.TokenType.Number);
         PdfNumber num = new PdfNumber(tok.getByteContent());
-        Assert.assertEquals("70", num.toString());
+        Assert.assertEquals("70.", num.toString());
 
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokeniser.TokenType.Name);
