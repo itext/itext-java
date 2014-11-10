@@ -6,6 +6,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     private static final int LengthOfIndirectsChain = 31;
     protected static final int Reading = -1;
+    protected static final int Free = -2;
 
     protected final int objNr;
     protected final int genNr;
@@ -171,13 +172,20 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.offsetOrIndex = offsetOrIndex;
     }
 
+    protected void fixOffset(long offset){
+        //TODO log invalid offsets
+        if (this.offsetOrIndex >= 0) {
+            this.offsetOrIndex = offset;
+        }
+    }
+
     protected boolean isInUse() {
-        return offsetOrIndex > 0 || objectStreamNumber > 0;
+        return offsetOrIndex >= 0;
     }
 
     // NOTE After this operation this indirect reference could be reused for new indirect objects.
     protected void setFree() {
-        offsetOrIndex = 0;
+        offsetOrIndex = Free;
         objectStreamNumber = 0;
         if (refersTo != null) {
             refersTo.setIndirectReference(null);

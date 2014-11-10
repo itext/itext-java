@@ -1,6 +1,7 @@
 package com.itextpdf.basics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PdfException extends Exception {
@@ -42,6 +43,7 @@ public class PdfException extends Exception {
     public static final String DictionaryKey1IsNotAName = "dictionary.key.1.is.not.a.name";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
     public static final String DocumentHasNoPages = "document.has.no.pages";
+    public static final String DocumentHasNoCatalogObject = "document.has.no.catalog.object";
     public static final String EolCodeWordEncounteredInBlackRun = "eol.code.word.encountered.in.black.run";
     public static final String EolCodeWordEncounteredInWhiteRun = "eol.code.word.encountered.in.white.run";
     public static final String ErrorAtFilePointer1 = "error.at.file.pointer.1";
@@ -77,6 +79,7 @@ public class PdfException extends Exception {
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData = "invalid.code.encountered.while.decoding.2d.group.4.compressed.data";
 
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "invalid.cross.reference.entry.in.this.xref.subsection";
+    public static final String InvalidIndirectReference1 = "invalid.indirect.reference.1";
     public static final String InvalidIccProfile = "invalid.icc.profile";
     public static final String InvalidJpeg2000File = "invalid.jpeg2000.file";
     public static final String InvalidMagicValueForBmpFile = "invalid.magic.value.for.bmp.file";
@@ -84,6 +87,7 @@ public class PdfException extends Exception {
     public static final String InvalidPageStructurePagesKidsMustBePdfArray = "invalid.page.structure.pages.kids.must.be.pdfarray";
     public static final String InvalidPageStructurePagesPagesMustBePdfDictionary = "invalid.page.structure.pages.must.be.pdfdictionary";
     public static final String InvalidOffsetForObject1 = "invalid.offset.for.object.1";
+    public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
     public static final String ObjectCannotBeAddedToObjectStream = "object.cannot.be.added.to.object.stream";
@@ -99,6 +103,7 @@ public class PdfException extends Exception {
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
     public static final String TiffFillOrderTagMustBeEither1Or2 = "tiff.fill.order.tag.must.be.either.1.or.2";
     public static final String TilesAreNotSupported = "tiles.are.not.supported";
+    public static final String TrailerNotFound = "trailer.not.found";
     public static final String TransparencyLengthMustBeEqualTo2WithCcittImages = "transparency.length.must.be.equal.to.2.with.ccitt.images";
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
@@ -145,9 +150,7 @@ public class PdfException extends Exception {
 
     public PdfException setMessageParams(Object... messageParams) {
         this.messageParams = new ArrayList<Object>();
-        for (Object obj: messageParams) {
-            this.messageParams.add(obj);
-        }
+        Collections.addAll(this.messageParams, messageParams);
         return this;
     }
 

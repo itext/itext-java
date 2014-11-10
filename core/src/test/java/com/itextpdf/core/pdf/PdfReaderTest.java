@@ -6,6 +6,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PRStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -22,6 +23,10 @@ public class PdfReaderTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfReaderTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfReaderTest/";
 
+    static final String author = "Alexander Chingarev";
+    static final String creator = "iText 6";
+    static final String title = "Empty iText 6 Document";
+
     @BeforeClass
     static public void beforeClass() {
         new File(destinationFolder).mkdirs();
@@ -30,9 +35,6 @@ public class PdfReaderTest {
     @Test
     public void openSimpleDoc() throws IOException, PdfException {
         String filename = destinationFolder + "openSimpleDoc.pdf";
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -45,6 +47,9 @@ public class PdfReaderTest {
 
         com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new FileInputStream(filename));
         pdfDoc = new PdfDocument(reader);
+        Assert.assertTrue(author.equals(pdfDoc.getInfo().getAuthor().toString()));
+        Assert.assertTrue(creator.equals(pdfDoc.getInfo().getCreator().toString()));
+        Assert.assertTrue(title.equals(pdfDoc.getInfo().getTitle().toString()));
         PdfObject object = pdfDoc.getXRef().get(1).getRefersTo();
         Assert.assertTrue(object.getType() == PdfObject.Dictionary);
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
@@ -576,7 +581,47 @@ public class PdfReaderTest {
 
     @Test
     public void comparePerformanceTest() throws IOException, PdfException, DocumentException {
-        comparePerformance(sourceFolder + "performanceTest.pdf", "no compression", 1.70f);
+        comparePerformance(sourceFolder + "performanceTest.pdf", "no compression", 1.55f);
+    }
+
+    @Ignore
+    @Test
+    public void compareMemory5Test() throws IOException, PdfException, DocumentException {
+        String filename = sourceFolder + "performanceTest.pdf";
+        int runCount = 10;
+        for (int i = 0; i < runCount; i++) {
+            FileInputStream fis = new FileInputStream(filename);
+            com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(fis);
+            int pageCount = reader.getNumberOfPages();
+            for (int k = 1; k < pageCount+1; k++) {
+                com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(k);
+                page.get(com.itextpdf.text.pdf.PdfName.MEDIABOX);
+                com.itextpdf.text.pdf.PdfReader.getStreamBytes((PRStream)page.getAsStream(com.itextpdf.text.pdf.PdfName.CONTENTS));
+            }
+            reader.close();
+        }
+        System.out.flush();
+    }
+
+    @Test
+    public void compareMemory6Test() throws IOException, PdfException, DocumentException {
+        String filename = sourceFolder + "performanceTest.pdf";
+        int runCount = 10;
+        for (int i = 0; i < runCount; i++) {
+            FileInputStream fis = new FileInputStream(filename);
+            PdfReader reader = new PdfReader(fis);
+            PdfDocument pdfDoc = new PdfDocument(reader);
+            int pageCount = pdfDoc.getNumOfPages();
+            for (int k = 1; k < pageCount+1; k++) {
+                PdfPage page = pdfDoc.getPage(k);
+                page.getPdfObject().get(PdfName.MediaBox);
+                page.getContentStream();
+            }
+            reader.close();
+            pdfDoc.close();
+            fis.close();
+        }
+        System.out.flush();
     }
 
     @Test
@@ -586,12 +631,12 @@ public class PdfReaderTest {
 
     @Test
     public void comparePerformanceRandomTest() throws IOException, PdfException, DocumentException {
-        comparePerformanceRandom(sourceFolder + "performanceTest.pdf", "random, no compression", 2.3f);
+        comparePerformanceRandom(sourceFolder + "performanceTest.pdf", "random, no compression", 2.2f);
     }
 
     @Test
     public void comparePerformanceRandomTestFullCompression() throws IOException, PdfException, DocumentException {
-        comparePerformanceRandom(sourceFolder + "performanceTestWithCompression.pdf", "random, compression", 2.1f);
+        comparePerformanceRandom(sourceFolder + "performanceTestWithCompression.pdf", "random, compression", 2.0f);
     }
 
     private void comparePerformance(String filename, String message, float coef) throws IOException, PdfException, DocumentException {
@@ -637,7 +682,6 @@ public class PdfReaderTest {
 
     private void comparePerformanceRandom(String filename, String message, float coef) throws IOException, PdfException, DocumentException {
         int runCount = 10;
-
         int totalCount = 10000;
 
         long t1 = System.currentTimeMillis();
@@ -682,9 +726,444 @@ public class PdfReaderTest {
         System.out.flush();
     }
 
+    @Test
+    public void correctSimpleDoc1() throws IOException, PdfException {
+        String filename = sourceFolder + "correctSimpleDoc1.pdf";
 
-    protected boolean objectTypeEqualTo(PdfObject object, PdfName type) throws PdfException {
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 1);
+
+        PdfPage page = document.getPage(1);
+        Assert.assertNotNull(page.getContentStream().getInputStreamBytes());
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void correctSimpleDoc2() throws IOException, PdfException {
+        String filename = sourceFolder + "correctSimpleDoc2.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 1);
+
+        PdfPage page = document.getPage(1);
+        Assert.assertNotNull(page.getContentStream().getInputStreamBytes());
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void correctSimpleDoc3() throws IOException, PdfException {
+        String filename = sourceFolder + "correctSimpleDoc3.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 1);
+
+        PdfPage page = document.getPage(1);
+        Assert.assertNotNull(page.getContentStream().getInputStreamBytes());
+
+        reader.close();
+        document.close();
+    }
+
+    @Test @Ignore //test with abnormal object declaration
+    public void correctSimpleDoc4() throws IOException, PdfException {
+        String filename = sourceFolder + "correctSimpleDoc4.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 1);
+
+        PdfPage page = document.getPage(1);
+        Assert.assertNotNull(page.getContentStream().getInputStreamBytes());
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest01() throws IOException, PdfException {
+        String filename = sourceFolder + "OnlyTrailer.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest02() throws IOException, PdfException {
+        String filename = sourceFolder + "CompressionShift1.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest03() throws IOException, PdfException {
+        String filename = sourceFolder + "CompressionShift2.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest04() throws IOException, PdfException {
+        String filename = sourceFolder + "CompressionWrongObjStm.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        boolean exception = false;
+        try {
+            new PdfDocument(reader);
+        } catch (PdfException ex) {
+            exception = true;
+        }
+
+        Assert.assertTrue(exception);
+        reader.close();
+    }
+
+    @Test
+    public void fixPdfTest05() throws IOException, PdfException {
+        String filename = sourceFolder + "CompressionWrongShift.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        boolean exception = false;
+        try {
+            new PdfDocument(reader);
+        } catch (PdfException ex) {
+            exception = true;
+        }
+
+        Assert.assertTrue(exception);
+        reader.close();
+    }
+
+    @Test
+    public void fixPdfTest06() throws IOException, PdfException {
+        String filename = sourceFolder + "InvalidOffsets.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest07() throws IOException, PdfException {
+        String filename = sourceFolder + "XRefSectionWithFreeReferences1.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        boolean exception = false;
+        try {
+            new PdfDocument(reader);
+        } catch (PdfException ex) {
+            exception = true;
+        }
+
+        Assert.assertTrue(exception);
+        reader.close();
+    }
+
+    @Test
+    public void fixPdfTest08() throws IOException, PdfException {
+        String filename = sourceFolder + "XRefSectionWithFreeReferences2.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+
+        Assert.assertTrue(author.equals(document.getInfo().getAuthor().toString()));
+        Assert.assertTrue(creator.equals(document.getInfo().getCreator().toString()));
+        Assert.assertTrue(title.equals(document.getInfo().getTitle().toString()));
+
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest09() throws IOException, PdfException {
+        String filename = sourceFolder + "XRefSectionWithFreeReferences3.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+
+        Assert.assertTrue(author.equals(document.getInfo().getAuthor().toString()));
+        Assert.assertTrue(creator.equals(document.getInfo().getCreator().toString()));
+        Assert.assertTrue(title.equals(document.getInfo().getTitle().toString()));
+
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest10() throws IOException, PdfException {
+        String filename = sourceFolder + "XRefSectionWithFreeReferences4.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+
+        Assert.assertTrue(document.getInfo().getAuthor() == null);
+        Assert.assertTrue(document.getInfo().getCreator() == null);
+        Assert.assertTrue(document.getInfo().getTitle() == null);
+
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest11() throws IOException, PdfException {
+        String filename = sourceFolder + "XRefSectionWithoutSize.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest12() throws IOException, PdfException {
+        String filename = sourceFolder + "XRefWithBreaks.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest13() throws IOException, PdfException {
+        String filename = sourceFolder + "XRefWithInvalidGenerations1.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 1000);
+
+        for (int i = 1; i < 10; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+
+        }
+
+        boolean exception = false;
+        try {
+            for (int i = 11; i < document.getNumOfPages() + 1; i++) {
+                PdfPage page = document.getPage(i);
+                page.getContentStream().getInputStreamBytes();
+            }
+        } catch (PdfException ex) {
+            exception = true;
+        }
+        Assert.assertTrue(exception);
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest14() throws IOException, PdfException {
+        String filename = sourceFolder + "XRefWithInvalidGenerations2.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        boolean exception = false;
+        try {
+            new PdfDocument(reader);
+        } catch (PdfException ex) {
+            exception = true;
+        }
+
+        Assert.assertTrue(exception);
+        reader.close();
+    }
+
+    @Test
+    public void fixPdfTest15() throws IOException, PdfException {
+        String filename = sourceFolder + "XRefWithInvalidGenerations3.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest16() throws IOException, PdfException {
+        String filename = sourceFolder + "XrefWithInvalidOffsets.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void fixPdfTest17() throws IOException, PdfException {
+        String filename = sourceFolder + "XrefWithNullOffsets.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream().getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+        }
+
+        reader.close();
+        document.close();
+    }
+
+    private boolean objectTypeEqualTo(PdfObject object, PdfName type) throws PdfException {
         PdfName objectType = ((PdfDictionary)object).getAsName(PdfName.Type);
         return type.equals(objectType);
+    }
+
+    /**
+     * Returns the current memory use.
+     *
+     * @return the current memory use
+     */
+    private static long getMemoryUse() {
+        garbageCollect();
+        garbageCollect();
+        garbageCollect();
+        garbageCollect();
+        long totalMemory = Runtime.getRuntime().totalMemory();
+        garbageCollect();
+        garbageCollect();
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        return (totalMemory - freeMemory);
+    }
+
+    /**
+     * Makes sure all garbage is cleared from the memory.
+     */
+    private static void garbageCollect() {
+        try {
+            System.gc();
+            Thread.sleep(200);
+            System.runFinalization();
+            Thread.sleep(200);
+            System.gc();
+            Thread.sleep(200);
+            System.runFinalization();
+            Thread.sleep(200);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 }

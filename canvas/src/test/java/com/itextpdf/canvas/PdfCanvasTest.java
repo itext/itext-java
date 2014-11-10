@@ -667,7 +667,7 @@ public class PdfCanvasTest {
 
     @Test
     public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
-        comparePerformance(true, 1.5f);
+        comparePerformance(true, 1.42f);
     }
 
     @Test

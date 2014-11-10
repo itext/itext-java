@@ -154,7 +154,7 @@ public class PdfTokeniserTest {
         Assert.assertSame(tok.getTokenType(), PdfTokeniser.TokenType.String);
         Assert.assertSame(tok.isHexString(), true);
         str = new PdfString(tok.getByteContent(), tok.isHexString());
-        Assert.assertEquals("\u008C%GÕ\u008DKÒÆóÓ+\u0083\u000Bã%\u009D ", str.toString());
+        Assert.assertEquals("\u008C%GÕ\u008DKÒÆóÓ+\u0083\u000Bã%\u009D ", str.getValue());
 
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokeniser.TokenType.Number);

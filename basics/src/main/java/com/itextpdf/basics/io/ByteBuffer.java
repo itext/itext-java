@@ -17,6 +17,16 @@ public class ByteBuffer {
         buffer = new byte[size];
     }
 
+    public static int getHex(int v) {
+        if (v >= '0' && v <= '9')
+            return v - '0';
+        if (v >= 'A' && v <= 'F')
+            return v - 'A' + 10;
+        if (v >= 'a' && v <= 'f')
+            return v - 'a' + 10;
+        return -1;
+    }
+
     public ByteBuffer append(byte b) {
         int newCount = count + 1;
         if (newCount > buffer.length) {
@@ -61,15 +71,14 @@ public class ByteBuffer {
         return append(bytes[b & 0x0f]);
     }
 
-    public static int getHex(int v) {
-        if (v >= '0' && v <= '9')
-            return v - '0';
-        if (v >= 'A' && v <= 'F')
-            return v - 'A' + 10;
-        if (v >= 'a' && v <= 'f')
-            return v - 'a' + 10;
-        return -1;
+    public byte get(int index) {
+        if (index >= count) {
+            throw new IndexOutOfBoundsException(String.format("Index: %n, Size: %n", index, count));
+        }
+        return buffer[index];
     }
+
+
 
     public ByteBuffer reset() {
         count = 0;
@@ -88,5 +97,13 @@ public class ByteBuffer {
 
     public int size() {
         return count;
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    public int capacity() {
+        return buffer.length;
     }
 }

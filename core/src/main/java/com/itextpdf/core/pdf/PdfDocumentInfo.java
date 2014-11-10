@@ -5,7 +5,7 @@ import com.itextpdf.basics.PdfException;
 public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfDocumentInfo(PdfDictionary pdfObject) {
-        super(pdfObject);
+        super(pdfObject == null ? new PdfDictionary() : pdfObject);
     }
 
     public PdfDocumentInfo(PdfDocument pdfDocument) {
@@ -13,7 +13,8 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        this(pdfObject);
+        this.pdfObject.makeIndirect(pdfDocument);
     }
 
     public PdfDocumentInfo setTitle(String title) {
@@ -41,8 +42,33 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    public String getTitle() throws PdfException {
+        return getStringValue(PdfName.Title);
+    }
+
+    public String getAuthor() throws PdfException {
+        return getStringValue(PdfName.Author);
+    }
+
+    public String getSubject() throws PdfException {
+        return getStringValue(PdfName.Subject);
+    }
+
+    public String getKeywords() throws PdfException {
+        return getStringValue(PdfName.Keywords);
+    }
+
+    public String getCreator() throws PdfException {
+        return getStringValue(PdfName.Creator);
+    }
+
     @Override
     public void flush() throws PdfException {
         pdfObject.flush(false);
+    }
+
+    private String getStringValue(PdfName name) throws PdfException {
+        PdfString pdfString = pdfObject.getAsString(name);
+        return pdfString != null ? pdfString.getValue() : null;
     }
 }

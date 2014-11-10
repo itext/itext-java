@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
-import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import com.itextpdf.basics.io.RandomAccessSource;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -432,117 +432,6 @@ public class PdfTokeniser {
         return Integer.parseInt(getStringValue());
     }
 
-    /**
-     * Reads data into the provided byte[]. Checks on leading whitespace.
-     * See {@link #isWhitespace(int) isWhiteSpace(int)} or {@link #isWhitespace(int, boolean) isWhiteSpace(int, boolean)}
-     * for a list of whitespace characters.
-     * <br />The same as calling {@link #readLineSegment(byte[], boolean) readLineSegment(input, true)}.
-     *
-     * @param input byte[]
-     * @return boolean
-     * @throws IOException
-     */
-    public boolean readLineSegment(byte[] input) throws IOException {
-        return readLineSegment(input, true);
-    }
-
-    /**
-     * Reads data into the provided byte[]. Checks on leading whitespace.
-     * See {@link #isWhitespace(int) isWhiteSpace(int)} or {@link #isWhitespace(int, boolean) isWhiteSpace(int, boolean)}
-     * for a list of whitespace characters.
-     *
-     * @param input byte[]
-     * @param isNullWhitespace boolean to indicate whether '0' is whitespace or not.
-     *                         If in doubt, use true or overloaded method {@link #readLineSegment(byte[]) readLineSegment(input)}
-     * @return boolean
-     * @throws IOException
-     */
-    public boolean readLineSegment(byte input[], boolean isNullWhitespace) throws IOException {
-        int c = -1;
-        boolean eol = false;
-        int ptr = 0;
-        int len = input.length;
-        // ssteward, pdftk-1.10, 040922:
-        // skip initial whitespace; added this because PdfReader.rebuildXref()
-        // assumes that line provided by readLineSegment does not have init. whitespace;
-        if ( ptr < len ) {
-            while (isWhitespace( (c = read()), isNullWhitespace ));
-        }
-        while ( !eol && ptr < len ) {
-            switch (c) {
-                case -1:
-                case '\n':
-                    eol = true;
-                    break;
-                case '\r':
-                    eol = true;
-                    long cur = getPosition();
-                    if ((read()) != '\n') {
-                        seek(cur);
-                    }
-                    break;
-                default:
-                    input[ptr++] = (byte)c;
-                    break;
-            }
-
-            // break loop? do it before we read() again
-            if ( eol || len <= ptr ) {
-                break;
-            } else {
-                c = read();
-            }
-        }
-        if (ptr >= len) {
-            eol = false;
-            while (!eol) {
-                switch (c = read()) {
-                    case -1:
-                    case '\n':
-                        eol = true;
-                        break;
-                    case '\r':
-                        eol = true;
-                        long cur = getPosition();
-                        if ((read()) != '\n') {
-                            seek(cur);
-                        }
-                        break;
-                }
-            }
-        }
-
-        if ((c == -1) && (ptr == 0)) {
-            return false;
-        }
-        if (ptr + 2 <= len) {
-            input[ptr++] = (byte)' ';
-            input[ptr] = (byte)'X';
-        }
-        return true;
-    }
-
-    public static long[] checkObjectStart(byte line[]) {
-        try {
-            PdfTokeniser tk = new PdfTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(line)));
-            if (!tk.nextToken() || tk.getTokenType() != TokenType.Number)
-                return null;
-            int num = tk.getIntValue();
-            if (!tk.nextToken() || tk.getTokenType() != TokenType.Number)
-                return null;
-            int gen = tk.getIntValue();
-            if (!tk.nextToken())
-                return null;
-            if (!Arrays.equals(Obj, tk.getByteContent()))
-                return null;
-            return new long[]{num, gen};
-        }
-        catch (Exception ioe) {
-            // empty on purpose
-        }
-        return null;
-    }
-
     public boolean isHexString() {
         return this.hexString;
     }
@@ -594,6 +483,166 @@ public class PdfTokeniser {
         } catch (IOException e) {
             throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
                     .setMessageParams(error, "no position");
+        }
+    }
+
+    protected static boolean checkTrailer(ByteBuffer line) {
+        if (Trailer.length > line.size())
+            return false;
+        for (int i = 0; i < Trailer.length; i++) {
+            if (Trailer[i] != line.get(i))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * Reads data into the provided byte[]. Checks on leading whitespace.
+     * See {@link #isWhitespace(int) isWhiteSpace(int)} or {@link #isWhitespace(int, boolean) isWhiteSpace(int, boolean)}
+     * for a list of whitespace characters.
+     * <br />The same as calling {@link #readLineSegment(com.itextpdf.basics.io.ByteBuffer, boolean) readLineSegment(input, true)}.
+     *
+     * @param buffer @see ByteBuffer
+     * @return boolean
+     * @throws IOException
+     */
+    protected boolean readLineSegment(ByteBuffer buffer) throws IOException {
+        return readLineSegment(buffer, true);
+    }
+
+    /**
+     * Reads data into the provided byte[]. Checks on leading whitespace.
+     * See {@link #isWhitespace(int) isWhiteSpace(int)} or {@link #isWhitespace(int, boolean) isWhiteSpace(int, boolean)}
+     * for a list of whitespace characters.
+     *
+     * @param buffer @see ByteBuffer
+     * @param isNullWhitespace boolean to indicate whether '0' is whitespace or not.
+     * If in doubt, use true or overloaded method {@link #readLineSegment(com.itextpdf.basics.io.ByteBuffer) readLineSegment(input)}
+     * @return boolean
+     * @throws IOException
+     */
+    protected boolean readLineSegment(ByteBuffer buffer, boolean isNullWhitespace) throws IOException {
+        int c;
+        boolean eol = false;
+        // ssteward, pdftk-1.10, 040922:
+        // skip initial whitespace; added this because PdfReader.rebuildXref()
+        // assumes that line provided by readLineSegment does not have init. whitespace;
+        while (isWhitespace((c = read()), isNullWhitespace));
+
+        boolean prevWasWhitespace = false;
+        while (!eol) {
+            switch (c) {
+                case -1:
+                case '\n':
+                    eol = true;
+                    break;
+                case '\r':
+                    eol = true;
+                    long cur = getPosition();
+                    if ((read()) != '\n') {
+                        seek(cur);
+                    }
+                    break;
+                case 9: //whitespaces
+                case 12:
+                case 32:
+                    if (prevWasWhitespace)
+                        break;
+                    prevWasWhitespace = true;
+                    buffer.append((byte)c);
+                    break;
+                default:
+                    prevWasWhitespace = false;
+                    buffer.append((byte)c);
+                    break;
+            }
+
+            // break loop? do it before we read() again
+            if (eol || buffer.size() == buffer.capacity()) {
+                break;
+            } else {
+                c = read();
+            }
+        }
+        if (buffer.size() == buffer.capacity()) {
+            eol = false;
+            while (!eol) {
+                switch (c = read()) {
+                    case -1:
+                    case '\n':
+                        eol = true;
+                        break;
+                    case '\r':
+                        eol = true;
+                        long cur = getPosition();
+                        if ((read()) != '\n') {
+                            seek(cur);
+                        }
+                        break;
+                }
+            }
+        }
+        return !(c == -1 && buffer.isEmpty());
+    }
+
+    protected static int[] checkObjectStart(PdfTokeniser lineTokeniser) {
+        try {
+            lineTokeniser.seek(0);
+            if (!lineTokeniser.nextToken() || lineTokeniser.getTokenType() != TokenType.Number)
+                return null;
+            int num = lineTokeniser.getIntValue();
+            if (!lineTokeniser.nextToken() || lineTokeniser.getTokenType() != TokenType.Number)
+                return null;
+            int gen = lineTokeniser.getIntValue();
+            if (!lineTokeniser.nextToken())
+                return null;
+            if (!Arrays.equals(Obj, lineTokeniser.getByteContent()))
+                return null;
+            return new int[]{num, gen};
+        }
+        catch (Exception ioe) {
+            // empty on purpose
+        }
+        return null;
+    }
+
+    protected static class ReusableRandomAccessSource implements RandomAccessSource {
+        private ByteBuffer buffer;
+
+        public ReusableRandomAccessSource(ByteBuffer buffer) {
+            if(buffer == null) throw new NullPointerException();
+            this.buffer = buffer;
+        }
+
+        @Override
+        public int get(long offset) {
+            if (offset >= buffer.size()) return -1;
+            return 0xff & buffer.getInternalBuffer()[(int)offset];
+        }
+
+        @Override
+        public int get(long offset, byte[] bytes, int off, int len) {
+            if (buffer == null) throw new IllegalStateException("Already closed");
+
+            if (offset >= buffer.size())
+                return -1;
+
+            if (offset + len > buffer.size())
+                len = (int)(buffer.size() - offset);
+
+            System.arraycopy(buffer.getInternalBuffer(), (int)offset, bytes, off, len);
+
+            return len;
+        }
+
+        @Override
+        public long length() {
+            return buffer.size();
+        }
+
+        @Override
+        public void close() throws IOException {
+            buffer = null;
         }
     }
 }

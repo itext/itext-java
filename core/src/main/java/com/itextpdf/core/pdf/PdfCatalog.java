@@ -7,8 +7,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     protected final PdfPagesTree pageTree;
 
     protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
-        super(pdfObject, pdfDocument);
-        pdfObject.put(PdfName.Type, PdfName.Catalog);
+        super(pdfObject);
+        if (pdfObject == null) {
+            throw new PdfException(PdfException.DocumentHasNoCatalogObject);
+        }
+        this.pdfObject.makeIndirect(pdfDocument);
+        this.pdfObject.put(PdfName.Type, PdfName.Catalog);
         pageTree = new PdfPagesTree(this);
     }
 

@@ -6,9 +6,11 @@ public class PdfXRefTable {
 
     private static final int InitialCapacity = 32;
 
-    PdfIndirectReference[] xref;
-    int count = 0;
-    int nextNumber = 0;
+    private PdfIndirectReference[] xref;
+    private int count = 0;
+    private int nextNumber = 0;
+
+    protected boolean isXRefStm;
 
     public PdfXRefTable() {
         xref = new PdfIndirectReference[InitialCapacity];
@@ -52,6 +54,8 @@ public class PdfXRefTable {
     }
 
     public void clear() {
+        for (int i = 0; i <= count; i++)
+            xref[i] = null;
         count = 0;
     }
 
@@ -64,6 +68,14 @@ public class PdfXRefTable {
             return null;
         }
         return xref[index];
+    }
+
+    protected boolean isXRefStm() {
+        return isXRefStm;
+    }
+
+    protected void setXRefStm(boolean isXRefStm) {
+        this.isXRefStm = isXRefStm;
     }
 
     /**
@@ -82,8 +94,8 @@ public class PdfXRefTable {
         }
     }
 
-    protected void setNextObjectNumber(int nextNumber) {
-        this.nextNumber = Math.max(this.nextNumber, nextNumber);
+    protected void updateNextObjectNumber() {
+        this.nextNumber = size();
     }
 
     private void ensureCount(final int count) {
