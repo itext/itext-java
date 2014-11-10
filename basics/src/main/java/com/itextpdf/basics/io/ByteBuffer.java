@@ -73,7 +73,7 @@ public class ByteBuffer {
 
     public byte get(int index) {
         if (index >= count) {
-            throw new IndexOutOfBoundsException(String.format("Index: %n, Size: %n", index, count));
+            throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, count));
         }
         return buffer[index];
     }

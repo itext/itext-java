@@ -355,7 +355,7 @@ public class PdfWriterTest {
         PdfWriter writer1 = new PdfWriter(fos1);
         final PdfDocument pdfDoc1 = new PdfDocument(writer1);
         PdfPage page1 = pdfDoc1.addNewPage();
-        page1.getContentStream().getOutputStream().write(PdfOutputStream.getIsoBytes("%Page_1"));
+        page1.getContentStream(0).getOutputStream().write(PdfOutputStream.getIsoBytes("%Page_1"));
 
         FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject5_2.pdf");
         PdfWriter writer2 = new PdfWriter(fos2);
@@ -364,7 +364,7 @@ public class PdfWriterTest {
         pdfDoc2.addPage(page2);
         page2.flush();
         page2 = pdfDoc2.addNewPage();
-        page2.getContentStream().getOutputStream().write(PdfOutputStream.getIsoBytes("%Page_2"));
+        page2.getContentStream(0).getOutputStream().write(PdfOutputStream.getIsoBytes("%Page_2"));
 
         page1.flush();
         page2.flush();

@@ -88,6 +88,7 @@ public class PdfException extends Exception {
     public static final String InvalidPageStructurePagesPagesMustBePdfDictionary = "invalid.page.structure.pages.must.be.pdfdictionary";
     public static final String InvalidOffsetForObject1 = "invalid.offset.for.object.1";
     public static final String InvalidXrefSection = "invalid.xref.section";
+    public static final String InvalidXrefStream = "invalid.xref.stream";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
     public static final String ObjectCannotBeAddedToObjectStream = "object.cannot.be.added.to.object.stream";

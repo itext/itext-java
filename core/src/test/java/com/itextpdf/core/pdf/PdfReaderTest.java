@@ -66,6 +66,8 @@ public class PdfReaderTest {
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
         Assert.assertTrue(pdfDoc.getXRef().get(5).getRefersTo().getType() == PdfObject.Stream);
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         pdfDoc.close();
     }
 
@@ -95,6 +97,8 @@ public class PdfReaderTest {
         String content = "100 100 100 100 re\nf\n";
         Assert.assertArrayEquals(OutputStream.getIsoBytes(content), ((PdfStream)object).getInputStreamBytes());
 
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+        reader.close();
         pdfDoc.close();
     }
 
@@ -134,6 +138,8 @@ public class PdfReaderTest {
         Assert.assertNotNull(object.getIndirectReference());
 
 
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+        reader.close();
         document.close();
     }
 
@@ -177,6 +183,9 @@ public class PdfReaderTest {
 
         for (int i = 6; i < document.getXRef().size(); i++)
             Assert.assertTrue(document.getXRef().get(i).getRefersTo().getType() == PdfObject.Dictionary);
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+        reader.close();
         document.close();
     }
 
@@ -223,6 +232,9 @@ public class PdfReaderTest {
 
         for (int i = 6+32; i < document.getXRef().size(); i++)
             Assert.assertTrue(document.getXRef().get(i).getRefersTo().getType() == PdfObject.IndirectReference);
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+        reader.close();
         document.close();
     }
 
@@ -253,6 +265,9 @@ public class PdfReaderTest {
         Assert.assertTrue(document.getXRef().get(6).getRefersTo().getType() == PdfObject.Dictionary);
         for (int i = 7; i < document.getXRef().size(); i++)
             Assert.assertTrue(document.getXRef().get(i).getRefersTo().getType() == PdfObject.IndirectReference);
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+        reader.close();
         document.close();
     }
 
@@ -282,6 +297,9 @@ public class PdfReaderTest {
         Assert.assertTrue(document.getXRef().get(6).getRefersTo().getType() == PdfObject.Dictionary);
         for (int i = 7; i < document.getXRef().size(); i++)
             Assert.assertNull(document.getXRef().get(i).getRefersTo());
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+        reader.close();
         document.close();
     }
 
@@ -296,13 +314,13 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.removePage(1);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
         reader.close();
@@ -313,10 +331,13 @@ public class PdfReaderTest {
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum  = document.getNumOfPages();
             PdfPage page = document.removePage(pageNum);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+pageNum+")"));
         }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
+        document.close();
     }
 
     @Test
@@ -330,15 +351,17 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.removePage(1);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
         document.close();
 
@@ -347,7 +370,7 @@ public class PdfReaderTest {
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum  = document.getNumOfPages();
             PdfPage page = document.removePage(pageNum);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+pageNum+")"));
         }
         reader.close();
@@ -365,15 +388,17 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.removePage(1);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
         document.close();
 
@@ -382,10 +407,12 @@ public class PdfReaderTest {
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum  = document.getNumOfPages();
             PdfPage page = document.removePage(pageNum);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+pageNum+")"));
         }
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
+        document.close();
     }
 
     @Test
@@ -400,15 +427,17 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.startsWith(i + "00"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.removePage(1);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.startsWith(i + "00"));
         }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
         document.close();
 
@@ -417,10 +446,12 @@ public class PdfReaderTest {
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum  = document.getNumOfPages();
             PdfPage page = document.removePage(pageNum);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.startsWith(pageNum + "00"));
         }
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
+        document.close();
     }
 
     @Test
@@ -435,15 +466,17 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.startsWith(i + "00"));
         }
 
         for (int i = 1; i < pageCount + 1; i++) {
             PdfPage page = document.removePage(1);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.startsWith(i + "00"));
         }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
         document.close();
 
@@ -452,10 +485,13 @@ public class PdfReaderTest {
         for (int i = 1; i < pageCount + 1; i++) {
             int pageNum  = document.getNumOfPages();
             PdfPage page = document.removePage(pageNum);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.startsWith(pageNum + "00"));
         }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
+        document.close();
     }
 
     @Test
@@ -468,12 +504,13 @@ public class PdfReaderTest {
         int pageCount = document.getNumOfPages();
         Assert.assertTrue(pageCount == 2);
         PdfPage page = document.getPage(1);
-        String content = new String(page.getContentStream().getInputStreamBytes());
+        String content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("100"));
 
         page = document.getPage(2);
-        content = new String(page.getContentStream().getInputStreamBytes());
+        content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("300"));
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
         document.close();
 
@@ -481,13 +518,15 @@ public class PdfReaderTest {
         document = new PdfDocument(reader);
 
         page = document.removePage(2);
-        content = new String(page.getContentStream().getInputStreamBytes());
+        content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("300"));
         page = document.removePage(1);
-        content = new String(page.getContentStream().getInputStreamBytes());
+        content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("100"));
 
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
+        document.close();
     }
 
     @Test
@@ -506,7 +545,9 @@ public class PdfReaderTest {
             exception = true;
         }
         Assert.assertTrue(exception);
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
+        document.close();
     }
 
     @Test
@@ -525,7 +566,9 @@ public class PdfReaderTest {
             exception = true;
         }
         Assert.assertTrue(exception);
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
+        document.close();
     }
 
     @Test
@@ -538,13 +581,15 @@ public class PdfReaderTest {
         int pageCount = document.getNumOfPages();
         Assert.assertTrue(pageCount == 1);
         PdfPage page = document.getPage(1);
-        String content = new String(page.getContentStream().getInputStreamBytes());
+        String content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("100"));
 
         page = document.removePage(1);
-        content = new String(page.getContentStream().getInputStreamBytes());
+        content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("100"));
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
+        document.close();
     }
 
     @Test
@@ -560,7 +605,7 @@ public class PdfReaderTest {
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             int pageNum = rnd.nextInt(document.getNumOfPages()) + 1;
             PdfPage page = document.getPage(pageNum);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+pageNum+")"));
         }
 
@@ -572,9 +617,10 @@ public class PdfReaderTest {
             int index = rnd.nextInt(document.getNumOfPages()) + 1;
             int pageNum = pageNums.remove(index-1);
             PdfPage page = document.removePage(index);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+pageNum+")"));
         }
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
         document.close();
     }
@@ -603,7 +649,7 @@ public class PdfReaderTest {
         System.out.flush();
     }
 
-    @Test
+    @Test @Ignore
     public void compareMemory6Test() throws IOException, PdfException, DocumentException {
         String filename = sourceFolder + "performanceTest.pdf";
         int runCount = 10;
@@ -615,7 +661,7 @@ public class PdfReaderTest {
             for (int k = 1; k < pageCount+1; k++) {
                 PdfPage page = pdfDoc.getPage(k);
                 page.getPdfObject().get(PdfName.MediaBox);
-                page.getContentStream();
+                page.getContentStream(0);
             }
             reader.close();
             pdfDoc.close();
@@ -626,7 +672,7 @@ public class PdfReaderTest {
 
     @Test
     public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
-        comparePerformance(sourceFolder + "performanceTestWithCompression.pdf", "compression", 1.85f);
+        comparePerformance(sourceFolder + "performanceTestWithCompression.pdf", "compression", 1.8f);
     }
 
     @Test
@@ -665,7 +711,7 @@ public class PdfReaderTest {
             for (int k = 1; k < pageCount+1; k++) {
                 PdfPage page = pdfDoc.getPage(k);
                 page.getPdfObject().get(PdfName.MediaBox);
-                page.getContentStream();
+                page.getContentStream(0);
             }
             reader.close();
             pdfDoc.close();
@@ -712,7 +758,7 @@ public class PdfReaderTest {
             for (int k = 0; k < totalCount; k++) {
                 PdfPage page = pdfDoc.getPage(rnd.nextInt(pageCount)+1);
                 page.getPdfObject().get(PdfName.MediaBox);
-                page.getContentStream();
+                page.getContentStream(0);
             }
             reader.close();
             pdfDoc.close();
@@ -736,7 +782,7 @@ public class PdfReaderTest {
         Assert.assertTrue(pageCount == 1);
 
         PdfPage page = document.getPage(1);
-        Assert.assertNotNull(page.getContentStream().getInputStreamBytes());
+        Assert.assertNotNull(page.getContentStream(0).getInputStreamBytes());
 
         reader.close();
         document.close();
@@ -752,7 +798,7 @@ public class PdfReaderTest {
         Assert.assertTrue(pageCount == 1);
 
         PdfPage page = document.getPage(1);
-        Assert.assertNotNull(page.getContentStream().getInputStreamBytes());
+        Assert.assertNotNull(page.getContentStream(0).getInputStreamBytes());
 
         reader.close();
         document.close();
@@ -768,7 +814,7 @@ public class PdfReaderTest {
         Assert.assertTrue(pageCount == 1);
 
         PdfPage page = document.getPage(1);
-        Assert.assertNotNull(page.getContentStream().getInputStreamBytes());
+        Assert.assertNotNull(page.getContentStream(0).getInputStreamBytes());
 
         reader.close();
         document.close();
@@ -784,7 +830,7 @@ public class PdfReaderTest {
         Assert.assertTrue(pageCount == 1);
 
         PdfPage page = document.getPage(1);
-        Assert.assertNotNull(page.getContentStream().getInputStreamBytes());
+        Assert.assertNotNull(page.getContentStream(0).getInputStreamBytes());
 
         reader.close();
         document.close();
@@ -801,7 +847,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -820,7 +866,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -839,7 +885,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -890,7 +936,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -930,7 +976,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -954,7 +1000,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -978,7 +1024,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -997,7 +1043,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -1016,7 +1062,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -1035,7 +1081,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < 10; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
 
         }
@@ -1044,7 +1090,7 @@ public class PdfReaderTest {
         try {
             for (int i = 11; i < document.getNumOfPages() + 1; i++) {
                 PdfPage page = document.getPage(i);
-                page.getContentStream().getInputStreamBytes();
+                page.getContentStream(0).getInputStreamBytes();
             }
         } catch (PdfException ex) {
             exception = true;
@@ -1081,7 +1127,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -1100,7 +1146,7 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
@@ -1119,9 +1165,162 @@ public class PdfReaderTest {
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
-            String content = new String(page.getContentStream().getInputStreamBytes());
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+i+")"));
         }
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void appendModeWith1000Pages() throws IOException, PdfException {
+        String filename = sourceFolder + "1000PagesDocumentAppended.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 1000);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
+            Assert.assertFalse(content.isEmpty());
+            content = new String(page.getContentStream(1).getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+            content = new String(page.getContentStream(2).getInputStreamBytes());
+            Assert.assertTrue(content.contains("Append mode"));
+        }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void appendModeWith1000PagesWithCompression() throws IOException, PdfException {
+        String filename = sourceFolder + "1000PagesDocumentWithFullCompressionAppended.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 1000);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
+            Assert.assertFalse(content.isEmpty());
+            content = new String(page.getContentStream(1).getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+            content = new String(page.getContentStream(2).getInputStreamBytes());
+            Assert.assertTrue(content.contains("Append mode"));
+        }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void appendModeWith10Pages() throws IOException, PdfException {
+        String filename = sourceFolder + "10PagesDocumentAppended.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
+            Assert.assertFalse(content.isEmpty());
+            content = new String(page.getContentStream(1).getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+            content = new String(page.getContentStream(2).getInputStreamBytes());
+            Assert.assertTrue(content.contains("Append mode"));
+        }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void appendModeWith10PagesWithCompression() throws IOException, PdfException {
+        String filename = sourceFolder + "10PagesDocumentWithFullCompressionAppended.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
+            Assert.assertFalse(content.isEmpty());
+            content = new String(page.getContentStream(1).getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+            content = new String(page.getContentStream(2).getInputStreamBytes());
+            Assert.assertTrue(content.contains("Append mode"));
+        }
+
+        Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void appendModeWith10PagesFix1() throws IOException, PdfException {
+        String filename = sourceFolder + "10PagesDocumentAppendedFix1.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
+            Assert.assertFalse(content.isEmpty());
+            content = new String(page.getContentStream(1).getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+            content = new String(page.getContentStream(2).getInputStreamBytes());
+            Assert.assertTrue(content.contains("Append mode"));
+        }
+
+        Assert.assertTrue("rebuildXref()", reader.rebuildXref);
+        Assert.assertNotNull("Invalid trailer", document.getTrailer().getPdfObject().get(PdfName.ID));
+
+        reader.close();
+        document.close();
+    }
+
+    @Test
+    public void appendModeWith10PagesFix2() throws IOException, PdfException {
+        String filename = sourceFolder + "10PagesDocumentAppendedFix2.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader);
+
+        int pageCount = document.getNumOfPages();
+        Assert.assertTrue(pageCount == 10);
+
+        for (int i = 1; i < document.getNumOfPages() + 1; i++) {
+            PdfPage page = document.getPage(i);
+            String content = new String(page.getContentStream(0).getInputStreamBytes());
+            Assert.assertFalse(content.isEmpty());
+            content = new String(page.getContentStream(1).getInputStreamBytes());
+            Assert.assertTrue(content.contains("("+i+")"));
+            content = new String(page.getContentStream(2).getInputStreamBytes());
+            Assert.assertTrue(content.contains("Append mode"));
+        }
+
+        Assert.assertTrue("rebuildXref()", reader.rebuildXref);
+        Assert.assertNotNull("Invalid trailer", document.getTrailer().getPdfObject().get(PdfName.ID));
 
         reader.close();
         document.close();

@@ -97,8 +97,8 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         list.clear();
     }
 
-    public PdfObject get(int index) {
-        return list.get(index);
+    public PdfObject get(int index) throws PdfException {
+        return get(index, true);
     }
 
     public PdfObject set(int index, PdfObject element) {
@@ -156,9 +156,9 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfObject get(int index, boolean asDirect) throws PdfException {
         if (!asDirect)
-            return get(index);
+            return list.get(index);
         else {
-            PdfObject obj = get(index);
+            PdfObject obj = list.get(index);
             if (obj.getType() == IndirectReference)
                 return ((PdfIndirectReference)obj).getRefersTo(true);
             else

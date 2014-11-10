@@ -42,16 +42,45 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         this(pdfDocument, pdfDocument.getDefaultPageSize());
     }
 
-    public PdfStream getContentStream() throws PdfException {
+    public PdfStream getContentStream(int index) throws PdfException {
+        int count = getContentStreamCount();
+        if (index >= count)
+            throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, count));
         PdfObject contents = pdfObject.get(PdfName.Contents);
         if (contents instanceof PdfStream)
             return (PdfStream) contents;
         else if (contents instanceof PdfArray) {
             PdfArray a = (PdfArray) contents;
-            return (PdfStream) a.get(a.size() - 1);
-        } else
+            return (PdfStream) a.get(index);
+        } else {
             return null;
+        }
     }
+
+    public int getContentStreamCount() throws PdfException {
+        PdfObject contents = pdfObject.get(PdfName.Contents);
+        if (contents instanceof PdfStream)
+            return 1;
+        else if (contents instanceof PdfArray) {
+            return ((PdfArray) contents).size();
+        } else {
+            return 0;
+        }
+    }
+
+    public PdfStream getFirstContentStream() throws PdfException {
+        if (getContentStreamCount() > 0)
+            return getContentStream(0);
+        return null;
+    }
+
+    public PdfStream getLastContentStream() throws PdfException {
+        int count = getContentStreamCount();
+        if (count > 0)
+            return getContentStream(count - 1);
+        return null;
+    }
+
 
     public PdfStream newContentStreamBefore() throws PdfException {
         return newContentStream(true);

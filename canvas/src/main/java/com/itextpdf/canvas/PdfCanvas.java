@@ -64,7 +64,7 @@ public class PdfCanvas {
      * @param page page to create canvas from.
      */
     public PdfCanvas(PdfPage page) throws PdfException {
-        this(page.getContentStream(), page.getResources());
+        this(page.getContentStream(page.getContentStreamCount() - 1), page.getResources());
     }
 
     public PdfCanvas(PdfFormXObject xObj) {

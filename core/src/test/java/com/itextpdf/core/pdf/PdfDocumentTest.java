@@ -29,7 +29,7 @@ public class PdfDocumentTest {
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
         PdfPage page1 = pdfDoc1.addNewPage();
-        page1.getContentStream().getOutputStream().write(PdfWriter.getIsoBytes("%Hello World\n"));
+        page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%Hello World\n"));
         page1.flush();
         pdfDoc1.close();
 
@@ -57,7 +57,7 @@ public class PdfDocumentTest {
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
         PdfPage page1 = pdfDoc1.addNewPage();
-        page1.getContentStream().getOutputStream().write(PdfWriter.getIsoBytes("%page 1\n"));
+        page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 1\n"));
         page1.flush();
         pdfDoc1.close();
 
@@ -67,7 +67,7 @@ public class PdfDocumentTest {
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
         PdfPage page2 = pdfDoc2.addNewPage();
-        page2.getContentStream().getOutputStream().write(PdfWriter.getIsoBytes("%page 2\n"));
+        page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 2\n"));
         page2.flush();
         pdfDoc2.close();
 
@@ -121,7 +121,7 @@ public class PdfDocumentTest {
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
         for (int i = 0; i < 10; i++) {
             PdfPage page1 = pdfDoc1.addNewPage();
-            page1.getContentStream().getOutputStream().write(PdfWriter.getIsoBytes("%page " + String.valueOf(i + 1) + "\n"));
+            page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + String.valueOf(i + 1) + "\n"));
             page1.flush();
         }
         pdfDoc1.close();
