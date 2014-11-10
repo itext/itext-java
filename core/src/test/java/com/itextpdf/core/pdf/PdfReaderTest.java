@@ -47,9 +47,9 @@ public class PdfReaderTest {
 
         com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new FileInputStream(filename));
         pdfDoc = new PdfDocument(reader);
-        Assert.assertTrue(author.equals(pdfDoc.getInfo().getAuthor().toString()));
-        Assert.assertTrue(creator.equals(pdfDoc.getInfo().getCreator().toString()));
-        Assert.assertTrue(title.equals(pdfDoc.getInfo().getTitle().toString()));
+        Assert.assertTrue(author.equals(pdfDoc.getInfo().getAuthor()));
+        Assert.assertTrue(creator.equals(pdfDoc.getInfo().getCreator()));
+        Assert.assertTrue(title.equals(pdfDoc.getInfo().getTitle()));
         PdfObject object = pdfDoc.getXRef().get(1).getRefersTo();
         Assert.assertTrue(object.getType() == PdfObject.Dictionary);
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
@@ -967,9 +967,9 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertTrue(author.equals(document.getInfo().getAuthor().toString()));
-        Assert.assertTrue(creator.equals(document.getInfo().getCreator().toString()));
-        Assert.assertTrue(title.equals(document.getInfo().getTitle().toString()));
+        Assert.assertTrue(author.equals(document.getInfo().getAuthor()));
+        Assert.assertTrue(creator.equals(document.getInfo().getCreator()));
+        Assert.assertTrue(title.equals(document.getInfo().getTitle()));
 
         int pageCount = document.getNumOfPages();
         Assert.assertTrue(pageCount == 10);
@@ -991,9 +991,9 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertTrue(author.equals(document.getInfo().getAuthor().toString()));
-        Assert.assertTrue(creator.equals(document.getInfo().getCreator().toString()));
-        Assert.assertTrue(title.equals(document.getInfo().getTitle().toString()));
+        Assert.assertTrue(author.equals(document.getInfo().getAuthor()));
+        Assert.assertTrue(creator.equals(document.getInfo().getCreator()));
+        Assert.assertTrue(title.equals(document.getInfo().getTitle()));
 
         int pageCount = document.getNumOfPages();
         Assert.assertTrue(pageCount == 10);
