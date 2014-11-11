@@ -47,25 +47,25 @@ public class PdfReaderTest {
 
         com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new FileInputStream(filename));
         pdfDoc = new PdfDocument(reader);
-        Assert.assertTrue(author.equals(pdfDoc.getInfo().getAuthor()));
-        Assert.assertTrue(creator.equals(pdfDoc.getInfo().getCreator()));
-        Assert.assertTrue(title.equals(pdfDoc.getInfo().getTitle()));
+        Assert.assertEquals(author, pdfDoc.getInfo().getAuthor());
+        Assert.assertEquals(creator, pdfDoc.getInfo().getCreator());
+        Assert.assertEquals(title, pdfDoc.getInfo().getTitle());
         PdfObject object = pdfDoc.getXRef().get(1).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = pdfDoc.getXRef().get(2).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = pdfDoc.getXRef().get(3).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
         object = pdfDoc.getXRef().get(4).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertTrue(pdfDoc.getXRef().get(5).getRefersTo().getType() == PdfObject.Stream);
+        Assert.assertEquals(PdfObject.Stream, pdfDoc.getXRef().get(5).getRefersTo().getType());
 
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         pdfDoc.close();
@@ -78,22 +78,22 @@ public class PdfReaderTest {
         PdfDocument pdfDoc = new PdfDocument(reader);
 
         PdfObject object = pdfDoc.getXRef().get(1).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = pdfDoc.getXRef().get(2).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = pdfDoc.getXRef().get(3).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
         object = pdfDoc.getXRef().get(4).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
         object = pdfDoc.getXRef().get(5).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Stream);
+        Assert.assertEquals(PdfObject.Stream, object.getType());
         String content = "100 100 100 100 re\nf\n";
         Assert.assertArrayEquals(OutputStream.getIsoBytes(content), ((PdfStream)object).getInputStreamBytes());
 
@@ -117,24 +117,24 @@ public class PdfReaderTest {
         document = new PdfDocument(reader);
 
         PdfObject object = document.getXRef().get(1).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = document.getXRef().get(2).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = document.getXRef().get(3).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
         object = document.getXRef().get(4).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertTrue(document.getXRef().get(5).getRefersTo().getType() == PdfObject.Stream);
+        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
 
         object = document.getXRef().get(6).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Boolean);
+        Assert.assertEquals(PdfObject.Boolean, object.getType());
         Assert.assertNotNull(object.getIndirectReference());
 
 
@@ -165,24 +165,24 @@ public class PdfReaderTest {
         document = new PdfDocument(reader);
 
         object = document.getXRef().get(1).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = document.getXRef().get(2).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = document.getXRef().get(3).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
         object = document.getXRef().get(4).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertTrue(document.getXRef().get(5).getRefersTo().getType() == PdfObject.Stream);
+        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
 
         for (int i = 6; i < document.getXRef().size(); i++)
-            Assert.assertTrue(document.getXRef().get(i).getRefersTo().getType() == PdfObject.Dictionary);
+            Assert.assertEquals(PdfObject.Dictionary, document.getXRef().get(i).getRefersTo().getType());
 
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
@@ -211,27 +211,27 @@ public class PdfReaderTest {
         document = new PdfDocument(reader);
 
         object = document.getXRef().get(1).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = document.getXRef().get(2).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = document.getXRef().get(3).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
         object = document.getXRef().get(4).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertTrue(document.getXRef().get(5).getRefersTo().getType() == PdfObject.Stream);
+        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
 
         for (int i = 6; i < 6+32; i++)
-            Assert.assertTrue(document.getXRef().get(6).getRefersTo().getType() == PdfObject.Dictionary);
+            Assert.assertEquals(PdfObject.Dictionary, document.getXRef().get(6).getRefersTo().getType());
 
         for (int i = 6+32; i < document.getXRef().size(); i++)
-            Assert.assertTrue(document.getXRef().get(i).getRefersTo().getType() == PdfObject.IndirectReference);
+            Assert.assertEquals(PdfObject.IndirectReference, document.getXRef().get(i).getRefersTo().getType());
 
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
@@ -246,25 +246,25 @@ public class PdfReaderTest {
         PdfDocument document = new PdfDocument(reader);
 
         PdfObject object = document.getXRef().get(1).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = document.getXRef().get(2).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = document.getXRef().get(3).getRefersTo();
         Assert.assertTrue(object.getType() == PdfObject.Dictionary);
 
         object = document.getXRef().get(4).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertTrue(document.getXRef().get(5).getRefersTo().getType() == PdfObject.Stream);
+        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
 
-        Assert.assertTrue(document.getXRef().get(6).getRefersTo().getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, document.getXRef().get(6).getRefersTo().getType());
         for (int i = 7; i < document.getXRef().size(); i++)
-            Assert.assertTrue(document.getXRef().get(i).getRefersTo().getType() == PdfObject.IndirectReference);
+            Assert.assertEquals(PdfObject.IndirectReference, document.getXRef().get(i).getRefersTo().getType());
 
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
@@ -279,22 +279,22 @@ public class PdfReaderTest {
         PdfDocument document = new PdfDocument(reader);
 
         PdfObject object = document.getXRef().get(1).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
         object = document.getXRef().get(2).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
         object = document.getXRef().get(3).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
         object = document.getXRef().get(4).getRefersTo();
-        Assert.assertTrue(object.getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertTrue(document.getXRef().get(5).getRefersTo().getType() == PdfObject.Stream);
-        Assert.assertTrue(document.getXRef().get(6).getRefersTo().getType() == PdfObject.Dictionary);
+        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
+        Assert.assertEquals(PdfObject.Dictionary, document.getXRef().get(6).getRefersTo().getType());
         for (int i = 7; i < document.getXRef().size(); i++)
             Assert.assertNull(document.getXRef().get(i).getRefersTo());
 
@@ -310,7 +310,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1000);
+        Assert.assertEquals(1000, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -347,7 +347,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1000);
+        Assert.assertEquals(1000, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -384,7 +384,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -423,7 +423,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(stream);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 3);
+        Assert.assertEquals(3, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -462,7 +462,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(stream);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 3);
+        Assert.assertEquals(3, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -502,7 +502,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(stream);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 2);
+        Assert.assertEquals(2, pageCount);
         PdfPage page = document.getPage(1);
         String content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("100"));
@@ -537,7 +537,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(stream);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 2);
+        Assert.assertEquals(2, pageCount);
         boolean exception = false;
         try {
             document.getPage(1);
@@ -558,7 +558,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(stream);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1);
+        Assert.assertEquals(1, pageCount);
         boolean exception = false;
         try {
             document.getPage(1);
@@ -579,7 +579,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(stream);
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1);
+        Assert.assertEquals(1, pageCount);
         PdfPage page = document.getPage(1);
         String content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("100"));
@@ -599,7 +599,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1000);
+        Assert.assertEquals(1000, pageCount);
 
         Random rnd = new Random();
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
@@ -623,11 +623,6 @@ public class PdfReaderTest {
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
         document.close();
-    }
-
-    @Test
-    public void comparePerformanceTest() throws IOException, PdfException, DocumentException {
-        comparePerformance(sourceFolder + "performanceTest.pdf", "no compression", 1.55f);
     }
 
     @Ignore
@@ -671,13 +666,18 @@ public class PdfReaderTest {
     }
 
     @Test
+    public void comparePerformanceTest() throws IOException, PdfException, DocumentException {
+        comparePerformance(sourceFolder + "performanceTest.pdf", "no compression", 1.55f);
+    }
+
+    @Test
     public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
-        comparePerformance(sourceFolder + "performanceTestWithCompression.pdf", "compression", 1.8f);
+        comparePerformance(sourceFolder + "performanceTestWithCompression.pdf", "compression", 1.7f);
     }
 
     @Test
     public void comparePerformanceRandomTest() throws IOException, PdfException, DocumentException {
-        comparePerformanceRandom(sourceFolder + "performanceTest.pdf", "random, no compression", 2.2f);
+        comparePerformanceRandom(sourceFolder + "performanceTest.pdf", "random, no compression", 2.15f);
     }
 
     @Test
@@ -711,11 +711,10 @@ public class PdfReaderTest {
             for (int k = 1; k < pageCount+1; k++) {
                 PdfPage page = pdfDoc.getPage(k);
                 page.getPdfObject().get(PdfName.MediaBox);
-                page.getContentStream(0);
+                page.getContentStream(0).getInputStreamBytes();
             }
             reader.close();
             pdfDoc.close();
-            fis.close();
         }
         t2 = System.currentTimeMillis();
         long iText6Time = t2 - t1;
@@ -758,7 +757,7 @@ public class PdfReaderTest {
             for (int k = 0; k < totalCount; k++) {
                 PdfPage page = pdfDoc.getPage(rnd.nextInt(pageCount)+1);
                 page.getPdfObject().get(PdfName.MediaBox);
-                page.getContentStream(0);
+                page.getContentStream(0).getInputStreamBytes();
             }
             reader.close();
             pdfDoc.close();
@@ -779,7 +778,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1);
+        Assert.assertEquals(1, pageCount);
 
         PdfPage page = document.getPage(1);
         Assert.assertNotNull(page.getContentStream(0).getInputStreamBytes());
@@ -795,7 +794,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1);
+        Assert.assertEquals(1, pageCount);
 
         PdfPage page = document.getPage(1);
         Assert.assertNotNull(page.getContentStream(0).getInputStreamBytes());
@@ -811,7 +810,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1);
+        Assert.assertEquals(1, pageCount);
 
         PdfPage page = document.getPage(1);
         Assert.assertNotNull(page.getContentStream(0).getInputStreamBytes());
@@ -827,7 +826,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1);
+        Assert.assertEquals(1, pageCount);
 
         PdfPage page = document.getPage(1);
         Assert.assertNotNull(page.getContentStream(0).getInputStreamBytes());
@@ -843,7 +842,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -862,7 +861,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -881,7 +880,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -932,7 +931,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -967,12 +966,12 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertTrue(author.equals(document.getInfo().getAuthor()));
-        Assert.assertTrue(creator.equals(document.getInfo().getCreator()));
-        Assert.assertTrue(title.equals(document.getInfo().getTitle()));
+        Assert.assertEquals(author, document.getInfo().getAuthor());
+        Assert.assertEquals(creator, document.getInfo().getCreator());
+        Assert.assertEquals(title, document.getInfo().getTitle());
 
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -991,12 +990,12 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertTrue(author.equals(document.getInfo().getAuthor()));
-        Assert.assertTrue(creator.equals(document.getInfo().getCreator()));
-        Assert.assertTrue(title.equals(document.getInfo().getTitle()));
+        Assert.assertEquals(author, document.getInfo().getAuthor());
+        Assert.assertEquals(creator, document.getInfo().getCreator());
+        Assert.assertEquals(title, document.getInfo().getTitle());
 
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1015,12 +1014,12 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertTrue(document.getInfo().getAuthor() == null);
-        Assert.assertTrue(document.getInfo().getCreator() == null);
-        Assert.assertTrue(document.getInfo().getTitle() == null);
+        Assert.assertEquals(null, document.getInfo().getAuthor());
+        Assert.assertEquals(null, document.getInfo().getCreator());
+        Assert.assertEquals(null, document.getInfo().getTitle());
 
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1039,7 +1038,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1058,7 +1057,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1077,7 +1076,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1000);
+        Assert.assertEquals(1000, pageCount);
 
         for (int i = 1; i < 10; i++) {
             PdfPage page = document.getPage(i);
@@ -1123,7 +1122,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1142,7 +1141,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1161,7 +1160,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1180,7 +1179,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1000);
+        Assert.assertEquals(1000, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1205,7 +1204,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 1000);
+        Assert.assertEquals(1000, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1230,7 +1229,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1255,7 +1254,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1280,7 +1279,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1292,7 +1291,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertTrue("rebuildXref()", reader.rebuildXref);
+        Assert.assertTrue("need rebuildXref()", reader.rebuildXref);
         Assert.assertNotNull("Invalid trailer", document.getTrailer().getPdfObject().get(PdfName.ID));
 
         reader.close();
@@ -1307,7 +1306,7 @@ public class PdfReaderTest {
         PdfDocument document = new PdfDocument(reader);
 
         int pageCount = document.getNumOfPages();
-        Assert.assertTrue(pageCount == 10);
+        Assert.assertEquals(10, pageCount);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1319,11 +1318,134 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertTrue("rebuildXref()", reader.rebuildXref);
+        Assert.assertTrue("need rebuildXref()", reader.rebuildXref);
         Assert.assertNotNull("Invalid trailer", document.getTrailer().getPdfObject().get(PdfName.ID));
 
         reader.close();
         document.close();
+    }
+
+    @Test
+    public void StreamLengthCorrection1() throws IOException, PdfException {
+        String filename = sourceFolder + "10PagesDocumentWithInvalidStreamLength.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        int pageCount = pdfDoc.getNumOfPages();
+        for (int k = 1; k < pageCount + 1; k++) {
+            PdfPage page = pdfDoc.getPage(k);
+            page.getPdfObject().get(PdfName.MediaBox);
+            byte[] content = page.getFirstContentStream().getInputStreamBytes();
+            Assert.assertEquals(57, content.length);
+        }
+        reader.close();
+        pdfDoc.close();
+    }
+
+    @Test
+    public void StreamLengthCorrection2() throws IOException, PdfException {
+        String filename = sourceFolder + "simpleCanvasWithDrawingLength1.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage page = pdfDoc.getPage(1);
+        page.getPdfObject().get(PdfName.MediaBox);
+        byte[] content = page.getFirstContentStream().getInputStreamBytes();
+        Assert.assertEquals(696, content.length);
+        reader.close();
+        pdfDoc.close();
+    }
+
+    @Test
+    public void StreamLengthCorrection3() throws IOException, PdfException {
+        String filename = sourceFolder + "simpleCanvasWithDrawingLength2.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage page = pdfDoc.getPage(1);
+        page.getPdfObject().get(PdfName.MediaBox);
+        byte[] content = page.getFirstContentStream().getInputStreamBytes();
+        Assert.assertEquals(697, content.length);
+        reader.close();
+        pdfDoc.close();
+    }
+
+    @Test
+    public void StreamLengthCorrection4() throws IOException, PdfException {
+        String filename = sourceFolder + "simpleCanvasWithDrawingLength3.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage page = pdfDoc.getPage(1);
+        page.getPdfObject().get(PdfName.MediaBox);
+        byte[] content = page.getFirstContentStream().getInputStreamBytes();
+        Assert.assertEquals(696, content.length);
+        reader.close();
+        pdfDoc.close();
+    }
+
+    @Test
+    public void StreamLengthCorrection5() throws IOException, PdfException {
+        String filename = sourceFolder + "simpleCanvasWithDrawingLength4.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage page = pdfDoc.getPage(1);
+        page.getPdfObject().get(PdfName.MediaBox);
+        byte[] content = page.getFirstContentStream().getInputStreamBytes();
+        Assert.assertEquals(696, content.length);
+        reader.close();
+        pdfDoc.close();
+    }
+
+    @Test
+    public void StreamLengthCorrection6() throws IOException, PdfException {
+        String filename = sourceFolder + "simpleCanvasWithDrawingWithInvalidStreamLength1.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage page = pdfDoc.getPage(1);
+        page.getPdfObject().get(PdfName.MediaBox);
+        byte[] content = page.getFirstContentStream().getInputStreamBytes();
+        Assert.assertEquals(696, content.length);
+        reader.close();
+        pdfDoc.close();
+    }
+
+    @Test
+    public void StreamLengthCorrection7() throws IOException, PdfException {
+        String filename = sourceFolder + "simpleCanvasWithDrawingWithInvalidStreamLength2.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage page = pdfDoc.getPage(1);
+        page.getPdfObject().get(PdfName.MediaBox);
+        byte[] content = page.getFirstContentStream().getInputStreamBytes();
+        Assert.assertEquals(696, content.length);
+        reader.close();
+        pdfDoc.close();
+    }
+
+    @Test
+    public void StreamLengthCorrection8() throws IOException, PdfException {
+        String filename = sourceFolder + "simpleCanvasWithDrawingWithInvalidStreamLength3.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage page = pdfDoc.getPage(1);
+        page.getPdfObject().get(PdfName.MediaBox);
+        byte[] content = page.getFirstContentStream().getInputStreamBytes();
+        Assert.assertEquals(697, content.length);
+        reader.close();
+        pdfDoc.close();
     }
 
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) throws PdfException {

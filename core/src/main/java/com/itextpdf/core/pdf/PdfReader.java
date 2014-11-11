@@ -24,6 +24,13 @@ public class PdfReader {
 
     protected boolean rebuildXref = false;
 
+    private static final String endstream1 = "endstream";
+    private static final String endstream2 = "\nendstream";
+    private static final String endstream3 = "\r\nendstream";
+    private static final String endstream4 = "\rendstream";
+    private static final byte[] endstream = PdfOutputStream.getIsoBytes("endstream");
+    private static final byte[] endobj = PdfOutputStream.getIsoBytes("endobj");
+
     public PdfReader(InputStream is) throws IOException, PdfException {
         this(new RandomAccessSourceFactory().createSource(is));
     }
@@ -409,7 +416,7 @@ public class PdfReader {
                 for (int k = 0; k < wc[2]; ++k)
                     field3 = (field3 << 8) + (b[bptr++] & 0xff);
                 int base = start;
-                PdfIndirectReference newReference = null;
+                PdfIndirectReference newReference;
                 switch (type) {
                     case 0:
                         newReference = new PdfIndirectReference(pdfDocument, base, field3, 0);
@@ -423,7 +430,7 @@ public class PdfReader {
                         newReference.setObjectStreamNumber((int)field2);
                         break;
                     default:
-                        throw new PdfException(PdfException.InvalidXrefSection);
+                        throw new PdfException(PdfException.InvalidXrefStream);
                 }
                 if (xref.get(base) == null) {
                     xref.add(newReference);
@@ -514,6 +521,9 @@ public class PdfReader {
     }
 
     protected byte[] readStreamBytes(PdfStream stream, boolean decode) throws IOException, PdfException {
+        PdfName type = stream.getAsName(PdfName.Type);
+        if (!PdfName.XRefStm.equals(type) && !PdfName.ObjStm.equals(type))
+            checkPdfStreamLength(stream);
         long offset = stream.getOffset();
         if (offset <= 0)
             return null;
@@ -592,6 +602,66 @@ public class PdfReader {
             }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotReadPdfObject, e);
+        }
+    }
+
+    private void checkPdfStreamLength(final PdfStream stream) throws PdfException, IOException {
+        if (!correctStreamLength)
+            return;
+        long fileLength = tokens.length();
+        long start = stream.getOffset();
+        boolean calc = false;
+        long streamLength = 0;
+        PdfNumber pdfNumber = stream.getAsNumber(PdfName.Length);
+        if (pdfNumber != null) {
+            streamLength = pdfNumber.getIntValue();
+            if (streamLength + start > fileLength - 20) {
+                calc = true;
+            } else {
+                tokens.seek(start + streamLength);
+                String line = tokens.readString(20);
+                if (!line.startsWith(endstream2) && !line.startsWith(endstream3) &&
+                        !line.startsWith(endstream4) && !line.startsWith(endstream1)) {
+                    calc = true;
+                }
+            }
+        } else {
+            pdfNumber = new PdfNumber(0);
+            stream.put(PdfName.Length, pdfNumber);
+            calc = true;
+        }
+        if (calc) {
+            ByteBuffer line = new ByteBuffer(16);
+            tokens.seek(start);
+            long pos;
+            while (true) {
+                pos = tokens.getPosition();
+                line.reset();
+                if (!tokens.readLineSegment(line, false)) // added boolean because of mailing list issue (17 Feb. 2014)
+                    break;
+                if (line.startsWith(endstream)) {
+                    streamLength = pos - start;
+                    break;
+                }
+                if (line.startsWith(endobj)) {
+                    tokens.seek(pos - 16);
+                    String s = tokens.readString(16);
+                    int index = s.indexOf(endstream1);
+                    if (index >= 0)
+                        pos = pos - 16 + index;
+                    streamLength = pos - start;
+                    break;
+                }
+            }
+            tokens.seek(pos - 2);
+            if (tokens.read() == 13) {
+                streamLength--;
+            }
+            tokens.seek(pos - 1);
+            if (tokens.read() == 10) {
+                streamLength--;
+            }
+            pdfNumber.setValue((int) streamLength);
         }
     }
 }

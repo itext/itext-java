@@ -78,19 +78,6 @@ public class ByteBuffer {
         return buffer[index];
     }
 
-
-
-    public ByteBuffer reset() {
-        count = 0;
-        return this;
-    }
-
-    public byte[] toByteArray() {
-        byte newBuf[] = new byte[count];
-        System.arraycopy(buffer, 0, newBuf, 0, count);
-        return newBuf;
-    }
-
     public byte[] getInternalBuffer() {
         return buffer;
     }
@@ -105,5 +92,26 @@ public class ByteBuffer {
 
     public int capacity() {
         return buffer.length;
+    }
+
+    public ByteBuffer reset() {
+        count = 0;
+        return this;
+    }
+
+    public byte[] toByteArray() {
+        byte newBuf[] = new byte[count];
+        System.arraycopy(buffer, 0, newBuf, 0, count);
+        return newBuf;
+    }
+
+    public boolean startsWith(byte[] b){
+        if (size() < b.length)
+            return false;
+        for (int k = 0; k < b.length; ++k) {
+            if (buffer[k] != b[k])
+                return false;
+        }
+        return true;
     }
 }
