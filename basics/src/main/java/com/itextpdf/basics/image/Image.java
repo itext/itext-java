@@ -10,10 +10,8 @@ import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -120,12 +118,10 @@ public class Image {
      */
     protected Image imageMask;
 
-    /**
-     * Holds value of property smask.
-     */
-    protected boolean smask;
-
     protected IAdditional additional;
+
+    /** Holds value of property interpolation. */
+    protected boolean interpolation;
 
     protected Image(URL url) {
         this.url = url;
@@ -342,6 +338,18 @@ public class Image {
         this.deflated = deflated;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public int getColorSpace() {
+        return colorSpace;
+    }
+
+    public byte[] getRawData() {
+        return rawData;
+    }
+
     /**
      * Returns <CODE>true</CODE> if this <CODE>Image</CODE> has the
      * requisites to be a mask.
@@ -375,15 +383,10 @@ public class Image {
         if (!imageMask.mask)
             throw new PdfException(PdfException.ImageMaskIsNotAMaskDidYouDoMakeMask);
         this.imageMask = imageMask;
-        smask = imageMask.bpc > 1 && imageMask.bpc <= 8;
     }
 
-    public boolean isSmask() {
-        return smask;
-    }
-
-    public void setSmask(boolean smask) {
-        this.smask = smask;
+    public boolean isSoftMask() {
+        return mask && bpc > 0 && bpc <=8;
     }
 
     /**
@@ -428,6 +431,14 @@ public class Image {
 
     public void setBpc(int bpc) {
         this.bpc = bpc;
+    }
+
+    public boolean isInterpolation() {
+        return interpolation;
+    }
+
+    public void setInterpolation(boolean interpolation) {
+        this.interpolation = interpolation;
     }
 
     private static byte[] readImageType(InputStream inputStream) throws IOException {
@@ -541,6 +552,26 @@ public class Image {
     }
 
     public static interface IAdditional {
+
+    }
+
+    // In PDF it should look: [/Indexed /DeviceRGB color palette]
+    static public class Indexed implements IAdditional {
+        private int color;
+        private byte[] palette;
+
+        public Indexed(int color, byte[] palette) {
+            this.color = color;
+            this.palette = palette;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public byte[] getPalette() {
+            return palette;
+        }
 
     }
 

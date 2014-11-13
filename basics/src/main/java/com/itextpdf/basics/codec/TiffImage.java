@@ -524,7 +524,7 @@ public class TiffImage {
                             palette[k * 3 + 2] = (byte) rgb[k + bColor];
                         }
                     }
-                    img.setAdditional(new Indexed(gColor - 1, palette));
+                    img.setAdditional(new Image.Indexed(gColor - 1, palette));
                 }
                 img.setOriginalType(Image.TIFF);
             }
@@ -631,26 +631,6 @@ public class TiffImage {
                 count++;
             }
         }
-    }
-
-    // In PDF it should look: [/Indexed /DeviceRGB color palette]
-    static public class Indexed implements Image.IAdditional {
-        private int color;
-        private byte[] palette;
-
-        public Indexed(int color, byte[] palette) {
-            this.color = color;
-            this.palette = palette;
-        }
-
-        public int getColor() {
-            return color;
-        }
-
-        public byte[] getPalette() {
-            return palette;
-        }
-
     }
 
 }

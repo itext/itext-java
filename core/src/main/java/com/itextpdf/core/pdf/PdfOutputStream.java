@@ -1,9 +1,9 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.basics.io.OutputStream;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class PdfOutputStream extends OutputStream {
         super(outputStream);
     }
 
-    public PdfOutputStream write(PdfObject object) throws IOException, PdfException {
+    public PdfOutputStream write(PdfObject object) throws PdfException {
         switch (object.getType()) {
             case PdfObject.Array:
                 write((PdfArray) object);
@@ -57,7 +57,7 @@ public class PdfOutputStream extends OutputStream {
         return this;
     }
 
-    protected void write(PdfArray array) throws IOException, PdfException {
+    protected void write(PdfArray array) throws PdfException {
         writeByte((byte)'[');
         for (int i = 0; i < array.size(); i++) {
             PdfObject value = array.get(i);
@@ -73,7 +73,7 @@ public class PdfOutputStream extends OutputStream {
         writeByte((byte)']');
     }
 
-    protected void write(PdfDictionary dictionary) throws IOException, PdfException {
+    protected void write(PdfDictionary dictionary) throws PdfException {
         writeBytes(openDict);
         for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
             write(entry.getKey());
@@ -89,7 +89,7 @@ public class PdfOutputStream extends OutputStream {
         writeBytes(closeDict);
     }
 
-    protected void write(PdfIndirectReference indirectReference) throws IOException, PdfException {
+    protected void write(PdfIndirectReference indirectReference) throws PdfException {
 //        if (indirectReference.getRefersTo() != null)
 //            pdfDocument.addIndirectReference(indirectReference);
         if (indirectReference.getGenNr() == 0) {
@@ -103,18 +103,18 @@ public class PdfOutputStream extends OutputStream {
         }
     }
 
-    protected void write(PdfPrimitiveObject primitive) throws IOException {
-        write(primitive.getContent());
+    protected void write(PdfPrimitiveObject primitive) throws PdfException {
+        writeBytes(primitive.getContent());
     }
 
-    protected void write(PdfName name) throws IOException, PdfException {
-        write((byte)'/');
-        write(name.getContent());
+    protected void write(PdfName name) throws PdfException {
+        writeByte((byte)'/');
+        writeBytes(name.getContent());
     }
 
-    protected void write(PdfNumber number) throws IOException, PdfException {
+    protected void write(PdfNumber number) throws PdfException {
         if (number.hasContent()) {
-            write(number.getContent());
+            writeBytes(number.getContent());
         } else if(number.getValueType() == PdfNumber.Int) {
             writeInteger(number.getIntValue());
         } else {
@@ -122,33 +122,37 @@ public class PdfOutputStream extends OutputStream {
         }
     }
 
-    protected void write(PdfStream stream) throws IOException, PdfException {
-        //When document is opened in stamping mode the output stream can be uninitialized.
-        //We shave to initialize it and write all data from streams input to streams output.
-        if (stream.getOutputStream() == null && stream.getReader() != null) {
-            stream.initOutputStream();
-            InputStream is = stream.getInputStream(false);
-            byte[] buffer = new byte[stream.getLength()];
-            is.read(buffer, 0, stream.getLength());
-            stream.getOutputStream().write(buffer);
-            is.close();
-        }
+    protected void write(PdfStream stream) throws PdfException {
+        try {
+            //When document is opened in stamping mode the output stream can be uninitialized.
+            //We shave to initialize it and write all data from streams input to streams output.
+            if (stream.getOutputStream() == null && stream.getReader() != null) {
+                stream.initOutputStream();
+                InputStream is = stream.getInputStream(false);
+                byte[] buffer = new byte[stream.getLength()];
+                is.read(buffer, 0, stream.getLength());
+                stream.getOutputStream().write(buffer);
+                is.close();
+            }
 
-        ByteArrayOutputStream byteStream = (ByteArrayOutputStream)stream.getOutputStream().getOutputStream();
-        if (stream instanceof PdfObjectStream) {
-            ByteArrayOutputStream indexStream = (ByteArrayOutputStream)((PdfObjectStream)stream).getIndexStream().getOutputStream();
-            stream.put(PdfName.Length, new PdfNumber(byteStream.size() + indexStream.size()));
-            write((PdfDictionary) stream);
-            writeBytes(PdfOutputStream.stream);
-            indexStream.writeTo(this);
-            byteStream.writeTo(this);
-            writeBytes(PdfOutputStream.endstream);
-        } else {
-            stream.put(PdfName.Length, new PdfNumber(byteStream.size()));
-            write((PdfDictionary) stream);
-            writeBytes(PdfOutputStream.stream);
-            byteStream.writeTo(this);
-            writeBytes(PdfOutputStream.endstream);
+            ByteArrayOutputStream byteStream = (ByteArrayOutputStream)stream.getOutputStream().getOutputStream();
+            if (stream instanceof PdfObjectStream) {
+                ByteArrayOutputStream indexStream = (ByteArrayOutputStream)((PdfObjectStream)stream).getIndexStream().getOutputStream();
+                stream.put(PdfName.Length, new PdfNumber(byteStream.size() + indexStream.size()));
+                write((PdfDictionary) stream);
+                writeBytes(PdfOutputStream.stream);
+                indexStream.writeTo(this);
+                byteStream.writeTo(this);
+                writeBytes(PdfOutputStream.endstream);
+            } else {
+                stream.put(PdfName.Length, new PdfNumber(byteStream.size()));
+                write((PdfDictionary) stream);
+                writeBytes(PdfOutputStream.stream);
+                byteStream.writeTo(this);
+                writeBytes(PdfOutputStream.endstream);
+            }
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotWritePdfStream, e, stream);
         }
     }
 }

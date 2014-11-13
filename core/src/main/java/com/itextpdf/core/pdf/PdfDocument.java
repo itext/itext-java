@@ -28,7 +28,7 @@ public class PdfDocument implements IEventDispatcher {
      * Default page size.
      * New page by default will be created with this size.
      */
-    protected PageSize defaultPageSize = PageSize.DEFAULT;
+    protected PageSize defaultPageSize = PageSize.Default;
 
     protected EventDispatcher eventDispatcher = new EventDispatcher();
 

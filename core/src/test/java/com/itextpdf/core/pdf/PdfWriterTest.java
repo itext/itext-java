@@ -17,7 +17,6 @@ import java.util.TreeMap;
 
 public class PdfWriterTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfWriterTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfWriterTest/";
 
     @BeforeClass

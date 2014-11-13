@@ -1,9 +1,8 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 public class PdfObjectStream extends PdfStream {
 
@@ -40,20 +39,16 @@ public class PdfObjectStream extends PdfStream {
         if (size == maxObjStreamSize)
             //todo verify exception, possible size should be included in message
             throw new PdfException(PdfException.ObjectCannotBeAddedToObjectStream);
-        try {
-            indexStream.writeInteger(object.getIndirectReference().getObjNr()).
-                    writeSpace().
-                    writeInteger(outputStream.getCurrentPos()).
-                    writeSpace();
-            outputStream.write(object);
-            object.getIndirectReference().setObjectStreamNumber(getIndirectReference().getObjNr());
-            object.getIndirectReference().setOffsetOrIndex(size);
-            outputStream.writeSpace();
-            ((PdfNumber)get(PdfName.N)).setValue(++size);
-            ((PdfNumber)get(PdfName.First)).setValue(indexStream.getCurrentPos());
-        } catch (IOException e) {
-            throw new PdfException(PdfException.CannotAddObjectToObjectstream, e, object);
-        }
+        indexStream.writeInteger(object.getIndirectReference().getObjNr()).
+                writeSpace().
+                writeInteger(outputStream.getCurrentPos()).
+                writeSpace();
+        outputStream.write(object);
+        object.getIndirectReference().setObjectStreamNumber(getIndirectReference().getObjNr());
+        object.getIndirectReference().setOffsetOrIndex(size);
+        outputStream.writeSpace();
+        ((PdfNumber)get(PdfName.N)).setValue(++size);
+        ((PdfNumber)get(PdfName.First)).setValue(indexStream.getCurrentPos());
     }
 
     /**

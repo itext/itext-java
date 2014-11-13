@@ -1,5 +1,7 @@
 package com.itextpdf.basics.io;
 
+import com.itextpdf.basics.PdfException;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -299,46 +301,64 @@ public class OutputStream extends java.io.OutputStream {
             outputStream.close();
     }
 
-    public OutputStream writeLong(long value) throws IOException {
-        getIsoBytes(value, numBuffer.reset());
-        write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
-        return this;
+    public OutputStream writeLong(long value) throws PdfException {
+        try {
+            getIsoBytes(value, numBuffer.reset());
+            write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
+            return this;
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotWriteIntNumber, e);
+        }
     }
 
-    public OutputStream writeInteger(int value) throws IOException {
-        getIsoBytes(value, numBuffer.reset());
-        write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
-        return this;
+    public OutputStream writeInteger(int value) throws PdfException {
+        try {
+            getIsoBytes(value, numBuffer.reset());
+            write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
+            return this;
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotWriteIntNumber, e);
+        }
     }
 
-    public OutputStream writeFloat(float value) throws IOException {
+    public OutputStream writeFloat(float value) throws PdfException {
         return writeDouble(value);
     }
 
-    public OutputStream writeDouble(double value) throws IOException {
-        getIsoBytes(value, numBuffer.reset());
-        write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
-        return this;
+    public OutputStream writeDouble(double value) throws PdfException {
+        try {
+            getIsoBytes(value, numBuffer.reset());
+            write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
+            return this;
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotWriteFloatNumber, e);
+        }
     }
 
-    public OutputStream writeByte(byte value) throws IOException {
-        write(value);
-        return this;
+    public OutputStream writeByte(byte value) throws PdfException {
+        try {
+            write(value);
+            return this;
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotWriteByte, e);
+        }
     }
 
-    public OutputStream writeSpace() throws IOException {
-        write((byte) ' ');
-        return this;
+    public OutputStream writeSpace() throws PdfException {
+        return writeByte((byte) ' ');
     }
 
-    public OutputStream writeString(String value) throws IOException {
-        write(getIsoBytes(value));
-        return this;
+    public OutputStream writeString(String value) throws PdfException {
+        return writeBytes(getIsoBytes(value));
     }
 
-    public OutputStream writeBytes(byte[] value) throws IOException {
-        write(value);
-        return this;
+    public OutputStream writeBytes(byte[] value) throws PdfException {
+        try {
+            write(value);
+            return this;
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotWriteBytes, e);
+        }
     }
 
     public int getCurrentPos() {
@@ -355,5 +375,13 @@ public class OutputStream extends java.io.OutputStream {
 
     public void setCloseStream(boolean closeStream) {
         this.closeStream = closeStream;
+    }
+
+    public void assignBytes(byte[] bytes, int count) throws PdfException {
+        if (outputStream instanceof ByteArrayOutputStream) {
+            ((ByteArrayOutputStream) outputStream).assignBytes(bytes, count);
+            currentPos = count;
+        } else
+            throw new PdfException(PdfException.BytesCanBeAssignedToByteArrayOutputStreamOnly);
     }
 }

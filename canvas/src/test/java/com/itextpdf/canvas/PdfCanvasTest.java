@@ -661,16 +661,6 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void comparePerformanceTest() throws IOException, PdfException, DocumentException {
-        comparePerformance(false, 1.21f);
-    }
-
-    @Test
-    public void comparePerformanceTestFullCompression() throws IOException, PdfException, DocumentException {
-        comparePerformance(true, 1.42f);
-    }
-
-    @Test
     public void copyPagesTest1() throws IOException, PdfException, DocumentException, InterruptedException {
         FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages1_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -933,63 +923,4 @@ public class PdfCanvasTest {
 
     }
 
-    private void comparePerformance(boolean fullCompression, float coef) throws IOException, PdfException, DocumentException {
-        int pageCount = 100000;
-        int runCount = 10;
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText";
-        final String title = "Empty iText Document";
-
-        long t1 = System.currentTimeMillis();
-        for (int i = 0; i < runCount; i++) {
-            Document.compress = false;
-            Document document = new Document();
-            FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTest_iText5.pdf");
-            com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(document, fos);
-            if (fullCompression)
-                writer.setFullCompression();
-            document.addAuthor(author);
-            document.addCreator(creator);
-            document.addTitle(title);
-            document.open();
-            for (int k = 0; k < pageCount; k++) {
-                document.newPage();
-                PdfContentByte cb = writer.getDirectContent();
-                cb.rectangle(100, 100, 100, 100);
-                cb.fill();
-            }
-            document.close();
-        }
-        long t2 = System.currentTimeMillis();
-        long iText5Time = t2 - t1;
-        System.out.println(String.format("iText5 time: %dms\t(%s)", iText5Time,
-                fullCompression ? "compression" : "no compression"));
-
-        t1 = System.currentTimeMillis();
-        for (int i = 0; i < runCount; i++) {
-            FileOutputStream fos = new FileOutputStream(destinationFolder + "comparePerformanceTest_iText6.pdf");
-            PdfWriter writer = new PdfWriter(fos);
-            writer.setFullCompression(fullCompression);
-            PdfDocument pdfDoc = new PdfDocument(writer);
-            pdfDoc.getInfo().setAuthor(author).
-                    setCreator(creator).
-                    setTitle(title);
-            for (int k = 0; k < pageCount; k++) {
-                PdfPage page = pdfDoc.addNewPage();
-                PdfCanvas canvas = new PdfCanvas(page);
-                canvas.rectangle(100, 100, 100, 100).fill();
-                page.flush();
-            }
-            pdfDoc.close();
-        }
-        t2 = System.currentTimeMillis();
-        long iText6Time = t2 - t1;
-        String compression = fullCompression ? "compression" : "no compression";
-        System.out.println(String.format("iText6 time: %dms\t(%s)", iText6Time, compression));
-        String message = String.format("%s: %.2f (%.2f)", compression, (double)iText5Time/iText6Time, coef);
-        Assert.assertTrue(message, iText5Time > iText6Time*coef);
-        System.out.println(message);
-        System.out.flush();
-    }
 }

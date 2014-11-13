@@ -177,7 +177,7 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @throws IOException
      */
-    protected void writeHeader() throws IOException {
+    protected void writeHeader() throws PdfException {
         writeByte((byte) '%').
                 writeString(pdfDocument.getPdfVersion().getPdfVersion()).
                 writeString("\n%\u00e2\u00e3\u00cf\u00d3\n");

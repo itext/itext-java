@@ -778,7 +778,7 @@ public class BmpImage {
         Image img = new RawImage(width, height, 1, bpc, bdata);
         byte np[] = getPalette(paletteEntries);
         int len = np.length;
-        img.setAdditional(new Indexed(len / 3 - 1, np));
+        img.setAdditional(new Image.Indexed(len / 3 - 1, np));
         return img;
     }
 
@@ -1291,27 +1291,6 @@ public class BmpImage {
     private int readLong(InputStream stream) throws IOException {
         return readInt(stream);
     }
-
-    // In PDF it should look: [/Indexed /DeviceRGB color palette]
-    static public class Indexed implements Image.IAdditional {
-        private int color;
-        private byte[] palette;
-
-        public Indexed(int color, byte[] palette) {
-            this.color = color;
-            this.palette = palette;
-        }
-
-        public int getColor() {
-            return color;
-        }
-
-        public byte[] getPalette() {
-            return palette;
-        }
-
-    }
-
 
 }
 

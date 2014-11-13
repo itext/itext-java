@@ -10,6 +10,7 @@ public class PdfException extends Exception {
 
 
     public static final String _1CorruptedJfifMarker = "1.corrupted.jfif.marker";
+    public static final String _1IsAnUnknownImageFormat = "1.is.an.unknown.image.format";
     public static final String _1IsNotAValidJpegFile = "1.is.not.a.valid.jpeg.file";
     public static final String _1IsNotAValidPlaceableWindowsMetafile = "1.is.not.a.valid.placeable.windows.metafile";
     public static final String _1MustHave8BitsPerComponent = "1.must.have.8.bits.per.component";
@@ -20,8 +21,8 @@ public class PdfException extends Exception {
     public static final String BadEndiannessTagNot0x4949Or0x4d4d = "bad.endianness.tag.not.0x4949.or.0x4d4d";
     public static final String BadMagicNumberShouldBe42 = "bad.magic.number.should.be.42";
     public static final String BitsPerComponentMustBe1_2_4or8 = "bits.per.component.must.be.1.2.4.or.8";
-
     public static final String BitsPerSample1IsNotSupported = "bits.per.sample.1.is.not.supported";
+    public static final String BytesCanBeAssignedToByteArrayOutputStreamOnly = "bytes.can.be.assigned.to.bytearrayoutputstream.only";
 
 
     public static final String CannotAddObjectToObjectstream = "cannot.add.object.to.objectstream";
@@ -36,6 +37,11 @@ public class PdfException extends Exception {
     public static final String CannotOpenDocument = "cannot.open.document";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
     public static final String CannotReadTiffImage = "cannot.read.tiff.image";
+    public static final String CannotWriteByte = "cannot.write.byte";
+    public static final String CannotWriteBytes = "cannot.write.bytes";
+    public static final String CannotWriteFloatNumber = "cannot.write.float.number";
+    public static final String CannotWriteIntNumber = "cannot.write.int.number";
+    public static final String CannotWritePdfStream = "cannot.write.pdf.stream";
     public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression.1.is.not.supported";
