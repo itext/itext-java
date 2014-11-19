@@ -2,8 +2,6 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.OutputStream;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PRStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -311,6 +309,13 @@ public class PdfReaderTest {
         PdfDocument document = new PdfDocument(reader);
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(1000, pageCount);
+
+        int xrefSize = document.getXRef().size();
+        PdfPage testPage = document.removePage(1000);
+
+        Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
+        document.addPage(1000, testPage);
+        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNr() < xrefSize);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);

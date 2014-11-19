@@ -1,31 +1,36 @@
 package com.itextpdf.core.pdf;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.TreeSet;
 
 public class PdfXRefTable {
 
     private static final int InitialCapacity = 32;
+    private static final int MaxGeneration = 65535;
 
     private PdfIndirectReference[] xref;
     private int count = 0;
     private int nextNumber = 0;
 
+    private final Queue<Integer> freeReferences;
     protected boolean isXRefStm;
 
     public PdfXRefTable() {
-        xref = new PdfIndirectReference[InitialCapacity];
+        this(InitialCapacity);
     }
 
     public PdfXRefTable(int capacity) {
         if (capacity < 1)
             capacity = InitialCapacity;
         xref = new PdfIndirectReference[capacity];
+        freeReferences = new LinkedList<Integer>();
     }
 
     public TreeSet<PdfIndirectReference> toSet() {
         TreeSet<PdfIndirectReference> indirects = new TreeSet<PdfIndirectReference>();
         for (int i = 0; i < xref.length; i++) {
-            if (xref[i] != null)
+            if (xref[i] != null && xref[i].isInUse())
                 indirects.add(xref[i]);
         }
         return indirects;
@@ -54,8 +59,11 @@ public class PdfXRefTable {
     }
 
     public void clear() {
-        for (int i = 0; i <= count; i++)
+        for (int i = 0; i <= count; i++) {
+            if (xref[i] != null && !xref[i].isInUse())
+                continue;
             xref[i] = null;
+        }
         count = 0;
     }
 
@@ -85,7 +93,25 @@ public class PdfXRefTable {
      * @return created indirect reference.
      */
     protected PdfIndirectReference createNextIndirectReference(PdfDocument document, PdfObject object) {
+        if (freeReferences.size() > 0) {
+            PdfIndirectReference reference = xref[freeReferences.poll()];
+            assert !reference.isInUse();
+            reference.setOffsetOrIndex(0);
+            reference.setRefersTo(object);
+            return reference;
+        }
         return add(new PdfIndirectReference(document, ++nextNumber, object));
+    }
+
+    protected void freeReference(PdfIndirectReference reference) {
+        reference.setOffsetOrIndex(PdfIndirectReference.Free);
+        reference.setObjectStreamNumber(0);
+        if (reference.refersTo != null) {
+            reference.refersTo.setIndirectReference(null);
+            reference.refersTo = null;
+        }
+        if (reference.getObjNr() != 0 && reference.getGenNr() < MaxGeneration)
+            freeReferences.add(reference.getObjNr());
     }
 
     protected void setCapacity(int capacity) {

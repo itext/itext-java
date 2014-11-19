@@ -73,21 +73,27 @@ public class PdfPagesTest {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
         PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(writer);
         PdfPage pages[] = new PdfPage[amount];
 
         for (int i = 0; i < indexes.length; i++) {
-            PdfPage page = pdfDoc.addNewPage();
+            PdfPage page = document.addNewPage();
             page.getPdfObject().put(PageNum, new PdfNumber(indexes[i]));
             //page.flush();
             pages[indexes[i] - 1] = page;
         }
 
+        int xrefSize = document.getXRef().size();
+        PdfPage testPage = document.removePage(1000);
+        Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
+        document.addPage(1000, testPage);
+        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNr() < xrefSize);
+
         for (int i = 0; i < pages.length; i++) {
-            pdfDoc.removePage(pages[i]);
-            pdfDoc.addPage(i + 1, pages[i]);
+            document.removePage(pages[i]);
+            document.addPage(i + 1, pages[i]);
         }
-        pdfDoc.close();
+        document.close();
 
         verifyPagesOrder(destinationFolder + filename);
     }

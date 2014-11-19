@@ -180,17 +180,12 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     protected boolean isInUse() {
-        return offsetOrIndex >= 0;
+        return offsetOrIndex != Free;
     }
 
     // NOTE After this operation this indirect reference could be reused for new indirect objects.
     protected void setFree() {
-        offsetOrIndex = Free;
-        objectStreamNumber = 0;
-        if (refersTo != null) {
-            refersTo.setIndirectReference(null);
-            refersTo = null;
-        }
+        getDocument().getXRef().freeReference(this);
     }
 
     @Override

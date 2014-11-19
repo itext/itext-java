@@ -14,7 +14,7 @@ public class PdfPrimitivesTest {
     static final String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfPrimitivesTest/";
     static final PdfName TestArray = new PdfName("TestArray");
     static final int DefaultArraySize = 64;
-    static final int PageCount = 30000;
+    static final int PageCount = 1000;
 
     public static class RandomString {
 
