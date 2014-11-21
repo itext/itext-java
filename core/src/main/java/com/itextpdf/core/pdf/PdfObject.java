@@ -151,9 +151,9 @@ abstract public class PdfObject {
      * @throws PdfException
      */
     protected <T extends PdfObject> T copy(PdfDocument document, boolean allowDuplicating) throws PdfException {
-        if (isFlushed())
-            throw new PdfException(PdfException.CannotCopyFlushedObject, this);
         PdfWriter writer = null;
+        if (document == null)
+            document = getDocument();
         if (document != null)
             writer = document.getWriter();
         if (writer != null)
@@ -200,7 +200,10 @@ abstract public class PdfObject {
      * @param from     object to copy content from.
      * @param document document to copy object to.
      */
-    abstract protected void copyContent(PdfObject from, PdfDocument document) throws PdfException;
+    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+        if (isFlushed())
+            throw new PdfException(PdfException.CannotCopyFlushedObject, this);
+    }
 
 
 }

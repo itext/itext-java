@@ -3,9 +3,11 @@ package com.itextpdf.canvas;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
@@ -62,6 +64,47 @@ public class PdfXObjectTest {
 
         Assert.assertTrue(new File(destinationDocument).length() < 20 * 1024 * 1024);
         Assert.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_documentFromImages1.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithForms() throws IOException, PdfException, DocumentException, InterruptedException {
+        final String destinationDocument = destinationFolder + "documentWithForms1.pdf";
+        FileOutputStream fos = new FileOutputStream(destinationDocument);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+
+        //Create form XObject and flush to document.
+        PdfFormXObject form = new PdfFormXObject(document, new Rectangle(0, 0, 50, 50));
+        PdfCanvas canvas = new PdfCanvas(form);
+        canvas.rectangle(10, 10, 30, 30);
+        canvas.fill();
+        form.flush();
+
+        //Create page1 and add forms to the page.
+        PdfPage page1 = document.addNewPage();
+        canvas = new PdfCanvas(page1);
+        canvas.addForm(form, 0, 0).addForm(form, 50, 0).addForm(form, 0, 50).addForm(form, 50, 50);
+
+        //Create form from the page1 and flush it.
+        form = new PdfFormXObject(page1);
+        form.flush();
+
+        //Now page1 can be flushed. It's not needed anymore.
+        page1.flush();
+
+        //Create page2 and add forms to the page.
+        PdfPage page2 = document.addNewPage();
+        canvas = new PdfCanvas(page2);
+        canvas.addForm(form, 0, 0);
+        canvas.addForm(form, 0, 200);
+        canvas.addForm(form, 200, 0);
+        canvas.addForm(form, 200, 200);
+        page2.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_documentWithForms1.pdf", destinationFolder, "diff_"));
+
     }
 
 }

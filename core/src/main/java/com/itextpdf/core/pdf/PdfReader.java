@@ -1,11 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.ByteBuffer;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
-import com.itextpdf.basics.io.RandomAccessSource;
-import com.itextpdf.basics.io.RandomAccessSourceFactory;
-import com.itextpdf.basics.io.WindowRandomAccessSource;
+import com.itextpdf.basics.io.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,7 +35,7 @@ public class PdfReader {
      * Constructs a new PdfReader.  This is the master constructor.
      *
      * @param byteSource source of bytes for the reader
-     * TODO param closeSourceOnConstructorError if true, the byteSource will be closed if there is an error during construction of this reader
+     *                   TODO param closeSourceOnConstructorError if true, the byteSource will be closed if there is an error during construction of this reader
      */
     public PdfReader(RandomAccessSource byteSource) throws IOException, PdfException {
         tokens = getOffsetTokeniser(byteSource);
@@ -116,8 +112,7 @@ public class PdfReader {
                 }
             }
             objectStream.getIndirectReference().setFree();
-        }
-        finally {
+        } finally {
             tokens = saveTokens;
         }
     }
@@ -265,7 +260,8 @@ public class PdfReader {
         eofPos = tokens.getPosition();
         try {
             if (readXrefStream(startxref)) return;
-        } catch (Exception e) { }
+        } catch (Exception e) {
+        }
         // clear xref because of possible issues at reading xref stream.
         pdfDocument.getXRef().clear();
 
@@ -339,7 +335,7 @@ public class PdfReader {
 
         PdfObject xrs = trailer.get(PdfName.XRefStm);
         if (xrs != null && xrs.getType() == PdfObject.Number) {
-            int loc = ((PdfNumber)xrs).getIntValue();
+            int loc = ((PdfNumber) xrs).getIntValue();
             try {
                 readXrefStream(loc);
             } catch (IOException e) {
@@ -366,32 +362,30 @@ public class PdfReader {
         PdfObject object = readObject(false);
         PdfStream xrefStream;
         if (object.getType() == PdfObject.Stream) {
-            xrefStream = (PdfStream)object;
+            xrefStream = (PdfStream) object;
             if (!PdfName.XRef.equals(xrefStream.get(PdfName.Type)))
                 return false;
-        }
-        else
+        } else
             return false;
         if (trailer == null) {
             trailer = new PdfDictionary();
             trailer.putAll(xrefStream);
         }
 
-        int size = ((PdfNumber)xrefStream.get(PdfName.Size)).getIntValue();
+        int size = ((PdfNumber) xrefStream.get(PdfName.Size)).getIntValue();
         PdfArray index;
         PdfObject obj = xrefStream.get(PdfName.Index);
         if (obj == null) {
             index = new PdfArray();
             index.add(new PdfNumber(0));
             index.add(new PdfNumber(size));
-        }
-        else
-            index = (PdfArray)obj;
+        } else
+            index = (PdfArray) obj;
         PdfArray w = xrefStream.getAsArray(PdfName.W);
         long prev = -1;
         obj = xrefStream.get(PdfName.Prev);
         if (obj != null)
-            prev = ((PdfNumber)obj).getLongValue();
+            prev = ((PdfNumber) obj).getLongValue();
         xref.setCapacity(size);
         byte b[] = readStreamBytes(xrefStream, true);
         int bptr = 0;
@@ -427,7 +421,7 @@ public class PdfReader {
                         break;
                     case 2:
                         newReference = new PdfIndirectReference(pdfDocument, base, 0, field3);
-                        newReference.setObjectStreamNumber((int)field2);
+                        newReference.setObjectStreamNumber((int) field2);
                         break;
                     default:
                         throw new PdfException(PdfException.InvalidXrefStream);
@@ -436,7 +430,7 @@ public class PdfReader {
                     xref.add(newReference);
                 } else if (xref.get(base).getOffset() == PdfIndirectReference.Reading
                         && xref.get(base).getObjNr() == newReference.getObjNr()
-                        && xref.get(base).getGenNr() == newReference.getGenNr()){
+                        && xref.get(base).getGenNr() == newReference.getGenNr()) {
                     PdfIndirectReference reference = xref.get(base);
                     reference.setOffsetOrIndex(newReference.getOffset());
                     reference.setObjectStreamNumber(newReference.getObjectStreamNumber());
@@ -454,7 +448,7 @@ public class PdfReader {
         tokens.seek(0);
         ByteBuffer buffer = new ByteBuffer(24);
         PdfTokeniser lineTokeniser = new PdfTokeniser(new RandomAccessFileOrArray(new PdfTokeniser.ReusableRandomAccessSource(buffer)));
-        for (;;) {
+        for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
             if (!tokens.readLineSegment(buffer, true)) // added boolean because of mailing list issue (17 Feb. 2014)
@@ -482,7 +476,7 @@ public class PdfReader {
         trailer = null;
         ByteBuffer buffer = new ByteBuffer(24);
         PdfTokeniser lineTokeniser = new PdfTokeniser(new RandomAccessFileOrArray(new PdfTokeniser.ReusableRandomAccessSource(buffer)));
-        for (;;) {
+        for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
             if (!tokens.readLineSegment(buffer, true)) // added boolean because of mailing list issue (17 Feb. 2014)
@@ -494,17 +488,15 @@ public class PdfReader {
                 tokens.nextToken();
                 pos = tokens.getPosition();
                 try {
-                    PdfDictionary dic = (PdfDictionary)readObject(false);
+                    PdfDictionary dic = (PdfDictionary) readObject(false);
                     if (dic.get(PdfName.Root, false) != null)
                         trailer = dic;
                     else
                         tokens.seek(pos);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     tokens.seek(pos);
                 }
-            }
-            else if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
+            } else if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
                 int obj[] = PdfTokeniser.checkObjectStart(lineTokeniser);
                 if (obj == null)
                     continue;
@@ -537,7 +529,10 @@ public class PdfReader {
             bytes = new byte[length];
             file.readFully(bytes);
         } finally {
-            try { file.close(); } catch(Exception e) { }
+            try {
+                file.close();
+            } catch (Exception e) {
+            }
         }
         return bytes;
     }

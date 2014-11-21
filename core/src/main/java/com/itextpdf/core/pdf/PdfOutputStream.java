@@ -127,12 +127,9 @@ public class PdfOutputStream extends OutputStream {
             //When document is opened in stamping mode the output stream can be uninitialized.
             //We shave to initialize it and write all data from streams input to streams output.
             if (stream.getOutputStream() == null && stream.getReader() != null) {
+                byte[] bytes = stream.getBytes(false);
                 stream.initOutputStream();
-                InputStream is = stream.getInputStream(false);
-                byte[] buffer = new byte[stream.getLength()];
-                is.read(buffer, 0, stream.getLength());
-                stream.getOutputStream().write(buffer);
-                is.close();
+                stream.getOutputStream().write(bytes);
             }
 
             ByteArrayOutputStream byteStream = (ByteArrayOutputStream)stream.getOutputStream().getOutputStream();

@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.geom.Rectangle;
 
 import java.util.*;
 
@@ -84,6 +85,11 @@ public class PdfDictionary extends PdfObject {
         if (direct != null && direct.getType() == PdfObject.Boolean)
             return (PdfBoolean)direct;
         return null;
+    }
+
+    public Rectangle getAsRectangle(PdfName key) throws PdfException {
+        PdfArray a = getAsArray(key);
+        return a == null ? null : a.toRectangle();
     }
 
     public PdfObject put(PdfName key, PdfObject value) {
@@ -174,6 +180,7 @@ public class PdfDictionary extends PdfObject {
 
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+        super.copyContent(from, document);
         PdfDictionary dictionary = (PdfDictionary) from;
         for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
             map.put(entry.getKey(), entry.getValue().copy(document, false));

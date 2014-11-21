@@ -61,10 +61,26 @@ public class PdfStream extends PdfDictionary {
         return getInputStreamBytes(true);
     }
 
+    /**
+     * Gets the decoded input stream associated with PdfStream.
+     * User is responsible for closing returned stream.
+     *
+     * @return
+     * @throws IOException
+     * @throws PdfException
+     */
     public InputStream getInputStream() throws IOException, PdfException {
         return getInputStream(true);
     }
 
+    /**
+     * Reads and gets stream bytes.
+     *
+     * @param decoded true if to get decoded stream bytes, false if to leave it originally encoded.
+     * @return
+     * @throws IOException
+     * @throws PdfException
+     */
     public byte[] getInputStreamBytes(boolean decoded) throws IOException, PdfException {
         if (offset > 0) {
             return getIndirectReference().getDocument().getReader().readStreamBytes(this, decoded);
@@ -72,6 +88,15 @@ public class PdfStream extends PdfDictionary {
         return null;
     }
 
+    /**
+     * Gets the input stream associated with PdfStream.
+     * User is responsible for closing returned stream.
+     *
+     * @param decoded true if to get decoded stream, false if to leave it originally encoded.
+     * @return
+     * @throws IOException
+     * @throws PdfException
+     */
     public InputStream getInputStream(boolean decoded) throws IOException, PdfException {
         if (offset > 0) {
             return getIndirectReference().getDocument().getReader().readStream(this, decoded);
@@ -86,9 +111,48 @@ public class PdfStream extends PdfDictionary {
 
     public int getLength() throws PdfException {
         PdfNumber length = getAsNumber(PdfName.Length);
-        if(length == null)
+        if (length == null)
             return 0;
         return length.getIntValue();
+    }
+
+    /**
+     * Gets decoded stream bytes.
+     *
+     * @return
+     * @throws PdfException
+     */
+    public byte[] getBytes() throws PdfException {
+        return getBytes(true);
+    }
+
+    /**
+     * Gets stream bytes.
+     *
+     * @param decoded true if to get decoded stream bytes, otherwise false.
+     * @return
+     * @throws PdfException
+     */
+    public byte[] getBytes(boolean decoded) throws PdfException {
+        byte[] bytes = null;
+        if (outputStream != null && outputStream.getOutputStream() != null && outputStream.getOutputStream() instanceof ByteArrayOutputStream) {
+            try {
+                outputStream.getOutputStream().flush();
+                bytes = ((ByteArrayOutputStream) outputStream.getOutputStream()).toByteArray();
+            } catch (IOException ioe) {
+                throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
+            }
+        } else if (getReader() != null) {
+            try {
+                InputStream is = getInputStream(decoded);
+                bytes = new byte[getLength()];
+                is.read(bytes, 0, getLength());
+                is.close();
+            } catch (IOException ioe) {
+                throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
+            }
+        }
+        return bytes;
     }
 
     @Override
@@ -104,24 +168,11 @@ public class PdfStream extends PdfDictionary {
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         super.copyContent(from, document);
         PdfStream stream = (PdfStream) from;
-        if (stream.outputStream != null && stream.outputStream.getOutputStream() != null && stream.outputStream.getOutputStream() instanceof ByteArrayOutputStream) {
-            try {
-                stream.outputStream.getOutputStream().flush();
-                byte[] bytes = ((ByteArrayOutputStream) stream.outputStream.getOutputStream()).toByteArray();
-                outputStream.write(bytes);
-            } catch (IOException ioe) {
-                throw new PdfException(PdfException.CannotCopyObjectContent, ioe);
-            }
-        } else if (stream.getReader() != null) {
-            try {
-                InputStream is = stream.getInputStream(false);
-                byte[] buffer = new byte[stream.getLength()];
-                is.read(buffer, 0, stream.getLength());
-                getOutputStream().write(buffer);
-                is.close();
-            } catch (IOException ioe) {
-                throw new PdfException(PdfException.CannotCopyObjectContent, ioe);
-            }
+        byte[] bytes = stream.getBytes(false);
+        try {
+            outputStream.write(bytes);
+        } catch (IOException ioe) {
+            throw new PdfException(PdfException.CannotCopyObjectContent, ioe, stream);
         }
     }
 

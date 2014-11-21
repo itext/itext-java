@@ -215,6 +215,23 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         return null;
     }
 
+    public Rectangle getAsRectangle(int index) throws PdfException {
+        PdfArray a = getAsArray(index);
+        return a == null ? null : a.toRectangle();
+    }
+
+    public Rectangle toRectangle() throws PdfException {
+        try {
+            float x1 = getAsNumber(0).getFloatValue();
+            float y1 = getAsNumber(1).getFloatValue();
+            float x2 = getAsNumber(2).getFloatValue();
+            float y2 = getAsNumber(3).getFloatValue();
+            return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+        } catch (Exception e) {
+            throw new PdfException(PdfException.CannotConvertPdfArrayToRectanle, e, this);
+        }
+    }
+
     @Override
     protected PdfArray newInstance() {
         return new PdfArray();
@@ -222,6 +239,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
 
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+        super.copyContent(from, document);
         PdfArray array = (PdfArray)from;
         for (PdfObject entry : array) {
             add(entry.copy(document, false));

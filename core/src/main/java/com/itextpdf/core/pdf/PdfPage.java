@@ -1,13 +1,15 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;
 import com.itextpdf.core.xmp.XMPMetaFactory;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -96,6 +98,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Use this method to set the XMP Metadata for each page.
+     *
      * @param xmpMetadata The xmpMetadata to set.
      * @throws IOException
      */
@@ -124,6 +127,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return copied page.
      * @throws PdfException
      */
+    @Override
     public PdfPage copy(PdfDocument pdfDocument) throws PdfException {
         PdfDictionary dictionary = getPdfObject().copy(pdfDocument, new ArrayList<PdfName>() {{
             add(PdfName.Parent);
@@ -131,20 +135,54 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return new PdfPage(dictionary, pdfDocument);
     }
 
-    /**
-     * Copies a page to the same document.
-     *
-     * @return copied page.
-     * @throws PdfException
-     */
-    public PdfPage copy() throws PdfException {
-        return copy(getDocument());
-    }
-
     @Override
     public void flush() throws PdfException {
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
         super.flush();
+    }
+
+    public Rectangle getMediaBox() throws PdfException {
+        return pdfObject.getAsRectangle(PdfName.MediaBox);
+    }
+
+    public Rectangle getCropBox() throws PdfException {
+        Rectangle cropBox = pdfObject.getAsRectangle(PdfName.CropBox);
+        if (cropBox == null)
+            cropBox = getMediaBox();
+        return cropBox;
+    }
+
+    /**
+     * Get decoded bytes for the whole page content.
+     *
+     * @return
+     * @throws PdfException
+     */
+    public byte[] getContentBytes() throws PdfException {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            for (int i = 0; i < getContentStreamCount(); i++) {
+                baos.write(getStreamBytes(i));
+            }
+            baos.flush();
+            byte[] bytes = baos.toByteArray();
+            baos.close();
+            return bytes;
+        } catch (IOException ioe) {
+            throw new PdfException(PdfException.CannotGetContentBytes, ioe, this);
+        }
+    }
+
+    /**
+     * Gets decoded bytes of a certain stream of a page content.
+     *
+     * @param index
+     * @return
+     * @throws PdfException
+     */
+    public byte[] getStreamBytes(int index) throws PdfException {
+        PdfStream stream = getContentStream(index);
+        return stream.getBytes();
     }
 
     protected void release() {

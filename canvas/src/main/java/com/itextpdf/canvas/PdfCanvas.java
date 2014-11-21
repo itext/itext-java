@@ -1,7 +1,6 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.colors.Color;
 import com.itextpdf.core.fonts.PdfEncodings;
@@ -10,7 +9,6 @@ import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
-import com.itextpdf.core.pdf.xobject.PdfXObject;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -85,6 +83,10 @@ public class PdfCanvas {
      */
     public PdfCanvas(PdfDocument doc, int pageNum) throws PdfException {
         this(doc.getPage(pageNum));
+    }
+
+    public PdfResources getResources() {
+        return resources;
     }
 
     /**
@@ -592,18 +594,6 @@ public class PdfCanvas {
     }
 
     /**
-     * Adds XObject.
-     *
-     * @param xObj the XObject.
-     * @param x    x coordinate.
-     * @param y    y coordinate.
-     * @return current canvas.
-     */
-    public PdfCanvas addXObject(PdfXObject xObj, float x, float y) {
-        return this;
-    }
-
-    /**
      * Sets line width.
      *
      * @param lineWidth line width.
@@ -659,7 +649,7 @@ public class PdfCanvas {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addImage(image);
-        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
+        contentStream.getOutputStream().write(name).writeBytes(Do);
         restoreState();
         return this;
     }
@@ -699,6 +689,19 @@ public class PdfCanvas {
      */
     public PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) throws PdfException {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
+    }
+
+    public PdfCanvas addForm(PdfFormXObject form, float a, float b, float c, float d, float e, float f) throws PdfException {
+        saveState();
+        concatMatrix(a, b, c, d, e, f);
+        PdfName name = resources.addForm(form);
+        contentStream.getOutputStream().write(name).writeBytes(Do);
+        restoreState();
+        return this;
+    }
+
+    public PdfCanvas addForm(PdfFormXObject form, float x, float y) throws PdfException {
+        return addForm(form, 1, 0, 0, 1, x, y);
     }
 
     /**

@@ -53,6 +53,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
 
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+        super.copyContent(from, document);
         PdfPrimitiveObject object = (PdfPrimitiveObject)from;
         if (object.content != null)
             content = Arrays.copyOf(object.content, object.content.length);

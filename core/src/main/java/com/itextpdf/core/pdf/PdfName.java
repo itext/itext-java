@@ -27,6 +27,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Action = createDirectName("Action");
     public static final PdfName Author = createDirectName("Author");
     public static final PdfName BaseFont = createDirectName("BaseFont");
+    public static final PdfName BBox = createDirectName("BBox");
     public static final PdfName BitsPerComponent = createDirectName("BitsPerComponent");
     public static final PdfName BlackIs1 = createDirectName("BlackIs1");
     public static final PdfName Catalog = createDirectName("Catalog");
@@ -38,6 +39,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Count = createDirectName("Count");
     public static final PdfName CreationDate = createDirectName("CreationDate");
     public static final PdfName Creator = createDirectName("Creator");
+    public static final PdfName CropBox = createDirectName("CropBox");
     public static final PdfName D = createDirectName("D");
     public static final PdfName DCTDecode = createDirectName("DCTDecode");
     public static final PdfName Decode = createDirectName("Decode");
@@ -62,6 +64,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName FitV = createDirectName("FitV");
     public static final PdfName FlateDecode = createDirectName("FlateDecode");
     public static final PdfName Font = createDirectName("Font");
+    public static final PdfName Form = createDirectName("Form");
     public static final PdfName GoTo = createDirectName("GoTo");
     public static final PdfName GoToR = createDirectName("GoToR");
     public static final PdfName Height = createDirectName("Height");
