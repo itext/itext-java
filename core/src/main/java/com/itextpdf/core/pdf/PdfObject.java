@@ -187,6 +187,11 @@ abstract public class PdfObject {
         return null;
     }
 
+    public void setModifiedState() {
+        if (indirectReference != null)
+            indirectReference.setState(PdfIndirectReference.Dirty);
+    }
+
     /**
      * Creates new instance of object.
      *

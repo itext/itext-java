@@ -23,7 +23,6 @@ public class PdfObjectStream extends PdfStream {
 
     public PdfObjectStream(PdfDocument doc) {
         super(doc);
-        outputStream.pdfDocument = doc;
         put(PdfName.Type, PdfName.ObjStm);
         put(PdfName.N, new PdfNumber(size));
         put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));

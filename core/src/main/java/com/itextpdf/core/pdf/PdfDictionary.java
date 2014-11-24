@@ -7,7 +7,7 @@ import java.util.*;
 
 public class PdfDictionary extends PdfObject {
 
-    protected Map<PdfName, PdfObject> map = new TreeMap<PdfName, PdfObject>();
+    private Map<PdfName, PdfObject> map = new TreeMap<PdfName, PdfObject>();
 
     public PdfDictionary() {
         super();
@@ -186,4 +186,12 @@ public class PdfDictionary extends PdfObject {
             map.put(entry.getKey(), entry.getValue().copy(document, false));
         }
     }
+
+    /**
+     * Release content of PdfDictionary.
+     */
+    protected void release(){
+        map = null;
+    }
+
 }

@@ -4,12 +4,28 @@ import com.itextpdf.basics.PdfException;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
-    private static final int LengthOfIndirectsChain = 31;
-    protected static final int Reading = -1;
-    protected static final int Free = -2;
+    // Indicates that the reference could be reused or have to be marked as free.
+    protected static final byte Free = 1;
+    // Indicates that definition of the reference still not found (e.g. keys in XRefStm).
+    protected static final byte Reading = 2;
+    // Indicates that @see refersTo changed (using in stamp mode).
+    protected static final byte Dirty = 4;
 
+    private static final int LengthOfIndirectsChain = 31;
+
+    /**
+     * Indicate same special states of PdfIndirectObject like @see Free, @see Reading, @see Dirty.
+     */
+    private byte state;
+
+    /**
+     * Object number.
+     */
     protected final int objNr;
-    protected final int genNr;
+    /**
+     * Object generation.
+     */
+    protected int genNr;
 
     /**
      * PdfObject that current PdfIndirectReference instance refers to.
@@ -60,6 +76,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.objNr = objNr;
         this.genNr = genNr;
         this.offsetOrIndex = offset;
+        assert offset >= 0;
     }
 
     public int getObjNr() {
@@ -122,6 +139,33 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return objectStreamNumber == 0 ? 0 : (int)offsetOrIndex;
     }
 
+    /**
+     * Checks state of the flag of current object.
+     * @param state special flag to check
+     * @return true if the state was set.
+     */
+    protected boolean checkState(byte state) {
+        return (this.state & state) == state;
+    }
+
+    /**
+     * Sets special states of current object.
+     * @param state special flag of current object
+     */
+    protected PdfIndirectReference setState(byte state) {
+        this.state |= state;
+        return this;
+    }
+
+    /**
+     * Clear state of the flag of current object.
+     * @param state special flag state to clear
+     */
+    protected PdfIndirectReference clearState(byte state) {
+        this.state &= 0xFF^state;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -174,13 +218,13 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     protected void fixOffset(long offset){
         //TODO log invalid offsets
-        if (this.offsetOrIndex >= 0) {
+        if (isInUse()) {
             this.offsetOrIndex = offset;
         }
     }
 
     protected boolean isInUse() {
-        return offsetOrIndex != Free;
+        return !checkState(Free);
     }
 
     // NOTE After this operation this indirect reference could be reused for new indirect objects.

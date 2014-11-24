@@ -8,8 +8,8 @@ public class PdfNumber extends PdfPrimitiveObject {
     protected static final byte Int = 1;
     protected static final byte Double = 2;
 
-    double value;
-    byte valueType;
+    private double value;
+    private byte valueType;
 
     public PdfNumber(double value) {
         super();

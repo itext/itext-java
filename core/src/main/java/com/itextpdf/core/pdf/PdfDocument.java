@@ -72,7 +72,7 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * List of indirect objects used in the document.
      */
-    protected final PdfXRefTable xref = new PdfXRefTable();
+    protected final PdfXrefTable xref = new PdfXrefTable();
 
     /**
      * Open PDF document in reading mode.
@@ -455,7 +455,7 @@ public class PdfDocument implements IEventDispatcher {
                 catalog.flush();
                 info.flush();
                 writer.flushWaitingObjects();
-                int startxref = writer.writeXRefTable();
+                int startxref = xref.writeXrefTable(writer);
                 writer.writeTrailer(startxref);
                 writer.close();
             }
@@ -501,7 +501,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @return list of indirect references.
      */
-    protected PdfXRefTable getXRef() {
+    protected PdfXrefTable getXRef() {
         return xref;
     }
 

@@ -13,12 +13,13 @@ public class PdfStream extends PdfDictionary {
      * Output stream associated with PDF stream.
      */
     protected PdfOutputStream outputStream;
-    protected long offset;
+    private long offset;
 
     public PdfStream(PdfDocument doc) {
         super();
         makeIndirect(doc);
         this.outputStream = new PdfOutputStream(new ByteArrayOutputStream());
+        this.outputStream.pdfDocument = doc;
     }
 
     public PdfStream(PdfDocument doc, byte[] bytes) throws IOException {
@@ -38,7 +39,7 @@ public class PdfStream extends PdfDictionary {
     }
 
     //NOTE This constructor only for PdfReader.
-    protected PdfStream(long offset) {
+    PdfStream(long offset) {
         super();
         this.offset = offset;
     }
@@ -181,4 +182,11 @@ public class PdfStream extends PdfDictionary {
             outputStream = new PdfOutputStream(new ByteArrayOutputStream());
     }
 
+    /**
+     * Release content of PdfStream.
+     */
+    protected void releaseOutputStream() throws IOException {
+        outputStream.close();
+        outputStream = null;
+    }
 }

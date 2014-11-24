@@ -4,19 +4,13 @@ import com.itextpdf.basics.PdfException;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.TreeSet;
 
 public class PdfWriter extends PdfOutputStream {
 
-    static private final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
-    static private final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
     static private final byte[] obj = getIsoBytes(" obj\n");
     static private final byte[] endobj = getIsoBytes("\nendobj\n");
-    static private final byte[] freeXRefEntry = getIsoBytes(" f \n");
-    static private final byte[] inUseXRefEntry = getIsoBytes(" n \n");
     static public final int GenerationMax = 65535;
 
     /**
@@ -119,19 +113,16 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     protected void flushObject(PdfArray array) {
-        array.list.clear();
-        array.list = null;
+        array.release();
     }
 
     protected void flushObject(PdfDictionary dictionary) {
-        dictionary.map.clear();
-        dictionary.map = null;
+        dictionary.release();
     }
 
     protected void flushObject(PdfStream stream) throws IOException {
         flushObject((PdfDictionary) stream);
-        stream.outputStream.close();
-        stream.outputStream = null;
+        stream.releaseOutputStream();
         if (stream instanceof PdfObjectStream) {
             ((PdfObjectStream) stream).indexStream.close();
             ((PdfObjectStream) stream).indexStream = null;
@@ -185,7 +176,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Writes PDF header.
      *
-     * @throws IOException
+     * @throws PdfException
      */
     protected void writeHeader() throws PdfException {
         writeByte((byte) '%').
@@ -212,71 +203,6 @@ public class PdfWriter extends PdfOutputStream {
             objectStream = null;
         }
         pdfDocument.getXRef().addAll(indirects);
-    }
-
-    /**
-     * Writes cross reference table to PDF.
-     *
-     * @return start of cross reference table.
-     * @throws IOException
-     * @throws PdfException
-     */
-    protected int writeXRefTable() throws IOException, PdfException {
-        int strtxref = currentPos;
-        if (fullCompression) {
-            PdfStream stream = new PdfStream(pdfDocument);
-            stream.put(PdfName.Type, PdfName.XRef);
-            stream.put(PdfName.Size, new PdfNumber(pdfDocument.getXRef().size()));
-            stream.put(PdfName.W, new PdfArray(new ArrayList<PdfObject>() {{
-                add(new PdfNumber(1));
-                add(new PdfNumber(4));
-                add(new PdfNumber(2));
-            }}));
-            stream.put(PdfName.Info, pdfDocument.getDocumentInfo().getPdfObject());
-            stream.put(PdfName.Root, pdfDocument.getCatalog().getPdfObject());
-            stream.getOutputStream().write(0);
-            stream.getOutputStream().write(intToBytes(0));
-            stream.getOutputStream().write(shortToBytes(0xFFFF));
-            PdfXRefTable xref = pdfDocument.getXRef();
-            for (int i = 1; i < xref.size(); i++) {
-                PdfIndirectReference indirect = xref.get(i);
-                if (indirect.getObjectStreamNumber() == 0) {
-                    stream.getOutputStream().write(1);
-                    //TODO check object stream writing in case long offsets
-                    stream.getOutputStream().write(intToBytes((int) indirect.getOffset()));
-                    stream.getOutputStream().write(shortToBytes(0));
-                } else {
-                    stream.getOutputStream().write(2);
-                    stream.getOutputStream().write(intToBytes(indirect.getObjectStreamNumber()));
-                    stream.getOutputStream().write(shortToBytes(indirect.getIndex()));
-                }
-            }
-            stream.flush();
-        } else {
-            writeString("xref\n").
-                    writeString("0 ").
-                    writeInteger(pdfDocument.getXRef().size()).
-                    writeString("\n0000000000 65535 f \n");
-            PdfXRefTable xref = pdfDocument.getXRef();
-            for (int i = 1; i < xref.size(); i++) {
-                PdfIndirectReference indirect = xref.get(i);
-                if (indirect == null) {
-                    writeString(objectOffsetFormatter.format(0)).
-                            writeSpace().
-                            writeString(objectGenerationFormatter.format(0)).writeBytes(freeXRefEntry);
-                } else {
-                    writeString(objectOffsetFormatter.format(indirect.getOffset())).
-                            writeSpace().
-                            writeString(objectGenerationFormatter.format(indirect.getGenNr()));
-                    if (indirect.getOffset() > 0) {
-                        writeBytes(inUseXRefEntry);
-                    } else {
-                        writeBytes(freeXRefEntry);
-                    }
-                }
-            }
-        }
-        return strtxref;
     }
 
     /**
@@ -308,13 +234,5 @@ public class PdfWriter extends PdfOutputStream {
         int result = object.getIndirectReference().hashCode();
         result = 31 * result + object.getDocument().hashCode();
         return result;
-    }
-
-    private byte[] shortToBytes(int n) {
-        return new byte[]{(byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
-    }
-
-    private byte[] intToBytes(int n) {
-        return new byte[]{(byte) ((n >> 24) & 0xFF), (byte) ((n >> 16) & 0xFF), (byte) ((n >> 8) & 0xFF), (byte) (n & 0xFF)};
     }
 }

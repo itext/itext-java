@@ -7,7 +7,7 @@ import java.util.*;
 
 public class PdfArray extends PdfObject implements Collection<PdfObject> {
 
-    protected List<PdfObject> list;
+    private List<PdfObject> list;
 
     public PdfArray() {
         super();
@@ -244,5 +244,12 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         for (PdfObject entry : array) {
             add(entry.copy(document, false));
         }
+    }
+
+    /**
+     * Release content of PdfArray.
+     */
+    protected void release(){
+        list = null;
     }
 }
