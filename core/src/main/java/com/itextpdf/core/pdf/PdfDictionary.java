@@ -190,8 +190,7 @@ public class PdfDictionary extends PdfObject {
     /**
      * Release content of PdfDictionary.
      */
-    protected void release(){
+    protected void releaseContent() throws PdfException {
         map = null;
     }
-
 }

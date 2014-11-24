@@ -65,7 +65,6 @@ public class PdfException extends Exception {
     public static final String ExpectedJpMarker = "expected.jp.marker";
     public static final String ExpectedJp2hMarker = "expected.jp2h.marker";
 
-
     public static final String ExtraSamplesAreNotSupported = "extra.samples.are.not.supported";
     public static final String FdfStartxrefNotFound = "fdf.startxref.not.found";
     public static final String FilePosition0CrossReferenceEntryInThisXrefSubsection = "file.position.0.cross.reference.entry.in.this.xref.subsection";
@@ -98,6 +97,7 @@ public class PdfException extends Exception {
     public static final String InvalidOffsetForObject1 = "invalid.offset.for.object.1";
     public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String InvalidXrefStream = "invalid.xref.stream";
+    public static final String IoException = "io.exception";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
     public static final String ObjectCannotBeAddedToObjectStream = "object.cannot.be.added.to.object.stream";

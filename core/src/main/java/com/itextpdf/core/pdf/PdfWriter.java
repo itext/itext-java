@@ -113,20 +113,11 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     protected void flushObject(PdfArray array) {
-        array.release();
+        array.releaseContent();
     }
 
-    protected void flushObject(PdfDictionary dictionary) {
-        dictionary.release();
-    }
-
-    protected void flushObject(PdfStream stream) throws IOException {
-        flushObject((PdfDictionary) stream);
-        stream.releaseOutputStream();
-        if (stream instanceof PdfObjectStream) {
-            ((PdfObjectStream) stream).indexStream.close();
-            ((PdfObjectStream) stream).indexStream = null;
-        }
+    protected void flushObject(PdfDictionary dictionary) throws PdfException {
+        dictionary.releaseContent();
     }
 
     protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) throws PdfException {

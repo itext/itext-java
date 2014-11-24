@@ -12,7 +12,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Output stream associated with PDF stream.
      */
-    protected PdfOutputStream outputStream;
+    private PdfOutputStream outputStream;
     private long offset;
 
     public PdfStream(PdfDocument doc) {
@@ -66,7 +66,7 @@ public class PdfStream extends PdfDictionary {
      * Gets the decoded input stream associated with PdfStream.
      * User is responsible for closing returned stream.
      *
-     * @return
+     * @return InputStream
      * @throws IOException
      * @throws PdfException
      */
@@ -78,7 +78,7 @@ public class PdfStream extends PdfDictionary {
      * Reads and gets stream bytes.
      *
      * @param decoded true if to get decoded stream bytes, false if to leave it originally encoded.
-     * @return
+     * @return byte[]
      * @throws IOException
      * @throws PdfException
      */
@@ -94,7 +94,7 @@ public class PdfStream extends PdfDictionary {
      * User is responsible for closing returned stream.
      *
      * @param decoded true if to get decoded stream, false if to leave it originally encoded.
-     * @return
+     * @return InputStream
      * @throws IOException
      * @throws PdfException
      */
@@ -120,7 +120,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Gets decoded stream bytes.
      *
-     * @return
+     * @return byte[]
      * @throws PdfException
      */
     public byte[] getBytes() throws PdfException {
@@ -131,7 +131,7 @@ public class PdfStream extends PdfDictionary {
      * Gets stream bytes.
      *
      * @param decoded true if to get decoded stream bytes, otherwise false.
-     * @return
+     * @return byte[]
      * @throws PdfException
      */
     public byte[] getBytes(boolean decoded) throws PdfException {
@@ -185,8 +185,12 @@ public class PdfStream extends PdfDictionary {
     /**
      * Release content of PdfStream.
      */
-    protected void releaseOutputStream() throws IOException {
-        outputStream.close();
+    protected void releaseContent() throws PdfException {
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            throw new PdfException(PdfException.IoException, e);
+        }
         outputStream = null;
     }
 }

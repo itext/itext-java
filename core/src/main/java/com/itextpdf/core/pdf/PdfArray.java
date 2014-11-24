@@ -249,7 +249,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     /**
      * Release content of PdfArray.
      */
-    protected void release(){
+    protected void releaseContent(){
         list = null;
     }
 }

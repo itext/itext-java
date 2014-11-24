@@ -3,6 +3,8 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 
+import java.io.IOException;
+
 
 public class PdfObjectStream extends PdfStream {
 
@@ -35,9 +37,11 @@ public class PdfObjectStream extends PdfStream {
      * @throws PdfException
      */
     public void addObject(PdfObject object) throws PdfException {
-        if (size == maxObjStreamSize)
+        if (size == maxObjStreamSize) {
             //todo verify exception, possible size should be included in message
             throw new PdfException(PdfException.ObjectCannotBeAddedToObjectStream);
+        }
+        PdfOutputStream outputStream = getOutputStream();
         indexStream.writeInteger(object.getIndirectReference().getObjNr()).
                 writeSpace().
                 writeInteger(outputStream.getCurrentPos()).
@@ -63,4 +67,14 @@ public class PdfObjectStream extends PdfStream {
         return indexStream;
     }
 
+    @Override
+    protected void releaseContent() throws PdfException {
+        super.releaseContent();
+        try {
+            indexStream.close();
+        } catch (IOException e) {
+            throw new PdfException(PdfException.IoException, e);
+        }
+        indexStream = null;
+    }
 }
