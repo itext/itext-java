@@ -39,6 +39,7 @@ public class XMPMetadataTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new PdfReader(destinationFolder + filename);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         Assert.assertArrayEquals(readFile(sourceFolder + "emptyDocumentWithXmp.xml"), reader.getMetadata());
         Assert.assertNotNull(reader.getPageN(1));
         reader.close();
@@ -59,6 +60,7 @@ public class XMPMetadataTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new PdfReader(new ByteArrayInputStream(fos.toByteArray()));
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         Assert.assertArrayEquals("abc".getBytes(), reader.getMetadata());
         Assert.assertNotNull(reader.getPageN(1));
         reader.close();

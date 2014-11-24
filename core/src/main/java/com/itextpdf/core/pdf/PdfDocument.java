@@ -171,6 +171,15 @@ public class PdfDocument implements IEventDispatcher {
         setXmpMetadata(xmpMeta);
     }
 
+    public PdfObject getPdfObject(final int objNum) throws PdfException {
+        PdfIndirectReference reference = xref.get(objNum);
+        if (reference == null) {
+            return null;
+        } else {
+            return reference.getRefersTo();
+        }
+    }
+
     /**
      * Gets the page by page number.
      *
@@ -455,7 +464,7 @@ public class PdfDocument implements IEventDispatcher {
                 catalog.flush();
                 info.flush();
                 writer.flushWaitingObjects();
-                int startxref = xref.writeXrefTable(writer);
+                int startxref = xref.writeXrefTable(this);
                 writer.writeTrailer(startxref);
                 writer.close();
             }
@@ -501,7 +510,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @return list of indirect references.
      */
-    protected PdfXrefTable getXRef() {
+    protected PdfXrefTable getXref() {
         return xref;
     }
 

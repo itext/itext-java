@@ -10,15 +10,15 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.TreeSet;
 
-public class PdfXrefTable {
+class PdfXrefTable {
 
     private static final int InitialCapacity = 32;
     private static final int MaxGeneration = 65535;
 
     static private final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
     static private final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
-    static private final byte[] freeXRefEntry = OutputStream.getIsoBytes(" f \n");
-    static private final byte[] inUseXRefEntry = OutputStream.getIsoBytes(" n \n");
+    static private final byte[] freeXRefEntry = OutputStream.getIsoBytes("f \n");
+    static private final byte[] inUseXRefEntry = OutputStream.getIsoBytes("n \n");
 
     private PdfIndirectReference[] xref;
     private int count = 0;
@@ -36,6 +36,7 @@ public class PdfXrefTable {
             capacity = InitialCapacity;
         xref = new PdfIndirectReference[capacity];
         freeReferences = new LinkedList<Integer>();
+        add(new PdfIndirectReference(null, 0, MaxGeneration, 0));
     }
 
     public TreeSet<PdfIndirectReference> toSet() {
@@ -70,12 +71,12 @@ public class PdfXrefTable {
     }
 
     public void clear() {
-        for (int i = 0; i <= count; i++) {
+        for (int i = 1; i <= count; i++) {
             if (xref[i] != null && !xref[i].isInUse())
                 continue;
             xref[i] = null;
         }
-        count = 0;
+        count = 1;
     }
 
     public int size() {
@@ -122,7 +123,7 @@ public class PdfXrefTable {
             reference.refersTo.setIndirectReference(null);
             reference.refersTo = null;
         }
-        if (reference.getObjNr() != 0 && reference.getGenNr() < MaxGeneration)
+        if (reference.getGenNr() < MaxGeneration)
             freeReferences.add(reference.getObjNr());
     }
 
@@ -143,10 +144,44 @@ public class PdfXrefTable {
      * @throws java.io.IOException
      * @throws com.itextpdf.basics.PdfException
      */
-    protected int writeXrefTable(PdfWriter writer) throws IOException, PdfException {
-        // Increment generation number for all freed references.
-        for(Integer objNr: freeReferences){
-            xref[objNr].genNr++;
+    protected int writeXrefTable(PdfDocument doc) throws IOException, PdfException {
+        PdfWriter writer = doc.getWriter();
+
+        if (doc.getReader() != null) {
+            // Increment generation number for all freed references.
+            for (Integer objNr : freeReferences) {
+                xref[objNr].genNr++;
+            }
+        } else {
+            for (Integer objNr : freeReferences) {
+                xref[objNr] = null;
+            }
+        }
+        freeReferences.clear();
+
+        ArrayList<Integer> sections = new ArrayList<Integer>();
+        int first = 0;
+        int len = 1;
+        for (int i = 1; i < size(); i++) {
+            PdfIndirectReference reference = xref[i];
+            if (reference == null) {
+                if (len > 0) {
+                    sections.add(first);
+                    sections.add(len);
+                }
+                len = 0;
+            } else {
+                if (len > 0) {
+                    len++;
+                } else {
+                    first = i;
+                    len = 1;
+                }
+            }
+        }
+        if (len > 0) {
+            sections.add(first);
+            sections.add(len);
         }
 
         int startxref = writer.getCurrentPos();
@@ -154,7 +189,7 @@ public class PdfXrefTable {
         if (writer.isFullCompression()) {
             PdfStream stream = new PdfStream(pdfDocument);
             stream.put(PdfName.Type, PdfName.XRef);
-            stream.put(PdfName.Size, new PdfNumber(pdfDocument.getXRef().size()));
+            stream.put(PdfName.Size, new PdfNumber(pdfDocument.getXref().size()));
             stream.put(PdfName.W, new PdfArray(new ArrayList<PdfObject>() {{
                 add(new PdfNumber(1));
                 add(new PdfNumber(4));
@@ -162,41 +197,48 @@ public class PdfXrefTable {
             }}));
             stream.put(PdfName.Info, pdfDocument.getDocumentInfo().getPdfObject());
             stream.put(PdfName.Root, pdfDocument.getCatalog().getPdfObject());
+            PdfArray index = new PdfArray();
+            for (int k = 0; k < sections.size(); k++) {
+                index.add(new PdfNumber(sections.get(k).intValue()));
+            }
+            stream.put(PdfName.Index, index);
             stream.getOutputStream().write(0);
             stream.getOutputStream().write(intToBytes(0));
             stream.getOutputStream().write(shortToBytes(0xFFFF));
-            PdfXrefTable xref = pdfDocument.getXRef();
+            PdfXrefTable xref = pdfDocument.getXref();
             for (int i = 1; i < xref.size(); i++) {
-                PdfIndirectReference indirect = xref.get(i);
-                if (indirect.getObjectStreamNumber() == 0) {
+                PdfIndirectReference reference = xref.get(i);
+                if (reference == null)
+                    continue;
+                if (!reference.isInUse()) {
+                    stream.getOutputStream().write(0);
+                    //NOTE The object number of the next free object should be at this position due to spec.
+                    stream.getOutputStream().write(intToBytes(0));
+                    stream.getOutputStream().write(shortToBytes(reference.getGenNr()));
+                } else if (reference.getObjectStreamNumber() == 0) {
                     stream.getOutputStream().write(1);
-                    assert indirect.getOffset() < Integer.MAX_VALUE;
-                    stream.getOutputStream().write(intToBytes((int) indirect.getOffset()));
-                    stream.getOutputStream().write(shortToBytes(0));
+                    assert reference.getOffset() < Integer.MAX_VALUE;
+                    stream.getOutputStream().write(intToBytes((int) reference.getOffset()));
+                    stream.getOutputStream().write(shortToBytes(reference.getGenNr()));
                 } else {
                     stream.getOutputStream().write(2);
-                    stream.getOutputStream().write(intToBytes(indirect.getObjectStreamNumber()));
-                    stream.getOutputStream().write(shortToBytes(indirect.getIndex()));
+                    stream.getOutputStream().write(intToBytes(reference.getObjectStreamNumber()));
+                    stream.getOutputStream().write(shortToBytes(reference.getIndex()));
                 }
             }
             stream.flush();
         } else {
-            writer.writeString("xref\n").
-                    writeString("0 ").
-                    writeInteger(pdfDocument.getXRef().size()).
-                    writeString("\n0000000000 65535 f \n");
-            PdfXrefTable xref = pdfDocument.getXRef();
-            for (int i = 1; i < xref.size(); i++) {
-                PdfIndirectReference indirect = xref.get(i);
-                if (indirect == null) {
-                    writer.writeString(objectOffsetFormatter.format(0)).
-                            writeSpace().
-                            writeString(objectGenerationFormatter.format(0)).writeBytes(freeXRefEntry);
-                } else {
-                    writer.writeString(objectOffsetFormatter.format(indirect.getOffset())).
-                            writeSpace().
-                            writeString(objectGenerationFormatter.format(indirect.getGenNr()));
-                    if (indirect.getOffset() > 0) {
+            writer.writeString("xref\n");
+            PdfXrefTable xref = pdfDocument.getXref();
+            for (int k = 0; k < sections.size(); k += 2) {
+                first = sections.get(k);
+                len = sections.get(k + 1);
+                writer.writeInteger(first).writeSpace().writeInteger(len).writeByte((byte) '\n');
+                for (int i = first; i < first + len; i++) {
+                    PdfIndirectReference reference = xref.get(i);
+                    writer.writeString(objectOffsetFormatter.format(reference.getOffset())).writeSpace().
+                            writeString(objectGenerationFormatter.format(reference.getGenNr())).writeSpace();
+                    if (reference.getOffset() > 0) {
                         writer.writeBytes(inUseXRefEntry);
                     } else {
                         writer.writeBytes(freeXRefEntry);

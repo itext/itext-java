@@ -83,7 +83,7 @@ public class PdfPagesTest {
             pages[indexes[i] - 1] = page;
         }
 
-        int xrefSize = document.getXRef().size();
+        int xrefSize = document.getXref().size();
         PdfPage testPage = document.removePage(1000);
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
         document.addPage(1000, testPage);
@@ -147,7 +147,7 @@ public class PdfPagesTest {
             pdfDoc.addPage(1, page);
             pdfDoc.close();
         } catch (PdfException e) {
-            if (e.getMessage() == PdfException.FlushedPageCannotBeAddedOrInserted)
+            if (PdfException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
                 error = true;
         }
 
@@ -166,7 +166,7 @@ public class PdfPagesTest {
             pdfDoc.addPage(page);
             pdfDoc.close();
         } catch (PdfException e) {
-            if (e.getMessage() == PdfException.FlushedPageCannotBeAddedOrInserted)
+            if (PdfException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
                 error = true;
         }
 
@@ -175,6 +175,7 @@ public class PdfPagesTest {
 
     public void verifyPagesOrder(String filename) throws IOException {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
 
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
             com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);

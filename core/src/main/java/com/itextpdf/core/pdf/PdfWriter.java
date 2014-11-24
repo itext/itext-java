@@ -190,8 +190,8 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected void flushWaitingObjects() throws PdfException {
-        TreeSet<PdfIndirectReference> indirects = pdfDocument.getXRef().toSet();
-        pdfDocument.getXRef().clear();
+        TreeSet<PdfIndirectReference> indirects = pdfDocument.getXref().toSet();
+        pdfDocument.getXref().clear();
         for (PdfIndirectReference indirectReference : indirects) {
             PdfObject object = indirectReference.getRefersTo(false);
             if (object != null && !object.equals(objectStream)) {
@@ -202,7 +202,7 @@ public class PdfWriter extends PdfOutputStream {
             objectStream.flush();
             objectStream = null;
         }
-        pdfDocument.getXRef().addAll(indirects);
+        pdfDocument.getXref().addAll(indirects);
     }
 
     /**
@@ -213,14 +213,14 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void writeTrailer(int startxref) throws IOException, PdfException {
         if (!fullCompression) {
-            pdfDocument.getTrailer().setSize(pdfDocument.getXRef().size());
+            pdfDocument.getTrailer().setSize(pdfDocument.getXref().size());
             writeString("trailer\n");
             write(pdfDocument.getTrailer().getPdfObject());
         }
         writeString("\nstartxref\n").
                 writeInteger(startxref).
                 writeString("\n%%EOF\n");
-        pdfDocument.getXRef().clear();
+        pdfDocument.getXref().clear();
     }
 
     /**

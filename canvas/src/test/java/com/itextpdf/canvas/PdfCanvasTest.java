@@ -6,9 +6,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.testutils.CompareTool;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
@@ -53,6 +51,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvas.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -129,6 +128,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -213,6 +213,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -242,6 +243,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithPageFlush.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -271,6 +273,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithFullCompression.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -301,6 +304,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -343,6 +347,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -387,6 +392,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -431,6 +437,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -475,6 +482,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + file);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -517,6 +525,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocumentWithFullCompression.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -561,6 +570,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -605,6 +615,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -649,6 +660,7 @@ public class PdfCanvasTest {
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
         Assert.assertEquals(author, info.get("Author"));
         Assert.assertEquals(creator, info.get("Creator"));
@@ -689,6 +701,7 @@ public class PdfCanvasTest {
         pdfDoc2.close();
 
         PdfReader reader = new PdfReader(destinationFolder + "copyPages1_2.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertNotNull(page.get(PdfName.PARENT));
         reader.close();
@@ -725,6 +738,7 @@ public class PdfCanvasTest {
         pdfDoc2.close();
 
         PdfReader reader = new PdfReader(destinationFolder + "copyPages2_2.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertNotNull(page.get(PdfName.PARENT));
         reader.close();
@@ -775,8 +789,10 @@ public class PdfCanvasTest {
 
         CompareTool cmpTool = new CompareTool();
         PdfReader reader1 = new PdfReader(destinationFolder + "copyPages3_1.pdf");
+        Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
         PdfDictionary p1 = reader1.getPageN(1);
         PdfReader reader2 = new PdfReader(destinationFolder + "copyPages3_2.pdf");
+        Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
         for (int i = 0; i < 10; i++) {
             PdfDictionary p2 = reader2.getPageN(i + 1);
             Assert.assertTrue(cmpTool.compareDictionaries(p1, p2));
@@ -817,6 +833,7 @@ public class PdfCanvasTest {
 
         CompareTool cmpTool = new CompareTool();
         PdfReader reader1 = new PdfReader(destinationFolder + "copyPages4_1.pdf");
+        Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
 
         for (int i = 0; i < 5; i++) {
             PdfDictionary page1 = reader1.getPageN(i + 1);
@@ -865,7 +882,9 @@ public class PdfCanvasTest {
         CompareTool cmpTool = new CompareTool();
         for (int i = 0; i < 3; i++) {
             PdfReader reader1 = new PdfReader(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
+            Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
             PdfReader reader2 = new PdfReader(destinationFolder + "copyPages5_4.pdf");
+            Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
             PdfDictionary page1 = reader1.getPageN(1);
             PdfDictionary page2 = reader2.getPageN(i + 1);
             Assert.assertTrue(cmpTool.compareDictionaries(page1, page2));
@@ -911,8 +930,11 @@ public class PdfCanvasTest {
         CompareTool cmpTool = new CompareTool();
         for (int i = 0; i < 3; i++) {
             PdfReader reader1 = new PdfReader(destinationFolder + "copyPages6_1.pdf");
+            Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
             PdfReader reader2 = new PdfReader(destinationFolder + "copyPages6_2.pdf");
+            Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
             PdfReader reader3 = new PdfReader(destinationFolder + "copyPages6_3.pdf");
+            Assert.assertEquals("Rebuilt", false, reader3.isRebuilt());
             Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(1), reader1.getPageN(2)));
             Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(2), reader2.getPageN(1)));
             Assert.assertTrue(cmpTool.compareDictionaries(reader2.getPageN(1), reader3.getPageN(1)));

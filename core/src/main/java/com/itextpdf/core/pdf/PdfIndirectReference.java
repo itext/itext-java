@@ -166,6 +166,10 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return this;
     }
 
+    protected void releaseObject() {
+        refersTo = null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -229,7 +233,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     // NOTE After this operation this indirect reference could be reused for new indirect objects.
     protected void setFree() {
-        getDocument().getXRef().freeReference(this);
+        getDocument().getXref().freeReference(this);
     }
 
     @Override

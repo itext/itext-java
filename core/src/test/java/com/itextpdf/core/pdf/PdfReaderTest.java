@@ -48,22 +48,22 @@ public class PdfReaderTest {
         Assert.assertEquals(author, pdfDoc.getInfo().getAuthor());
         Assert.assertEquals(creator, pdfDoc.getInfo().getCreator());
         Assert.assertEquals(title, pdfDoc.getInfo().getTitle());
-        PdfObject object = pdfDoc.getXRef().get(1).getRefersTo();
+        PdfObject object = pdfDoc.getPdfObject(1);
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
-        object = pdfDoc.getXRef().get(2).getRefersTo();
+        object = pdfDoc.getPdfObject(2);
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
-        object = pdfDoc.getXRef().get(3).getRefersTo();
+        object = pdfDoc.getPdfObject(3);
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
-        object = pdfDoc.getXRef().get(4).getRefersTo();
+        object = pdfDoc.getPdfObject(4);
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.Stream, pdfDoc.getXRef().get(5).getRefersTo().getType());
+        Assert.assertEquals(PdfObject.Stream, pdfDoc.getPdfObject(5).getType());
 
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         pdfDoc.close();
@@ -75,22 +75,22 @@ public class PdfReaderTest {
         com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new FileInputStream(filename));
         PdfDocument pdfDoc = new PdfDocument(reader);
 
-        PdfObject object = pdfDoc.getXRef().get(1).getRefersTo();
+        PdfObject object = pdfDoc.getPdfObject(1);
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
-        object = pdfDoc.getXRef().get(2).getRefersTo();
+        object = pdfDoc.getPdfObject(2);
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
-        object = pdfDoc.getXRef().get(3).getRefersTo();
+        object = pdfDoc.getPdfObject(3);
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
-        object = pdfDoc.getXRef().get(4).getRefersTo();
+        object = pdfDoc.getPdfObject(4);
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        object = pdfDoc.getXRef().get(5).getRefersTo();
+        object = pdfDoc.getPdfObject(5);
         Assert.assertEquals(PdfObject.Stream, object.getType());
         String content = "100 100 100 100 re\nf\n";
         Assert.assertArrayEquals(OutputStream.getIsoBytes(content), ((PdfStream)object).getInputStreamBytes());
@@ -114,24 +114,24 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         document = new PdfDocument(reader);
 
-        PdfObject object = document.getXRef().get(1).getRefersTo();
+        PdfObject object = document.getXref().get(1).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
-        object = document.getXRef().get(2).getRefersTo();
+        object = document.getXref().get(2).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
-        object = document.getXRef().get(3).getRefersTo();
+        object = document.getXref().get(3).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
-        object = document.getXRef().get(4).getRefersTo();
+        object = document.getXref().get(4).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
+        Assert.assertEquals(PdfObject.Stream, document.getXref().get(5).getRefersTo().getType());
 
-        object = document.getXRef().get(6).getRefersTo();
+        object = document.getXref().get(6).getRefersTo();
         Assert.assertEquals(PdfObject.Boolean, object.getType());
         Assert.assertNotNull(object.getIndirectReference());
 
@@ -162,25 +162,25 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         document = new PdfDocument(reader);
 
-        object = document.getXRef().get(1).getRefersTo();
+        object = document.getXref().get(1).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
-        object = document.getXRef().get(2).getRefersTo();
+        object = document.getXref().get(2).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
-        object = document.getXRef().get(3).getRefersTo();
+        object = document.getXref().get(3).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
-        object = document.getXRef().get(4).getRefersTo();
+        object = document.getXref().get(4).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
+        Assert.assertEquals(PdfObject.Stream, document.getXref().get(5).getRefersTo().getType());
 
-        for (int i = 6; i < document.getXRef().size(); i++)
-            Assert.assertEquals(PdfObject.Dictionary, document.getXRef().get(i).getRefersTo().getType());
+        for (int i = 6; i < document.getXref().size(); i++)
+            Assert.assertEquals(PdfObject.Dictionary, document.getXref().get(i).getRefersTo().getType());
 
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
@@ -208,28 +208,28 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         document = new PdfDocument(reader);
 
-        object = document.getXRef().get(1).getRefersTo();
+        object = document.getXref().get(1).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
-        object = document.getXRef().get(2).getRefersTo();
+        object = document.getXref().get(2).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
-        object = document.getXRef().get(3).getRefersTo();
+        object = document.getXref().get(3).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
-        object = document.getXRef().get(4).getRefersTo();
+        object = document.getXref().get(4).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
+        Assert.assertEquals(PdfObject.Stream, document.getXref().get(5).getRefersTo().getType());
 
         for (int i = 6; i < 6+32; i++)
-            Assert.assertEquals(PdfObject.Dictionary, document.getXRef().get(6).getRefersTo().getType());
+            Assert.assertEquals(PdfObject.Dictionary, document.getXref().get(6).getRefersTo().getType());
 
-        for (int i = 6+32; i < document.getXRef().size(); i++)
-            Assert.assertEquals(PdfObject.IndirectReference, document.getXRef().get(i).getRefersTo().getType());
+        for (int i = 6+32; i < document.getXref().size(); i++)
+            Assert.assertEquals(PdfObject.IndirectReference, document.getXref().get(i).getRefersTo().getType());
 
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
@@ -243,26 +243,26 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
 
-        PdfObject object = document.getXRef().get(1).getRefersTo();
+        PdfObject object = document.getXref().get(1).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
-        object = document.getXRef().get(2).getRefersTo();
+        object = document.getXref().get(2).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
-        object = document.getXRef().get(3).getRefersTo();
+        object = document.getXref().get(3).getRefersTo();
         Assert.assertTrue(object.getType() == PdfObject.Dictionary);
 
-        object = document.getXRef().get(4).getRefersTo();
+        object = document.getXref().get(4).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
+        Assert.assertEquals(PdfObject.Stream, document.getXref().get(5).getRefersTo().getType());
 
-        Assert.assertEquals(PdfObject.Dictionary, document.getXRef().get(6).getRefersTo().getType());
-        for (int i = 7; i < document.getXRef().size(); i++)
-            Assert.assertEquals(PdfObject.IndirectReference, document.getXRef().get(i).getRefersTo().getType());
+        Assert.assertEquals(PdfObject.Dictionary, document.getXref().get(6).getRefersTo().getType());
+        for (int i = 7; i < document.getXref().size(); i++)
+            Assert.assertEquals(PdfObject.IndirectReference, document.getXref().get(i).getRefersTo().getType());
 
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
@@ -276,25 +276,25 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
 
-        PdfObject object = document.getXRef().get(1).getRefersTo();
+        PdfObject object = document.getXref().get(1).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
 
-        object = document.getXRef().get(2).getRefersTo();
+        object = document.getXref().get(2).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Pages));
 
-        object = document.getXRef().get(3).getRefersTo();
+        object = document.getXref().get(3).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
 
-        object = document.getXRef().get(4).getRefersTo();
+        object = document.getXref().get(4).getRefersTo();
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Page));
 
-        Assert.assertEquals(PdfObject.Stream, document.getXRef().get(5).getRefersTo().getType());
-        Assert.assertEquals(PdfObject.Dictionary, document.getXRef().get(6).getRefersTo().getType());
-        for (int i = 7; i < document.getXRef().size(); i++)
-            Assert.assertNull(document.getXRef().get(i).getRefersTo());
+        Assert.assertEquals(PdfObject.Stream, document.getXref().get(5).getRefersTo().getType());
+        Assert.assertEquals(PdfObject.Dictionary, document.getXref().get(6).getRefersTo().getType());
+        for (int i = 7; i < document.getXref().size(); i++)
+            Assert.assertNull(document.getXref().get(i).getRefersTo());
 
         Assert.assertFalse("No need in rebuildXref()", reader.rebuildXref);
         reader.close();
@@ -310,7 +310,7 @@ public class PdfReaderTest {
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(1000, pageCount);
 
-        int xrefSize = document.getXRef().size();
+        int xrefSize = document.getXref().size();
         PdfPage testPage = document.removePage(1000);
 
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);

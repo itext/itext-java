@@ -192,6 +192,13 @@ abstract public class PdfObject {
             indirectReference.setState(PdfIndirectReference.Dirty);
     }
 
+    public void release() {
+        if (indirectReference != null && getReader() != null) {
+            indirectReference.releaseObject();
+        }
+        //TODO log reasonless call of method
+    }
+
     /**
      * Creates new instance of object.
      *

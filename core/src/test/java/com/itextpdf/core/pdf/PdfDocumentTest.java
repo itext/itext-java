@@ -42,6 +42,7 @@ public class PdfDocumentTest {
         pdfDoc2.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "stamping1_2.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         com.itextpdf.text.pdf.PdfDictionary trailer = reader.getTrailer();
         com.itextpdf.text.pdf.PdfDictionary info = trailer.getAsDict(com.itextpdf.text.pdf.PdfName.INFO);
         com.itextpdf.text.pdf.PdfString creator = info.getAsString(com.itextpdf.text.pdf.PdfName.CREATOR);
@@ -72,6 +73,37 @@ public class PdfDocumentTest {
         pdfDoc2.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "stamping2_2.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        byte[] bytes = reader.getPageContent(1);
+        Assert.assertEquals("%page 1\n", new String(bytes));
+        bytes = reader.getPageContent(2);
+        Assert.assertEquals("%page 2\n", new String(bytes));
+        reader.close();
+    }
+
+    @Test
+    public void stamping3() throws IOException, PdfException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "stamping3_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfPage page1 = pdfDoc1.addNewPage();
+        page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 1\n"));
+        page1.flush();
+        pdfDoc1.close();
+
+        FileInputStream fis2 = new FileInputStream(destinationFolder + "stamping3_1.pdf");
+        PdfReader reader2 = new PdfReader(fis2);
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "stamping3_2.pdf");
+        PdfWriter writer2 = new PdfWriter(fos2);
+        writer2.setFullCompression(true);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+        PdfPage page2 = pdfDoc2.addNewPage();
+        page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 2\n"));
+        page2.flush();
+        pdfDoc2.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "stamping3_2.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         byte[] bytes = reader.getPageContent(1);
         Assert.assertEquals("%page 1\n", new String(bytes));
         bytes = reader.getPageContent(2);
@@ -105,6 +137,7 @@ public class PdfDocumentTest {
         pdfDoc1.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copying1_2.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         com.itextpdf.text.pdf.PdfDictionary trailer = reader.getTrailer();
         com.itextpdf.text.pdf.PdfDictionary info = trailer.getAsDict(com.itextpdf.text.pdf.PdfName.INFO);
         com.itextpdf.text.pdf.PdfName b = info.getAsName(new com.itextpdf.text.pdf.PdfName("a"));
@@ -142,6 +175,7 @@ public class PdfDocumentTest {
         pdfDoc1.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copying2_2.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         for (int i = 0; i < 5; i++) {
             byte[] bytes = reader.getPageContent(i+1);
             Assert.assertEquals("%page " + String.valueOf(i * 2 + 1) + "\n", new String(bytes));

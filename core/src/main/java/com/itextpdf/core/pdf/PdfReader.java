@@ -105,7 +105,7 @@ public class PdfReader {
                     tokens.seek(address[k]);
                     obj = readObject(false);
                 }
-                PdfIndirectReference reference = pdfDocument.getXRef().get(objNumber[k]);
+                PdfIndirectReference reference = pdfDocument.getXref().get(objNumber[k]);
                 // Check if this object has no incremental updates (e.g. no append mode)
                 if (reference.getObjectStreamNumber() == objectStreamNumber) {
                     reference.setRefersTo(obj);
@@ -162,7 +162,7 @@ public class PdfReader {
                 return readPdfName(readAsDirect);
             case Ref:
                 int num = tokens.getObjNr();
-                PdfXrefTable table = pdfDocument.getXRef();
+                PdfXrefTable table = pdfDocument.getXref();
                 PdfIndirectReference reference = table.get(num);
                 if (reference != null) {
                     if (reference.getGenNr() != tokens.getGenNr()) {
@@ -263,7 +263,7 @@ public class PdfReader {
         } catch (Exception e) {
         }
         // clear xref because of possible issues at reading xref stream.
-        pdfDocument.getXRef().clear();
+        pdfDocument.getXref().clear();
 
         tokens.seek(startxref);
         trailer = readXrefSection();
@@ -286,7 +286,7 @@ public class PdfReader {
         tokens.nextValidToken();
         if (!tokens.tokenValueEqualsTo(PdfTokeniser.Xref))
             tokens.throwError(PdfException.XrefSubsectionNotFound);
-        PdfXrefTable xref = pdfDocument.getXRef();
+        PdfXrefTable xref = pdfDocument.getXref();
         int end = 0;
         while (true) {
             tokens.nextValidToken();
@@ -320,9 +320,10 @@ public class PdfReader {
                         xref.add(reference);
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokeniser.F)) {
-                    reference.setFree();
-                    if (xref.get(num) == null)
+                    if (xref.get(num) == null) {
+                        reference.setFree();
                         xref.add(reference);
+                    }
                 } else
                     tokens.throwError(PdfException.InvalidCrossReferenceEntryInThisXrefSubsection);
             }
@@ -358,7 +359,7 @@ public class PdfReader {
             return false;
         if (!tokens.nextToken() || !tokens.tokenValueEqualsTo(PdfTokeniser.Obj))
             return false;
-        PdfXrefTable xref = pdfDocument.getXRef();
+        PdfXrefTable xref = pdfDocument.getXref();
         PdfObject object = readObject(false);
         PdfStream xrefStream;
         if (object.getType() == PdfObject.Stream) {
@@ -444,7 +445,7 @@ public class PdfReader {
     }
 
     protected void fixXref() throws IOException, PdfException {
-        PdfXrefTable xref = pdfDocument.getXRef();
+        PdfXrefTable xref = pdfDocument.getXref();
         tokens.seek(0);
         ByteBuffer buffer = new ByteBuffer(24);
         PdfTokeniser lineTokeniser = new PdfTokeniser(new RandomAccessFileOrArray(new PdfTokeniser.ReusableRandomAccessSource(buffer)));
@@ -469,7 +470,7 @@ public class PdfReader {
 
     protected void rebuildXref() throws IOException, PdfException {
         rebuildXref = true;
-        PdfXrefTable xref = pdfDocument.getXRef();
+        PdfXrefTable xref = pdfDocument.getXref();
         xref.setXRefStm(false);
         xref.clear();
         tokens.seek(0);
@@ -567,7 +568,7 @@ public class PdfReader {
             return reference.refersTo;
         try {
             if (reference.getObjectStreamNumber() > 0) {
-                PdfStream objectStream = (PdfStream) pdfDocument.getXRef().
+                PdfStream objectStream = (PdfStream) pdfDocument.getXref().
                         get(reference.getObjectStreamNumber()).getRefersTo(false);
                 readObjectStream(objectStream);
                 PdfObject object = reference.refersTo;
