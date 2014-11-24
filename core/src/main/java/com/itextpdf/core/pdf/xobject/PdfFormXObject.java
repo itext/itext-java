@@ -44,4 +44,8 @@ public class PdfFormXObject extends PdfXObject {
         return resources;
     }
 
+    @Override
+    public PdfFormXObject copy(PdfDocument document) throws PdfException {
+        return new PdfFormXObject((PdfStream)getPdfObject().copy(document), document);
+    }
 }

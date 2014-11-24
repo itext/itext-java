@@ -55,6 +55,16 @@ public class PdfImageXObject extends PdfXObject {
         super.flush();
     }
 
+    @Override
+    public PdfImageXObject copy(PdfDocument document) throws PdfException {
+        PdfImageXObject image = new PdfImageXObject((PdfStream) getPdfObject().copy(document), document);
+        image.width = width;
+        image.height = height;
+        image.mask = mask;
+        image.softMask = softMask;
+        return image;
+    }
+
     static protected PdfStream createPdfStream(PdfDocument document, Image image, PdfImageXObject imageMask) throws PdfException {
         PdfStream stream = new PdfStream(document);
         stream.put(PdfName.Type, PdfName.XObject);
@@ -77,11 +87,7 @@ public class PdfImageXObject extends PdfXObject {
         }
 
         if (image.isMask() && image.isInverted())
-            stream.put(PdfName.Decode, new PdfArray(new ArrayList<PdfObject>() {{
-                add(new PdfNumber(1));
-                add(new PdfNumber(0));
-            }}));
-
+            stream.put(PdfName.Decode, new PdfArray(new float[] {1, 0}));
         if (image.isInterpolation())
             stream.put(PdfName.Interpolate, PdfBoolean.PdfTrue);
 
@@ -129,37 +135,18 @@ public class PdfImageXObject extends PdfXObject {
                         case 1:
                             stream.put(PdfName.ColorSpace, PdfName.DeviceGray);
                             if (image.isInverted())
-                                stream.put(PdfName.Decode, new PdfArray(new ArrayList<PdfObject>() {{
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                }}));
+                                stream.put(PdfName.Decode, new PdfArray(new float[] {1, 0}));
                             break;
                         case 3:
                             stream.put(PdfName.ColorSpace, PdfName.DeviceRGB);
                             if (image.isInverted())
-                                stream.put(PdfName.Decode, new PdfArray(new ArrayList<PdfObject>() {{
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                }}));
+                                stream.put(PdfName.Decode, new PdfArray(new float[]{1, 0, 1, 0, 1, 0}));
                             break;
                         case 4:
                         default:
                             stream.put(PdfName.ColorSpace, PdfName.DeviceCMYK);
                             if (image.isInverted())
-                                stream.put(PdfName.Decode, new PdfArray(new ArrayList<PdfObject>() {{
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                }}));
+                                stream.put(PdfName.Decode, new PdfArray(new float[]{1, 0, 1, 0, 1, 0, 1, 0}));
                     }
                     Image.IAdditional additional = image.getAdditional();
                     if (additional instanceof Image.Indexed) {
@@ -209,16 +196,7 @@ public class PdfImageXObject extends PdfXObject {
                         default:
                             stream.put(PdfName.ColorSpace, PdfName.DeviceCMYK);
                             if (image.isInverted()) {
-                                stream.put(PdfName.Decode, new PdfArray(new ArrayList<PdfObject>() {{
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                    add(new PdfNumber(1));
-                                    add(new PdfNumber(0));
-                                }}));
+                                stream.put(PdfName.Decode, new PdfArray(new float[]{1, 0, 1, 0, 1, 0, 1, 0}));
                             }
                     }
                     stream.put(PdfName.BitsPerComponent, new PdfNumber(8));

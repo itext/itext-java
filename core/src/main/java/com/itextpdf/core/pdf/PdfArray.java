@@ -28,6 +28,20 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
             add(element);
     }
 
+    public PdfArray(float[] numbers) {
+        list = new ArrayList<PdfObject>(numbers.length);
+        for (float f : numbers) {
+            list.add(new PdfNumber(f));
+        }
+    }
+
+    public PdfArray(int[] numbers) {
+        list = new ArrayList<PdfObject>(numbers.length);
+        for (float i : numbers) {
+            list.add(new PdfNumber(i));
+        }
+    }
+
     @Override
     public int size() {
         return list.size();
