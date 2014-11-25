@@ -1,5 +1,6 @@
 package com.itextpdf.core.fonts;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
@@ -13,11 +14,11 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfFont(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
-        pdfObject.put(PdfName.Type, PdfName.Font);
     }
 
     public PdfFont(PdfDocument pdfDocument) {
         this(new PdfDictionary(), pdfDocument);
+        pdfObject.put(PdfName.Type, PdfName.Font);
     }
 
     /**
@@ -31,4 +32,8 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
+    @Override
+    public PdfFont copy(PdfDocument document) throws PdfException {
+        return new PdfFont((PdfDictionary)getPdfObject().copy(document), document);
+    }
 }

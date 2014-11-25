@@ -92,6 +92,21 @@ public class PdfDictionary extends PdfObject {
         return a == null ? null : a.toRectangle();
     }
 
+    public Float getAsFloat(PdfName key) throws PdfException {
+        PdfNumber number = getAsNumber(key);
+        return number == null ? null : number.getFloatValue();
+    }
+
+    public Integer getAsInt(PdfName key) throws PdfException {
+        PdfNumber number = getAsNumber(key);
+        return number == null ? null : number.getIntValue();
+    }
+
+    public Boolean getAsBool(PdfName key) throws PdfException {
+        PdfBoolean b = getAsBoolean(key);
+        return b == null ? null : b.getValue();
+    }
+
     public PdfObject put(PdfName key, PdfObject value) {
         return map.put(key, value);
     }

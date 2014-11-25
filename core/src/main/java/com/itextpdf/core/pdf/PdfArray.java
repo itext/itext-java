@@ -234,6 +234,21 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         return a == null ? null : a.toRectangle();
     }
 
+    public Float getAsFloat(int index) throws PdfException {
+        PdfNumber number = getAsNumber(index);
+        return number == null ? null : number.getFloatValue();
+    }
+
+    public Integer getAsInt(int index) throws PdfException {
+        PdfNumber number = getAsNumber(index);
+        return number == null ? null : number.getIntValue();
+    }
+
+    public Boolean getAsBool(int index) throws PdfException {
+        PdfBoolean b = getAsBoolean(index);
+        return b == null ? null : b.getValue();
+    }
+
     public Rectangle toRectangle() throws PdfException {
         try {
             float x1 = getAsNumber(0).getFloatValue();

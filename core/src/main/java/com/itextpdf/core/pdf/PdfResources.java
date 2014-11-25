@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.fonts.PdfFont;
+import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
@@ -13,6 +14,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private static final String F = "F";
     private static final String Im = "Im";
     private static final String Fm = "Fm";
+    private static final String Gs = "Gs";
 
     private HashMap<PdfObjectWrapper, PdfName> resources = new LinkedHashMap<PdfObjectWrapper, PdfName>();
 
@@ -22,6 +24,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private ResourceNumber fontNumber = new ResourceNumber();
     private ResourceNumber imageNumber = new ResourceNumber();
     private ResourceNumber formNumber = new ResourceNumber();
+    private ResourceNumber egsNumber = new ResourceNumber();
 
     public PdfResources(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -42,6 +45,10 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfName addForm(PdfFormXObject form) throws PdfException {
         return addResource(form, PdfName.XObject, Fm, formNumber);
+    }
+
+    public PdfName addExtGState(PdfExtGState extGState) throws PdfException {
+        return addResource(extGState, PdfName.ExtGState, Gs, egsNumber);
     }
 
     public PdfName getResourceName(PdfObjectWrapper resource) {

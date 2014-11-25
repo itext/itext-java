@@ -7,6 +7,7 @@ import com.itextpdf.core.fonts.PdfEncodings;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
@@ -44,12 +45,13 @@ public class PdfCanvas {
     static final private byte[] s = OutputStream.getIsoBytes("s\n");
     static final private byte[] Do = OutputStream.getIsoBytes(" Do\n");
     static final private byte[] cm = OutputStream.getIsoBytes(" cm\n");
+    static final private byte[] gs = OutputStream.getIsoBytes("gs\n");
 
     protected Stack<PdfGraphicsState> gsStack = new Stack<PdfGraphicsState>();
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
     protected PdfStream contentStream;
     protected PdfResources resources;
-    protected PdfDocument pdfDocument;
+    protected PdfDocument document;
 
     /**
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
@@ -59,7 +61,7 @@ public class PdfCanvas {
     public PdfCanvas(PdfStream contentStream, PdfResources resources) {
         this.contentStream = contentStream;
         this.resources = resources;
-        pdfDocument = contentStream.getDocument();
+        document = contentStream.getDocument();
     }
 
     /**
@@ -87,6 +89,14 @@ public class PdfCanvas {
 
     public PdfResources getResources() {
         return resources;
+    }
+
+    public void release() {
+        gsStack = null;
+        currentGs = null;
+        contentStream = null;
+        resources = null;
+        document = null;
     }
 
     /**
@@ -161,10 +171,11 @@ public class PdfCanvas {
     public PdfCanvas setFontAndSize(PdfFont font, float size) throws PdfException {
         if (size < 0.0001f && size > -0.0001f)
             throw new PdfException(PdfException.FontSizeTooSmall, size);
-        currentGs.size = size;
-        currentGs.fontName = resources.addFont(font);
+        currentGs.fontSize = size;
+        PdfName fontName = resources.addFont(font);
+        currentGs.font = font;
         contentStream.getOutputStream()
-                .write(currentGs.fontName)
+                .write(fontName)
                 .writeSpace()
                 .writeFloat(size)
                 .writeBytes(Tf);
@@ -704,6 +715,14 @@ public class PdfCanvas {
         return addForm(form, 1, 0, 0, 1, x, y);
     }
 
+    public PdfCanvas setExtGState(PdfExtGState extGState) throws PdfException {
+        if (!extGState.isFlushed())
+            currentGs.updateFromExtGState(extGState);
+        PdfName name = resources.addExtGState(extGState);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(gs);
+        return this;
+    }
+
     /**
      * A helper to insert into the content stream the <code>text</code>
      * converted to bytes according to the font's encoding.
@@ -711,7 +730,7 @@ public class PdfCanvas {
      * @param text the text to write.
      */
     private void showText2(final String text) throws PdfException {
-        if (currentGs.fontName == null)
+        if (currentGs.font == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = PdfEncodings.convertToBytes(text, PdfEncodings.WINANSI);
         escapeString(b);
