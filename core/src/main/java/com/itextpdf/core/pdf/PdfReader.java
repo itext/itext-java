@@ -18,7 +18,9 @@ public class PdfReader {
     protected PdfDictionary trailer;
     protected PdfDocument pdfDocument;
 
-    protected boolean rebuildXref = false;
+    protected boolean rebuiltXref = false;
+    protected boolean hybridXref = false;
+    protected boolean fixedXref = false;
 
     private static final String endstream1 = "endstream";
     private static final String endstream2 = "\nendstream";
@@ -35,7 +37,8 @@ public class PdfReader {
      * Constructs a new PdfReader.  This is the master constructor.
      *
      * @param byteSource source of bytes for the reader
-     *                   TODO param closeSourceOnConstructorError if true, the byteSource will be closed if there is an error during construction of this reader
+     * TODO @param closeSourceOnConstructorError if true,
+     * TODO the byteSource will be closed if there is an error during construction of this reader
      */
     public PdfReader(RandomAccessSource byteSource) throws IOException, PdfException {
         tokens = getOffsetTokeniser(byteSource);
@@ -51,6 +54,31 @@ public class PdfReader {
 
     public void setCloseStream(boolean closeStream) {
         tokens.setCloseStream(closeStream);
+    }
+
+    /**
+     * If any exception generated while reading XRef section, PdfReader will try to rebuild it.
+     * @return true, if PdfReader rebuilt XRef section.
+     */
+    public boolean isRebuiltXref() {
+        return rebuiltXref;
+    }
+
+    /**
+     * Some documents contain hybrid XRef, for more information see "7.5.8.4 Compatibility with Applications
+     * That Do Not Support Compressed Reference Streams" in PDF 32000-1:2008 spec.
+     * @return true, if the document has hybrid XRef.
+     */
+    public boolean isHybridXref() {
+        return hybridXref;
+    }
+
+    /**
+     * If any exception generated while reading PdfObject, PdfReader will try to fix offsets of all objects.
+     * @return true, if PdfReader fixed offsets of PdfObjects.
+     */
+    public boolean isFixedXref() {
+        return fixedXref;
     }
 
     /**
@@ -339,6 +367,7 @@ public class PdfReader {
             int loc = ((PdfNumber) xrs).getIntValue();
             try {
                 readXrefStream(loc);
+                hybridXref = true;
             } catch (IOException e) {
                 xref.clear();
                 throw e;
@@ -445,6 +474,7 @@ public class PdfReader {
     }
 
     protected void fixXref() throws IOException, PdfException {
+        fixedXref = true;
         PdfXrefTable xref = pdfDocument.getXref();
         tokens.seek(0);
         ByteBuffer buffer = new ByteBuffer(24);
@@ -469,7 +499,8 @@ public class PdfReader {
     }
 
     protected void rebuildXref() throws IOException, PdfException {
-        rebuildXref = true;
+        hybridXref = false;
+        rebuiltXref = true;
         PdfXrefTable xref = pdfDocument.getXref();
         xref.setXRefStm(false);
         xref.clear();
