@@ -48,6 +48,7 @@ public class PdfCanvasTest {
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
+        canvas.release();
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvas.pdf");
@@ -124,7 +125,7 @@ public class PdfCanvasTest {
                 .curveTo(500, 570, 450, 450, 550, 550)
                 .stroke()
                 .restoreState();
-
+        canvas.release();
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
@@ -209,7 +210,7 @@ public class PdfCanvasTest {
                 .showText("Hello ZapfDingbats!")
                 .endText()
                 .restoreState();
-
+        canvas.release();
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
@@ -239,6 +240,7 @@ public class PdfCanvasTest {
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
+        canvas.release();
         page1.flush();
         pdfDoc.close();
 
@@ -270,6 +272,7 @@ public class PdfCanvasTest {
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
+        canvas.release();
         pdfDoc.close();
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithFullCompression.pdf");
@@ -300,6 +303,7 @@ public class PdfCanvasTest {
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
+        canvas.release();
         page1.flush();
         pdfDoc.close();
 
@@ -341,7 +345,7 @@ public class PdfCanvasTest {
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
-
+            canvas.release();
             page.flush();
         }
         pdfDoc.close();
@@ -386,7 +390,7 @@ public class PdfCanvasTest {
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
-
+            canvas.release();
             page.flush();
         }
         pdfDoc.close();
@@ -431,7 +435,7 @@ public class PdfCanvasTest {
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
-
+            canvas.release();
             page.flush();
         }
         pdfDoc.close();
@@ -476,7 +480,7 @@ public class PdfCanvasTest {
                     .endText();
 
             canvas.rectangle(100, 100, 100, 100).fill();
-
+            canvas.release();
             page.flush();
         }
         pdfDoc.close();
@@ -520,6 +524,7 @@ public class PdfCanvasTest {
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
+            canvas.release();
             page.flush();
         }
         pdfDoc.close();
@@ -565,6 +570,7 @@ public class PdfCanvasTest {
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
+            canvas.release();
             page.flush();
         }
         pdfDoc.close();
@@ -610,6 +616,7 @@ public class PdfCanvasTest {
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
+            canvas.release();
             page.flush();
         }
         pdfDoc.close();
@@ -655,6 +662,7 @@ public class PdfCanvasTest {
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
+            canvas.release();
             page.flush();
         }
         pdfDoc.close();
@@ -687,6 +695,7 @@ public class PdfCanvasTest {
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
+        canvas.release();
 
         FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages1_2.pdf");
         PdfWriter writer2 = new PdfWriter(fos2);
@@ -724,6 +733,7 @@ public class PdfCanvasTest {
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
+            canvas.release();
         }
 
         FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages2_2.pdf");
@@ -772,6 +782,7 @@ public class PdfCanvasTest {
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!!!");
         canvas.endText();
+        canvas.release();
 
         FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages3_2.pdf");
         PdfWriter writer2 = new PdfWriter(fos2);
@@ -817,6 +828,7 @@ public class PdfCanvasTest {
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
+            canvas.release();
         }
 
         for (int i = 0; i < 5; i++) {
@@ -866,6 +878,7 @@ public class PdfCanvasTest {
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
+            canvas.release();
         }
 
         FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages5_4.pdf");
@@ -909,6 +922,7 @@ public class PdfCanvasTest {
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
+        canvas.release();
 
         FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages6_2.pdf");
         PdfWriter writer2 = new PdfWriter(fos2);

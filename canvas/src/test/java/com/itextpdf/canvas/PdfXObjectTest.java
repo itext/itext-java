@@ -59,6 +59,7 @@ public class PdfXObjectTest {
         canvas.addImage(images[1], 300, 0, 200);
         canvas.addImage(images[2], 0, 300, 200);
         canvas.addImage(images[3], 300, 300, 200);
+        canvas.release();
         page.flush();
         document.close();
 
@@ -78,12 +79,14 @@ public class PdfXObjectTest {
         PdfCanvas canvas = new PdfCanvas(form);
         canvas.rectangle(10, 10, 30, 30);
         canvas.fill();
+        canvas.release();
         form.flush();
 
         //Create page1 and add forms to the page.
         PdfPage page1 = document.addNewPage();
         canvas = new PdfCanvas(page1);
         canvas.addForm(form, 0, 0).addForm(form, 50, 0).addForm(form, 0, 50).addForm(form, 50, 50);
+        canvas.release();
 
         //Create form from the page1 and flush it.
         form = new PdfFormXObject(page1);
@@ -99,6 +102,7 @@ public class PdfXObjectTest {
         canvas.addForm(form, 0, 200);
         canvas.addForm(form, 200, 0);
         canvas.addForm(form, 200, 200);
+        canvas.release();
         page2.flush();
 
         document.close();

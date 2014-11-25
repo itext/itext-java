@@ -14,6 +14,12 @@ import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import java.util.ArrayList;
 import java.util.Stack;
 
+/**
+ * PdfCanvas class represents algorithm for writing data into content stream.
+ * To write into page content create PdfCanvas from page instance.
+ * To write into form XObject create PdfCanvas from form XObject instance.
+ * Take care about calling PdfCanvas.release() after you finished writing to canvas. It will save some memory.
+ */
 public class PdfCanvas {
 
     static final private byte[] c = OutputStream.getIsoBytes(" c\n");
@@ -91,6 +97,10 @@ public class PdfCanvas {
         return resources;
     }
 
+    /**
+     * Releases the canvas.
+     * Use this method after you finished working with canvas.
+     */
     public void release() {
         gsStack = null;
         currentGs = null;

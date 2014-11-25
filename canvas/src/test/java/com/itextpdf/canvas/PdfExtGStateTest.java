@@ -65,6 +65,7 @@ public class PdfExtGStateTest {
         canvas.moveText(50, 400);
         canvas.showText("Courier, 36pt");
         canvas.endText();
+        canvas.release();
 
         page.flush();
         document.close();
