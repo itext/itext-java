@@ -30,7 +30,7 @@ public class PdfPagesTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        for (int i = 0; i < 111; i++) {
+        for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             page.getPdfObject().put(PageNum, new PdfNumber(i + 1));
             page.flush();
@@ -181,6 +181,34 @@ public class PdfPagesTest {
         }
 
         Assert.assertTrue(error);
+    }
+
+    @Test
+    public void removeFlushedPage() throws IOException, PdfException {
+        String filename = "removeFlushedPage.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfPage removedPage = pdfDoc.addNewPage();
+        int removedPageObjectNumber = removedPage.getPdfObject().getIndirectReference().getObjNr();
+        removedPage.flush();
+        pdfDoc.removePage(removedPage);
+
+
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            page.getPdfObject().put(PageNum, new PdfNumber(i + 1));
+            page.flush();
+        }
+
+        Assert.assertEquals("Remove last page", true, pdfDoc.removePage(pdfDoc.getPage(pageCount)));
+        Assert.assertEquals("Free reference", true, pdfDoc.getXref().get(removedPageObjectNumber).checkState(PdfIndirectReference.Free));
+
+        pdfDoc.close();
+        verifyPagesOrder(destinationFolder + filename, pageCount - 1);
     }
 
     public void verifyPagesOrder(String filename, int numOfPages) throws IOException {

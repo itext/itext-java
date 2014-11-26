@@ -77,8 +77,10 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void flushObject(PdfObject object, boolean canBeInObjStm) throws IOException, PdfException {
         PdfIndirectReference indirectReference;
-        if (object.isFlushed() || (indirectReference = object.getIndirectReference()) == null)
+        if (object.isFlushed() || (indirectReference = object.getIndirectReference()) == null) {
+            //TODO log meaningless call of flush: object is direct or released
             return;
+        }
         if (isFullCompression() && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
             objectStream.addObject(object);
@@ -86,8 +88,7 @@ public class PdfWriter extends PdfOutputStream {
             indirectReference.setOffsetOrIndex(getCurrentPos());
             writeToBody(object);
         }
-        indirectReference.flushed = true;
-        indirectReference.setRefersTo(null);
+        indirectReference.setState(PdfIndirectReference.Flushed);
         switch (object.getType()) {
             case PdfObject.Boolean:
             case PdfObject.Name:

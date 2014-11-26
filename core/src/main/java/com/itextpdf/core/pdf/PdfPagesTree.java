@@ -130,7 +130,10 @@ class PdfPagesTree {
     public PdfPage removePage(int pageNum) throws PdfException {
         PdfPage pdfPage = getPage(pageNum);
         if (internalRemovePage(--pageNum)) {
-            pdfPage.release();
+            if (!pdfPage.getPdfObject().isFlushed()) {
+                pdfPage.getPdfObject().remove(PdfName.Parent);
+            }
+            pdfPage.getPdfObject().getIndirectReference().setFree();
             return pdfPage;
         } else {
             return null;
@@ -143,14 +146,17 @@ class PdfPagesTree {
      * contained the specified element (or equivalently, if this list
      * changed as a result of the call).
      *
-     * @param page page to be removed from this list, if present
+     * @param pdfPage page to be removed from this list, if present
      * @return <tt>true</tt> if this list contained the specified page
      */
-    public boolean removePage(PdfPage page) throws PdfException {
-        int pageNum = getPageNum(page) - 1;
+    public boolean removePage(PdfPage pdfPage) throws PdfException {
+        int pageNum = getPageNum(pdfPage) - 1;
         if (pageNum < 0)
             return false;
-        page.release();
+        if (!pdfPage.getPdfObject().isFlushed()) {
+            pdfPage.getPdfObject().remove(PdfName.Parent);
+        }
+        pdfPage.getPdfObject().getIndirectReference().setFree();
         internalRemovePage(pageNum);
         return true;
     }
@@ -269,7 +275,7 @@ class PdfPagesTree {
         int parentIndex = findPageParent(pageNum);
         PdfPages pdfPages = parents.get(parentIndex);
         if (pdfPages.remove(pageNum)) {
-            if (pdfPages.getCount() == 0) {
+            if (pdfPages.getCount() == 0 && parents.size() > 1) {
                 parents.remove(parentIndex);
                 --parentIndex;
             }

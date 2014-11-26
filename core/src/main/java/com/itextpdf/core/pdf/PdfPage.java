@@ -185,13 +185,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return stream.getBytes();
     }
 
-    protected void release() {
-        if (!isFlushed() && pdfObject.getIndirectReference() != null) {
-            pdfObject.getIndirectReference().setFree();
-            pdfObject.remove(PdfName.Parent);
-        }
-    }
-
     protected void makeIndirect(PdfDocument pdfDocument) {
         pdfObject.makeIndirect(pdfDocument);
     }

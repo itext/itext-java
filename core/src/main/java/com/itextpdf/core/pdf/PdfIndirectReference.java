@@ -10,6 +10,8 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     protected static final byte Reading = 2;
     // Indicates that @see refersTo changed (using in stamp mode).
     protected static final byte Modified = 4;
+    // Indicates if the refersTo object has been flushed.
+    protected static final byte Flushed = 8;
 
     private static final int LengthOfIndirectsChain = 31;
 
@@ -43,11 +45,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * If the object placed into object stream then it is an object index inside object stream.
      */
     protected long offsetOrIndex = 0;
-
-    /**
-     * Indicates if the refersTo object has been flushed.
-     */
-    protected boolean flushed = false;
 
     /**
      * PdfDocument object belongs to. For direct objects it is null.
@@ -97,7 +94,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // this method return 31st reference in chain.
     public PdfObject getRefersTo(boolean recursively) throws PdfException {
         if (!recursively) {
-            if (refersTo == null && !flushed && getReader() != null) {
+            if (refersTo == null && !checkState(Flushed) && getReader() != null) {
                 refersTo = getReader().readObject(this);
             }
             return refersTo;
@@ -164,10 +161,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     protected PdfIndirectReference clearState(byte state) {
         this.state &= 0xFF^state;
         return this;
-    }
-
-    protected void releaseObject() {
-        refersTo = null;
     }
 
     @Override

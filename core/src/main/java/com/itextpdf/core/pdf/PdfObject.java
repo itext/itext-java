@@ -121,7 +121,7 @@ abstract public class PdfObject {
      */
     public boolean isFlushed() {
         PdfIndirectReference indirectReference = getIndirectReference();
-        return (indirectReference != null && indirectReference.flushed);
+        return (indirectReference != null && indirectReference.checkState(PdfIndirectReference.Flushed));
     }
 
     /**
@@ -193,8 +193,10 @@ abstract public class PdfObject {
     }
 
     public void release() {
-        if (indirectReference != null && getReader() != null) {
-            indirectReference.releaseObject();
+        if (getReader() != null && indirectReference != null
+                && !indirectReference.checkState(PdfIndirectReference.Flushed)) {
+            indirectReference.refersTo = null;
+            indirectReference = null;
         }
         //TODO log reasonless call of method
     }

@@ -20,6 +20,13 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return pdfObject;
     }
 
+    public PdfObjectWrapper<T> setModifiedState() {
+        if (pdfObject != null) {
+            pdfObject.setModifiedState();
+        }
+        return this;
+    }
+
     public void flush() throws PdfException {
         pdfObject.flush();
     }
@@ -32,11 +39,11 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return pdfObject.getDocument();
     }
 
-    public <T extends PdfObjectWrapper> T copy(PdfDocument document) throws PdfException {
+    public <T1 extends PdfObjectWrapper> T1 copy(PdfDocument document) throws PdfException {
         throw new NotImplementedException();
     }
 
-    public <T extends PdfObjectWrapper> T copy() throws PdfException {
+    public <T1 extends PdfObjectWrapper> T1 copy() throws PdfException {
         return copy(getDocument());
     }
 

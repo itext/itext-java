@@ -123,12 +123,14 @@ class PdfXrefTable {
         reference.setOffsetOrIndex(0);
         reference.setObjectStreamNumber(0);
         reference.setState(PdfIndirectReference.Free);
-        if (reference.refersTo != null) {
-            reference.refersTo.setIndirectReference(null);
-            reference.refersTo = null;
+        if (!reference.checkState(PdfIndirectReference.Flushed)) {
+            if (reference.refersTo != null) {
+                reference.refersTo.setIndirectReference(null);
+                reference.refersTo = null;
+            }
+            if (reference.getGenNr() < MaxGeneration)
+                freeReferences.add(reference.getObjNr());
         }
-        if (reference.getGenNr() < MaxGeneration)
-            freeReferences.add(reference.getObjNr());
     }
 
     protected void setCapacity(int capacity) {
