@@ -9,12 +9,12 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // Indicates that definition of the reference still not found (e.g. keys in XRefStm).
     protected static final byte Reading = 2;
     // Indicates that @see refersTo changed (using in stamp mode).
-    protected static final byte Dirty = 4;
+    protected static final byte Modified = 4;
 
     private static final int LengthOfIndirectsChain = 31;
 
     /**
-     * Indicate same special states of PdfIndirectObject like @see Free, @see Reading, @see Dirty.
+     * Indicate same special states of PdfIndirectObject like @see Free, @see Reading, @see Modified.
      */
     private byte state;
 

@@ -24,27 +24,31 @@ public class PdfPagesTest {
     @Test
     public void simplePagesTest() throws IOException, PdfException {
         String filename = "simplePagesTest.pdf";
+        int pageCount = 111;
+
         FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         for (int i = 0; i < 111; i++) {
             PdfPage page = pdfDoc.addNewPage();
-            page.getPdfObject().put(PageNum, new PdfNumber(i));
+            page.getPdfObject().put(PageNum, new PdfNumber(i + 1));
             page.flush();
         }
         pdfDoc.close();
-        verifyPagesOrder(destinationFolder + filename);
+        verifyPagesOrder(destinationFolder + filename, pageCount);
     }
 
     @Test
     public void reversePagesTest() throws IOException, PdfException {
         String filename = "reversePagesTest.pdf";
+        int pageCount = 111;
+
         FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        for (int i = 111; i > 0; i--) {
+        for (int i = pageCount; i > 0; i--) {
             PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
             pdfDoc.addPage(1, page);
             page.getPdfObject().put(PageNum, new PdfNumber(i));
@@ -52,14 +56,14 @@ public class PdfPagesTest {
         }
         pdfDoc.close();
 
-        verifyPagesOrder(destinationFolder + filename);
+        verifyPagesOrder(destinationFolder + filename, pageCount);
     }
 
     @Test
     public void randomObjectPagesTest() throws IOException, PdfException {
         String filename = "randomObjectPagesTest.pdf";
-        int amount = 10000;
-        int indexes[] = new int[amount];
+        int pageCount = 10000;
+        int indexes[] = new int[pageCount];
         for (int i = 0; i < indexes.length; i++)
             indexes[i] = i+1;
 
@@ -74,7 +78,7 @@ public class PdfPagesTest {
         FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
-        PdfPage pages[] = new PdfPage[amount];
+        PdfPage pages[] = new PdfPage[pageCount];
 
         for (int i = 0; i < indexes.length; i++) {
             PdfPage page = document.addNewPage();
@@ -90,19 +94,19 @@ public class PdfPagesTest {
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNr() < xrefSize);
 
         for (int i = 0; i < pages.length; i++) {
-            document.removePage(pages[i]);
+            Assert.assertEquals("Remove page", true, document.removePage(pages[i]));
             document.addPage(i + 1, pages[i]);
         }
         document.close();
 
-        verifyPagesOrder(destinationFolder + filename);
+        verifyPagesOrder(destinationFolder + filename, pageCount);
     }
 
     @Test
     public void randomNumberPagesTest() throws IOException, PdfException {
         String filename = "randomNumberPagesTest.pdf";
-        int amount = 10000;
-        int indexes[] = new int[amount];
+        int pageCount = 3000;
+        int indexes[] = new int[pageCount];
         for (int i = 0; i < indexes.length; i++)
             indexes[i] = i+1;
 
@@ -117,22 +121,28 @@ public class PdfPagesTest {
         FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        int pages[] = new int[amount];
 
         for (int i = 0; i < indexes.length; i++) {
             PdfPage page = pdfDoc.addNewPage();
             page.getPdfObject().put(PageNum, new PdfNumber(indexes[i]));
-            pages[indexes[i] - 1] = indexes[i];
         }
 
-        for (int i = 0; i < pages.length; i++) {
-            PdfPage page = pdfDoc.removePage(pages[i]);
-            pdfDoc.addPage(i + 1, page);
+        for (int i = 1; i < pageCount; i++) {
+            for (int j = i + 1; j <= pageCount; j++) {
+                int j_page = pdfDoc.getPage(j).getPdfObject().getAsNumber(PageNum).getIntValue();
+                int i_page = pdfDoc.getPage(i).getPdfObject().getAsNumber(PageNum).getIntValue();
+                if (j_page < i_page){
+                    PdfPage page = pdfDoc.removePage(j);
+                    pdfDoc.addPage(i+1, page);
+                    page = pdfDoc.removePage(i);
+                    pdfDoc.addPage(j, page);
+                }
+            }
             Assert.assertTrue(pdfDoc.getCatalog().pageTree.verifyIntegrity() == -1);
         }
         pdfDoc.close();
 
-        verifyPagesOrder(destinationFolder + filename);
+        verifyPagesOrder(destinationFolder + filename, pageCount);
     }
 
     @Test
@@ -173,17 +183,18 @@ public class PdfPagesTest {
         Assert.assertTrue(error);
     }
 
-    public void verifyPagesOrder(String filename) throws IOException {
+    public void verifyPagesOrder(String filename, int numOfPages) throws IOException {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
 
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
             com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
             Assert.assertNotNull(page);
-
             com.itextpdf.text.pdf.PdfNumber number = page.getAsNumber(PageNum5);
-            Assert.assertNotNull(number.intValue() == i);
+            Assert.assertEquals("Page number", i, number.intValue());
         }
+
+        Assert.assertEquals("Number of pages", numOfPages, reader.getNumberOfPages());
         reader.close();
     }
 }

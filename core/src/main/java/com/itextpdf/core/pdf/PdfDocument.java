@@ -225,7 +225,7 @@ public class PdfDocument implements IEventDispatcher {
      */
     public PdfPage addNewPage(PageSize pageSize) throws PdfException {
         PdfPage page = new PdfPage(this, pageSize);
-        catalog.addNewPage(page);
+        catalog.addPage(page);
         return page;
     }
 

@@ -189,7 +189,7 @@ abstract public class PdfObject {
 
     public void setModifiedState() {
         if (indirectReference != null)
-            indirectReference.setState(PdfIndirectReference.Dirty);
+            indirectReference.setState(PdfIndirectReference.Modified);
     }
 
     public void release() {

@@ -26,11 +26,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         pageTree.addPage(page);
     }
 
-    protected void addNewPage(PdfPage page) throws PdfException {
-        pageTree.addPage(page);
-    }
-
     public void addPage(int index, PdfPage page) throws PdfException {
+        if (page.isFlushed())
+            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
         pageTree.addPage(index, page);
     }
 

@@ -57,8 +57,7 @@ class PdfPagesTree {
         page.makeIndirect(pdfDocument);
         pdfPages.addPage(page.getPdfObject());
         pageRefs.add(page.getPdfObject());
-        //just reserve index
-        pages.add(null);
+        pages.add(page);
     }
 
     /**

@@ -105,14 +105,18 @@ class PdfXrefTable {
      * @return created indirect reference.
      */
     protected PdfIndirectReference createNextIndirectReference(PdfDocument document, PdfObject object) {
+        PdfIndirectReference reference;
         if (freeReferences.size() > 0) {
-            PdfIndirectReference reference = xref[freeReferences.poll()];
+            reference = xref[freeReferences.poll()];
             assert !reference.isInUse();
             reference.setOffsetOrIndex(0);
             reference.setRefersTo(object);
-            return reference;
+            reference.clearState(PdfIndirectReference.Free);
+        } else {
+            reference = new PdfIndirectReference(document, ++nextNumber, object);
+            add(reference);
         }
-        return add(new PdfIndirectReference(document, ++nextNumber, object));
+        return reference.setState(PdfIndirectReference.Modified);
     }
 
     protected void freeReference(PdfIndirectReference reference) {

@@ -137,6 +137,7 @@ public class PdfReader {
                 // Check if this object has no incremental updates (e.g. no append mode)
                 if (reference.getObjectStreamNumber() == objectStreamNumber) {
                     reference.setRefersTo(obj);
+                    obj.setIndirectReference(reference);
                 }
             }
             objectStream.getIndirectReference().setFree();
@@ -602,8 +603,7 @@ public class PdfReader {
                 PdfStream objectStream = (PdfStream) pdfDocument.getXref().
                         get(reference.getObjectStreamNumber()).getRefersTo(false);
                 readObjectStream(objectStream);
-                PdfObject object = reference.refersTo;
-                return object != null ? object.setIndirectReference(reference) : null;
+                return reference.refersTo;
             } else if (reference.getOffset() > 0) {
                 PdfObject object;
                 try {
