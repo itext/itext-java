@@ -18,15 +18,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public final static int FirstPage = 1;
     public final static int LastPage = Integer.MAX_VALUE;
 
-    protected PdfResources resources = null;
+    private PdfResources resources = null;
 
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
-        PdfDictionary resources = pdfObject.getAsDictionary(PdfName.Resources);
-        if (resources != null)
-            this.resources = new PdfResources(resources);
-        else
-            this.resources = new PdfResources();
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
@@ -34,7 +29,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         super(new PdfDictionary(), pdfDocument);
         PdfStream contentStream = new PdfStream(pdfDocument);
         pdfObject.put(PdfName.Contents, contentStream);
-        pdfObject.put(PdfName.Resources, (resources = new PdfResources()).getPdfObject());
         pdfObject.put(PdfName.Type, PdfName.Page);
         pdfObject.put(PdfName.MediaBox, new PdfArray(pageSize));
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
@@ -92,7 +86,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return newContentStream(false);
     }
 
-    public PdfResources getResources() {
+    public PdfResources getResources() throws PdfException {
+        if (this.resources == null) {
+            PdfDictionary resources = pdfObject.getAsDictionary(PdfName.Resources);
+            if (resources == null) {
+                resources = new PdfDictionary();
+                pdfObject.put(PdfName.Resources, resources);
+            }
+            this.resources = new PdfResources(resources);
+        }
         return resources;
     }
 
@@ -138,6 +140,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     @Override
     public void flush() throws PdfException {
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
+        resources = null;
         super.flush();
     }
 

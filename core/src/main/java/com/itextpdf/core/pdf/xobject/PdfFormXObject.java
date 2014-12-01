@@ -6,11 +6,10 @@ import com.itextpdf.core.pdf.*;
 
 public class PdfFormXObject extends PdfXObject {
 
-    protected PdfResources resources = null;
+    private PdfResources resources = null;
 
     public PdfFormXObject(PdfDocument document, Rectangle bBox) throws PdfException {
         super(new PdfStream(document), document);
-        pdfObject.put(PdfName.Resources, (resources = new PdfResources()).getPdfObject());
         pdfObject.put(PdfName.Type, PdfName.XObject);
         pdfObject.put(PdfName.Subtype, PdfName.Form);
         pdfObject.put(PdfName.BBox, new PdfArray(bBox));
@@ -18,13 +17,6 @@ public class PdfFormXObject extends PdfXObject {
 
     public PdfFormXObject(PdfStream pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
-        PdfDictionary resources = pdfObject.getAsDictionary(PdfName.Resources);
-        if (resources != null)
-            this.resources = new PdfResources(resources);
-        else {
-            this.resources = new PdfResources();
-            pdfObject.put(PdfName.Resources, resources);
-        }
     }
 
     /**
@@ -40,7 +32,15 @@ public class PdfFormXObject extends PdfXObject {
 
     }
 
-    public PdfResources getResources() {
+    public PdfResources getResources() throws PdfException {
+        if (this.resources == null) {
+            PdfDictionary resources = pdfObject.getAsDictionary(PdfName.Resources);
+            if (resources == null) {
+                resources = new PdfDictionary();
+                pdfObject.put(PdfName.Resources, resources);
+            }
+            this.resources = new PdfResources(resources);
+        }
         return resources;
     }
 
@@ -48,4 +48,11 @@ public class PdfFormXObject extends PdfXObject {
     public PdfFormXObject copy(PdfDocument document) throws PdfException {
         return new PdfFormXObject((PdfStream)getPdfObject().copy(document), document);
     }
+
+    @Override
+    public void flush() throws PdfException {
+        resources = null;
+        super.flush();
+    }
+
 }

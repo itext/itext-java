@@ -6,8 +6,7 @@ import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
@@ -16,7 +15,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private static final String Fm = "Fm";
     private static final String Gs = "Gs";
 
-    private HashMap<PdfObjectWrapper, PdfName> resources = new LinkedHashMap<PdfObjectWrapper, PdfName>();
+
+    private Map<PdfObject, PdfName> resourceToName = new HashMap<PdfObject, PdfName>();
+    private Map<PdfName, Map<PdfName, PdfObject>> nameToResource = new HashMap<PdfName, Map<PdfName, PdfObject>>();
 
     /**
      * The font value counter for the fonts in the document.
@@ -26,12 +27,12 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private ResourceNumber formNumber = new ResourceNumber();
     private ResourceNumber egsNumber = new ResourceNumber();
 
-    public PdfResources(PdfDictionary pdfObject) {
+    public PdfResources(PdfDictionary pdfObject) throws PdfException {
         super(pdfObject);
         buildResources(pdfObject);
     }
 
-    public PdfResources() {
+    public PdfResources() throws PdfException {
         this(new PdfDictionary());
     }
 
@@ -39,7 +40,15 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(font, PdfName.Font, F, fontNumber);
     }
 
+    public PdfName addFont(PdfObject font) throws PdfException {
+        return addResource(font, PdfName.Font, F, fontNumber);
+    }
+
     public PdfName addImage(PdfImageXObject image) throws PdfException {
+        return addResource(image, PdfName.XObject, Im, imageNumber);
+    }
+
+    public PdfName addImage(PdfObject image) throws PdfException {
         return addResource(image, PdfName.XObject, Im, imageNumber);
     }
 
@@ -47,30 +56,100 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(form, PdfName.XObject, Fm, formNumber);
     }
 
+    public PdfName addForm(PdfObject form) throws PdfException {
+        return addResource(form, PdfName.XObject, Fm, formNumber);
+    }
+
     public PdfName addExtGState(PdfExtGState extGState) throws PdfException {
         return addResource(extGState, PdfName.ExtGState, Gs, egsNumber);
     }
 
+    public PdfName addExtGState(PdfObject extGState) throws PdfException {
+        return addResource(extGState, PdfName.ExtGState, Gs, egsNumber);
+    }
+
     public PdfName getResourceName(PdfObjectWrapper resource) {
-        return resources.get(resource);
+        return resourceToName.get(resource.getPdfObject());
+    }
+
+    public PdfName getResourceName(PdfObject resource) {
+        PdfName resName = resourceToName.get(resource);
+        if (resName == null)
+            resName = resourceToName.get(resource.getIndirectReference());
+        return resName;
+    }
+
+    public Set<PdfName> getResourceNames() {
+        Set<PdfName> names = new TreeSet<PdfName>();
+        for (PdfName resType : nameToResource.keySet()) {
+            names.addAll(getResourceNames(resType));
+        }
+        return names;
+    }
+
+    public Set<PdfName> getResourceNames(PdfName resType) {
+        Map<PdfName, PdfObject> resourceCategory = nameToResource.get(resType);
+        return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet();
     }
 
     protected PdfName addResource(PdfObjectWrapper resource, PdfName resType, String resPrefix, ResourceNumber resNumber) throws PdfException {
-        PdfName resName = resources.get(resource);
+        return addResource(resource.getPdfObject(), resType, resPrefix, resNumber);
+    }
+
+    protected PdfName addResource(PdfObject resource, PdfName resType, String resPrefix, ResourceNumber resNumber) throws PdfException {
+        PdfName resName = getResourceName(resource);
         if (resName == null) {
             resName = new PdfName(resPrefix + resNumber.increment());
-            resources.put(resource, resName);
+            resourceToName.put(resource, resName);
+            Map<PdfName, PdfObject> resourceCategory = nameToResource.get(resType);
+            if (resourceCategory == null) {
+                nameToResource.put(resType, resourceCategory = new HashMap<PdfName, PdfObject>());
+            }
+            resourceCategory.put(resName, resource);
             PdfDictionary resDictionary = (PdfDictionary) pdfObject.get(resType);
             if (resDictionary == null) {
                 pdfObject.put(resType, resDictionary = new PdfDictionary());
             }
-            resDictionary.put(resName, resource.getPdfObject());
+            resDictionary.put(resName, resource);
         }
         return resName;
     }
 
-    protected void buildResources(PdfDictionary dictionary) {
-        //TODO: Implement populating PdfResources internals from PdfDictionary.
+    protected void buildResources(PdfDictionary dictionary) throws PdfException {
+        for (PdfName resourceType : dictionary.keySet()) {
+            if (nameToResource.get(resourceType) == null) {
+                nameToResource.put(resourceType, new HashMap<PdfName, PdfObject>());
+            }
+            PdfDictionary resources = dictionary.getAsDictionary(resourceType);
+            for (PdfName resourceName : resources.keySet()) {
+                PdfObject resource = resources.get(resourceName, false);
+                resourceToName.put(resource, resourceName);
+                nameToResource.get(resourceType).put(resourceName, resource);
+            }
+        }
+        Set<PdfName> names = getResourceNames();
+        fontNumber = getAvailableNumber(names, F);
+        imageNumber = getAvailableNumber(names, Im);
+        formNumber = getAvailableNumber(names, Fm);
+        egsNumber = getAvailableNumber(names, Gs);
+    }
+
+    private ResourceNumber getAvailableNumber(Set<PdfName> names, final String resPrefix) {
+        int resNumber = 0;
+        for (PdfName name : names) {
+            String nameStr = name.getValue();
+            if (nameStr.startsWith(resPrefix)) {
+                nameStr = nameStr.replace(resPrefix, "");
+                try {
+                    int number = Integer.parseInt(nameStr);
+                    if (number > resNumber)
+                        resNumber = number;
+                } catch (NumberFormatException e) {
+
+                }
+            }
+        }
+        return new ResourceNumber(resNumber);
     }
 
     static private class ResourceNumber {

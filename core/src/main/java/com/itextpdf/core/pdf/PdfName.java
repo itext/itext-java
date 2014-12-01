@@ -6,6 +6,7 @@ import com.itextpdf.basics.io.OutputStream;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -208,7 +209,12 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     @Override
     public int compareTo(PdfName o) {
-        return getValue().compareTo(o.getValue());
+        if (value != null && o.value != null) {
+            return value.compareTo(o.value);
+        } else if (content != null && o.content != null) {
+            return compareContent(o);
+        } else
+            return getValue().compareTo(o.getValue());
     }
 
     protected void generateValue() {
@@ -293,7 +299,10 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     @Override
     public String toString() {
-        return "/" + getValue();
+        if (content != null)
+            return "/" + new String(content);
+        else
+            return "/" + getValue();
     }
 
     @Override

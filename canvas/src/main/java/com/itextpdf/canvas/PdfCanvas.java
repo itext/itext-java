@@ -79,7 +79,7 @@ public class PdfCanvas {
         this(page.getContentStream(page.getContentStreamCount() - 1), page.getResources());
     }
 
-    public PdfCanvas(PdfFormXObject xObj) {
+    public PdfCanvas(PdfFormXObject xObj) throws PdfException {
         this(xObj.getPdfObject(), xObj.getResources());
     }
 

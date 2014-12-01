@@ -59,5 +59,18 @@ abstract class PdfPrimitiveObject extends PdfObject {
             content = Arrays.copyOf(object.content, object.content.length);
     }
 
+    protected int compareContent(PdfPrimitiveObject o) {
+        for (int i = 0; i < Math.min(content.length, o.content.length); i++) {
+            if (content[i] > o.content[i])
+                return 1;
+            if (content[i] < o.content[i])
+                return -1;
+        }
+        if (content.length > o.content.length)
+            return 1;
+        if (content.length < o.content.length)
+            return -1;
+        return 0;
+    }
 
 }
