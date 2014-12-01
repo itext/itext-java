@@ -85,7 +85,7 @@ public class PdfWriter extends PdfOutputStream {
             PdfObjectStream objectStream = getObjectStream();
             objectStream.addObject(object);
         } else {
-            indirectReference.setOffsetOrIndex(getCurrentPos());
+            indirectReference.setOffset(getCurrentPos());
             writeToBody(object);
         }
         indirectReference.setState(PdfIndirectReference.Flushed);
@@ -198,21 +198,24 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     /**
-     * Writes trailer to PDF.
+     * Flushes all modified objects which have not been flushed yet. Used in case incremental updates.
      *
-     * @param startxref start of cross reference table.
-     * @throws IOException
+     * @throws PdfException
      */
-    protected void writeTrailer(int startxref) throws IOException, PdfException {
-        if (!fullCompression) {
-            pdfDocument.getTrailer().setSize(pdfDocument.getXref().size());
-            writeString("trailer\n");
-            write(pdfDocument.getTrailer().getPdfObject());
-        }
-        writeString("\nstartxref\n").
-                writeInteger(startxref).
-                writeString("\n%%EOF\n");
+    protected void flushModifiedWaitingObjects() throws PdfException {
+        TreeSet<PdfIndirectReference> indirects = pdfDocument.getXref().toSet();
         pdfDocument.getXref().clear();
+        for (PdfIndirectReference indirectReference : indirects) {
+            PdfObject object = indirectReference.getRefersTo(false);
+            if (object != null && !object.equals(objectStream) && object.isModified()) {
+                object.flush();
+            }
+        }
+        if (objectStream != null && objectStream.getSize() > 0) {
+            objectStream.flush();
+            objectStream = null;
+        }
+        pdfDocument.getXref().addAll(indirects);
     }
 
     /**

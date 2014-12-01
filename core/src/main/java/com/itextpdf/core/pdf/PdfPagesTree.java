@@ -15,6 +15,7 @@ class PdfPagesTree {
     private ArrayList<PdfPages> parents;
     private ArrayList<PdfPage> pages;
     private PdfDocument pdfDocument;
+    private boolean generated = false;
 
     /**
      * Create PdfPages tree.
@@ -170,6 +171,8 @@ class PdfPagesTree {
     protected  PdfObject generateTree() throws PdfException {
         if (pageRefs.isEmpty())
             throw new PdfException(PdfException.DocumentHasNoPages);
+        if (generated)
+            throw new PdfException(PdfException.PdfPagesTreeCouldBeGeneratedOnlyOnce);
         for (int  i = 0; i < pageRefs.size(); i++) {
             pageRefs.set(i, null);
             pages.set(i, null);
@@ -196,6 +199,7 @@ class PdfPagesTree {
             }
             parents = nextParents;
         }
+        generated = true;
         return parents.get(0).getPdfObject();
     }
 

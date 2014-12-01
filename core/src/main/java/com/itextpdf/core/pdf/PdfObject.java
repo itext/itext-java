@@ -16,7 +16,6 @@ abstract public class PdfObject {
     static public final byte Stream = 8;
     static public final byte String = 9;
 
-
     /**
      * If object is flushed the indirect reference is kept here.
      */
@@ -125,6 +124,15 @@ abstract public class PdfObject {
     }
 
     /**
+     * Indicates is the object has been set as modified or not. Useful for incremental updates (e.g. appendMode).
+     * @return true is object has been set as modified, otherwise false.
+     */
+    public boolean isModified() {
+        PdfIndirectReference indirectReference = getIndirectReference();
+        return (indirectReference != null && indirectReference.checkState(PdfIndirectReference.Modified));
+    }
+
+    /**
      * Gets the document the object belongs to.
      *
      * @return a document the object belongs to. If object is direct return null.
@@ -187,7 +195,8 @@ abstract public class PdfObject {
         return null;
     }
 
-    public void setModifiedState() {
+    //TODO comment! Add note about flush, modified flag and xref.
+    public void setModified() {
         if (indirectReference != null)
             indirectReference.setState(PdfIndirectReference.Modified);
     }

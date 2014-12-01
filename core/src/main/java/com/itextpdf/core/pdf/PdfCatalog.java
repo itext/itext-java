@@ -54,8 +54,17 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public void flush() throws PdfException {
-        pdfObject.put(PdfName.Pages, pageTree.generateTree());
-        pdfObject.flush(false);
+        if (getDocument().appendMode && !getPdfObject().getIndirectReference().checkState(PdfIndirectReference.Modified)) {
+            PdfObject pages = pageTree.generateTree();
+            if (pages.getIndirectReference().checkState(PdfIndirectReference.Modified)) {
+                pdfObject.put(PdfName.Pages, pages);
+                pdfObject.setModified();
+                pdfObject.flush();
+            }
+        } else {
+            pdfObject.put(PdfName.Pages, pageTree.generateTree());
+            pdfObject.flush(false);
+        }
     }
 
 }

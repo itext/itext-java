@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.core.Version;
 import com.itextpdf.core.events.EventDispatcher;
 import com.itextpdf.core.events.IEventDispatcher;
@@ -75,12 +76,21 @@ public class PdfDocument implements IEventDispatcher {
     protected final PdfXrefTable xref = new PdfXrefTable();
 
     /**
+     *  Indicate incremental updates mode of stamping mode.
+     */
+    protected final boolean appendMode;
+
+    /**
      * Open PDF document in reading mode.
      *
      * @param reader PDF reader.
      */
     public PdfDocument(PdfReader reader) throws PdfException {
+        if (reader == null) {
+            throw new NullPointerException("reader");
+        }
         this.reader = reader;
+        this.appendMode = false;
         open();
     }
 
@@ -91,7 +101,31 @@ public class PdfDocument implements IEventDispatcher {
      * @param writer PDF writer
      */
     public PdfDocument(PdfWriter writer) throws PdfException {
+        if (writer == null) {
+            throw new NullPointerException("writer");
+        }
         this.writer = writer;
+        this.appendMode = false;
+        open();
+    }
+
+    /**
+     * Open PDF document in stamping mode.
+     *
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     * @param append if true, incremental updates will
+     */
+    public PdfDocument(PdfReader reader, PdfWriter writer, boolean append) throws PdfException {
+        if (reader == null) {
+            throw new NullPointerException("reader");
+        }
+        if (writer == null) {
+            throw new NullPointerException("writer");
+        }
+        this.reader = reader;
+        this.writer = writer;
+        this.appendMode = append;
         open();
     }
 
@@ -102,10 +136,9 @@ public class PdfDocument implements IEventDispatcher {
      * @param writer PDF writer.
      */
     public PdfDocument(PdfReader reader, PdfWriter writer) throws PdfException {
-        this.reader = reader;
-        this.writer = writer;
-        open();
+        this(reader, writer, false);
     }
+
 
     /**
      * Use this method to set the XMP Metadata.
@@ -132,7 +165,7 @@ public class PdfDocument implements IEventDispatcher {
         try {
             xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
-        } catch (XMPException xmpExc) {}
+        } catch (XMPException ignored) {}
         PdfDictionary docInfo = info.getPdfObject();
         if (docInfo != null) {
             PdfName key;
@@ -461,11 +494,17 @@ public class PdfDocument implements IEventDispatcher {
                     xmp.put(PdfName.Subtype, PdfName.XML);
                     catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
-                catalog.flush();
-                info.flush();
-                writer.flushWaitingObjects();
-                int startxref = xref.writeXrefTable(this);
-                writer.writeTrailer(startxref);
+                if (appendMode) {
+                    catalog.flush();
+                    if (info.getPdfObject().isModified())
+                        info.flush();
+                    writer.flushModifiedWaitingObjects();
+                } else {
+                    catalog.flush();
+                    info.flush();
+                    writer.flushWaitingObjects();
+                }
+                xref.writeXrefTableAndTrailer(this);
                 writer.close();
             }
             if (reader != null)
@@ -488,6 +527,8 @@ public class PdfDocument implements IEventDispatcher {
                 trailer = new PdfTrailer(reader.trailer);
                 catalog = new PdfCatalog((PdfDictionary) trailer.getPdfObject().get(PdfName.Root, true), this);
                 info = new PdfDocumentInfo((PdfDictionary) trailer.getPdfObject().get(PdfName.Info, true), this);
+                if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
+                    throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }
             if (writer != null) {
                 writer.pdfDocument = this;
@@ -498,6 +539,20 @@ public class PdfDocument implements IEventDispatcher {
                     trailer.setCatalog(catalog);
                     trailer.setInfo(info);
                 }
+            }
+            if (appendMode) {       // Due to constructor reader and writer not null.
+                assert reader != null;
+                RandomAccessFileOrArray file = reader.tokens.getSafeFile();
+                int n;
+                byte[] buffer = new byte[8192];
+                while ((n = file.read(buffer)) > 0) {
+                    writer.write(buffer, 0, n);
+                }
+                file.close();
+                writer.write((byte)'\n');
+                //TODO log if full compression differs
+                writer.setFullCompression(reader.hasXrefStm());
+            } else if (writer != null) {
                 writer.writeHeader();
             }
         } catch (IOException e) {

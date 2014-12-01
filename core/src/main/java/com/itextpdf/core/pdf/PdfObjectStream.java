@@ -48,7 +48,7 @@ public class PdfObjectStream extends PdfStream {
                 writeSpace();
         outputStream.write(object);
         object.getIndirectReference().setObjectStreamNumber(getIndirectReference().getObjNr());
-        object.getIndirectReference().setOffsetOrIndex(size);
+        object.getIndirectReference().setIndex(size);
         outputStream.writeSpace();
         ((PdfNumber)get(PdfName.N)).setValue(++size);
         ((PdfNumber)get(PdfName.First)).setValue(indexStream.getCurrentPos());

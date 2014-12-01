@@ -4,14 +4,18 @@ import com.itextpdf.basics.PdfException;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
-    // Indicates that the reference could be reused or have to be marked as free.
-    protected static final byte Free = 1;
-    // Indicates that definition of the reference still not found (e.g. keys in XRefStm).
-    protected static final byte Reading = 2;
-    // Indicates that @see refersTo changed (using in stamp mode).
-    protected static final byte Modified = 4;
     // Indicates if the refersTo object has been flushed.
-    protected static final byte Flushed = 8;
+    protected static final byte Flushed = 1;
+    // Indicates that the reference could be reused or have to be marked as free.
+    protected static final byte Free = 2;
+    // Indicates that definition of the reference still not found (e.g. keys in XRefStm).
+    protected static final byte Reading = 4;
+    // Indicates that @see refersTo changed (using in stamp mode).
+    protected static final byte Modified = 8;
+    // Indicates that the reference represents ObjectStream from original document.
+    // When PdfReader read ObjectStream reference marked as OriginalObjectStream
+    // to avoid further reusing.
+    protected static final byte OriginalObjectStream = 16;
 
     private static final int LengthOfIndirectsChain = 31;
 
@@ -209,19 +213,27 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.objectStreamNumber = objectStreamNumber;
     }
 
-    protected void setOffsetOrIndex(long offsetOrIndex) {
-        this.offsetOrIndex = offsetOrIndex;
+    protected void setIndex(long index) {
+        this.offsetOrIndex = index;
+    }
+
+    protected void setOffset(long offset) {
+        this.offsetOrIndex = offset;
+        this.objectStreamNumber = 0;
     }
 
     protected void fixOffset(long offset){
         //TODO log invalid offsets
-        if (isInUse()) {
+        if (!isFree()) {
             this.offsetOrIndex = offset;
         }
     }
 
-    protected boolean isInUse() {
-        return !checkState(Free);
+    // NOTE In append mode object could be OriginalObjectStream, but not Modified,
+    // so information about this reference would not be added to the new Cross-Reference table.
+    // In stamp mode without append the reference will be free.
+    protected boolean isFree() {
+        return checkState(Free) || checkState(OriginalObjectStream);
     }
 
     // NOTE After this operation this indirect reference could be reused for new indirect objects.

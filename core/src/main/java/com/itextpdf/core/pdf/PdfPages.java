@@ -37,6 +37,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         kids.add(index - from, pdfPage.getPdfObject());
         pdfPage.getPdfObject().put(PdfName.Parent, getPdfObject());
         count.increment();
+        updateModifiedState(pdfPage.getPdfObject());
         return true;
     }
 
@@ -45,6 +46,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
             return false;
         count.decrement();
         kids.remove(pageNum - from);
+        setModified();
         return true;
     }
 
@@ -64,16 +66,24 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         kids.add(page);
         count.increment();
         page.put(PdfName.Parent, getPdfObject());
+        updateModifiedState(page);
     }
 
-    public void addPages(PdfPages pages) {
-        kids.add(pages.getPdfObject());
-        count.setValue(count.getIntValue() + pages.getCount());
-        pages.getPdfObject().put(PdfName.Parent, getPdfObject());
+    public void addPages(PdfPages pdfPages) {
+        kids.add(pdfPages.getPdfObject());
+        count.setValue(count.getIntValue() + pdfPages.getCount());
+        pdfPages.getPdfObject().put(PdfName.Parent, getPdfObject());
+        updateModifiedState(pdfPages.getPdfObject());
     }
 
     public PdfArray getKids() throws PdfException {
         return pdfObject.getAsArray(PdfName.Kids);
+    }
+
+    public void updateModifiedState(PdfObject newObject){
+        if (newObject.isModified()) {
+            setModified();
+        }
     }
 
     public int compareTo(int index) {

@@ -20,9 +20,9 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return pdfObject;
     }
 
-    public PdfObjectWrapper<T> setModifiedState() {
+    public PdfObjectWrapper<T> setModified() {
         if (pdfObject != null) {
-            pdfObject.setModifiedState();
+            pdfObject.setModified();
         }
         return this;
     }
@@ -46,5 +46,4 @@ public class PdfObjectWrapper<T extends PdfObject> {
     public <T1 extends PdfObjectWrapper> T1 copy() throws PdfException {
         return copy(getDocument());
     }
-
 }

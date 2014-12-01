@@ -21,6 +21,7 @@ public class PdfReader {
     protected boolean rebuiltXref = false;
     protected boolean hybridXref = false;
     protected boolean fixedXref = false;
+    protected boolean xrefStm = false;
 
     private static final String endstream1 = "endstream";
     private static final String endstream2 = "\nendstream";
@@ -58,27 +59,43 @@ public class PdfReader {
 
     /**
      * If any exception generated while reading XRef section, PdfReader will try to rebuild it.
-     * @return true, if PdfReader rebuilt XRef section.
+     * @return true, if PdfReader rebuilt Cross-Reference section.
      */
-    public boolean isRebuiltXref() {
+    public boolean hasRebuiltXref() {
         return rebuiltXref;
     }
 
     /**
      * Some documents contain hybrid XRef, for more information see "7.5.8.4 Compatibility with Applications
      * That Do Not Support Compressed Reference Streams" in PDF 32000-1:2008 spec.
-     * @return true, if the document has hybrid XRef.
+     * @return true, if the document has hybrid Cross-Reference section.
      */
-    public boolean isHybridXref() {
+    public boolean hasHybridXref() {
         return hybridXref;
+    }
+
+    /**
+     * Indicates whether the document has Cross-Reference Streams.
+     * @return true, if the document has Cross-Reference Streams.
+     */
+    public boolean hasXrefStm() {
+        return xrefStm;
     }
 
     /**
      * If any exception generated while reading PdfObject, PdfReader will try to fix offsets of all objects.
      * @return true, if PdfReader fixed offsets of PdfObjects.
      */
-    public boolean isFixedXref() {
+    public boolean hasFixedXref() {
         return fixedXref;
+    }
+
+    /**
+     * Gets position of the last Cross-Reference table.
+     * @return -1 if Cross-Reference table has rebuilt, otherwise position of the last Cross-Reference table.
+     */
+    public long getLastXref() {
+        return lastXref;
     }
 
     /**
@@ -140,7 +157,7 @@ public class PdfReader {
                     obj.setIndirectReference(reference);
                 }
             }
-            objectStream.getIndirectReference().setFree();
+            objectStream.getIndirectReference().setState(PdfIndirectReference.OriginalObjectStream);
         } finally {
             tokens = saveTokens;
         }
@@ -288,8 +305,11 @@ public class PdfReader {
         lastXref = startxref;
         eofPos = tokens.getPosition();
         try {
-            if (readXrefStream(startxref)) return;
-        } catch (Exception e) {
+            if (readXrefStream(startxref)) {
+                xrefStm = true;
+                return;
+            }
+        } catch (Exception ignored) {
         }
         // clear xref because of possible issues at reading xref stream.
         pdfDocument.getXref().clear();
@@ -338,7 +358,7 @@ public class PdfReader {
                 if (reference == null) {
                     reference = new PdfIndirectReference(pdfDocument, num, gen, pos);
                 } else if (reference.checkState(PdfIndirectReference.Reading) && reference.getGenNr() == gen) {
-                    reference.setOffsetOrIndex(pos);
+                    reference.setOffset(pos);
                 } else {
                     continue;
                 }
@@ -368,13 +388,13 @@ public class PdfReader {
             int loc = ((PdfNumber) xrs).getIntValue();
             try {
                 readXrefStream(loc);
+                xrefStm = true;
                 hybridXref = true;
             } catch (IOException e) {
                 xref.clear();
                 throw e;
             }
         }
-        xref.setXRefStm(false);
         xref.updateNextObjectNumber();
         return trailer;
     }
@@ -463,13 +483,12 @@ public class PdfReader {
                         && xref.get(base).getObjNr() == newReference.getObjNr()
                         && xref.get(base).getGenNr() == newReference.getGenNr()) {
                     PdfIndirectReference reference = xref.get(base);
-                    reference.setOffsetOrIndex(newReference.getOffset());
+                    reference.setOffset(newReference.getOffset());
                     reference.setObjectStreamNumber(newReference.getObjectStreamNumber());
                 }
                 ++start;
             }
         }
-        xref.setXRefStm(true);
         xref.updateNextObjectNumber();
         return prev == -1 || readXrefStream(prev);
     }
@@ -500,10 +519,10 @@ public class PdfReader {
     }
 
     protected void rebuildXref() throws IOException, PdfException {
+        xrefStm = false;
         hybridXref = false;
         rebuiltXref = true;
         PdfXrefTable xref = pdfDocument.getXref();
-        xref.setXRefStm(false);
         xref.clear();
         tokens.seek(0);
         trailer = null;
@@ -564,7 +583,7 @@ public class PdfReader {
         } finally {
             try {
                 file.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return bytes;

@@ -65,7 +65,7 @@ public class PdfReaderTest {
 
         Assert.assertEquals(PdfObject.Stream, pdfDoc.getPdfObject(5).getType());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         pdfDoc.close();
     }
 
@@ -95,7 +95,7 @@ public class PdfReaderTest {
         String content = "100 100 100 100 re\nf\n";
         Assert.assertArrayEquals(OutputStream.getIsoBytes(content), ((PdfStream)object).getInputStreamBytes());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         pdfDoc.close();
     }
@@ -136,7 +136,7 @@ public class PdfReaderTest {
         Assert.assertNotNull(object.getIndirectReference());
 
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -182,7 +182,7 @@ public class PdfReaderTest {
         for (int i = 6; i < document.getXref().size(); i++)
             Assert.assertEquals(PdfObject.Dictionary, document.getXref().get(i).getRefersTo().getType());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -231,7 +231,7 @@ public class PdfReaderTest {
         for (int i = 6+32; i < document.getXref().size(); i++)
             Assert.assertEquals(PdfObject.IndirectReference, document.getXref().get(i).getRefersTo().getType());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -264,7 +264,7 @@ public class PdfReaderTest {
         for (int i = 7; i < document.getXref().size(); i++)
             Assert.assertEquals(PdfObject.IndirectReference, document.getXref().get(i).getRefersTo().getType());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -296,7 +296,7 @@ public class PdfReaderTest {
         for (int i = 7; i < document.getXref().size(); i++)
             Assert.assertNull(document.getXref().get(i).getRefersTo());
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -340,7 +340,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("("+pageNum+")"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -366,7 +366,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
 
@@ -403,7 +403,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
 
@@ -415,7 +415,7 @@ public class PdfReaderTest {
             String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+pageNum+")"));
         }
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -442,7 +442,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.startsWith(i + "00"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
 
@@ -454,7 +454,7 @@ public class PdfReaderTest {
             String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.startsWith(pageNum + "00"));
         }
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -481,7 +481,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.startsWith(i + "00"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
 
@@ -494,7 +494,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.startsWith(pageNum + "00"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -515,7 +515,7 @@ public class PdfReaderTest {
         page = document.getPage(2);
         content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("300"));
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
 
@@ -529,7 +529,7 @@ public class PdfReaderTest {
         content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("100"));
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -550,7 +550,7 @@ public class PdfReaderTest {
             exception = true;
         }
         Assert.assertTrue(exception);
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -571,7 +571,7 @@ public class PdfReaderTest {
             exception = true;
         }
         Assert.assertTrue(exception);
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -592,7 +592,7 @@ public class PdfReaderTest {
         page = document.removePage(1);
         content = new String(page.getContentStream(0).getInputStreamBytes());
         Assert.assertTrue(content.startsWith("100"));
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -625,7 +625,7 @@ public class PdfReaderTest {
             String content = new String(page.getContentStream(0).getInputStreamBytes());
             Assert.assertTrue(content.contains("("+pageNum+")"));
         }
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
         document.close();
     }
@@ -636,7 +636,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(1, pageCount);
@@ -654,7 +654,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need fixXref()", reader.isFixedXref());
+        Assert.assertTrue("Need fixXref()", reader.hasFixedXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(1, pageCount);
@@ -672,7 +672,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(1, pageCount);
@@ -690,7 +690,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(1, pageCount);
@@ -708,7 +708,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
@@ -729,8 +729,8 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertFalse("No need in fixXref()", reader.isFixedXref());
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
@@ -751,8 +751,8 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertFalse("No need in fixXref()", reader.isFixedXref());
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
@@ -805,7 +805,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need fixXref()", reader.isFixedXref());
+        Assert.assertTrue("Need fixXref()", reader.hasFixedXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
@@ -842,7 +842,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         Assert.assertEquals(author, document.getInfo().getAuthor());
         Assert.assertEquals(creator, document.getInfo().getCreator());
@@ -867,7 +867,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         Assert.assertEquals(author, document.getInfo().getAuthor());
         Assert.assertEquals(creator, document.getInfo().getCreator());
@@ -893,8 +893,8 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
 
-        Assert.assertFalse("No need in fixXref()", reader.isFixedXref());
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
         Assert.assertEquals(null, document.getInfo().getAuthor());
         Assert.assertEquals(null, document.getInfo().getCreator());
@@ -919,7 +919,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
@@ -940,7 +940,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
@@ -961,8 +961,8 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertFalse("No need in fixXref()", reader.isFixedXref());
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(1000, pageCount);
@@ -1010,7 +1010,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
@@ -1031,7 +1031,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertFalse("No need in fixXref()", reader.isFixedXref());
+        Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
@@ -1042,7 +1042,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("("+i+")"));
         }
 
-        Assert.assertTrue("Need live fixXref()", reader.isFixedXref());
+        Assert.assertTrue("Need live fixXref()", reader.hasFixedXref());
 
         reader.close();
         document.close();
@@ -1054,7 +1054,7 @@ public class PdfReaderTest {
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
@@ -1088,7 +1088,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
         reader.close();
         document.close();
@@ -1113,7 +1113,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
         reader.close();
         document.close();
@@ -1138,7 +1138,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
         reader.close();
         document.close();
@@ -1163,7 +1163,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertFalse("No need in rebuildXref()", reader.isRebuiltXref());
+        Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
         reader.close();
         document.close();
@@ -1188,7 +1188,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
         Assert.assertNotNull("Invalid trailer", document.getTrailer().getPdfObject().get(PdfName.ID));
 
         reader.close();
@@ -1215,7 +1215,7 @@ public class PdfReaderTest {
             Assert.assertTrue(content.contains("Append mode"));
         }
 
-        Assert.assertTrue("Need rebuildXref()", reader.isRebuiltXref());
+        Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
         Assert.assertNotNull("Invalid trailer", document.getTrailer().getPdfObject().get(PdfName.ID));
 
         reader.close();

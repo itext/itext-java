@@ -126,10 +126,10 @@ public class PdfObjectTest {
         Assert.assertEquals("Modified", false, reference.checkState(PdfIndirectReference.Modified));
 
 
-        Assert.assertEquals("Is InUse", true, reference.isInUse());
+        Assert.assertEquals("Is InUse", true, !reference.isFree());
 
         reference.setState(PdfIndirectReference.Free);
 
-        Assert.assertEquals("Not IsInUse", false, reference.isInUse());
+        Assert.assertEquals("Not IsInUse", false, !reference.isFree());
     }
 }

@@ -18,6 +18,7 @@ public class PdfException extends Exception {
 
 
     public static final String AllFillBitsPrecedingEolCodeMustBe0 = "all.fill.bits.preceding.eol.code.must.be.0";
+    public static final String AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible = "append.mode.requires.a.document.without.errors.even.if.recovery.was.possible";
     public static final String BadEndiannessTagNot0x4949Or0x4d4d = "bad.endianness.tag.not.0x4949.or.0x4d4d";
     public static final String BadMagicNumberShouldBe42 = "bad.magic.number.should.be.42";
     public static final String BitsPerComponentMustBe1_2_4or8 = "bits.per.component.must.be.1.2.4.or.8";
@@ -104,6 +105,7 @@ public class PdfException extends Exception {
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
+    public static final String PdfPagesTreeCouldBeGeneratedOnlyOnce = "pdf.pages.tree.could.be.generated.only.once";
     public static final String PdfStartxrefIsNotFollowedByANumber = "pdf.startxref.is.not.followed.by.a.number";
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";
     public static final String Photometric1IsNotSupported = "photometric.1.is.not.supported";
