@@ -348,6 +348,10 @@ public class OutputStream extends java.io.OutputStream {
         return writeByte((byte) ' ');
     }
 
+    public OutputStream writeNewLine() throws PdfException {
+        return writeByte((byte) '\n');
+    }
+
     public OutputStream writeString(String value) throws PdfException {
         return writeBytes(getIsoBytes(value));
     }

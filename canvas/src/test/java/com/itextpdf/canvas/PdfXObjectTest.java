@@ -68,6 +68,26 @@ public class PdfXObjectTest {
     }
 
     @Test
+    public void createDocumentFromImages2() throws IOException, PdfException, DocumentException, InterruptedException {
+        final String destinationDocument = destinationFolder + "documentFromImages2.pdf";
+        FileOutputStream fos = new FileOutputStream(destinationDocument);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+
+        Image image = Image.getInstance(sourceFolder + "itext.jpg");
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.addImage(image, 50, 500, 100, true);
+        canvas.addImage(image, 200, 500, 100, false).flush();
+        canvas.release();
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_documentFromImages2.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
     public void createDocumentWithForms() throws IOException, PdfException, DocumentException, InterruptedException {
         final String destinationDocument = destinationFolder + "documentWithForms1.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);

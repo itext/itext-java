@@ -217,6 +217,14 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
             return getValue().compareTo(o.getValue());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PdfName pdfName = (PdfName) o;
+        return this.compareTo(pdfName) == 0;
+    }
+
     protected void generateValue() {
         StringBuilder buf = new StringBuilder();
         try {

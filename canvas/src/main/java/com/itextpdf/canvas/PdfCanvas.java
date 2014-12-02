@@ -1,6 +1,7 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.colors.Color;
 import com.itextpdf.core.fonts.PdfEncodings;
@@ -12,6 +13,7 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -22,11 +24,11 @@ import java.util.Stack;
  */
 public class PdfCanvas {
 
-    static final private byte[] c = OutputStream.getIsoBytes(" c\n");
-    static final private byte[] l = OutputStream.getIsoBytes(" l\n");
-    static final private byte[] m = OutputStream.getIsoBytes(" m\n");
-    static final private byte[] v = OutputStream.getIsoBytes(" v\n");
-    static final private byte[] y = OutputStream.getIsoBytes(" y\n");
+    static final private byte[] c = OutputStream.getIsoBytes("c\n");
+    static final private byte[] l = OutputStream.getIsoBytes("l\n");
+    static final private byte[] m = OutputStream.getIsoBytes("m\n");
+    static final private byte[] v = OutputStream.getIsoBytes("v\n");
+    static final private byte[] y = OutputStream.getIsoBytes("y\n");
     static final private byte[] q = OutputStream.getIsoBytes("q\n");
     static final private byte[] Q = OutputStream.getIsoBytes("Q\n");
     static final private byte[] f = OutputStream.getIsoBytes("f\n");
@@ -34,24 +36,27 @@ public class PdfCanvas {
     static final private byte[] re = OutputStream.getIsoBytes("re\n");
     static final private byte[] BT = OutputStream.getIsoBytes("BT\n");
     static final private byte[] ET = OutputStream.getIsoBytes("ET\n");
-    static final private byte[] Tf = OutputStream.getIsoBytes(" Tf\n");
+    static final private byte[] Tf = OutputStream.getIsoBytes("Tf\n");
     static final private byte[] Tj = OutputStream.getIsoBytes("Tj\n");
-    static final private byte[] Tm = OutputStream.getIsoBytes(" Tm\n");
-    static final private byte[] Td = OutputStream.getIsoBytes(" Td\n");
-    static final private byte[] Tr = OutputStream.getIsoBytes(" Tr\n");
+    static final private byte[] Tm = OutputStream.getIsoBytes("Tm\n");
+    static final private byte[] Td = OutputStream.getIsoBytes("Td\n");
+    static final private byte[] Tr = OutputStream.getIsoBytes("Tr\n");
     static final private byte[] escR = OutputStream.getIsoBytes("\r");
     static final private byte[] escN = OutputStream.getIsoBytes("\n");
     static final private byte[] escT = OutputStream.getIsoBytes("\t");
     static final private byte[] escB = OutputStream.getIsoBytes("\b");
     static final private byte[] escF = OutputStream.getIsoBytes("\f");
-    static final private byte[] w = OutputStream.getIsoBytes(" w\n");
+    static final private byte[] w = OutputStream.getIsoBytes("w\n");
     static final private byte[] h = OutputStream.getIsoBytes("h\n");
     static final private byte[] n = OutputStream.getIsoBytes("n\n");
     static final private byte[] S = OutputStream.getIsoBytes("S\n");
     static final private byte[] s = OutputStream.getIsoBytes("s\n");
-    static final private byte[] Do = OutputStream.getIsoBytes(" Do\n");
-    static final private byte[] cm = OutputStream.getIsoBytes(" cm\n");
+    static final private byte[] Do = OutputStream.getIsoBytes("Do\n");
+    static final private byte[] cm = OutputStream.getIsoBytes("cm\n");
     static final private byte[] gs = OutputStream.getIsoBytes("gs\n");
+    static final private byte[] BI = OutputStream.getIsoBytes("BI\n");
+    static final private byte[] ID = OutputStream.getIsoBytes("ID\n");
+    static final private byte[] EI = OutputStream.getIsoBytes("EI\n");
 
     protected Stack<PdfGraphicsState> gsStack = new Stack<PdfGraphicsState>();
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
@@ -138,7 +143,7 @@ public class PdfCanvas {
                 writeFloat(c).writeSpace().
                 writeFloat(d).writeSpace().
                 writeFloat(e).writeSpace().
-                writeFloat(f).writeBytes(cm);
+                writeFloat(f).writeSpace().writeBytes(cm);
         return this;
     }
 
@@ -187,7 +192,7 @@ public class PdfCanvas {
         contentStream.getOutputStream()
                 .write(fontName)
                 .writeSpace()
-                .writeFloat(size)
+                .writeFloat(size).writeSpace()
                 .writeBytes(Tf);
         return this;
     }
@@ -203,7 +208,7 @@ public class PdfCanvas {
         contentStream.getOutputStream()
                 .writeFloat(x)
                 .writeSpace()
-                .writeFloat(y)
+                .writeFloat(y).writeSpace()
                 .writeBytes(Td);
         return this;
     }
@@ -217,7 +222,7 @@ public class PdfCanvas {
     public PdfCanvas setTextRenderingMode(int textRenderingMode) throws PdfException {
         currentGs.textRenderingMode = textRenderingMode;
         contentStream.getOutputStream()
-                .writeInteger(textRenderingMode)
+                .writeInteger(textRenderingMode).writeSpace()
                 .writeBytes(Tr);
         return this;
     }
@@ -245,7 +250,7 @@ public class PdfCanvas {
                 .writeSpace()
                 .writeFloat(x)
                 .writeSpace()
-                .writeFloat(y)
+                .writeFloat(y).writeSpace()
                 .writeBytes(Tm);
         return this;
     }
@@ -273,7 +278,7 @@ public class PdfCanvas {
         contentStream.getOutputStream()
                 .writeFloat(x)
                 .writeSpace()
-                .writeFloat(y)
+                .writeFloat(y).writeSpace()
                 .writeBytes(m);
         return this;
     }
@@ -290,7 +295,7 @@ public class PdfCanvas {
         contentStream.getOutputStream()
                 .writeFloat(x)
                 .writeSpace()
-                .writeFloat(y)
+                .writeFloat(y).writeSpace()
                 .writeBytes(l);
         return this;
     }
@@ -319,6 +324,7 @@ public class PdfCanvas {
                 .writeFloat(x3)
                 .writeSpace()
                 .writeFloat(y3)
+                .writeSpace()
                 .writeBytes(c);
         return this;
     }
@@ -340,7 +346,7 @@ public class PdfCanvas {
                 .writeSpace()
                 .writeFloat(x3)
                 .writeSpace()
-                .writeFloat(y3)
+                .writeFloat(y3).writeSpace()
                 .writeBytes(v);
         return this;
     }
@@ -362,7 +368,7 @@ public class PdfCanvas {
                 .writeSpace()
                 .writeFloat(x3)
                 .writeSpace()
-                .writeFloat(y3)
+                .writeFloat(y3).writeSpace()
                 .writeBytes(y);
         return this;
     }
@@ -622,7 +628,7 @@ public class PdfCanvas {
      */
     public PdfCanvas setLineWidth(float lineWidth) throws PdfException {
         contentStream.getOutputStream()
-                .writeFloat(lineWidth)
+                .writeFloat(lineWidth).writeSpace()
                 .writeBytes(w);
         return this;
     }
@@ -666,25 +672,124 @@ public class PdfCanvas {
         return this;
     }
 
+    /**
+     * Adds Image XObject to canvas.
+     *
+     * @param image
+     * @param a
+     * @param b
+     * @param c
+     * @param d
+     * @param e
+     * @param f
+     * @return canvas
+     * @throws PdfException
+     */
     public PdfCanvas addImage(PdfImageXObject image, float a, float b, float c, float d, float e, float f) throws PdfException {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addImage(image);
-        contentStream.getOutputStream().write(name).writeBytes(Do);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
         restoreState();
         return this;
     }
 
+
+    /**
+     * Creates Image XObject from image and adds it to canvas.
+     *
+     * @param image
+     * @param a
+     * @param b
+     * @param c
+     * @param d
+     * @param e
+     * @param f
+     * @param asInline true if to add image as in-line.
+     * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @throws PdfException
+     */
+    public PdfImageXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) throws PdfException {
+        if (asInline) {
+            PdfImageXObject imageXObject = new PdfImageXObject(null, image);
+            saveState();
+            concatMatrix(a, b, c, d, e, f);
+            PdfOutputStream os = contentStream.getOutputStream();
+            os.writeBytes(BI);
+            for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().entrySet()) {
+                PdfName key = entry.getKey();
+                if (PdfName.Type.equals(key) || PdfName.Subtype.equals(key) || PdfName.Length.equals(key)) {
+
+                } else {
+                    os.write(entry.getKey()).writeSpace();
+                    os.write(entry.getValue()).writeNewLine();
+                }
+            }
+            os.writeBytes(ID);
+            os.writeBytes(imageXObject.getPdfObject().getBytes()).writeNewLine().writeBytes(EI).writeNewLine();
+            restoreState();
+            return null;
+        } else {
+            PdfImageXObject imageXObject = new PdfImageXObject(document, image);
+            addImage(imageXObject, a, b, c, d, e, f);
+            return imageXObject;
+        }
+    }
+
+    /**
+     * Adds Image XObject to specified rectangle on canvas.
+     *
+     * @param image
+     * @param rect
+     * @return
+     * @throws PdfException
+     */
     public PdfCanvas addImage(PdfImageXObject image, Rectangle rect) throws PdfException {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
     }
 
+    /**
+     * Creates Image XObject from image and adds it to canvas.
+     *
+     * @param image
+     * @param rect
+     * @param asInline true if to add image as in-line.
+     * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @throws PdfException
+     */
+    public PdfImageXObject addImage(Image image, Rectangle rect, boolean asInline) throws PdfException {
+        return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY(), asInline);
+    }
+
+    /**
+     * Adds image to the specified position.
+     *
+     * @param image
+     * @param x
+     * @param y
+     * @return
+     * @throws PdfException
+     */
     public PdfCanvas addImage(PdfImageXObject image, float x, float y) throws PdfException {
         return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y);
     }
 
     /**
-     * Adds image to the specified position with specified width preserving aspect ratio.
+     * Creates Image XObject from image and adds it to canvas.
+     *
+     * @param image
+     * @param x
+     * @param y
+     * @param asInline true if to add image as in-line.
+     * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @throws PdfException
+     */
+    public PdfImageXObject addImage(Image image, float x, float y, boolean asInline) throws PdfException {
+        return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y, asInline);
+    }
+
+    /**
+     * Adds Image XObject to the specified position with specified width preserving aspect ratio.
      *
      * @param image
      * @param x
@@ -698,7 +803,22 @@ public class PdfCanvas {
     }
 
     /**
-     * Adds image to the specified position with specified height preserving aspect ratio.
+     * Creates Image XObject from image and adds it to the specified position with specified width preserving aspect ratio.
+     *
+     * @param image
+     * @param x
+     * @param y
+     * @param width
+     * @param asInline true if to add image as in-line.
+     * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @throws PdfException
+     */
+    public PdfImageXObject addImage(Image image, float x, float y, float width, boolean asInline) throws PdfException {
+        return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y, asInline);
+    }
+
+    /**
+     * Adds Image XObject to the specified position with specified height preserving aspect ratio.
      *
      * @param image
      * @param x
@@ -712,11 +832,27 @@ public class PdfCanvas {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
     }
 
+    /**
+     * Creates Image XObject from image and adds it to the specified position with specified width preserving aspect ratio.
+     *
+     * @param image
+     * @param x
+     * @param y
+     * @param height
+     * @param asInline true if to add image as in-line.
+     * @param dummy
+     * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @throws PdfException
+     */
+    public PdfImageXObject addImage(Image image, float x, float y, float height, boolean asInline, boolean dummy) throws PdfException {
+        return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y, asInline);
+    }
+
     public PdfCanvas addForm(PdfFormXObject form, float a, float b, float c, float d, float e, float f) throws PdfException {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addForm(form);
-        contentStream.getOutputStream().write(name).writeBytes(Do);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
         restoreState();
         return this;
     }
