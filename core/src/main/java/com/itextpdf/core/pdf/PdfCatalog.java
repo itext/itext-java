@@ -45,26 +45,22 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public boolean removePage(PdfPage page) throws PdfException {
+        //TODO log removing flushed page
         return pageTree.removePage(page);
     }
 
     public PdfPage removePage(int pageNum) throws PdfException {
+        //TODO log removing flushed page
         return pageTree.removePage(pageNum);
     }
 
+    /**
+     * TODO!
+     * @throws PdfException
+     */
     @Override
     public void flush() throws PdfException {
-        if (getDocument().appendMode && !getPdfObject().getIndirectReference().checkState(PdfIndirectReference.Modified)) {
-            PdfObject pages = pageTree.generateTree();
-            if (pages.getIndirectReference().checkState(PdfIndirectReference.Modified)) {
-                pdfObject.put(PdfName.Pages, pages);
-                pdfObject.setModified();
-                pdfObject.flush();
-            }
-        } else {
-            pdfObject.put(PdfName.Pages, pageTree.generateTree());
-            pdfObject.flush(false);
-        }
+        throw new PdfException(PdfException.YouCannotFlushPdfCatalogManually);
     }
 
 }

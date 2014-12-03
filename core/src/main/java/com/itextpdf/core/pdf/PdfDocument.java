@@ -481,12 +481,22 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Close PDF document.
      *
-     * @throws PdfException
      */
     public void close() throws PdfException {
+        close(false);
+    }
+
+    /**
+     * Close PDF document.
+     *
+     */
+    public void close(boolean optimizePagesTree) throws PdfException {
+        //TODO catalog.pagestree.rebuild();
         try {
             removeAllHandlers();
             if (writer != null) {
+                if (catalog.isFlushed())
+                    throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
                 if (xmpMetadata != null) {
                     PdfStream xmp = new PdfStream(this);
                     xmp.getOutputStream().write(xmpMetadata);
@@ -495,12 +505,17 @@ public class PdfDocument implements IEventDispatcher {
                     catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
                 if (appendMode) {
-                    catalog.flush();
-                    if (info.getPdfObject().isModified())
+                    if (catalog.getPdfObject().isModified()) {
+                        catalog.pdfObject.put(PdfName.Pages, catalog.pageTree.generateTree(optimizePagesTree));
+                        catalog.pdfObject.flush(false);
+                    }
+                    if (info.getPdfObject().isModified()) {
                         info.flush();
+                    }
                     writer.flushModifiedWaitingObjects();
                 } else {
-                    catalog.flush();
+                    catalog.pdfObject.put(PdfName.Pages, catalog.pageTree.generateTree(optimizePagesTree));
+                    catalog.pdfObject.flush(false);
                     info.flush();
                     writer.flushWaitingObjects();
                 }

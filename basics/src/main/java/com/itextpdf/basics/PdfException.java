@@ -28,6 +28,7 @@ public class PdfException extends Exception {
 
     public static final String CannotAddObjectToObjectstream = "cannot.add.object.to.objectstream";
     public static final String CannotCloseDocument = "cannot.close.document";
+    public static final String CannotCloseDocumentWithAlreadyFlushedPdfCatalog = "cannot.close.document.with.already.flushed.pdf.catalog";
     public static final String CannotConvertPdfArrayToRectanle = "cannot.convert.pdfarray.to.rectangle";
     public static final String CannotCopyFlushedObject = "cannot.copy.flushed.object";
     public static final String CannotCopyObjectContent = "cannot.copy.object.content";
@@ -103,6 +104,7 @@ public class PdfException extends Exception {
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
     public static final String ObjectCannotBeAddedToObjectStream = "object.cannot.be.added.to.object.stream";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
+    public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
     public static final String PdfPagesTreeCouldBeGeneratedOnlyOnce = "pdf.pages.tree.could.be.generated.only.once";

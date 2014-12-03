@@ -5,7 +5,6 @@ import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.basics.io.OutputStream;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 public class PdfOutputStream extends OutputStream {
@@ -60,7 +59,7 @@ public class PdfOutputStream extends OutputStream {
     protected void write(PdfArray array) throws PdfException {
         writeByte((byte)'[');
         for (int i = 0; i < array.size(); i++) {
-            PdfObject value = array.get(i);
+            PdfObject value = array.get(i, false);
             PdfIndirectReference indirectReference;
             if ((indirectReference = value.getIndirectReference()) != null) {
                 write(indirectReference);

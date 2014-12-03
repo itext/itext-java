@@ -16,6 +16,7 @@ class PdfPagesTree {
     private ArrayList<PdfPage> pages;
     private PdfDocument pdfDocument;
     private boolean generated = false;
+    private PdfPages root;
 
     /**
      * Create PdfPages tree.
@@ -31,34 +32,18 @@ class PdfPagesTree {
             PdfDictionary pages = pdfCatalog.getPdfObject().getAsDictionary(PdfName.Pages);
             if (pages == null)
                 throw new PdfException(PdfException.InvalidPageStructurePagesPagesMustBePdfDictionary);
-            PdfPages pdfPages = new PdfPages(0, pages, Integer.MAX_VALUE);
-            for (int i = 0; i < pdfPages.getCount(); i++) {
+            this.root = new PdfPages(0, Integer.MAX_VALUE, pages, null);
+            parents.add(this.root);
+            for (int i = 0; i < this.root.getCount(); i++) {
                 this.pageRefs.add(null);
                 this.pages.add(null);
             }
-            parents.add(pdfPages);
         } else {
+            this.root = null;
             this.parents.add(new PdfPages(0, this.pdfDocument));
         }
         //in read mode we will create PdfPages from 0 to Count
         // and reserve null indexes for pageRefs and pages.
-    }
-
-    /**
-     * Appends the specified {@see PdfPage} to the end of this tree.
-     *
-     * @param page {@see PdfPage}
-     */
-    public void addPage(PdfPage page) throws PdfException {
-        PdfPages pdfPages = parents.get(parents.size() - 1);
-        if (pdfPages.getCount() % leafSize == 0 && pageRefs.size() != 0) {
-            pdfPages = new PdfPages(pdfPages.getFrom() + pdfPages.getCount(), pdfDocument);
-            parents.add(pdfPages);
-        }
-        page.makeIndirect(pdfDocument);
-        pdfPages.addPage(page.getPdfObject());
-        pageRefs.add(page.getPdfObject());
-        pages.add(page);
     }
 
     /**
@@ -95,29 +80,49 @@ class PdfPagesTree {
     }
 
     /**
+     * Appends the specified {@see PdfPage} to the end of this tree.
+     *
+     * @param pdfPage {@see PdfPage}
+     */
+    public void addPage(PdfPage pdfPage) throws PdfException {
+        PdfPages pdfPages;
+        if (root != null) { // in this case we save tree structure
+            loadPage(pageRefs.size() - 1);
+            pdfPages = parents.get(parents.size() - 1);
+        } else {
+            pdfPages = parents.get(parents.size() - 1);
+            if (pdfPages.getCount() % leafSize == 0 && pageRefs.size() != 0) {
+                pdfPages = new PdfPages(pdfPages.getFrom() + pdfPages.getCount(), pdfDocument);
+                parents.add(pdfPages);
+            }
+        }
+        pdfPage.makeIndirect(pdfDocument);
+        pdfPages.addPage(pdfPage.getPdfObject());
+        pageRefs.add(pdfPage.getPdfObject());
+        pages.add(pdfPage);
+    }
+
+    /**
      * Insert {@see PdfPage} into specific one-based position.
      *
      * @param index one-base index of the page
-     * @param page {@see PdfPage}
-     * @throws PdfException in case {@code page} has been flushed
+     * @param pdfPage {@see PdfPage}
      */
-    public void addPage(int index, PdfPage page) throws PdfException {
-        if (page.isFlushed())
-            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
+    public void addPage(int index, PdfPage pdfPage) throws PdfException {
         --index;
         if (index > pageRefs.size())
             throw new IndexOutOfBoundsException("index");
         if (index == pageRefs.size()) {
-            addPage(page);
+            addPage(pdfPage);
             return;
         }
         loadPage(index);
-        page.makeIndirect(pdfDocument);
+        pdfPage.makeIndirect(pdfDocument);
         int parentIndex = findPageParent(index);
-        parents.get(parentIndex).addPage(index, page);
+        parents.get(parentIndex).addPage(index, pdfPage);
         correctPdfPagesFromProperty(parentIndex + 1, +1);
-        pageRefs.add(index, page.getPdfObject());
-        pages.add(index, page);
+        pageRefs.add(index, pdfPage.getPdfObject());
+        pages.add(index, pdfPage);
     }
 
     /**
@@ -168,7 +173,7 @@ class PdfPagesTree {
      * @return root {@see PdfPages}
      * @throws PdfException in case empty document
      */
-    protected  PdfObject generateTree() throws PdfException {
+    protected  PdfObject generateTree(boolean rebuild) throws PdfException {
         if (pageRefs.isEmpty())
             throw new PdfException(PdfException.DocumentHasNoPages);
         if (generated)
@@ -178,29 +183,33 @@ class PdfPagesTree {
             pages.set(i, null);
         }
 
-        while (parents.size() != 1) {
-            ArrayList<PdfPages> nextParents = new ArrayList<PdfPages>();
-            //dynamicLeafSize helps to avoid PdfPages leaf with only one page
-            int dynamicLeafSize = leafSize;
-            PdfPages current = null;
-            for (int i = 0; i < parents.size(); i++) {
-                PdfPages pages = parents.get(i);
-                int pageCount = pages.getCount();
-                if (i % dynamicLeafSize == 0) {
-                    if (pageCount <= 1) {
-                        dynamicLeafSize++;
-                    } else {
-                        current = new PdfPages(-1, pdfDocument);
-                        nextParents.add(current);
-                        dynamicLeafSize = leafSize;
+        if (root == null) {
+            while (parents.size() != 1) {
+                ArrayList<PdfPages> nextParents = new ArrayList<PdfPages>();
+                //dynamicLeafSize helps to avoid PdfPages leaf with only one page
+                int dynamicLeafSize = leafSize;
+                PdfPages current = null;
+                for (int i = 0; i < parents.size(); i++) {
+                    PdfPages pages = parents.get(i);
+                    int pageCount = pages.getCount();
+                    if (i % dynamicLeafSize == 0) {
+                        if (pageCount <= 1) {
+                            dynamicLeafSize++;
+                        } else {
+                            current = new PdfPages(-1, pdfDocument);
+                            nextParents.add(current);
+                            dynamicLeafSize = leafSize;
+                        }
                     }
+                    assert current != null;
+                    current.addPages(pages);
                 }
-                current.addPages(pages);
+                parents = nextParents;
             }
-            parents = nextParents;
+            root = parents.get(0);
         }
         generated = true;
-        return parents.get(0).getPdfObject();
+        return root.getPdfObject();
     }
 
     private void loadPage(int pageNum) throws PdfException {
@@ -242,16 +251,19 @@ class PdfPagesTree {
                 PdfDictionary pdfPagesObject = kids.getAsDictionary(i);
                 if (pdfPagesObject.getAsArray(PdfName.Kids) == null) {      // pdfPagesObject is PdfPage
                     if (lastPdfPages == null) {                             // possible if only first kid is PdfPage
-                        lastPdfPages = new PdfPages(parent.getFrom(), pdfDocument);
+                        lastPdfPages = new PdfPages(parent.getFrom(), pdfDocument, parent);
+                        kids.set(i, lastPdfPages.getPdfObject());
                         newParents.add(lastPdfPages);
                     }
                     lastPdfPages.addPage(pdfPagesObject);
+                    kids.remove(i);
+                    i--;
                     kidsCount--;
                 } else {                                                    // pdfPagesObject is PdfPages
                     int from = lastPdfPages == null
                             ? parent.getFrom()
                             : lastPdfPages.getFrom() + lastPdfPages.getCount();
-                    lastPdfPages = new PdfPages(from, pdfPagesObject, kidsCount);
+                    lastPdfPages = new PdfPages(from, kidsCount, pdfPagesObject, parent);
                     newParents.add(lastPdfPages);
                     kidsCount -= lastPdfPages.getCount();
                 }
@@ -278,9 +290,10 @@ class PdfPagesTree {
     private boolean internalRemovePage(int pageNum) throws PdfException {
         int parentIndex = findPageParent(pageNum);
         PdfPages pdfPages = parents.get(parentIndex);
-        if (pdfPages.remove(pageNum)) {
+        if (pdfPages.removePage(pageNum)) {
             if (pdfPages.getCount() == 0 && parents.size() > 1) {
                 parents.remove(parentIndex);
+                pdfPages.removeFromParent();
                 --parentIndex;
             }
             correctPdfPagesFromProperty(parentIndex + 1, -1);
@@ -315,7 +328,8 @@ class PdfPagesTree {
         }
     }
 
-    protected int verifyIntegrity() {
+    // TODO move to tests
+    int verifyIntegrity() {
         int from = 0;
         for (int i = 0; i < parents.size(); i++) {
             if (parents.get(i).getFrom() != from)

@@ -17,7 +17,8 @@ public class PdfDocumentTest {
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        boolean create = new File(destinationFolder).mkdirs();
+        assert !create : "Error in creating destination folder.";
     }
 
     @Test
@@ -149,90 +150,6 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping3Mix1() throws IOException, PdfException {
-        String filename1 =  destinationFolder + "stamping3Mix1_1.pdf";
-        String filename2 =  destinationFolder + "stamping3Mix1_2.pdf";
-
-        FileOutputStream fos1 = new FileOutputStream(filename1);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        writer1.setFullCompression(true);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        PdfPage page1 = pdfDoc1.addNewPage();
-        page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 1\n"));
-        page1.flush();
-        pdfDoc1.close();
-
-        FileInputStream fis2 = new FileInputStream(filename1);
-        PdfReader reader2 = new PdfReader(fis2);
-        FileOutputStream fos2 = new FileOutputStream(filename2);
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
-        PdfPage page2 = pdfDoc2.addNewPage();
-        page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 2\n"));
-        page2.flush();
-        pdfDoc2.close();
-
-        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
-        PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
-            pdfDoc3.getPage(i + 1);
-        }
-        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
-        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
-        pdfDoc3.close();
-
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        byte[] bytes = reader.getPageContent(1);
-        Assert.assertEquals("%page 1\n", new String(bytes));
-        bytes = reader.getPageContent(2);
-        Assert.assertEquals("%page 2\n", new String(bytes));
-        reader.close();
-    }
-
-    @Test
-    public void stamping3Mix2() throws IOException, PdfException {
-        String filename1 =  destinationFolder + "stamping3Mix2_1.pdf";
-        String filename2 =  destinationFolder + "stamping3Mix2_2.pdf";
-
-        FileOutputStream fos1 = new FileOutputStream(filename1);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        PdfPage page1 = pdfDoc1.addNewPage();
-        page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 1\n"));
-        page1.flush();
-        pdfDoc1.close();
-
-        FileInputStream fis2 = new FileInputStream(filename1);
-        PdfReader reader2 = new PdfReader(fis2);
-        FileOutputStream fos2 = new FileOutputStream(filename2);
-        PdfWriter writer2 = new PdfWriter(fos2);
-        writer2.setFullCompression(true);
-        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
-        PdfPage page2 = pdfDoc2.addNewPage();
-        page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 2\n"));
-        page2.flush();
-        pdfDoc2.close();
-
-        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
-        PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
-            pdfDoc3.getPage(i + 1);
-        }
-        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
-        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
-        pdfDoc3.close();
-
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        byte[] bytes = reader.getPageContent(1);
-        Assert.assertEquals("%page 1\n", new String(bytes));
-        bytes = reader.getPageContent(2);
-        Assert.assertEquals("%page 2\n", new String(bytes));
-        reader.close();
-    }
-
-    @Test
     public void stamping4() throws IOException, PdfException {
         String filename1 =  destinationFolder + "stamping4_1.pdf";
         String filename2 =  destinationFolder + "stamping4_2.pdf";
@@ -321,6 +238,258 @@ public class PdfDocumentTest {
         for (int i = 1; i < reader.getNumberOfPages(); i++) {
             byte[] bytes = reader.getPageContent(i);
             Assert.assertEquals("%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stamping6() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stamping6_1.pdf";
+        String filename2 =  destinationFolder + "stamping6_2.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(true);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfPage page1 = pdfDoc1.addNewPage();
+        page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 1\n"));
+        page1.flush();
+        pdfDoc1.close();
+
+        FileInputStream fis2 = new FileInputStream(filename1);
+        PdfReader reader2 = new PdfReader(fis2);
+        FileOutputStream fos2 = new FileOutputStream(filename2);
+        PdfWriter writer2 = new PdfWriter(fos2);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+        PdfPage page2 = pdfDoc2.addNewPage();
+        page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 2\n"));
+        page2.flush();
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        byte[] bytes = reader.getPageContent(1);
+        Assert.assertEquals("%page 1\n", new String(bytes));
+        bytes = reader.getPageContent(2);
+        Assert.assertEquals("%page 2\n", new String(bytes));
+        reader.close();
+    }
+
+    @Test
+    public void stamping7() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stamping7_1.pdf";
+        String filename2 =  destinationFolder + "stamping7_2.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfPage page1 = pdfDoc1.addNewPage();
+        page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 1\n"));
+        page1.flush();
+        pdfDoc1.close();
+
+        FileInputStream fis2 = new FileInputStream(filename1);
+        PdfReader reader2 = new PdfReader(fis2);
+        FileOutputStream fos2 = new FileOutputStream(filename2);
+        PdfWriter writer2 = new PdfWriter(fos2);
+        writer2.setFullCompression(true);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+        PdfPage page2 = pdfDoc2.addNewPage();
+        page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page 2\n"));
+        page2.flush();
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        byte[] bytes = reader.getPageContent(1);
+        Assert.assertEquals("%page 1\n", new String(bytes));
+        bytes = reader.getPageContent(2);
+        Assert.assertEquals("%page 2\n", new String(bytes));
+        reader.close();
+    }
+
+    @Test
+    public void stamping8() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stamping8_1.pdf";
+        String filename2 =  destinationFolder + "stamping8_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(true);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(true);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stamping9() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stamping9_1.pdf";
+        String filename2 =  destinationFolder + "stamping9_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(false);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(true);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stamping10() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stamping10_1.pdf";
+        String filename2 =  destinationFolder + "stamping10_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(true);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(false);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stamping11() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stamping11_1.pdf";
+        String filename2 =  destinationFolder + "stamping11_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(false);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(false);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
     }
@@ -544,6 +713,174 @@ public class PdfDocumentTest {
         for (int i = 1; i < reader.getNumberOfPages(); i++) {
             byte[] bytes = reader.getPageContent(i);
             Assert.assertEquals("%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stampingAppend8() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stampingAppend8_1.pdf";
+        String filename2 =  destinationFolder + "stampingAppend8_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(true);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(true);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2, true);
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stampingAppend9() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stampingAppend9_1.pdf";
+        String filename2 =  destinationFolder + "stampingAppend9_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(false);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(true);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2, true);
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stampingAppend10() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stampingAppend10_1.pdf";
+        String filename2 =  destinationFolder + "stampingAppend10_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(true);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(false);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2, true);
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stampingAppend11() throws IOException, PdfException {
+        String filename1 =  destinationFolder + "stampingAppend11_1.pdf";
+        String filename2 =  destinationFolder + "stampingAppend11_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(false);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(false);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2, true);
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
     }

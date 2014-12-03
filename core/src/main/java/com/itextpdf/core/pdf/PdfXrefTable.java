@@ -139,10 +139,9 @@ class PdfXrefTable {
      * @throws java.io.IOException
      * @throws com.itextpdf.basics.PdfException
      */
-    protected void writeXrefTableAndTrailer(PdfDocument doc) throws IOException, PdfException {
-        PdfWriter writer = doc.getWriter();
-
-        if (doc.getReader() != null) {
+    protected void writeXrefTableAndTrailer(PdfDocument document) throws IOException, PdfException {
+        PdfWriter writer = document.getWriter();
+        if (document.getReader() != null) {
             // Increment generation number for all freed references.
             for (Integer objNr : freeReferences) {
                 xref[objNr].genNr++;
@@ -157,14 +156,14 @@ class PdfXrefTable {
         ArrayList<Integer> sections = new ArrayList<Integer>();
         int first = 0;
         int len = 1;
-        if (doc.appendMode) {
+        if (document.appendMode) {
             first = 1;
             len = 0;
         }
         for (int i = 1; i < size(); i++) {
             PdfIndirectReference indirectReference = xref[i];
             if (indirectReference == null
-                    || (doc.appendMode && !indirectReference.checkState(PdfIndirectReference.Modified))) {
+                    || (document.appendMode && !indirectReference.checkState(PdfIndirectReference.Modified))) {
                 if (len > 0) {
                     sections.add(first);
                     sections.add(len);
@@ -183,12 +182,15 @@ class PdfXrefTable {
             sections.add(first);
             sections.add(len);
         }
+        if (document.appendMode && sections.size() == 0) { // no modifications.
+            document.getXref().clear();
+            return;
+        }
 
         int size = sections.get(sections.size() - 2) + sections.get(sections.size() - 1);
         int startxref = writer.getCurrentPos();
-        PdfDocument pdfDocument = writer.pdfDocument;
         if (writer.isFullCompression()) {
-            PdfStream stream = new PdfStream(pdfDocument);
+            PdfStream stream = new PdfStream(document);
             stream.put(PdfName.Type, PdfName.XRef);
             stream.put(PdfName.Size, new PdfNumber(size));
             stream.put(PdfName.W, new PdfArray(new ArrayList<PdfObject>() {{
@@ -196,18 +198,18 @@ class PdfXrefTable {
                 add(new PdfNumber(4));
                 add(new PdfNumber(2));
             }}));
-            stream.put(PdfName.Info, pdfDocument.getDocumentInfo().getPdfObject());
-            stream.put(PdfName.Root, pdfDocument.getCatalog().getPdfObject());
+            stream.put(PdfName.Info, document.getDocumentInfo().getPdfObject());
+            stream.put(PdfName.Root, document.getCatalog().getPdfObject());
             PdfArray index = new PdfArray();
             for (Integer section : sections) {
                 index.add(new PdfNumber(section.intValue()));
             }
-            if (pdfDocument.appendMode) {
-                PdfNumber lastXref = new PdfNumber(pdfDocument.reader.getLastXref());
+            if (document.appendMode) {
+                PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
                 stream.put(PdfName.Prev, lastXref);
             }
             stream.put(PdfName.Index, index);
-            PdfXrefTable xref = pdfDocument.getXref();
+            PdfXrefTable xref = document.getXref();
             for (int k = 0; k < sections.size(); k += 2) {
                 first = sections.get(k);
                 len = sections.get(k + 1);
@@ -235,7 +237,7 @@ class PdfXrefTable {
             stream.flush();
         } else {
             writer.writeString("xref\n");
-            PdfXrefTable xref = pdfDocument.getXref();
+            PdfXrefTable xref = document.getXref();
             for (int k = 0; k < sections.size(); k += 2) {
                 first = sections.get(k);
                 len = sections.get(k + 1);
@@ -252,25 +254,25 @@ class PdfXrefTable {
                     }
                 }
             }
-            PdfDictionary trailer = pdfDocument.getTrailer().getPdfObject();
+            PdfDictionary trailer = document.getTrailer().getPdfObject();
             trailer.put(PdfName.Size, new PdfNumber(size));
             trailer.remove(PdfName.W);
             trailer.remove(PdfName.Index);
             trailer.remove(PdfName.Type);
             trailer.remove(PdfName.Length);
             writer.writeString("trailer\n");
-            if (pdfDocument.appendMode) {
-                PdfNumber lastXref = new PdfNumber(pdfDocument.reader.getLastXref());
+            if (document.appendMode) {
+                PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
                 trailer.put(PdfName.Prev, lastXref);
             }
-            writer.write(pdfDocument.getTrailer().getPdfObject());
+            writer.write(document.getTrailer().getPdfObject());
 
         }
 
         writer.writeString("\nstartxref\n").
                 writeInteger(startxref).
                 writeString("\n%%EOF\n");
-        pdfDocument.getXref().clear();
+        document.getXref().clear();
     }
 
     private void ensureCount(final int count) {
