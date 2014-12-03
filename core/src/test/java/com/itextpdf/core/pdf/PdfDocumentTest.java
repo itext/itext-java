@@ -17,8 +17,7 @@ public class PdfDocumentTest {
 
     @BeforeClass
     static public void beforeClass() {
-        boolean create = new File(destinationFolder).mkdirs();
-        assert !create : "Error in creating destination folder.";
+        new File(destinationFolder).mkdirs();
     }
 
     @Test
