@@ -119,6 +119,7 @@ public class PdfException extends Exception {
     public static final String TilesAreNotSupported = "tiles.are.not.supported";
     public static final String TrailerNotFound = "trailer.not.found";
     public static final String TransparencyLengthMustBeEqualTo2WithCcittImages = "transparency.length.must.be.equal.to.2.with.ccitt.images";
+    public static final String UnbalancedBeginEndMarkedContentOperators = "unbalanced.begin.end.marked.content.operators";
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
@@ -154,10 +155,10 @@ public class PdfException extends Exception {
         if (messageParams != null) {
             StringBuilder builder = new StringBuilder(super.getMessage());
             builder.append('+');
-            for (Object obj: messageParams) {
+            for (Object obj : messageParams) {
                 builder.append(obj.toString()).append('+');
             }
-            return builder.substring(0, builder.length()-1);
+            return builder.substring(0, builder.length() - 1);
         }
         return super.getMessage();
     }

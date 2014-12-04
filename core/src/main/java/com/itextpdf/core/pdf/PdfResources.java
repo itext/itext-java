@@ -14,6 +14,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private static final String Im = "Im";
     private static final String Fm = "Fm";
     private static final String Gs = "Gs";
+    private static final String Pr = "Pr";
 
 
     private Map<PdfObject, PdfName> resourceToName = new HashMap<PdfObject, PdfName>();
@@ -26,6 +27,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private ResourceNumber imageNumber = new ResourceNumber();
     private ResourceNumber formNumber = new ResourceNumber();
     private ResourceNumber egsNumber = new ResourceNumber();
+    private ResourceNumber propNumber = new ResourceNumber();
 
     public PdfResources(PdfDictionary pdfObject) throws PdfException {
         super(pdfObject);
@@ -66,6 +68,10 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfName addExtGState(PdfObject extGState) throws PdfException {
         return addResource(extGState, PdfName.ExtGState, Gs, egsNumber);
+    }
+
+    public PdfName addProperties(PdfObject properties) throws PdfException {
+        return addResource(properties, PdfName.Properties, Pr, propNumber);
     }
 
     public PdfName getResourceName(PdfObjectWrapper resource) {
@@ -132,6 +138,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         imageNumber = getAvailableNumber(names, Im);
         formNumber = getAvailableNumber(names, Fm);
         egsNumber = getAvailableNumber(names, Gs);
+        propNumber = getAvailableNumber(names, Pr);
     }
 
     private ResourceNumber getAvailableNumber(Set<PdfName> names, final String resPrefix) {

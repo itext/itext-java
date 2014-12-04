@@ -2,9 +2,7 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.fonts.PdfStandardFont;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.pdf.*;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfDictionary;
@@ -14,6 +12,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -958,5 +957,47 @@ public class PdfCanvasTest {
         }
 
     }
+
+    @Test
+    public void markedContentTest1() throws Exception {
+        String message = "";
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginMarkedContent(new com.itextpdf.core.pdf.PdfName("Tag1"));
+        canvas.endMarkedContent();
+        try {
+            canvas.endMarkedContent();
+        } catch (PdfException e) {
+            message = e.getMessage();
+        }
+        canvas.release();
+        document.close();
+        Assert.assertEquals(PdfException.UnbalancedBeginEndMarkedContentOperators, message);
+    }
+
+    @Test
+    public void markedContentTest2() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "markedContentTest2.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        final PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        com.itextpdf.core.pdf.PdfDictionary tag2 = new com.itextpdf.core.pdf.PdfDictionary(new HashMap<com.itextpdf.core.pdf.PdfName, PdfObject>(){{put(new com.itextpdf.core.pdf.PdfName("Tag"), new PdfNumber(2));}});
+        com.itextpdf.core.pdf.PdfDictionary tag3 = new com.itextpdf.core.pdf.PdfDictionary(new HashMap<com.itextpdf.core.pdf.PdfName, PdfObject>(){{put(new com.itextpdf.core.pdf.PdfName("Tag"), new PdfNumber(3).makeIndirect(document));}});
+
+        canvas.beginMarkedContent(new com.itextpdf.core.pdf.PdfName("Tag1")).endMarkedContent().
+                beginMarkedContent(new com.itextpdf.core.pdf.PdfName("Tag2"), tag2).endMarkedContent().
+                beginMarkedContent(new com.itextpdf.core.pdf.PdfName("Tag3"), (com.itextpdf.core.pdf.PdfDictionary) tag3.makeIndirect(document)).endMarkedContent();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "markedContentTest2.pdf", sourceFolder + "cmp_markedContentTest2.pdf", destinationFolder, "diff_"));
+    }
+
 
 }

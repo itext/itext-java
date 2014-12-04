@@ -57,12 +57,16 @@ public class PdfCanvas {
     static final private byte[] BI = OutputStream.getIsoBytes("BI\n");
     static final private byte[] ID = OutputStream.getIsoBytes("ID\n");
     static final private byte[] EI = OutputStream.getIsoBytes("EI\n");
+    static final private byte[] BMC = OutputStream.getIsoBytes("BMC\n");
+    static final private byte[] BDC = OutputStream.getIsoBytes("BDC\n");
+    static final private byte[] EMC = OutputStream.getIsoBytes("EMC\n");
 
     protected Stack<PdfGraphicsState> gsStack = new Stack<PdfGraphicsState>();
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
     protected PdfStream contentStream;
     protected PdfResources resources;
     protected PdfDocument document;
+    protected int mcDepth;
 
     /**
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
@@ -100,6 +104,16 @@ public class PdfCanvas {
 
     public PdfResources getResources() {
         return resources;
+    }
+
+    /**
+     * Attaches new content stream to the canvas.
+     * This method is supposed to be used when you want to write in different PdfStream keeping context (gsStack, currentGs, ...) the same.
+     *
+     * @param contentStream a content stream to attach.
+     */
+    public void attachContentStream(PdfStream contentStream) {
+        this.contentStream = contentStream;
     }
 
     /**
@@ -868,6 +882,36 @@ public class PdfCanvas {
         contentStream.getOutputStream().write(name).writeSpace().writeBytes(gs);
         return this;
     }
+
+    public PdfExtGState setExtGState(PdfDictionary extGState) throws PdfException {
+        PdfExtGState egs = new PdfExtGState(extGState, document);
+        setExtGState(egs);
+        return egs;
+    }
+
+    public PdfCanvas beginMarkedContent(PdfName tag) throws PdfException {
+        return beginMarkedContent(tag, null);
+    }
+
+    public PdfCanvas beginMarkedContent(PdfName tag, PdfDictionary properties) throws PdfException {
+        mcDepth++;
+        PdfOutputStream out = contentStream.getOutputStream().write(tag).writeSpace();
+        if (properties == null) {
+            out.writeBytes(BMC);
+        } else {
+            PdfObject objectToWrite = properties.getIndirectReference() == null ? properties : resources.addProperties(properties);
+            out.write(objectToWrite).writeSpace().writeBytes(BDC);
+        }
+        return this;
+    }
+
+    public PdfCanvas endMarkedContent() throws PdfException {
+        if (--mcDepth < 0)
+            throw new PdfException(PdfException.UnbalancedBeginEndMarkedContentOperators);
+        contentStream.getOutputStream().writeBytes(EMC);
+        return this;
+    }
+
 
     /**
      * A helper to insert into the content stream the <code>text</code>
