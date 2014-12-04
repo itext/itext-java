@@ -55,8 +55,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * TODO!
-     * @throws PdfException
+     * PdfCatalog will be flushed in PdfDocument.close(). User mustn't flush PdfCatalog!
      */
     @Override
     public void flush() throws PdfException {

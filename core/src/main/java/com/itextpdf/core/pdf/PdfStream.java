@@ -19,7 +19,7 @@ public class PdfStream extends PdfDictionary {
         super();
         makeIndirect(doc);
         this.outputStream = new PdfOutputStream(new ByteArrayOutputStream());
-        this.outputStream.pdfDocument = doc;
+        this.outputStream.document = doc;
     }
 
     public PdfStream(PdfDocument doc, byte[] bytes) throws IOException {

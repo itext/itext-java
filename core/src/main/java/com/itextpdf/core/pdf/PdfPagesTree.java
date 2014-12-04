@@ -14,7 +14,7 @@ class PdfPagesTree {
     private ArrayList<PdfDictionary> pageRefs;
     private ArrayList<PdfPages> parents;
     private ArrayList<PdfPage> pages;
-    private PdfDocument pdfDocument;
+    private PdfDocument document;
     private boolean generated = false;
     private PdfPages root;
 
@@ -24,7 +24,7 @@ class PdfPagesTree {
      * @param pdfCatalog {@see PdfCatalog}
      */
     public PdfPagesTree(PdfCatalog pdfCatalog) throws PdfException {
-        this.pdfDocument = pdfCatalog.getDocument();
+        this.document = pdfCatalog.getDocument();
         this.pageRefs = new ArrayList<PdfDictionary>();
         this.parents = new ArrayList<PdfPages>();
         this.pages = new ArrayList<PdfPage>();
@@ -40,7 +40,7 @@ class PdfPagesTree {
             }
         } else {
             this.root = null;
-            this.parents.add(new PdfPages(0, this.pdfDocument));
+            this.parents.add(new PdfPages(0, this.document));
         }
         //in read mode we will create PdfPages from 0 to Count
         // and reserve null indexes for pageRefs and pages.
@@ -57,7 +57,7 @@ class PdfPagesTree {
         PdfPage pdfPage = pages.get(pageNum);
         if (pdfPage == null) {
             loadPage(pageNum);
-            pdfPage = new PdfPage(pageRefs.get(pageNum), pdfDocument);
+            pdfPage = new PdfPage(pageRefs.get(pageNum), document);
             pages.set(pageNum, pdfPage);
         }
         return pdfPage;
@@ -87,16 +87,20 @@ class PdfPagesTree {
     public void addPage(PdfPage pdfPage) throws PdfException {
         PdfPages pdfPages;
         if (root != null) { // in this case we save tree structure
-            loadPage(pageRefs.size() - 1);
-            pdfPages = parents.get(parents.size() - 1);
+            if (pageRefs.size() == 0) {
+                pdfPages = root;
+            } else {
+                loadPage(pageRefs.size() - 1);
+                pdfPages = parents.get(parents.size() - 1);
+            }
         } else {
             pdfPages = parents.get(parents.size() - 1);
             if (pdfPages.getCount() % leafSize == 0 && pageRefs.size() != 0) {
-                pdfPages = new PdfPages(pdfPages.getFrom() + pdfPages.getCount(), pdfDocument);
+                pdfPages = new PdfPages(pdfPages.getFrom() + pdfPages.getCount(), document);
                 parents.add(pdfPages);
             }
         }
-        pdfPage.makeIndirect(pdfDocument);
+        pdfPage.makeIndirect(document);
         pdfPages.addPage(pdfPage.getPdfObject());
         pageRefs.add(pdfPage.getPdfObject());
         pages.add(pdfPage);
@@ -117,7 +121,7 @@ class PdfPagesTree {
             return;
         }
         loadPage(index);
-        pdfPage.makeIndirect(pdfDocument);
+        pdfPage.makeIndirect(document);
         int parentIndex = findPageParent(index);
         parents.get(parentIndex).addPage(index, pdfPage);
         correctPdfPagesFromProperty(parentIndex + 1, +1);
@@ -178,10 +182,8 @@ class PdfPagesTree {
             throw new PdfException(PdfException.DocumentHasNoPages);
         if (generated)
             throw new PdfException(PdfException.PdfPagesTreeCouldBeGeneratedOnlyOnce);
-        for (int  i = 0; i < pageRefs.size(); i++) {
-            pageRefs.set(i, null);
-            pages.set(i, null);
-        }
+        pageRefs = null;
+        pages = null;
 
         if (root == null) {
             while (parents.size() != 1) {
@@ -196,7 +198,7 @@ class PdfPagesTree {
                         if (pageCount <= 1) {
                             dynamicLeafSize++;
                         } else {
-                            current = new PdfPages(-1, pdfDocument);
+                            current = new PdfPages(-1, document);
                             nextParents.add(current);
                             dynamicLeafSize = leafSize;
                         }
@@ -210,6 +212,14 @@ class PdfPagesTree {
         }
         generated = true;
         return root.getPdfObject();
+    }
+
+    protected ArrayList<PdfPages> getParents() {
+        return parents;
+    }
+
+    protected PdfPages getRoot() {
+        return root;
     }
 
     private void loadPage(int pageNum) throws PdfException {
@@ -251,7 +261,7 @@ class PdfPagesTree {
                 PdfDictionary pdfPagesObject = kids.getAsDictionary(i);
                 if (pdfPagesObject.getAsArray(PdfName.Kids) == null) {      // pdfPagesObject is PdfPage
                     if (lastPdfPages == null) {                             // possible if only first kid is PdfPage
-                        lastPdfPages = new PdfPages(parent.getFrom(), pdfDocument, parent);
+                        lastPdfPages = new PdfPages(parent.getFrom(), document, parent);
                         kids.set(i, lastPdfPages.getPdfObject());
                         newParents.add(lastPdfPages);
                     }
@@ -291,12 +301,16 @@ class PdfPagesTree {
         int parentIndex = findPageParent(pageNum);
         PdfPages pdfPages = parents.get(parentIndex);
         if (pdfPages.removePage(pageNum)) {
-            if (pdfPages.getCount() == 0 && parents.size() > 1) {
+            if (pdfPages.getCount() == 0) {
                 parents.remove(parentIndex);
                 pdfPages.removeFromParent();
                 --parentIndex;
             }
-            correctPdfPagesFromProperty(parentIndex + 1, -1);
+            if (parents.size() == 0) {
+                parents.add(root == null ? new PdfPages(0, document) : root);
+            } else {
+                correctPdfPagesFromProperty(parentIndex + 1, -1);
+            }
             pageRefs.remove(pageNum);
             pages.remove(pageNum);
             return true;
@@ -326,16 +340,5 @@ class PdfPagesTree {
                 parents.get(i).correctFrom(correction);
             }
         }
-    }
-
-    // TODO move to tests
-    int verifyIntegrity() {
-        int from = 0;
-        for (int i = 0; i < parents.size(); i++) {
-            if (parents.get(i).getFrom() != from)
-                return i;
-            from = parents.get(i).getFrom()+parents.get(i).getCount();
-        }
-        return -1;
     }
 }

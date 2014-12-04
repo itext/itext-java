@@ -5,13 +5,11 @@ import com.itextpdf.basics.PdfException;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.TreeSet;
 
 public class PdfWriter extends PdfOutputStream {
 
     static private final byte[] obj = getIsoBytes(" obj\n");
     static private final byte[] endobj = getIsoBytes("\nendobj\n");
-    static public final int GenerationMax = 65535;
 
     /**
      * Indicates if to use full compression (using object streams).
@@ -59,10 +57,10 @@ public class PdfWriter extends PdfOutputStream {
         if (!fullCompression)
             return null;
         if (objectStream == null) {
-            objectStream = new PdfObjectStream(pdfDocument);
+            objectStream = new PdfObjectStream(document);
         } else if (objectStream.getSize() == PdfObjectStream.maxObjStreamSize) {
             objectStream.flush();
-            objectStream = new PdfObjectStream(pdfDocument);
+            objectStream = new PdfObjectStream(document);
         }
         return objectStream;
     }
@@ -70,55 +68,81 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Flushes the object. Override this method if you want to define custom behaviour for object flushing.
      *
-     * @param object        object to flush.
+     * @param pdfObject object to flush.
      * @param canBeInObjStm indicates whether object can be placed into object stream.
      * @throws IOException
      * @throws PdfException
      */
-    protected void flushObject(PdfObject object, boolean canBeInObjStm) throws IOException, PdfException {
+    protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException, PdfException {
         PdfIndirectReference indirectReference;
-        if (object.isFlushed() || (indirectReference = object.getIndirectReference()) == null) {
+        if (pdfObject.isFlushed() || (indirectReference = pdfObject.getIndirectReference()) == null) {
             //TODO log meaningless call of flush: object is direct or released
             return;
         }
         if (isFullCompression() && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
-            objectStream.addObject(object);
+            objectStream.addObject(pdfObject);
         } else {
             indirectReference.setOffset(getCurrentPos());
-            writeToBody(object);
+            writeToBody(pdfObject);
         }
         indirectReference.setState(PdfIndirectReference.Flushed);
-        switch (object.getType()) {
+        indirectReference.clearState(PdfIndirectReference.MustBeFlushed);
+        switch (pdfObject.getType()) {
             case PdfObject.Boolean:
             case PdfObject.Name:
             case PdfObject.Null:
             case PdfObject.Number:
             case PdfObject.String:
-                flushObject((PdfPrimitiveObject) object);
+                ((PdfPrimitiveObject) pdfObject).content = null;
                 break;
             case PdfObject.Array:
-                flushObject((PdfArray) object);
+                PdfArray array = ((PdfArray) pdfObject);
+                markArrayContentToFlush(array);
+                array.releaseContent();
                 break;
             case PdfObject.Stream:
-                flushObject((PdfStream) object);
-                break;
             case PdfObject.Dictionary:
-                flushObject((PdfDictionary) object);
+                PdfDictionary dictionary = ((PdfDictionary) pdfObject);
+                markDictionaryContentToFlush(dictionary);
+                dictionary.releaseContent();
                 break;
+            case PdfObject.IndirectReference:
+                markObjectToFlush(((PdfIndirectReference)pdfObject).getRefersTo(false));
         }
     }
 
-    protected void flushObject(PdfPrimitiveObject object) {
-        object.content = null;
+    private void markArrayContentToFlush(PdfArray array) {
+        for (PdfObject item: array) {
+            markObjectToFlush(item);
+        }
     }
 
-    protected void flushObject(PdfArray array) {
-        array.releaseContent();
+    private void markDictionaryContentToFlush(PdfDictionary dictionary) {
+        for (PdfObject item: dictionary.values()) {
+            markObjectToFlush(item);
+        }
     }
 
-    protected void flushObject(PdfDictionary dictionary) throws PdfException {
-        dictionary.releaseContent();
+    private void markObjectToFlush(PdfObject pdfObject) {
+        if (pdfObject != null) {
+            PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
+            if (indirectReference != null) {
+                if (!indirectReference.checkState(PdfIndirectReference.Flushed)) {
+                    indirectReference.setState(PdfIndirectReference.MustBeFlushed);
+                }
+            } else {
+                if (pdfObject.getType() == PdfObject.IndirectReference) {
+                    if (!((PdfIndirectReference)pdfObject).checkState(PdfIndirectReference.Flushed)) {
+                        ((PdfIndirectReference) pdfObject).setState(PdfIndirectReference.MustBeFlushed);
+                    }
+                } else if (pdfObject.getType() == PdfObject.Array) {
+                    markArrayContentToFlush((PdfArray)pdfObject);
+                } else if (pdfObject.getType() == PdfObject.Dictionary) {
+                    markDictionaryContentToFlush((PdfDictionary) pdfObject);
+                }
+            }
+        }
     }
 
     protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) throws PdfException {
@@ -172,7 +196,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void writeHeader() throws PdfException {
         writeByte((byte) '%').
-                writeString(pdfDocument.getPdfVersion().getPdfVersion()).
+                writeString(document.getPdfVersion().getPdfVersion()).
                 writeString("\n%\u00e2\u00e3\u00cf\u00d3\n");
     }
 
@@ -182,19 +206,26 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected void flushWaitingObjects() throws PdfException {
-        TreeSet<PdfIndirectReference> indirects = pdfDocument.getXref().toSet();
-        pdfDocument.getXref().clear();
-        for (PdfIndirectReference indirectReference : indirects) {
-            PdfObject object = indirectReference.getRefersTo(false);
-            if (object != null && !object.equals(objectStream)) {
-                object.flush();
+        PdfXrefTable xref = document.getXref();
+        boolean needFlush = true;
+        while (needFlush) {
+            needFlush = false;
+            for (int i = 1; i < xref.size(); i++) {
+                PdfIndirectReference indirectReference = xref.get(i);
+                if (indirectReference != null
+                        && indirectReference.checkState(PdfIndirectReference.MustBeFlushed)) {
+                    PdfObject object = indirectReference.getRefersTo(false);
+                    if (object != null) {
+                        object.flush();
+                        needFlush = true;
+                    }
+                }
             }
         }
         if (objectStream != null && objectStream.getSize() > 0) {
             objectStream.flush();
             objectStream = null;
         }
-        pdfDocument.getXref().addAll(indirects);
     }
 
     /**
@@ -203,9 +234,9 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected void flushModifiedWaitingObjects() throws PdfException {
-        TreeSet<PdfIndirectReference> indirects = pdfDocument.getXref().toSet();
-        pdfDocument.getXref().clear();
-        for (PdfIndirectReference indirectReference : indirects) {
+        PdfXrefTable xref = document.getXref();
+        for (int i = 1; i < xref.size(); i++) {
+            PdfIndirectReference indirectReference = xref.get(i);
             PdfObject object = indirectReference.getRefersTo(false);
             if (object != null && !object.equals(objectStream) && object.isModified()) {
                 object.flush();
@@ -215,7 +246,6 @@ public class PdfWriter extends PdfOutputStream {
             objectStream.flush();
             objectStream = null;
         }
-        pdfDocument.getXref().addAll(indirects);
     }
 
     /**

@@ -395,7 +395,6 @@ public class PdfReader {
                 throw e;
             }
         }
-        xref.updateNextObjectNumber();
         return trailer;
     }
 
@@ -489,7 +488,6 @@ public class PdfReader {
                 ++start;
             }
         }
-        xref.updateNextObjectNumber();
         return prev == -1 || readXrefStream(prev);
     }
 
@@ -559,7 +557,6 @@ public class PdfReader {
                 }
             }
         }
-        xref.updateNextObjectNumber();
         if (trailer == null)
             throw new PdfException(PdfException.TrailerNotFound);
     }

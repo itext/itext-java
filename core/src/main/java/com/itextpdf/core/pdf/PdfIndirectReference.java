@@ -16,6 +16,10 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // When PdfReader read ObjectStream reference marked as OriginalObjectStream
     // to avoid further reusing.
     protected static final byte OriginalObjectStream = 16;
+    // For internal usage only. Marks objects that shall be written to the output document.
+    // Option is needed to build the correct PDF objects tree when closing the document.
+    // As a result it avoids writing unused (removed) objects.
+    protected static final byte MustBeFlushed = 32;
 
     private static final int LengthOfIndirectsChain = 31;
 
@@ -206,7 +210,26 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     @Override
     public String toString() {
-        return java.lang.String.format("%d %d R", getObjNr(), getGenNr());
+        StringBuilder states = new StringBuilder(" ");
+        if (checkState(Free)) {
+            states.append("Free; ");
+        }
+        if (checkState(Modified)) {
+            states.append("Modified; ");
+        }
+        if (checkState(MustBeFlushed)) {
+            states.append("MustBeFlushed; ");
+        }
+        if (checkState(Reading)) {
+            states.append("Reading; ");
+        }
+        if (checkState(Flushed)) {
+            states.append("Flushed; ");
+        }
+        if (checkState(OriginalObjectStream)) {
+            states.append("OriginalObjectStream; ");
+        }
+        return java.lang.String.format("%d %d R%s", getObjNr(), getGenNr(), states.substring(0, states.length() - 1));
     }
 
     protected void setObjectStreamNumber(int objectStreamNumber) {

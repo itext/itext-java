@@ -546,7 +546,7 @@ public class PdfDocument implements IEventDispatcher {
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }
             if (writer != null) {
-                writer.pdfDocument = this;
+                writer.document = this;
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this);

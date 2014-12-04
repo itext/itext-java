@@ -140,6 +140,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     @Override
     public void flush() throws PdfException {
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
+        int contentStreamCount = getContentStreamCount();
+        for (int i = 0; i < contentStreamCount; i++) {
+            getContentStream(i).flush(false);
+        }
         resources = null;
         super.flush();
     }

@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class PdfPagesTest {
@@ -138,7 +139,7 @@ public class PdfPagesTest {
                     pdfDoc.addPage(j, page);
                 }
             }
-            Assert.assertTrue(pdfDoc.getCatalog().pageTree.verifyIntegrity() == -1);
+            Assert.assertTrue(verifyIntegrity(pdfDoc.getCatalog().pageTree) == -1);
         }
         pdfDoc.close();
 
@@ -211,7 +212,7 @@ public class PdfPagesTest {
         verifyPagesOrder(destinationFolder + filename, pageCount - 1);
     }
 
-    public void verifyPagesOrder(String filename, int numOfPages) throws IOException {
+    void verifyPagesOrder(String filename, int numOfPages) throws IOException {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
 
@@ -224,5 +225,16 @@ public class PdfPagesTest {
 
         Assert.assertEquals("Number of pages", numOfPages, reader.getNumberOfPages());
         reader.close();
+    }
+
+    int verifyIntegrity(PdfPagesTree pagesTree) {
+        ArrayList<PdfPages> parents = pagesTree.getParents();
+        int from = 0;
+        for (int i = 0; i < parents.size(); i++) {
+            if (parents.get(i).getFrom() != from)
+                return i;
+            from = parents.get(i).getFrom()+parents.get(i).getCount();
+        }
+        return -1;
     }
 }

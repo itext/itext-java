@@ -19,7 +19,7 @@ public class PdfOutputStream extends OutputStream {
     /**
      * Document associated with PdfOutputStream.
      */
-    protected PdfDocument pdfDocument = null;
+    protected PdfDocument document = null;
 
     public PdfOutputStream(java.io.OutputStream outputStream) {
         super(outputStream);
@@ -89,8 +89,6 @@ public class PdfOutputStream extends OutputStream {
     }
 
     protected void write(PdfIndirectReference indirectReference) throws PdfException {
-//        if (indirectReference.getRefersTo() != null)
-//            pdfDocument.addIndirectReference(indirectReference);
         if (indirectReference.getGenNr() == 0) {
             writeInteger(indirectReference.getObjNr()).
                     writeBytes(endIndirectWithZeroGenNr);
@@ -130,7 +128,7 @@ public class PdfOutputStream extends OutputStream {
                 stream.initOutputStream();
                 stream.getOutputStream().write(bytes);
             }
-
+            assert stream.getOutputStream() != null : "PdfStream lost OutputStream";
             ByteArrayOutputStream byteStream = (ByteArrayOutputStream)stream.getOutputStream().getOutputStream();
             if (stream instanceof PdfObjectStream) {
                 ByteArrayOutputStream indexStream = (ByteArrayOutputStream)((PdfObjectStream)stream).getIndexStream().getOutputStream();
