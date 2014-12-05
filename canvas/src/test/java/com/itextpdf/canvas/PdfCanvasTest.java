@@ -54,9 +54,10 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvas.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
         PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
@@ -131,9 +132,10 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
         PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
@@ -216,9 +218,10 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
         PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
@@ -247,9 +250,10 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithPageFlush.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
         PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
@@ -278,9 +282,10 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithFullCompression.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
         PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
@@ -310,9 +315,10 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
         PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
@@ -353,9 +359,10 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
@@ -395,12 +402,13 @@ public class PdfCanvasTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
@@ -440,12 +448,13 @@ public class PdfCanvasTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
@@ -455,20 +464,19 @@ public class PdfCanvasTest {
 
     @Test
     public void create1000PagesDocumentWithText() throws IOException, PdfException {
-
-        final String file = "1000PagesDocumentWithText.pdf";
+        int pageCount = 1000;
+        final String filename = destinationFolder + "1000PagesDocumentWithText.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + file);
+        FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        int pageCount = 1000;
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -485,12 +493,13 @@ public class PdfCanvasTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + file);
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
@@ -500,19 +509,21 @@ public class PdfCanvasTest {
 
     @Test
     public void create1000PagesDocumentWithFullCompression() throws IOException, PdfException {
+        int pageCount = 1000;
+        String filename = destinationFolder + "1000PagesDocumentWithFullCompression.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "1000PagesDocumentWithFullCompression.pdf");
+        FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
         writer.setFullCompression(true);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             canvas
@@ -529,13 +540,14 @@ public class PdfCanvasTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocumentWithFullCompression.pdf");
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
-        for (int i = 1; i <= 10; i++) {
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
@@ -544,8 +556,8 @@ public class PdfCanvasTest {
 
     @Test
     public void create100PagesDocumentWithFullCompression() throws IOException, PdfException {
-        int count = 100;
-        String filename = destinationFolder + count + "PagesDocumentWithFullCompression.pdf";
+        int pageCount = 100;
+        String filename = destinationFolder + pageCount + "PagesDocumentWithFullCompression.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -558,7 +570,7 @@ public class PdfCanvasTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             canvas
@@ -578,10 +590,11 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
-        for (int i = 1; i <= count; i++) {
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
@@ -590,8 +603,8 @@ public class PdfCanvasTest {
 
     @Test
     public void create197PagesDocumentWithFullCompression() throws IOException, PdfException {
-        int count = 197;
-        String filename = destinationFolder + count + "PagesDocumentWithFullCompression.pdf";
+        int pageCount = 197;
+        String filename = destinationFolder + pageCount + "PagesDocumentWithFullCompression.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -604,7 +617,7 @@ public class PdfCanvasTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             canvas
@@ -624,10 +637,11 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
-        for (int i = 1; i <= count; i++) {
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
@@ -636,8 +650,8 @@ public class PdfCanvasTest {
 
     @Test
     public void create10PagesDocumentWithFullCompression() throws IOException, PdfException {
-        int count = 10;
-        String filename = destinationFolder + count + "PagesDocumentWithFullCompression.pdf";
+        int pageCount = 10;
+        String filename = destinationFolder + pageCount + "PagesDocumentWithFullCompression.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -650,7 +664,7 @@ public class PdfCanvasTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             canvas
@@ -670,10 +684,11 @@ public class PdfCanvasTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         HashMap<String, String> info = reader.getInfo();
-        Assert.assertEquals(author, info.get("Author"));
-        Assert.assertEquals(creator, info.get("Creator"));
-        Assert.assertEquals(title, info.get("Title"));
-        for (int i = 1; i <= count; i++) {
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }

@@ -307,7 +307,8 @@ class PdfPagesTree {
                 --parentIndex;
             }
             if (parents.size() == 0) {
-                parents.add(root == null ? new PdfPages(0, document) : root);
+                root = null;
+                parents.add(new PdfPages(0, document));
             } else {
                 correctPdfPagesFromProperty(parentIndex + 1, -1);
             }

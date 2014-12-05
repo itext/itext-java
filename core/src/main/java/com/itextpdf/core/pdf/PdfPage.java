@@ -162,19 +162,17 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Get decoded bytes for the whole page content.
      *
-     * @return
-     * @throws PdfException
+     * @return byte array.
+     * @throws PdfException in case any @see IOException.
      */
     public byte[] getContentBytes() throws PdfException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            for (int i = 0; i < getContentStreamCount(); i++) {
+            int streamCount = getContentStreamCount();
+            for (int i = 0; i < streamCount; i++) {
                 baos.write(getStreamBytes(i));
             }
-            baos.flush();
-            byte[] bytes = baos.toByteArray();
-            baos.close();
-            return bytes;
+            return baos.toByteArray();
         } catch (IOException ioe) {
             throw new PdfException(PdfException.CannotGetContentBytes, ioe, this);
         }
@@ -183,9 +181,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets decoded bytes of a certain stream of a page content.
      *
-     * @param index
-     * @return
-     * @throws PdfException
+     * @param index index of stream inside Content.
+     * @return byte array.
+     * @throws PdfException in case any @see IOException.
      */
     public byte[] getStreamBytes(int index) throws PdfException {
         PdfStream stream = getContentStream(index);
@@ -198,18 +196,21 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private PdfStream newContentStream(boolean before) throws PdfException {
         PdfObject contents = pdfObject.get(PdfName.Contents);
-        PdfArray a = null;
+        PdfArray array;
         if (contents instanceof PdfStream) {
-            a = new PdfArray();
-            a.add(contents);
+            array = new PdfArray();
+            array.add(contents);
         } else if (contents instanceof PdfArray) {
-            a = (PdfArray) contents;
+            array = (PdfArray) contents;
+        } else {
+            throw new PdfException(PdfException.PdfPageShallHaveContent);
         }
         PdfStream contentStream = new PdfStream(pdfObject.getDocument());
-        if (before)
-            a.add(0, contentStream);
-        else
-            a.add(contentStream);
+        if (before) {
+            array.add(0, contentStream);
+        } else {
+            array.add(contentStream);
+        }
         return contentStream;
     }
 

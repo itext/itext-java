@@ -107,6 +107,7 @@ public class PdfException extends Exception {
     public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
+    public static final String PdfPageShallHaveContent = "pdf.page.shall.have.content";
     public static final String PdfPagesTreeCouldBeGeneratedOnlyOnce = "pdf.pages.tree.could.be.generated.only.once";
     public static final String PdfStartxrefIsNotFollowedByANumber = "pdf.startxref.is.not.followed.by.a.number";
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";

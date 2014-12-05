@@ -6,8 +6,7 @@ import com.itextpdf.basics.io.OutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.TreeSet;
 
 class PdfXrefTable {
 
@@ -22,7 +21,7 @@ class PdfXrefTable {
     private PdfIndirectReference[] xref;
     private int count = 0;
 
-    private final Queue<Integer> freeReferences;
+    private final TreeSet<Integer> freeReferences;
 
     public PdfXrefTable() {
         this(InitialCapacity);
@@ -32,7 +31,7 @@ class PdfXrefTable {
         if (capacity < 1)
             capacity = InitialCapacity;
         xref = new PdfIndirectReference[capacity];
-        freeReferences = new LinkedList<Integer>();
+        freeReferences = new TreeSet<Integer>();
         add(new PdfIndirectReference(null, 0, MaxGeneration, 0));
     }
 
@@ -71,7 +70,7 @@ class PdfXrefTable {
     protected PdfIndirectReference createNextIndirectReference(PdfDocument document, PdfObject object) {
         PdfIndirectReference indirectReference;
         if (freeReferences.size() > 0) {
-            indirectReference = xref[freeReferences.poll()];
+            indirectReference = xref[freeReferences.pollFirst()];
             assert indirectReference.isFree();
             indirectReference.setOffset(0);
             indirectReference.setRefersTo(object);
@@ -110,7 +109,7 @@ class PdfXrefTable {
      */
     protected void writeXrefTableAndTrailer(PdfDocument document) throws IOException, PdfException {
         PdfWriter writer = document.getWriter();
-        if (document.getReader() != null) {
+        if (document.appendMode) {
             // Increment generation number for all freed references.
             for (Integer objNr : freeReferences) {
                 xref[objNr].genNr++;
@@ -131,8 +130,15 @@ class PdfXrefTable {
         }
         for (int i = 1; i < size(); i++) {
             PdfIndirectReference indirectReference = xref[i];
-            if (indirectReference == null
-                    || (document.appendMode && !indirectReference.checkState(PdfIndirectReference.Modified))) {
+            if (indirectReference != null) {
+                if ((document.appendMode && !indirectReference.checkState(PdfIndirectReference.Modified)) ||
+                    (indirectReference.isFree() && indirectReference.getGenNr() == 0) ||
+                     (!indirectReference.checkState(PdfIndirectReference.Flushed))) {
+                    indirectReference = null;
+                }
+            }
+
+            if (indirectReference == null) {
                 if (len > 0) {
                     sections.add(first);
                     sections.add(len);
@@ -186,7 +192,7 @@ class PdfXrefTable {
                     PdfIndirectReference indirectReference = xref.get(i);
                     if (indirectReference == null)
                         continue;
-                    if (indirectReference.isFree() || !indirectReference.checkState(PdfIndirectReference.Flushed)) {
+                    if (indirectReference.isFree()) {
                         stream.getOutputStream().write(0);
                         //NOTE The object number of the next free object should be at this position due to spec.
                         stream.getOutputStream().write(intToBytes(0));
@@ -213,12 +219,9 @@ class PdfXrefTable {
                 writer.writeInteger(first).writeSpace().writeInteger(len).writeByte((byte) '\n');
                 for (int i = first; i < first + len; i++) {
                     PdfIndirectReference indirectReference = xref.get(i);
-                    boolean isFree =  indirectReference.isFree()
-                            || !indirectReference.checkState(PdfIndirectReference.Flushed);
-                    long offset = isFree ? 0 : indirectReference.getOffset();
-                    writer.writeString(objectOffsetFormatter.format(offset)).writeSpace().
+                    writer.writeString(objectOffsetFormatter.format(indirectReference.getOffset())).writeSpace().
                             writeString(objectGenerationFormatter.format(indirectReference.getGenNr())).writeSpace();
-                    if (isFree) {
+                    if (indirectReference.isFree()) {
                         writer.writeBytes(freeXRefEntry);
                     } else {
                         writer.writeBytes(inUseXRefEntry);
