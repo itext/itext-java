@@ -15,38 +15,36 @@ public class PdfGraphicsState {
     /**
      * ExtGState parameters.
      */
-    protected Float lineWidth;
-    protected Integer lineCapStyle;
-    protected Integer lineJoinStyle;
-    protected Float miterLimit;
-    protected PdfArray dashPattern;
-    protected PdfName renderingIntent;
-    protected Boolean strokeOverprint;
-    protected Boolean fillOverprint;
-    protected Integer overprintMode;
-    protected Float fontSize;
-    protected PdfFont font;
-    protected PdfObject blackGenerationFunction;
-    protected PdfObject blackGenerationFunction2;
-    protected PdfObject underColorRemovalFunction;
-    protected PdfObject underColorRemovalFunction2;
-    protected PdfObject transferFunction;
-    protected PdfObject transferFunction2;
-    protected PdfObject halftone;
-    protected Float flatnessTolerance;
-    protected Float smoothnessTolerance;
-    protected Boolean automaticStrokeAdjustment;
-    protected PdfObject blendMode;
-    protected PdfObject softMask;
-    protected Float strokeAlpha;
-    protected Float fillAlpha;
-    protected Boolean alphaIsShape;
-    protected Boolean textKnockout;
-
-    protected Color fillColor = DeviceGray.Black;
-    protected Color strokeColor = DeviceGray.Black;
-
-    protected Integer textRenderingMode;
+    private Float lineWidth;
+    private Integer lineCapStyle;
+    private Integer lineJoinStyle;
+    private Float miterLimit;
+    private PdfArray dashPattern;
+    private PdfName renderingIntent;
+    private Boolean strokeOverprint;
+    private Boolean fillOverprint;
+    private Integer overprintMode;
+    private Float fontSize;
+    private PdfFont font;
+    private PdfObject blackGenerationFunction;
+    private PdfObject blackGenerationFunction2;
+    private PdfObject underColorRemovalFunction;
+    private PdfObject underColorRemovalFunction2;
+    private PdfObject transferFunction;
+    private PdfObject transferFunction2;
+    private PdfObject halftone;
+    private Float flatnessTolerance;
+    private Float smoothnessTolerance;
+    private Boolean automaticStrokeAdjustment;
+    private PdfObject blendMode;
+    private PdfObject softMask;
+    private Float strokeAlpha;
+    private Float fillAlpha;
+    private Boolean alphaIsShape;
+    private Boolean textKnockout;
+    private Color fillColor = DeviceGray.Black;
+    private Color strokeColor = DeviceGray.Black;
+    private Integer textRenderingMode;
 
     public PdfGraphicsState() {
 
@@ -166,5 +164,83 @@ public class PdfGraphicsState {
         updateFromExtGState(extGState.getPdfObject());
     }
 
+    public Float getLineWidth() {
+        return lineWidth;
+    }
 
+    public void setLineWidth(Float lineWidth) {
+        this.lineWidth = lineWidth;
+    }
+
+    public Integer getLineCapStyle() {
+        return lineCapStyle;
+    }
+
+    public void setLineCapStyle(Integer lineCapStyle) {
+        this.lineCapStyle = lineCapStyle;
+    }
+
+    public Integer getLineJoinStyle() {
+        return lineJoinStyle;
+    }
+
+    public void setLineJoinStyle(Integer lineJoinStyle) {
+        this.lineJoinStyle = lineJoinStyle;
+    }
+
+    public Float getMiterLimit() {
+        return miterLimit;
+    }
+
+    public void setMiterLimit(Float miterLimit) {
+        this.miterLimit = miterLimit;
+    }
+
+    public PdfArray getDashPattern() {
+        return dashPattern;
+    }
+
+    public void setDashPattern(PdfArray dashPattern) {
+        this.dashPattern = dashPattern;
+    }
+
+    public PdfName getRenderingIntent() {
+        return renderingIntent;
+    }
+
+    public void setRenderingIntent(PdfName renderingIntent) {
+        this.renderingIntent = renderingIntent;
+    }
+
+    public Float getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(Float fontSize) {
+        this.fontSize = fontSize;
+    }
+
+    public PdfFont getFont() {
+        return font;
+    }
+
+    public void setFont(PdfFont font) {
+        this.font = font;
+    }
+
+    public Integer getTextRenderingMode() {
+        return textRenderingMode;
+    }
+
+    public void setTextRenderingMode(Integer textRenderingMode) {
+        this.textRenderingMode = textRenderingMode;
+    }
+
+    public Float getFlatnessTolerance() {
+        return flatnessTolerance;
+    }
+
+    public void setFlatnessTolerance(Float flatnessTolerance) {
+        this.flatnessTolerance = flatnessTolerance;
+    }
 }

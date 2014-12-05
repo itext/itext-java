@@ -47,6 +47,12 @@ public class PdfCanvas {
     static final private byte[] escB = OutputStream.getIsoBytes("\b");
     static final private byte[] escF = OutputStream.getIsoBytes("\f");
     static final private byte[] w = OutputStream.getIsoBytes("w\n");
+    static final private byte[] J = OutputStream.getIsoBytes("J\n");
+    static final private byte[] j = OutputStream.getIsoBytes("j\n");
+    static final private byte[] M = OutputStream.getIsoBytes("M\n");
+    static final private byte[] d = OutputStream.getIsoBytes("d\n");
+    static final private byte[] ri = OutputStream.getIsoBytes("ri\n");
+    static final private byte[] i = OutputStream.getIsoBytes("i\n");
     static final private byte[] h = OutputStream.getIsoBytes("h\n");
     static final private byte[] n = OutputStream.getIsoBytes("n\n");
     static final private byte[] S = OutputStream.getIsoBytes("S\n");
@@ -114,6 +120,10 @@ public class PdfCanvas {
      */
     public void attachContentStream(PdfStream contentStream) {
         this.contentStream = contentStream;
+    }
+
+    public PdfGraphicsState getGraphicsState() {
+        return currentGs;
     }
 
     /**
@@ -200,9 +210,9 @@ public class PdfCanvas {
     public PdfCanvas setFontAndSize(PdfFont font, float size) throws PdfException {
         if (size < 0.0001f && size > -0.0001f)
             throw new PdfException(PdfException.FontSizeTooSmall, size);
-        currentGs.fontSize = size;
+        currentGs.setFontSize(size);
         PdfName fontName = resources.addFont(font);
-        currentGs.font = font;
+        currentGs.setFont(font);
         contentStream.getOutputStream()
                 .write(fontName)
                 .writeSpace()
@@ -234,7 +244,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setTextRenderingMode(int textRenderingMode) throws PdfException {
-        currentGs.textRenderingMode = textRenderingMode;
+        currentGs.setTextRenderingMode(textRenderingMode);
         contentStream.getOutputStream()
                 .writeInteger(textRenderingMode).writeSpace()
                 .writeBytes(Tr);
@@ -641,9 +651,58 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineWidth(float lineWidth) throws PdfException {
+        currentGs.setLineWidth(lineWidth);
         contentStream.getOutputStream()
                 .writeFloat(lineWidth).writeSpace()
                 .writeBytes(w);
+        return this;
+    }
+
+    public PdfCanvas setLineCapStyle(int lineCapStyle) throws PdfException {
+        currentGs.setLineCapStyle(lineCapStyle);
+        contentStream.getOutputStream()
+                .writeInteger(lineCapStyle).writeSpace()
+                .writeBytes(J);
+        return this;
+    }
+
+    public PdfCanvas setLineJoinStyle(int lineJoinStyle) throws PdfException {
+        currentGs.setLineJoinStyle(lineJoinStyle);
+        contentStream.getOutputStream()
+                .writeInteger(lineJoinStyle).writeSpace()
+                .writeBytes(j);
+        return this;
+    }
+
+    public PdfCanvas setMiterLimit(float miterLimit) throws PdfException {
+        currentGs.setMiterLimit(miterLimit);
+        contentStream.getOutputStream()
+                .writeFloat(miterLimit).writeSpace()
+                .writeBytes(M);
+        return this;
+    }
+
+    public PdfCanvas setDashPattern(PdfArray dashPattern) throws PdfException {
+        currentGs.setDashPattern(dashPattern);
+        PdfOutputStream out = contentStream.getOutputStream();
+        out.write(dashPattern.get(0)).writeSpace();
+        out.write(dashPattern.get(0)).writeBytes(d);
+        return this;
+    }
+
+    public PdfCanvas setRenderingIntent(PdfName renderingIntent) throws PdfException {
+        currentGs.setRenderingIntent(renderingIntent);
+        contentStream.getOutputStream()
+                .write(renderingIntent).writeSpace()
+                .writeBytes(ri);
+        return this;
+    }
+
+    public PdfCanvas setFlatnessTolerance(float flatnessTolerance) throws PdfException {
+        currentGs.setFlatnessTolerance(flatnessTolerance);
+        contentStream.getOutputStream()
+                .writeFloat(flatnessTolerance).writeSpace()
+                .writeBytes(i);
         return this;
     }
 
@@ -920,7 +979,7 @@ public class PdfCanvas {
      * @param text the text to write.
      */
     private void showText2(final String text) throws PdfException {
-        if (currentGs.font == null)
+        if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = PdfEncodings.convertToBytes(text, PdfEncodings.WINANSI);
         escapeString(b);

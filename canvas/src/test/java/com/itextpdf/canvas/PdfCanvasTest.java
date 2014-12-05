@@ -3,6 +3,7 @@ package com.itextpdf.canvas;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfDictionary;
@@ -997,6 +998,27 @@ public class PdfCanvasTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "markedContentTest2.pdf", sourceFolder + "cmp_markedContentTest2.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void graphicsStateTest1() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.setLineWidth(3);
+        canvas.saveState();
+        canvas.setLineWidth(5);
+        Assert.assertEquals(5, canvas.getGraphicsState().getLineWidth(), 0);
+        canvas.restoreState();
+        Assert.assertEquals(3, canvas.getGraphicsState().getLineWidth(), 0);
+        PdfExtGState egs = new PdfExtGState(document);
+        egs.getPdfObject().put(com.itextpdf.core.pdf.PdfName.LW, new PdfNumber(2));
+        canvas.setExtGState(egs);
+        Assert.assertEquals(2, canvas.getGraphicsState().getLineWidth(), 0);
+        canvas.release();
+        document.close();
     }
 
 

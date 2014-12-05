@@ -25,6 +25,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     private static final byte[] solidus = OutputStream.getIsoBytes("#2f");              //  '/'
     private static final byte[] numberSign = OutputStream.getIsoBytes("#23");           //  '#'
 
+    public static final PdfName AbsoluteColorimetric = createDirectName("AbsoluteColorimetric");
     public static final PdfName Action = createDirectName("Action");
     public static final PdfName AIS = createDirectName("AIS");
     public static final PdfName Author = createDirectName("Author");
@@ -111,15 +112,18 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Page = createDirectName("Page");
     public static final PdfName Pages = createDirectName("Pages");
     public static final PdfName Parent = createDirectName("Parent");
+    public static final PdfName Perceptual = createDirectName("Perceptual");
     public static final PdfName Prev = createDirectName("Prev");
     public static final PdfName Producer = createDirectName("Producer");
     public static final PdfName Properties = createDirectName("Properties");
+    public static final PdfName RelativeColorimetric = createDirectName("RelativeColorimetric");
     public static final PdfName Resources = createDirectName("Resources");
     public static final PdfName RI = createDirectName("RI");
     public static final PdfName Root = createDirectName("Root");
     public static final PdfName Rows = createDirectName("Rows");
     public static final PdfName S = createDirectName("S");
     public static final PdfName SA = createDirectName("SA");
+    public static final PdfName Saturation = createDirectName("Saturation");
     public static final PdfName Size = createDirectName("Size");
     public static final PdfName SM = createDirectName("SM");
     public static final PdfName SMask = createDirectName("SMask");
