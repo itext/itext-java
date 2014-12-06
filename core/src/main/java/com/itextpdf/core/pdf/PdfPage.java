@@ -200,6 +200,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (contents instanceof PdfStream) {
             array = new PdfArray();
             array.add(contents);
+            pdfObject.put(PdfName.Contents, array);
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
         } else {
