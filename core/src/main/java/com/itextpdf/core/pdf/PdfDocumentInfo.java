@@ -4,17 +4,16 @@ import com.itextpdf.basics.PdfException;
 
 public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
+    public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+        super(pdfObject == null ? new PdfDictionary() : pdfObject, pdfDocument);
+    }
+
     public PdfDocumentInfo(PdfDictionary pdfObject) {
-        super(pdfObject == null ? new PdfDictionary() : pdfObject);
+        this(pdfObject, null);
     }
 
     public PdfDocumentInfo(PdfDocument pdfDocument) {
-        super(new PdfDictionary(), pdfDocument);
-    }
-
-    public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        this(pdfObject);
-        this.pdfObject.makeIndirect(pdfDocument);
+        this(new PdfDictionary(), pdfDocument);
     }
 
     public PdfDocumentInfo setTitle(String title) {
@@ -60,6 +59,16 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
     public String getCreator() throws PdfException {
         return getStringValue(PdfName.Creator);
+    }
+
+    public PdfDocumentInfo addCreationDate() {
+        this.getPdfObject().put(PdfName.CreationDate, new PdfDate().getPdfObject());
+        return this;
+    }
+
+    public PdfDocumentInfo addModDate() {
+        this.getPdfObject().put(PdfName.ModDate, new PdfDate().getPdfObject());
+        return this;
     }
 
     @Override

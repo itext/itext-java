@@ -549,10 +549,12 @@ public class PdfDocument implements IEventDispatcher {
                 writer.document = this;
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
-                    info = new PdfDocumentInfo(this);
+                    info = new PdfDocumentInfo(this).addCreationDate();
                     trailer = new PdfTrailer();
                     trailer.setCatalog(catalog);
                     trailer.setInfo(info);
+                } else {
+                    info.addModDate();
                 }
             }
             if (appendMode) {       // Due to constructor reader and writer not null.

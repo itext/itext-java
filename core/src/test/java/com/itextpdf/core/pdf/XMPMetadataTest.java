@@ -33,6 +33,7 @@ public class XMPMetadataTest {
         pdfDoc.getInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
+        pdfDoc.getInfo().getPdfObject().remove(PdfName.CreationDate);
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.setXmpMetadata();
@@ -54,6 +55,7 @@ public class XMPMetadataTest {
         pdfDoc.getInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
+        pdfDoc.getInfo().getPdfObject().remove(PdfName.CreationDate);
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.setXmpMetadata("abc".getBytes());

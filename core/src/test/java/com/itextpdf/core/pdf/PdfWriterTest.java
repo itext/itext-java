@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.TreeMap;
 
 public class PdfWriterTest {
@@ -39,6 +41,11 @@ public class PdfWriterTest {
         com.itextpdf.text.pdf.PdfReader reader = new PdfReader(destinationFolder + "emptyDocument.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         Assert.assertNotNull(reader.getPageN(1));
+        String date = reader.getInfo().get("CreationDate");
+        Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
+        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
+        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
+        Assert.assertTrue(message, diff < 5000);
         reader.close();
 
     }

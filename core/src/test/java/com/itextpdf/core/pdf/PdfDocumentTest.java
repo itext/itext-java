@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class PdfDocumentTest {
 
@@ -63,6 +65,11 @@ public class PdfDocumentTest {
         Assert.assertEquals("iText 7", creator.toString());
         byte[] bytes = reader.getPageContent(1);
         Assert.assertEquals("%Hello World\n", new String(bytes));
+        String date = reader.getInfo().get("ModDate");
+        Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
+        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
+        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
+        Assert.assertTrue(message, diff < 5000);
         reader.close();
     }
 
@@ -684,6 +691,11 @@ public class PdfDocumentTest {
         Assert.assertEquals("iText 7", creator.toString());
         byte[] bytes = reader.getPageContent(1);
         Assert.assertEquals("%Hello World\n", new String(bytes));
+        String date = reader.getInfo().get("ModDate");
+        Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
+        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
+        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
+        Assert.assertTrue(message, diff < 5000);
         reader.close();
     }
 
