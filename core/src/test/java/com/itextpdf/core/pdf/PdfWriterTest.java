@@ -407,4 +407,36 @@ public class PdfWriterTest {
         fos.write(1);
     }
 
+    @Test
+    public void directInIndirectChain() throws IOException, PdfException {
+        String filename = destinationFolder + "directInIndirectChain.pdf";
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfArray level1 = new PdfArray();
+        level1.add(new PdfNumber(1).makeIndirect(pdfDoc));
+        PdfDictionary level2 = new PdfDictionary();
+        level1.add(level2);
+        PdfArray level3 = new PdfArray();
+        level2.put(new PdfName("level3"), level3);
+        level2.put(new PdfName("num"), new PdfNumber(2).makeIndirect(pdfDoc));
+        level3.add(new PdfNumber(3).makeIndirect(pdfDoc));
+        level3.add(new PdfNumber(3).makeIndirect(pdfDoc));
+        PdfDictionary level4 = new PdfDictionary();
+        level4.put(new PdfName("num"), new PdfNumber(4).makeIndirect(pdfDoc));
+        level3.add(level4);
+        PdfPage page1 = pdfDoc.addNewPage();
+
+        page1.getPdfObject().put(new PdfName("test"), level1);
+
+        pdfDoc.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
+        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
+        Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        reader.close();
+    }
+
 }

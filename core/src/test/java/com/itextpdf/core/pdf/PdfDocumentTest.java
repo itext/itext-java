@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -598,6 +599,42 @@ public class PdfDocumentTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test @Ignore
+    public void stamping14() throws IOException, PdfException {
+        String filename1 =  sourceFolder + "20000PagesDocument.pdf";
+        String filename2 =  destinationFolder + "stamping14.pdf";
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+
+        for (int i = pdfDoc2.getNumOfPages(); i > 3; i--) {
+            Assert.assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
+        }
+
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 1; i <= pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i);
+        }
+        Assert.assertTrue("Xref size is " + pdfDoc3.getXref().size(), pdfDoc3.getXref().size() < 20);
+        Assert.assertEquals("Number of pages", 3, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
             byte[] bytes = reader.getPageContent(i);
             Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
