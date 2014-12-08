@@ -177,7 +177,7 @@ class PdfPagesTree {
      * @return root {@see PdfPages}
      * @throws PdfException in case empty document
      */
-    protected  PdfObject generateTree(boolean rebuild) throws PdfException {
+    protected  PdfObject generateTree() throws PdfException {
         if (pageRefs.isEmpty())
             throw new PdfException(PdfException.DocumentHasNoPages);
         if (generated)

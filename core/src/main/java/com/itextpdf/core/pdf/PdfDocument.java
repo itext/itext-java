@@ -483,14 +483,6 @@ public class PdfDocument implements IEventDispatcher {
      *
      */
     public void close() throws PdfException {
-        close(false);
-    }
-
-    /**
-     * Close PDF document.
-     *
-     */
-    public void close(boolean optimizePagesTree) throws PdfException {
         try {
             removeAllHandlers();
             if (writer != null) {
@@ -504,7 +496,7 @@ public class PdfDocument implements IEventDispatcher {
                     catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
                 if (appendMode) {
-                    PdfObject pageRoot = catalog.pageTree.generateTree(optimizePagesTree);
+                    PdfObject pageRoot = catalog.pageTree.generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
                         catalog.pdfObject.put(PdfName.Pages, pageRoot);
                         catalog.pdfObject.flush(false);
@@ -514,7 +506,7 @@ public class PdfDocument implements IEventDispatcher {
                     }
                     writer.flushModifiedWaitingObjects();
                 } else {
-                    catalog.pdfObject.put(PdfName.Pages, catalog.pageTree.generateTree(optimizePagesTree));
+                    catalog.pdfObject.put(PdfName.Pages, catalog.pageTree.generateTree());
                     catalog.pdfObject.flush(false);
                     info.flush();
                     writer.flushWaitingObjects();
