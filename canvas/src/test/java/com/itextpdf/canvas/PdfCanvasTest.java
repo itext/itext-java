@@ -1,8 +1,12 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.canvas.colors.Color;
+import com.itextpdf.canvas.colors.DeviceCmyk;
+import com.itextpdf.canvas.colors.DeviceRgb;
 import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
@@ -1035,6 +1039,63 @@ public class PdfCanvasTest {
         canvas.release();
         document.close();
     }
+
+    @Test
+    public void colorTest1() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest1.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        final PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.setFillColor(DeviceRgb.Red).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColor(DeviceRgb.Green).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColor(DeviceRgb.Blue).rectangle(250, 500, 50, 50).fill();
+        canvas.setLineWidth(5);
+        canvas.setStrokeColor(DeviceCmyk.Cyan).rectangle(50, 400, 50, 50).stroke();
+        canvas.setStrokeColor(DeviceCmyk.Magenta).rectangle(150, 400, 50, 50).stroke();
+        canvas.setStrokeColor(DeviceCmyk.Yellow).rectangle(250, 400, 50, 50).stroke();
+        canvas.setStrokeColor(DeviceCmyk.Black).rectangle(350, 400, 50, 50).stroke();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest1.pdf", sourceFolder + "cmp_colorTest1.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void colorTest2() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest2.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        final PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb(document);
+        Color red = new Color(rgb, new float[] {1, 0, 0});
+        Color green = new Color(rgb, new float[] {0, 1, 0});
+        Color blue = new Color(rgb, new float[] {0, 0, 1});
+        PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk(document);
+        Color cyan = new Color(cmyk, new float[] {1, 0, 0, 0});
+        Color magenta = new Color(cmyk, new float[] {0, 1, 0, 0});
+        Color yellow = new Color(cmyk, new float[] {0, 0, 1, 0});
+        Color black = new Color(cmyk, new float[] {0, 0, 0, 1});
+
+        canvas.setFillColor(red).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColor(green).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColor(blue).rectangle(250, 500, 50, 50).fill();
+        canvas.setLineWidth(5);
+        canvas.setStrokeColor(cyan).rectangle(50, 400, 50, 50).stroke();
+        canvas.setStrokeColor(magenta).rectangle(150, 400, 50, 50).stroke();
+        canvas.setStrokeColor(yellow).rectangle(250, 400, 50, 50).stroke();
+        canvas.setStrokeColor(black).rectangle(350, 400, 50, 50).stroke();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest2.pdf", sourceFolder + "cmp_colorTest2.pdf", destinationFolder, "diff_"));
+    }
+
 
 
 }

@@ -159,7 +159,7 @@ public class PdfGraphicsState {
         if (tk != null)
             textKnockout = tk;
     }
-    
+
     public void updateFromExtGState(PdfExtGState extGState) throws PdfException {
         updateFromExtGState(extGState.getPdfObject());
     }

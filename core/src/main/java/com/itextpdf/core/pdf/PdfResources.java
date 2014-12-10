@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.fonts.PdfFont;
+import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
@@ -15,6 +16,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private static final String Fm = "Fm";
     private static final String Gs = "Gs";
     private static final String Pr = "Pr";
+    private static final String Cs = "Cs";
 
 
     private Map<PdfObject, PdfName> resourceToName = new HashMap<PdfObject, PdfName>();
@@ -28,6 +30,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private ResourceNumber formNumber = new ResourceNumber();
     private ResourceNumber egsNumber = new ResourceNumber();
     private ResourceNumber propNumber = new ResourceNumber();
+    private ResourceNumber csNumber = new ResourceNumber();
 
     public PdfResources(PdfDictionary pdfObject) throws PdfException {
         super(pdfObject);
@@ -72,6 +75,14 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfName addProperties(PdfObject properties) throws PdfException {
         return addResource(properties, PdfName.Properties, Pr, propNumber);
+    }
+
+    public PdfName addColorSpace(PdfColorSpace cs) throws PdfException {
+        return addResource(cs, PdfName.ColorSpace, Cs, csNumber);
+    }
+
+    public PdfName addColorSpace(PdfObject colorSpace) throws PdfException {
+        return addResource(colorSpace, PdfName.ColorSpace, Cs, csNumber);
     }
 
     public PdfName getResourceName(PdfObjectWrapper resource) {
@@ -139,6 +150,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         formNumber = getAvailableNumber(names, Fm);
         egsNumber = getAvailableNumber(names, Gs);
         propNumber = getAvailableNumber(names, Pr);
+        csNumber = getAvailableNumber(names, Cs);
     }
 
     private ResourceNumber getAvailableNumber(Set<PdfName> names, final String resPrefix) {

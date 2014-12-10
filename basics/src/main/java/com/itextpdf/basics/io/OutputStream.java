@@ -325,6 +325,15 @@ public class OutputStream extends java.io.OutputStream {
         return writeDouble(value);
     }
 
+    public <T extends OutputStream> T writeFloats(float[] value) throws PdfException {
+        for (int i = 0; i < value.length; i++) {
+            writeFloat(value[i]);
+            if (i < value.length - 1)
+                writeSpace();
+        }
+        return (T)this;
+    }
+
     public <T extends OutputStream> T writeDouble(double value) throws PdfException {
         try {
             getIsoBytes(value, numBuffer.reset());

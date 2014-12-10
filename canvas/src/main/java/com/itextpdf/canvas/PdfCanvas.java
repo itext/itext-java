@@ -4,6 +4,9 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.colors.Color;
+import com.itextpdf.canvas.colors.DeviceCmyk;
+import com.itextpdf.canvas.colors.DeviceGray;
+import com.itextpdf.canvas.colors.DeviceRgb;
 import com.itextpdf.core.fonts.PdfEncodings;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
@@ -66,6 +69,16 @@ public class PdfCanvas {
     static final private byte[] BMC = OutputStream.getIsoBytes("BMC\n");
     static final private byte[] BDC = OutputStream.getIsoBytes("BDC\n");
     static final private byte[] EMC = OutputStream.getIsoBytes("EMC\n");
+    static final private byte[] g = OutputStream.getIsoBytes("g\n");
+    static final private byte[] G = OutputStream.getIsoBytes("G\n");
+    static final private byte[] k = OutputStream.getIsoBytes("k\n");
+    static final private byte[] K = OutputStream.getIsoBytes("K\n");
+    static final private byte[] rg = OutputStream.getIsoBytes("rg\n");
+    static final private byte[] RG = OutputStream.getIsoBytes("RG\n");
+    static final private byte[] cs = OutputStream.getIsoBytes("cs\n");
+    static final private byte[] CS = OutputStream.getIsoBytes("CS\n");
+    static final private byte[] sc = OutputStream.getIsoBytes("sc\n");
+    static final private byte[] SC = OutputStream.getIsoBytes("SC\n");
 
     protected Stack<PdfGraphicsState> gsStack = new Stack<PdfGraphicsState>();
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
@@ -712,8 +725,8 @@ public class PdfCanvas {
      * @param color fill color.
      * @return current canvas.
      */
-    public PdfCanvas setFillColor(Color color) {
-        return this;
+    public PdfCanvas setFillColor(Color color) throws PdfException {
+        return setColor(color, true);
     }
 
     /**
@@ -722,7 +735,25 @@ public class PdfCanvas {
      * @param color stroke color.
      * @return current canvas.
      */
-    public PdfCanvas setStrokeColor(Color color) {
+    public PdfCanvas setStrokeColor(Color color) throws PdfException {
+        return setColor(color, false);
+    }
+
+    public PdfCanvas setColor(Color color, boolean fill) throws PdfException {
+        if (fill)
+            currentGs.setFillColor(color);
+        else
+            currentGs.setStrokeColor(color);
+        if (color.getColorSpace().getPdfObject().getIndirectReference() != null) {
+            PdfName name = resources.addColorSpace(color.getColorSpace());
+            contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS).
+                    writeFloats(color.getColorValue()).writeSpace().writeBytes(fill ? sc : SC);
+        } else if (color instanceof DeviceGray)
+            contentStream.getOutputStream().writeFloats(color.getColorValue()).writeSpace().writeBytes(fill ? g : G);
+        else if (color instanceof DeviceRgb)
+            contentStream.getOutputStream().writeFloats(color.getColorValue()).writeSpace().writeBytes(fill ? rg : RG);
+        else if (color instanceof DeviceCmyk)
+            contentStream.getOutputStream().writeFloats(color.getColorValue()).writeSpace().writeBytes(fill ? k : K);
         return this;
     }
 
