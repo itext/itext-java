@@ -1,11 +1,10 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.canvas.colors.Color;
-import com.itextpdf.canvas.colors.DeviceCmyk;
-import com.itextpdf.canvas.colors.DeviceRgb;
+import com.itextpdf.canvas.colors.*;
 import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.testutils.CompareTool;
@@ -351,7 +350,7 @@ public class PdfCanvasTest {
                     .beginText()
                     .moveText(36, 700)
                     .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
-                    .showText(Integer.toString(i+1))
+                    .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
@@ -397,7 +396,7 @@ public class PdfCanvasTest {
                     .beginText()
                     .moveText(36, 700)
                     .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
-                    .showText(Integer.toString(i+1))
+                    .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
@@ -443,7 +442,7 @@ public class PdfCanvasTest {
                     .beginText()
                     .moveText(36, 700)
                     .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
-                    .showText(Integer.toString(i+1))
+                    .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
@@ -535,7 +534,7 @@ public class PdfCanvasTest {
                     .beginText()
                     .moveText(36, 700)
                     .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
-                    .showText(Integer.toString(i+1))
+                    .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
@@ -1006,8 +1005,12 @@ public class PdfCanvasTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        com.itextpdf.core.pdf.PdfDictionary tag2 = new com.itextpdf.core.pdf.PdfDictionary(new HashMap<com.itextpdf.core.pdf.PdfName, PdfObject>(){{put(new com.itextpdf.core.pdf.PdfName("Tag"), new PdfNumber(2));}});
-        com.itextpdf.core.pdf.PdfDictionary tag3 = new com.itextpdf.core.pdf.PdfDictionary(new HashMap<com.itextpdf.core.pdf.PdfName, PdfObject>(){{put(new com.itextpdf.core.pdf.PdfName("Tag"), new PdfNumber(3).makeIndirect(document));}});
+        com.itextpdf.core.pdf.PdfDictionary tag2 = new com.itextpdf.core.pdf.PdfDictionary(new HashMap<com.itextpdf.core.pdf.PdfName, PdfObject>() {{
+            put(new com.itextpdf.core.pdf.PdfName("Tag"), new PdfNumber(2));
+        }});
+        com.itextpdf.core.pdf.PdfDictionary tag3 = new com.itextpdf.core.pdf.PdfDictionary(new HashMap<com.itextpdf.core.pdf.PdfName, PdfObject>() {{
+            put(new com.itextpdf.core.pdf.PdfName("Tag"), new PdfNumber(3).makeIndirect(document));
+        }});
 
         canvas.beginMarkedContent(new com.itextpdf.core.pdf.PdfName("Tag1")).endMarkedContent().
                 beginMarkedContent(new com.itextpdf.core.pdf.PdfName("Tag2"), tag2).endMarkedContent().
@@ -1072,14 +1075,14 @@ public class PdfCanvasTest {
         PdfCanvas canvas = new PdfCanvas(page);
 
         PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb(document);
-        Color red = new Color(rgb, new float[] {1, 0, 0});
-        Color green = new Color(rgb, new float[] {0, 1, 0});
-        Color blue = new Color(rgb, new float[] {0, 0, 1});
+        Color red = new Color(rgb, new float[]{1, 0, 0});
+        Color green = new Color(rgb, new float[]{0, 1, 0});
+        Color blue = new Color(rgb, new float[]{0, 0, 1});
         PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk(document);
-        Color cyan = new Color(cmyk, new float[] {1, 0, 0, 0});
-        Color magenta = new Color(cmyk, new float[] {0, 1, 0, 0});
-        Color yellow = new Color(cmyk, new float[] {0, 0, 1, 0});
-        Color black = new Color(cmyk, new float[] {0, 0, 0, 1});
+        Color cyan = new Color(cmyk, new float[]{1, 0, 0, 0});
+        Color magenta = new Color(cmyk, new float[]{0, 1, 0, 0});
+        Color yellow = new Color(cmyk, new float[]{0, 0, 1, 0});
+        Color black = new Color(cmyk, new float[]{0, 0, 0, 1});
 
         canvas.setFillColor(red).rectangle(50, 500, 50, 50).fill();
         canvas.setFillColor(green).rectangle(150, 500, 50, 50).fill();
@@ -1096,6 +1099,37 @@ public class PdfCanvasTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest2.pdf", sourceFolder + "cmp_colorTest2.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void colorTest3() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest3.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        final PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        CalGray calGray1 = new CalGray(document, new float[]{0.9505f, 1.0000f, 1.0890f}, 0.5f);
+        canvas.setFillColor(calGray1).rectangle(50, 500, 50, 50).fill();
+        CalGray calGray2 = new CalGray(document, new float[]{0.9505f, 1.0000f, 1.0890f}, null, 2.222f, 0.5f);
+        canvas.setFillColor(calGray2).rectangle(150, 500, 50, 50).fill();
+
+        CalRgb calRgb = new CalRgb(document,
+                new float[]{0.9505f, 1.0000f, 1.0890f},
+                null,
+                new float[]{1.8000f, 1.8000f, 1.8000f},
+                new float[]{0.4497f, 0.2446f, 0.0252f, 0.3163f, 0.6720f, 0.1412f, 0.1845f, 0.0833f, 0.9227f},
+                new float[]{1f, 0.5f, 0f});
+        canvas.setFillColor(calRgb).rectangle(50, 400, 50, 50).fill();
+
+        Lab lab1 = new Lab(document, new float[] {0.9505f, 1.0000f, 1.0890f}, null, new float[] {-128, 127, -128, 127}, new float[] {1f, 0.5f, 0f});
+        canvas.setFillColor(lab1).rectangle(50, 300, 50, 50).fill();
+        Lab lab2 = new Lab((PdfCieBasedCs.Lab)lab1.getColorSpace(), new float[] {0f, 0.5f, 0f});
+        canvas.setFillColor(lab2).rectangle(150, 300, 50, 50).fill();
+
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest3.pdf", sourceFolder + "cmp_colorTest3.pdf", destinationFolder, "diff_"));
+    }
 
 
 }

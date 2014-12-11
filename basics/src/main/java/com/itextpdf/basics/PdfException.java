@@ -125,6 +125,7 @@ public class PdfException extends Exception {
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
     public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";
+    public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";
     public static final String WrongNumberOfComponentsInIccProfile = "icc.profile.contains.1.components.the.image.data.contains.2.components";
     public static final String XrefSubsectionNotFound = "xref.subsection.not.found";
     public static final String XrefTableDoesntHaveSuitableItemForObject1 = "xref.table.doesn't.have.suitable.item.for.object.1";

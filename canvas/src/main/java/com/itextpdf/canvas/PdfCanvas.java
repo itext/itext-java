@@ -4,18 +4,18 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.colors.Color;
-import com.itextpdf.canvas.colors.DeviceCmyk;
-import com.itextpdf.canvas.colors.DeviceGray;
-import com.itextpdf.canvas.colors.DeviceRgb;
 import com.itextpdf.core.fonts.PdfEncodings;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Stack;
 
@@ -664,6 +664,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineWidth(float lineWidth) throws PdfException {
+        if (floatsAreEqual(currentGs.getLineWidth(), lineWidth))
+            return this;
         currentGs.setLineWidth(lineWidth);
         contentStream.getOutputStream()
                 .writeFloat(lineWidth).writeSpace()
@@ -672,6 +674,8 @@ public class PdfCanvas {
     }
 
     public PdfCanvas setLineCapStyle(int lineCapStyle) throws PdfException {
+        if (integersAreEqual(currentGs.getLineCapStyle(), lineCapStyle))
+            return this;
         currentGs.setLineCapStyle(lineCapStyle);
         contentStream.getOutputStream()
                 .writeInteger(lineCapStyle).writeSpace()
@@ -680,6 +684,8 @@ public class PdfCanvas {
     }
 
     public PdfCanvas setLineJoinStyle(int lineJoinStyle) throws PdfException {
+        if (integersAreEqual(currentGs.getLineJoinStyle(), lineJoinStyle))
+            return this;
         currentGs.setLineJoinStyle(lineJoinStyle);
         contentStream.getOutputStream()
                 .writeInteger(lineJoinStyle).writeSpace()
@@ -688,6 +694,8 @@ public class PdfCanvas {
     }
 
     public PdfCanvas setMiterLimit(float miterLimit) throws PdfException {
+        if (floatsAreEqual(currentGs.getMiterLimit(), miterLimit))
+            return this;
         currentGs.setMiterLimit(miterLimit);
         contentStream.getOutputStream()
                 .writeFloat(miterLimit).writeSpace()
@@ -696,6 +704,8 @@ public class PdfCanvas {
     }
 
     public PdfCanvas setDashPattern(PdfArray dashPattern) throws PdfException {
+        if (dashPattern.equals(currentGs.getDashPattern()))
+            return this;
         currentGs.setDashPattern(dashPattern);
         PdfOutputStream out = contentStream.getOutputStream();
         out.write(dashPattern.get(0)).writeSpace();
@@ -704,6 +714,8 @@ public class PdfCanvas {
     }
 
     public PdfCanvas setRenderingIntent(PdfName renderingIntent) throws PdfException {
+        if (renderingIntent.equals(currentGs.getRenderingIntent()))
+            return this;
         currentGs.setRenderingIntent(renderingIntent);
         contentStream.getOutputStream()
                 .write(renderingIntent).writeSpace()
@@ -712,6 +724,8 @@ public class PdfCanvas {
     }
 
     public PdfCanvas setFlatnessTolerance(float flatnessTolerance) throws PdfException {
+        if (floatsAreEqual(currentGs.getFlatnessTolerance(), flatnessTolerance))
+            return this;
         currentGs.setFlatnessTolerance(flatnessTolerance);
         contentStream.getOutputStream()
                 .writeFloat(flatnessTolerance).writeSpace()
@@ -740,20 +754,31 @@ public class PdfCanvas {
     }
 
     public PdfCanvas setColor(Color color, boolean fill) throws PdfException {
-        if (fill)
-            currentGs.setFillColor(color);
-        else
-            currentGs.setStrokeColor(color);
-        if (color.getColorSpace().getPdfObject().getIndirectReference() != null) {
-            PdfName name = resources.addColorSpace(color.getColorSpace());
+        return setColor(color.getColorSpace(), color.getColorValue(), fill);
+    }
+
+    public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, boolean fill) throws PdfException {
+        if (fill) {
+            if (currentGs.getFillColor().getColorSpace().equals(colorSpace) &&
+                    Arrays.equals(currentGs.getFillColor().getColorValue(), colorValue))
+                return this;
+            currentGs.setFillColor(new Color(colorSpace, colorValue));
+        } else {
+            if (currentGs.getStrokeColor().getColorSpace().equals(colorSpace) &&
+                    Arrays.equals(currentGs.getStrokeColor().getColorValue(), colorValue))
+                return this;
+            currentGs.setStrokeColor(new Color(colorSpace, colorValue));
+        }
+        if (colorSpace.getPdfObject().getIndirectReference() != null) {
+            PdfName name = resources.addColorSpace(colorSpace);
             contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS).
-                    writeFloats(color.getColorValue()).writeSpace().writeBytes(fill ? sc : SC);
-        } else if (color instanceof DeviceGray)
-            contentStream.getOutputStream().writeFloats(color.getColorValue()).writeSpace().writeBytes(fill ? g : G);
-        else if (color instanceof DeviceRgb)
-            contentStream.getOutputStream().writeFloats(color.getColorValue()).writeSpace().writeBytes(fill ? rg : RG);
-        else if (color instanceof DeviceCmyk)
-            contentStream.getOutputStream().writeFloats(color.getColorValue()).writeSpace().writeBytes(fill ? k : K);
+                    writeFloats(colorValue).writeSpace().writeBytes(fill ? sc : SC);
+        } else if (colorSpace instanceof PdfDeviceCs.Gray)
+            contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? g : G);
+        else if (colorSpace instanceof PdfDeviceCs.Rgb)
+            contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? rg : RG);
+        else if (colorSpace instanceof PdfDeviceCs.Cmyk)
+            contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? k : K);
         return this;
     }
 
@@ -1000,6 +1025,24 @@ public class PdfCanvas {
             throw new PdfException(PdfException.UnbalancedBeginEndMarkedContentOperators);
         contentStream.getOutputStream().writeBytes(EMC);
         return this;
+    }
+
+    static private boolean floatsAreEqual(Float f1, Float f2) {
+        if (f1 == null && f2 == null)
+            return true;
+        else if (f1 == null || f2 == null)
+            return false;
+        else
+            return Float.compare(f1, f2) == 0;
+    }
+
+    static private boolean integersAreEqual(Integer i1, Integer i2) {
+        if (i1 == null && i2 == null)
+            return true;
+        else if (i1 == null || i2 == null)
+            return false;
+        else
+            return Integer.compare(i1, i2) == 0;
     }
 
 

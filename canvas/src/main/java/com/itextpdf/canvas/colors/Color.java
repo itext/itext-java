@@ -3,7 +3,8 @@ package com.itextpdf.canvas.colors;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
+
+import java.util.Arrays;
 
 public class Color {
 
@@ -42,4 +43,23 @@ public class Color {
         return colorValue;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Color color = (Color) o;
+
+        if (colorSpace != null ? !colorSpace.equals(color.colorSpace) : color.colorSpace != null) return false;
+        if (!Arrays.equals(colorValue, color.colorValue)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = colorSpace != null ? colorSpace.hashCode() : 0;
+        result = 31 * result + (colorValue != null ? Arrays.hashCode(colorValue) : 0);
+        return result;
+    }
 }
