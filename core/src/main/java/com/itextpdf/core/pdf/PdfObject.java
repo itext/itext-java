@@ -48,10 +48,16 @@ abstract public class PdfObject {
      * @throws PdfException
      */
     final public void flush(boolean canBeInObjStm) throws PdfException {
+        if (isFlushed() || getIndirectReference() == null) {
+            //TODO log meaningless call of flush: object is direct or released
+            return;
+        }
         try {
             PdfWriter writer = getWriter();
-            if (writer != null)
-                writer.flushObject(this, getType() != Stream && getType() != IndirectReference && canBeInObjStm);
+            if (writer != null) {
+                writer.flushObject(this, canBeInObjStm && getType() != Stream
+                        && getType() != IndirectReference && getIndirectReference().getGenNr() == 0);
+            }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotFlushObject, e, this);
         }
@@ -93,8 +99,11 @@ abstract public class PdfObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+    public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) throws PdfException {
         if (document == null || indirectReference != null) return (T) this;
+        if (document.getWriter() == null) {
+            throw new PdfException(PdfException.ThereIsNoAssociatePdfWriterForMakingIndirects);
+        }
         if (reference == null) {
             indirectReference = document.createNextIndirectReference(this);
         } else {
@@ -109,7 +118,7 @@ abstract public class PdfObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
+    public <T extends PdfObject> T makeIndirect(PdfDocument document) throws PdfException {
         return makeIndirect(document, null);
     }
 

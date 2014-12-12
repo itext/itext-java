@@ -12,11 +12,11 @@ import com.itextpdf.core.pdf.PdfObjectWrapper;
  */
 public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfFont(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+    public PdfFont(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
     }
 
-    public PdfFont(PdfDocument pdfDocument) {
+    public PdfFont(PdfDocument pdfDocument) throws PdfException {
         this(new PdfDictionary(), pdfDocument);
         pdfObject.put(PdfName.Type, PdfName.Font);
     }

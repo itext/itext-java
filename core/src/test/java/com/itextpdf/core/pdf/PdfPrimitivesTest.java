@@ -211,7 +211,7 @@ public class PdfPrimitivesTest {
     }
 
 
-    private PdfArray generatePdfArrayWithFloatNumbers(PdfDocument doc, boolean indirects) {
+    private PdfArray generatePdfArrayWithFloatNumbers(PdfDocument doc, boolean indirects) throws PdfException {
         PdfArray array = new PdfArray().makeIndirect(doc);
         Random rnd = new Random();
         for (int i = 0; i < DefaultArraySize; i++) {
@@ -223,7 +223,7 @@ public class PdfPrimitivesTest {
         return array;
     }
 
-    private PdfArray generatePdfArrayWithIntNumbers(PdfDocument doc, boolean indirects) {
+    private PdfArray generatePdfArrayWithIntNumbers(PdfDocument doc, boolean indirects) throws PdfException {
         PdfArray array = new PdfArray().makeIndirect(doc);
         Random rnd = new Random();
         for (int i = 0; i < DefaultArraySize; i++) {
@@ -232,7 +232,7 @@ public class PdfPrimitivesTest {
         return array;
     }
 
-    private PdfArray generatePdfArrayWithStrings(PdfDocument doc, boolean indirects) {
+    private PdfArray generatePdfArrayWithStrings(PdfDocument doc, boolean indirects) throws PdfException {
         PdfArray array = new PdfArray().makeIndirect(doc);
         RandomString rnd = new RandomString(16);
         for (int i = 0; i < DefaultArraySize; i++) {
@@ -241,7 +241,7 @@ public class PdfPrimitivesTest {
         return array;
     }
 
-    private PdfArray generatePdfArrayWithNames(PdfDocument doc, boolean indirects) {
+    private PdfArray generatePdfArrayWithNames(PdfDocument doc, boolean indirects) throws PdfException {
         PdfArray array = new PdfArray().makeIndirect(doc);
         RandomString rnd = new RandomString(6);
         for (int i = 0; i < DefaultArraySize; i++) {
@@ -250,7 +250,7 @@ public class PdfPrimitivesTest {
         return array;
     }
 
-    private PdfArray generatePdfArrayWithBooleans(PdfDocument doc, boolean indirects) {
+    private PdfArray generatePdfArrayWithBooleans(PdfDocument doc, boolean indirects) throws PdfException {
         PdfArray array = new PdfArray().makeIndirect(doc);
         Random rnd = new Random();
         for (int i = 0; i < DefaultArraySize; i++) {

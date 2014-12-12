@@ -51,6 +51,7 @@ public class PdfException extends Exception {
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression.1.is.not.supported";
     public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "compression.jpeg.is.only.supported.with.a.single.strip.this.image.has.1.strips";
+    public static final String DecodeParameterType1IsNotSupported = "decode.parameter.type.1.is.not.supported";
     public static final String DictionaryKey1IsNotAName = "dictionary.key.1.is.not.a.name";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
     public static final String DocumentHasNoPages = "document.has.no.pages";
@@ -69,14 +70,21 @@ public class PdfException extends Exception {
 
     public static final String ExtraSamplesAreNotSupported = "extra.samples.are.not.supported";
     public static final String FdfStartxrefNotFound = "fdf.startxref.not.found";
+    public static final String Filter1IsNotSupported = "filter.1.is.not.supported";
     public static final String FilePosition0CrossReferenceEntryInThisXrefSubsection = "file.position.0.cross.reference.entry.in.this.xref.subsection";
+    public static final String FilterCcittfaxdecodeIsOnlySupportedForImages = "filter.ccittfaxdecode.is.only.supported.for.images";
     public static final String FirstScanlineMustBe1dEncoded = "first.scanline.must.be.1d.encoded";
+    public static final String FlateCompressException = "flate.compress.exception";
     public static final String FlushedPageCannotBeAddedOrInserted = "flushed.page.cannot.be.added.or.inserted";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "font.and.size.must.be.set.before.writing.any.text";
     public static final String FontSizeTooSmall = "font.size.too.small";
     public static final String ImageFormatCannotBeRecognized = "image.format.cannot.be.recognized";
     public static final String GtNotExpected = "gt.not.expected";
     public static final String IllegalValueForPredictorInTiffFile = "illegal.value.for.predictor.in.tiff.file";
+    public static final String IllegalCharacterInAsciihexdecode = "illegal.character.in.asciihexdecode";
+    public static final String IllegalCharacterInAscii85decode = "illegal.character.in.ascii85decode";
+    public static final String IllegalLengthInAscii85decode = "illegal.length.in.ascii85decode";
+
     public static final String ImageCanNotBeAnImageMask = "image.can.not.be.an.image.mask";
     public static final String ImageMaskCannotContainAnotherImageMask = "image.mask.cannot.contain.another.image.mask";
     public static final String ImageMaskIsNotAMaskDidYouDoMakeMask = "image.mask.is.not.a.mask.did.you.do.makemask";
@@ -100,13 +108,16 @@ public class PdfException extends Exception {
     public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String InvalidXrefStream = "invalid.xref.stream";
     public static final String IoException = "io.exception";
+    public static final String LzwDecoderException = "lzw.decoder.exception";
+    public static final String LzwFlavourNotSupported = "lzw.flavour.not.supported";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
-    public static final String ObjectCannotBeAddedToObjectStream = "object.cannot.be.added.to.object.stream";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
     public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
+    public static final String PngFilterUnknown = "png.filter.unknown";
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
+    public static final String PdfObjectStreamReachMaxSize = "pdf.object.stream.reach.max.size";
     public static final String PdfPageShallHaveContent = "pdf.page.shall.have.content";
     public static final String PdfPagesTreeCouldBeGeneratedOnlyOnce = "pdf.pages.tree.could.be.generated.only.once";
     public static final String PdfStartxrefIsNotFollowedByANumber = "pdf.startxref.is.not.followed.by.a.number";
@@ -115,6 +126,8 @@ public class PdfException extends Exception {
     public static final String PlanarImagesAreNotSupported = "planar.images.are.not.supported";
     public static final String PrematureEofWhileReadingJpg = "premature.eof.while.reading.jpg";
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
+    public static final String StreamCouldNotBeCompressedFilterIsNotANameOrArray = "stream.could.not.be.compressed.filter.is.not.a.name.or.array";
+    public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
     public static final String TiffFillOrderTagMustBeEither1Or2 = "tiff.fill.order.tag.must.be.either.1.or.2";
     public static final String TilesAreNotSupported = "tiles.are.not.supported";

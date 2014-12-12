@@ -32,7 +32,7 @@ class PdfXrefTable {
             capacity = InitialCapacity;
         xref = new PdfIndirectReference[capacity];
         freeReferences = new TreeSet<Integer>();
-        add(new PdfIndirectReference(null, 0, MaxGeneration, 0));
+        add(new PdfIndirectReference(null, 0, MaxGeneration, 0).setState(PdfIndirectReference.Free));
     }
 
     /**

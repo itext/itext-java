@@ -4,15 +4,18 @@ import com.itextpdf.basics.PdfException;
 
 public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject == null ? new PdfDictionary() : pdfObject, pdfDocument);
+    public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+        super(pdfObject == null ? new PdfDictionary() : pdfObject);
+        if (pdfDocument.getWriter() != null) {
+            this.pdfObject.makeIndirect(pdfDocument);
+        }
     }
 
-    public PdfDocumentInfo(PdfDictionary pdfObject) {
+    public PdfDocumentInfo(PdfDictionary pdfObject) throws PdfException {
         this(pdfObject, null);
     }
 
-    public PdfDocumentInfo(PdfDocument pdfDocument) {
+    public PdfDocumentInfo(PdfDocument pdfDocument) throws PdfException {
         this(new PdfDictionary(), pdfDocument);
     }
 

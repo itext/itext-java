@@ -2,10 +2,13 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.*;
+import com.itextpdf.core.pdf.filters.FilterHandler;
+import com.itextpdf.core.pdf.filters.FilterHandlers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 public class PdfReader {
 
@@ -113,7 +116,7 @@ public class PdfReader {
         int objectStreamNumber = objectStream.getIndirectReference().getObjNr();
         int first = objectStream.getAsNumber(PdfName.First).getIntValue();
         int n = objectStream.getAsNumber(PdfName.N).getIntValue();
-        byte[] bytes = objectStream.getInputStreamBytes(true);
+        byte[] bytes = readStreamBytes(objectStream, true);
         PdfTokeniser saveTokens = tokens;
         try {
             tokens = new PdfTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(bytes)));
@@ -561,7 +564,24 @@ public class PdfReader {
             throw new PdfException(PdfException.TrailerNotFound);
     }
 
-    protected byte[] readStreamBytes(PdfStream stream, boolean decode) throws IOException, PdfException {
+    /**
+     * Reads and gets stream bytes.
+     *
+     * @param decode true if to get decoded stream bytes, false if to leave it originally encoded.
+     * @return byte[]
+     * @throws IOException
+     * @throws PdfException
+     */
+    public byte[] readStreamBytes(PdfStream stream, boolean decode) throws IOException, PdfException {
+        byte[] b = readStreamBytesRaw(stream);
+        if (decode && b != null) {
+            return decodeBytes(b, stream);
+        } else {
+            return b;
+        }
+    }
+
+    public byte[] readStreamBytesRaw(PdfStream stream) throws IOException, PdfException {
         PdfName type = stream.getAsName(PdfName.Type);
         if (!PdfName.XRefStm.equals(type) && !PdfName.ObjStm.equals(type))
             checkPdfStreamLength(stream);
@@ -586,9 +606,88 @@ public class PdfReader {
         return bytes;
     }
 
-    protected InputStream readStream(PdfStream stream, boolean decode) throws IOException, PdfException {
+    /**
+     * Gets the input stream associated with PdfStream.
+     * User is responsible for closing returned stream.
+     *
+     * @param decode true if to get decoded stream, false if to leave it originally encoded.
+     * @return InputStream
+     * @throws IOException
+     * @throws PdfException
+     */
+    public InputStream readStream(PdfStream stream, boolean decode) throws IOException, PdfException {
         byte[] bytes = readStreamBytes(stream, decode);
         return bytes != null ? new ByteArrayInputStream(bytes) : null;
+    }
+
+    /**
+     * Decode a byte[] applying the filters specified in the provided dictionary using default filter handlers.
+     *
+     * @param b the bytes to decode
+     * @param streamDictionary the dictionary that contains filter information
+     * @return the decoded bytes
+     * @throws PdfException if there are any problems decoding the bytes
+     */
+    public static byte[] decodeBytes(byte[] b, PdfDictionary streamDictionary) throws PdfException {
+        return decodeBytes(b, streamDictionary, FilterHandlers.getDefaultFilterHandlers());
+    }
+
+    /**
+     * Decode a byte[] applying the filters specified in the provided dictionary using the provided filter handlers.
+     *
+     * @param b the bytes to decode
+     * @param streamDictionary the dictionary that contains filter information
+     * @param filterHandlers the map used to look up a handler for each type of filter
+     * @return the decoded bytes
+     * @throws PdfException if there are any problems decoding the bytes
+     */
+    public static byte[] decodeBytes(byte[] b, PdfDictionary streamDictionary, Map<PdfName, FilterHandler> filterHandlers) throws PdfException {
+        if (b == null) {
+            return null;
+        }
+        PdfObject filter = streamDictionary.get(PdfName.Filter);
+        PdfArray filters = new PdfArray();
+        if (filter != null) {
+            if (filter.getType() == PdfObject.Name)
+                filters.add(filter);
+            else if (filter.getType() == PdfObject.Array)
+                filters = ((PdfArray)filter);
+        }
+        PdfArray dp = new PdfArray();
+        // TODO getPdfObjectRelease?
+        PdfObject dpo = streamDictionary.get(PdfName.DecodeParms);
+        if (dpo == null || (dpo.getType() != PdfObject.Dictionary && dpo.getType() != PdfObject.Array))
+            dpo = streamDictionary.get(PdfName.DP); // TODO getPdfObjectRelease?
+        if (dpo != null) {
+            if (dpo.getType() == PdfObject.Dictionary) {
+                dp.add(dpo);
+            } else if (dpo.getType() == PdfObject.Array) {
+                dp = ((PdfArray) dpo);
+            }
+        }
+        for (int j = 0; j < filters.size(); ++j) {
+            PdfName filterName = (PdfName)filters.get(j);
+            FilterHandler filterHandler = filterHandlers.get(filterName);
+            if (filterHandler == null)
+                throw new PdfException(PdfException.Filter1IsNotSupported).setMessageParams(filterName);
+
+            PdfDictionary decodeParams;
+            if (j < dp.size()){
+                PdfObject dpEntry = dp.get(j);
+                if (dpEntry instanceof PdfDictionary){
+                    decodeParams = (PdfDictionary)dpEntry;
+                } else if (dpEntry == null || dpEntry instanceof PdfNull) {
+                    decodeParams = null;
+                } else {
+                    throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(dpEntry.getClass().toString());
+                }
+
+            } else {
+                decodeParams = null;
+            }
+            b = filterHandler.decode(b, filterName, decodeParams, streamDictionary);
+        }
+        return b;
     }
 
     /**

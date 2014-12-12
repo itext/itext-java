@@ -36,7 +36,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
     protected abstract void generateContent();
 
     @Override
-    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
+    public <T extends PdfObject> T makeIndirect(PdfDocument document) throws PdfException {
         //TODO log makingIndirect for directObjects
         if (directOnly) return null;
         return super.makeIndirect(document);

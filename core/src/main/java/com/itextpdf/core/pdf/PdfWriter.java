@@ -16,6 +16,8 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected boolean fullCompression = false;
 
+    protected int compressionLevel = DEFAULT_COMPRESSION;
+
     /**
      * Currently active object stream.
      * Objects are written to the object stream if fullCompression set to true.
@@ -47,6 +49,24 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     /**
+     * Gets default compression level for @see PdfStream.
+     * For more details @see {@link java.util.zip.Deflater}.
+     * @return compression level.
+     */
+    public int getCompressionLevel() {
+        return compressionLevel;
+    }
+
+    /**
+     * Sets default compression level for @see PdfStream.
+     * For more details @see {@link java.util.zip.Deflater}.
+     * @param compressionLevel compression level.
+     */
+    public void setCompressionLevel(int compressionLevel) {
+        this.compressionLevel = compressionLevel;
+    }
+
+    /**
      * Gets the current object stream.
      *
      * @return object stream.
@@ -60,7 +80,7 @@ public class PdfWriter extends PdfOutputStream {
             objectStream = new PdfObjectStream(document);
         } else if (objectStream.getSize() == PdfObjectStream.maxObjStreamSize) {
             objectStream.flush();
-            objectStream = new PdfObjectStream(document);
+            objectStream = new PdfObjectStream(objectStream);
         }
         return objectStream;
     }
@@ -74,12 +94,8 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException, PdfException {
-        PdfIndirectReference indirectReference;
-        if (pdfObject.isFlushed() || (indirectReference = pdfObject.getIndirectReference()) == null) {
-            //TODO log meaningless call of flush: object is direct or released
-            return;
-        }
-        if (isFullCompression() && canBeInObjStm) {
+        PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
+        if (fullCompression && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
             objectStream.addObject(pdfObject);
         } else {

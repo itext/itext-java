@@ -8,8 +8,11 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     private final PdfArray kids;
     private final PdfPages parent;
 
-    public PdfPages(int from, PdfDocument pdfDocument, PdfPages parent) {
-        super(new PdfDictionary(), pdfDocument);
+    public PdfPages(int from, PdfDocument pdfDocument, PdfPages parent) throws PdfException {
+        super(new PdfDictionary());
+        if (pdfDocument.getWriter() != null) {
+            pdfObject.makeIndirect(pdfDocument);
+        }
         this.from = from;
         this.count = new PdfNumber(0);
         this.kids = new PdfArray();
@@ -19,7 +22,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         pdfObject.put(PdfName.Count, this.count);
     }
 
-    public PdfPages(int from, PdfDocument pdfDocument) {
+    public PdfPages(int from, PdfDocument pdfDocument) throws PdfException {
         this(from, pdfDocument, null);
     }
 

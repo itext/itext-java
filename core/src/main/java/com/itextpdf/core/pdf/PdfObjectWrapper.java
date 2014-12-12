@@ -11,7 +11,7 @@ public class PdfObjectWrapper<T extends PdfObject> {
         this.pdfObject = pdfObject;
     }
 
-    public PdfObjectWrapper(T pdfObject, PdfDocument pdfDocument) {
+    public PdfObjectWrapper(T pdfObject, PdfDocument pdfDocument) throws PdfException {
         this(pdfObject);
         pdfObject.makeIndirect(pdfDocument);
     }

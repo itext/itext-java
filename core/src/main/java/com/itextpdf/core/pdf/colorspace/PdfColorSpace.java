@@ -9,7 +9,7 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
         super(pdfObject);
     }
 
-    public PdfColorSpace(T pdfObject, PdfDocument document) {
+    public PdfColorSpace(T pdfObject, PdfDocument document) throws PdfException {
         super(pdfObject, document);
     }
 

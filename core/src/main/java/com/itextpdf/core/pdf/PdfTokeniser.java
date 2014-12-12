@@ -454,7 +454,7 @@ public class PdfTokeniser {
      * @param ch int
      * @return boolean
      */
-    protected static boolean isWhitespace(int ch) {
+    public static boolean isWhitespace(int ch) {
         return isWhitespace(ch, true);
     }
 

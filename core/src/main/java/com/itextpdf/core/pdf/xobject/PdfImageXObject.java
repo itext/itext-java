@@ -3,13 +3,18 @@ package com.itextpdf.core.pdf.xobject;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.CcittImage;
 import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 public class PdfImageXObject extends PdfXObject {
 
@@ -108,7 +113,6 @@ public class PdfImageXObject extends PdfXObject {
                 int colorspace = image.getColorSpace();
                 byte[] imgBytes = image.getRawData();
                 stream.getOutputStream().assignBytes(imgBytes, imgBytes.length);
-                stream.put(PdfName.Length, new PdfNumber(imgBytes.length));
                 int bpc = image.getBpc();
                 if (bpc > 0xff) {
                     if (!image.isMask())
@@ -160,11 +164,8 @@ public class PdfImageXObject extends PdfXObject {
                     if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 8))
                         stream.remove(PdfName.ColorSpace);
                     stream.put(PdfName.BitsPerComponent, new PdfNumber(image.getBpc()));
-                    if (image.isDeflated())
+                    if (image.isDeflated()) {
                         stream.put(PdfName.Filter, PdfName.FlateDecode);
-                    else {
-//TODO Add filter compression here
-//                        flateCompress(image.getCompressionLevel());
                     }
                 }
                 return stream;
@@ -203,7 +204,6 @@ public class PdfImageXObject extends PdfXObject {
                     if (image.getRawData() != null) {
                         byte[] imgBytes = image.getRawData();
                         stream.getOutputStream().assignBytes(imgBytes, imgBytes.length);
-                        stream.put(PdfName.Length, new PdfNumber(imgBytes.length));
                         return stream;
                     }
                     transferBytes(is, stream.getOutputStream());
@@ -226,7 +226,6 @@ public class PdfImageXObject extends PdfXObject {
                     if (image.getRawData() != null) {
                         byte[] imgBytes = image.getRawData();
                         stream.getOutputStream().assignBytes(imgBytes, imgBytes.length);
-                        stream.put(PdfName.Length, new PdfNumber(imgBytes.length));
                         return stream;
                     }
                     transferBytes(is, stream.getOutputStream());
@@ -238,7 +237,6 @@ public class PdfImageXObject extends PdfXObject {
                     if (image.getRawData() != null) {
                         byte[] imgBytes = image.getRawData();
                         stream.getOutputStream().assignBytes(imgBytes, imgBytes.length);
-                        stream.put(PdfName.Length, new PdfNumber(imgBytes.length));
                         return stream;
                     }
                     transferBytes(is, stream.getOutputStream());
@@ -246,11 +244,6 @@ public class PdfImageXObject extends PdfXObject {
                 default:
                     throw new PdfException(PdfException._1IsAnUnknownImageFormat).setMessageParams(errorID);
             }
-//TODO Add filter compression here
-//            if (image.getCompressionLevel() > NO_COMPRESSION)
-//                flateCompress(image.getCompressionLevel());
-
-            stream.put(PdfName.Length, new PdfNumber(((ByteArrayOutputStream) stream.getOutputStream().getOutputStream()).size()));
         } catch (IOException ioe) {
             throw new PdfException(ioe.getMessage(), ioe);
         } finally {

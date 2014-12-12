@@ -54,7 +54,7 @@ public class PdfResourcesTest {
         document.close();
 
         PdfReader reader = new PdfReader(new ByteArrayInputStream(baos.toByteArray()));
-        document = new PdfDocument(reader);
+        document = new PdfDocument(reader, new PdfWriter(new com.itextpdf.basics.io.ByteArrayOutputStream()));
         page = document.getPage(1);
         resources = page.getResources();
         Set<PdfName> names = resources.getResourceNames();

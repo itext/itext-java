@@ -2,40 +2,54 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.basics.io.OutputStream;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 public class PdfStream extends PdfDictionary {
 
-    /**
-     * Output stream associated with PDF stream.
-     */
+    protected int compressionLevel;
+    // Output stream associated with PDF stream.
     private PdfOutputStream outputStream;
     private long offset;
 
-    public PdfStream(PdfDocument doc) {
+    /**
+     *
+     * @param doc PdfDocument.
+     * @param bytes initial content of {@link PdfOutputStream}.
+     * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
+     * @throws PdfException
+     */
+    public PdfStream(PdfDocument doc, byte[] bytes, int compressionLevel) throws PdfException {
         super();
         makeIndirect(doc);
-        this.outputStream = new PdfOutputStream(new ByteArrayOutputStream());
-        this.outputStream.document = doc;
-    }
-
-    public PdfStream(PdfDocument doc, byte[] bytes) throws IOException {
-        super();
-        makeIndirect(doc);
+        this.compressionLevel = compressionLevel;
         if (bytes != null && bytes.length > 0) {
             this.outputStream = new PdfOutputStream(new ByteArrayOutputStream(bytes.length));
-            this.outputStream.write(bytes);
+            this.outputStream.writeBytes(bytes);
         } else {
             this.outputStream = new PdfOutputStream(new ByteArrayOutputStream());
         }
+        this.outputStream.document = doc;
     }
 
-    public PdfStream(PdfDocument doc, OutputStream stream) {
-        this(doc);
-        this.outputStream = new PdfOutputStream(stream);
+    public PdfStream(PdfDocument doc, byte[] bytes) throws PdfException {
+        this(doc, bytes, PdfWriter.DEFAULT_COMPRESSION);
+        if (doc != null) {
+            this.compressionLevel = doc.getWriter().getCompressionLevel();
+        }
+    }
+
+    /**
+     *
+     * @param doc PdfDocument.
+     * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
+     */
+    public PdfStream(PdfDocument doc, int compressionLevel) throws PdfException {
+        this(doc, null, compressionLevel);
+    }
+
+    public PdfStream(PdfDocument doc) throws PdfException {
+        this(doc, null);
     }
 
     //NOTE This constructor only for PdfReader.
@@ -58,51 +72,13 @@ public class PdfStream extends PdfDictionary {
         return outputStream;
     }
 
-    public byte[] getInputStreamBytes() throws IOException, PdfException {
-        return getInputStreamBytes(true);
-    }
-
     /**
-     * Gets the decoded input stream associated with PdfStream.
-     * User is responsible for closing returned stream.
-     *
-     * @return InputStream
-     * @throws IOException
-     * @throws PdfException
+     * Gets compression level of this PdfStream.
+     * For more details @see {@link java.util.zip.Deflater}.
+     * @return compression level.
      */
-    public InputStream getInputStream() throws IOException, PdfException {
-        return getInputStream(true);
-    }
-
-    /**
-     * Reads and gets stream bytes.
-     *
-     * @param decoded true if to get decoded stream bytes, false if to leave it originally encoded.
-     * @return byte[]
-     * @throws IOException
-     * @throws PdfException
-     */
-    public byte[] getInputStreamBytes(boolean decoded) throws IOException, PdfException {
-        if (offset > 0) {
-            return getIndirectReference().getDocument().getReader().readStreamBytes(this, decoded);
-        }
-        return null;
-    }
-
-    /**
-     * Gets the input stream associated with PdfStream.
-     * User is responsible for closing returned stream.
-     *
-     * @param decoded true if to get decoded stream, false if to leave it originally encoded.
-     * @return InputStream
-     * @throws IOException
-     * @throws PdfException
-     */
-    public InputStream getInputStream(boolean decoded) throws IOException, PdfException {
-        if (offset > 0) {
-            return getIndirectReference().getDocument().getReader().readStream(this, decoded);
-        }
-        return null;
+    public int getCompressionLevel() {
+        return compressionLevel;
     }
 
     @Override
@@ -145,10 +121,7 @@ public class PdfStream extends PdfDictionary {
             }
         } else if (getReader() != null) {
             try {
-                InputStream is = getInputStream(decoded);
-                bytes = new byte[getLength()];
-                is.read(bytes, 0, getLength());
-                is.close();
+                bytes = getIndirectReference().getDocument().getReader().readStreamBytes(this, decoded);
             } catch (IOException ioe) {
                 throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
             }
@@ -177,9 +150,9 @@ public class PdfStream extends PdfDictionary {
         }
     }
 
-    protected void initOutputStream() {
+    protected void initOutputStream(java.io.OutputStream stream) {
         if (getOutputStream() == null)
-            outputStream = new PdfOutputStream(new ByteArrayOutputStream());
+            outputStream = new PdfOutputStream(stream != null ? stream : new ByteArrayOutputStream());
     }
 
     /**

@@ -7,12 +7,12 @@ import java.util.ArrayList;
 
 abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
 
-    public PdfCieBasedCs(PdfArray pdfObject, PdfDocument document) {
+    public PdfCieBasedCs(PdfArray pdfObject, PdfDocument document) throws PdfException {
         super(pdfObject, document);
     }
 
     static public class CalGray extends PdfCieBasedCs {
-        public CalGray(PdfArray pdfObject, PdfDocument document) {
+        public CalGray(PdfArray pdfObject, PdfDocument document) throws PdfException {
             super(pdfObject, document);
         }
 
@@ -43,7 +43,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class CalRgb extends PdfCieBasedCs {
-        public CalRgb(PdfArray pdfObject, PdfDocument document) {
+        public CalRgb(PdfArray pdfObject, PdfDocument document) throws PdfException {
             super(pdfObject, document);
         }
 
@@ -76,7 +76,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class Lab extends PdfCieBasedCs {
-        public Lab(PdfArray pdfObject, PdfDocument document) {
+        public Lab(PdfArray pdfObject, PdfDocument document) throws PdfException {
             super(pdfObject, document);
         }
 
