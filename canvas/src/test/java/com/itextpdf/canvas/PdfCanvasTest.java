@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -371,6 +372,83 @@ public class PdfCanvasTest {
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
         reader.close();
+    }
+
+    @Test
+    public void create1000PagesDocumentWithFlate() throws IOException, PdfException {
+        int pageCount = 1000;
+        String filename = destinationFolder + pageCount + "PagesDocumentWithFlate.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfWriter.DEFAULT_COMPRESSION);
+        writer.setFullCompression(true);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .showText(Integer.toString(i + 1))
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+            canvas.release();
+            page.flush();
+        }
+        pdfDoc.close();
+
+
+        com.itextpdf.core.pdf.PdfReader reader6 = new com.itextpdf.core.pdf.PdfReader(new FileInputStream(filename));
+        PdfDocument document = new PdfDocument(reader6);
+
+        Assert.assertEquals("Page count", pageCount, document.getNumOfPages());
+
+        String contentTemplate = "q\n" +
+                "BT\n" +
+                "36 700 Td\n" +
+                "/F1 72 Tf\n" +
+                "(%d)Tj\n" +
+                "ET\n" +
+                "Q\n" +
+                "100 500 100 100 re\n" +
+                "f\n";
+
+        for (int i = 1; i <= document.getNumOfPages(); i++) {
+            PdfPage page = document.getPage(i);
+            byte[] content = page.getFirstContentStream().getBytes();
+            Assert.assertEquals("Page content " + i, String.format(contentTemplate, i), new String(content));
+        }
+
+        Assert.assertFalse("No need in rebuildXref()", reader6.hasRebuiltXref());
+        Assert.assertFalse("No need in fixXref()", reader6.hasFixedXref());
+        reader6.close();
+        document.close();
+
+
+
+        com.itextpdf.text.pdf.PdfReader reader5 = new com.itextpdf.text.pdf.PdfReader(filename);
+        Assert.assertEquals("Rebuilt", false, reader5.isRebuilt());
+        HashMap<String, String> info = reader5.getInfo();
+        Assert.assertEquals("Author", author, info.get("Author"));
+        Assert.assertEquals("Creator", creator, info.get("Creator"));
+        Assert.assertEquals("Title", title, info.get("Title"));
+        Assert.assertEquals("Page count", pageCount, reader5.getNumberOfPages());
+        for (int i = 1; i <= pageCount; i++) {
+            PdfDictionary page = reader5.getPageN(i);
+            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        }
+        reader5.close();
     }
 
     @Test
