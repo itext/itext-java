@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.xmp.XMPException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -642,6 +643,99 @@ public class PdfDocumentTest {
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stampingXmp1() throws IOException, PdfException, XMPException {
+        String filename1 =  destinationFolder + "stampingXmp1_1.pdf";
+        String filename2 =  destinationFolder + "stampingXmp1_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(true);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(false);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+        pdfDoc2.getDocumentInfo().setAuthor("Alexander Chingarev");
+        pdfDoc2.setXmpMetadata();
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
+            byte[] bytes = reader.getPageContent(i);
+            Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void stampingXmp2() throws IOException, PdfException, XMPException {
+        String filename1 =  destinationFolder + "stampingXmp2_1.pdf";
+        String filename2 =  destinationFolder + "stampingXmp2_2.pdf";
+        int pageCount = 10;
+
+        FileOutputStream fos1 = new FileOutputStream(filename1);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setFullCompression(false);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 1; i <= pageCount; i++ ) {
+            PdfPage page = pdfDoc1.addNewPage();
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.flush();
+        }
+        pdfDoc1.close();
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
+        writer2.setFullCompression(true);
+        PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
+        pdfDoc2.getDocumentInfo().setAuthor("Alexander Chingarev");
+        pdfDoc2.getDocumentInfo().setAuthor("Alexander Chingarev");
+        pdfDoc2.setXmpMetadata();
+        pdfDoc2.close();
+
+        PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
+        PdfDocument pdfDoc3 = new PdfDocument(reader3);
+        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+            pdfDoc3.getPage(i + 1);
+        }
+        Assert.assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
+        Assert.assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader3.hasFixedXref());
+        verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
+        pdfDoc3.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 1; i <= pageCount; i++) {
             byte[] bytes = reader.getPageContent(i);
             Assert.assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }

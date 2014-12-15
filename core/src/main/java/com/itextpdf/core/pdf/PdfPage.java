@@ -122,6 +122,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
+    public PdfStream getXmpMetadata() throws XMPException, PdfException {
+        return getPdfObject().getAsStream(PdfName.Metadata);
+    }
+
     /**
      * Copies page to a specified document.
      *

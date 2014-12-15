@@ -204,6 +204,10 @@ public class PdfDocument implements IEventDispatcher {
         setXmpMetadata(xmpMeta);
     }
 
+    public PdfStream getXmpMetadata() throws XMPException, PdfException {
+        return getCatalog().getPdfObject().getAsStream(PdfName.Metadata);
+    }
+
     public PdfObject getPdfObject(final int objNum) throws PdfException {
         PdfIndirectReference reference = xref.get(objNum);
         if (reference == null) {
