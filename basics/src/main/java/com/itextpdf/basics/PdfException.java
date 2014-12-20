@@ -104,6 +104,7 @@ public class PdfException extends Exception {
     public static final String InvalidPageStructure1 = "invalid.page.structure.1";
     public static final String InvalidPageStructurePagesKidsMustBePdfArray = "invalid.page.structure.pages.kids.must.be.pdfarray";
     public static final String InvalidPageStructurePagesPagesMustBePdfDictionary = "invalid.page.structure.pages.must.be.pdfdictionary";
+    public static final String InvalidRangeArray = "invalid.range.array";
     public static final String InvalidOffsetForObject1 = "invalid.offset.for.object.1";
     public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String InvalidXrefStream = "invalid.xref.stream";

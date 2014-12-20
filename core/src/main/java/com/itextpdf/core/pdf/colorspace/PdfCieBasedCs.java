@@ -37,7 +37,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumOfComponents() throws PdfException {
             return 1;
         }
     }
@@ -70,7 +70,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumOfComponents() throws PdfException {
             return 3;
         }
     }
@@ -101,12 +101,29 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumOfComponents() throws PdfException {
             return 3;
         }
     }
 
+    static public class IccBased extends PdfCieBasedCs {
+        public IccBased(PdfArray pdfObject, PdfDocument document) throws PdfException {
+            super(pdfObject, document);
+        }
 
+        public IccBased(PdfDocument document, final PdfStream stream) throws PdfException {
+            this(new PdfArray(new ArrayList<PdfObject>() {{
+                add(PdfName.ICCBased);
+                add(stream);
+            }}), document);
+        }
+
+        @Override
+        public int getNumOfComponents() throws PdfException {
+            return ((PdfArray) pdfObject).getAsStream(1).getAsInt(PdfName.Action.N).intValue();
+        }
+
+    }
 
 
 }

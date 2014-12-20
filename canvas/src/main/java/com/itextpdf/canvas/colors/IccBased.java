@@ -1,0 +1,60 @@
+package com.itextpdf.canvas.colors;
+
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.color.IccProfile;
+import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
+
+import java.io.InputStream;
+
+public class IccBased extends Color {
+
+    public IccBased(PdfCieBasedCs.IccBased cs, float[] value) {
+        super(cs, value);
+    }
+
+    /**
+     * Creates IccBased color.
+     *
+     * @param document
+     * @param iccStream ICC profile stream. User is responsible for closing the stream.
+     * @param value     color value.
+     * @throws PdfException
+     */
+    public IccBased(PdfDocument document, InputStream iccStream, float[] value) throws PdfException {
+        this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream)), value);
+    }
+
+    public IccBased(PdfDocument document, InputStream iccStream, float[] range, float[] value) throws PdfException {
+        this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream, range)), value);
+        if (getNumOfComponents() * 2 != range.length)
+            throw new PdfException(PdfException.InvalidRangeArray, this);
+    }
+
+    static private PdfStream getStream(PdfDocument document, InputStream iccStream) throws PdfException {
+        IccProfile iccProfile = IccProfile.getInstance(iccStream);
+        PdfStream stream = new PdfStream(document, iccProfile.getData());
+        stream.put(PdfName.N, new PdfNumber(iccProfile.getNumComponents()));
+        switch (iccProfile.getNumComponents()) {
+            case 1:
+                stream.put(PdfName.Alternate, PdfName.DeviceGray);
+                break;
+            case 3:
+                stream.put(PdfName.Alternate, PdfName.DeviceRGB);
+                break;
+            case 4:
+                stream.put(PdfName.Alternate, PdfName.DeviceCMYK);
+                break;
+            default:
+                break;
+        }
+        return stream;
+    }
+
+    static private PdfStream getStream(PdfDocument document, InputStream iccStream, float[] range) throws PdfException {
+        PdfStream stream = getStream(document, iccStream);
+        stream.put(PdfName.Range, new PdfArray(range));
+        return stream;
+    }
+
+}

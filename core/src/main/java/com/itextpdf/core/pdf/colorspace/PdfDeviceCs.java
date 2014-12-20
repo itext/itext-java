@@ -29,7 +29,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumOfComponents() throws PdfException {
             return 1;
         }
     }
@@ -45,7 +45,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumOfComponents() throws PdfException {
             return 3;
         }
     }
@@ -61,7 +61,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumOfComponents() throws PdfException {
             return 4;
         }
     }

@@ -22,7 +22,11 @@ public class Color {
     public Color(PdfColorSpace colorSpace, float[] colorValue) {
         this.colorSpace = colorSpace;
         if (colorValue == null)
-            this.colorValue = new float[colorSpace.getNumOfComponents()];
+            try {
+                this.colorValue = new float[colorSpace.getNumOfComponents()];
+            } catch (PdfException e) {
+                e.printStackTrace();
+            }
         else
             this.colorValue = colorValue;
     }
