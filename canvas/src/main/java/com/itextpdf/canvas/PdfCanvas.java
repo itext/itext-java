@@ -80,6 +80,10 @@ public class PdfCanvas {
     static final private byte[] sc = OutputStream.getIsoBytes("sc\n");
     static final private byte[] SC = OutputStream.getIsoBytes("SC\n");
 
+    static private final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
+    static private final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
+    static private final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
+
     protected Stack<PdfGraphicsState> gsStack = new Stack<PdfGraphicsState>();
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
     protected PdfStream contentStream;
@@ -780,6 +784,30 @@ public class PdfCanvas {
         else if (colorSpace instanceof PdfDeviceCs.Cmyk)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? k : K);
         return this;
+    }
+
+    public PdfCanvas setFillColorGray(float g) throws PdfException {
+        return setColor(gray, new float[]{g}, true);
+    }
+
+    public PdfCanvas setStrokeColorGray(float g) throws PdfException {
+        return setColor(gray, new float[]{g}, false);
+    }
+
+    public PdfCanvas setFillColorRgb(float r, float g, float b) throws PdfException {
+        return setColor(rgb, new float[]{r, g, b}, true);
+    }
+
+    public PdfCanvas setStrokeColorRgb(float r, float g, float b) throws PdfException {
+        return setColor(rgb, new float[]{r, g, b}, false);
+    }
+
+    public PdfCanvas setFillColorCmyk(float c, float m, float y, float k) throws PdfException {
+        return setColor(cmyk, new float[]{c, m, y, k}, true);
+    }
+
+    public PdfCanvas setStrokeColorCmyk(float c, float m, float y, float k) throws PdfException {
+        return setColor(cmyk, new float[]{c, m, y, k}, false);
     }
 
     /**

@@ -1165,5 +1165,31 @@ public class PdfCanvasTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest4.pdf", sourceFolder + "cmp_colorTest4.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void colorTest5() throws Exception {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest5.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+        FileInputStream streamGray = new FileInputStream(sourceFolder + "BlackWhite.icc");
+        FileInputStream streamRgb = new FileInputStream(sourceFolder + "CIERGB.icc");
+        FileInputStream streamCmyk = new FileInputStream(sourceFolder + "USWebUncoated.icc");
+        PdfCieBasedCs.IccBased gray = (PdfCieBasedCs.IccBased)new IccBased(document, streamGray).getColorSpace();
+        PdfCieBasedCs.IccBased rgb = (PdfCieBasedCs.IccBased)new IccBased(document, streamRgb).getColorSpace();
+        PdfCieBasedCs.IccBased cmyk = (PdfCieBasedCs.IccBased)new IccBased(document, streamCmyk).getColorSpace();
+        PdfResources resources = page.getResources();
+        resources.setDefaultGray(gray);
+        resources.setDefaultRgb(rgb);
+        resources.setDefaultCmyk(cmyk);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.setFillColorGray(0.5f).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColorRgb(1.0f, 0.5f, 0f).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColorCmyk(1.0f, 0.5f, 0f, 0f).rectangle(250, 500, 50, 50).fill();
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest5.pdf", sourceFolder + "cmp_colorTest5.pdf", destinationFolder, "diff_"));
+    }
 
 }

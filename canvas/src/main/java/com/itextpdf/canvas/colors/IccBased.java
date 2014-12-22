@@ -18,6 +18,20 @@ public class IccBased extends Color {
      *
      * @param document
      * @param iccStream ICC profile stream. User is responsible for closing the stream.
+     * @throws PdfException
+     */
+    public IccBased(PdfDocument document, InputStream iccStream) throws PdfException {
+        this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream)), null);
+        colorValue = new float[getNumOfComponents()];
+        for (int i = 0; i < getNumOfComponents(); i++)
+            colorValue[i] = 0f;
+    }
+
+    /**
+     * Creates IccBased color.
+     *
+     * @param document
+     * @param iccStream ICC profile stream. User is responsible for closing the stream.
      * @param value     color value.
      * @throws PdfException
      */

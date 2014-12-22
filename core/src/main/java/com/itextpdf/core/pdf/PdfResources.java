@@ -85,6 +85,28 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(colorSpace, PdfName.ColorSpace, Cs, csNumber);
     }
 
+    /**
+     * Sets the default color space.
+     * @param defaultCsKey
+     * @param defaultCsValue
+     * @throws PdfException
+     */
+    public void setDefaultColorSpace(PdfName defaultCsKey, PdfColorSpace defaultCsValue) throws PdfException {
+        addResource(defaultCsValue.getPdfObject(), PdfName.ColorSpace, defaultCsKey);
+    }
+
+    public void setDefaultGray(PdfColorSpace defaultCs) throws PdfException {
+        setDefaultColorSpace(PdfName.DefaultGray, defaultCs);
+    }
+
+    public void setDefaultRgb(PdfColorSpace defaultCs) throws PdfException {
+        setDefaultColorSpace(PdfName.DefaultRGB, defaultCs);
+    }
+
+    public void setDefaultCmyk(PdfColorSpace defaultCs) throws PdfException {
+        setDefaultColorSpace(PdfName.DefaultCMYK, defaultCs);
+    }
+
     public PdfName getResourceName(PdfObjectWrapper resource) {
         return resourceToName.get(resource.getPdfObject());
     }
@@ -113,21 +135,27 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(resource.getPdfObject(), resType, resPrefix, resNumber);
     }
 
+    protected void addResource(PdfObject resource, PdfName resType, PdfName resName) throws PdfException {
+        if (nameToResource.containsKey(resType) && nameToResource.get(resType).containsKey(resName))
+            return;
+        resourceToName.put(resource, resName);
+        Map<PdfName, PdfObject> resourceCategory = nameToResource.get(resType);
+        if (resourceCategory == null) {
+            nameToResource.put(resType, resourceCategory = new HashMap<PdfName, PdfObject>());
+        }
+        resourceCategory.put(resName, resource);
+        PdfDictionary resDictionary = (PdfDictionary) pdfObject.get(resType);
+        if (resDictionary == null) {
+            pdfObject.put(resType, resDictionary = new PdfDictionary());
+        }
+        resDictionary.put(resName, resource);
+    }
+
     protected PdfName addResource(PdfObject resource, PdfName resType, String resPrefix, ResourceNumber resNumber) throws PdfException {
         PdfName resName = getResourceName(resource);
         if (resName == null) {
             resName = new PdfName(resPrefix + resNumber.increment());
-            resourceToName.put(resource, resName);
-            Map<PdfName, PdfObject> resourceCategory = nameToResource.get(resType);
-            if (resourceCategory == null) {
-                nameToResource.put(resType, resourceCategory = new HashMap<PdfName, PdfObject>());
-            }
-            resourceCategory.put(resName, resource);
-            PdfDictionary resDictionary = (PdfDictionary) pdfObject.get(resType);
-            if (resDictionary == null) {
-                pdfObject.put(resType, resDictionary = new PdfDictionary());
-            }
-            resDictionary.put(resName, resource);
+            addResource(resource, resType, resName);
         }
         return resName;
     }

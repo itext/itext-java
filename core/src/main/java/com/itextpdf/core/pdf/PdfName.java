@@ -62,6 +62,9 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName DCTDecode = createDirectName("DCTDecode");
     public static final PdfName Decode = createDirectName("Decode");
     public static final PdfName DecodeParms = createDirectName("DecodeParms");
+    public static final PdfName DefaultCMYK = createDirectName("DefaultCMYK");
+    public static final PdfName DefaultGray = createDirectName("DefaultGray");
+    public static final PdfName DefaultRGB = createDirectName("DefaultRGB");
     public static final PdfName DeviceCMYK = createDirectName("DeviceCMYK");
     public static final PdfName DeviceGray = createDirectName("DeviceGray");
     public static final PdfName DeviceRGB = createDirectName("DeviceRGB");
