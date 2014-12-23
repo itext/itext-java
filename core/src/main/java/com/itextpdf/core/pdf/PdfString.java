@@ -25,9 +25,14 @@ public class PdfString extends PdfPrimitiveObject {
     protected String value;
     protected boolean hexWriting = false;
 
-    public PdfString(String value) {
+    public PdfString(String value, boolean hexWriting) {
         super();
         this.value = value;
+        this.hexWriting = hexWriting;
+    }
+
+    public PdfString(String value) {
+        this(value, false);
     }
 
     public PdfString(byte[] content, boolean hexWriting) {
