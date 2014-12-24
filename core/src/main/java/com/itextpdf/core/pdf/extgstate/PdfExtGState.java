@@ -13,9 +13,9 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         this(new PdfDictionary(), document);
     }
 
-    @Override
-    public PdfExtGState copy(PdfDocument document) throws PdfException {
-        return new PdfExtGState((PdfDictionary)getPdfObject().copy(document), document);
-    }
+//    @Override
+//    public PdfExtGState copy(PdfDocument document) throws PdfException {
+//        return new PdfExtGState((PdfDictionary)getPdfObject().copy(document), document);
+//    }
 
 }

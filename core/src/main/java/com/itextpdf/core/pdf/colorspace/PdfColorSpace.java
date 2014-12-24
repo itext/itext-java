@@ -36,6 +36,8 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
                 return new PdfCieBasedCs.Lab(array, document);
             else if (PdfName.ICCBased.equals(csType))
                 return new PdfCieBasedCs.IccBased(array, document);
+            else if (PdfName.Indexed.equals(csType))
+                return new PdfSpecialCs.Indexed(array, document);
         }
         return null;
     }
