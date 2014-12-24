@@ -6,6 +6,7 @@ import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
@@ -1191,5 +1192,33 @@ public class PdfCanvasTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest5.pdf", sourceFolder + "cmp_colorTest5.pdf", destinationFolder, "diff_"));
     }
+
+    @Test
+    public void colorTest6() throws Exception {
+
+        byte[] bytes = new byte[256 * 3];
+        int k = 0;
+        for (int i = 0; i < 256; i++) {
+            bytes[k++] = (byte)i;
+            bytes[k++] = (byte)i;
+            bytes[k++] = (byte)i;
+        }
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest6.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(document, com.itextpdf.core.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes)));
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.setFillColor(new Indexed(indexed, 85)).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColor(new Indexed(indexed, 127)).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColor(new Indexed(indexed, 170)).rectangle(250, 500, 50, 50).fill();
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest6.pdf", sourceFolder + "cmp_colorTest6.pdf", destinationFolder, "diff_"));
+    }
+
 
 }
