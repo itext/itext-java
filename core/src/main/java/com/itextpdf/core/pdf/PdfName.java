@@ -39,9 +39,13 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName BG = createDirectName("BG");
     public static final PdfName BG2 = createDirectName("BG2");
     public static final PdfName BitsPerComponent = createDirectName("BitsPerComponent");
+    public static final PdfName BitsPerSample = createDirectName("BitsPerSample");
     public static final PdfName BlackIs1 = createDirectName("BlackIs1");
     public static final PdfName BlackPoint = createDirectName("BlackPoint");
     public static final PdfName BM = createDirectName("BM");
+    public static final PdfName Bounds = createDirectName("Bounds");
+    public static final PdfName C0 = createDirectName("C0");
+    public static final PdfName C1 = createDirectName("C1");
     public static final PdfName CA = createDirectName("CA");
     public static final PdfName ca = createDirectName("ca");
     public static final PdfName CalGray = createDirectName("CalGray");
@@ -68,7 +72,9 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName DeviceCMYK = createDirectName("DeviceCMYK");
     public static final PdfName DeviceGray = createDirectName("DeviceGray");
     public static final PdfName DeviceRGB = createDirectName("DeviceRGB");
+    public static final PdfName Domain = createDirectName("Domain");
     public static final PdfName DP = new PdfName("DP");
+    public static final PdfName Encode = createDirectName("Encode");
     public static final PdfName EncodedByteAlign = createDirectName("EncodedByteAlign");
     public static final PdfName Encoding = createDirectName("Encoding");
     public static final PdfName EndOfBlock = createDirectName("EndOfBlock");
@@ -89,6 +95,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName FlateDecode = createDirectName("FlateDecode");
     public static final PdfName Font = createDirectName("Font");
     public static final PdfName Form = createDirectName("Form");
+    public static final PdfName Functions = createDirectName("Functions");
+    public static final PdfName FunctionType = createDirectName("FunctionType");
     public static final PdfName Gamma = createDirectName("Gamma");
     public static final PdfName GoTo = createDirectName("GoTo");
     public static final PdfName GoToR = createDirectName("GoToR");
@@ -128,6 +136,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName OP = createDirectName("OP");
     public static final PdfName op = createDirectName("op");
     public static final PdfName OPM = createDirectName("OPM");
+    public static final PdfName Order = createDirectName("Order");
     public static final PdfName Page = createDirectName("Page");
     public static final PdfName Pages = createDirectName("Pages");
     public static final PdfName Parent = createDirectName("Parent");
