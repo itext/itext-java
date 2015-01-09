@@ -15,6 +15,14 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
         return ((PdfDictionary)pdfObject).getAsInt(PdfName.FunctionType);
     }
 
+    public int getInputSize() throws PdfException {
+        return ((PdfDictionary)pdfObject).getAsArray(PdfName.Domain).size() / 2;
+    }
+
+    public int getOutputSize() throws PdfException {
+        return ((PdfDictionary)pdfObject).getAsArray(PdfName.Range).size() / 2;
+    }
+
     static public class Type0 extends PdfFunction<PdfStream> {
 
         public Type0(PdfStream pdfObject, PdfDocument pdfDocument) throws PdfException {

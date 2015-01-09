@@ -47,6 +47,12 @@ public class Color {
         return colorValue;
     }
 
+    public void setColorValue(float[] value) throws PdfException {
+        colorValue = value;
+        if (colorValue.length != value.length)
+            throw new PdfException(PdfException.IncorrectNumberOfComponents, this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

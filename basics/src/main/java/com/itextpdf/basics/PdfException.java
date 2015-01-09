@@ -78,6 +78,7 @@ public class PdfException extends Exception {
     public static final String FlushedPageCannotBeAddedOrInserted = "flushed.page.cannot.be.added.or.inserted";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "font.and.size.must.be.set.before.writing.any.text";
     public static final String FontSizeTooSmall = "font.size.too.small";
+    public static final String FunctionIsNotCompatibleWitColorSpace = "function.is.not.compatible.with.color.space";
     public static final String ImageFormatCannotBeRecognized = "image.format.cannot.be.recognized";
     public static final String GtNotExpected = "gt.not.expected";
     public static final String IllegalValueForPredictorInTiffFile = "illegal.value.for.predictor.in.tiff.file";
@@ -89,6 +90,7 @@ public class PdfException extends Exception {
     public static final String ImageMaskCannotContainAnotherImageMask = "image.mask.cannot.contain.another.image.mask";
     public static final String ImageMaskIsNotAMaskDidYouDoMakeMask = "image.mask.is.not.a.mask.did.you.do.makemask";
     public static final String IncompletePalette = "incomplete.palette";
+    public static final String IncorrectNumberOfComponents = "incorrect.number.of.components";
 
     public static final String InfiniteIndirectReferenceChain = "infinite.indirect.reference.chain";
     public static final String InvalidBmpFileCompression = "invalid.bmp.file.compression";

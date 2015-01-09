@@ -2,7 +2,6 @@ package com.itextpdf.core.pdf.colorspace;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
-import com.sun.corba.se.spi.orb.ParserDataFactory;
 
 abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrapper {
 
@@ -18,7 +17,7 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
 
     static public PdfColorSpace makeColorSpace(PdfObject pdfObject, PdfDocument document) throws PdfException {
         if (pdfObject instanceof PdfIndirectReference)
-            pdfObject = ((PdfIndirectReference)pdfObject).getRefersTo();
+            pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (PdfName.DeviceGray.equals(pdfObject))
             return new PdfDeviceCs.Gray(document);
         else if (PdfName.DeviceRGB.equals(pdfObject))
@@ -26,7 +25,7 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
         else if (PdfName.DeviceCMYK.equals(pdfObject))
             return new PdfDeviceCs.Cmyk(document);
         else if (pdfObject instanceof PdfArray) {
-            PdfArray array = (PdfArray)pdfObject;
+            PdfArray array = (PdfArray) pdfObject;
             PdfName csType = array.getAsName(0);
             if (PdfName.CalGray.equals(csType))
                 return new PdfCieBasedCs.CalGray(array, document);
@@ -38,6 +37,8 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
                 return new PdfCieBasedCs.IccBased(array, document);
             else if (PdfName.Indexed.equals(csType))
                 return new PdfSpecialCs.Indexed(array, document);
+            else if (PdfName.Separation.equals(csType))
+                return new PdfSpecialCs.Separation(array, document);
         }
         return null;
     }

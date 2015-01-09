@@ -155,6 +155,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName S = createDirectName("S");
     public static final PdfName SA = createDirectName("SA");
     public static final PdfName Saturation = createDirectName("Saturation");
+    public static final PdfName Separation = createDirectName("Separation");
     public static final PdfName Size = createDirectName("Size");
     public static final PdfName SM = createDirectName("SM");
     public static final PdfName SMask = createDirectName("SMask");

@@ -762,21 +762,25 @@ public class PdfCanvas {
     }
 
     public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, boolean fill) throws PdfException {
-        if (fill) {
-            if (currentGs.getFillColor().getColorSpace().equals(colorSpace) &&
-                    Arrays.equals(currentGs.getFillColor().getColorValue(), colorValue))
-                return this;
-            currentGs.setFillColor(new Color(colorSpace, colorValue));
+        boolean setColorValueOnly = false;
+        Color c = fill ? currentGs.getFillColor() : currentGs.getStrokeColor();
+        if (c.getColorSpace().equals(colorSpace) && Arrays.equals(c.getColorValue(), colorValue))
+            return this;
+        else if (c.getColorSpace().equals(colorSpace)) {
+            c.setColorValue(colorValue);
+            setColorValueOnly = true;
         } else {
-            if (currentGs.getStrokeColor().getColorSpace().equals(colorSpace) &&
-                    Arrays.equals(currentGs.getStrokeColor().getColorValue(), colorValue))
-                return this;
-            currentGs.setStrokeColor(new Color(colorSpace, colorValue));
+            if (fill)
+                currentGs.setFillColor(new Color(colorSpace, colorValue));
+            else
+                currentGs.setStrokeColor(new Color(colorSpace, colorValue));
         }
         if (colorSpace.getPdfObject().getIndirectReference() != null) {
-            PdfName name = resources.addColorSpace(colorSpace);
-            contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS).
-                    writeFloats(colorValue).writeSpace().writeBytes(fill ? sc : SC);
+            if (!setColorValueOnly) {
+                PdfName name = resources.addColorSpace(colorSpace);
+                contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS);
+            }
+            contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? sc : SC);
         } else if (colorSpace instanceof PdfDeviceCs.Gray)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? g : G);
         else if (colorSpace instanceof PdfDeviceCs.Rgb)
