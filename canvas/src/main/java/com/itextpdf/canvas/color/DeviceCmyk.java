@@ -1,6 +1,5 @@
-package com.itextpdf.canvas.colors;
+package com.itextpdf.canvas.color;
 
-import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 
 public class DeviceCmyk extends Color {

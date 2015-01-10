@@ -3,7 +3,7 @@ package com.itextpdf.canvas;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
-import com.itextpdf.canvas.colors.Color;
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.fonts.PdfEncodings;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.Rectangle;

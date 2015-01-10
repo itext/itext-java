@@ -1,4 +1,4 @@
-package com.itextpdf.canvas.colors;
+package com.itextpdf.canvas.color;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfObject;

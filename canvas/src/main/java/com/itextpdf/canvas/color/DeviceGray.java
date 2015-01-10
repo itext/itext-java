@@ -1,7 +1,5 @@
-package com.itextpdf.canvas.colors;
+package com.itextpdf.canvas.color;
 
-import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 
 public class DeviceGray extends Color {

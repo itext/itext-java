@@ -1,4 +1,4 @@
-package com.itextpdf.canvas.colors;
+package com.itextpdf.canvas.color;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -14,7 +14,7 @@ public class Separation extends Color {
     }
 
     public Separation(PdfDocument document, String name, PdfColorSpace alternateCs, PdfFunction tintTransform, float value) throws PdfException {
-        this(new PdfSpecialCs.Separation(document, new PdfName(name), alternateCs, tintTransform), value);
+        this(new PdfSpecialCs.Separation(document, name, alternateCs, tintTransform), value);
     }
 
 }
