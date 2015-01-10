@@ -1247,5 +1247,27 @@ public class PdfCanvasTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest07.pdf", sourceFolder + "cmp_colorTest07.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void colorTest08() throws Exception {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest08.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        com.itextpdf.core.pdf.function.PdfFunction.Type4 function = new com.itextpdf.core.pdf.function.PdfFunction.Type4(document, new PdfArray(new float[]{0, 1, 0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes());
+        PdfSpecialCs.DeviceN deviceN = new PdfSpecialCs.DeviceN(document, new ArrayList<String>() {{add("MyRed"); add("MyGreen");}}, new PdfDeviceCs.Rgb(), function);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.setFillColor(new DeviceN(deviceN, new float[] {0, 0})).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColor(new DeviceN(deviceN, new float[] {0, 1})).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColor(new DeviceN(deviceN, new float[] {1, 0})).rectangle(250, 500, 50, 50).fill();
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest08.pdf", sourceFolder + "cmp_colorTest08.pdf", destinationFolder, "diff_"));
+    }
+
 
 }

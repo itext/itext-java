@@ -39,6 +39,8 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
                 return new PdfSpecialCs.Indexed(array, document);
             else if (PdfName.Separation.equals(csType))
                 return new PdfSpecialCs.Separation(array, document);
+            else if (PdfName.DeviceN.equals(csType))
+                return array.size() == 4 ? new PdfSpecialCs.DeviceN(array, document) : new PdfSpecialCs.NChannel(array, document);
         }
         return null;
     }

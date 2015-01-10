@@ -7,7 +7,10 @@ import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
@@ -87,6 +90,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the default color space.
+     *
      * @param defaultCsKey
      * @param defaultCsValue
      * @throws PdfException

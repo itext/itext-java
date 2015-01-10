@@ -96,7 +96,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
         public DeviceN(PdfDocument document, List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform) throws PdfException {
             this(document, new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
-            if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
+            if (tintTransform.getInputSize() != getNumOfComponents() || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
                 throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
@@ -146,7 +146,6 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
             nChannel.add(attributes);
             return nChannel;
         }
-
 
     }
 
