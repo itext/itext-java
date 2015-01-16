@@ -3,14 +3,8 @@ package com.itextpdf.core.pdf.xobject;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.CcittImage;
 import com.itextpdf.basics.image.Image;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfBoolean;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfStream;
-import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,7 +86,7 @@ public class PdfImageXObject extends PdfXObject {
         }
 
         if (image.isMask() && image.isInverted())
-            stream.put(PdfName.Decode, new PdfArray(new float[] {1, 0}));
+            stream.put(PdfName.Decode, new PdfArray(new float[]{1, 0}));
         if (image.isInterpolation())
             stream.put(PdfName.Interpolate, PdfBoolean.PdfTrue);
 
@@ -139,7 +133,7 @@ public class PdfImageXObject extends PdfXObject {
                         case 1:
                             stream.put(PdfName.ColorSpace, PdfName.DeviceGray);
                             if (image.isInverted())
-                                stream.put(PdfName.Decode, new PdfArray(new float[] {1, 0}));
+                                stream.put(PdfName.Decode, new PdfArray(new float[]{1, 0}));
                             break;
                         case 3:
                             stream.put(PdfName.ColorSpace, PdfName.DeviceRGB);
@@ -154,12 +148,8 @@ public class PdfImageXObject extends PdfXObject {
                     }
                     Image.IAdditional additional = image.getAdditional();
                     if (additional instanceof Image.Indexed) {
-                        PdfArray indexed = new PdfArray();
-                        indexed.add(PdfName.Indexed);
-                        indexed.add(PdfName.DeviceRGB);
-                        indexed.add(new PdfNumber(((Image.Indexed) additional).getColor()));
-                        indexed.add(new PdfString(((Image.Indexed) additional).getPalette()));
-                        stream.put(PdfName.ColorSpace, indexed);
+                        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(document, PdfName.DeviceRGB, ((Image.Indexed) additional).getColor(), new PdfString(new String(((Image.Indexed) additional).getPalette())));
+                        stream.put(PdfName.ColorSpace, indexed.getPdfObject());
                     }
                     if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 8))
                         stream.remove(PdfName.ColorSpace);
