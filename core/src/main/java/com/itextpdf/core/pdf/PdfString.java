@@ -118,7 +118,7 @@ public class PdfString extends PdfPrimitiveObject {
     @Override
     public String toString() {
         if (value == null) {
-            return new String(content, Charset.forName("UTF8"));
+            return new String(content, Charset.forName(defaultCharset));
         } else {
             return getValue();
         }
@@ -150,7 +150,7 @@ public class PdfString extends PdfPrimitiveObject {
 
     protected void generateValue() {
         assert content != null : "No byte[] content to generate value";
-        value = new String(decodeContent(), Charset.forName("UTF8"));
+        value = new String(decodeContent(), Charset.forName(defaultCharset));
     }
 
     @Override
@@ -171,7 +171,7 @@ public class PdfString extends PdfPrimitiveObject {
             } else {
                 decrypt.setHashKey(0, 0);
             }
-            value = new String(decrypt.decryptByteArray(decodedContent), Charset.forName("UTF8"));
+            value = new String(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
         }
         return this;
     }
