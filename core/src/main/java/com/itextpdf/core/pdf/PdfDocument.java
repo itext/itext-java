@@ -76,7 +76,7 @@ public class PdfDocument implements IEventDispatcher {
     protected final PdfXrefTable xref = new PdfXrefTable();
 
     /**
-     *  Indicate incremental updates mode of stamping mode.
+     * Indicate incremental updates mode of stamping mode.
      */
     protected final boolean appendMode;
 
@@ -142,6 +142,7 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Use this method to set the XMP Metadata.
+     *
      * @param xmpMetadata The xmpMetadata to set.
      */
     public void setXmpMetadata(final byte[] xmpMetadata) {
@@ -165,7 +166,8 @@ public class PdfDocument implements IEventDispatcher {
         try {
             xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
             xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
-        } catch (XMPException ignored) {}
+        } catch (XMPException ignored) {
+        }
         PdfDictionary docInfo = info.getPdfObject();
         if (docInfo != null) {
             PdfName key;
@@ -280,7 +282,7 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Creates and inserts new page to the document.
      *
-     * @param index position to addPage page to
+     * @param index    position to addPage page to
      * @param pageSize page size of the new page
      * @return inserted page
      * @throws PdfException in case {@code page} is flushed
@@ -484,7 +486,6 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Close PDF document.
-     *
      */
     public void close() throws PdfException {
         try {
@@ -497,8 +498,15 @@ public class PdfDocument implements IEventDispatcher {
                     xmp.getOutputStream().write(xmpMetadata);
                     xmp.put(PdfName.Type, PdfName.Metadata);
                     xmp.put(PdfName.Subtype, PdfName.XML);
+                    PdfEncryption crypto = writer.getEncryption();
+                    if (crypto != null && !crypto.isMetadataEncrypted()) {
+                        PdfArray ar = new PdfArray();
+                        ar.add(PdfName.Crypt);
+                        xmp.put(PdfName.Filter, ar);
+                    }
                     catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
+                PdfObject crypto = null;
                 if (appendMode) {
                     PdfObject pageRoot = catalog.pageTree.generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
@@ -509,13 +517,44 @@ public class PdfDocument implements IEventDispatcher {
                         info.flush();
                     }
                     writer.flushModifiedWaitingObjects();
+                    if (writer.crypto != null) {
+                        assert reader.getCryptoRef() != null : "Conflict with source encryption";
+                        crypto = reader.getCryptoRef();
+                    }
+
                 } else {
                     catalog.pdfObject.put(PdfName.Pages, catalog.pageTree.generateTree());
                     catalog.pdfObject.flush(false);
                     info.flush();
                     writer.flushWaitingObjects();
                 }
-                xref.writeXrefTableAndTrailer(this);
+
+                byte[] originalFileID = null;
+                if (crypto == null && writer.crypto != null) {
+                    originalFileID = writer.crypto.documentID;
+                    crypto = writer.crypto.getEncryptionDictionary();
+                    crypto.makeIndirect(this);
+                    // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
+                    // NOTE. No need in reverting, because it is the last operation with the document.
+                    writer.crypto = null;
+                    crypto.flush(false);
+                }
+
+                PdfObject fileId;
+                boolean isModified = false;
+                if (originalFileID == null) {
+                    if (getReader() != null) {
+                        originalFileID = getReader().getOriginalFileId();
+                        isModified = true;
+                    }
+                    if (originalFileID == null) {
+                        originalFileID = PdfEncryption.createDocumentId();
+                    }
+                }
+                // if originalFIleID comes from crypto, it means that no need in checking modified state.
+                // For crypto purposes new documentId always generated.
+                fileId = PdfEncryption.createInfoId(originalFileID, isModified);
+                xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.close();
             }
             if (reader != null)
@@ -562,7 +601,7 @@ public class PdfDocument implements IEventDispatcher {
                     writer.write(buffer, 0, n);
                 }
                 file.close();
-                writer.write((byte)'\n');
+                writer.write((byte) '\n');
                 //TODO log if full compression differs
                 writer.setFullCompression(reader.hasXrefStm());
             } else if (writer != null) {

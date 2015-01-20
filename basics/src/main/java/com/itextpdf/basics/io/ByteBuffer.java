@@ -2,7 +2,7 @@ package com.itextpdf.basics.io;
 
 public class ByteBuffer {
 
-    private static final byte[] bytes = new byte[] {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
+    private static final byte[] bytes = new byte[]{48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
 
     protected int count;
     private byte[] buffer;
@@ -59,7 +59,7 @@ public class ByteBuffer {
     }
 
     public ByteBuffer append(int b) {
-        return append((byte)b);
+        return append((byte) b);
     }
 
     public ByteBuffer append(String str) {
@@ -69,6 +69,22 @@ public class ByteBuffer {
     public ByteBuffer appendHex(byte b) {
         append(bytes[(b >> 4) & 0x0f]);
         return append(bytes[b & 0x0f]);
+    }
+
+    /**
+     * Append char, represented as int. Using instead of StringBuilder.getBytes() method.
+     * Values above 128 encoded with two bytes.
+     *
+     * @param b char from 0 to 255.
+     */
+    public void appendAsCharBytes(int b) {
+        assert b >= 0 && b < 256 : b;
+        if (b < 128) {
+            append((byte) b);
+        } else {
+            append((byte) (192 | b >> 6));
+            append((byte) (128 | b & 63));
+        }
     }
 
     public byte get(int index) {
@@ -99,13 +115,17 @@ public class ByteBuffer {
         return this;
     }
 
-    public byte[] toByteArray() {
-        byte newBuf[] = new byte[count];
-        System.arraycopy(buffer, 0, newBuf, 0, count);
+    public byte[] toByteArray(int off, int len) {
+        byte newBuf[] = new byte[len];
+        System.arraycopy(buffer, off, newBuf, 0, len);
         return newBuf;
     }
 
-    public boolean startsWith(byte[] b){
+    public byte[] toByteArray() {
+        return toByteArray(0, count);
+    }
+
+    public boolean startsWith(byte[] b) {
         if (size() < b.length)
             return false;
         for (int k = 0; k < b.length; ++k) {

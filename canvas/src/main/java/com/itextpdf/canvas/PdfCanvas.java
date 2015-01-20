@@ -1,10 +1,11 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.core.fonts.PdfEncodings;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
@@ -44,11 +45,6 @@ public class PdfCanvas {
     static final private byte[] Tm = OutputStream.getIsoBytes("Tm\n");
     static final private byte[] Td = OutputStream.getIsoBytes("Td\n");
     static final private byte[] Tr = OutputStream.getIsoBytes("Tr\n");
-    static final private byte[] escR = OutputStream.getIsoBytes("\r");
-    static final private byte[] escN = OutputStream.getIsoBytes("\n");
-    static final private byte[] escT = OutputStream.getIsoBytes("\t");
-    static final private byte[] escB = OutputStream.getIsoBytes("\b");
-    static final private byte[] escF = OutputStream.getIsoBytes("\f");
     static final private byte[] w = OutputStream.getIsoBytes("w\n");
     static final private byte[] J = OutputStream.getIsoBytes("J\n");
     static final private byte[] j = OutputStream.getIsoBytes("j\n");
@@ -836,15 +832,15 @@ public class PdfCanvas {
     /**
      * Adds Image XObject to canvas.
      *
-     * @param image
-     * @param a
-     * @param b
-     * @param c
-     * @param d
-     * @param e
-     * @param f
-     * @return canvas
-     * @throws PdfException
+     * @param image the {@code PdfImageXObject} object
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @return canvas a reference to this object.
+     * @throws PdfException on error
      */
     public PdfCanvas addImage(PdfImageXObject image, float a, float b, float c, float d, float e, float f) throws PdfException {
         saveState();
@@ -859,16 +855,16 @@ public class PdfCanvas {
     /**
      * Creates Image XObject from image and adds it to canvas.
      *
-     * @param image
-     * @param a
-     * @param b
-     * @param c
-     * @param d
-     * @param e
-     * @param f
+     * @param image the {@code PdfImageXObject} object
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
      * @param asInline true if to add image as in-line.
      * @return created Image XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
+     * @throws PdfException on error
      */
     public PdfImageXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) throws PdfException {
         if (asInline) {
@@ -1088,45 +1084,8 @@ public class PdfCanvas {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = PdfEncodings.convertToBytes(text, PdfEncodings.WINANSI);
-        escapeString(b);
+        Utilities.writeEscapedString(contentStream.getOutputStream(), b);
     }
 
-    /**
-     * Escapes a <code>byte</code> array according to the PDF conventions.
-     *
-     * @param b the <code>byte</code> array to escape.
-     */
-    private void escapeString(final byte b[]) throws PdfException {
-        OutputStream output = contentStream.getOutputStream();
-        output.writeByte((byte) '(');
-        for (int k = 0; k < b.length; ++k) {
-            byte c = b[k];
-            switch (c) {
-                case '\r':
-                    output.writeBytes(escR);
-                    break;
-                case '\n':
-                    output.writeBytes(escN);
-                    break;
-                case '\t':
-                    output.writeBytes(escT);
-                    break;
-                case '\b':
-                    output.writeBytes(escB);
-                    break;
-                case '\f':
-                    output.writeBytes(escF);
-                    break;
-                case '(':
-                case ')':
-                case '\\':
-                    output.writeByte((byte) '\\').writeByte(c);
-                    break;
-                default:
-                    output.writeByte(c);
-            }
-        }
-        output.writeByte((byte) ')');
-    }
 
 }

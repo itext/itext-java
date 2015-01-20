@@ -9,12 +9,13 @@ abstract public class PdfObject {
     static public final byte Array = 1;
     static public final byte Boolean = 2;
     static public final byte Dictionary = 3;
-    static public final byte IndirectReference = 4;
-    static public final byte Name = 5;
-    static public final byte Null = 6;
-    static public final byte Number = 7;
-    static public final byte Stream = 8;
-    static public final byte String = 9;
+    static public final byte Literal = 4;
+    static public final byte IndirectReference = 5;
+    static public final byte Name = 6;
+    static public final byte Null = 7;
+    static public final byte Number = 8;
+    static public final byte Stream = 9;
+    static public final byte String = 10;
 
     /**
      * If object is flushed the indirect reference is kept here.

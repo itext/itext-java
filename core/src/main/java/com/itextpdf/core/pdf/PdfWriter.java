@@ -8,8 +8,8 @@ import java.util.Hashtable;
 
 public class PdfWriter extends PdfOutputStream {
 
-    static private final byte[] obj = getIsoBytes(" obj\n");
-    static private final byte[] endobj = getIsoBytes("\nendobj\n");
+    private static final byte[] obj = getIsoBytes(" obj\n");
+    private static final byte[] endobj = getIsoBytes("\nendobj\n");
 
     /**
      * Indicates if to use full compression (using object streams).
@@ -51,6 +51,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Gets default compression level for @see PdfStream.
      * For more details @see {@link java.util.zip.Deflater}.
+     *
      * @return compression level.
      */
     public int getCompressionLevel() {
@@ -60,6 +61,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Sets default compression level for @see PdfStream.
      * For more details @see {@link java.util.zip.Deflater}.
+     *
      * @param compressionLevel compression level.
      */
     public void setCompressionLevel(int compressionLevel) {
@@ -88,7 +90,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Flushes the object. Override this method if you want to define custom behaviour for object flushing.
      *
-     * @param pdfObject object to flush.
+     * @param pdfObject     object to flush.
      * @param canBeInObjStm indicates whether object can be placed into object stream.
      * @throws IOException
      * @throws PdfException
@@ -124,18 +126,18 @@ public class PdfWriter extends PdfOutputStream {
                 dictionary.releaseContent();
                 break;
             case PdfObject.IndirectReference:
-                markObjectToFlush(((PdfIndirectReference)pdfObject).getRefersTo(false));
+                markObjectToFlush(((PdfIndirectReference) pdfObject).getRefersTo(false));
         }
     }
 
     private void markArrayContentToFlush(PdfArray array) {
-        for (PdfObject item: array) {
+        for (PdfObject item : array) {
             markObjectToFlush(item);
         }
     }
 
     private void markDictionaryContentToFlush(PdfDictionary dictionary) {
-        for (PdfObject item: dictionary.values()) {
+        for (PdfObject item : dictionary.values()) {
             markObjectToFlush(item);
         }
     }
@@ -149,11 +151,11 @@ public class PdfWriter extends PdfOutputStream {
                 }
             } else {
                 if (pdfObject.getType() == PdfObject.IndirectReference) {
-                    if (!((PdfIndirectReference)pdfObject).checkState(PdfIndirectReference.Flushed)) {
+                    if (!((PdfIndirectReference) pdfObject).checkState(PdfIndirectReference.Flushed)) {
                         ((PdfIndirectReference) pdfObject).setState(PdfIndirectReference.MustBeFlushed);
                     }
                 } else if (pdfObject.getType() == PdfObject.Array) {
-                    markArrayContentToFlush((PdfArray)pdfObject);
+                    markArrayContentToFlush((PdfArray) pdfObject);
                 } else if (pdfObject.getType() == PdfObject.Dictionary) {
                     markDictionaryContentToFlush((PdfDictionary) pdfObject);
                 }
@@ -163,7 +165,7 @@ public class PdfWriter extends PdfOutputStream {
 
     protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) throws PdfException {
         if (object instanceof PdfIndirectReference)
-            object = ((PdfIndirectReference)object).getRefersTo();
+            object = ((PdfIndirectReference) object).getRefersTo();
         PdfIndirectReference indirectReference = object.getIndirectReference();
         PdfIndirectReference copiedIndirectReference;
         int copyObjectKey = 0;
@@ -198,6 +200,9 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected void writeToBody(PdfObject object) throws IOException, PdfException {
+        if (crypto != null) {
+            crypto.setHashKey(object.getIndirectReference().getObjNr(), object.getIndirectReference().getGenNr());
+        }
         writeInteger(object.getIndirectReference().getObjNr()).
                 writeSpace().
                 writeInteger(object.getIndirectReference().getGenNr()).writeBytes(obj);

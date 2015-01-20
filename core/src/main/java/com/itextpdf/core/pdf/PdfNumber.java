@@ -21,7 +21,7 @@ public class PdfNumber extends PdfPrimitiveObject {
         setValue(value);
     }
 
-    public PdfNumber(byte[] content) {
+    protected PdfNumber(byte[] content) {
         super(content);
         this.valueType = Double;
         this.value = java.lang.Double.NaN;
@@ -37,21 +37,21 @@ public class PdfNumber extends PdfPrimitiveObject {
     }
 
     public double getValue() {
-        if(java.lang.Double.isNaN(value))
+        if (java.lang.Double.isNaN(value))
             generateValue();
         return value;
     }
 
     public float getFloatValue() {
-        return (float)getValue();
+        return (float) getValue();
     }
 
     public long getLongValue() {
-        return (long)getValue();
+        return (long) getValue();
     }
 
     public int getIntValue() {
-        return (int)getValue();
+        return (int) getValue();
     }
 
     public void setValue(int value) {
@@ -97,7 +97,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     protected void generateContent() {
         switch (valueType) {
             case Int:
-                content = OutputStream.getIsoBytes((int)value);
+                content = OutputStream.getIsoBytes((int) value);
                 break;
             case Double:
                 content = OutputStream.getIsoBytes(value);
@@ -119,7 +119,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         super.copyContent(from, document);
-        PdfNumber number = (PdfNumber)from;
+        PdfNumber number = (PdfNumber) from;
         value = number.value;
         valueType = number.valueType;
     }

@@ -107,7 +107,7 @@ class PdfXrefTable {
      * @throws java.io.IOException
      * @throws com.itextpdf.basics.PdfException
      */
-    protected void writeXrefTableAndTrailer(PdfDocument document) throws IOException, PdfException {
+    protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException, PdfException {
         PdfWriter writer = document.getWriter();
         if (document.appendMode) {
             // Increment generation number for all freed references.
@@ -132,8 +132,8 @@ class PdfXrefTable {
             PdfIndirectReference indirectReference = xref[i];
             if (indirectReference != null) {
                 if ((document.appendMode && !indirectReference.checkState(PdfIndirectReference.Modified)) ||
-                    (indirectReference.isFree() && indirectReference.getGenNr() == 0) ||
-                     (!indirectReference.checkState(PdfIndirectReference.Flushed))) {
+                        (indirectReference.isFree() && indirectReference.getGenNr() == 0) ||
+                        (!indirectReference.checkState(PdfIndirectReference.Flushed))) {
                     indirectReference = null;
                 }
             }
@@ -165,25 +165,28 @@ class PdfXrefTable {
         int size = sections.get(sections.size() - 2) + sections.get(sections.size() - 1);
         int startxref = writer.getCurrentPos();
         if (writer.isFullCompression()) {
-            PdfStream stream = new PdfStream(document);
-            stream.put(PdfName.Type, PdfName.XRef);
-            stream.put(PdfName.Size, new PdfNumber(size));
-            stream.put(PdfName.W, new PdfArray(new ArrayList<PdfObject>() {{
+            PdfStream xrefStream = new PdfStream(document);
+            xrefStream.put(PdfName.Type, PdfName.XRef);
+            xrefStream.put(PdfName.ID, fileId);
+            if (crypto != null)
+                xrefStream.put(PdfName.Encrypt, crypto);
+            xrefStream.put(PdfName.Size, new PdfNumber(size));
+            xrefStream.put(PdfName.W, new PdfArray(new ArrayList<PdfObject>() {{
                 add(new PdfNumber(1));
                 add(new PdfNumber(4));
                 add(new PdfNumber(2));
             }}));
-            stream.put(PdfName.Info, document.getDocumentInfo().getPdfObject());
-            stream.put(PdfName.Root, document.getCatalog().getPdfObject());
+            xrefStream.put(PdfName.Info, document.getDocumentInfo().getPdfObject());
+            xrefStream.put(PdfName.Root, document.getCatalog().getPdfObject());
             PdfArray index = new PdfArray();
             for (Integer section : sections) {
                 index.add(new PdfNumber(section.intValue()));
             }
             if (document.appendMode) {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
-                stream.put(PdfName.Prev, lastXref);
+                xrefStream.put(PdfName.Prev, lastXref);
             }
-            stream.put(PdfName.Index, index);
+            xrefStream.put(PdfName.Index, index);
             PdfXrefTable xref = document.getXref();
             for (int k = 0; k < sections.size(); k += 2) {
                 first = sections.get(k);
@@ -193,23 +196,23 @@ class PdfXrefTable {
                     if (indirectReference == null)
                         continue;
                     if (indirectReference.isFree()) {
-                        stream.getOutputStream().write(0);
+                        xrefStream.getOutputStream().write(0);
                         //NOTE The object number of the next free object should be at this position due to spec.
-                        stream.getOutputStream().write(intToBytes(0));
-                        stream.getOutputStream().write(shortToBytes(indirectReference.getGenNr()));
+                        xrefStream.getOutputStream().write(intToBytes(0));
+                        xrefStream.getOutputStream().write(shortToBytes(indirectReference.getGenNr()));
                     } else if (indirectReference.getObjectStreamNumber() == 0) {
-                        stream.getOutputStream().write(1);
+                        xrefStream.getOutputStream().write(1);
                         assert indirectReference.getOffset() < Integer.MAX_VALUE;
-                        stream.getOutputStream().write(intToBytes((int) indirectReference.getOffset()));
-                        stream.getOutputStream().write(shortToBytes(indirectReference.getGenNr()));
+                        xrefStream.getOutputStream().write(intToBytes((int) indirectReference.getOffset()));
+                        xrefStream.getOutputStream().write(shortToBytes(indirectReference.getGenNr()));
                     } else {
-                        stream.getOutputStream().write(2);
-                        stream.getOutputStream().write(intToBytes(indirectReference.getObjectStreamNumber()));
-                        stream.getOutputStream().write(shortToBytes(indirectReference.getIndex()));
+                        xrefStream.getOutputStream().write(2);
+                        xrefStream.getOutputStream().write(intToBytes(indirectReference.getObjectStreamNumber()));
+                        xrefStream.getOutputStream().write(shortToBytes(indirectReference.getIndex()));
                     }
                 }
             }
-            stream.flush();
+            xrefStream.flush();
         } else {
             writer.writeString("xref\n");
             PdfXrefTable xref = document.getXref();
@@ -229,11 +232,15 @@ class PdfXrefTable {
                 }
             }
             PdfDictionary trailer = document.getTrailer().getPdfObject();
-            trailer.put(PdfName.Size, new PdfNumber(size));
+            // Remove all unused keys in case stamp mode in case original file has full compression, but destination file has not.
             trailer.remove(PdfName.W);
             trailer.remove(PdfName.Index);
             trailer.remove(PdfName.Type);
             trailer.remove(PdfName.Length);
+            trailer.put(PdfName.Size, new PdfNumber(size));
+            trailer.put(PdfName.ID, fileId);
+            if (crypto != null)
+                trailer.put(PdfName.Encrypt, crypto);
             writer.writeString("trailer\n");
             if (document.appendMode) {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());

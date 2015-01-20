@@ -9,7 +9,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
     protected byte[] content = null;
     protected boolean directOnly;
 
-    public PdfPrimitiveObject() {
+    protected PdfPrimitiveObject() {
         super();
     }
 
@@ -18,12 +18,12 @@ abstract class PdfPrimitiveObject extends PdfObject {
         this.directOnly = directOnly;
     }
 
-    public PdfPrimitiveObject(byte[] content) {
+    protected PdfPrimitiveObject(byte[] content) {
         this();
         this.content = content;
     }
 
-    final public byte[] getContent() {
+    final protected byte[] getInternalContent() {
         if (content == null)
             generateContent();
         return content;
@@ -54,7 +54,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         super.copyContent(from, document);
-        PdfPrimitiveObject object = (PdfPrimitiveObject)from;
+        PdfPrimitiveObject object = (PdfPrimitiveObject) from;
         if (object.content != null)
             content = Arrays.copyOf(object.content, object.content.length);
     }
@@ -72,5 +72,4 @@ abstract class PdfPrimitiveObject extends PdfObject {
             return -1;
         return 0;
     }
-
 }

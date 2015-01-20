@@ -167,7 +167,6 @@ public class RandomAccessFileOrArray implements DataInput {
         isBack = false;
     }
 
-    //TODO: consider changing method name to getPosition or something like that - might not be worth making a breaking change, though
     public long getPosition() throws IOException {
         return byteSourcePosition - (isBack ? 1 : 0);
     }
@@ -227,7 +226,7 @@ public class RandomAccessFileOrArray implements DataInput {
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
             throw new EOFException();
-        return (short)((ch2 << 8) + (ch1 << 0));
+        return (short)((ch2 << 8) + ch1);
     }
 
     public int readUnsignedShort() throws IOException {
@@ -263,7 +262,7 @@ public class RandomAccessFileOrArray implements DataInput {
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
             throw new EOFException();
-        return (ch2 << 8) + (ch1 << 0);
+        return (ch2 << 8) + ch1;
     }
 
     public char readChar() throws IOException {
@@ -298,7 +297,7 @@ public class RandomAccessFileOrArray implements DataInput {
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
             throw new EOFException();
-        return (char)((ch2 << 8) + (ch1 << 0));
+        return (char)((ch2 << 8) + ch2);
     }
 
     public int readInt() throws IOException {
@@ -337,7 +336,7 @@ public class RandomAccessFileOrArray implements DataInput {
         int ch4 = this.read();
         if ((ch1 | ch2 | ch3 | ch4) < 0)
             throw new EOFException();
-        return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0));
+        return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + ch1);
     }
 
     /**
@@ -365,7 +364,7 @@ public class RandomAccessFileOrArray implements DataInput {
         long ch4 = this.read();
         if ((ch1 | ch2 | ch3 | ch4) < 0)
             throw new EOFException();
-        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
     }
 
     public final long readUnsignedIntLE() throws IOException {
@@ -375,7 +374,7 @@ public class RandomAccessFileOrArray implements DataInput {
         long ch4 = this.read();
         if ((ch1 | ch2 | ch3 | ch4) < 0)
             throw new EOFException();
-        return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0));
+        return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + ch1);
     }
 
     public long readLong() throws IOException {

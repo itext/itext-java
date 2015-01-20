@@ -28,16 +28,16 @@ public class PdfTokeniser {
     }
 
     public static final boolean delims[] = {
-            true,  true,  false, false, false, false, false, false, false, false,
-            true,  true,  false, true,  true,  false, false, false, false, false,
+            true, true, false, false, false, false, false, false, false, false,
+            true, true, false, true, true, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
-            false, false, false, true,  false, false, false, false, true,  false,
-            false, true,  true,  false, false, false, false, false, true,  false,
+            false, false, false, true, false, false, false, false, true, false,
+            false, true, true, false, false, false, false, false, true, false,
             false, false, false, false, false, false, false, false, false, false,
-            false, true,  false, true,  false, false, false, false, false, false,
+            false, true, false, true, false, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
-            false, false, true,  false, true,  false, false, false, false, false,
+            false, false, true, false, true, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
@@ -57,7 +57,6 @@ public class PdfTokeniser {
 
 
     protected static final byte[] Obj = OutputStream.getIsoBytes("obj");
-    protected static final byte[] Endobj = OutputStream.getIsoBytes("endobj");
     protected static final byte[] R = OutputStream.getIsoBytes("R");
     protected static final byte[] Xref = OutputStream.getIsoBytes("xref");
     protected static final byte[] Startxref = OutputStream.getIsoBytes("startxref");
@@ -85,6 +84,7 @@ public class PdfTokeniser {
      * Creates a PRTokeniser for the specified {@link RandomAccessFileOrArray}.
      * The beginning of the file is read to determine the location of the header, and the data source is adjusted
      * as necessary to account for any junk that occurs in the byte source before the header
+     *
      * @param file the source
      */
     public PdfTokeniser(RandomAccessFileOrArray file) {
@@ -124,7 +124,7 @@ public class PdfTokeniser {
             ch = read();
             if (ch == -1)
                 break;
-            buf.append((char)ch);
+            buf.append((char) ch);
         }
         return buf.toString();
     }
@@ -165,13 +165,13 @@ public class PdfTokeniser {
 
     public void backOnePosition(int ch) {
         if (ch != -1)
-            file.pushBack((byte)ch);
+            file.pushBack((byte) ch);
     }
 
     public int getHeaderOffset() throws PdfException, IOException {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
-        if (idx < 0){
+        if (idx < 0) {
             idx = str.indexOf("%FDF-");
             if (idx < 0)
                 throw new PdfException(PdfException.PdfHeaderNotFound, this);
@@ -202,7 +202,7 @@ public class PdfTokeniser {
         long fileLength = file.length();
         long pos = fileLength - arrLength;
         if (pos < 1) pos = 1;
-        while (pos > 0){
+        while (pos > 0) {
             file.seek(pos);
             String str = readString(arrLength);
             int idx = str.lastIndexOf("startxref");
@@ -221,8 +221,7 @@ public class PdfTokeniser {
             if (type == TokenType.Comment)
                 continue;
             switch (level) {
-                case 0:
-                {
+                case 0: {
                     if (type != TokenType.Number)
                         return;
                     ptr = file.getPosition();
@@ -230,8 +229,7 @@ public class PdfTokeniser {
                     ++level;
                     break;
                 }
-                case 1:
-                {
+                case 1: {
                     if (type != TokenType.Number) {
                         file.seek(ptr);
                         type = TokenType.Number;
@@ -242,15 +240,16 @@ public class PdfTokeniser {
                     ++level;
                     break;
                 }
-                default:
-                {
+                case 2: {
                     if (type == TokenType.Other) {
                         if (tokenValueEqualsTo(R)) {
+                            assert n2 != null;
                             type = TokenType.Ref;
                             reference = Integer.parseInt(new String(n1));
                             generation = Integer.parseInt(new String(n2));
                             return;
                         } else if (tokenValueEqualsTo(Obj)) {
+                            assert n2 != null;
                             type = TokenType.Obj;
                             reference = Integer.parseInt(new String(n1));
                             generation = Integer.parseInt(new String(n2));
@@ -265,7 +264,7 @@ public class PdfTokeniser {
             }
         }
 
-        if (level == 1){ // if the level 1 check returns EOF, then we are still looking at a number - set the type back to Number
+        if (level == 1) { // if the level 1 check returns EOF, then we are still looking at a number - set the type back to Number
             type = TokenType.Number;
         }
         // if we hit here, the file is either corrupt (stream ended unexpectedly),
@@ -278,7 +277,7 @@ public class PdfTokeniser {
         do {
             ch = file.read();
         } while (ch != -1 && isWhitespace(ch));
-        if (ch == -1){
+        if (ch == -1) {
             type = TokenType.EndOfFile;
             return false;
         }
@@ -298,7 +297,7 @@ public class PdfTokeniser {
                     ch = file.read();
                     if (delims[ch + 1])
                         break;
-                    outBuf.append(ch);
+                    outBuf.appendAsCharBytes(ch);
                 }
                 backOnePosition(ch);
                 break;
@@ -317,26 +316,25 @@ public class PdfTokeniser {
                     break;
                 }
                 outBuf.reset();
-                outBuf.append('<');
                 type = TokenType.String;
                 hexString = true;
                 int v2 = 0;
                 while (true) {
                     while (isWhitespace(v1))
                         v1 = file.read();
-                    outBuf.append(v1);
                     if (v1 == '>')
                         break;
+                    outBuf.append(v1);
                     v1 = ByteBuffer.getHex(v1);
                     if (v1 < 0)
                         break;
                     v2 = file.read();
                     while (isWhitespace(v2))
                         v2 = file.read();
-                    outBuf.append(v2);
                     if (v2 == '>') {
                         break;
                     }
+                    outBuf.append(v2);
                     v2 = ByteBuffer.getHex(v2);
                     if (v2 < 0)
                         break;
@@ -355,7 +353,6 @@ public class PdfTokeniser {
             }
             case '(': {
                 outBuf.reset();
-                outBuf.append('(');
                 type = TokenType.String;
                 hexString = false;
                 int nesting = 0;
@@ -365,22 +362,17 @@ public class PdfTokeniser {
                         break;
                     if (ch == '(') {
                         ++nesting;
-                        outBuf.append(ch);
-                    }
-                    else if (ch == ')') {
+                    } else if (ch == ')') {
                         --nesting;
-                        outBuf.append(ch);
-                    }
-                    else if (ch == '\\') {
-                        outBuf.append('\\');
+                        if (nesting == -1)
+                            break;
+                    } else if (ch == '\\') {
+                        outBuf.appendAsCharBytes('\\');
                         ch = file.read();
-                        outBuf.append(ch);
                         if (ch < 0)
                             break;
                     }
-                    if (nesting == -1)
-                        break;
-                    outBuf.append(ch);
+                    outBuf.appendAsCharBytes(ch);
                 }
                 if (ch == -1)
                     throwError(PdfException.ErrorReadingString);
@@ -399,8 +391,7 @@ public class PdfTokeniser {
                         } while (ch == '-');
                         if (minus)
                             outBuf.append('-');
-                    }
-                    else {
+                    } else {
                         outBuf.append(ch);
                         ch = file.read();
                     }
@@ -408,15 +399,14 @@ public class PdfTokeniser {
                         outBuf.append(ch);
                         ch = file.read();
                     }
-                }
-                else {
+                } else {
                     type = TokenType.Other;
                     do {
-                        outBuf.append((char)ch);
+                        outBuf.appendAsCharBytes((char) ch);
                         ch = file.read();
                     } while (!delims[ch + 1]);
                 }
-                if(ch != -1)
+                if (ch != -1)
                     backOnePosition(ch);
                 break;
             }
@@ -451,6 +441,7 @@ public class PdfTokeniser {
     /**
      * Is a certain character a whitespace? Currently checks on the following: '0', '9', '10', '12', '13', '32'.
      * <br />The same as calling {@link #isWhitespace(int, boolean) isWhiteSpace(ch, true)}.
+     *
      * @param ch int
      * @return boolean
      */
@@ -460,12 +451,13 @@ public class PdfTokeniser {
 
     /**
      * Checks whether a character is a whitespace. Currently checks on the following: '0', '9', '10', '12', '13', '32'.
-     * @param ch int
+     *
+     * @param ch           int
      * @param isWhitespace boolean
      * @return boolean
      */
     protected static boolean isWhitespace(int ch, boolean isWhitespace) {
-        return ( ( isWhitespace && ch == 0 ) || ch == 9 || ch == 10 || ch == 12 || ch == 13 || ch == 32);
+        return ((isWhitespace && ch == 0) || ch == 9 || ch == 10 || ch == 12 || ch == 13 || ch == 32);
     }
 
     protected static boolean isDelimiter(int ch) {
@@ -515,9 +507,9 @@ public class PdfTokeniser {
      * See {@link #isWhitespace(int) isWhiteSpace(int)} or {@link #isWhitespace(int, boolean) isWhiteSpace(int, boolean)}
      * for a list of whitespace characters.
      *
-     * @param buffer @see ByteBuffer
+     * @param buffer           @see ByteBuffer
      * @param isNullWhitespace boolean to indicate whether '0' is whitespace or not.
-     * If in doubt, use true or overloaded method {@link #readLineSegment(com.itextpdf.basics.io.ByteBuffer) readLineSegment(input)}
+     *                         If in doubt, use true or overloaded method {@link #readLineSegment(com.itextpdf.basics.io.ByteBuffer) readLineSegment(input)}
      * @return boolean
      * @throws IOException
      */
@@ -527,7 +519,7 @@ public class PdfTokeniser {
         // ssteward, pdftk-1.10, 040922:
         // skip initial whitespace; added this because PdfReader.rebuildXref()
         // assumes that line provided by readLineSegment does not have init. whitespace;
-        while (isWhitespace((c = read()), isNullWhitespace));
+        while (isWhitespace((c = read()), isNullWhitespace)) ;
 
         boolean prevWasWhitespace = false;
         while (!eol) {
@@ -549,17 +541,16 @@ public class PdfTokeniser {
                     if (prevWasWhitespace)
                         break;
                     prevWasWhitespace = true;
-                    buffer.append((byte)c);
+                    buffer.append((byte) c);
                     break;
                 default:
                     prevWasWhitespace = false;
-                    buffer.append((byte)c);
+                    buffer.append((byte) c);
                     break;
             }
-
             // break loop? do it before we read() again
             if (eol || buffer.size() == buffer.capacity()) {
-                break;
+                eol = true;
             } else {
                 c = read();
             }
@@ -599,8 +590,7 @@ public class PdfTokeniser {
             if (!Arrays.equals(Obj, lineTokeniser.getByteContent()))
                 return null;
             return new int[]{num, gen};
-        }
-        catch (Exception ioe) {
+        } catch (Exception ioe) {
             // empty on purpose
         }
         return null;
@@ -610,14 +600,14 @@ public class PdfTokeniser {
         private ByteBuffer buffer;
 
         public ReusableRandomAccessSource(ByteBuffer buffer) {
-            if(buffer == null) throw new NullPointerException();
+            if (buffer == null) throw new NullPointerException();
             this.buffer = buffer;
         }
 
         @Override
         public int get(long offset) {
             if (offset >= buffer.size()) return -1;
-            return 0xff & buffer.getInternalBuffer()[(int)offset];
+            return 0xff & buffer.getInternalBuffer()[(int) offset];
         }
 
         @Override
@@ -628,9 +618,9 @@ public class PdfTokeniser {
                 return -1;
 
             if (offset + len > buffer.size())
-                len = (int)(buffer.size() - offset);
+                len = (int) (buffer.size() - offset);
 
-            System.arraycopy(buffer.getInternalBuffer(), (int)offset, bytes, off, len);
+            System.arraycopy(buffer.getInternalBuffer(), (int) offset, bytes, off, len);
 
             return len;
         }

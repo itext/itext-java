@@ -1,6 +1,9 @@
-package com.itextpdf.core.fonts;
+package com.itextpdf.basics.font;
+
+import com.itextpdf.basics.PdfException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -10,16 +13,21 @@ import java.util.Map;
 
 public class PdfEncodings {
 
+    public static final String EmptyString = "";
     /**
      * This is the default encoding to be used for converting Strings into
      * bytes and vice versa. The default encoding is PdfDocEncoding.
      */
     public static final String TEXT_PDFDOCENCODING = "PDF";
 
-    /** This is the encoding to be used to output text in Unicode. */
+    /**
+     * This is the encoding to be used to output text in Unicode.
+     */
     public static final String TEXT_UNICODE = "UnicodeBig";
 
-    /** WinANSI encoding. */
+    /**
+     * WinANSI encoding.
+     */
     public static final String WINANSI = "Cp1252";
 
     static final char winansiByteToChar[] = {
@@ -76,11 +84,13 @@ public class PdfEncodings {
         }
     }
 
-    /** Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
+    /**
+     * Converts a {@code String} to a {@code byte} array according
      * to the font's encoding.
-     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
+     *
      * @param encoding the encoding
-     * @param text the <CODE>String</CODE> to be converted
+     * @param text     the {@code String} to be converted
+     * @return an array of {@code byte} representing the conversion according to the font's encoding
      */
     public static byte[] convertToBytes(String text, String encoding) {
         if (text == null)
@@ -89,7 +99,7 @@ public class PdfEncodings {
             int len = text.length();
             byte b[] = new byte[len];
             for (int k = 0; k < len; ++k)
-                b[k] = (byte)text.charAt(k);
+                b[k] = (byte) text.charAt(k);
             return b;
         }
         Map<Integer, Integer> hash = null;
@@ -104,13 +114,15 @@ public class PdfEncodings {
             byte b[] = new byte[len];
             int c;
             for (int k = 0; k < len; ++k) {
-                char char1 = cc[k];
-                if (char1 < 128 || char1 > 160 && char1 <= 255)
-                    c = char1;
-                else
-                    c = hash.get(char1);
-                if (c != 0)
-                    b[ptr++] = (byte)c;
+                char ch = cc[k];
+                if (ch < 128 || ch > 160 && ch <= 255) {
+                    c = ch;
+                } else {
+                    c = hash.get((int) ch);
+                }
+                if (c != 0) {
+                    b[ptr++] = (byte) c;
+                }
             }
             if (ptr == len)
                 return b;
@@ -128,8 +140,8 @@ public class PdfEncodings {
             int bptr = 2;
             for (int k = 0; k < len; ++k) {
                 char c = cc[k];
-                b[bptr++] = (byte)(c >> 8);
-                b[bptr++] = (byte)(c & 0xff);
+                b[bptr++] = (byte) (c >> 8);
+                b[bptr++] = (byte) (c & 0xff);
             }
             return b;
         }
@@ -144,22 +156,23 @@ public class PdfEncodings {
             byte[] br = new byte[lim];
             bb.get(br);
             return br;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             //TODO change exception type
             throw new RuntimeException();
         }
     }
 
-    /** Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
+    /**
+     * Converts a {@code String} to a {@code byte} array according
      * to the font's encoding.
-     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
+     *
      * @param encoding the encoding
-     * @param char1 the <CODE>char</CODE> to be converted
+     * @param ch    the {@code char} to be converted
+     * @return an array of {@code byte} representing the conversion according to the font's encoding
      */
-    public static byte[] convertToBytes(char char1, String encoding) {
+    public static byte[] convertToBytes(char ch, String encoding) {
         if (encoding == null || encoding.length() == 0)
-            return new byte[]{(byte)char1};
+            return new byte[]{(byte) ch};
         Map<Integer, Integer> hash = null;
         if (encoding.equals(WINANSI))
             hash = winansi;
@@ -167,12 +180,12 @@ public class PdfEncodings {
             hash = pdfEncoding;
         if (hash != null) {
             int c;
-            if (char1 < 128 || char1 > 160 && char1 <= 255)
-                c = char1;
+            if (ch < 128 || ch > 160 && ch <= 255)
+                c = ch;
             else
-                c = hash.get(char1);
+                c = hash.get((int) ch);
             if (c != 0)
-                return new byte[]{(byte)c};
+                return new byte[]{(byte) c};
             else
                 return new byte[0];
         }
@@ -181,25 +194,88 @@ public class PdfEncodings {
             byte b[] = new byte[4];
             b[0] = -2;
             b[1] = -1;
-            b[2] = (byte)(char1 >> 8);
-            b[3] = (byte)(char1 & 0xff);
+            b[2] = (byte) (ch >> 8);
+            b[3] = (byte) (ch & 0xff);
             return b;
         }
         try {
             Charset cc = Charset.forName(encoding);
             CharsetEncoder ce = cc.newEncoder();
             ce.onUnmappableCharacter(CodingErrorAction.IGNORE);
-            CharBuffer cb = CharBuffer.wrap(new char[]{char1});
+            CharBuffer cb = CharBuffer.wrap(new char[]{ch});
             java.nio.ByteBuffer bb = ce.encode(cb);
             bb.rewind();
             int lim = bb.limit();
             byte[] br = new byte[lim];
             bb.get(br);
             return br;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             //TODO change exception type
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Converts a {@code byte} array to a {@code String} according
+     * to the some encoding.
+     *
+     * @param bytes    the bytes to convert
+     * @param encoding the encoding
+     * @return the converted {@code String}
+     */
+    public static String convertToString(byte bytes[], String encoding) throws PdfException {
+        if (bytes == null)
+            return EmptyString;
+        if (encoding == null || encoding.length() == 0) {
+            char c[] = new char[bytes.length];
+            for (int k = 0; k < bytes.length; ++k)
+                c[k] = (char) (bytes[k] & 0xff);
+            return new String(c);
+        }
+        // TODO!
+//        ExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
+//        if (extra != null) {
+//            String text = extra.byteToChar(bytes, encoding);
+//            if (text != null)
+//                return text;
+//        }
+        char ch[] = null;
+        if (encoding.equals(PdfEncodings.WINANSI))
+            ch = winansiByteToChar;
+        else if (encoding.equals(PdfEncodings.TEXT_PDFDOCENCODING))
+            ch = pdfEncodingByteToChar;
+        if (ch != null) {
+            int len = bytes.length;
+            char c[] = new char[len];
+            for (int k = 0; k < len; ++k) {
+                c[k] = ch[bytes[k] & 0xff];
+            }
+            return new String(c);
+        }
+        try {
+            return new String(bytes, encoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new PdfException(PdfException.PdfEncodings, e);
+        }
+    }
+
+    /**
+     * Checks is {@code text} only has PdfDocEncoding characters.
+     *
+     * @param text the {@code String} to test
+     * @return {@code true} if only PdfDocEncoding characters are present
+     */
+    public static boolean isPdfDocEncoding(String text) {
+        if (text == null)
+            return true;
+        int len = text.length();
+        for (int k = 0; k < len; k++) {
+            char ch = text.charAt(k);
+            if (ch < 128 || ch > 160 && ch <= 255)
+                continue;
+            if (!pdfEncoding.containsKey((int) ch))
+                return false;
+        }
+        return true;
     }
 }

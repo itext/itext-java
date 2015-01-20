@@ -13,9 +13,8 @@ public class PdfStream extends PdfDictionary {
     private long offset;
 
     /**
-     *
-     * @param doc PdfDocument.
-     * @param bytes initial content of {@link PdfOutputStream}.
+     * @param doc              PdfDocument.
+     * @param bytes            initial content of {@link PdfOutputStream}.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
      * @throws PdfException
      */
@@ -40,8 +39,7 @@ public class PdfStream extends PdfDictionary {
     }
 
     /**
-     *
-     * @param doc PdfDocument.
+     * @param doc              PdfDocument.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
      */
     public PdfStream(PdfDocument doc, int compressionLevel) throws PdfException {
@@ -75,6 +73,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Gets compression level of this PdfStream.
      * For more details @see {@link java.util.zip.Deflater}.
+     *
      * @return compression level.
      */
     public int getCompressionLevel() {
@@ -88,8 +87,9 @@ public class PdfStream extends PdfDictionary {
 
     public int getLength() throws PdfException {
         PdfNumber length = getAsNumber(PdfName.Length);
-        if (length == null)
-            return 0;
+        if (length == null) {
+            return -1;
+        }
         return length.getIntValue();
     }
 

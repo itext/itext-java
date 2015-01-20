@@ -305,7 +305,7 @@ public class OutputStream extends java.io.OutputStream {
         try {
             getIsoBytes(value, numBuffer.reset());
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
-            return (T)this;
+            return (T) this;
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotWriteIntNumber, e);
         }
@@ -315,7 +315,7 @@ public class OutputStream extends java.io.OutputStream {
         try {
             getIsoBytes(value, numBuffer.reset());
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
-            return (T)this;
+            return (T) this;
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotWriteIntNumber, e);
         }
@@ -331,14 +331,14 @@ public class OutputStream extends java.io.OutputStream {
             if (i < value.length - 1)
                 writeSpace();
         }
-        return (T)this;
+        return (T) this;
     }
 
     public <T extends OutputStream> T writeDouble(double value) throws PdfException {
         try {
             getIsoBytes(value, numBuffer.reset());
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
-            return (T)this;
+            return (T) this;
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotWriteFloatNumber, e);
         }
@@ -347,28 +347,37 @@ public class OutputStream extends java.io.OutputStream {
     public <T extends OutputStream> T writeByte(byte value) throws PdfException {
         try {
             write(value);
-            return (T)this;
+            return (T) this;
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotWriteByte, e);
         }
     }
 
     public <T extends OutputStream> T writeSpace() throws PdfException {
-        return (T)writeByte((byte) ' ');
+        return (T) writeByte((byte) ' ');
     }
 
     public <T extends OutputStream> T writeNewLine() throws PdfException {
-        return (T)writeByte((byte) '\n');
+        return (T) writeByte((byte) '\n');
     }
 
     public <T extends OutputStream> T writeString(String value) throws PdfException {
-        return (T)writeBytes(getIsoBytes(value));
+        return (T) writeBytes(getIsoBytes(value));
     }
 
-    public <T extends OutputStream> T writeBytes(byte[] value) throws PdfException {
+    public <T extends OutputStream> T writeBytes(byte[] b) throws PdfException {
         try {
-            write(value);
-            return (T)this;
+            write(b);
+            return (T) this;
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotWriteBytes, e);
+        }
+    }
+
+    public <T extends OutputStream> T writeBytes(byte[] b, int off, int len) throws PdfException {
+        try {
+            write(b, off, len);
+            return (T) this;
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotWriteBytes, e);
         }
