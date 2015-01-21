@@ -1,5 +1,8 @@
 package com.itextpdf.basics.codec;
 
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
+
 /**
  * Class that can decompress TIFF files.
  */
@@ -550,9 +553,9 @@ public class TIFFFaxDecompressor {
         this.compression = compression;
         this.t4Options = t4Options;
         this.t6Options = t6Options;
-        this.oneD = (int) (t4Options & 0x01);
-        this.uncompressedMode = (int) ((t4Options & 0x02) >> 1);
-        this.fillBits = (int) ((t4Options & 0x04) >> 2);
+        this.oneD = t4Options & 0x01;
+        this.uncompressedMode = (t4Options & 0x02) >> 1;
+        this.fillBits = (t4Options & 0x04) >> 2;
     }
 
     public void decodeRaw(byte[] buffer, byte[] compData, int w, int h) {
@@ -577,10 +580,10 @@ public class TIFFFaxDecompressor {
             } else if (compression == TIFFConstants.COMPRESSION_CCITTFAX3) {
                 decodeT4();
             } else if (compression == TIFFConstants.COMPRESSION_CCITTFAX4) {
-                this.uncompressedMode = (int) ((t6Options & 0x02) >> 1);
+                this.uncompressedMode = (t6Options & 0x02) >> 1;
                 decodeT6();
             } else {
-                throw new RuntimeException("Unknown compression type " + compression);
+                throw new PdfRuntimeException(PdfException.UnknownCompressionType1).setMessageParams(compression);
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             //ignore
@@ -680,7 +683,7 @@ public class TIFFFaxDecompressor {
             // Mark start of black run.
             runOffset = bitOffset;
 
-            while (isWhite == false && bitOffset < w) {
+            while (!isWhite && bitOffset < w) {
                 // Black run
                 current = nextLesserThan8Bits(4);
                 entry = initBlack[current];
@@ -850,7 +853,7 @@ public class TIFFFaxDecompressor {
                     entry = nextLesserThan8Bits(7);
 
                     // Run these through the 2DCodes table
-                    entry = (int) (twoDCodes[entry] & 0xff);
+                    entry = twoDCodes[entry] & 0xff;
 
                     // Get the code and the number of bits used up
                     code = (entry & 0x78) >>> 3;
@@ -996,7 +999,7 @@ public class TIFFFaxDecompressor {
                 // Get the next seven bits
                 entry = nextLesserThan8Bits(7);
                 // Run these through the 2DCodes table
-                entry = (int) (twoDCodes[entry] & 0xff);
+                entry = twoDCodes[entry] & 0xff;
 
                 // Get the code and the number of bits used up
                 code = (entry & 0x78) >>> 3;
@@ -1417,9 +1420,7 @@ public class TIFFFaxDecompressor {
                 bitPointer = bitsFromNextByte;
             }
         }
-
-        int i = i1 | i2;
-        return i;
+        return i1 | i2;
     }
 
     private int nextLesserThan8Bits(int bitsToGet) {

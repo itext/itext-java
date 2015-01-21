@@ -1,6 +1,7 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -157,8 +158,7 @@ public class PdfEncodings {
             bb.get(br);
             return br;
         } catch (IOException e) {
-            //TODO change exception type
-            throw new RuntimeException();
+            throw new PdfRuntimeException(PdfException.PdfEncodings, e);
         }
     }
 
@@ -210,8 +210,7 @@ public class PdfEncodings {
             bb.get(br);
             return br;
         } catch (IOException e) {
-            //TODO change exception type
-            throw new RuntimeException(e);
+            throw new PdfRuntimeException(PdfException.PdfEncodings, e);
         }
     }
 

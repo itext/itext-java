@@ -156,6 +156,7 @@ public class PdfException extends Exception {
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
+    public static final String UnknownCompressionType1 = "unknown.compression.type.1";
     public static final String UnknownEncryptionTypeREq1 = "unknown.encryption.type.r.eq.1";
     public static final String UnknownEncryptionTypeVEq1 = "unknown.encryption.type.v.eq.1";
     public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";

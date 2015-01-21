@@ -4,7 +4,6 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.io.OutputStream;
 
 import java.nio.charset.Charset;
 
@@ -28,11 +27,6 @@ import java.nio.charset.Charset;
 public class PdfString extends PdfPrimitiveObject {
 
     private static String defaultCharset = "UTF-8";
-    private static final byte[] escR = OutputStream.getIsoBytes("\\r");
-    private static final byte[] escN = OutputStream.getIsoBytes("\\n");
-    private static final byte[] escT = OutputStream.getIsoBytes("\\t");
-    private static final byte[] escB = OutputStream.getIsoBytes("\\b");
-    private static final byte[] escF = OutputStream.getIsoBytes("\\f");
 
     protected String value;
     protected String encoding;
