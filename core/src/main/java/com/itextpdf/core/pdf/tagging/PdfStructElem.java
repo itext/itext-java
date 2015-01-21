@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf.tagging;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -100,11 +101,11 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             structParent = structParents.getIntValue();
     }
 
-    private PdfStructElem(PdfDocument document, PdfName role, int mcid) throws PdfException {
-        this(new PdfDictionary(), document);
-        type = getType(role);
-        getPdfObject().put(PdfName.Type, PdfName.StructElem);
-        getPdfObject().put(PdfName.S, role);
+    private PdfStructElem(PdfDocument document, final PdfName role, final int mcid) throws PdfException {
+        this(new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
+            put(PdfName.Type, PdfName.StructElem);
+            put(PdfName.S, role);
+        }}), document);
         if (mcid >= 0)
             getPdfObject().put(PdfName.K, new PdfNumber(mcid));
     }
@@ -243,7 +244,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         return structParent;
     }
 
-    private static int getType(PdfName role) {
+    private int getType(PdfName role) throws PdfException {
+        PdfDictionary roleMap = getDocument().getStructTreeRoot().getRoleMap();
+        if (roleMap.containsKey(role))
+            role = roleMap.getAsName(role);
         if (groupingRoles.contains(role))
             return Grouping;
         else if (blockLevelRoles.contains(role))

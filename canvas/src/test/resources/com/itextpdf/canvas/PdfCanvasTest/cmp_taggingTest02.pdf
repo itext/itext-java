@@ -1,0 +1,79 @@
+%PDF-1.7
+%‚„œ”
+7 0 obj
+<</Length 108>>stream
+BT
+/F1 24 Tf
+1 0 0 1 32 512 Tm
+/Span <</MCID 0>> BDC
+(Hello )Tj
+EMC
+/Chunk <</MCID 1>> BDC
+(World)Tj
+EMC
+ET
+
+endstream
+
+endobj
+6 0 obj
+<</Contents 7 0 R/MediaBox [0 0 612 792]/Parent 2 0 R/Resources <</Font <</F1 8 0 R>>>>/StructParents 0/Type /Page>>
+endobj
+4 0 obj
+<</K [5 0 R]/ParentTree 12 0 R/RoleMap <</Chunk /Span>>/Type /StructTreeRoot>>
+endobj
+1 0 obj
+<</MarkInfo <</Marked true>>/Pages 2 0 R/StructTreeRoot 4 0 R/Type /Catalog>>
+endobj
+3 0 obj
+<</CreationDate (D:20150121130857-03'00')>>
+endobj
+2 0 obj
+<</Count 1/Kids [6 0 R]/Type /Pages>>
+endobj
+5 0 obj
+<</K [9 0 R]/P 4 0 R/S /Document/Type /StructElem>>
+endobj
+8 0 obj
+<</BaseFont /Courier/Encoding /WinAnsiEncoding/Subtype /Type1/Type /Font>>
+endobj
+9 0 obj
+<</K [10 0 R]/P 5 0 R/S /P/Type /StructElem>>
+endobj
+10 0 obj
+<</K [11 0 R]/P 9 0 R/Pg 6 0 R/S /Span/Type /StructElem>>
+endobj
+11 0 obj
+<</K 1/P 10 0 R/Pg 6 0 R/S /Chunk/Type /StructElem>>
+endobj
+12 0 obj
+<</Nums 13 0 R>>
+endobj
+13 0 obj
+[0 14 0 R]
+endobj
+14 0 obj
+[10 0 R 11 0 R]
+endobj
+xref
+0 15
+0000000000 65535 f 
+0000000398 00000 n 
+0000000550 00000 n 
+0000000491 00000 n 
+0000000304 00000 n 
+0000000603 00000 n 
+0000000172 00000 n 
+0000000015 00000 n 
+0000000670 00000 n 
+0000000760 00000 n 
+0000000821 00000 n 
+0000000895 00000 n 
+0000000964 00000 n 
+0000000997 00000 n 
+0000001024 00000 n 
+trailer
+<</ID [<77d37024fb88e2b21ed84d4c458e3c08><77d37024fb88e2b21ed84d4c458e3c08>]/Info 3 0 R/Root 1 0 R/Size 15>>
+startxref
+1056
+%%EOF

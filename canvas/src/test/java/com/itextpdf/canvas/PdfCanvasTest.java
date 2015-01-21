@@ -1332,5 +1332,42 @@ public class PdfCanvasTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest01.pdf", sourceFolder + "cmp_taggingTest01.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void tagginTest02() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest02.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        document.getStructTreeRoot().getRoleMap().put(new com.itextpdf.core.pdf.PdfName("Chunk"), com.itextpdf.core.pdf.PdfName.Span);
+        PdfStructElem doc = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document);
+        document.getStructTreeRoot().addKid(doc);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        PdfStructElem paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
+        doc.addKid(paragraph);
+        PdfStructElem span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
+        paragraph.addKid(span1);
+        canvas.openTag(span1);
+        canvas.showText("Hello ");
+        canvas.closeTag(span1);
+        PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
+        span1.addKid(span2);
+        canvas.openTag(span2);
+        canvas.showText("World");
+        canvas.closeTag(span2);
+        canvas.endText();
+        canvas.release();
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest02.pdf", sourceFolder + "cmp_taggingTest02.pdf", destinationFolder, "diff_"));
+    }
+
 
 }

@@ -2,9 +2,7 @@ package com.itextpdf.core.pdf.tagging;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -40,52 +38,57 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public void flush() throws PdfException {
-
-        Map<PdfObject, PageAndNums> nums = new LinkedHashMap<PdfObject, PageAndNums>();
+        Map<PdfObject, Object[]> page2Nums = new LinkedHashMap<PdfObject, Object[]>();
         for (int i = 1; i <= getDocument().getNumOfPages(); i++) {
             PdfPage page = getDocument().getPage(i);
             Integer structParentIndex = page.getStructParentIndex();
             if (structParentIndex != null)
-                nums.put(page.getPdfObject(), new PageAndNums(page, new PdfArray()));
+                page2Nums.put(page.getPdfObject(), new Object[]{page, new PdfArray()});
         }
         PdfArray kids = getKids();
         for (int i = 0; i < kids.size(); i++) {
             if (kids.get(i) instanceof PdfDictionary)
-                fillNums(nums, (PdfDictionary)kids.get(i));
+                fillNums(page2Nums, (PdfDictionary) kids.get(i));
         }
-
-
         PdfDictionary parentTree = new PdfDictionary().makeIndirect(getDocument());
         getPdfObject().put(PdfName.ParentTree, parentTree);
-        PdfArray numsArray = new PdfArray().makeIndirect(getDocument());
-        for (Map.Entry<PdfObject, PageAndNums> entry : nums.entrySet()) {
-            numsArray.add(new PdfNumber(entry.getValue().getPage().getStructParentIndex()));
-            numsArray.add(entry.getValue().getNums().makeIndirect(getDocument()));
+        PdfArray nums = new PdfArray().makeIndirect(getDocument());
+        for (Map.Entry<PdfObject, Object[]> entry : page2Nums.entrySet()) {
+            nums.add(new PdfNumber(((PdfPage) entry.getValue()[0]).getStructParentIndex()));
+            nums.add(((PdfArray) entry.getValue()[1]).makeIndirect(getDocument()));
         }
-        parentTree.put(PdfName.Nums, numsArray);
-
+        parentTree.put(PdfName.Nums, nums);
         getPdfObject().flush();
     }
 
-    private void fillNums(Map<PdfObject, PageAndNums> nums, PdfDictionary structElem) throws PdfException {
+    public PdfDictionary getRoleMap() throws PdfException {
+        PdfDictionary roleMap = getPdfObject().getAsDictionary(PdfName.RoleMap);
+        if (roleMap == null) {
+            roleMap = new PdfDictionary();
+            getPdfObject().put(PdfName.RoleMap, roleMap);
+        }
+        return roleMap;
+    }
+
+    private void fillNums(Map<PdfObject, Object[]> nums, PdfDictionary structElem) throws PdfException {
         PdfObject pg = structElem.get(PdfName.Pg);
-        PageAndNums pageAndNums = null;
+        Object[] num = null;
         if (pg != null) {
-            pageAndNums = nums.get(pg);
-            if (pageAndNums != null) {
-                pageAndNums.getNums().add(structElem);
+            num = nums.get(pg);
+            if (num != null) {
+                ((PdfArray) num[1]).add(structElem);
             }
         }
         PdfObject kids = structElem.get(PdfName.K);
         if (kids instanceof PdfDictionary)
-            fillNums(nums, (PdfDictionary)kids);
+            fillNums(nums, (PdfDictionary) kids);
         else if (kids instanceof PdfArray) {
-            for (int i = 0; i < ((PdfArray)kids).size(); i++) {
-                PdfDictionary kid = ((PdfArray)kids).getAsDictionary(i);
+            for (int i = 0; i < ((PdfArray) kids).size(); i++) {
+                PdfDictionary kid = ((PdfArray) kids).getAsDictionary(i);
                 if (kid != null) {
                     if (PdfName.MCR.equals(kid.get(PdfName.Type))) {
-                        if (pageAndNums != null) {
-                            pageAndNums.getNums().add(structElem);
+                        if (num != null) {
+                            ((PdfArray) num[1]).add(structElem);
                         }
                     } else {
                         fillNums(nums, kid);
@@ -94,24 +97,5 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> {
             }
         }
     }
-
-    private static class PageAndNums {
-        private PdfPage page;
-        private PdfArray nums;
-
-        private PageAndNums(PdfPage page, PdfArray nums) {
-            this.page = page;
-            this.nums = nums;
-        }
-
-        public PdfPage getPage() {
-            return page;
-        }
-
-        public PdfArray getNums() {
-            return nums;
-        }
-    }
-
 
 }
