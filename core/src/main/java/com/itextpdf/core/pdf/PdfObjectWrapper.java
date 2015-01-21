@@ -5,7 +5,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfObjectWrapper<T extends PdfObject> {
 
-    protected T pdfObject = null;
+    private T pdfObject = null;
 
     public PdfObjectWrapper(T pdfObject) {
         this.pdfObject = pdfObject;

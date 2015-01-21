@@ -29,6 +29,7 @@ public class PdfException extends Exception {
 
 
     public static final String CannotAddObjectToObjectstream = "cannot.add.object.to.objectstream";
+    public static final String CannotAddStructElemToContent = "cannot.add.structelem.to.content";
     public static final String CannotCloseDocument = "cannot.close.document";
     public static final String CannotCloseDocumentWithAlreadyFlushedPdfCatalog = "cannot.close.document.with.already.flushed.pdf.catalog";
     public static final String CannotConvertPdfArrayToRectanle = "cannot.convert.pdfarray.to.rectangle";
@@ -127,7 +128,6 @@ public class PdfException extends Exception {
     public static final String NoCompatibleEncryptionFound = "no.compatible.encryption.found";
     public static final String NoValidEncryptionMode = "no.valid.encryption.mode";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
-    public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
     public static final String PngFilterUnknown = "png.filter.unknown";
     public static final String PdfEncodings = "pdf.encodings";
@@ -146,6 +146,7 @@ public class PdfException extends Exception {
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
     public static final String StreamCouldNotBeCompressedFilterIsNotANameOrArray = "stream.could.not.be.compressed.filter.is.not.a.name.or.array";
+    public static final String StructureElementShallContainPgKey = "structure.element.shall.contain.pg.key";
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
     public static final String TiffFillOrderTagMustBeEither1Or2 = "tiff.fill.order.tag.must.be.either.1.or.2";
@@ -164,6 +165,8 @@ public class PdfException extends Exception {
     public static final String WrongNumberOfComponentsInIccProfile = "icc.profile.contains.1.components.the.image.data.contains.2.components";
     public static final String XrefSubsectionNotFound = "xref.subsection.not.found";
     public static final String XrefTableDoesntHaveSuitableItemForObject1 = "xref.table.doesn't.have.suitable.item.for.object.1";
+    public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
+    public static final String YouCannotFlushStructTreeRootManually = "you.cannot.flush.structtreeroot.manually";
 
     protected Object object;
     protected String composedMessage;

@@ -13,15 +13,15 @@ public class PdfTrailer extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public void setCatalog(PdfCatalog catalog) {
-        pdfObject.put(PdfName.Root, catalog.getPdfObject());
+        getPdfObject().put(PdfName.Root, catalog.getPdfObject());
     }
 
     public void setInfo(PdfDocumentInfo info) {
-        pdfObject.put(PdfName.Info, info.getPdfObject());
+        getPdfObject().put(PdfName.Info, info.getPdfObject());
     }
 
     public void setSize(int size) {
-        pdfObject.put(PdfName.Size, new PdfNumber(size));
+        getPdfObject().put(PdfName.Size, new PdfNumber(size));
     }
 
 }

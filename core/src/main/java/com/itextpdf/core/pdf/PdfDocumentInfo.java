@@ -11,7 +11,7 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
     public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject == null ? new PdfDictionary() : pdfObject);
         if (pdfDocument.getWriter() != null) {
-            this.pdfObject.makeIndirect(pdfDocument);
+            this.getPdfObject().makeIndirect(pdfDocument);
         }
     }
 
@@ -24,27 +24,27 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfDocumentInfo setTitle(String title) {
-        pdfObject.put(PdfName.Title, new PdfString(title, PdfEncodings.TEXT_UNICODE));
+        getPdfObject().put(PdfName.Title, new PdfString(title));
         return this;
     }
 
     public PdfDocumentInfo setAuthor(String author) {
-        pdfObject.put(PdfName.Author, new PdfString(author, PdfEncodings.TEXT_UNICODE));
+        getPdfObject().put(PdfName.Author, new PdfString(author));
         return this;
     }
 
     public PdfDocumentInfo setSubject(String subject) {
-        pdfObject.put(PdfName.Subject, new PdfString(subject, PdfEncodings.TEXT_UNICODE));
+        getPdfObject().put(PdfName.Subject, new PdfString(subject));
         return this;
     }
 
     public PdfDocumentInfo setKeywords(String keywords) {
-        pdfObject.put(PdfName.Keywords, new PdfString(keywords, PdfEncodings.TEXT_UNICODE));
+        getPdfObject().put(PdfName.Keywords, new PdfString(keywords));
         return this;
     }
 
     public PdfDocumentInfo setCreator(String creator) {
-        pdfObject.put(PdfName.Creator, new PdfString(creator, PdfEncodings.TEXT_UNICODE));
+        getPdfObject().put(PdfName.Creator, new PdfString(creator));
         return this;
     }
 
@@ -95,11 +95,11 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public void flush() throws PdfException {
-        pdfObject.flush(false);
+        getPdfObject().flush(false);
     }
 
     private String getStringValue(PdfName name) throws PdfException {
-        PdfString pdfString = pdfObject.getAsString(name);
+        PdfString pdfString = getPdfObject().getAsString(name);
         return pdfString != null ? pdfString.getValue() : null;
     }
 }

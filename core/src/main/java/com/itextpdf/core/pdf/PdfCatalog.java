@@ -11,8 +11,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (pdfObject == null) {
             throw new PdfException(PdfException.DocumentHasNoCatalogObject);
         }
-        this.pdfObject.makeIndirect(pdfDocument);
-        this.pdfObject.put(PdfName.Type, PdfName.Catalog);
+        getPdfObject().makeIndirect(pdfDocument);
+        getPdfObject().put(PdfName.Type, PdfName.Catalog);
         pageTree = new PdfPagesTree(this);
     }
 

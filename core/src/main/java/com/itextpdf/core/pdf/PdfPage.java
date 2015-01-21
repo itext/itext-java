@@ -19,18 +19,29 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public final static int LastPage = Integer.MAX_VALUE;
 
     private PdfResources resources = null;
+    private int mcid = 0;
+    private Integer structParentIndex = null;
 
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
+        if (pdfDocument.isTagged()) {
+            PdfNumber structParents = getPdfObject().getAsNumber(PdfName.StructParents);
+            if (structParents != null)
+                structParentIndex = structParents.getIntValue();
+        }
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
     protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) throws PdfException {
         super(new PdfDictionary(), pdfDocument);
         PdfStream contentStream = new PdfStream(pdfDocument);
-        pdfObject.put(PdfName.Contents, contentStream);
-        pdfObject.put(PdfName.Type, PdfName.Page);
-        pdfObject.put(PdfName.MediaBox, new PdfArray(pageSize));
+        getPdfObject().put(PdfName.Contents, contentStream);
+        getPdfObject().put(PdfName.Type, PdfName.Page);
+        getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
+        if (pdfDocument.isTagged()) {
+            structParentIndex = pdfDocument.structParentIndex++;
+            getPdfObject().put(PdfName.StructParents, new PdfNumber(structParentIndex));
+        }
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
@@ -42,7 +53,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         int count = getContentStreamCount();
         if (index >= count)
             throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, count));
-        PdfObject contents = pdfObject.get(PdfName.Contents);
+        PdfObject contents = getPdfObject().get(PdfName.Contents);
         if (contents instanceof PdfStream)
             return (PdfStream) contents;
         else if (contents instanceof PdfArray) {
@@ -54,7 +65,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public int getContentStreamCount() throws PdfException {
-        PdfObject contents = pdfObject.get(PdfName.Contents);
+        PdfObject contents = getPdfObject().get(PdfName.Contents);
         if (contents instanceof PdfStream)
             return 1;
         else if (contents instanceof PdfArray) {
@@ -88,10 +99,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfResources getResources() throws PdfException {
         if (this.resources == null) {
-            PdfDictionary resources = pdfObject.getAsDictionary(PdfName.Resources);
+            PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
             if (resources == null) {
                 resources = new PdfDictionary();
-                pdfObject.put(PdfName.Resources, resources);
+                getPdfObject().put(PdfName.Resources, resources);
             }
             this.resources = new PdfResources(resources);
         }
@@ -143,6 +154,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public void flush() throws PdfException {
+        getPdfObject().remove(PdfName.MCID);
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
@@ -153,11 +165,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Rectangle getMediaBox() throws PdfException {
-        return pdfObject.getAsRectangle(PdfName.MediaBox);
+        return getPdfObject().getAsRectangle(PdfName.MediaBox);
     }
 
     public Rectangle getCropBox() throws PdfException {
-        Rectangle cropBox = pdfObject.getAsRectangle(PdfName.CropBox);
+        Rectangle cropBox = getPdfObject().getAsRectangle(PdfName.CropBox);
         if (cropBox == null)
             cropBox = getMediaBox();
         return cropBox;
@@ -194,23 +206,37 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return stream.getBytes();
     }
 
+    /**
+     * Calculates and returns next available MCID reference.
+     *
+     * @return calculated MCID reference.
+     * @throws PdfException
+     */
+    public int getNextMcid() {
+        return mcid++;
+    }
+
+    public Integer getStructParentIndex() {
+        return structParentIndex;
+    }
+
     protected void makeIndirect(PdfDocument pdfDocument) throws PdfException {
-        pdfObject.makeIndirect(pdfDocument);
+        getPdfObject().makeIndirect(pdfDocument);
     }
 
     private PdfStream newContentStream(boolean before) throws PdfException {
-        PdfObject contents = pdfObject.get(PdfName.Contents);
+        PdfObject contents = getPdfObject().get(PdfName.Contents);
         PdfArray array;
         if (contents instanceof PdfStream) {
             array = new PdfArray();
             array.add(contents);
-            pdfObject.put(PdfName.Contents, array);
+            getPdfObject().put(PdfName.Contents, array);
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
         } else {
             throw new PdfException(PdfException.PdfPageShallHaveContent);
         }
-        PdfStream contentStream = new PdfStream(pdfObject.getDocument());
+        PdfStream contentStream = new PdfStream(getPdfObject().getDocument());
         if (before) {
             array.add(0, contentStream);
         } else {

@@ -1,22 +1,20 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.core.Version;
 import com.itextpdf.core.events.EventDispatcher;
 import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.PageSize;
-import com.itextpdf.core.xmp.PdfConst;
-import com.itextpdf.core.xmp.XMPConst;
-import com.itextpdf.core.xmp.XMPException;
-import com.itextpdf.core.xmp.XMPMeta;
-import com.itextpdf.core.xmp.XMPMetaFactory;
+import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.core.xmp.*;
 import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class PdfDocument implements IEventDispatcher {
 
@@ -79,6 +77,10 @@ public class PdfDocument implements IEventDispatcher {
      * Indicate incremental updates mode of stamping mode.
      */
     protected final boolean appendMode;
+
+    protected PdfStructTreeRoot structTreeRoot;
+
+    protected int structParentIndex = 0;
 
     /**
      * Open PDF document in reading mode.
@@ -508,10 +510,12 @@ public class PdfDocument implements IEventDispatcher {
                 }
                 PdfObject crypto = null;
                 if (appendMode) {
+                    if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified())
+                        structTreeRoot.flush();
                     PdfObject pageRoot = catalog.pageTree.generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
-                        catalog.pdfObject.put(PdfName.Pages, pageRoot);
-                        catalog.pdfObject.flush(false);
+                        catalog.getPdfObject().put(PdfName.Pages, pageRoot);
+                        catalog.getPdfObject().flush(false);
                     }
                     if (info.getPdfObject().isModified()) {
                         info.flush();
@@ -523,8 +527,10 @@ public class PdfDocument implements IEventDispatcher {
                     }
 
                 } else {
-                    catalog.pdfObject.put(PdfName.Pages, catalog.pageTree.generateTree());
-                    catalog.pdfObject.flush(false);
+                    if (structTreeRoot != null)
+                        structTreeRoot.flush();
+                    catalog.getPdfObject().put(PdfName.Pages, catalog.pageTree.generateTree());
+                    catalog.getPdfObject().flush(false);
                     info.flush();
                     writer.flushWaitingObjects();
                 }
@@ -564,6 +570,24 @@ public class PdfDocument implements IEventDispatcher {
         }
     }
 
+    public boolean isTagged() {
+        return structTreeRoot != null;
+    }
+
+    public void setTagged() throws PdfException {
+        if (structTreeRoot == null) {
+            structTreeRoot = new PdfStructTreeRoot(this);
+            catalog.getPdfObject().put(PdfName.StructTreeRoot, structTreeRoot.getPdfObject());
+            catalog.getPdfObject().put(PdfName.MarkInfo, new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
+                put(PdfName.Marked, PdfBoolean.PdfTrue);
+            }}));
+        }
+    }
+
+    public PdfStructTreeRoot getStructTreeRoot() {
+        return structTreeRoot;
+    }
+
     /**
      * Initializes document.
      *
@@ -577,6 +601,9 @@ public class PdfDocument implements IEventDispatcher {
                 trailer = new PdfTrailer(reader.trailer);
                 catalog = new PdfCatalog((PdfDictionary) trailer.getPdfObject().get(PdfName.Root, true), this);
                 info = new PdfDocumentInfo((PdfDictionary) trailer.getPdfObject().get(PdfName.Info, true), this);
+                PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
+                if (str != null)
+                    structTreeRoot = new PdfStructTreeRoot(str, this);
                 if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }

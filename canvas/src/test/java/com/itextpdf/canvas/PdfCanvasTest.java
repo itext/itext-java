@@ -2,12 +2,15 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.color.*;
+import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
+import com.itextpdf.core.pdf.tagging.PdfMcr;
+import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfDictionary;
@@ -1257,16 +1260,76 @@ public class PdfCanvasTest {
         PdfPage page = document.addNewPage();
 
         com.itextpdf.core.pdf.function.PdfFunction.Type4 function = new com.itextpdf.core.pdf.function.PdfFunction.Type4(document, new PdfArray(new float[]{0, 1, 0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes());
-        PdfSpecialCs.DeviceN deviceN = new PdfSpecialCs.DeviceN(document, new ArrayList<String>() {{add("MyRed"); add("MyGreen");}}, new PdfDeviceCs.Rgb(), function);
+        PdfSpecialCs.DeviceN deviceN = new PdfSpecialCs.DeviceN(document, new ArrayList<String>() {{
+            add("MyRed");
+            add("MyGreen");
+        }}, new PdfDeviceCs.Rgb(), function);
 
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.setFillColor(new DeviceN(deviceN, new float[] {0, 0})).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColor(new DeviceN(deviceN, new float[] {0, 1})).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColor(new DeviceN(deviceN, new float[] {1, 0})).rectangle(250, 500, 50, 50).fill();
+        canvas.setFillColor(new DeviceN(deviceN, new float[]{0, 0})).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColor(new DeviceN(deviceN, new float[]{0, 1})).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColor(new DeviceN(deviceN, new float[]{1, 0})).rectangle(250, 500, 50, 50).fill();
         canvas.release();
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest08.pdf", sourceFolder + "cmp_colorTest08.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void tagginTest01() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest01.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        PdfStructElem doc = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document);
+        document.getStructTreeRoot().addKid(doc);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        PdfStructElem paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
+        doc.addKid(paragraph);
+        PdfStructElem span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
+        paragraph.addKid(span1);
+        canvas.openTag(span1);
+        canvas.showText("Hello ");
+        canvas.closeTag(span1);
+        PdfMcr span1_1 = new PdfMcr(page, com.itextpdf.core.pdf.PdfName.Span);
+        span1.addKid(span1_1);
+        canvas.openTag(span1_1);
+        canvas.showText("World");
+        canvas.closeTag(span1_1);
+        canvas.endText();
+        canvas.release();
+        page.flush();
+
+        page = document.addNewPage();
+        canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Helvetica), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
+        doc.addKid(paragraph);
+        span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
+        paragraph.addKid(span1);
+        canvas.openTag(span1);
+        canvas.showText("Hello ");
+        canvas.closeTag(span1);
+        PdfStructElem span2 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
+        paragraph.addKid(span2);
+        canvas.openTag(span2);
+        canvas.showText("World");
+        canvas.closeTag(span2);
+        canvas.endText();
+        canvas.release();
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest01.pdf", sourceFolder + "cmp_taggingTest01.pdf", destinationFolder, "diff_"));
     }
 
 

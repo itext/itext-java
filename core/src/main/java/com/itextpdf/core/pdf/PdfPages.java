@@ -11,15 +11,15 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     public PdfPages(int from, PdfDocument pdfDocument, PdfPages parent) throws PdfException {
         super(new PdfDictionary());
         if (pdfDocument.getWriter() != null) {
-            pdfObject.makeIndirect(pdfDocument);
+            getPdfObject().makeIndirect(pdfDocument);
         }
         this.from = from;
         this.count = new PdfNumber(0);
         this.kids = new PdfArray();
         this.parent = parent;
-        pdfObject.put(PdfName.Type, PdfName.Pages);
-        pdfObject.put(PdfName.Kids, this.kids);
-        pdfObject.put(PdfName.Count, this.count);
+        getPdfObject().put(PdfName.Type, PdfName.Pages);
+        getPdfObject().put(PdfName.Kids, this.kids);
+        getPdfObject().put(PdfName.Count, this.count);
     }
 
     public PdfPages(int from, PdfDocument pdfDocument) throws PdfException {
@@ -98,7 +98,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfArray getKids() throws PdfException {
-        return pdfObject.getAsArray(PdfName.Kids);
+        return getPdfObject().getAsArray(PdfName.Kids);
     }
 
     public void incrementCount(){

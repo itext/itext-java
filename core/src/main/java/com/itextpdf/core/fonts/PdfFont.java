@@ -18,7 +18,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfFont(PdfDocument pdfDocument) throws PdfException {
         this(new PdfDictionary(), pdfDocument);
-        pdfObject.put(PdfName.Type, PdfName.Font);
+        getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
     /**

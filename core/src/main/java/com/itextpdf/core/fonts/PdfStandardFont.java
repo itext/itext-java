@@ -33,10 +33,10 @@ public class PdfStandardFont extends PdfFont {
 
     public PdfStandardFont(PdfDocument pdfDocument, PdfName fontName) throws PdfException {
         super(pdfDocument);
-        pdfObject.put(PdfName.BaseFont, fontName);
-        pdfObject.put(PdfName.Subtype, PdfName.Type1);
+        getPdfObject().put(PdfName.BaseFont, fontName);
+        getPdfObject().put(PdfName.Subtype, PdfName.Type1);
         if (!fontName.equals(Symbol)) {
-            pdfObject.put(PdfName.Encoding, PdfName.WinAnsiEncoding);
+            getPdfObject().put(PdfName.Encoding, PdfName.WinAnsiEncoding);
         }
     }
 

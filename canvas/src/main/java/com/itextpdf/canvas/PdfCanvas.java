@@ -12,13 +12,11 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
+import com.itextpdf.core.pdf.tagging.IPdfTag;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * PdfCanvas class represents algorithm for writing data into content stream.
@@ -86,6 +84,7 @@ public class PdfCanvas {
     protected PdfResources resources;
     protected PdfDocument document;
     protected int mcDepth;
+    protected int mcid = 0;
 
     /**
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
@@ -1053,6 +1052,18 @@ public class PdfCanvas {
             throw new PdfException(PdfException.UnbalancedBeginEndMarkedContentOperators);
         contentStream.getOutputStream().writeBytes(EMC);
         return this;
+    }
+
+    public PdfCanvas openTag(final IPdfTag tag) throws PdfException {
+        if (tag.getRole() == null)
+            return this;
+        return beginMarkedContent(tag.getRole(), tag.getMcid() == null ? null : new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
+            put(PdfName.MCID, new PdfNumber(tag.getMcid()));
+        }}));
+    }
+
+    public PdfCanvas closeTag(IPdfTag tag) throws PdfException {
+        return endMarkedContent();
     }
 
     static private boolean floatsAreEqual(Float f1, Float f2) {

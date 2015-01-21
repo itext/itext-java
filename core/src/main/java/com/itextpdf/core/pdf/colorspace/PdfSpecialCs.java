@@ -27,7 +27,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         public PdfColorSpace getBaseCs() throws PdfException {
-            return makeColorSpace(((PdfArray) pdfObject).get(1), getDocument());
+            return makeColorSpace(((PdfArray) getPdfObject()).get(1), getDocument());
         }
 
         static private PdfArray getIndexedCsArray(PdfObject base, int hival, PdfString lookup) {
@@ -63,11 +63,11 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         public PdfColorSpace getBaseCs() throws PdfException {
-            return makeColorSpace(((PdfArray) pdfObject).get(2), getDocument());
+            return makeColorSpace(((PdfArray) getPdfObject()).get(2), getDocument());
         }
 
         public PdfName getName() throws PdfException {
-            return ((PdfArray) pdfObject).getAsName(1);
+            return ((PdfArray) getPdfObject()).getAsName(1);
         }
 
         static private PdfArray getSeparationCsArray(PdfName name, PdfObject alternateSpace, PdfObject tintTransform) {
@@ -107,11 +107,11 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         public PdfColorSpace getBaseCs() throws PdfException {
-            return makeColorSpace(((PdfArray) pdfObject).get(2), getDocument());
+            return makeColorSpace(((PdfArray) getPdfObject()).get(2), getDocument());
         }
 
         public PdfArray getNames() throws PdfException {
-            return ((PdfArray) pdfObject).getAsArray(1);
+            return ((PdfArray) getPdfObject()).getAsArray(1);
         }
 
         static protected PdfArray getDeviceNCsArray(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform) {

@@ -12,15 +12,15 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
     }
 
     public int getType() throws PdfException {
-        return ((PdfDictionary)pdfObject).getAsInt(PdfName.FunctionType);
+        return ((PdfDictionary)getPdfObject()).getAsInt(PdfName.FunctionType);
     }
 
     public int getInputSize() throws PdfException {
-        return ((PdfDictionary)pdfObject).getAsArray(PdfName.Domain).size() / 2;
+        return ((PdfDictionary)getPdfObject()).getAsArray(PdfName.Domain).size() / 2;
     }
 
     public int getOutputSize() throws PdfException {
-        return ((PdfDictionary)pdfObject).getAsArray(PdfName.Range).size() / 2;
+        return ((PdfDictionary)getPdfObject()).getAsArray(PdfName.Range).size() / 2;
     }
 
     static public class Type0 extends PdfFunction<PdfStream> {

@@ -120,7 +120,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
 
         @Override
         public int getNumOfComponents() throws PdfException {
-            return ((PdfArray) pdfObject).getAsStream(1).getAsInt(PdfName.Action.N).intValue();
+            return ((PdfArray) getPdfObject()).getAsStream(1).getAsInt(PdfName.Action.N).intValue();
         }
 
     }

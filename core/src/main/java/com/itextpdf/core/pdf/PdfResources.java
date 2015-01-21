@@ -148,9 +148,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             nameToResource.put(resType, resourceCategory = new HashMap<PdfName, PdfObject>());
         }
         resourceCategory.put(resName, resource);
-        PdfDictionary resDictionary = (PdfDictionary) pdfObject.get(resType);
+        PdfDictionary resDictionary = (PdfDictionary) getPdfObject().get(resType);
         if (resDictionary == null) {
-            pdfObject.put(resType, resDictionary = new PdfDictionary());
+            getPdfObject().put(resType, resDictionary = new PdfDictionary());
         }
         resDictionary.put(resName, resource);
     }
