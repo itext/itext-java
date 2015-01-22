@@ -163,7 +163,7 @@ class PdfXrefTable {
         }
 
         int size = sections.get(sections.size() - 2) + sections.get(sections.size() - 1);
-        int startxref = writer.getCurrentPos();
+        long startxref = writer.getCurrentPos();
         if (writer.isFullCompression()) {
             PdfStream xrefStream = new PdfStream(document);
             xrefStream.put(PdfName.Type, PdfName.XRef);
@@ -251,7 +251,7 @@ class PdfXrefTable {
         }
 
         writer.writeString("\nstartxref\n").
-                writeInteger(startxref).
+                writeLong(startxref).
                 writeString("\n%%EOF\n");
         xref = null;
     }

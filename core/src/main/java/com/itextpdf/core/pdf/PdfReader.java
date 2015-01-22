@@ -674,7 +674,7 @@ public class PdfReader {
         PdfTokeniser.TokenType type = tokens.getTokenType();
         switch (type) {
             case StartDic: {
-                PdfDictionary dic = readDictionary();
+                PdfDictionary dict = readDictionary();
                 long pos = tokens.getPosition();
                 // be careful in the trailer. May not be a "next" token.
                 boolean hasNext;
@@ -692,12 +692,10 @@ public class PdfReader {
                         ch = tokens.read();
                     if (ch != '\n')
                         tokens.backOnePosition(ch);
-                    PdfStream stream = new PdfStream(tokens.getPosition());
-                    stream.putAll(dic);
-                    return stream;
+                    return new PdfStream(tokens.getPosition(), dict);
                 } else {
                     tokens.seek(pos);
-                    return dic;
+                    return dict;
                 }
             }
             case StartArray:
@@ -1134,14 +1132,14 @@ public class PdfReader {
         }
     }
 
-    private void checkPdfStreamLength(final PdfStream stream) throws PdfException, IOException {
+    private void checkPdfStreamLength(final PdfStream pdfStream) throws PdfException, IOException {
         if (!correctStreamLength)
             return;
         long fileLength = tokens.length();
-        long start = stream.getOffset();
+        long start = pdfStream.getOffset();
         boolean calc = false;
-        long streamLength = 0;
-        PdfNumber pdfNumber = stream.getAsNumber(PdfName.Length);
+        int streamLength = 0;
+        PdfNumber pdfNumber = pdfStream.getAsNumber(PdfName.Length);
         if (pdfNumber != null) {
             streamLength = pdfNumber.getIntValue();
             if (streamLength + start > fileLength - 20) {
@@ -1156,7 +1154,7 @@ public class PdfReader {
             }
         } else {
             pdfNumber = new PdfNumber(0);
-            stream.put(PdfName.Length, pdfNumber);
+            pdfStream.put(PdfName.Length, pdfNumber);
             calc = true;
         }
         if (calc) {
@@ -1169,16 +1167,15 @@ public class PdfReader {
                 if (!tokens.readLineSegment(line, false)) // added boolean because of mailing list issue (17 Feb. 2014)
                     break;
                 if (line.startsWith(endstream)) {
-                    streamLength = pos - start;
+                    streamLength = (int)(pos - start);
                     break;
-                }
-                if (line.startsWith(endobj)) {
+                } else if (line.startsWith(endobj)) {
                     tokens.seek(pos - 16);
                     String s = tokens.readString(16);
                     int index = s.indexOf(endstream1);
                     if (index >= 0)
                         pos = pos - 16 + index;
-                    streamLength = pos - start;
+                    streamLength = (int)(pos - start);
                     break;
                 }
             }
@@ -1190,7 +1187,8 @@ public class PdfReader {
             if (tokens.read() == 10) {
                 streamLength--;
             }
-            pdfNumber.setValue((int) streamLength);
+            pdfNumber.setValue(streamLength);
+            pdfStream.updateLength(streamLength);
         }
     }
 }

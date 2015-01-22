@@ -65,7 +65,7 @@ public class OutputStream extends java.io.OutputStream {
 
 
     protected java.io.OutputStream outputStream = null;
-    protected int currentPos = 0;
+    protected long currentPos = 0;
     protected boolean closeStream = true;
 
     public static byte[] getIsoBytes(String text) {
@@ -383,7 +383,7 @@ public class OutputStream extends java.io.OutputStream {
         }
     }
 
-    public int getCurrentPos() {
+    public long getCurrentPos() {
         return currentPos;
     }
 

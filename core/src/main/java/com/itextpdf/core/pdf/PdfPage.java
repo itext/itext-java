@@ -202,8 +202,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @throws PdfException in case any @see IOException.
      */
     public byte[] getStreamBytes(int index) throws PdfException {
-        PdfStream stream = getContentStream(index);
-        return stream.getBytes();
+        return getContentStream(index).getBytes();
     }
 
     /**

@@ -35,6 +35,7 @@ public class PdfException extends Exception {
     public static final String CannotConvertPdfArrayToRectanle = "cannot.convert.pdfarray.to.rectangle";
     public static final String CannotCopyFlushedObject = "cannot.copy.flushed.object";
     public static final String CannotCopyObjectContent = "cannot.copy.object.content";
+    public static final String CannotCreatePdfStreamByInputStreamWithoutPdfDocument = "cannot.create.pdfstream.by.inputstream.without.pdfdocument";
     public static final String CannotGetContentBytes = "cannot.get.content.bytes";
     public static final String CannotGetPdfStreamBytes = "cannot.get.pdfstream.bytes";
     public static final String CannotGetTiffImageColor = "cannot.get.tiff.image.color";

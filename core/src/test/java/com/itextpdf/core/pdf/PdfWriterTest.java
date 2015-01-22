@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -444,6 +445,44 @@ public class PdfWriterTest {
         com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
+    }
+
+    @Test
+    public void createPdfStreamByInputStream() throws IOException, PdfException {
+        String filename = destinationFolder + "createPdfStreamByInputStream.pdf";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        document.getInfo().setAuthor("Alexander Chingarev").
+                setCreator("iText 6").
+                setTitle("Empty iText 6 Document");
+        PdfPage page = document.addNewPage();
+        page.flush();
+
+        String streamContent = "Some text content with strange symbols ∞²";
+        PdfStream stream = new PdfStream(document, new ByteArrayInputStream(streamContent.getBytes()));
+        stream.flush();
+        int streamIndirectNumber = stream.getIndirectReference().getObjNr();
+        document.close();
+
+//        com.itextpdf.text.pdf.PdfReader reader = new PdfReader(filename);
+//        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+//        Assert.assertNotNull(reader.getPageN(1));
+//        String date = reader.getInfo().get("CreationDate");
+//        Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
+//        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
+//        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
+//        Assert.assertTrue(message, diff < 5000);
+//        reader.close();
+
+        com.itextpdf.core.pdf.PdfReader reader6 = new com.itextpdf.core.pdf.PdfReader(filename);
+        document = new PdfDocument(reader6);
+        Assert.assertEquals("Rebuilt", false, reader6.hasRebuiltXref());
+        Assert.assertEquals("Fixed", false, reader6.hasFixedXref());
+        PdfStream pdfStream = (PdfStream) document.getXref().get(streamIndirectNumber).getRefersTo();
+        Assert.assertArrayEquals("Stream by InputStream", streamContent.getBytes(), pdfStream.getBytes());
+        document.close();
     }
 
 }
