@@ -44,10 +44,16 @@ public class PdfCanvas {
     static final private byte[] Td = OutputStream.getIsoBytes("Td\n");
     static final private byte[] Tr = OutputStream.getIsoBytes("Tr\n");
     static final private byte[] w = OutputStream.getIsoBytes("w\n");
+    static final private byte[] W = OutputStream.getIsoBytes("W\n");
+    static final private byte[] WStar = OutputStream.getIsoBytes("W*\n");
     static final private byte[] J = OutputStream.getIsoBytes("J\n");
     static final private byte[] j = OutputStream.getIsoBytes("j\n");
     static final private byte[] M = OutputStream.getIsoBytes("M\n");
     static final private byte[] d = OutputStream.getIsoBytes("d\n");
+    static final private byte[] b = OutputStream.getIsoBytes("b\n");
+    static final private byte[] bStar = OutputStream.getIsoBytes("b*\n");
+    static final private byte[] B = OutputStream.getIsoBytes("B\n");
+    static final private byte[] BStar = OutputStream.getIsoBytes("B*\n");
     static final private byte[] ri = OutputStream.getIsoBytes("ri\n");
     static final private byte[] i = OutputStream.getIsoBytes("i\n");
     static final private byte[] h = OutputStream.getIsoBytes("h\n");
@@ -439,6 +445,18 @@ public class PdfCanvas {
     }
 
     /**
+     * Draws an ellipse inscribed within the rectangle x1,y1,x2,y2.
+     *
+     * @param x1 a corner of the enclosing rectangle
+     * @param y1 a corner of the enclosing rectangle
+     * @param x2 a corner of the enclosing rectangle
+     * @param y2 a corner of the enclosing rectangle
+     */
+    public PdfCanvas ellipse(final float x1, final float y1, final float x2, final float y2) throws PdfException {
+        return arc(x1, y1, x2, y2, 0f, 360f);
+    }
+
+    /**
      * Generates an array of bezier curves to draw an arc.
      * <p/>
      * (x1, y1) and (x2, y2) are the corners of the enclosing rectangle.
@@ -607,6 +625,26 @@ public class PdfCanvas {
     }
 
     /**
+     * Closes the path, fills it using the even-odd rule to determine the region to fill and strokes it.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas closePathEoFillStroke() throws PdfException {
+        contentStream.getOutputStream().writeBytes(bStar);
+        return this;
+    }
+
+    /**
+     * Closes the path, fills it using the non-zero winding number rule to determine the region to fill and strokes it.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas closePathFillStroke() throws PdfException {
+        contentStream.getOutputStream().writeBytes(b);
+        return this;
+    }
+
+    /**
      * Ends the path without filling or stroking it.
      *
      * @return current canvas.
@@ -623,6 +661,22 @@ public class PdfCanvas {
      */
     public PdfCanvas stroke() throws PdfException {
         contentStream.getOutputStream().writeBytes(S);
+        return this;
+    }
+
+    public PdfCanvas clip() throws PdfException {
+        contentStream.getOutputStream().writeBytes(W);
+        return this;
+    }
+
+    /**
+     * Modify the current clipping path by intersecting it with the current path, using the
+     * even-odd rule to determine which regions lie inside the clipping path.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas eoClip() throws PdfException {
+        contentStream.getOutputStream().writeBytes(WStar);
         return this;
     }
 
@@ -647,12 +701,32 @@ public class PdfCanvas {
     }
 
     /**
+     * Fills the path using the non-zero winding number rule to determine the region to fill and strokes it.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas fillStroke() throws PdfException {
+        contentStream.getOutputStream().writeBytes(B);
+        return this;
+    }
+
+    /**
      * EOFills current path.
      *
      * @return current canvas.
      */
     public PdfCanvas eoFill() throws PdfException {
         contentStream.getOutputStream().writeBytes(fStar);
+        return this;
+    }
+
+    /**
+     * Fills the path, using the even-odd rule to determine the region to fill and strokes it.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas eoFillStroke() throws PdfException {
+        contentStream.getOutputStream().writeBytes(BStar);
         return this;
     }
 
@@ -702,14 +776,79 @@ public class PdfCanvas {
         return this;
     }
 
-    public PdfCanvas setDashPattern(PdfArray dashPattern) throws PdfException {
-        if (dashPattern.equals(currentGs.getDashPattern()))
-            return this;
-        currentGs.setDashPattern(dashPattern);
-        PdfOutputStream out = contentStream.getOutputStream();
-        out.write(dashPattern.get(0)).writeSpace();
-        out.write(dashPattern.get(0)).writeBytes(d);
+    /**
+     * Changes the value of the <VAR>line dash pattern</VAR>.
+     * <P>
+     * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
+     * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
+     * of the alternating dashes and gaps. The phase specifies the distance into the dash
+     * pattern to start the dash.
+     *
+     * @param phase the value of the phase
+     */
+    public PdfCanvas setLineDash(final float phase) throws PdfException {
+        contentStream.getOutputStream().writeByte((byte)'[').writeByte((byte)']').writeSpace()
+                .writeFloat(phase).writeSpace()
+                .writeBytes(d);
         return this;
+    }
+
+    /**
+     * Changes the value of the <VAR>line dash pattern</VAR>.
+     * <P>
+     * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
+     * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
+     * of the alternating dashes and gaps. The phase specifies the distance into the dash
+     * pattern to start the dash.
+     *
+     * @param phase the value of the phase
+     * @param unitsOn the number of units that must be 'on' (equals the number of units that must be 'off').
+     */
+    public void setLineDash(final float unitsOn, final float phase) throws PdfException {
+        contentStream.getOutputStream().writeByte((byte)'[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
+                .writeFloat(phase).writeSpace()
+                .writeBytes(d);
+    }
+
+    /**
+     * Changes the value of the <VAR>line dash pattern</VAR>.
+     * <P>
+     * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
+     * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
+     * of the alternating dashes and gaps. The phase specifies the distance into the dash
+     * pattern to start the dash.
+     *
+     * @param phase the value of the phase
+     * @param unitsOn the number of units that must be 'on'
+     * @param unitsOff the number of units that must be 'off'
+     */
+    public void setLineDash(final float unitsOn, final float unitsOff, final float phase) throws PdfException {
+        contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeSpace()
+                .writeFloat(unitsOff).writeByte((byte) ']').writeSpace()
+                .writeFloat(phase).writeSpace()
+                .writeBytes(d);
+    }
+
+    /**
+     * Changes the value of the <VAR>line dash pattern</VAR>.
+     * <P>
+     * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
+     * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
+     * of the alternating dashes and gaps. The phase specifies the distance into the dash
+     * pattern to start the dash.
+     *
+     * @param array length of the alternating dashes and gaps
+     * @param phase the value of the phase
+     */
+    public final void setLineDash(final float[] array, final float phase) throws PdfException {
+        PdfOutputStream out = contentStream.getOutputStream();
+        out.writeByte((byte) '[');
+        for (int i = 0; i < array.length; i++) {
+            out.writeFloat(array[i]);
+            if (i < array.length - 1)
+                out.writeSpace();
+        }
+        out.writeByte((byte) ']').writeSpace().writeFloat(phase).writeSpace().writeBytes(d);
     }
 
     public PdfCanvas setRenderingIntent(PdfName renderingIntent) throws PdfException {
@@ -793,6 +932,24 @@ public class PdfCanvas {
         return setColor(gray, new float[]{g}, false);
     }
 
+    /**
+     * Changes the current color for filling paths to black.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas resetFillColorGray() throws PdfException {
+        return setFillColorGray(0);
+    }
+
+    /**
+     * Changes the current color for stroking paths to black.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas resetStrokeColorGray() throws PdfException {
+        return setStrokeColorGray(0);
+    }
+
     public PdfCanvas setFillColorRgb(float r, float g, float b) throws PdfException {
         return setColor(rgb, new float[]{r, g, b}, true);
     }
@@ -801,12 +958,49 @@ public class PdfCanvas {
         return setColor(rgb, new float[]{r, g, b}, false);
     }
 
+    /**
+     * Changes the current color for filling paths to black.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas resetFillColorRgb() throws PdfException {
+        return resetFillColorGray();
+    }
+
+    /**
+     * Changes the current color for stroking paths to black.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas resetStrokeColorRgb() throws PdfException {
+        return resetStrokeColorGray();
+    }
+
+
     public PdfCanvas setFillColorCmyk(float c, float m, float y, float k) throws PdfException {
         return setColor(cmyk, new float[]{c, m, y, k}, true);
     }
 
     public PdfCanvas setStrokeColorCmyk(float c, float m, float y, float k) throws PdfException {
         return setColor(cmyk, new float[]{c, m, y, k}, false);
+    }
+
+    /**
+     * Changes the current color for filling paths to black.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas resetFillColorCmyk() throws PdfException {
+        return setFillColorCmyk(0,0,0,1);
+    }
+
+    /**
+     * Changes the current color for stroking paths to black.
+     *
+     * @return current canvas.
+     */
+    public PdfCanvas resetStrokeColorCmyk() throws PdfException {
+        return setStrokeColorCmyk(0,0,0,1);
     }
 
     /**
