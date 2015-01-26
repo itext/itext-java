@@ -42,7 +42,10 @@ public class PdfCanvas {
     static final private byte[] Tj = OutputStream.getIsoBytes("Tj\n");
     static final private byte[] Tm = OutputStream.getIsoBytes("Tm\n");
     static final private byte[] Td = OutputStream.getIsoBytes("Td\n");
+    static final private byte[] Tc = OutputStream.getIsoBytes("Tc\n");
     static final private byte[] Tr = OutputStream.getIsoBytes("Tr\n");
+    static final private byte[] Ts = OutputStream.getIsoBytes("Ts\n");
+    static final private byte[] Tw = OutputStream.getIsoBytes("Tw\n");
     static final private byte[] w = OutputStream.getIsoBytes("w\n");
     static final private byte[] W = OutputStream.getIsoBytes("W\n");
     static final private byte[] WStar = OutputStream.getIsoBytes("W*\n");
@@ -266,6 +269,50 @@ public class PdfCanvas {
         contentStream.getOutputStream()
                 .writeInteger(textRenderingMode).writeSpace()
                 .writeBytes(Tr);
+        return this;
+    }
+
+    /**
+     * Sets the text rise parameter.
+     * <P>
+     * This allows to write text in subscript or superscript mode.</P>
+     *
+     * @param textRise a parameter
+     * @return current canvas.
+     */
+    public PdfCanvas setTextRise(final float textRise) throws PdfException {
+        currentGs.setTextRise(textRise);
+        contentStream.getOutputStream()
+                .writeFloat(textRise).writeSpace()
+                .writeBytes(Ts);
+        return this;
+    }
+
+    /**
+     * Sets the word spacing parameter.
+     *
+     * @param wordSpacing a parameter
+     * @return current canvas.
+     */
+    public PdfCanvas setWordSpacing(final float wordSpacing) throws PdfException {
+        currentGs.setWordSpacing(wordSpacing);
+        contentStream.getOutputStream()
+                .writeFloat(wordSpacing).writeSpace()
+                .writeBytes(Tw);
+        return this;
+    }
+
+    /**
+     * Sets the character spacing parameter.
+     *
+     * @param charSpacing a parameter
+     * @return current canvas.
+     */
+    public PdfCanvas setCharacterSpacing(final float charSpacing) throws PdfException {
+        currentGs.setCharacterSpacing(charSpacing);
+        contentStream.getOutputStream()
+                .writeFloat(charSpacing).writeSpace()
+                .writeBytes(Tc);
         return this;
     }
 
@@ -861,6 +908,15 @@ public class PdfCanvas {
         return this;
     }
 
+    /**
+     * Changes the <VAR>Flatness</VAR>.
+     * <P>
+     * <VAR>Flatness</VAR> sets the maximum permitted distance in device pixels between the
+     * mathematically correct path and an approximation constructed from straight line segments.<BR>
+     *
+     * @param flatnessTolerance a value
+     * @return current canvas.
+     */
     public PdfCanvas setFlatnessTolerance(float flatnessTolerance) throws PdfException {
         if (floatsAreEqual(currentGs.getFlatnessTolerance(), flatnessTolerance))
             return this;
@@ -1161,7 +1217,7 @@ public class PdfCanvas {
      * @param width
      * @param asInline true if to add image as in-line.
      * @return created Image XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
+     * @throws PdfException on error.
      */
     public PdfImageXObject addImage(Image image, float x, float y, float width, boolean asInline) throws PdfException {
         return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y, asInline);
@@ -1176,7 +1232,7 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return
-     * @throws PdfException
+     * @throws PdfException on error.
      */
     public PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) throws PdfException {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
@@ -1260,6 +1316,36 @@ public class PdfCanvas {
         return endMarkedContent();
     }
 
+    /**
+     * Outputs a {@code String} directly to the content.
+     * @param s the {@code String}
+     * @return current canvas.
+     */
+    public PdfCanvas setLiteral(final String s) throws PdfException {
+        contentStream.getOutputStream().writeString(s);
+        return this;
+    }
+
+    /**
+     * Outputs a {@code char} directly to the content.
+     * @param c the {@code char}
+     * @return current canvas.
+     */
+    public PdfCanvas setLiteral(final char c) throws PdfException {
+        contentStream.getOutputStream().writeInteger((int) c);
+        return this;
+    }
+
+    /**
+     * Outputs a {@code float} directly to the content.
+     * @param n the {@code float}
+     * @return current canvas.
+     */
+    public PdfCanvas setLiteral(final float n) throws PdfException {
+        contentStream.getOutputStream().writeFloat(n);
+        return this;
+    }
+
     static private boolean floatsAreEqual(Float f1, Float f2) {
         if (f1 == null && f2 == null)
             return true;
@@ -1280,7 +1366,7 @@ public class PdfCanvas {
 
 
     /**
-     * A helper to insert into the content stream the <code>text</code>
+     * A helper to insert into the content stream the {@code text}
      * converted to bytes according to the font's encoding.
      *
      * @param text the text to write.
@@ -1291,6 +1377,4 @@ public class PdfCanvas {
         byte b[] = PdfEncodings.convertToBytes(text, PdfEncodings.WINANSI);
         Utilities.writeEscapedString(contentStream.getOutputStream(), b);
     }
-
-
 }

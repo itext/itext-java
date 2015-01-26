@@ -45,6 +45,9 @@ public class PdfGraphicsState {
     private Color fillColor = DeviceGray.Black;
     private Color strokeColor = DeviceGray.Black;
     private Integer textRenderingMode;
+    private Float textRise;
+    private Float wordSpacing;
+    private Float characterSpacing;
 
     public PdfGraphicsState() {
 
@@ -236,11 +239,35 @@ public class PdfGraphicsState {
         this.textRenderingMode = textRenderingMode;
     }
 
+    public Float getTextRise() {
+        return textRise;
+    }
+
+    public void setTextRise(Float textRise) {
+        this.textRise = textRise;
+    }
+
     public Float getFlatnessTolerance() {
         return flatnessTolerance;
     }
 
     public void setFlatnessTolerance(Float flatnessTolerance) {
         this.flatnessTolerance = flatnessTolerance;
+    }
+
+    public void setWordSpacing(Float wordSpacing) {
+        this.wordSpacing = wordSpacing;
+    }
+
+    public float getWordSpacing() {
+        return wordSpacing;
+    }
+
+    public void setCharacterSpacing(Float characterSpacing) {
+        this.characterSpacing = characterSpacing;
+    }
+
+    public Float getCharacterSpacing() {
+        return characterSpacing;
     }
 }
