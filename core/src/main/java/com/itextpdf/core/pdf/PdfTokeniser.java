@@ -274,6 +274,7 @@ public class PdfTokeniser {
 
     public boolean nextToken() throws PdfException, IOException {
         int ch;
+        outBuf.reset();
         do {
             ch = file.read();
         } while (ch != -1 && isWhitespace(ch));
@@ -291,7 +292,6 @@ public class PdfTokeniser {
                 break;
             }
             case '/': {
-                outBuf.reset();
                 type = TokenType.Name;
                 while (true) {
                     ch = file.read();
@@ -315,7 +315,6 @@ public class PdfTokeniser {
                     type = TokenType.StartDic;
                     break;
                 }
-                outBuf.reset();
                 type = TokenType.String;
                 hexString = true;
                 int v2 = 0;
@@ -352,7 +351,6 @@ public class PdfTokeniser {
                 break;
             }
             case '(': {
-                outBuf.reset();
                 type = TokenType.String;
                 hexString = false;
                 int nesting = 0;
@@ -379,7 +377,6 @@ public class PdfTokeniser {
                 break;
             }
             default: {
-                outBuf.reset();
                 if (ch == '-' || ch == '+' || ch == '.' || (ch >= '0' && ch <= '9')) {
                     type = TokenType.Number;
                     if (ch == '-') {
