@@ -80,7 +80,7 @@ public class PdfDocument implements IEventDispatcher {
 
     protected PdfStructTreeRoot structTreeRoot;
 
-    protected int structParentIndex = 0;
+    protected Integer structParentIndex = null;
 
     /**
      * Open PDF document in reading mode.
@@ -581,11 +581,16 @@ public class PdfDocument implements IEventDispatcher {
             catalog.getPdfObject().put(PdfName.MarkInfo, new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
                 put(PdfName.Marked, PdfBoolean.PdfTrue);
             }}));
+            structParentIndex = new Integer(0);
         }
     }
 
     public PdfStructTreeRoot getStructTreeRoot() {
         return structTreeRoot;
+    }
+
+    public Integer getNextStructParentIndex() {
+        return structParentIndex++;
     }
 
     /**
@@ -602,8 +607,10 @@ public class PdfDocument implements IEventDispatcher {
                 catalog = new PdfCatalog((PdfDictionary) trailer.getPdfObject().get(PdfName.Root, true), this);
                 info = new PdfDocumentInfo((PdfDictionary) trailer.getPdfObject().get(PdfName.Info, true), this);
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
-                if (str != null)
+                if (str != null) {
                     structTreeRoot = new PdfStructTreeRoot(str, this);
+                    structParentIndex = structTreeRoot.flattenNums() + 1;
+                }
                 if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }

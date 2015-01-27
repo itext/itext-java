@@ -26,8 +26,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject, pdfDocument);
         if (pdfDocument.isTagged()) {
             PdfNumber structParents = getPdfObject().getAsNumber(PdfName.StructParents);
-            if (structParents != null)
+            if (structParents != null) {
                 structParentIndex = structParents.getIntValue();
+                mcid = getMcid();
+            }
         }
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
@@ -148,6 +150,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage copy(PdfDocument pdfDocument) throws PdfException {
         PdfDictionary dictionary = getPdfObject().copy(pdfDocument, new ArrayList<PdfName>() {{
             add(PdfName.Parent);
+            add(PdfName.StructParents);
         }}, true);
         return new PdfPage(dictionary, pdfDocument);
     }
@@ -242,6 +245,31 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             array.add(contentStream);
         }
         return contentStream;
+    }
+
+    private int getMcid() throws PdfException {
+        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(structParentIndex, true);
+        int maxMcid = 0;
+        for (int i = 0; i < numsBranch.size(); i++) {
+            PdfDictionary elem = numsBranch.getAsDictionary(i);
+            if (elem != null && elem.containsKey(PdfName.Pg)) {
+                PdfObject k = elem.get(PdfName.K);
+                if (k instanceof PdfNumber && ((PdfNumber) k).getIntValue() > maxMcid)
+                    maxMcid = ((PdfNumber) k).getIntValue();
+                else if (k instanceof PdfArray) {
+                    for (PdfObject o : (PdfArray) k) {
+                        if (o instanceof PdfNumber && ((PdfNumber) o).getIntValue() > maxMcid)
+                            maxMcid = ((PdfNumber) o).getIntValue();
+                        else if (o instanceof PdfDictionary && PdfName.MCR.equals(((PdfDictionary) o).getAsName(PdfName.Type))) {
+                            PdfNumber mcid = ((PdfDictionary) o).getAsNumber(PdfName.MCID);
+                            if (mcid != null && mcid.getIntValue() > maxMcid)
+                                maxMcid = mcid.getIntValue();
+                        }
+                    }
+                }
+            }
+        }
+        return maxMcid + 1;
     }
 
 }

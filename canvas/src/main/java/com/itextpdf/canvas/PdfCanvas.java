@@ -2,10 +2,10 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
@@ -13,6 +13,7 @@ import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagging.PdfArtifact;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
@@ -1082,12 +1083,12 @@ public class PdfCanvas {
      * Adds Image XObject to canvas.
      *
      * @param image the {@code PdfImageXObject} object
-     * @param a an element of the transformation matrix
-     * @param b an element of the transformation matrix
-     * @param c an element of the transformation matrix
-     * @param d an element of the transformation matrix
-     * @param e an element of the transformation matrix
-     * @param f an element of the transformation matrix
+     * @param a     an element of the transformation matrix
+     * @param b     an element of the transformation matrix
+     * @param c     an element of the transformation matrix
+     * @param d     an element of the transformation matrix
+     * @param e     an element of the transformation matrix
+     * @param f     an element of the transformation matrix
      * @return canvas a reference to this object.
      * @throws PdfException on error
      */
@@ -1104,13 +1105,13 @@ public class PdfCanvas {
     /**
      * Creates Image XObject from image and adds it to canvas.
      *
-     * @param image the {@code PdfImageXObject} object
-     * @param a an element of the transformation matrix
-     * @param b an element of the transformation matrix
-     * @param c an element of the transformation matrix
-     * @param d an element of the transformation matrix
-     * @param e an element of the transformation matrix
-     * @param f an element of the transformation matrix
+     * @param image    the {@code PdfImageXObject} object
+     * @param a        an element of the transformation matrix
+     * @param b        an element of the transformation matrix
+     * @param c        an element of the transformation matrix
+     * @param d        an element of the transformation matrix
+     * @param e        an element of the transformation matrix
+     * @param f        an element of the transformation matrix
      * @param asInline true if to add image as in-line.
      * @return created Image XObject or null in case of in-line image (asInline = true).
      * @throws PdfException on error
@@ -1307,6 +1308,8 @@ public class PdfCanvas {
     public PdfCanvas openTag(final IPdfTag tag) throws PdfException {
         if (tag.getRole() == null)
             return this;
+        if ((tag.getStructParentIndex() == null) && !(tag instanceof PdfArtifact))
+            throw new PdfException(PdfException.StructureElementIsNotLinkedToStructParent, tag);
         return beginMarkedContent(tag.getRole(), tag.getMcid() == null ? null : new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
             put(PdfName.MCID, new PdfNumber(tag.getMcid()));
         }}));

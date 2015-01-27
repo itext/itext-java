@@ -2,7 +2,6 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.color.*;
-import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
@@ -13,9 +12,6 @@ import com.itextpdf.core.pdf.tagging.PdfMcr;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,7 +58,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        PdfDictionary page = reader.getPageN(1);
+        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
     }
@@ -140,7 +136,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        PdfDictionary page = reader.getPageN(1);
+        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
     }
@@ -226,7 +222,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        PdfDictionary page = reader.getPageN(1);
+        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
     }
@@ -258,7 +254,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        PdfDictionary page = reader.getPageN(1);
+        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
     }
@@ -290,7 +286,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        PdfDictionary page = reader.getPageN(1);
+        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
     }
@@ -323,7 +319,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        PdfDictionary page = reader.getPageN(1);
+        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         reader.close();
     }
@@ -368,7 +364,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = reader.getPageN(i);
+            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
         reader.close();
@@ -414,7 +410,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = reader.getPageN(i);
+            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
         reader.close();
@@ -460,7 +456,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = reader.getPageN(i);
+            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
         reader.close();
@@ -505,7 +501,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = reader.getPageN(i);
+            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
         reader.close();
@@ -552,7 +548,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = reader.getPageN(i);
+            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
         reader.close();
@@ -599,7 +595,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = reader.getPageN(i);
+            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
         reader.close();
@@ -646,7 +642,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = reader.getPageN(i);
+            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
         reader.close();
@@ -693,7 +689,7 @@ public class PdfCanvasTest {
         Assert.assertEquals("Title", title, info.get("Title"));
         Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = reader.getPageN(i);
+            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
             Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
         }
         reader.close();
@@ -728,10 +724,10 @@ public class PdfCanvasTest {
         pdfDoc1.close();
         pdfDoc2.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "copyPages1_2.pdf");
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages1_2.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertNotNull(page.get(PdfName.PARENT));
+        Assert.assertNotNull(page.get(com.itextpdf.text.pdf.PdfName.PARENT));
         reader.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "copyPages1_1.pdf", destinationFolder + "copyPages1_2.pdf", destinationFolder, "diff_"));
     }
@@ -766,19 +762,19 @@ public class PdfCanvasTest {
         pdfDoc1.close();
         pdfDoc2.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "copyPages2_2.pdf");
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages2_2.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertNotNull(page.get(PdfName.PARENT));
+        Assert.assertNotNull(page.get(com.itextpdf.text.pdf.PdfName.PARENT));
         reader.close();
 
         CompareTool cmpTool = new CompareTool();
-        PdfReader reader1 = new PdfReader(destinationFolder + "copyPages2_1.pdf");
-        PdfReader reader2 = new PdfReader(destinationFolder + "copyPages2_2.pdf");
+        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages2_1.pdf");
+        com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages2_2.pdf");
 
         for (int i = 0; i < 10; i++) {
-            PdfDictionary page1 = reader1.getPageN(i + 1);
-            PdfDictionary page2 = reader2.getPageN(10 - i);
+            com.itextpdf.text.pdf.PdfDictionary page1 = reader1.getPageN(i + 1);
+            com.itextpdf.text.pdf.PdfDictionary page2 = reader2.getPageN(10 - i);
             Assert.assertTrue(cmpTool.compareDictionaries(page1, page2));
         }
 
@@ -818,13 +814,13 @@ public class PdfCanvasTest {
 
 
         CompareTool cmpTool = new CompareTool();
-        PdfReader reader1 = new PdfReader(destinationFolder + "copyPages3_1.pdf");
+        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages3_1.pdf");
         Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
-        PdfDictionary p1 = reader1.getPageN(1);
-        PdfReader reader2 = new PdfReader(destinationFolder + "copyPages3_2.pdf");
+        com.itextpdf.text.pdf.PdfDictionary p1 = reader1.getPageN(1);
+        com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages3_2.pdf");
         Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
         for (int i = 0; i < 10; i++) {
-            PdfDictionary p2 = reader2.getPageN(i + 1);
+            com.itextpdf.text.pdf.PdfDictionary p2 = reader2.getPageN(i + 1);
             Assert.assertTrue(cmpTool.compareDictionaries(p1, p2));
         }
         reader1.close();
@@ -863,13 +859,13 @@ public class PdfCanvasTest {
 
 
         CompareTool cmpTool = new CompareTool();
-        PdfReader reader1 = new PdfReader(destinationFolder + "copyPages4_1.pdf");
+        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages4_1.pdf");
         Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
 
         for (int i = 0; i < 5; i++) {
-            PdfDictionary page1 = reader1.getPageN(i + 1);
-            PdfReader reader2 = new PdfReader(destinationFolder + String.format("copyPages4_%d.pdf", i + 2));
-            PdfDictionary page = reader2.getPageN(1);
+            com.itextpdf.text.pdf.PdfDictionary page1 = reader1.getPageN(i + 1);
+            com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + String.format("copyPages4_%d.pdf", i + 2));
+            com.itextpdf.text.pdf.PdfDictionary page = reader2.getPageN(1);
             Assert.assertTrue(cmpTool.compareDictionaries(page1, page));
             reader2.close();
         }
@@ -913,12 +909,12 @@ public class PdfCanvasTest {
 
         CompareTool cmpTool = new CompareTool();
         for (int i = 0; i < 3; i++) {
-            PdfReader reader1 = new PdfReader(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
+            com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
             Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
-            PdfReader reader2 = new PdfReader(destinationFolder + "copyPages5_4.pdf");
+            com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages5_4.pdf");
             Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
-            PdfDictionary page1 = reader1.getPageN(1);
-            PdfDictionary page2 = reader2.getPageN(i + 1);
+            com.itextpdf.text.pdf.PdfDictionary page1 = reader1.getPageN(1);
+            com.itextpdf.text.pdf.PdfDictionary page2 = reader2.getPageN(i + 1);
             Assert.assertTrue(cmpTool.compareDictionaries(page1, page2));
             reader1.close();
             reader2.close();
@@ -962,11 +958,11 @@ public class PdfCanvasTest {
 
         CompareTool cmpTool = new CompareTool();
         for (int i = 0; i < 3; i++) {
-            PdfReader reader1 = new PdfReader(destinationFolder + "copyPages6_1.pdf");
+            com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages6_1.pdf");
             Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
-            PdfReader reader2 = new PdfReader(destinationFolder + "copyPages6_2.pdf");
+            com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages6_2.pdf");
             Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
-            PdfReader reader3 = new PdfReader(destinationFolder + "copyPages6_3.pdf");
+            com.itextpdf.text.pdf.PdfReader reader3 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages6_3.pdf");
             Assert.assertEquals("Rebuilt", false, reader3.isRebuilt());
             Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(1), reader1.getPageN(2)));
             Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(2), reader2.getPageN(1)));
@@ -1276,7 +1272,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void tagginTest01() throws Exception {
+    public void taggingTest01() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest01.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
@@ -1297,7 +1293,7 @@ public class PdfCanvasTest {
         canvas.openTag(span1);
         canvas.showText("Hello ");
         canvas.closeTag(span1);
-        PdfMcr span1_1 = new PdfMcr(page, com.itextpdf.core.pdf.PdfName.Span);
+        PdfMcr span1_1 = new PdfMcr(page, span1);
         span1.addKid(span1_1);
         canvas.openTag(span1_1);
         canvas.showText("World");
@@ -1333,7 +1329,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void tagginTest02() throws Exception {
+    public void taggingTest02() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
@@ -1356,7 +1352,7 @@ public class PdfCanvasTest {
         canvas.showText("Hello ");
         canvas.closeTag(span1);
         PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
-        span1.addKid(span2);
+        paragraph.addKid(span2);
         canvas.openTag(span2);
         canvas.showText("World");
         canvas.closeTag(span2);
@@ -1367,6 +1363,71 @@ public class PdfCanvasTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest02.pdf", sourceFolder + "cmp_taggingTest02.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void taggingTest03() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos);
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        document.getStructTreeRoot().getRoleMap().put(new com.itextpdf.core.pdf.PdfName("Chunk"), com.itextpdf.core.pdf.PdfName.Span);
+        PdfStructElem doc = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document);
+        document.getStructTreeRoot().addKid(doc);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        PdfStructElem paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
+        doc.addKid(paragraph);
+        PdfStructElem span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
+        paragraph.addKid(span1);
+        canvas.openTag(span1);
+        canvas.showText("Hello ");
+        canvas.closeTag(span1);
+        PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
+        paragraph.addKid(span2);
+        canvas.openTag(span2);
+        canvas.showText("World");
+        canvas.closeTag(span2);
+        canvas.endText();
+        canvas.release();
+        page.flush();
+
+        page = document.addNewPage();
+        canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Helvetica), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
+        doc.addKid(paragraph);
+        span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
+        paragraph.addKid(span1);
+        canvas.openTag(span1);
+        canvas.showText("Hello ");
+        canvas.closeTag(span1);
+        span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
+        paragraph.addKid(span2);
+        canvas.openTag(span2);
+        canvas.showText("World");
+        canvas.closeTag(span2);
+        canvas.endText();
+        canvas.release();
+        page.flush();
+
+        document.close();
+        byte[] bytes = baos.toByteArray();
+
+        com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new ByteArrayInputStream(bytes));
+        document = new PdfDocument(reader);
+        Assert.assertEquals(2, document.getNextStructParentIndex().intValue());
+        PdfPage page1 = document.getPage(1);
+        Assert.assertEquals(0, page1.getStructParentIndex().intValue());
+        Assert.assertEquals(2, page1.getNextMcid());
+        document.close();
     }
 
 

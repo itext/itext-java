@@ -164,7 +164,9 @@ public class PdfDictionary extends PdfObject {
     public PdfDictionary copy(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) throws PdfException {
         Map<PdfName, PdfObject> excluded = new TreeMap<PdfName, PdfObject>();
         for (PdfName key : excludeKeys) {
-            excluded.put(key, map.remove(key));
+            PdfObject obj = map.get(key);
+            if (obj != null)
+                excluded.put(key, map.remove(key));
         }
         PdfDictionary dictionary = copy(document, allowDuplicating);
         map.putAll(excluded);

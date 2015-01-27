@@ -104,6 +104,8 @@ public class PdfException extends Exception {
     public static final String IncorrectNumberOfComponents = "incorrect.number.of.components";
 
     public static final String InfiniteIndirectReferenceChain = "infinite.indirect.reference.chain";
+    public static final String InlineLevelOrIllustrationElementCannotContainKids = "inline.level.or.illustration.element.cannot.contain.kids";
+
     public static final String InvalidBmpFileCompression = "invalid.bmp.file.compression";
     public static final String InvalidCodeEncountered = "invalid.code.encountered";
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData = "invalid.code.encountered.while.decoding.2d.group.3.compressed.data";
@@ -147,6 +149,7 @@ public class PdfException extends Exception {
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
     public static final String StreamCouldNotBeCompressedFilterIsNotANameOrArray = "stream.could.not.be.compressed.filter.is.not.a.name.or.array";
+    public static final String StructureElementIsNotLinkedToStructParent = "structure.element.is.not.linked.to.structparent";
     public static final String StructureElementShallContainPgKey = "structure.element.shall.contain.pg.key";
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
