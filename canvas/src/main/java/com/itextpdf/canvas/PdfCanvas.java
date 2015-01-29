@@ -113,7 +113,7 @@ public class PdfCanvas {
      * @param page page to create canvas from.
      */
     public PdfCanvas(PdfPage page) throws PdfException {
-        this(page.getContentStream(page.getContentStreamCount() - 1), page.getResources());
+        this(getPageStream(page), page.getResources());
     }
 
     public PdfCanvas(PdfFormXObject xObj) throws PdfException {
@@ -275,7 +275,7 @@ public class PdfCanvas {
 
     /**
      * Sets the text rise parameter.
-     * <P>
+     * <p/>
      * This allows to write text in subscript or superscript mode.</P>
      *
      * @param textRise a parameter
@@ -826,7 +826,7 @@ public class PdfCanvas {
 
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
-     * <P>
+     * <p/>
      * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
      * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
@@ -835,7 +835,7 @@ public class PdfCanvas {
      * @param phase the value of the phase
      */
     public PdfCanvas setLineDash(final float phase) throws PdfException {
-        contentStream.getOutputStream().writeByte((byte)'[').writeByte((byte)']').writeSpace()
+        contentStream.getOutputStream().writeByte((byte) '[').writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
         return this;
@@ -843,31 +843,31 @@ public class PdfCanvas {
 
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
-     * <P>
+     * <p/>
      * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
      * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
      * pattern to start the dash.
      *
-     * @param phase the value of the phase
+     * @param phase   the value of the phase
      * @param unitsOn the number of units that must be 'on' (equals the number of units that must be 'off').
      */
     public void setLineDash(final float unitsOn, final float phase) throws PdfException {
-        contentStream.getOutputStream().writeByte((byte)'[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
+        contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
     }
 
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
-     * <P>
+     * <p/>
      * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
      * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
      * pattern to start the dash.
      *
-     * @param phase the value of the phase
-     * @param unitsOn the number of units that must be 'on'
+     * @param phase    the value of the phase
+     * @param unitsOn  the number of units that must be 'on'
      * @param unitsOff the number of units that must be 'off'
      */
     public void setLineDash(final float unitsOn, final float unitsOff, final float phase) throws PdfException {
@@ -879,7 +879,7 @@ public class PdfCanvas {
 
     /**
      * Changes the value of the <VAR>line dash pattern</VAR>.
-     * <P>
+     * <p/>
      * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
      * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
@@ -911,7 +911,7 @@ public class PdfCanvas {
 
     /**
      * Changes the <VAR>Flatness</VAR>.
-     * <P>
+     * <p/>
      * <VAR>Flatness</VAR> sets the maximum permitted distance in device pixels between the
      * mathematically correct path and an approximation constructed from straight line segments.<BR>
      *
@@ -1048,7 +1048,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas resetFillColorCmyk() throws PdfException {
-        return setFillColorCmyk(0,0,0,1);
+        return setFillColorCmyk(0, 0, 0, 1);
     }
 
     /**
@@ -1057,7 +1057,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas resetStrokeColorCmyk() throws PdfException {
-        return setStrokeColorCmyk(0,0,0,1);
+        return setStrokeColorCmyk(0, 0, 0, 1);
     }
 
     /**
@@ -1321,6 +1321,7 @@ public class PdfCanvas {
 
     /**
      * Outputs a {@code String} directly to the content.
+     *
      * @param s the {@code String}
      * @return current canvas.
      */
@@ -1331,6 +1332,7 @@ public class PdfCanvas {
 
     /**
      * Outputs a {@code char} directly to the content.
+     *
      * @param c the {@code char}
      * @return current canvas.
      */
@@ -1341,6 +1343,7 @@ public class PdfCanvas {
 
     /**
      * Outputs a {@code float} directly to the content.
+     *
      * @param n the {@code float}
      * @return current canvas.
      */
@@ -1367,6 +1370,10 @@ public class PdfCanvas {
             return Integer.compare(i1, i2) == 0;
     }
 
+    private static PdfStream getPageStream(PdfPage page) throws PdfException {
+        PdfStream stream = page.getContentStream(page.getContentStreamCount() - 1);
+        return stream.getOutputStream() == null ? page.newContentStreamAfter() : stream;
+    }
 
     /**
      * A helper to insert into the content stream the {@code text}

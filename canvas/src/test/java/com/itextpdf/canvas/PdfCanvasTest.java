@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
+import com.itextpdf.core.pdf.tagging.IPdfStructElem;
 import com.itextpdf.core.pdf.tagging.PdfMcr;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.testutils.CompareTool;
@@ -1428,6 +1429,69 @@ public class PdfCanvasTest {
         Assert.assertEquals(0, page1.getStructParentIndex().intValue());
         Assert.assertEquals(2, page1.getNextMcid());
         document.close();
+    }
+
+    @Test
+    public void taggingTest04() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos);
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        document.getStructTreeRoot().getRoleMap().put(new com.itextpdf.core.pdf.PdfName("Chunk"), com.itextpdf.core.pdf.PdfName.Span);
+        PdfStructElem doc = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document);
+        document.getStructTreeRoot().addKid(doc);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        PdfStructElem paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
+        doc.addKid(paragraph);
+        PdfStructElem span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
+        paragraph.addKid(span1);
+        canvas.openTag(span1);
+        canvas.showText("Hello ");
+        canvas.closeTag(span1);
+        PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
+        paragraph.addKid(span2);
+        canvas.openTag(span2);
+        canvas.showText("World");
+        canvas.closeTag(span2);
+        canvas.endText();
+        canvas.release();
+        page.flush();
+
+        document.close();
+        byte[] bytes = baos.toByteArray();
+
+        com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new ByteArrayInputStream(bytes));
+        writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest04.pdf"));
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        document = new PdfDocument(reader, writer);
+
+        page = document.getPage(1);
+        canvas = new PdfCanvas(page);
+
+        IPdfStructElem structElem = page.getLastStructElem();
+
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 490);
+        span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
+        ((PdfStructElem)structElem.getParent()).addKid(span1);
+        canvas.openTag(span1);
+        canvas.showText("text1");
+        canvas.closeTag(span1);
+        canvas.endText();
+
+        canvas.release();
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest04.pdf", sourceFolder + "cmp_taggingTest04.pdf", destinationFolder, "diff_"));
     }
 
 

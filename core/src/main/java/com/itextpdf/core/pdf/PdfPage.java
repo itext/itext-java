@@ -4,6 +4,8 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.core.pdf.tagging.IPdfStructElem;
+import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;
 import com.itextpdf.core.xmp.XMPMetaFactory;
@@ -12,6 +14,7 @@ import com.itextpdf.core.xmp.options.SerializeOptions;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
@@ -20,14 +23,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private PdfResources resources = null;
     private int mcid = 0;
-    private Integer structParentIndex = null;
+//    private Integer structParentIndex = null;
 
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
         if (pdfDocument.isTagged()) {
             PdfNumber structParents = getPdfObject().getAsNumber(PdfName.StructParents);
             if (structParents != null) {
-                structParentIndex = structParents.getIntValue();
+//                structParentIndex = structParents.getIntValue();
                 mcid = getMcid();
             }
         }
@@ -41,7 +44,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Type, PdfName.Page);
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
         if (pdfDocument.isTagged()) {
-            structParentIndex = pdfDocument.structParentIndex++;
+            Integer structParentIndex = pdfDocument.structParentIndex++;
             getPdfObject().put(PdfName.StructParents, new PdfNumber(structParentIndex));
         }
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
@@ -218,8 +221,42 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return mcid++;
     }
 
-    public Integer getStructParentIndex() {
-        return structParentIndex;
+    public Integer getStructParentIndex() throws PdfException {
+        PdfNumber spi = getPdfObject().getAsNumber(PdfName.StructParents);
+        return spi == null ? null : spi.getIntValue();
+    }
+
+    /**
+     * Gets a list of StructElems which belong to the page.
+     *
+     * @return
+     * @throws PdfException
+     */
+    public List<IPdfStructElem> getStructElems() throws PdfException {
+        if (getDocument().getStructTreeRoot() == null)
+            return null;
+        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(getStructParentIndex());
+        if (numsBranch == null || numsBranch.isEmpty())
+            return null;
+        List<IPdfStructElem> list = new ArrayList<IPdfStructElem>();
+        for (int i = 0; i < numsBranch.size(); i++)
+            list.add(new PdfStructElem(numsBranch.getAsDictionary(i), getDocument()));
+        return list;
+    }
+
+    /**
+     * Gets last StructElem of the page.
+     *
+     * @return
+     * @throws PdfException
+     */
+    public IPdfStructElem getLastStructElem() throws PdfException {
+        if (getDocument().getStructTreeRoot() == null)
+            return null;
+        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(getStructParentIndex());
+        if (numsBranch == null || numsBranch.isEmpty())
+            return null;
+        return new PdfStructElem(numsBranch.getAsDictionary(numsBranch.size() - 1), getDocument());
     }
 
     protected void makeIndirect(PdfDocument pdfDocument) throws PdfException {
@@ -248,7 +285,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private int getMcid() throws PdfException {
-        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(structParentIndex);
+        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(getStructParentIndex());
         int maxMcid = 0;
         for (int i = 0; i < numsBranch.size(); i++) {
             PdfDictionary elem = numsBranch.getAsDictionary(i);

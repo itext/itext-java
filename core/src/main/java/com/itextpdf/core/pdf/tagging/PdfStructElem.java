@@ -83,6 +83,12 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     public PdfStructElem(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
+        PdfDictionary pg = getPdfObject().getAsDictionary(PdfName.Pg);
+        if (pg != null) {
+            PdfNumber spi = pg.getAsNumber(PdfName.StructParents);
+            if (spi != null)
+                structParentIndex = spi.getIntValue();
+        }
         PdfName role = getPdfObject().getAsName(PdfName.S);
         type = getType(role);
     }
@@ -94,9 +100,11 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public PdfStructElem(PdfDocument document, PdfName role, PdfPage page) throws PdfException {
         this(document, role, page.getNextMcid());
         getPdfObject().put(PdfName.Pg, page.getPdfObject());
-        PdfNumber structParents = page.getPdfObject().getAsNumber(PdfName.StructParents);
-        if (structParents != null)
-            structParentIndex = structParents.getIntValue();
+        if (structParentIndex == null) {
+            PdfNumber structParents = page.getPdfObject().getAsNumber(PdfName.StructParents);
+            if (structParents != null)
+                structParentIndex = structParents.getIntValue();
+        }
     }
 
     private PdfStructElem(PdfDocument document, final PdfName role, final int mcid) throws PdfException {
