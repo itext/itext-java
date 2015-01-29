@@ -35,7 +35,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     @Override
     public List<IPdfStructElem> getKids() throws PdfException {
         final PdfObject k = getPdfObject().get(PdfName.K);
-        if (k instanceof PdfDictionary && PdfName.StructElem.equals(((PdfDictionary) k).getAsName(PdfName.Type))) {
+        if (k instanceof PdfDictionary && PdfStructElem.isStructElem((PdfDictionary) k)) {
             return new ArrayList<IPdfStructElem>() {{
                 add(new PdfStructElem((PdfDictionary) k, getDocument()));
             }};
@@ -46,7 +46,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
                 PdfObject o = kArr.get(i);
                 if (o instanceof PdfDictionary) {
                     PdfDictionary d = (PdfDictionary) o;
-                    if (PdfName.StructElem.equals(d.getAsName(PdfName.Type))) {
+                    if (PdfStructElem.isStructElem(d)) {
                         kids.add(new PdfStructElem(d, getDocument()));
                     }
                 }
@@ -67,7 +67,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     public void addKidObject(PdfDictionary structElem) throws PdfException {
         getKidsObject().add(structElem);
-        if (PdfName.StructElem.equals(structElem.getAsName(PdfName.Type)))
+        if (PdfStructElem.isStructElem(structElem))
             structElem.put(PdfName.P, getPdfObject());
     }
 
@@ -131,7 +131,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         PdfArray nums = getParentTreeObject().getAsArray(PdfName.Nums);
         for (int i = 0; i < nums.size(); i++) {
             PdfNumber n = nums.getAsNumber(i);
-            if (n!= null && n.getIntValue() > maxStructParentIndex)
+            if (n != null && n.getIntValue() > maxStructParentIndex)
                 maxStructParentIndex = n.getIntValue();
         }
         return maxStructParentIndex;
@@ -139,10 +139,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     public PdfArray getNumsBranch(Integer structParentIndex) throws PdfException {
-        return getNumsBranch(structParentIndex, false);
-    }
-
-    public PdfArray getNumsBranch(Integer structParentIndex, boolean flatten) throws PdfException {
         if (structParentIndex == null)
             return null;
         PdfArray nums = getNums();
