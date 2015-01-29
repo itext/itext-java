@@ -248,7 +248,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private int getMcid() throws PdfException {
-        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(structParentIndex, true);
+        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(structParentIndex);
         int maxMcid = 0;
         for (int i = 0; i < numsBranch.size(); i++) {
             PdfDictionary elem = numsBranch.getAsDictionary(i);
