@@ -8,35 +8,32 @@ import java.util.List;
 /**
  * Represents Marked Content Reference (MCR) object wrapper.
  */
-public class PdfMcr extends PdfObjectWrapper<PdfDictionary> implements IPdfTag {
+abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper implements IPdfTag {
 
     protected PdfStructElem parent;
 
-    public PdfMcr(PdfDocument document, PdfPage page, PdfStructElem parent) throws PdfException {
-        super(new PdfDictionary(), document);
-        getPdfObject().put(PdfName.Type, PdfName.MCR);
-        getPdfObject().put(PdfName.Pg, page.getPdfObject());
-        getPdfObject().put(PdfName.MCID, new PdfNumber(page.getNextMcid()));
+    public PdfMcr(T pdfObject, PdfStructElem parent) {
+        super(pdfObject);
         this.parent = parent;
     }
 
-    public PdfMcr(PdfPage page, PdfStructElem parent) throws PdfException {
-        this(null, page, parent);
-    }
-
-    public PdfMcr(PdfDictionary pdfObject, PdfStructElem parent) throws PdfException {
-        this(pdfObject, null, parent);
-    }
-
-    public PdfMcr(PdfDictionary pdfObject, PdfDocument pdfDocument, PdfStructElem parent) throws PdfException {
-        super(pdfObject, pdfDocument);
-        this.parent = parent;
-    }
+//    public PdfMcr(PdfPage page, PdfStructElem parent) throws PdfException {
+//        super(new PdfDictionary());
+//        getPdfObject().put(PdfName.Type, PdfName.MCR);
+//        getPdfObject().put(PdfName.Pg, page.getPdfObject());
+//        getPdfObject().put(PdfName.MCID, new PdfNumber(page.getNextMcid()));
+//        this.parent = parent;
+//    }
+//
+//    public PdfMcr(PdfDictionary pdfObject, PdfStructElem parent) throws PdfException {
+//        super(pdfObject);
+//        this.parent = parent;
+//    }
 
     @Override
-    public Integer getMcid() throws PdfException {
-        return getPdfObject().getAsNumber(PdfName.MCID).getIntValue();
-    }
+    abstract public Integer getMcid() throws PdfException;// {
+//        return getPdfObject().getAsNumber(PdfName.MCID).getIntValue();
+//    }
 
     @Override
     public PdfName getRole() throws PdfException {
@@ -55,6 +52,16 @@ public class PdfMcr extends PdfObjectWrapper<PdfDictionary> implements IPdfTag {
 
     @Override
     public Integer getStructParentIndex() throws PdfException {
-        return parent.getStructParentIndex();
+        Integer structParentIndex = 0;
+        PdfDictionary page = getPageObject();
+        if (page != null) {
+            PdfNumber spi = page.getAsNumber(PdfName.StructParents);
+            if (spi != null)
+                structParentIndex = spi.getIntValue();
+        }
+        return structParentIndex;
     }
+
+    protected abstract PdfDictionary getPageObject() throws PdfException;
+
 }

@@ -34,26 +34,35 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     @Override
     public List<IPdfStructElem> getKids() throws PdfException {
-        final PdfObject k = getPdfObject().get(PdfName.K);
-        if (k instanceof PdfDictionary && PdfStructElem.isStructElem((PdfDictionary) k)) {
-            return new ArrayList<IPdfStructElem>() {{
-                add(new PdfStructElem((PdfDictionary) k, getDocument()));
-            }};
-        } else if (k instanceof PdfArray) {
-            List<IPdfStructElem> kids = new ArrayList<IPdfStructElem>();
-            PdfArray kArr = (PdfArray) k;
-            for (int i = 0; i < kArr.size(); i++) {
-                PdfObject o = kArr.get(i);
-                if (o instanceof PdfDictionary) {
-                    PdfDictionary d = (PdfDictionary) o;
-                    if (PdfStructElem.isStructElem(d)) {
-                        kids.add(new PdfStructElem(d, getDocument()));
+        PdfObject k = getPdfObject().get(PdfName.K);
+        List<IPdfStructElem> kids = new ArrayList<IPdfStructElem>();
+        switch (k.getType()) {
+            case PdfObject.Dictionary:
+                PdfDictionary d = (PdfDictionary) k;
+                if (PdfStructElem.isStructElem(d))
+                    kids.add(new PdfStructElem(d));
+                break;
+            case PdfObject.Array:
+                PdfArray a = (PdfArray) k;
+                for (int i = 0; i < a.size(); i++) {
+                    PdfObject o = a.get(i);
+                    switch (o.getType()) {
+                        case PdfObject.Dictionary:
+                            d = a.getAsDictionary(i);
+                            if (d != null) {
+                                if (PdfStructElem.isStructElem(d))
+                                    kids.add(new PdfStructElem(d));
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
-            }
-            return kids;
+                break;
+            default:
+                break;
         }
-        return null;
+        return kids;
     }
 
     public PdfArray getKidsObject() throws PdfException {
@@ -69,11 +78,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         getKidsObject().add(structElem);
         if (PdfStructElem.isStructElem(structElem))
             structElem.put(PdfName.P, getPdfObject());
-    }
-
-    @Override
-    public void flush() throws PdfException {
-        super.flush();
     }
 
     public PdfDictionary getRoleMap() throws PdfException {
@@ -158,4 +162,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return numsBranch;
     }
 
+    @Override
+    public PdfName getRole() throws PdfException {
+        return null;
+    }
 }

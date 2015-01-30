@@ -10,6 +10,7 @@ import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.tagging.IPdfStructElem;
 import com.itextpdf.core.pdf.tagging.PdfMcr;
+import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
@@ -1291,14 +1292,15 @@ public class PdfCanvasTest {
         doc.addKid(paragraph);
         PdfStructElem span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
         paragraph.addKid(span1);
+
         canvas.openTag(span1);
         canvas.showText("Hello ");
-        canvas.closeTag(span1);
-        PdfMcr span1_1 = new PdfMcr(page, span1);
+        canvas.closeTag();
+        PdfMcr span1_1 = new PdfMcrDictionary(page, span1);
         span1.addKid(span1_1);
         canvas.openTag(span1_1);
         canvas.showText("World");
-        canvas.closeTag(span1_1);
+        canvas.closeTag();
         canvas.endText();
         canvas.release();
         page.flush();
@@ -1314,12 +1316,12 @@ public class PdfCanvasTest {
         paragraph.addKid(span1);
         canvas.openTag(span1);
         canvas.showText("Hello ");
-        canvas.closeTag(span1);
+        canvas.closeTag();
         PdfStructElem span2 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
         paragraph.addKid(span2);
         canvas.openTag(span2);
         canvas.showText("World");
-        canvas.closeTag(span2);
+        canvas.closeTag();
         canvas.endText();
         canvas.release();
         page.flush();
@@ -1351,12 +1353,12 @@ public class PdfCanvasTest {
         paragraph.addKid(span1);
         canvas.openTag(span1);
         canvas.showText("Hello ");
-        canvas.closeTag(span1);
+        canvas.closeTag();
         PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
         paragraph.addKid(span2);
         canvas.openTag(span2);
         canvas.showText("World");
-        canvas.closeTag(span2);
+        canvas.closeTag();
         canvas.endText();
         canvas.release();
         page.flush();
@@ -1388,12 +1390,12 @@ public class PdfCanvasTest {
         paragraph.addKid(span1);
         canvas.openTag(span1);
         canvas.showText("Hello ");
-        canvas.closeTag(span1);
+        canvas.closeTag();
         PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
         paragraph.addKid(span2);
         canvas.openTag(span2);
         canvas.showText("World");
-        canvas.closeTag(span2);
+        canvas.closeTag();
         canvas.endText();
         canvas.release();
         page.flush();
@@ -1409,12 +1411,12 @@ public class PdfCanvasTest {
         paragraph.addKid(span1);
         canvas.openTag(span1);
         canvas.showText("Hello ");
-        canvas.closeTag(span1);
+        canvas.closeTag();
         span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
         paragraph.addKid(span2);
         canvas.openTag(span2);
         canvas.showText("World");
-        canvas.closeTag(span2);
+        canvas.closeTag();
         canvas.endText();
         canvas.release();
         page.flush();
@@ -1453,12 +1455,12 @@ public class PdfCanvasTest {
         paragraph.addKid(span1);
         canvas.openTag(span1);
         canvas.showText("Hello ");
-        canvas.closeTag(span1);
+        canvas.closeTag();
         PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
         paragraph.addKid(span2);
         canvas.openTag(span2);
         canvas.showText("World");
-        canvas.closeTag(span2);
+        canvas.closeTag();
         canvas.endText();
         canvas.release();
         page.flush();
@@ -1480,10 +1482,10 @@ public class PdfCanvasTest {
         canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 490);
         span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
-        ((PdfStructElem)structElem.getParent()).addKid(span1);
+        ((PdfStructElem) structElem.getParent()).addKid(span1);
         canvas.openTag(span1);
         canvas.showText("text1");
-        canvas.closeTag(span1);
+        canvas.closeTag();
         canvas.endText();
 
         canvas.release();
@@ -1492,6 +1494,17 @@ public class PdfCanvasTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest04.pdf", sourceFolder + "cmp_taggingTest04.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void taggingTest05() throws Exception {
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument document = new PdfDocument(reader);
+
+        Assert.assertEquals(2072, document.getNextStructParentIndex().intValue());
+
+        document.close();
     }
 
 

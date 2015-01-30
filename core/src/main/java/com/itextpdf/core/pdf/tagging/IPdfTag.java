@@ -5,8 +5,6 @@ import com.itextpdf.core.pdf.PdfName;
 
 public interface IPdfTag extends IPdfStructElem {
 
-    public PdfName getRole() throws PdfException;
-
     public Integer getMcid() throws PdfException;
 
     public Integer getStructParentIndex() throws PdfException;
