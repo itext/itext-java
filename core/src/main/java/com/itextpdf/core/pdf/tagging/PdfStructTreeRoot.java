@@ -16,15 +16,15 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
         super(pdfObject, document);
-//        PdfDictionary parentTree = getPdfObject().getAsDictionary(PdfName.ParentTree);
-//        if (parentTree == null) {
-//            parentTree = new PdfDictionary().makeIndirect(document);
-//            getPdfObject().put(PdfName.ParentTree, parentTree);
-//        }
     }
 
-    public void addKid(PdfStructElem structElem) throws PdfException {
-        addKidObject(structElem.getPdfObject());
+    public PdfStructElem addKid(PdfStructElem structElem) throws PdfException {
+        return addKid(-1, structElem);
+    }
+
+    public PdfStructElem addKid(int index, PdfStructElem structElem) throws PdfException {
+        addKidObject(index, structElem.getPdfObject());
+        return structElem;
     }
 
     @Override
@@ -74,12 +74,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return k;
     }
 
-    public void addKidObject(PdfDictionary structElem) throws PdfException {
-        getKidsObject().add(structElem);
-        if (PdfStructElem.isStructElem(structElem))
-            structElem.put(PdfName.P, getPdfObject());
-    }
-
     public PdfDictionary getRoleMap() throws PdfException {
         PdfDictionary roleMap = getPdfObject().getAsDictionary(PdfName.RoleMap);
         if (roleMap == null) {
@@ -100,21 +94,11 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return parentTree;
     }
 
-    public PdfArray getNums() throws PdfException {
-        PdfArray nums = getParentTreeObject().getAsArray(PdfName.Nums);
-        if (nums == null) {
-            nums = new PdfArray();
-            if (getDocument().getWriter() != null)
-                nums.makeIndirect(getDocument());
-            getParentTreeObject().put(PdfName.Nums, nums);
-        }
-        return nums;
-    }
-
-    public int flattenNums() throws PdfException {
+    public int getStructParentIndex() throws PdfException {
+        PdfArray nums = null;
         PdfArray kids = getParentTreeObject().getAsArray(PdfName.Kids);
         if (kids != null) {
-            PdfArray nums = new PdfArray();
+            nums = new PdfArray();
             for (int i = 0; i < kids.size(); i++) {
                 PdfObject o = kids.get(i);
                 if (o instanceof PdfDictionary) {
@@ -126,13 +110,11 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
                     LoggerFactory.getLogger(this.getClass()).warn("Suspicious nums element in StructParentTree", o);
                 }
             }
-            getParentTreeObject().remove(PdfName.Kids);
-            getParentTreeObject().put(PdfName.Nums, nums);
-
         }
 
         int maxStructParentIndex = 0;
-        PdfArray nums = getParentTreeObject().getAsArray(PdfName.Nums);
+        if (nums == null)
+            nums = getParentTreeObject().getAsArray(PdfName.Nums);
         for (int i = 0; i < nums.size(); i++) {
             PdfNumber n = nums.getAsNumber(i);
             if (n != null && n.getIntValue() > maxStructParentIndex)
@@ -142,28 +124,43 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     }
 
-    public PdfArray getNumsBranch(Integer structParentIndex) throws PdfException {
-        if (structParentIndex == null)
-            return null;
-        PdfArray nums = getNums();
-        PdfArray numsBranch = null;
-        for (int i = 0; i < nums.size() / 2; i++) {
-            PdfNumber spi = nums.getAsNumber(i * 2);
-            if (spi != null && structParentIndex.equals(spi.getIntValue())) {
-                PdfObject branchEntry = nums.get(i * 2 + 1);
-                return ((PdfArray) branchEntry);
-            }
-        }
-        numsBranch = new PdfArray();
-        if (getDocument().getWriter() != null)
-            numsBranch.makeIndirect(getDocument());
-        nums.add(new PdfNumber(structParentIndex));
-        nums.add(numsBranch);
-        return numsBranch;
-    }
-
     @Override
     public PdfName getRole() throws PdfException {
         return null;
     }
+
+    @Override
+    public void flush() throws PdfException {
+        PdfArray nums = new PdfArray();
+        for (int i = 0; i < getDocument().getNumOfPages(); i++) {
+            PdfPage page = getDocument().getPage(i + 1);
+            List<IPdfTag> tags = page.getPageTags();
+            PdfArray numsBranch = new PdfArray();
+            if (getDocument().getWriter() != null)
+                numsBranch.makeIndirect(getDocument());
+            for (IPdfTag tag : tags) {
+                numsBranch.add(((PdfStructElem) tag.getParent()).getPdfObject());
+            }
+            nums.add(new PdfNumber(i));
+            nums.add(numsBranch);
+        }
+        getParentTreeObject().remove(PdfName.Kids);
+        getParentTreeObject().put(PdfName.Nums, nums);
+        super.flush();
+    }
+
+    private void addKidObject(PdfDictionary structElem) throws PdfException {
+        getKidsObject().add(-1, structElem);
+    }
+
+    private void addKidObject(int index, PdfDictionary structElem) throws PdfException {
+        if (index == -1)
+            getKidsObject().add(structElem);
+        else
+            getKidsObject().add(index, structElem);
+        if (PdfStructElem.isStructElem(structElem))
+            structElem.put(PdfName.P, getPdfObject());
+    }
+
+
 }

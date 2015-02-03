@@ -4,7 +4,9 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.tagging.IPdfStructElem;
+import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
+import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;
@@ -22,18 +24,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public final static int LastPage = Integer.MAX_VALUE;
 
     private PdfResources resources = null;
-    private int mcid = 0;
-//    private Integer structParentIndex = null;
+    private Integer mcid = null;
 
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
-        if (pdfDocument.isTagged()) {
-            PdfNumber structParents = getPdfObject().getAsNumber(PdfName.StructParents);
-            if (structParents != null) {
-//                structParentIndex = structParents.getIntValue();
-                mcid = getMcid();
-            }
-        }
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
@@ -160,7 +154,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public void flush() throws PdfException {
-        getPdfObject().remove(PdfName.MCID);
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
@@ -217,7 +210,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return calculated MCID reference.
      * @throws PdfException
      */
-    public int getNextMcid() {
+    public int getNextMcid() throws PdfException {
+        if (mcid == null) {
+            getPageTags();
+        }
         return mcid++;
     }
 
@@ -227,36 +223,61 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets a list of StructElems which belong to the page.
+     * Gets a list of tags on this page.
+     * Please use this method very carefully as it rereads all structure tree and is slow.
      *
      * @return
      * @throws PdfException
      */
-    public List<IPdfStructElem> getStructElems() throws PdfException {
+    public List<IPdfTag> getPageTags() throws PdfException {
         if (getDocument().getStructTreeRoot() == null)
             return null;
-        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(getStructParentIndex());
-        if (numsBranch == null || numsBranch.isEmpty())
-            return null;
-        List<IPdfStructElem> list = new ArrayList<IPdfStructElem>();
-        for (int i = 0; i < numsBranch.size(); i++)
-            list.add(new PdfStructElem(numsBranch.getAsDictionary(i), getDocument()));
-        return list;
+        List<IPdfTag> tags = new ArrayList<IPdfTag>();
+        getPageTags(getDocument().getStructTreeRoot().getPdfObject(), tags);
+        mcid = getMcid(tags);
+        return tags;
     }
 
-    /**
-     * Gets last StructElem of the page.
-     *
-     * @return
-     * @throws PdfException
-     */
-    public IPdfStructElem getLastStructElem() throws PdfException {
-        if (getDocument().getStructTreeRoot() == null)
-            return null;
-        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(getStructParentIndex());
-        if (numsBranch == null || numsBranch.isEmpty())
-            return null;
-        return new PdfStructElem(numsBranch.getAsDictionary(numsBranch.size() - 1), getDocument());
+    private void getPageTags(PdfDictionary getFrom, List<IPdfTag> putTo) throws PdfException {
+        PdfObject k = getFrom.get(PdfName.K);
+        if (k == null)
+            return;
+        switch (k.getType()) {
+            case PdfObject.Number:
+                if (getFrom.getAsDictionary(PdfName.Pg) == getPdfObject())
+                    putTo.add(new PdfMcrNumber((PdfNumber) k, new PdfStructElem(getFrom, getDocument())));
+                break;
+            case PdfObject.Dictionary:
+                PdfDictionary d = (PdfDictionary) k;
+                if (PdfName.MCR.equals(d.getAsName(PdfName.Type)) && getPdfObject() == d.getAsDictionary(PdfName.Pg))
+                    putTo.add(new PdfMcrDictionary(d, new PdfStructElem(getFrom, getDocument())));
+                else
+                    getPageTags(d, putTo);
+                break;
+            case PdfObject.Array:
+                PdfArray a = (PdfArray) k;
+                for (int i = 0; i < a.size(); i++) {
+                    PdfObject aItem = a.get(i);
+                    switch (aItem.getType()) {
+                        case PdfObject.Number:
+                            if (getFrom.getAsDictionary(PdfName.Pg) == getPdfObject())
+                                putTo.add(new PdfMcrNumber((PdfNumber) aItem, new PdfStructElem(getFrom, getDocument())));
+                            break;
+                        case PdfObject.Dictionary:
+                            PdfDictionary dItem = (PdfDictionary) aItem;
+                            if (PdfName.MCR.equals(dItem.getAsName(PdfName.Type)) && getPdfObject() == dItem.getAsDictionary(PdfName.Pg))
+                                putTo.add(new PdfMcrDictionary(dItem, new PdfStructElem(getFrom, getDocument())));
+                            else
+                                getPageTags(dItem, putTo);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     protected void makeIndirect(PdfDocument pdfDocument) throws PdfException {
@@ -284,29 +305,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return contentStream;
     }
 
-    private int getMcid() throws PdfException {
-        PdfArray numsBranch = getDocument().getStructTreeRoot().getNumsBranch(getStructParentIndex());
-        int maxMcid = 0;
-        for (int i = 0; i < numsBranch.size(); i++) {
-            PdfDictionary elem = numsBranch.getAsDictionary(i);
-            if (elem != null && elem.containsKey(PdfName.Pg)) {
-                PdfObject k = elem.get(PdfName.K);
-                if (k instanceof PdfNumber && ((PdfNumber) k).getIntValue() > maxMcid)
-                    maxMcid = ((PdfNumber) k).getIntValue();
-                else if (k instanceof PdfArray) {
-                    for (PdfObject o : (PdfArray) k) {
-                        if (o instanceof PdfNumber && ((PdfNumber) o).getIntValue() > maxMcid)
-                            maxMcid = ((PdfNumber) o).getIntValue();
-                        else if (o instanceof PdfDictionary && PdfName.MCR.equals(((PdfDictionary) o).getAsName(PdfName.Type))) {
-                            PdfNumber mcid = ((PdfDictionary) o).getAsNumber(PdfName.MCID);
-                            if (mcid != null && mcid.getIntValue() > maxMcid)
-                                maxMcid = mcid.getIntValue();
-                        }
-                    }
-                }
-            }
+    private Integer getMcid(List<IPdfTag> tags) throws PdfException {
+        Integer maxMcid = null;
+        for (IPdfTag tag : tags) {
+            if (maxMcid == null || tag.getMcid() > maxMcid)
+                maxMcid = tag.getMcid();
         }
-        return maxMcid + 1;
+        return maxMcid == null ? 0 : maxMcid + 1;
     }
 
 }

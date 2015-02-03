@@ -8,9 +8,9 @@ import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
-import com.itextpdf.core.pdf.tagging.IPdfStructElem;
-import com.itextpdf.core.pdf.tagging.PdfMcr;
+import com.itextpdf.core.pdf.tagging.IPdfTag;
 import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
+import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
@@ -1280,25 +1280,20 @@ public class PdfCanvasTest {
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
-        PdfStructElem doc = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document);
-        document.getStructTreeRoot().addKid(doc);
+        PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
         canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-        PdfStructElem paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
-        doc.addKid(paragraph);
-        PdfStructElem span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
-        paragraph.addKid(span1);
+        PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
+        PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
 
-        canvas.openTag(span1);
+        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
         canvas.showText("Hello ");
         canvas.closeTag();
-        PdfMcr span1_1 = new PdfMcrDictionary(page, span1);
-        span1.addKid(span1_1);
-        canvas.openTag(span1_1);
+        canvas.openTag(span1.addKid(new PdfMcrDictionary(page, span1)));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -1310,16 +1305,13 @@ public class PdfCanvasTest {
         canvas.beginText();
         canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Helvetica), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-        paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
-        doc.addKid(paragraph);
-        span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
-        paragraph.addKid(span1);
-        canvas.openTag(span1);
+        paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
+        span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
         canvas.showText("Hello ");
         canvas.closeTag();
-        PdfStructElem span2 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
-        paragraph.addKid(span2);
-        canvas.openTag(span2);
+        PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -1339,24 +1331,20 @@ public class PdfCanvasTest {
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         document.getStructTreeRoot().getRoleMap().put(new com.itextpdf.core.pdf.PdfName("Chunk"), com.itextpdf.core.pdf.PdfName.Span);
-        PdfStructElem doc = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document);
-        document.getStructTreeRoot().addKid(doc);
+        PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
         canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-        PdfStructElem paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
-        doc.addKid(paragraph);
-        PdfStructElem span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
-        paragraph.addKid(span1);
-        canvas.openTag(span1);
+        PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
+        PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
         canvas.showText("Hello ");
         canvas.closeTag();
-        PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
-        paragraph.addKid(span2);
-        canvas.openTag(span2);
+        PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page));
+        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -1370,30 +1358,26 @@ public class PdfCanvasTest {
 
     @Test
     public void taggingTest03() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest03.pdf");
+        PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         document.getStructTreeRoot().getRoleMap().put(new com.itextpdf.core.pdf.PdfName("Chunk"), com.itextpdf.core.pdf.PdfName.Span);
-        PdfStructElem doc = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document);
-        document.getStructTreeRoot().addKid(doc);
+        PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
         canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-        PdfStructElem paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
-        doc.addKid(paragraph);
-        PdfStructElem span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
-        paragraph.addKid(span1);
-        canvas.openTag(span1);
+        PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
+        PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
         canvas.showText("Hello ");
         canvas.closeTag();
-        PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
-        paragraph.addKid(span2);
-        canvas.openTag(span2);
+        PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page));
+        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -1405,16 +1389,13 @@ public class PdfCanvasTest {
         canvas.beginText();
         canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Helvetica), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-        paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
-        doc.addKid(paragraph);
-        span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
-        paragraph.addKid(span1);
-        canvas.openTag(span1);
+        paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
+        span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
         canvas.showText("Hello ");
         canvas.closeTag();
-        span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
-        paragraph.addKid(span2);
-        canvas.openTag(span2);
+        span2 = paragraph.addKid(new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page));
+        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -1422,9 +1403,8 @@ public class PdfCanvasTest {
         page.flush();
 
         document.close();
-        byte[] bytes = baos.toByteArray();
 
-        com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new ByteArrayInputStream(bytes));
+        com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new FileInputStream(destinationFolder + "taggingTest03.pdf"));
         document = new PdfDocument(reader);
         Assert.assertEquals(2, document.getNextStructParentIndex().intValue());
         PdfPage page1 = document.getPage(1);
@@ -1441,24 +1421,20 @@ public class PdfCanvasTest {
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         document.getStructTreeRoot().getRoleMap().put(new com.itextpdf.core.pdf.PdfName("Chunk"), com.itextpdf.core.pdf.PdfName.Span);
-        PdfStructElem doc = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document);
-        document.getStructTreeRoot().addKid(doc);
+        PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
         canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
-        PdfStructElem paragraph = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P);
-        doc.addKid(paragraph);
-        PdfStructElem span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
-        paragraph.addKid(span1);
-        canvas.openTag(span1);
+        PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
+        PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
         canvas.showText("Hello ");
         canvas.closeTag();
-        PdfStructElem span2 = new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page);
-        paragraph.addKid(span2);
-        canvas.openTag(span2);
+        PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page));
+        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -1476,16 +1452,27 @@ public class PdfCanvasTest {
         page = document.getPage(1);
         canvas = new PdfCanvas(page);
 
-        IPdfStructElem structElem = page.getLastStructElem();
+        List<IPdfTag> elems = page.getPageTags();
 
         canvas.beginText();
         canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 490);
-        span1 = new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page);
-        ((PdfStructElem) structElem.getParent()).addKid(span1);
-        canvas.openTag(span1);
+
+        //Inserting span between of 2 existing ones.
+        span1 = ((PdfStructElem) elems.get(0).getParent().getParent()).addKid(1, new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
         canvas.showText("text1");
         canvas.closeTag();
+
+        elems = page.getPageTags();
+
+        //Inserting span at the end.
+        IPdfTag elem = elems.get(elems.size() - 1);
+        span1 = ((PdfStructElem) elem.getParent().getParent()).addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.showText("text2");
+        canvas.closeTag();
+
         canvas.endText();
 
         canvas.release();

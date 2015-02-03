@@ -12,10 +12,7 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
-import com.itextpdf.core.pdf.tagging.IPdfStructElem;
-import com.itextpdf.core.pdf.tagging.IPdfTag;
-import com.itextpdf.core.pdf.tagging.PdfArtifact;
-import com.itextpdf.core.pdf.tagging.PdfStructElem;
+import com.itextpdf.core.pdf.tagging.*;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
@@ -1317,18 +1314,21 @@ public class PdfCanvas {
         }}));
     }
 
-    public PdfCanvas openTag(final PdfStructElem structElem) throws PdfException {
-        List<IPdfStructElem> kids = structElem.getKids();
-        if (kids != null) {
-            for (IPdfStructElem kid : kids)
-                if (kid instanceof IPdfTag) {
-                    openTag((IPdfTag)kid);
-                    break;
-                }
-
-        }
-        return this;
-    }
+//    public PdfCanvas openTag(final PdfStructElem structElem) throws PdfException {
+//        List<IPdfStructElem> kids = structElem.getKids();
+//        boolean pdfTagFound = false;
+//        if (kids != null) {
+//            for (IPdfStructElem kid : kids)
+//                if (kid instanceof IPdfTag) {
+//                    openTag((IPdfTag)kid);
+//                    pdfTagFound = true;
+//                    break;
+//                }
+//        }
+//        if (!pdfTagFound)
+//            openTag(structElem.addKid(new PdfMcrNumber()))
+//        return this;
+//    }
 
     public PdfCanvas closeTag() throws PdfException {
         return endMarkedContent();

@@ -150,6 +150,7 @@ public class PdfException extends Exception {
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
     public static final String StreamCouldNotBeCompressedFilterIsNotANameOrArray = "stream.could.not.be.compressed.filter.is.not.a.name.or.array";
     public static final String StructureElementIsNotLinkedToStructParent = "structure.element.is.not.linked.to.structparent";
+    public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String StructureElementShallContainPgKey = "structure.element.shall.contain.pg.key";
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";

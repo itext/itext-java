@@ -609,7 +609,7 @@ public class PdfDocument implements IEventDispatcher {
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
                     structTreeRoot = new PdfStructTreeRoot(str, this);
-                    structParentIndex = structTreeRoot.flattenNums() + 1;
+                    structParentIndex = getStructTreeRoot().getStructParentIndex() + 1;
                 }
                 if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
