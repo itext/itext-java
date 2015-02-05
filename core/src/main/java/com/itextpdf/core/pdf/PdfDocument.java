@@ -439,6 +439,14 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
+     * Returns true if the document is opened in append mode, and false otherwise.
+     * @return
+     */
+    public boolean isAppendMode() {
+        return appendMode;
+    }
+
+    /**
      * Creates next available indirect reference.
      *
      * @param object an object for which indirect reference should be created.
@@ -512,6 +520,9 @@ public class PdfDocument implements IEventDispatcher {
                 if (appendMode) {
                     if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified())
                         structTreeRoot.flush();
+                    if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
+                        catalog.getOCProperties(false).flush();
+                    }
                     PdfObject pageRoot = catalog.pageTree.generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
                         catalog.getPdfObject().put(PdfName.Pages, pageRoot);
@@ -525,10 +536,13 @@ public class PdfDocument implements IEventDispatcher {
                         assert reader.getCryptoRef() != null : "Conflict with source encryption";
                         crypto = reader.getCryptoRef();
                     }
-
                 } else {
                     if (structTreeRoot != null)
                         structTreeRoot.flush();
+                    if (catalog.isOCPropertiesMayHaveChanged()) {
+                        catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
+                        catalog.getOCProperties(false).flush();
+                    }
                     catalog.getPdfObject().put(PdfName.Pages, catalog.pageTree.generateTree());
                     catalog.getPdfObject().flush(false);
                     info.flush();

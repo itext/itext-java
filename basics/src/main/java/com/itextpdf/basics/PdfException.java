@@ -159,6 +159,7 @@ public class PdfException extends Exception {
     public static final String TrailerNotFound = "trailer.not.found";
     public static final String TransparencyLengthMustBeEqualTo2WithCcittImages = "transparency.length.must.be.equal.to.2.with.ccitt.images";
     public static final String UnbalancedBeginEndMarkedContentOperators = "unbalanced.begin.end.marked.content.operators";
+    public static final String UnbalancedLayerOperators = "unbalanced.layer.operators";
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";

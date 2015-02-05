@@ -12,7 +12,11 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
-import com.itextpdf.core.pdf.tagging.*;
+import com.itextpdf.core.pdf.layer.PdfLayer;
+import com.itextpdf.core.pdf.layer.PdfLayerMembership;
+import com.itextpdf.core.pdf.layer.PdfOCG;
+import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagging.PdfArtifact;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
@@ -94,6 +98,7 @@ public class PdfCanvas {
     protected PdfDocument document;
     protected int mcDepth;
     protected int mcid = 0;
+    protected ArrayList<Integer> layerDepth;
 
     /**
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
@@ -1060,12 +1065,36 @@ public class PdfCanvas {
     }
 
     /**
-     * Begins OCG layer.
+     * Begins a graphic block whose visibility is controlled by the <CODE>layer</CODE>.
+     * Blocks can be nested. Each block must be terminated by an {@link #endLayer()}.<p>
+     * Note that nested layers with {@link PdfLayer#addChild(PdfLayer)} only require a single
+     * call to this method and a single call to {@link #endLayer()}; all the nesting control
+     * is built in.
      *
      * @param layer @see PdfLayer.
      * @return current canvas.
      */
-    public PdfCanvas beginLayer(PdfLayer layer) {
+    public PdfCanvas beginLayer(final PdfOCG layer) throws PdfException {
+        if (layer instanceof PdfLayer && ((PdfLayer)layer).getTitle() != null)
+            throw new IllegalArgumentException("Illegal layer argument.");
+        if (layerDepth == null)
+            layerDepth = new ArrayList<Integer>();
+        if (layer instanceof PdfLayerMembership) {
+            layerDepth.add(1);
+            addToPropertiesAndBeginLayer(layer);
+        } else if (layer instanceof PdfLayer) {
+            int n = 0;
+            PdfLayer la = (PdfLayer)layer;
+            while (la != null) {
+                if (la.getTitle() == null) {
+                    addToPropertiesAndBeginLayer(la);
+                    n++;
+                }
+                la = la.getParent();
+            }
+            layerDepth.add(n);
+        } else
+            throw new UnsupportedOperationException("Unsupported type for operand: layer");
         return this;
     }
 
@@ -1074,7 +1103,16 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas endLayer() {
+    public PdfCanvas endLayer() throws PdfException {
+        int n = 1;
+        if (layerDepth != null && !layerDepth.isEmpty()) {
+            n = layerDepth.get(layerDepth.size() - 1);
+            layerDepth.remove(layerDepth.size() - 1);
+        } else {
+            throw new PdfException(PdfException.UnbalancedLayerOperators);
+        }
+        while (n-- > 0)
+            contentStream.getOutputStream().writeBytes(EMC).writeNewLine();
         return this;
     }
 
@@ -1401,5 +1439,10 @@ public class PdfCanvas {
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = PdfEncodings.convertToBytes(text, PdfEncodings.WINANSI);
         Utilities.writeEscapedString(contentStream.getOutputStream(), b);
+    }
+
+    private void addToPropertiesAndBeginLayer(final PdfOCG layer) throws PdfException {
+        PdfName name = resources.addProperties(layer.getPdfObject());
+        contentStream.getOutputStream().write(PdfName.OC).writeSpace().write(name).writeSpace().writeBytes(BDC).writeNewLine();
     }
 }

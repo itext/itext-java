@@ -5,6 +5,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
 import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.layer.PdfOCG;
 
 public class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
@@ -21,6 +22,14 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
             return new PdfFormXObject(stream, document);
         else
             return new PdfImageXObject(stream, document);
+    }
+
+    /**
+     * Sets the layer this XObject belongs to.
+     * @param layer the layer this XObject belongs to
+     */
+    public void setLayer(PdfOCG layer) throws PdfException {
+        getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 
 }

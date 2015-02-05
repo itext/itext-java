@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-public class PdfOutputStream extends OutputStream {
+public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     /**
      * Type of encryption.

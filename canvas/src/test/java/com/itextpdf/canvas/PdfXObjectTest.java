@@ -7,6 +7,7 @@ import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.pdf.layer.PdfLayer;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.testutils.CompareTool;
@@ -44,6 +45,7 @@ public class PdfXObjectTest {
         PdfImageXObject[] images = new PdfImageXObject[4];
         for (int i = 0; i < 4; i++) {
             images[i] = new PdfImageXObject(document, Image.getInstance(PdfXObjectTest.images[i]));
+            images[i].setLayer(new PdfLayer("layer" + i, document));
             if (i % 2 == 0)
                 images[i].flush();
         }

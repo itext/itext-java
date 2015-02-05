@@ -22,7 +22,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         add(new PdfNumber(rectangle.getY() + rectangle.getHeight()));
     }
 
-    public PdfArray(List<PdfObject> objects) {
+    public PdfArray(List<? extends PdfObject> objects) {
         list = new ArrayList<PdfObject>(objects.size());
         for (PdfObject element : objects)
             add(element);

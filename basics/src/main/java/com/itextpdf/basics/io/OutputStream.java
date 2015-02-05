@@ -7,7 +7,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-public class OutputStream extends java.io.OutputStream {
+public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
 
     private static class ByteUtils {
         protected int count;
@@ -301,7 +301,7 @@ public class OutputStream extends java.io.OutputStream {
             outputStream.close();
     }
 
-    public <T extends OutputStream> T writeLong(long value) throws PdfException {
+    public T writeLong(long value) throws PdfException {
         try {
             getIsoBytes(value, numBuffer.reset());
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
@@ -311,7 +311,7 @@ public class OutputStream extends java.io.OutputStream {
         }
     }
 
-    public <T extends OutputStream> T writeInteger(int value) throws PdfException {
+    public T writeInteger(int value) throws PdfException {
         try {
             getIsoBytes(value, numBuffer.reset());
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
@@ -321,11 +321,11 @@ public class OutputStream extends java.io.OutputStream {
         }
     }
 
-    public <T extends OutputStream> T writeFloat(float value) throws PdfException {
+    public T writeFloat(float value) throws PdfException {
         return writeDouble(value);
     }
 
-    public <T extends OutputStream> T writeFloats(float[] value) throws PdfException {
+    public T writeFloats(float[] value) throws PdfException {
         for (int i = 0; i < value.length; i++) {
             writeFloat(value[i]);
             if (i < value.length - 1)
@@ -334,7 +334,7 @@ public class OutputStream extends java.io.OutputStream {
         return (T) this;
     }
 
-    public <T extends OutputStream> T writeDouble(double value) throws PdfException {
+    public T writeDouble(double value) throws PdfException {
         try {
             getIsoBytes(value, numBuffer.reset());
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
@@ -344,7 +344,7 @@ public class OutputStream extends java.io.OutputStream {
         }
     }
 
-    public <T extends OutputStream> T writeByte(byte value) throws PdfException {
+    public T writeByte(byte value) throws PdfException {
         try {
             write(value);
             return (T) this;
@@ -353,19 +353,19 @@ public class OutputStream extends java.io.OutputStream {
         }
     }
 
-    public <T extends OutputStream> T writeSpace() throws PdfException {
-        return (T) writeByte((byte) ' ');
+    public T writeSpace() throws PdfException {
+        return writeByte((byte) ' ');
     }
 
-    public <T extends OutputStream> T writeNewLine() throws PdfException {
-        return (T) writeByte((byte) '\n');
+    public T writeNewLine() throws PdfException {
+        return writeByte((byte) '\n');
     }
 
-    public <T extends OutputStream> T writeString(String value) throws PdfException {
-        return (T) writeBytes(getIsoBytes(value));
+    public T writeString(String value) throws PdfException {
+        return writeBytes(getIsoBytes(value));
     }
 
-    public <T extends OutputStream> T writeBytes(byte[] b) throws PdfException {
+    public T writeBytes(byte[] b) throws PdfException {
         try {
             write(b);
             return (T) this;
@@ -374,7 +374,7 @@ public class OutputStream extends java.io.OutputStream {
         }
     }
 
-    public <T extends OutputStream> T writeBytes(byte[] b, int off, int len) throws PdfException {
+    public T writeBytes(byte[] b, int off, int len) throws PdfException {
         try {
             write(b, off, len);
             return (T) this;

@@ -221,6 +221,108 @@ abstract public class PdfObject {
     }
 
     /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfNull</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isNull() {
+        return getType() == Null;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfBoolean</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isBoolean() {
+        return getType() == Boolean;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfNumber</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isNumber() {
+        return getType() == Number;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfString</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isString() {
+        return getType() == String;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfName</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isName() {
+        return getType() == Name;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfArray</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isArray() {
+        return getType() == Array;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfDictionary</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isDictionary() {
+        return getType() == Dictionary;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfStream</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isStream() {
+        return getType() == Stream;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfIndirectReference</CODE>.
+     *
+     * @return <CODE>true</CODE> if this is an indirect reference,
+     *   otherwise <CODE>false</CODE>
+     */
+    public boolean isIndirectReference() {
+        return getType() == IndirectReference;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfLiteral</CODE>.
+     *
+     * @return <CODE>true</CODE> if this is a literal,
+     *   otherwise <CODE>false</CODE>
+     */
+    public boolean isLiteral() {
+        return getType() == Literal;
+    }
+
+    /**
      * Creates new instance of object.
      *
      * @return new instance of object.
