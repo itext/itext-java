@@ -113,7 +113,7 @@ abstract public class PdfObject {
         return (T) this;
     }
 
-     /**
+    /**
      * Marks object to be saved as indirect.
      *
      * @param document a document the indirect reference will belong to.
@@ -135,6 +135,7 @@ abstract public class PdfObject {
 
     /**
      * Indicates is the object has been set as modified or not. Useful for incremental updates (e.g. appendMode).
+     *
      * @return true is object has been set as modified, otherwise false.
      */
     public boolean isModified() {
@@ -153,11 +154,6 @@ abstract public class PdfObject {
         return null;
     }
 
-    protected  <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
-        this.indirectReference = indirectReference;
-        return (T) this;
-    }
-
     /**
      * Copied object to a specified document.
      *
@@ -168,7 +164,7 @@ abstract public class PdfObject {
      * @return copied object.
      * @throws PdfException
      */
-    protected <T extends PdfObject> T copy(PdfDocument document, boolean allowDuplicating) throws PdfException {
+    public <T extends PdfObject> T copy(PdfDocument document, boolean allowDuplicating) throws PdfException {
         PdfWriter writer = null;
         if (document == null)
             document = getDocument();
@@ -179,6 +175,11 @@ abstract public class PdfObject {
         T newObject = newInstance();
         newObject.copyContent(this, document);
         return newObject;
+    }
+
+    protected <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
+        this.indirectReference = indirectReference;
+        return (T) this;
     }
 
     /**

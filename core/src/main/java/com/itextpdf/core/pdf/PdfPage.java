@@ -139,17 +139,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Copies page to a specified document.
      *
-     * @param pdfDocument a document to copy page to.
+     * @param toDocument a document to copy page to.
      * @return copied page.
      * @throws PdfException
      */
     @Override
-    public PdfPage copy(PdfDocument pdfDocument) throws PdfException {
-        PdfDictionary dictionary = getPdfObject().copy(pdfDocument, new ArrayList<PdfName>() {{
+    public PdfPage copy(PdfDocument toDocument) throws PdfException {
+        PdfDictionary dictionary = getPdfObject().copy(toDocument, new ArrayList<PdfName>() {{
             add(PdfName.Parent);
             add(PdfName.StructParents);
         }}, true);
-        return new PdfPage(dictionary, pdfDocument);
+        PdfPage page = new PdfPage(dictionary, toDocument);
+        if (toDocument.isTagged())
+            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(toDocument.structParentIndex++));
+        return page;
     }
 
     @Override

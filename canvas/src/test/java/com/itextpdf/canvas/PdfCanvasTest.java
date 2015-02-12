@@ -22,6 +22,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 
 public class PdfCanvasTest {
@@ -1487,12 +1488,28 @@ public class PdfCanvasTest {
     public void taggingTest05() throws Exception {
         FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
         PdfReader reader = new PdfReader(fis);
-        PdfDocument document = new PdfDocument(reader);
+        PdfDocument source = new PdfDocument(reader);
 
-        Assert.assertEquals(2072, document.getNextStructParentIndex().intValue());
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest05.pdf"));
+        PdfDocument destination = new PdfDocument(writer);
+        destination.setTagged();
 
-        document.close();
+        source.copyPages(new TreeSet<Integer>() {{
+            add(3);
+            add(4);
+            add(10);
+            add(11);
+        }}, destination).copyPages(50, 52, destination);
+
+
+        destination.close();
+        source.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest05.pdf", sourceFolder + "cmp_taggingTest05.pdf", destinationFolder, "diff_"));
+
     }
+
+
 
 
 }

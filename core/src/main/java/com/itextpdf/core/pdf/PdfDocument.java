@@ -15,6 +15,8 @@ import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.TreeSet;
 
 public class PdfDocument implements IEventDispatcher {
 
@@ -267,6 +269,7 @@ public class PdfDocument implements IEventDispatcher {
     public PdfPage addNewPage(PageSize pageSize) throws PdfException {
         PdfPage page = new PdfPage(this, pageSize);
         catalog.addPage(page);
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
         return page;
     }
 
@@ -306,6 +309,7 @@ public class PdfDocument implements IEventDispatcher {
      */
     public PdfPage addPage(PdfPage page) throws PdfException {
         catalog.addPage(page);
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
         return page;
     }
 
@@ -605,6 +609,51 @@ public class PdfDocument implements IEventDispatcher {
 
     public Integer getNextStructParentIndex() {
         return structParentIndex++;
+    }
+
+    /**
+     * Copies a range of pages from current document to {@code toDocument}.
+     * Use this method if you want to copy pages across tagged documents.
+     * This will keep resultant PDF structure more consistent.
+     *
+     * @param pageFrom
+     * @param pageTo
+     * @param toDocument
+     * @param insertTo
+     * @throws PdfException
+     */
+    public PdfDocument copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertTo) throws PdfException {
+        TreeSet<Integer> pages = new TreeSet<Integer>();
+        for (int i = pageFrom; i <= pageTo; i++) {
+            pages.add(i);
+        }
+        return copyPages(pages, toDocument, insertTo);
+    }
+
+    public PdfDocument copyPages(int pageFrom, int pageTo, PdfDocument toDocument) throws PdfException {
+        return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumOfPages() + 1);
+    }
+
+    public PdfDocument copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertTo) throws PdfException {
+        LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
+        for (Integer pageNum : pagesToCopy) {
+            PdfPage page = getPage(pageNum);
+            PdfPage newPage = page.copy(toDocument);
+            page2page.put(page, newPage);
+            if (insertTo < toDocument.getNumOfPages() + 1) {
+                toDocument.addPage(insertTo, newPage);
+            } else {
+                toDocument.addPage(newPage);
+            }
+            insertTo++;
+        }
+        if (toDocument.isTagged())
+            getStructTreeRoot().copyToDocument(toDocument, page2page);
+        return this;
+    }
+
+    public PdfDocument copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument) throws PdfException {
+        return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1);
     }
 
     /**

@@ -171,16 +171,16 @@ public class PdfWriter extends PdfOutputStream {
         int copyObjectKey = 0;
         if (!allowDuplicating && indirectReference != null) {
             if (indirectReference.getDocument().hashCode() == document.hashCode()) {
-                return indirectReference;
+                return indirectReference.getRefersTo();
             } else {
                 copyObjectKey = getCopyObjectKey(object);
                 copiedIndirectReference = copiedObjects.get(copyObjectKey);
                 if (copiedIndirectReference != null)
-                    return copiedIndirectReference;
+                    return copiedIndirectReference.getRefersTo();
             }
         }
         if (!allowDuplicating && indirectReference != null && (copiedIndirectReference = copiedObjects.get(copyObjectKey = getCopyObjectKey(object))) != null) {
-            return copiedIndirectReference;
+            return copiedIndirectReference.getRefersTo();
         }
         PdfObject newObject = object.newInstance();
         if (indirectReference != null) {
