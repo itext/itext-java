@@ -444,6 +444,7 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Returns true if the document is opened in append mode, and false otherwise.
+     *
      * @return
      */
     public boolean isAppendMode() {
@@ -614,44 +615,79 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Copies a range of pages from current document to {@code toDocument}.
      * Use this method if you want to copy pages across tagged documents.
-     * This will keep resultant PDF structure more consistent.
+     * This will keep resultant PDF structure consistent.
      *
-     * @param pageFrom
-     * @param pageTo
-     * @param toDocument
-     * @param insertTo
+     * @param pageFrom         start of the range of pages to be copied.
+     * @param pageTo           end of the range of pages to be copied.
+     * @param toDocument       a document to copy pages to.
+     * @param insertBeforePage a position where to insert copied pages.
      * @throws PdfException
      */
-    public PdfDocument copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertTo) throws PdfException {
+    public PdfDocument copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) throws PdfException {
         TreeSet<Integer> pages = new TreeSet<Integer>();
         for (int i = pageFrom; i <= pageTo; i++) {
             pages.add(i);
         }
-        return copyPages(pages, toDocument, insertTo);
+        return copyPages(pages, toDocument, insertBeforePage);
     }
 
+    /**
+     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
+     * Use this method if you want to copy pages across tagged documents.
+     * This will keep resultant PDF structure consistent.
+     *
+     * @param pageFrom
+     * @param pageTo
+     * @param toDocument
+     * @return
+     * @throws PdfException
+     */
     public PdfDocument copyPages(int pageFrom, int pageTo, PdfDocument toDocument) throws PdfException {
         return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumOfPages() + 1);
     }
 
-    public PdfDocument copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertTo) throws PdfException {
+
+    /**
+     * Copies a range of pages from current document to {@code toDocument}.
+     * Use this method if you want to copy pages across tagged documents.
+     * This will keep resultant PDF structure consistent.
+     *
+     * @param pagesToCopy      list of pages to be copied.
+     * @param toDocument       a document to copy pages to.
+     * @param insertBeforePage a position where to insert copied pages.
+     * @throws PdfException
+     */
+    public PdfDocument copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) throws PdfException {
         LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage(pageNum);
             PdfPage newPage = page.copy(toDocument);
             page2page.put(page, newPage);
-            if (insertTo < toDocument.getNumOfPages() + 1) {
-                toDocument.addPage(insertTo, newPage);
+            if (insertBeforePage < toDocument.getNumOfPages() + 1) {
+                toDocument.addPage(insertBeforePage, newPage);
             } else {
                 toDocument.addPage(newPage);
             }
-            insertTo++;
+            insertBeforePage++;
         }
-        if (toDocument.isTagged())
-            getStructTreeRoot().copyToDocument(toDocument, page2page);
+        if (toDocument.isTagged()) {
+            if (insertBeforePage > toDocument.getNumOfPages())
+                getStructTreeRoot().copyToDocument(toDocument, page2page);
+            else
+                getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
+        }
         return this;
     }
 
+    /**
+     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
+     * Use this method if you want to copy pages across tagged documents.
+     * This will keep resultant PDF structure consistent.
+     *
+     * @param pagesToCopy list of pages to be copied.
+     * @param toDocument  a document to copy pages to.
+     * @throws PdfException
+     */
     public PdfDocument copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument) throws PdfException {
         return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1);
     }

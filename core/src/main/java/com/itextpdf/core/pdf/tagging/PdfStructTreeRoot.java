@@ -154,11 +154,18 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         super.flush();
     }
 
+    /**
+     * Copies structure to a {@code toDocument}.
+     *
+     * @param toDocument document to cpt structure to.
+     * @param page2page  association between original page and copied page.
+     * @throws PdfException
+     */
     public void copyToDocument(PdfDocument toDocument, LinkedHashMap<PdfPage, PdfPage> page2page) throws PdfException {
         if (!toDocument.isTagged())
             return;
-        Set<PdfDictionary> tops = new HashSet<PdfDictionary>();
-        Set<PdfDictionary> objectsToCopy = new HashSet<PdfDictionary>();
+        Set<PdfDictionary> tops = new LinkedHashSet<PdfDictionary>();
+        Set<PdfDictionary> objectsToCopy = new LinkedHashSet<PdfDictionary>();
         LinkedHashMap<PdfDictionary, PdfDictionary> page2pageDictionaries = new LinkedHashMap<PdfDictionary, PdfDictionary>();
         for (Map.Entry<PdfPage, PdfPage> page : page2page.entrySet()) {
             page2pageDictionaries.put(page.getKey().getPdfObject(), page.getValue().getPdfObject());
@@ -173,6 +180,44 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
+    /**
+     * Copies structure to a {@code toDocument} and insert it in a specified position in the document..
+     *
+     * @param toDocument       document to cpt structure to.
+     * @param insertBeforePage indicates where the structure to be inserted.
+     * @param page2page        association between original page and copied page.
+     * @throws PdfException
+     */
+    public void copyToDocument(PdfDocument toDocument, int insertBeforePage, LinkedHashMap<PdfPage, PdfPage> page2page) throws PdfException {
+        if (!toDocument.isTagged())
+            return;
+
+        List<PdfObject> kids = new ArrayList<PdfObject>();
+        for (int i = 0; i < toDocument.getStructTreeRoot().getKidsObject().size(); i++) {
+            kids.add(toDocument.getStructTreeRoot().getKidsObject().get(i, false));
+        }
+
+        LinkedHashMap<PdfPage, PdfPage> page2pageSource = new LinkedHashMap<PdfPage, PdfPage>();
+        for (int i = 1; i < insertBeforePage; i++) {
+            PdfPage page = toDocument.getPage(i);
+            page2pageSource.put(page, page);
+        }
+        copyToDocument(toDocument, page2pageSource);
+
+        copyToDocument(toDocument, page2page);
+
+        page2pageSource = new LinkedHashMap<PdfPage, PdfPage>();
+        for (int i = insertBeforePage; i <= toDocument.getNumOfPages(); i++) {
+            PdfPage page = toDocument.getPage(i);
+            page2pageSource.put(page, page);
+        }
+        copyToDocument(toDocument, page2pageSource);
+        for (PdfObject k : kids) {
+            toDocument.getStructTreeRoot().getKidsObject().remove(k);
+        }
+
+
+    }
 
     private PdfDictionary getObjectsToCopy(IPdfTag tag, Set<PdfDictionary> objectsToCopy) throws PdfException {
         if (tag instanceof PdfMcrDictionary)
@@ -209,6 +254,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
                         PdfDictionary copiedK = copyObject(kDict, objectsToCopy, kDict.getIndirectReference() == null ? null : toDocument, page2page);
                         if (hasParent)
                             copiedK.put(PdfName.P, copied);
+                        copied.put(PdfName.K, copiedK);
                     }
                     break;
                 case PdfObject.Array:

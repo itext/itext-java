@@ -1,26 +1,20 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfException;
-import com.itextpdf.canvas.color.*;
 import com.itextpdf.core.fonts.PdfStandardFont;
-import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
-import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
-import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
-import com.itextpdf.core.pdf.extgstate.PdfExtGState;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.tagging.IPdfTag;
 import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.testutils.CompareTool;
-import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -272,23 +266,16 @@ public class PdfTaggingTest {
 
     @Test
     public void taggingTest06() throws Exception {
-        FileInputStream fis1 = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
-        PdfReader reader1 = new PdfReader(fis1);
-        PdfDocument source = new PdfDocument(reader1);
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument source = new PdfDocument(reader);
 
-        FileInputStream fis2 = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
-        PdfReader reader2 = new PdfReader(fis2);
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest06.pdf"));
-        PdfDocument destination = new PdfDocument(reader2, writer);
+        PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
 
-        source.copyPages(new TreeSet<Integer>() {{
-            add(3);
-            add(4);
-            add(10);
-            add(11);
-        }}, destination).copyPages(50, 52, destination);
-
+        source.copyPages(6, source.getNumOfPages(), destination);
+        source.copyPages(1, 5, destination);
 
         destination.close();
         source.close();
@@ -297,6 +284,86 @@ public class PdfTaggingTest {
 
     }
 
+    @Test
+    public void taggingTest07() throws Exception {
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument source = new PdfDocument(reader);
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest07.pdf"));
+        PdfDocument destination = new PdfDocument(writer);
+
+
+        source.copyPages(6, source.getNumOfPages(), destination);
+        source.copyPages(1, 5, destination);
+
+        destination.close();
+        source.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest07.pdf", sourceFolder + "cmp_taggingTest07.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void taggingTest08() throws Exception {
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument source = new PdfDocument(reader);
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest08.pdf"));
+        PdfDocument destination = new PdfDocument(writer);
+        destination.setTagged();
+
+        for (int i = 1; i <= source.getNumOfPages(); i++)
+            source.copyPages(i, i, destination);
+
+        destination.close();
+        source.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest08.pdf", sourceFolder + "cmp_taggingTest08.pdf", destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void taggingTest09() throws Exception {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "iphone_user_guide.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest09.pdf"));
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
+        PdfDocument document1 = new PdfDocument(reader1);
+        document1.copyPages(1, 1, document, 2);
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox-table.pdf"));
+        PdfDocument document2 = new PdfDocument(reader2);
+        document2.copyPages(1, 3, document, 4);
+
+
+        document.close();
+        document1.close();
+        document2.close();
+
+//        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest08.pdf", sourceFolder + "cmp_taggingTest08.pdf", destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void taggingTest10() throws Exception {
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument source = new PdfDocument(reader);
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest10.pdf"));
+        PdfDocument destination = new PdfDocument(writer);
+        destination.setTagged();
+
+        source.copyPages(1, source.getNumOfPages(), destination);
+
+        destination.close();
+        source.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest10.pdf", sourceFolder + "cmp_taggingTest10.pdf", destinationFolder, "diff_"));
+
+    }
 
 
 
