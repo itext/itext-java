@@ -8,6 +8,12 @@ import java.util.Arrays;
 
 public class Color {
 
+    static public final Color Red = DeviceRgb.Red;
+    static public final Color Green = DeviceRgb.Green;
+    static public final Color Blue = DeviceRgb.Blue;
+    static public final Color White = DeviceRgb.White;
+    static public final Color Black = DeviceRgb.Black;
+
     protected PdfColorSpace colorSpace;
     protected float[] colorValue;
 
@@ -55,15 +61,18 @@ public class Color {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
         Color color = (Color) o;
+        if (colorSpace != null ? !colorSpace.equals(color.colorSpace) : color.colorSpace != null) {
+            return false;
+        }
+        return Arrays.equals(colorValue, color.colorValue);
 
-        if (colorSpace != null ? !colorSpace.equals(color.colorSpace) : color.colorSpace != null) return false;
-        if (!Arrays.equals(colorValue, color.colorValue)) return false;
-
-        return true;
     }
 
     @Override

@@ -25,6 +25,7 @@ public class PdfException extends Exception {
     public static final String BadUserPassword = "bad.user.password";
     public static final String BitsPerComponentMustBe1_2_4or8 = "bits.per.component.must.be.1.2.4.or.8";
     public static final String BitsPerSample1IsNotSupported = "bits.per.sample.1.is.not.supported";
+    public static final String BmpImageException = "bmp.image.exception";
     public static final String BytesCanBeAssignedToByteArrayOutputStreamOnly = "bytes.can.be.assigned.to.bytearrayoutputstream.only";
 
 
@@ -40,6 +41,7 @@ public class PdfException extends Exception {
     public static final String CannotGetPdfStreamBytes = "cannot.get.pdfstream.bytes";
     public static final String CannotGetTiffImageColor = "cannot.get.tiff.image.color";
     public static final String CannotGetTiffNumberOfPages = "cannot.get.tiff.number.of.pages";
+    public static final String CannotFind1Frame = "cannot.find.1.frame";
     public static final String CannotFlushObject = "cannot.flush.object";
     public static final String CannotHandleBoxSizesHigherThan2_32 = "cannot.handle.box.sizes.higher.than.2.32";
     public static final String CannotInflateTiffImage = "cannot.inflate.tiff.image";
@@ -87,7 +89,9 @@ public class PdfException extends Exception {
     public static final String FontSizeTooSmall = "font.size.too.small";
     public static final String FunctionIsNotCompatibleWitColorSpace = "function.is.not.compatible.with.color.space";
     public static final String ImageFormatCannotBeRecognized = "image.format.cannot.be.recognized";
+    public static final String GifImageException = "gif.image.exception";
     public static final String GtNotExpected = "gt.not.expected";
+    public static final String GifSignatureNotFound = "gif.signature.not.found";
     public static final String IllegalValueForPredictorInTiffFile = "illegal.value.for.predictor.in.tiff.file";
     public static final String IllegalCharacterInAsciihexdecode = "illegal.character.in.asciihexdecode";
     public static final String IllegalCharacterInAscii85decode = "illegal.character.in.ascii85decode";
@@ -124,18 +128,23 @@ public class PdfException extends Exception {
     public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String InvalidXrefStream = "invalid.xref.stream";
     public static final String IoException = "io.exception";
+    public static final String Jbig2ImageException = "jbig2.image.exception";
+    public static final String JpegImageException = "jpeg.image.exception";
+    public static final String Jpeg2000ImageException = "jpeg2000.image.exception";
     public static final String LzwDecoderException = "lzw.decoder.exception";
     public static final String LzwFlavourNotSupported = "lzw.flavour.not.supported";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
     public static final String NoCompatibleEncryptionFound = "no.compatible.encryption.found";
+    public static final String NotAPlaceableWindowsMetafile = "not.a.placeable.windows.metafile";
     public static final String NoValidEncryptionMode = "no.valid.encryption.mode";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
+    public static final String OnlyBmpCanBeWrappedInWmf = "only.bmp.can.be.wrapped.in.wmf";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
-    public static final String PngFilterUnknown = "png.filter.unknown";
     public static final String PdfEncodings = "pdf.encodings";
     public static final String PdfEncryption = "pdf.encryption";
     public static final String PdfDecryption = "pdf.decryption";
+    public static final String PdfFormXobjectHasInvalidBbox = "pdf.form.xobject.has.invalid.bbox";
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
     public static final String PdfObjectStreamReachMaxSize = "pdf.object.stream.reach.max.size";
     public static final String PdfPageShallHaveContent = "pdf.page.shall.have.content";
@@ -145,6 +154,8 @@ public class PdfException extends Exception {
     public static final String PdfStringHasNoContentOrHasAlreadyDecrypted = "pdf.string.has.no.content.or.has.already.decrypted";
     public static final String Photometric1IsNotSupported = "photometric.1.is.not.supported";
     public static final String PlanarImagesAreNotSupported = "planar.images.are.not.supported";
+    public static final String PngFilterUnknown = "png.filter.unknown";
+    public static final String PngImageException = "png.image.exception";
     public static final String PrematureEofWhileReadingJpg = "premature.eof.while.reading.jpg";
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
@@ -155,6 +166,7 @@ public class PdfException extends Exception {
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
     public static final String TiffFillOrderTagMustBeEither1Or2 = "tiff.fill.order.tag.must.be.either.1.or.2";
+    public static final String TiffImageException = "tiff.image.exception";
     public static final String TilesAreNotSupported = "tiles.are.not.supported";
     public static final String TrailerNotFound = "trailer.not.found";
     public static final String TransparencyLengthMustBeEqualTo2WithCcittImages = "transparency.length.must.be.equal.to.2.with.ccitt.images";
@@ -168,6 +180,7 @@ public class PdfException extends Exception {
     public static final String UnknownEncryptionTypeVEq1 = "unknown.encryption.type.v.eq.1";
     public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";
     public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";
+    public static final String WmfImageException = "wmf.image.exception";
     public static final String WrongNumberOfComponentsInIccProfile = "icc.profile.contains.1.components.the.image.data.contains.2.components";
     public static final String XrefSubsectionNotFound = "xref.subsection.not.found";
     public static final String XrefTableDoesntHaveSuitableItemForObject1 = "xref.table.doesn't.have.suitable.item.for.object.1";

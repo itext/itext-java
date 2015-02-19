@@ -782,7 +782,7 @@ public class PdfReader {
         PdfArray array = new PdfArray();
         while (true) {
             PdfObject obj = readObject(true);
-            if (obj == null) {
+             if (obj == null) {
                 if (tokens.getTokenType() == PdfTokeniser.TokenType.EndArray)
                     break;
                 if (tokens.getTokenType() == PdfTokeniser.TokenType.EndDic)

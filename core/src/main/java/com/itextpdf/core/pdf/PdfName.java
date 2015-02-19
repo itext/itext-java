@@ -167,6 +167,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Interpolate = createDirectName("Interpolate");
     public static final PdfName IsMap = createDirectName("IsMap");
     public static final PdfName JBIG2Decode = createDirectName("JBIG2Decode");
+    public static final PdfName JBIG2Globals = createDirectName("JBIG2Globals");
     public static final PdfName JPXDecode = createDirectName("JPXDecode");
     public static final PdfName K = createDirectName("K");
     public static final PdfName Keywords = createDirectName("Keywords");

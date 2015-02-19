@@ -103,7 +103,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     public static final int BEST_COMPRESSION = Deflater.BEST_COMPRESSION;
 
     private static final byte[] stream = getIsoBytes("stream\n");
-    private static final byte[] endstream = getIsoBytes("\nendstream\n");
+    private static final byte[] endstream = getIsoBytes("\nendstream");
     private static final byte[] openDict = getIsoBytes("<<");
     private static final byte[] closeDict = getIsoBytes(">>");
     private static final byte[] endIndirect = getIsoBytes(" R");

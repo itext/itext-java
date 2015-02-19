@@ -1,8 +1,8 @@
-package com.itextpdf.basics.codec;
+package com.itextpdf.canvas.image;
 
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.color.Color;
-import com.itextpdf.basics.color.RgbColor;
+import com.itextpdf.canvas.color.Color;
+import com.itextpdf.canvas.color.DeviceRgb;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,8 +60,6 @@ public class InputMeta {
         int green = readByte();
         int blue = readByte();
         readByte();
-        return new RgbColor(red, green, blue);
+        return new DeviceRgb(red, green, blue);
     }
-
-
 }

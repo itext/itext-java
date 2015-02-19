@@ -6,6 +6,7 @@ import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.color.Color;
+import com.itextpdf.canvas.image.WmfImageHelper;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
@@ -19,6 +20,7 @@ import com.itextpdf.core.pdf.tagging.IPdfTag;
 import com.itextpdf.core.pdf.tagging.PdfArtifact;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.core.pdf.xobject.PdfXObject;
 
 import java.util.*;
 
@@ -347,6 +349,17 @@ public class PdfCanvas {
                 .writeFloat(y).writeSpace()
                 .writeBytes(Tm);
         return this;
+    }
+
+    /**
+     * Changes the text matrix.
+     *
+     * @param x operand 3,1 in the matrix.
+     * @param y operand 3,2 in the matrix.
+     * @return current canvas.
+     */
+    public PdfCanvas setTextMatrix(float x, float y) throws PdfException {
+        return setTextMatrix(1, 0, 0, 1, x, y);
     }
 
     /**
@@ -1117,29 +1130,6 @@ public class PdfCanvas {
     }
 
     /**
-     * Adds Image XObject to canvas.
-     *
-     * @param image the {@code PdfImageXObject} object
-     * @param a     an element of the transformation matrix
-     * @param b     an element of the transformation matrix
-     * @param c     an element of the transformation matrix
-     * @param d     an element of the transformation matrix
-     * @param e     an element of the transformation matrix
-     * @param f     an element of the transformation matrix
-     * @return canvas a reference to this object.
-     * @throws PdfException on error
-     */
-    public PdfCanvas addImage(PdfImageXObject image, float a, float b, float c, float d, float e, float f) throws PdfException {
-        saveState();
-        concatMatrix(a, b, c, d, e, f);
-        PdfName name = resources.addImage(image);
-        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
-        restoreState();
-        return this;
-    }
-
-
-    /**
      * Creates Image XObject from image and adds it to canvas.
      *
      * @param image    the {@code PdfImageXObject} object
@@ -1153,25 +1143,14 @@ public class PdfCanvas {
      * @return created Image XObject or null in case of in-line image (asInline = true).
      * @throws PdfException on error
      */
-    public PdfImageXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) throws PdfException {
-        if (asInline) {
+    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) throws PdfException {
+        if (image.getOriginalType() == Image.WMF) {
+            WmfImageHelper wmf = new WmfImageHelper(image);
+            // TODO add matrix parameters
+            return wmf.createPdfForm(document);
+        } else if (asInline) {
             PdfImageXObject imageXObject = new PdfImageXObject(null, image);
-            saveState();
-            concatMatrix(a, b, c, d, e, f);
-            PdfOutputStream os = contentStream.getOutputStream();
-            os.writeBytes(BI);
-            for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().entrySet()) {
-                PdfName key = entry.getKey();
-                if (PdfName.Type.equals(key) || PdfName.Subtype.equals(key) || PdfName.Length.equals(key)) {
-
-                } else {
-                    os.write(entry.getKey()).writeSpace();
-                    os.write(entry.getValue()).writeNewLine();
-                }
-            }
-            os.writeBytes(ID);
-            os.writeBytes(imageXObject.getPdfObject().getBytes()).writeNewLine().writeBytes(EI).writeNewLine();
-            restoreState();
+            addInlineImage(imageXObject, a, b, c, d, e, f);
             return null;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(document, image);
@@ -1181,69 +1160,42 @@ public class PdfCanvas {
     }
 
     /**
-     * Adds Image XObject to specified rectangle on canvas.
-     *
-     * @param image
-     * @param rect
-     * @return
-     * @throws PdfException
-     */
-    public PdfCanvas addImage(PdfImageXObject image, Rectangle rect) throws PdfException {
-        return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
-    }
-
-    /**
      * Creates Image XObject from image and adds it to canvas.
      *
      * @param image
      * @param rect
      * @param asInline true if to add image as in-line.
-     * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException
      */
-    public PdfImageXObject addImage(Image image, Rectangle rect, boolean asInline) throws PdfException {
+    public PdfXObject addImage(Image image, Rectangle rect, boolean asInline) throws PdfException {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY(), asInline);
     }
 
     /**
-     * Adds image to the specified position.
-     *
-     * @param image
-     * @param x
-     * @param y
-     * @return
-     * @throws PdfException
-     */
-    public PdfCanvas addImage(PdfImageXObject image, float x, float y) throws PdfException {
-        return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y);
-    }
-
-    /**
      * Creates Image XObject from image and adds it to canvas.
      *
      * @param image
      * @param x
      * @param y
      * @param asInline true if to add image as in-line.
-     * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException
      */
-    public PdfImageXObject addImage(Image image, float x, float y, boolean asInline) throws PdfException {
-        return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y, asInline);
-    }
-
-    /**
-     * Adds Image XObject to the specified position with specified width preserving aspect ratio.
-     *
-     * @param image
-     * @param x
-     * @param y
-     * @param width
-     * @return
-     * @throws PdfException
-     */
-    public PdfCanvas addImage(PdfImageXObject image, float x, float y, float width) throws PdfException {
-        return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+    public PdfXObject addImage(Image image, float x, float y, boolean asInline) throws PdfException {
+        if (image.getOriginalType() == Image.WMF) {
+            WmfImageHelper wmf = new WmfImageHelper(image);
+            // TODO add matrix parameters
+            return wmf.createPdfForm(document);
+        } else if (asInline) {
+            PdfImageXObject imageXObject = new PdfImageXObject(null, image);
+            addInlineImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
+            return null;
+        } else {
+            PdfImageXObject imageXObject = new PdfImageXObject(document, image);
+            addImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
+            return imageXObject;
+        }
     }
 
     /**
@@ -1254,26 +1206,23 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @param asInline true if to add image as in-line.
-     * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException on error.
      */
-    public PdfImageXObject addImage(Image image, float x, float y, float width, boolean asInline) throws PdfException {
-        return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y, asInline);
-    }
-
-    /**
-     * Adds Image XObject to the specified position with specified height preserving aspect ratio.
-     *
-     * @param image
-     * @param x
-     * @param y
-     * @param height
-     * @param dummy
-     * @return
-     * @throws PdfException on error.
-     */
-    public PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) throws PdfException {
-        return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
+    public PdfXObject addImage(Image image, float x, float y, float width, boolean asInline) throws PdfException {
+        if (image.getOriginalType() == Image.WMF) {
+            WmfImageHelper wmf = new WmfImageHelper(image);
+            // TODO add matrix parameters
+            return wmf.createPdfForm(document);
+        } else if (asInline) {
+            PdfImageXObject imageXObject = new PdfImageXObject(null, image);
+            addInlineImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+            return null;
+        } else {
+            PdfImageXObject imageXObject = new PdfImageXObject(document, image);
+            addImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+            return imageXObject;
+        }
     }
 
     /**
@@ -1285,24 +1234,112 @@ public class PdfCanvas {
      * @param height
      * @param asInline true if to add image as in-line.
      * @param dummy
-     * @return created Image XObject or null in case of in-line image (asInline = true).
+     * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException
      */
-    public PdfImageXObject addImage(Image image, float x, float y, float height, boolean asInline, boolean dummy) throws PdfException {
+    public PdfXObject addImage(Image image, float x, float y, float height, boolean asInline, boolean dummy) throws PdfException {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y, asInline);
     }
 
-    public PdfCanvas addForm(PdfFormXObject form, float a, float b, float c, float d, float e, float f) throws PdfException {
-        saveState();
-        concatMatrix(a, b, c, d, e, f);
-        PdfName name = resources.addForm(form);
-        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
-        restoreState();
-        return this;
+    /**
+     * Adds {@code PdfXObject} to canvas.
+     *
+     * @param xObject the {@code PdfImageXObject} object
+     * @param a     an element of the transformation matrix
+     * @param b     an element of the transformation matrix
+     * @param c     an element of the transformation matrix
+     * @param d     an element of the transformation matrix
+     * @param e     an element of the transformation matrix
+     * @param f     an element of the transformation matrix
+     * @return canvas a reference to this object.
+     * @throws PdfException on error.
+     */
+    public PdfCanvas addXObject(PdfXObject xObject, float a, float b, float c, float d, float e, float f) throws PdfException {
+        if (xObject instanceof PdfFormXObject) {
+            return  addForm((PdfFormXObject)xObject, a, b, c, d, e, f);
+        } else if (xObject instanceof PdfImageXObject) {
+            return  addImage((PdfImageXObject) xObject, a, b, c, d, e, f);
+        } else {
+            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
+        }
     }
 
-    public PdfCanvas addForm(PdfFormXObject form, float x, float y) throws PdfException {
-        return addForm(form, 1, 0, 0, 1, x, y);
+    /**
+     * Adds {@code PdfXObject} to the specified position.
+     *
+     * @param xObject
+     * @param x
+     * @param y
+     * @return
+     * @throws PdfException on error.
+     */
+    public PdfCanvas addXObject(PdfXObject xObject, float x, float y) throws PdfException {
+        if (xObject instanceof PdfFormXObject) {
+            return  addForm((PdfFormXObject)xObject, x, y);
+        } else if (xObject instanceof PdfImageXObject) {
+            return  addImage((PdfImageXObject) xObject, x, y);
+        } else {
+            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
+        }
+    }
+
+    /**
+     * Adds {@code PdfXObject} to specified rectangle on canvas.
+     *
+     * @param xObject
+     * @param rect
+     * @return
+     * @throws PdfException on error.
+     */
+    public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) throws PdfException {
+        if (xObject instanceof PdfFormXObject) {
+            return  addForm((PdfFormXObject)xObject, rect);
+        } else if (xObject instanceof PdfImageXObject) {
+            return  addImage((PdfImageXObject) xObject, rect);
+        } else {
+            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
+        }
+    }
+
+    /**
+     * Adds {@code PdfXObject} to the specified position with specified width preserving aspect ratio.
+     *
+     * @param xObject
+     * @param x
+     * @param y
+     * @param width
+     * @return
+     * @throws PdfException on error.
+     */
+    public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float width) throws PdfException {
+        if (xObject instanceof PdfFormXObject) {
+            return  addForm((PdfFormXObject)xObject, x, y, width);
+        } else if (xObject instanceof PdfImageXObject) {
+            return  addImage((PdfImageXObject) xObject, x, y, width);
+        } else {
+            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
+        }
+    }
+
+    /**
+     * Adds {@code PdfXObject} to the specified position with specified height preserving aspect ratio.
+     *
+     * @param xObject
+     * @param x
+     * @param y
+     * @param height
+     * @param dummy
+     * @return
+     * @throws PdfException on error.
+     */
+    public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float height, boolean dummy) throws PdfException {
+        if (xObject instanceof PdfFormXObject) {
+            return  addForm((PdfFormXObject)xObject, x, y, height, dummy);
+        } else if (xObject instanceof PdfImageXObject) {
+            return  addImage((PdfImageXObject) xObject, x, y, height, dummy);
+        } else {
+            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
+        }
     }
 
     public PdfCanvas setExtGState(PdfExtGState extGState) throws PdfException {
@@ -1405,7 +1442,200 @@ public class PdfCanvas {
         return this;
     }
 
-    static private boolean floatsAreEqual(Float f1, Float f2) {
+    /**
+     * Adds {@code PdfImageXObject} to canvas.
+     *
+     * @param imageXObject the {@code PdfImageXObject} object
+     * @param a     an element of the transformation matrix
+     * @param b     an element of the transformation matrix
+     * @param c     an element of the transformation matrix
+     * @param d     an element of the transformation matrix
+     * @param e     an element of the transformation matrix
+     * @param f     an element of the transformation matrix
+     * @throws PdfException on error
+     */
+    protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) throws PdfException {
+        saveState();
+        concatMatrix(a, b, c, d, e, f);
+        PdfOutputStream os = contentStream.getOutputStream();
+        os.writeBytes(BI);
+        for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().entrySet()) {
+            PdfName key = entry.getKey();
+            if (!PdfName.Type.equals(key) && !PdfName.Subtype.equals(key) && !PdfName.Length.equals(key)) {
+                os.write(entry.getKey()).writeSpace();
+                os.write(entry.getValue()).writeNewLine();
+            }
+        }
+        os.writeBytes(ID);
+        os.writeBytes(imageXObject.getPdfObject().getBytes()).writeNewLine().writeBytes(EI).writeNewLine();
+        restoreState();
+    }
+
+    /**
+     * Adds {@code PdfFormXObject} to canvas.
+     *
+     * @param form the {@code PdfImageXObject} object
+     * @param a     an element of the transformation matrix
+     * @param b     an element of the transformation matrix
+     * @param c     an element of the transformation matrix
+     * @param d     an element of the transformation matrix
+     * @param e     an element of the transformation matrix
+     * @param f     an element of the transformation matrix
+     * @return canvas a reference to this object.
+     * @throws PdfException on error
+     */
+    private PdfCanvas addForm(PdfFormXObject form, float a, float b, float c, float d, float e, float f) throws PdfException {
+        saveState();
+        concatMatrix(a, b, c, d, e, f);
+        PdfName name = resources.addForm(form);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
+        restoreState();
+        return this;
+    }
+
+    /**
+     * Adds {@code PdfFormXObject} to the specified position.
+     *
+     * @param form
+     * @param x
+     * @param y
+     * @return
+     * @throws PdfException
+     */
+    private PdfCanvas addForm(PdfFormXObject form, float x, float y) throws PdfException {
+        return addForm(form, 1, 0, 0, 1, x, y);
+    }
+
+    /**
+     * Adds {@code PdfFormXObject} to specified rectangle on canvas.
+     *
+     * @param form
+     * @param rect
+     * @return
+     * @throws PdfException
+     */
+    private PdfCanvas addForm(PdfFormXObject form, Rectangle rect) throws PdfException {
+        return addForm(form, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
+    }
+
+    /**
+     * Adds I{@code PdfFormXObject} to the specified position with specified width preserving aspect ratio.
+     *
+     * @param form
+     * @param x
+     * @param y
+     * @param width
+     * @return
+     * @throws PdfException
+     */
+    private PdfCanvas addForm(PdfFormXObject form, float x, float y, float width) throws PdfException {
+        PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
+        if (bbox == null)
+            throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
+        Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
+        Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
+        return addForm(form, width, 0, 0, width / formWidth * formHeight, x, y);
+    }
+
+    /**
+     * Adds {@code PdfFormXObject} to the specified position with specified height preserving aspect ratio.
+     *
+     * @param form
+     * @param x
+     * @param y
+     * @param height
+     * @param dummy
+     * @return
+     * @throws PdfException on error.
+     */
+    private PdfCanvas addForm(PdfFormXObject form, float x, float y, float height, boolean dummy) throws PdfException {
+        PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
+        if (bbox == null)
+            throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
+        Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
+        Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
+        return addForm(form, height / formHeight * formWidth, 0, 0, height, x, y);
+    }
+
+    /**
+     * Adds {@code PdfImageXObject} to canvas.
+     *
+     * @param image the {@code PdfImageXObject} object
+     * @param a     an element of the transformation matrix
+     * @param b     an element of the transformation matrix
+     * @param c     an element of the transformation matrix
+     * @param d     an element of the transformation matrix
+     * @param e     an element of the transformation matrix
+     * @param f     an element of the transformation matrix
+     * @return canvas a reference to this object.
+     * @throws PdfException on error
+     */
+    private PdfCanvas addImage(PdfImageXObject image, float a, float b, float c, float d, float e, float f) throws PdfException {
+        saveState();
+        concatMatrix(a, b, c, d, e, f);
+        PdfName name = resources.addImage(image);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
+        restoreState();
+        return this;
+    }
+
+    /**
+     * Adds {@code PdfImageXObject} to the specified position.
+     *
+     * @param image
+     * @param x
+     * @param y
+     * @return
+     * @throws PdfException
+     */
+    private PdfCanvas addImage(PdfImageXObject image, float x, float y) throws PdfException {
+        return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y);
+    }
+
+    /**
+     * Adds {@code PdfImageXObject} to specified rectangle on canvas.
+     *
+     * @param image
+     * @param rect
+     * @return
+     * @throws PdfException
+     */
+    private PdfCanvas addImage(PdfImageXObject image, Rectangle rect) throws PdfException {
+        return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
+    }
+
+    /**
+     * Adds {@code PdfImageXObject} to the specified position with specified width preserving aspect ratio.
+     *
+     * @param image
+     * @param x
+     * @param y
+     * @param width
+     * @return
+     * @throws PdfException
+     */
+    private PdfCanvas addImage(PdfImageXObject image, float x, float y, float width) throws PdfException {
+        return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+    }
+
+    /**
+     * Adds {@code PdfImageXObject} to the specified position with specified height preserving aspect ratio.
+     *
+     * @param image
+     * @param x
+     * @param y
+     * @param height
+     * @param dummy
+     * @return
+     * @throws PdfException on error.
+     */
+    private PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) throws PdfException {
+        return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
+    }
+
+
+
+    private static boolean floatsAreEqual(Float f1, Float f2) {
         if (f1 == null && f2 == null)
             return true;
         else if (f1 == null || f2 == null)
@@ -1414,7 +1644,7 @@ public class PdfCanvas {
             return Float.compare(f1, f2) == 0;
     }
 
-    static private boolean integersAreEqual(Integer i1, Integer i2) {
+    private static boolean integersAreEqual(Integer i1, Integer i2) {
         if (i1 == null && i2 == null)
             return true;
         else if (i1 == null || i2 == null)

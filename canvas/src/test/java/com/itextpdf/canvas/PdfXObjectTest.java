@@ -2,6 +2,7 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
+import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -44,7 +45,7 @@ public class PdfXObjectTest {
         PdfDocument document = new PdfDocument(writer);
         PdfImageXObject[] images = new PdfImageXObject[4];
         for (int i = 0; i < 4; i++) {
-            images[i] = new PdfImageXObject(document, Image.getInstance(PdfXObjectTest.images[i]));
+            images[i] = new PdfImageXObject(document, ImageFactory.getImage(PdfXObjectTest.images[i]));
             images[i].setLayer(new PdfLayer("layer" + i, document));
             if (i % 2 == 0)
                 images[i].flush();
@@ -52,15 +53,15 @@ public class PdfXObjectTest {
         for (int i = 0; i < 4; i++) {
             PdfPage page = document.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
-            canvas.addImage(images[i], PageSize.Default);
+            canvas.addXObject(images[i], PageSize.Default);
             page.flush();
         }
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.addImage(images[0], 0, 0, 200);
-        canvas.addImage(images[1], 300, 0, 200);
-        canvas.addImage(images[2], 0, 300, 200);
-        canvas.addImage(images[3], 300, 300, 200);
+        canvas.addXObject(images[0], 0, 0, 200);
+        canvas.addXObject(images[1], 300, 0, 200);
+        canvas.addXObject(images[2], 0, 300, 200);
+        canvas.addXObject(images[3], 300, 300, 200);
         canvas.release();
         page.flush();
         document.close();
@@ -76,7 +77,7 @@ public class PdfXObjectTest {
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
 
-        Image image = Image.getInstance(sourceFolder + "itext.jpg");
+        Image image = ImageFactory.getImage(sourceFolder + "itext.jpg");
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.addImage(image, 50, 500, 100, true);
@@ -107,7 +108,7 @@ public class PdfXObjectTest {
         //Create page1 and add forms to the page.
         PdfPage page1 = document.addNewPage();
         canvas = new PdfCanvas(page1);
-        canvas.addForm(form, 0, 0).addForm(form, 50, 0).addForm(form, 0, 50).addForm(form, 50, 50);
+        canvas.addXObject(form, 0, 0).addXObject(form, 50, 0).addXObject(form, 0, 50).addXObject(form, 50, 50);
         canvas.release();
 
         //Create form from the page1 and flush it.
@@ -120,10 +121,10 @@ public class PdfXObjectTest {
         //Create page2 and add forms to the page.
         PdfPage page2 = document.addNewPage();
         canvas = new PdfCanvas(page2);
-        canvas.addForm(form, 0, 0);
-        canvas.addForm(form, 0, 200);
-        canvas.addForm(form, 200, 0);
-        canvas.addForm(form, 200, 200);
+        canvas.addXObject(form, 0, 0);
+        canvas.addXObject(form, 0, 200);
+        canvas.addXObject(form, 200, 0);
+        canvas.addXObject(form, 200, 200);
         canvas.release();
         page2.flush();
 
