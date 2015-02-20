@@ -1,11 +1,20 @@
 package com.itextpdf.core.pdf.navigation;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
-public class PdfExplicitDestination extends PdfArray implements IPdfDestination {
+public class PdfExplicitDestination extends PdfDestination<PdfArray> {
 
     public PdfExplicitDestination() {
-        super();
+        this(new PdfArray());
+    }
+
+    public PdfExplicitDestination(PdfArray pdfObject) {
+        super(pdfObject);
+    }
+
+    public PdfExplicitDestination(PdfArray pdfObject, PdfDocument pdfDocument) throws PdfException {
+        super(pdfObject, pdfDocument);
     }
 
     static public PdfExplicitDestination createXYZ(PdfPage page, float left, float top, float zoom) {
@@ -73,22 +82,31 @@ public class PdfExplicitDestination extends PdfArray implements IPdfDestination 
     }
 
     static public PdfExplicitDestination create(PdfPage page, PdfName type, float left, float bottom, float right, float top, float zoom) {
-        PdfExplicitDestination dest = new PdfExplicitDestination();
-        dest.add(page.getPdfObject());
-        dest.add(type);
-        return dest.add(left).add(bottom).add(right).add(top).add(zoom);
+        return new PdfExplicitDestination().add(page).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
     }
 
     static public PdfExplicitDestination create(int pageNum, PdfName type, float left, float bottom, float right, float top, float zoom) {
-        PdfExplicitDestination dest = new PdfExplicitDestination();
-        dest.add(new PdfNumber(pageNum));
-        dest.add(type);
-        return dest.add(left).add(bottom).add(right).add(top).add(zoom);
+        return new PdfExplicitDestination().add(pageNum).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
     }
 
     private PdfExplicitDestination add(float value) {
         if (!Float.isNaN(value))
-            add(new PdfNumber(value));
+            getPdfObject().add(new PdfNumber(value));
+        return this;
+    }
+
+    private PdfExplicitDestination add(int value) {
+        getPdfObject().add(new PdfNumber(value));
+        return this;
+    }
+
+    private PdfExplicitDestination add(PdfPage page) {
+        getPdfObject().add(page.getPdfObject());
+        return this;
+    }
+
+    private PdfExplicitDestination add(PdfName type) {
+        getPdfObject().add(type);
         return this;
     }
 

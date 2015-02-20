@@ -1,8 +1,8 @@
 package com.itextpdf.model.elements;
 
-import com.itextpdf.core.pdf.actions.PdfAction;
+import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annots.PdfLinkAnnotation;
-import com.itextpdf.core.pdf.navigation.IPdfDestination;
+import com.itextpdf.core.pdf.navigation.PdfDestination;
 
 public class Link extends Span {
 
@@ -17,7 +17,7 @@ public class Link extends Span {
         this(text, new PdfLinkAnnotation().setAction(action));
     }
 
-    public Link(String text, IPdfDestination destination) {
+    public Link(String text, PdfDestination destination) {
         this(text, new PdfLinkAnnotation().setDestination(destination));
     }
 

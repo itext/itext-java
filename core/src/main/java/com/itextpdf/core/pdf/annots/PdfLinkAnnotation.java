@@ -1,8 +1,7 @@
 package com.itextpdf.core.pdf.annots;
 
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.actions.PdfAction;
-import com.itextpdf.core.pdf.navigation.IPdfDestination;
+import com.itextpdf.core.pdf.action.PdfAction;
+import com.itextpdf.core.pdf.navigation.PdfDestination;
 
 public class PdfLinkAnnotation extends PdfAnnotation {
 
@@ -10,7 +9,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         super();
     }
 
-    public PdfLinkAnnotation setDestination(IPdfDestination destination) {
+    public PdfLinkAnnotation setDestination(PdfDestination destination) {
         return this;
     }
 
