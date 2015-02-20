@@ -111,15 +111,15 @@ public final class RawImageHelper {
         image.setTransparency(transparency);
     }
 
-    protected static void updateCcittImageParameters(RawImage image, int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data) throws PdfException {
-        if (typeCCITT != RawImage.CCITTG4 && typeCCITT != RawImage.CCITTG3_1D && typeCCITT != RawImage.CCITTG3_2D)
+    protected static void updateCcittImageParameters(RawImage image, int width, int height, boolean reverseBits, int typeCcitt, int parameters, byte[] data) throws PdfException {
+        if (typeCcitt != RawImage.CCITTG4 && typeCcitt != RawImage.CCITTG3_1D && typeCcitt != RawImage.CCITTG3_2D)
             throw new PdfException(PdfException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
         image.setHeight(height);
         image.setWidth(width);
         image.setColorSpace(parameters);
-        image.setTypeCCITT(typeCCITT);
+        image.setTypeCcitt(typeCcitt);
         image.setRawData(data);
     }
 }

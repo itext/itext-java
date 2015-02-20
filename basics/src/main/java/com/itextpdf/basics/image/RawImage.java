@@ -44,7 +44,8 @@ public class RawImage extends Image {
      */
     public static final int CCITT_ENDOFBLOCK = 8;
 
-    protected int typeCCITT;
+    //NOTE in itext5 instead of typeCcitt bpc property was using for both bpc and type CCITT.
+    protected int typeCcitt;
 
     private byte[] rawData;
 
@@ -69,11 +70,11 @@ public class RawImage extends Image {
         return true;
     }
 
-    public int getTypeCCITT() {
-        return typeCCITT;
+    public int getTypeCcitt() {
+        return typeCcitt;
     }
 
-    public void setTypeCCITT(int typeCCITT) {
-        this.typeCCITT = typeCCITT;
+    public void setTypeCcitt(int typeCcitt) {
+        this.typeCcitt = typeCcitt;
     }
 }

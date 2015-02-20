@@ -58,7 +58,7 @@ public final class ImageFactory {
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
         RawImage image = new RawImage(data, Image.RAW);
-        image.setTypeCCITT(typeCCITT);
+        image.setTypeCcitt(typeCCITT);
         image.height = height;
         image.width = width;
         image.colorSpace = parameters;
