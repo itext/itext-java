@@ -105,7 +105,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param name the name of the layer.
      */
     public void setName(String name) {
-        getPdfObject().put(PdfName.Name, new PdfString(name, PdfEncodings.TEXT_UNICODE));
+        getPdfObject().put(PdfName.Name, new PdfString(name, PdfEncodings.UnicodeBig));
         getPdfObject().setModified();
     }
 
@@ -212,7 +212,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     public void setCreatorInfo(String creator, String subtype) throws PdfException {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
-        dic.put(PdfName.Creator, new PdfString(creator, PdfEncodings.TEXT_UNICODE));
+        dic.put(PdfName.Creator, new PdfString(creator, PdfEncodings.UnicodeBig));
         dic.put(PdfName.Subtype, new PdfName(subtype));
         usage.put(PdfName.CreatorInfo, dic);
         usage.setModified();
@@ -229,7 +229,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     public void setLanguage(String lang, boolean preferred) throws PdfException {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
-        dic.put(PdfName.Lang, new PdfString(lang, PdfEncodings.TEXT_UNICODE));
+        dic.put(PdfName.Lang, new PdfString(lang, PdfEncodings.UnicodeBig));
         if (preferred)
             dic.put(PdfName.Preferred, PdfName.ON);
         usage.put(PdfName.Language, dic);
@@ -319,11 +319,11 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.Type, new PdfName(type));
         if (names.length == 1) {
-            dic.put(PdfName.Name, new PdfString(names[0], PdfEncodings.TEXT_UNICODE));
+            dic.put(PdfName.Name, new PdfString(names[0], PdfEncodings.UnicodeBig));
         } else {
             PdfArray namesArray = new PdfArray();
             for (String name : names) {
-                namesArray.add(new PdfString(name, PdfEncodings.TEXT_UNICODE));
+                namesArray.add(new PdfString(name, PdfEncodings.UnicodeBig));
             }
             dic.put(PdfName.Name, namesArray);
         }

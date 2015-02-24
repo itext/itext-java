@@ -165,7 +165,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             return;
         PdfArray kids = new PdfArray();
         if (layer.getTitle() != null)
-            kids.add(new PdfString(layer.getTitle(), PdfEncodings.TEXT_UNICODE));
+            kids.add(new PdfString(layer.getTitle(), PdfEncodings.UnicodeBig));
         for (PdfLayer child : children) {
             getOCGOrder(kids, child);
         }

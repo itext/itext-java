@@ -87,7 +87,7 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
                 if (value == null) {
                     getPdfObject().remove(keyName);
                 } else {
-                    getPdfObject().put(keyName, new PdfString(value, PdfEncodings.TEXT_UNICODE));
+                    getPdfObject().put(keyName, new PdfString(value, PdfEncodings.UnicodeBig));
                 }
             }
         }

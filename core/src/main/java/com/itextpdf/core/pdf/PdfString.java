@@ -103,9 +103,9 @@ public class PdfString extends PdfPrimitiveObject {
             generateContent();
         }
         if (content.length >= 2 && content[0] == (byte)254 && content[1] == (byte)255) {
-            return PdfEncodings.convertToString(content, PdfEncodings.TEXT_UNICODE);
+            return PdfEncodings.convertToString(content, PdfEncodings.UnicodeBig);
         } else {
-            return PdfEncodings.convertToString(content, PdfEncodings.TEXT_PDFDOCENCODING);
+            return PdfEncodings.convertToString(content, PdfEncodings.PdfDocEncoding);
         }
     }
 
@@ -127,8 +127,8 @@ public class PdfString extends PdfPrimitiveObject {
     protected byte[] getValueBytes() {
         if (value == null)
             generateValue();
-        if (encoding != null && encoding.equals(PdfEncodings.TEXT_UNICODE) && PdfEncodings.isPdfDocEncoding(value))
-            return PdfEncodings.convertToBytes(value, PdfEncodings.TEXT_PDFDOCENCODING);
+        if (encoding != null && encoding.equals(PdfEncodings.UnicodeBig) && PdfEncodings.isPdfDocEncoding(value))
+            return PdfEncodings.convertToBytes(value, PdfEncodings.PdfDocEncoding);
         else
             return PdfEncodings.convertToBytes(value, encoding);
     }
