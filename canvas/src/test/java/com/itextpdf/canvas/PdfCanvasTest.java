@@ -8,10 +8,6 @@ import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
-import com.itextpdf.core.pdf.tagging.IPdfTag;
-import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
-import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
-import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
@@ -22,7 +18,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeSet;
 
 
 public class PdfCanvasTest {

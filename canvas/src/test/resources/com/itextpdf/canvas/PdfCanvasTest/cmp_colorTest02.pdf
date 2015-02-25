@@ -4,62 +4,51 @@
 <</Pages 2 0 R/Type /Catalog>>
 endobj
 3 0 obj
-<</CreationDate (D:20150203110433-03'00')>>
+<</CreationDate (D:20150225143257+03'00')>>
 endobj
 2 0 obj
 <</Count 1/Kids [4 0 R]/Type /Pages>>
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox [0 0 595 842]/Parent 2 0 R/Resources <</ColorSpace <</Cs1 6 0 R/Cs2 7 0 R>>>>/Type /Page>>
+<</Contents 5 0 R/MediaBox [0 0 595 842]/Parent 2 0 R/Resources <<>>/Type /Page>>
 endobj
 5 0 obj
-<</Length 222>>stream
-/Cs1 cs
-1 0 0 sc
+<</Length 202>>stream
+1 0 0 rg
 50 500 50 50 re
 f
-0 1 0 sc
+0 1 0 rg
 150 500 50 50 re
 f
-0 0 1 sc
+0 0 1 rg
 250 500 50 50 re
 f
 5 w
-/Cs2 CS
-1 0 0 0 SC
+1 0 0 0 K
 50 400 50 50 re
 S
-0 1 0 0 SC
+0 1 0 0 K
 150 400 50 50 re
 S
-0 0 1 0 SC
+0 0 1 0 K
 250 400 50 50 re
 S
-0 0 0 1 SC
+0 0 0 1 K
 350 400 50 50 re
 S
 
 endstream
-
-endobj
-6 0 obj
-/DeviceRGB
-endobj
-7 0 obj
-/DeviceCMYK
 endobj
 xref
-0 8
+0 6
 0000000000 65535 f 
 0000000015 00000 n 
 0000000120 00000 n 
 0000000061 00000 n 
 0000000173 00000 n 
-0000000306 00000 n 
-0000000577 00000 n 
-0000000603 00000 n 
+0000000270 00000 n 
 trailer
-<</ID [<412b97bec5a91083068259716d633e54><412b97bec5a91083068259716d633e54>]/Info 3 0 R/Root 1 0 R/Size 8>>
+<</ID [<58a273eb5477b287dc77ada76f5d2ded><58a273eb5477b287dc77ada76f5d2ded>]/Info 3 0 R/Root 1 0 R/Size 6>>
 startxref
-630
+520
 %%EOF
