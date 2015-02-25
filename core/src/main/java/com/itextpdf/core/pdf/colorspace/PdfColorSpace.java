@@ -3,7 +3,7 @@ package com.itextpdf.core.pdf.colorspace;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
-abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrapper {
+abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrapper<T> {
 
     public PdfColorSpace(T pdfObject) {
         super(pdfObject);
@@ -16,7 +16,7 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
     abstract public int getNumOfComponents() throws PdfException;
 
     static public PdfColorSpace makeColorSpace(PdfObject pdfObject, PdfDocument document) throws PdfException {
-        if (pdfObject instanceof PdfIndirectReference)
+        if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (PdfName.DeviceGray.equals(pdfObject))
             return new PdfDeviceCs.Gray(document);
@@ -24,7 +24,9 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
             return new PdfDeviceCs.Rgb(document);
         else if (PdfName.DeviceCMYK.equals(pdfObject))
             return new PdfDeviceCs.Cmyk(document);
-        else if (pdfObject instanceof PdfArray) {
+        else if (PdfName.Pattern.equals(pdfObject))
+            return new PdfSpecialCs.Pattern(document);
+        else if (pdfObject.isArray()) {
             PdfArray array = (PdfArray) pdfObject;
             PdfName csType = array.getAsName(0);
             if (PdfName.CalGray.equals(csType))
@@ -41,6 +43,8 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
                 return new PdfSpecialCs.Separation(array, document);
             else if (PdfName.DeviceN.equals(csType))
                 return array.size() == 4 ? new PdfSpecialCs.DeviceN(array, document) : new PdfSpecialCs.NChannel(array, document);
+            else if (PdfName.Pattern.equals(csType))
+                return new PdfSpecialCs.UncoloredTilingPattern(array, document);
         }
         return null;
     }

@@ -42,6 +42,13 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         }
     }
 
+    public PdfArray(boolean[] values) {
+        list = new ArrayList<PdfObject>(values.length);
+        for (boolean b : values) {
+            list.add(new PdfBoolean(b));
+        }
+    }
+
     public PdfArray(List<String> strings, boolean asNames) {
         list = new ArrayList<PdfObject>(strings.size());
         for (String s : strings) {

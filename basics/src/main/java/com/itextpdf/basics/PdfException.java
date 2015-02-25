@@ -58,6 +58,7 @@ public class PdfException extends Exception {
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression.1.is.not.supported";
     public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "compression.jpeg.is.only.supported.with.a.single.strip.this.image.has.1.strips";
+    public static final String ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters = "content.stream.must.not.invoke.operators.that.specify.colors.or.other.color.related.parameters.in.the.graphics.state";
     public static final String DecodeParameterType1IsNotSupported = "decode.parameter.type.1.is.not.supported";
     public static final String DefaultcryptfilterNotFoundEncryption = "defaultcryptfilter.not.found.encryption";
     public static final String DictionaryKey1IsNotAName = "dictionary.key.1.is.not.a.name";

@@ -6,9 +6,6 @@ import com.itextpdf.core.pdf.PdfName;
 
 abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
 
-    private static final PdfName DeviceGray = new PdfName("DeviceGray");
-    private static final PdfName DeviceRGB = new PdfName("DeviceRGB");
-    private static final PdfName DeviceCMYK = new PdfName("DeviceCMYK");
 
     public PdfDeviceCs(PdfName pdfObject) {
         super(pdfObject);
@@ -25,7 +22,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
         }
 
         public Gray(PdfDocument pdfDocument) throws PdfException {
-            super(PdfDeviceCs.DeviceGray, pdfDocument);
+            super(PdfName.DeviceGray, pdfDocument);
         }
 
         @Override
@@ -41,7 +38,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
         }
 
         public Rgb(PdfDocument pdfDocument) throws PdfException {
-            super(PdfDeviceCs.DeviceRGB, pdfDocument);
+            super(PdfName.DeviceRGB, pdfDocument);
         }
 
         @Override
@@ -57,7 +54,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
         }
 
         public Cmyk(PdfDocument pdfDocument) throws PdfException {
-            super(PdfDeviceCs.DeviceCMYK, pdfDocument);
+            super(PdfName.DeviceCMYK, pdfDocument);
         }
 
         @Override

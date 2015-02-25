@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.function.PdfFunction;
 
+import java.util.Arrays;
 import java.util.List;
 
 abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
@@ -149,5 +150,51 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     }
 
+    static public class Pattern extends PdfColorSpace {
+        public Pattern() {
+            super(PdfName.Pattern);
+        }
+
+        public Pattern(PdfDocument pdfDocument) throws PdfException {
+            super(PdfName.Pattern, pdfDocument);
+        }
+
+        protected Pattern(PdfObject pdfObj) {
+            super(pdfObj);
+        }
+
+        protected Pattern(PdfObject pdfObj, PdfDocument pdfDoc) throws PdfException {
+            super(pdfObj, pdfDoc);
+        }
+
+        @Override
+        public int getNumOfComponents() throws PdfException {
+            return 0;
+        }
+    }
+
+    static public class UncoloredTilingPattern extends Pattern {
+
+        public UncoloredTilingPattern(PdfArray pdfObject, PdfDocument pdfDocument) throws PdfException {
+            super(pdfObject, pdfDocument);
+        }
+
+        public UncoloredTilingPattern(PdfColorSpace underlyingColorSpace) {
+            super(new PdfArray(Arrays.asList(PdfName.Pattern, underlyingColorSpace.getPdfObject())));
+        }
+
+        public UncoloredTilingPattern(PdfDocument pdfDocument, PdfColorSpace underlyingColorSpace) throws PdfException {
+            super(new PdfArray(Arrays.asList(PdfName.Pattern, underlyingColorSpace.getPdfObject())), pdfDocument);
+        }
+
+        @Override
+        public int getNumOfComponents() throws PdfException {
+            return PdfColorSpace.makeColorSpace(((PdfArray)getPdfObject()).get(1), getDocument()).getNumOfComponents();
+        }
+
+        public PdfColorSpace getUnderlyingColorSpace() throws PdfException {
+            return PdfColorSpace.makeColorSpace(((PdfArray)getPdfObject()).get(1), getDocument());
+        }
+    }
 
 }

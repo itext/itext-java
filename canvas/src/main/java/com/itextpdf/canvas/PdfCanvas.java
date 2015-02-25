@@ -6,12 +6,12 @@ import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.color.Color;
+import com.itextpdf.canvas.color.PatternColor;
 import com.itextpdf.canvas.image.WmfImageHelper;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.core.pdf.colorspace.*;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.layer.PdfLayer;
 import com.itextpdf.core.pdf.layer.PdfLayerMembership;
@@ -22,7 +22,10 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * PdfCanvas class represents algorithm for writing data into content stream.
@@ -69,6 +72,7 @@ public class PdfCanvas {
     static final private byte[] n = OutputStream.getIsoBytes("n\n");
     static final private byte[] S = OutputStream.getIsoBytes("S\n");
     static final private byte[] s = OutputStream.getIsoBytes("s\n");
+    static final private byte[] sh = OutputStream.getIsoBytes("sh\n");
     static final private byte[] Do = OutputStream.getIsoBytes("Do\n");
     static final private byte[] cm = OutputStream.getIsoBytes("cm\n");
     static final private byte[] gs = OutputStream.getIsoBytes("gs\n");
@@ -86,8 +90,8 @@ public class PdfCanvas {
     static final private byte[] RG = OutputStream.getIsoBytes("RG\n");
     static final private byte[] cs = OutputStream.getIsoBytes("cs\n");
     static final private byte[] CS = OutputStream.getIsoBytes("CS\n");
-    static final private byte[] sc = OutputStream.getIsoBytes("sc\n");
-    static final private byte[] SC = OutputStream.getIsoBytes("SC\n");
+    static final private byte[] scn = OutputStream.getIsoBytes("scn\n");
+    static final private byte[] SCN = OutputStream.getIsoBytes("SCN\n");
     static final private byte[] TL = OutputStream.getIsoBytes("TL\n");
     static final private byte[] TD = OutputStream.getIsoBytes("TD\n");
     static final private byte[] Tz = OutputStream.getIsoBytes("Tz\n");
@@ -96,6 +100,7 @@ public class PdfCanvas {
     static private final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
     static private final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
     static private final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
+    static private final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
 
     protected Stack<PdfGraphicsState> gsStack = new Stack<PdfGraphicsState>();
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
@@ -784,6 +789,12 @@ public class PdfCanvas {
         return this;
     }
 
+    public PdfCanvas paintShading(PdfShading shading) throws PdfException {
+        PdfName shadingName = resources.addShading(shading);
+        contentStream.getOutputStream().write(shadingName).writeSpace().writeBytes(sh);
+        return this;
+    }
+
     /**
      * Closes the current subpath by appending a straight line segment from the current point
      * to the starting point of the subpath.
@@ -1072,35 +1083,53 @@ public class PdfCanvas {
     }
 
     public PdfCanvas setColor(Color color, boolean fill) throws PdfException {
-        return setColor(color.getColorSpace(), color.getColorValue(), fill);
+        if (color instanceof PatternColor) {
+            return setColor(color.getColorSpace(), color.getColorValue(), ((PatternColor) color).getPattern(), fill);
+        } else {
+            return setColor(color.getColorSpace(), color.getColorValue(), fill);
+        }
     }
 
     public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, boolean fill) throws PdfException {
+        return setColor(colorSpace, colorValue, null, fill);
+    }
+
+    public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern, boolean fill) throws PdfException {
         boolean setColorValueOnly = false;
         Color c = fill ? currentGs.getFillColor() : currentGs.getStrokeColor();
-        if (c.getColorSpace().equals(colorSpace) && Arrays.equals(c.getColorValue(), colorValue))
+        Color newColor = createColor(colorSpace, colorValue, pattern);
+        if (c.equals(newColor))
             return this;
         else if (c.getColorSpace().equals(colorSpace)) {
             c.setColorValue(colorValue);
+            if (c instanceof PatternColor) {
+                ((PatternColor)c).setPattern(pattern);
+            }
             setColorValueOnly = true;
         } else {
             if (fill)
-                currentGs.setFillColor(new Color(colorSpace, colorValue));
+                currentGs.setFillColor(newColor);
             else
-                currentGs.setStrokeColor(new Color(colorSpace, colorValue));
+                currentGs.setStrokeColor(newColor);
         }
         if (colorSpace.getPdfObject().getIndirectReference() != null) {
             if (!setColorValueOnly) {
                 PdfName name = resources.addColorSpace(colorSpace);
                 contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS);
             }
-            contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? sc : SC);
+            contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? scn : SCN);
         } else if (colorSpace instanceof PdfDeviceCs.Gray)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? g : G);
         else if (colorSpace instanceof PdfDeviceCs.Rgb)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? rg : RG);
         else if (colorSpace instanceof PdfDeviceCs.Cmyk)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? k : K);
+        else if (colorSpace instanceof PdfSpecialCs.UncoloredTilingPattern)
+            contentStream.getOutputStream().write(resources.addColorSpace(colorSpace)).writeSpace().writeBytes(fill ? cs : CS).
+                    writeNewLine().writeFloats(colorValue).writeSpace().write(resources.addPattern(pattern)).writeSpace().writeBytes(fill ? scn : SCN);
+        else if (colorSpace instanceof PdfSpecialCs.Pattern)
+            contentStream.getOutputStream().write(PdfName.Pattern).writeSpace().writeBytes(fill ? cs : CS).
+                    writeNewLine().write(resources.addPattern(pattern)).writeSpace().writeBytes(fill ? scn : SCN);
         return this;
     }
 
@@ -1136,6 +1165,14 @@ public class PdfCanvas {
 
     public PdfCanvas setStrokeColorRgb(float r, float g, float b) throws PdfException {
         return setColor(rgb, new float[]{r, g, b}, false);
+    }
+
+    public PdfCanvas setFillColorShading(PdfPattern.Shading shading) throws PdfException {
+        return setColor(pattern, null, shading, true);
+    }
+
+    public PdfCanvas setStrokeColorShading(PdfPattern.Shading shading) throws PdfException {
+        return setColor(pattern, null, shading, false);
     }
 
     /**
@@ -1780,5 +1817,14 @@ public class PdfCanvas {
     private void addToPropertiesAndBeginLayer(final PdfOCG layer) throws PdfException {
         PdfName name = resources.addProperties(layer.getPdfObject());
         contentStream.getOutputStream().write(PdfName.OC).writeSpace().write(name).writeSpace().writeBytes(BDC).writeNewLine();
+    }
+
+    private Color createColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern) throws PdfException {
+        if (colorSpace instanceof PdfSpecialCs.UncoloredTilingPattern) {
+            return new PatternColor((PdfPattern.Tiling) pattern, ((PdfSpecialCs.UncoloredTilingPattern) colorSpace).getUnderlyingColorSpace(), colorValue);
+        } else if (colorSpace instanceof PdfSpecialCs.Pattern) {
+            return new PatternColor(pattern);
+        }
+        return new Color(colorSpace, colorValue);
     }
 }

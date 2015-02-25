@@ -72,7 +72,8 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
             PdfDictionary dictionary = new PdfDictionary();
             dictionary.put(PdfName.FunctionType, new PdfNumber(2));
             dictionary.put(PdfName.Domain, domain);
-            dictionary.put(PdfName.Range, range);
+            if (range != null)
+                dictionary.put(PdfName.Range, range);
             if (c0 != null)
                 dictionary.put(PdfName.C0, c0);
             if (c1 != null)

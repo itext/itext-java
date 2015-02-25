@@ -14,6 +14,10 @@ public class Rectangle {
         this.height = height;
     }
 
+    public Rectangle(float width, float height) {
+        this(0, 0, width, height);
+    }
+
     public float getX() {
         return x;
     }

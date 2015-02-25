@@ -37,10 +37,6 @@ public class Color {
             this.colorValue = colorValue;
     }
 
-    public Color(PdfColorSpace colorSpace) {
-        this(colorSpace, null);
-    }
-
     public int getNumOfComponents() {
         return colorValue.length;
     }

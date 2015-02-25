@@ -3,6 +3,8 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.core.pdf.colorspace.PdfPattern;
+import com.itextpdf.core.pdf.colorspace.PdfShading;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
@@ -20,6 +22,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private static final String Gs = "Gs";
     private static final String Pr = "Pr";
     private static final String Cs = "Cs";
+    private static final String P = "P";
+    private static final String Sh = "Sh";
 
 
     private Map<PdfObject, PdfName> resourceToName = new HashMap<PdfObject, PdfName>();
@@ -34,6 +38,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private ResourceNumber egsNumber = new ResourceNumber();
     private ResourceNumber propNumber = new ResourceNumber();
     private ResourceNumber csNumber = new ResourceNumber();
+    private ResourceNumber patternNumber = new ResourceNumber();
+    private ResourceNumber shadingNumber = new ResourceNumber();
 
     public PdfResources(PdfDictionary pdfObject) throws PdfException {
         super(pdfObject);
@@ -86,6 +92,22 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfName addColorSpace(PdfObject colorSpace) throws PdfException {
         return addResource(colorSpace, PdfName.ColorSpace, Cs, csNumber);
+    }
+
+    public PdfName addPattern(PdfPattern pattern) throws PdfException {
+        return addResource(pattern, PdfName.Pattern, P, patternNumber);
+    }
+
+    public PdfName addPattern(PdfObject pattern) throws PdfException {
+        return addResource(pattern, PdfName.Pattern, P, patternNumber);
+    }
+
+    public PdfName addShading(PdfShading shading) throws PdfException {
+        return addResource(shading, PdfName.Shading, Sh, shadingNumber);
+    }
+
+    public PdfName addShading(PdfObject shading) throws PdfException {
+        return addResource(shading, PdfName.Shading, Sh, shadingNumber);
     }
 
     /**
