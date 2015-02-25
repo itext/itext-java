@@ -47,7 +47,9 @@ public class PdfGraphicsState {
     private Integer textRenderingMode;
     private Float textRise;
     private Float wordSpacing;
-    private Float characterSpacing;
+    private Float charSpacing;
+    private Float scale = 100f;
+    private Float leading;
 
     public PdfGraphicsState() {
 
@@ -263,11 +265,27 @@ public class PdfGraphicsState {
         return wordSpacing;
     }
 
-    public void setCharacterSpacing(Float characterSpacing) {
-        this.characterSpacing = characterSpacing;
+    public void setCharSpacing(Float characterSpacing) {
+        this.charSpacing = characterSpacing;
     }
 
-    public Float getCharacterSpacing() {
-        return characterSpacing;
+    public Float getCharSpacing() {
+        return charSpacing;
+    }
+
+    public Float getLeading() {
+        return leading;
+    }
+
+    public void setLeading(Float leading) {
+        this.leading = leading;
+    }
+
+    public Float getHorizontalScaling() {
+        return scale;
+    }
+
+    public void setHorizontalScaling(Float scale) {
+        this.scale = scale;
     }
 }

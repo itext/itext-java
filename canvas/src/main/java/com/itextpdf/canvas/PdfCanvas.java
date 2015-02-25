@@ -88,6 +88,10 @@ public class PdfCanvas {
     static final private byte[] CS = OutputStream.getIsoBytes("CS\n");
     static final private byte[] sc = OutputStream.getIsoBytes("sc\n");
     static final private byte[] SC = OutputStream.getIsoBytes("SC\n");
+    static final private byte[] TL = OutputStream.getIsoBytes("TL\n");
+    static final private byte[] TD = OutputStream.getIsoBytes("TD\n");
+    static final private byte[] Tz = OutputStream.getIsoBytes("Tz\n");
+    static final private byte[] TStar = OutputStream.getIsoBytes("T*\n");
 
     static private final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
     static private final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
@@ -266,6 +270,93 @@ public class PdfCanvas {
     }
 
     /**
+     * Sets the text leading parameter.
+     * <P>
+     * The leading parameter is measured in text space units. It specifies the vertical distance
+     * between the baselines of adjacent lines of text.</P>
+     *
+     * @param leading the new leading.
+     * @return current canvas.
+     */
+    public PdfCanvas setLeading(final float leading) throws PdfException {
+        currentGs.setLeading(leading);
+        contentStream.getOutputStream()
+                .writeFloat(leading)
+                .writeSpace()
+                .writeBytes(TL);
+
+        return this;
+    }
+
+    /**
+     * Moves to the start of the next line, offset from the start of the current line.
+     * <P>
+     * As a side effect, this sets the leading parameter in the text state.</P>
+     *
+     * @param x offset of the new current point
+     * @param y y-coordinate of the new current point
+     * @return current canvas.
+     */
+    public PdfCanvas moveTextWithLeading(final float x, final float y) throws PdfException {
+        currentGs.setLeading(-y);
+        contentStream.getOutputStream()
+                .writeFloat(x)
+                .writeSpace()
+                .writeFloat(y)
+                .writeSpace()
+                .writeBytes(TD);
+        return this;
+    }
+
+    /**
+     * Moves to the start of the next line.
+     * @return current canvas.
+     */
+    public PdfCanvas newlineText() throws PdfException {
+        contentStream.getOutputStream()
+                .writeBytes(TStar);
+        return this;
+    }
+
+    /**
+     * Moves to the next line and shows {@code text}.
+     *
+     * @param text the text to write
+     * @return current canvas.
+     */
+    public PdfCanvas newlineShowText(final String text) throws PdfException {
+        showText2(text);
+        contentStream.getOutputStream()
+                .writeByte((byte) '\'')
+                .writeNewLine();
+        return this;
+    }
+
+    /**
+     * Moves to the next line and shows text string, using the given values of the character and word spacing parameters.
+     *
+     * @param       wordSpacing     a parameter
+     * @param       charSpacing     a parameter
+     * @param text the text to write
+     * @return current canvas.
+     */
+    public PdfCanvas newlineShowText(final float wordSpacing, final float charSpacing, final String text) throws PdfException {
+        contentStream.getOutputStream()
+                .writeFloat(wordSpacing)
+                .writeSpace()
+                .writeFloat(charSpacing);
+        showText2(text);
+        contentStream.getOutputStream()
+                .writeByte((byte) '"')
+                .writeNewLine();
+        // The " operator sets charSpace and wordSpace into graphics state
+        // (cfr PDF reference v1.6, table 5.6)
+        currentGs.setCharSpacing(charSpacing);
+        currentGs.setWordSpacing(wordSpacing);
+        return this;
+    }
+
+    /**
      * Sets text rendering mode.
      *
      * @param textRenderingMode text rendering mode @see PdfCanvasConstants.
@@ -316,10 +407,25 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setCharacterSpacing(final float charSpacing) throws PdfException {
-        currentGs.setCharacterSpacing(charSpacing);
+        currentGs.setCharSpacing(charSpacing);
         contentStream.getOutputStream()
                 .writeFloat(charSpacing).writeSpace()
                 .writeBytes(Tc);
+        return this;
+    }
+
+    /**
+     * Sets the horizontal scaling parameter.
+     *
+     * @param scale a parameter.
+     * @return current canvas.
+     */
+    public PdfCanvas setHorizontalScaling(float scale) throws PdfException {
+        currentGs.setHorizontalScaling(scale);
+        contentStream.getOutputStream()
+                .writeFloat(scale)
+                .writeSpace()
+                .writeBytes(Tz);
         return this;
     }
 
