@@ -1,5 +1,7 @@
 package com.itextpdf.model.elements;
 
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annots.PdfLinkAnnotation;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
@@ -13,12 +15,12 @@ public class Link extends Span {
         this.linkAnnotation = linkAnnotation;
     }
 
-    public Link(String text, PdfAction action) {
-        this(text, new PdfLinkAnnotation().setAction(action));
+    public Link(String text, PdfAction action) throws PdfException {
+        this(text, new PdfLinkAnnotation(action.getDocument()).setAction(action));
     }
 
-    public Link(String text, PdfDestination destination) {
-        this(text, new PdfLinkAnnotation().setDestination(destination));
+    public Link(String text, PdfDestination destination) throws PdfException {
+        this(text, new PdfLinkAnnotation(destination.getDocument()).setDestination(destination));
     }
 
 

@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.tagging.IPdfTag;
 import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
@@ -239,6 +240,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPageTags(getDocument().getStructTreeRoot().getPdfObject(), tags);
         mcid = getMcid(tags);
         return tags;
+    }
+
+    public PdfPage setAdditionalAction(PdfName key, PdfAction action) throws PdfException {
+        PdfAction.setAdditionalAction(this, key, action);
+        return this;
     }
 
     private void getPageTags(PdfDictionary getFrom, List<IPdfTag> putTo) throws PdfException {

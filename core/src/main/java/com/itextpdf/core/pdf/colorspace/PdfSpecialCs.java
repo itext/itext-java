@@ -28,7 +28,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         public PdfColorSpace getBaseCs() throws PdfException {
-            return makeColorSpace(((PdfArray) getPdfObject()).get(1), getDocument());
+            return makeColorSpace(getPdfObject().get(1), getDocument());
         }
 
         static private PdfArray getIndexedCsArray(PdfObject base, int hival, PdfString lookup) {
@@ -108,11 +108,11 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         public PdfColorSpace getBaseCs() throws PdfException {
-            return makeColorSpace(((PdfArray) getPdfObject()).get(2), getDocument());
+            return makeColorSpace(getPdfObject().get(2), getDocument());
         }
 
         public PdfArray getNames() throws PdfException {
-            return ((PdfArray) getPdfObject()).getAsArray(1);
+            return getPdfObject().getAsArray(1);
         }
 
         static protected PdfArray getDeviceNCsArray(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform) {
@@ -189,11 +189,11 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
         @Override
         public int getNumOfComponents() throws PdfException {
-            return PdfColorSpace.makeColorSpace(((PdfArray)getPdfObject()).get(1), getDocument()).getNumOfComponents();
+            return PdfColorSpace.makeColorSpace(((PdfArray) getPdfObject()).get(1), getDocument()).getNumOfComponents();
         }
 
         public PdfColorSpace getUnderlyingColorSpace() throws PdfException {
-            return PdfColorSpace.makeColorSpace(((PdfArray)getPdfObject()).get(1), getDocument());
+            return PdfColorSpace.makeColorSpace(((PdfArray) getPdfObject()).get(1), getDocument());
         }
     }
 

@@ -14,9 +14,7 @@ import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.TreeSet;
+import java.util.*;
 
 public class PdfDocument implements IEventDispatcher {
 
@@ -83,6 +81,9 @@ public class PdfDocument implements IEventDispatcher {
     protected PdfStructTreeRoot structTreeRoot;
 
     protected Integer structParentIndex = null;
+
+    protected boolean closeReader = true;
+    protected boolean closeWriter = true;
 
     /**
      * Open PDF document in reading mode.
@@ -580,9 +581,10 @@ public class PdfDocument implements IEventDispatcher {
                 // For crypto purposes new documentId always generated.
                 fileId = PdfEncryption.createInfoId(originalFileID, isModified);
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
-                writer.close();
+                if (isCloseWriter())
+                    writer.close();
             }
-            if (reader != null)
+            if (reader != null && isCloseReader())
                 reader.close();
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotCloseDocument, e, this);
@@ -621,9 +623,10 @@ public class PdfDocument implements IEventDispatcher {
      * @param pageTo           end of the range of pages to be copied.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
+     * @return list of copied pages
      * @throws PdfException
      */
-    public PdfDocument copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) throws PdfException {
+    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) throws PdfException {
         TreeSet<Integer> pages = new TreeSet<Integer>();
         for (int i = pageFrom; i <= pageTo; i++) {
             pages.add(i);
@@ -639,10 +642,10 @@ public class PdfDocument implements IEventDispatcher {
      * @param pageFrom
      * @param pageTo
      * @param toDocument
-     * @return
+     * @return list of copied pages
      * @throws PdfException
      */
-    public PdfDocument copyPages(int pageFrom, int pageTo, PdfDocument toDocument) throws PdfException {
+    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument) throws PdfException {
         return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumOfPages() + 1);
     }
 
@@ -655,13 +658,16 @@ public class PdfDocument implements IEventDispatcher {
      * @param pagesToCopy      list of pages to be copied.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
+     * @return list of copied pages
      * @throws PdfException
      */
-    public PdfDocument copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) throws PdfException {
+    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) throws PdfException {
+        List<PdfPage> copiedPages = new ArrayList<PdfPage>();
         LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage(pageNum);
             PdfPage newPage = page.copy(toDocument);
+            copiedPages.add(newPage);
             page2page.put(page, newPage);
             if (insertBeforePage < toDocument.getNumOfPages() + 1) {
                 toDocument.addPage(insertBeforePage, newPage);
@@ -676,7 +682,7 @@ public class PdfDocument implements IEventDispatcher {
             else
                 getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
         }
-        return this;
+        return copiedPages;
     }
 
     /**
@@ -686,10 +692,27 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param pagesToCopy list of pages to be copied.
      * @param toDocument  a document to copy pages to.
+     * @return list of copied pages
      * @throws PdfException
      */
-    public PdfDocument copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument) throws PdfException {
+    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument) throws PdfException {
         return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1);
+    }
+
+    public boolean isCloseReader() {
+        return closeReader;
+    }
+
+    public void setCloseReader(boolean closeReader) {
+        this.closeReader = closeReader;
+    }
+
+    public boolean isCloseWriter() {
+        return closeWriter;
+    }
+
+    public void setCloseWriter(boolean closeWriter) {
+        this.closeWriter = closeWriter;
     }
 
     /**

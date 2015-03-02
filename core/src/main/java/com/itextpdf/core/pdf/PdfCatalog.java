@@ -1,7 +1,9 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.layer.PdfOCProperties;
+import com.itextpdf.core.pdf.navigation.PdfDestination;
 
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
@@ -63,13 +65,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * so if you want to make low-level changes in Pdf structures themselves (PdfArray, PdfDictionary, etc),
      * then you should address directly those objects, e.g.:
      * <CODE>
-     *     PdfCatalog pdfCatalog = pdfDoc.getCatalog();
-     *     PdfDictionary ocProps = pdfCatalog.getAsDictionary(PdfName.OCProperties);
-     *     // manipulate with ocProps.
+     * PdfCatalog pdfCatalog = pdfDoc.getCatalog();
+     * PdfDictionary ocProps = pdfCatalog.getAsDictionary(PdfName.OCProperties);
+     * // manipulate with ocProps.
      * </CODE>
      * Also note that this method is implicitly called when creating a new PdfLayer instance,
      * so you should either use hi-level logic of operating with layers,
      * or manipulate low-level Pdf objects by yourself.
+     *
      * @param createIfNotExists true to create new /OCProperties entry in catalog if not exists,
      *                          false to return null if /OCProperties entry in catalog is not present.
      * @return the Optional Content Properties Dictionary
@@ -94,6 +97,19 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     @Override
     public void flush() throws PdfException {
         throw new PdfException(PdfException.YouCannotFlushPdfCatalogManually);
+    }
+
+    public PdfCatalog setOpenAction(PdfDestination destination) {
+        return put(PdfName.OpenAction, destination);
+    }
+
+    public PdfCatalog setOpenAction(PdfAction action) {
+        return put(PdfName.OpenAction, action);
+    }
+
+    public PdfCatalog setAdditionalAction(PdfName key, PdfAction action) throws PdfException {
+        PdfAction.setAdditionalAction(this, key, action);
+        return this;
     }
 
     /**

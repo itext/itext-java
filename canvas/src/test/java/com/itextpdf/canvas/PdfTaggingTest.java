@@ -254,7 +254,8 @@ public class PdfTaggingTest {
             add(4);
             add(10);
             add(11);
-        }}, destination).copyPages(50, 52, destination);
+        }}, destination);
+        source.copyPages(50, 52, destination);
 
 
         destination.close();

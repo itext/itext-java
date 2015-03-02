@@ -14,6 +14,11 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         list = new ArrayList<PdfObject>();
     }
 
+    public PdfArray(PdfObject obj) {
+        this();
+        list.add(obj);
+    }
+
     public PdfArray(Rectangle rectangle) {
         list = new ArrayList<PdfObject>(4);
         add(new PdfNumber(rectangle.getX()));
