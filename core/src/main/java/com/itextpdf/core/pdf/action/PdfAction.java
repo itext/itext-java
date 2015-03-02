@@ -2,7 +2,7 @@ package com.itextpdf.core.pdf.action;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.annots.PdfAnnotation;
+import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 import com.itextpdf.core.pdf.filespec.PdfStringFS;
 import com.itextpdf.core.pdf.navigation.PdfDestination;

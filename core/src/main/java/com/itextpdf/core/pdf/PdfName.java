@@ -278,6 +278,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName RB = createDirectName("RB");
     public static final PdfName RBGroups = createDirectName("RBGroups");
     public static final PdfName Recipients = createDirectName("Recipients");
+    public static final PdfName Rect = createDirectName("Rect");
     public static final PdfName Reference = createDirectName("Reference");
     public static final PdfName RelativeColorimetric = createDirectName("RelativeColorimetric");
     public static final PdfName Rendition = createDirectName("Rendition");
