@@ -213,8 +213,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName MCD = createDirectName("MCD");
     public static final PdfName MCID = createDirectName("MCID");
     public static final PdfName MCR = createDirectName("MCR");
-    public static final PdfName Mediaclip = createDirectName("MediaBox");
-    public static final PdfName MediaBox = createDirectName("MediaClip");
+    public static final PdfName MediaBox = createDirectName("MediaBox");
+    public static final PdfName MediaClip = createDirectName("MediaClip");
     public static final PdfName Metadata = createDirectName("Metadata");
     public static final PdfName min = createDirectName("min");
     public static final PdfName Mix = createDirectName("Mix");

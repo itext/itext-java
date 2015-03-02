@@ -14,7 +14,7 @@ public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfMediaClipData(PdfDocument pdfDocument, String file, PdfFileSpec fs, String mimeType) throws PdfException {
         this(new PdfDictionary(), pdfDocument);
-        getPdfObject().put(PdfName.Type, PdfName.Mediaclip);
+        getPdfObject().put(PdfName.Type, PdfName.MediaClip);
         getPdfObject().put(PdfName.S, PdfName.MCD);
         getPdfObject().put(PdfName.N, new PdfString(String.format("Media clip for %s", file)));
         getPdfObject().put(PdfName.CT, new PdfString(mimeType));
