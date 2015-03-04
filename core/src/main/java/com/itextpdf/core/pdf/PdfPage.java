@@ -255,7 +255,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             for (int i = 0; i < annots.size(); i++) {
                 PdfDictionary annot = annots.getAsDictionary(i);
                 if (annot != null)
-                    annotations.add(PdfAnnotation.makeAnnotation(annot, getDocument(), this));
+                    annotations.add(PdfAnnotation.makeAnnotation(annot, getDocument()).setPage(this));
             }
         }
         return annotations;

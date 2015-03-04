@@ -21,17 +21,8 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         super(pdfObject, document);
     }
 
-    public PdfLinkAnnotation(PdfDictionary pdfObject, PdfDocument document, PdfPage page) throws PdfException {
-        super(pdfObject, document, page);
-    }
-
     public PdfLinkAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
         super(document, rect);
-        put(PdfName.Subtype, PdfName.Link);
-    }
-
-    public PdfLinkAnnotation(PdfDocument document, Rectangle rect, PdfPage page) throws PdfException {
-        super(document, rect, page);
         put(PdfName.Subtype, PdfName.Link);
     }
 
@@ -94,7 +85,6 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     public PdfLinkAnnotation setQuadPoints(PdfDictionary borderStyle) {
         return put(PdfName.BS, borderStyle);
     }
-
 
 
 }

@@ -23,24 +23,12 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     protected PdfPage page;
 
     public PdfAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
-        this(document, rect, null);
-    }
-
-    public PdfAnnotation(PdfDocument document, Rectangle rect, PdfPage page) throws PdfException {
         this(new PdfDictionary(), document);
         put(PdfName.Rect, new PdfArray(rect));
-        if (page != null)
-            put(PdfName.P, page);
-        this.page = page;
     }
 
     public PdfAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
-        this(pdfObject, document, null);
-    }
-
-    public PdfAnnotation(PdfDictionary pdfObject, PdfDocument document, PdfPage page) throws PdfException {
         super(pdfObject, document);
-        this.page = page;
     }
 
     /**
@@ -225,7 +213,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.StructParent, new PdfNumber(structParentIndex));
     }
 
-    static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document, PdfPage page) throws PdfException {
+    static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document) throws PdfException {
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (pdfObject.isDictionary()) {
@@ -235,10 +223,6 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 return (T) new PdfLinkAnnotation((PdfDictionary) pdfObject, document);
         }
         return null;
-    }
-
-    static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document) throws PdfException {
-        return makeAnnotation(pdfObject, document, null);
     }
 
 }
