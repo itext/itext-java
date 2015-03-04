@@ -5,6 +5,7 @@ import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.action.PdfAction;
+import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.tagging.IPdfTag;
 import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
@@ -247,6 +248,23 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    public List<PdfAnnotation> getAnnotations() throws PdfException {
+        List<PdfAnnotation> annotations = new ArrayList<PdfAnnotation>();
+        PdfArray annots = getPdfObject().getAsArray(PdfName.Annots);
+        if (annots != null) {
+            for (int i = 0; i < annots.size(); i++) {
+                PdfDictionary annot = annots.getAsDictionary(i);
+                if (annot != null)
+                    annotations.add(PdfAnnotation.makeAnnotation(annot, getDocument(), this));
+            }
+        }
+        return annotations;
+    }
+
+    protected void makeIndirect(PdfDocument pdfDocument) throws PdfException {
+        getPdfObject().makeIndirect(pdfDocument);
+    }
+
     private void getPageTags(PdfDictionary getFrom, List<IPdfTag> putTo) throws PdfException {
         PdfObject k = getFrom.get(PdfName.K);
         if (k == null)
@@ -287,10 +305,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             default:
                 break;
         }
-    }
-
-    protected void makeIndirect(PdfDocument pdfDocument) throws PdfException {
-        getPdfObject().makeIndirect(pdfDocument);
     }
 
     private PdfStream newContentStream(boolean before) throws PdfException {
