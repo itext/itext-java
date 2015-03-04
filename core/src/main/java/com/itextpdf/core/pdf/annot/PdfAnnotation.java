@@ -221,7 +221,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             return n.getIntValue();
     }
 
-    public <T extends PdfAnnotation> T setStructParenyIndex(int structParentIndex) {
+    public <T extends PdfAnnotation> T setStructParentIndex(int structParentIndex) {
         return put(PdfName.StructParent, new PdfNumber(structParentIndex));
     }
 
