@@ -261,8 +261,40 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annotations;
     }
 
+    public PdfPage addAnnotation(PdfAnnotation annotation) throws PdfException {
+        PdfArray annots = getAnnots(true);
+        annots.add(annotation.getPdfObject());
+        return this;
+    }
+
+    public PdfPage addAnnotation(int index, PdfAnnotation annotation) throws PdfException {
+        if (getAnnotsSize() <= index)
+            return addAnnotation(annotation);
+        else {
+            PdfArray annots = getAnnots(true);
+            annots.add(index, annotation.getPdfObject());
+            return this;
+        }
+    }
+
+    public int getAnnotsSize() throws PdfException {
+        PdfArray annots = getAnnots(false);
+        if (annots == null)
+            return 0;
+        return annots.size();
+    }
+
     protected void makeIndirect(PdfDocument pdfDocument) throws PdfException {
         getPdfObject().makeIndirect(pdfDocument);
+    }
+
+    private PdfArray getAnnots(boolean create) throws PdfException {
+        PdfArray annots = getPdfObject().getAsArray(PdfName.Annots);
+        if (annots == null && create) {
+            annots = new PdfArray();
+            put(PdfName.Annots, annots);
+        }
+        return annots;
     }
 
     private void getPageTags(PdfDictionary getFrom, List<IPdfTag> putTo) throws PdfException {
