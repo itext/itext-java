@@ -6,6 +6,8 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.layer.PdfOCG;
 
+import java.util.ArrayList;
+
 public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     static public final int Invisible = 1;

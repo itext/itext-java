@@ -263,7 +263,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfPage addAnnotation(PdfAnnotation annotation) throws PdfException {
         PdfArray annots = getAnnots(true);
-        annots.add(annotation.getPdfObject());
+        annots.add(annotation.setPage(this).getPdfObject());
         return this;
     }
 
@@ -272,7 +272,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             return addAnnotation(annotation);
         else {
             PdfArray annots = getAnnots(true);
-            annots.add(index, annotation.getPdfObject());
+            annots.add(index, annotation.setPage(this).getPdfObject());
             return this;
         }
     }
