@@ -6,8 +6,6 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.layer.PdfOCG;
 
-import java.util.ArrayList;
-
 public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     static public final int Invisible = 1;
@@ -216,15 +214,37 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document) throws PdfException {
+        T annotation = null;
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (pdfObject.isDictionary()) {
             PdfDictionary dictionary = (PdfDictionary) pdfObject;
             PdfName subtype = dictionary.getAsName(PdfName.Subtype);
             if (PdfName.Link.equals(subtype))
-                return (T) new PdfLinkAnnotation((PdfDictionary) pdfObject, document);
+                annotation = (T) new PdfLinkAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.Movie.equals(subtype))
+                throw new UnsupportedOperationException();
+            else if (PdfName.Widget.equals(subtype))
+                throw new UnsupportedOperationException();
+            else if (PdfName.Screen.equals(subtype))
+                throw new UnsupportedOperationException();
+            else if (PdfName.PrinterMark.equals(subtype))
+                throw new UnsupportedOperationException();
+            else if (PdfName.TrapNet.equals(subtype))
+                throw new UnsupportedOperationException();
+            else if (PdfName.Watermark.equals(subtype))
+                throw new UnsupportedOperationException();
+            else if (PdfName._3D.equals(subtype))
+                throw new UnsupportedOperationException();
         }
-        return null;
+        if (annotation instanceof PdfMarkupAnnotation) {
+            PdfMarkupAnnotation markup = (PdfMarkupAnnotation) annotation;
+            PdfDictionary inReplyTo = markup.getInReplyToObject();
+            if (inReplyTo != null)
+                markup.setInReplyTo(makeAnnotation(inReplyTo, document));
+        }
+        return annotation;
     }
+
 
 }
