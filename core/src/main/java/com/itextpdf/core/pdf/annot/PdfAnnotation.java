@@ -62,7 +62,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfString getContents() throws PdfException {
-        return (PdfString) get(PdfName.Contents);
+        return getPdfObject().getAsString(PdfName.Contents);
     }
 
     public <T extends PdfAnnotation> T setContents(PdfString contents) {
@@ -70,7 +70,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfDictionary getPageObject() throws PdfException {
-        return (PdfDictionary) get(PdfName.P);
+        return getPdfObject().getAsDictionary(PdfName.P);
     }
 
     public PdfPage getPage() {
@@ -83,7 +83,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfString getName() throws PdfException {
-        return (PdfString) get(PdfName.NM);
+        return getPdfObject().getAsString(PdfName.NM);
     }
 
     public <T extends PdfAnnotation> T setName(PdfString name) {
@@ -91,7 +91,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfString getDate() throws PdfException {
-        return (PdfString) get(PdfName.M);
+        return getPdfObject().getAsString(PdfName.M);
     }
 
     public <T extends PdfAnnotation> T setDate(PdfString date) {
@@ -99,7 +99,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public int getFlags() throws PdfException {
-        PdfNumber f = (PdfNumber) get(PdfName.F);
+        PdfNumber f = getPdfObject().getAsNumber(PdfName.F);
         if (f != null)
             return f.getIntValue();
         else
@@ -190,7 +190,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfName getAppearanceState() throws PdfException {
-        return (PdfName) get(PdfName.AS);
+        return getPdfObject().getAsName(PdfName.AS);
     }
 
     public <T extends PdfAnnotation> T setAppearanceState(PdfName as) {
@@ -198,7 +198,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfArray getBorder() throws PdfException {
-        return (PdfArray) get(PdfName.Border);
+        return getPdfObject().getAsArray(PdfName.Border);
     }
 
     public <T extends PdfAnnotation> T setBorder(PdfArray border) {
@@ -206,7 +206,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfArray getColor() throws PdfException {
-        return (PdfArray) get(PdfName.C);
+        return getPdfObject().getAsArray(PdfName.C);
     }
 
     public <T extends PdfAnnotation> T setColor(PdfArray color) {
@@ -214,7 +214,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public int getStructParentIndex() throws PdfException {
-        PdfNumber n = (PdfNumber) get(PdfName.StructParent);
+        PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParent);
         if (n == null)
             return -1;
         else

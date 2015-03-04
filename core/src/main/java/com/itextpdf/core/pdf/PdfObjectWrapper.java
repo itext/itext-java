@@ -108,18 +108,4 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return (T1) this;
     }
 
-    public PdfObject get(PdfName key) throws PdfException {
-        if (getPdfObject().isDictionary())
-            return ((PdfDictionary) getPdfObject()).get(key);
-        else
-            return null;
-    }
-
-    public PdfObject get(int index) throws PdfException {
-        if (getPdfObject().isArray())
-            return ((PdfArray) getPdfObject()).get(index);
-        else
-            return null;
-    }
-
 }

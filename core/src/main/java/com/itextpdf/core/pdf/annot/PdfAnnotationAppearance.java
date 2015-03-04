@@ -33,7 +33,7 @@ public class PdfAnnotationAppearance extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfStream getStateObject(PdfName stateName) throws PdfException {
-        return (PdfStream) get(stateName);
+        return getPdfObject().getAsStream(stateName);
     }
 
     public Set<PdfName> getStates() {

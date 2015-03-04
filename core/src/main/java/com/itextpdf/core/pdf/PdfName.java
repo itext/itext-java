@@ -113,6 +113,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName DefaultGray = createDirectName("DefaultGray");
     public static final PdfName DefaultRGB = createDirectName("DefaultRGB");
     public static final PdfName Design = createDirectName("Design");
+    public static final PdfName Dest = createDirectName("Dest");
     public static final PdfName DeviceCMYK = createDirectName("DeviceCMYK");
     public static final PdfName DeviceGray = createDirectName("DeviceGray");
     public static final PdfName DeviceN = createDirectName("DeviceN");
@@ -172,6 +173,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Height = createDirectName("Height");
     public static final PdfName Hide = createDirectName("Hide");
     public static final PdfName HT = createDirectName("HT");
+    public static final PdfName I = createDirectName("I");
     public static final PdfName ICCBased = createDirectName("ICCBased");
     public static final PdfName ID = createDirectName("ID");
     public static final PdfName Identity = createDirectName("Identity");
@@ -255,6 +257,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Or = createDirectName("Or");
     public static final PdfName Order = createDirectName("Order");
     public static final PdfName P = createDirectName("P");
+    public static final PdfName PA = createDirectName("PA");
     public static final PdfName Page = createDirectName("Page");
     public static final PdfName PageElement = createDirectName("PageElement");
     public static final PdfName Pages = createDirectName("Pages");
@@ -277,6 +280,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Private = createDirectName("Private");
     public static final PdfName Producer = createDirectName("Producer");
     public static final PdfName Properties = createDirectName("Properties");
+    public static final PdfName QuadPoints = createDirectName("QuadPoints");
     public static final PdfName Quote = createDirectName("Quote");
     public static final PdfName R = createDirectName("R");
     public static final PdfName Range = createDirectName("Range");
