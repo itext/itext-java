@@ -77,6 +77,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName BM = createDirectName("BM");
     public static final PdfName Border = createDirectName("Border");
     public static final PdfName Bounds = createDirectName("Bounds");
+    public static final PdfName BS = createDirectName("BS");
     public static final PdfName C = createDirectName("C");
     public static final PdfName C0 = createDirectName("C0");
     public static final PdfName C1 = createDirectName("C1");
