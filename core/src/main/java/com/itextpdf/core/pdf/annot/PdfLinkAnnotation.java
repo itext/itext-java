@@ -78,11 +78,11 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return put(PdfName.QuadPoints, quadPoints);
     }
 
-    public PdfDictionary getBorserStyle() throws PdfException {
+    public PdfDictionary getBorderStyle() throws PdfException {
         return getPdfObject().getAsDictionary(PdfName.BS);
     }
 
-    public PdfLinkAnnotation setQuadPoints(PdfDictionary borderStyle) {
+    public PdfLinkAnnotation setBorderStyle(PdfDictionary borderStyle) {
         return put(PdfName.BS, borderStyle);
     }
 
