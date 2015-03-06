@@ -256,6 +256,8 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 throw new UnsupportedOperationException();
             else if (PdfName._3D.equals(subtype))
                 throw new UnsupportedOperationException();
+            else if (PdfName.Text.equals(subtype))
+                annotation = (T) new PdfTextAnnotation((PdfDictionary) pdfObject, document);
         }
         if (annotation instanceof PdfMarkupAnnotation) {
             PdfMarkupAnnotation markup = (PdfMarkupAnnotation) annotation;
