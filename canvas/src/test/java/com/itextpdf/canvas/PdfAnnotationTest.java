@@ -1,13 +1,17 @@
 package com.itextpdf.canvas;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
+import com.itextpdf.core.pdf.annot.PdfCaretAnnotation;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.core.pdf.annot.PdfPopupAnnotation;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.List;
+
+import java.io.*;
 
 public class PdfAnnotationTest {
 
@@ -129,5 +135,54 @@ public class PdfAnnotationTest {
 
     }
 
+    @Test
+    public void caretTest() throws IOException, PdfException, DocumentException, InterruptedException {
+        String filename =  destinationFolder + "CaretAnnotation.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("This is a text")
+                .endText()
+                .restoreState();
+
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(236, 750)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("This is an edited text")
+                .endText()
+                .restoreState();
+
+        PdfCaretAnnotation caret = new PdfCaretAnnotation(pdfDoc1, new Rectangle(36, 745, 350, 20));
+        caret.setSymbol(new PdfString("P"));
+
+        PdfPopupAnnotation popup = new PdfPopupAnnotation(pdfDoc1, new Rectangle(36, 445, 100, 100));
+        popup.setContents(new PdfString("Popup"));
+        popup.setOpen(new PdfBoolean(true));
+
+        caret.setPopup(popup);
+
+        page1.addAnnotation(caret);
+        page1.addAnnotation(popup);
+        page1.flush();
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_CaretAnnotation.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
 
 }

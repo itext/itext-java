@@ -233,7 +233,19 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.StructParent, new PdfNumber(structParentIndex));
     }
 
+    public PdfArray getQuadPoints() throws PdfException {
+        return getPdfObject().getAsArray(PdfName.QuadPoints);
+    }
+
+    public <T extends PdfAnnotation> T setQuadPoints(PdfArray quadPoints) {
+        return put(PdfName.QuadPoints, quadPoints);
+    }
+
     static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document) throws PdfException {
+        return makeAnnotation(pdfObject, document, null);
+    }
+
+    static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document, PdfAnnotation parent) throws PdfException {
         T annotation = null;
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
@@ -242,6 +254,8 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             PdfName subtype = dictionary.getAsName(PdfName.Subtype);
             if (PdfName.Link.equals(subtype))
                 annotation = (T) new PdfLinkAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.Popup.equals(subtype))
+                annotation = (T) new PdfPopupAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Movie.equals(subtype))
                 throw new UnsupportedOperationException();
             else if (PdfName.Widget.equals(subtype))
@@ -256,15 +270,31 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 throw new UnsupportedOperationException();
             else if (PdfName._3D.equals(subtype))
                 throw new UnsupportedOperationException();
+            else if (PdfName.Highlight.equals(subtype) || PdfName.Underline.equals(subtype) || PdfName.Squiggly.equals(subtype) || PdfName.StrikeOut.equals(subtype))
+                throw new UnsupportedOperationException();
+            else if (PdfName.Caret.equals(subtype))
+                return (T) new PdfCaretAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Text.equals(subtype))
-                annotation = (T) new PdfTextAnnotation((PdfDictionary) pdfObject, document);
+                    annotation = (T) new PdfTextAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.Sound.equals(subtype)){
+                throw new UnsupportedOperationException();
+            }
         }
         if (annotation instanceof PdfMarkupAnnotation) {
             PdfMarkupAnnotation markup = (PdfMarkupAnnotation) annotation;
             PdfDictionary inReplyTo = markup.getInReplyToObject();
             if (inReplyTo != null)
                 markup.setInReplyTo(makeAnnotation(inReplyTo, document));
+            PdfDictionary popup = markup.getPopupObject();
+            if (popup != null)
+                markup.setPopup((PdfPopupAnnotation) makeAnnotation(popup, document, markup));
         }
+        if (annotation instanceof PdfPopupAnnotation) {
+            PdfPopupAnnotation popup = (PdfPopupAnnotation) annotation;
+            if (parent != null)
+                popup.setParent(parent);
+        }
+        
         return annotation;
     }
 

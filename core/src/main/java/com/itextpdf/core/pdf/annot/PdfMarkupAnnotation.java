@@ -7,6 +7,7 @@ import com.itextpdf.core.pdf.*;
 abstract public class PdfMarkupAnnotation extends PdfAnnotation {
 
     protected PdfAnnotation inReplyTo = null;
+    protected PdfPopupAnnotation popup = null;
 
     public PdfMarkupAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
         super(document, rect);
@@ -62,6 +63,19 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
     public <T extends PdfMarkupAnnotation> T setInReplyTo(PdfAnnotation inReplyTo) {
         this.inReplyTo = inReplyTo;
         return put(PdfName.IRT, inReplyTo);
+    }
+
+    public <T extends PdfMarkupAnnotation> T setPopup(PdfPopupAnnotation popup) {
+        this.popup = popup;
+        return put(PdfName.Popup, popup);
+    }
+
+    public PdfDictionary getPopupObject() throws PdfException {
+        return getPdfObject().getAsDictionary(PdfName.Popup);
+    }
+
+    public PdfPopupAnnotation getPopup() {
+        return popup;
     }
 
     public PdfString getSubject() throws PdfException {
