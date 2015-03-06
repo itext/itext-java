@@ -4,17 +4,20 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
-public class PdfMarkupAnnotation extends PdfAnnotation {
+abstract public class PdfMarkupAnnotation extends PdfAnnotation {
 
     protected PdfAnnotation inReplyTo = null;
 
     public PdfMarkupAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
         super(document, rect);
+        put(PdfName.Subtype, getSubtype());
     }
 
     public PdfMarkupAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
         super(pdfObject, document);
     }
+
+    abstract public PdfName getSubtype();
 
     public PdfString getText() throws PdfException {
         return getPdfObject().getAsString(PdfName.T);

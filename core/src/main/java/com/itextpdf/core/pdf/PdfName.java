@@ -257,6 +257,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ON = createDirectName("ON");
     public static final PdfName OP = createDirectName("OP");
     public static final PdfName op = createDirectName("op");
+    public static final PdfName Open = createDirectName("Open");
     public static final PdfName OpenAction = createDirectName("OpenAction");
     public static final PdfName Operation = createDirectName("Operation");
     public static final PdfName OPM = createDirectName("OPM");
@@ -325,6 +326,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Span = createDirectName("Span");
     public static final PdfName Standard = createDirectName("Standard");
     public static final PdfName State = createDirectName("State");
+    public static final PdfName StateModel = createDirectName("StateModel");
     public static final PdfName StdCF = createDirectName("StdCF");
     public static final PdfName StmF = createDirectName("StmF");
     public static final PdfName StrF = createDirectName("StrF");
@@ -341,6 +343,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Table = createDirectName("Table");
     public static final PdfName TBody = createDirectName("TBody");
     public static final PdfName TD = createDirectName("TD");
+    public static final PdfName Text = createDirectName("Text");
     public static final PdfName TF = createDirectName("TF");
     public static final PdfName TFoot = createDirectName("TFoot");
     public static final PdfName TH = createDirectName("TH");

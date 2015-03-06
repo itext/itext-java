@@ -8,6 +8,9 @@ import com.itextpdf.core.pdf.layer.PdfOCG;
 
 public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
+    /**
+     * Annotation flags.
+     */
     static public final int Invisible = 1;
     static public final int Hidden = 2;
     static public final int Print = 4;
@@ -19,6 +22,23 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     static public final int ToggleNoView = 256;
     static public final int LockedContents = 512;
 
+
+    /**
+     * Annotation states.
+     */
+    static public final PdfString Marked = new PdfString("Marked");
+    static public final PdfString Unmarked = new PdfString("Unmarked");
+    static public final PdfString Accepted = new PdfString("Accepted");
+    static public final PdfString Rejected = new PdfString("Rejected");
+    static public final PdfString Canceled = new PdfString("Cancelled");
+    static public final PdfString Completed = new PdfString("Completed");
+    static public final PdfString None = new PdfString("None");
+
+    /**
+     * Annotation state models.
+     */
+    static public final PdfString MarkedModel = new PdfString("Marked");
+    static public final PdfString ReviewModel = new PdfString("Review");
 
     protected PdfPage page;
 
