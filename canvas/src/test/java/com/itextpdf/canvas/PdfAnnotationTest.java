@@ -5,10 +5,7 @@ import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
-import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.annot.PdfCaretAnnotation;
-import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.core.pdf.annot.PdfPopupAnnotation;
+import com.itextpdf.core.pdf.annot.*;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
@@ -136,6 +133,25 @@ public class PdfAnnotationTest {
     }
 
     @Test
+    public void addTextAnnotation01() throws Exception {
+        PdfDocument document = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "textAnnotation01.pdf")));
+
+        PdfPage page = document.addNewPage();
+
+        PdfTextAnnotation textannot = new PdfTextAnnotation(document, new Rectangle(100, 600, 50, 40)).setText(new PdfString("Text Annotation 01")).setContents(new PdfString("Some contents..."));
+        PdfPopupAnnotation popupAnnot = new PdfPopupAnnotation(document, new Rectangle(150, 640, 200, 100)).setOpen(true);
+        textannot.setPopup(popupAnnot);
+        popupAnnot.setParent(textannot);
+        page.addAnnotation(textannot);
+        page.addAnnotation(popupAnnot);
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "textAnnotation01.pdf", sourceFolder + "cmp_textAnnotation01.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
     public void caretTest() throws IOException, PdfException, DocumentException, InterruptedException {
         String filename =  destinationFolder + "CaretAnnotation.pdf";
 
@@ -169,7 +185,7 @@ public class PdfAnnotationTest {
 
         PdfPopupAnnotation popup = new PdfPopupAnnotation(pdfDoc1, new Rectangle(36, 445, 100, 100));
         popup.setContents(new PdfString("Popup"));
-        popup.setOpen(new PdfBoolean(true));
+        popup.setOpen(true);
 
         caret.setPopup(popup);
 

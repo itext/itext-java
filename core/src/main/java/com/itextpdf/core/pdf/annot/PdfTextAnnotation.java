@@ -19,15 +19,6 @@ public class PdfTextAnnotation extends PdfMarkupAnnotation {
         return PdfName.Text;
     }
 
-    public boolean getOpen() throws PdfException {
-        PdfBoolean open = getPdfObject().getAsBoolean(PdfName.Open);
-        return open == null ? false : open.getValue();
-    }
-
-    public PdfTextAnnotation setOpen(boolean open) {
-        return put(PdfName.Open, new PdfBoolean(open));
-    }
-
     public PdfName getIconName() throws PdfException {
         return getPdfObject().getAsName(PdfName.Name);
     }

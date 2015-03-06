@@ -30,7 +30,4 @@ public class PdfPopupAnnotation extends PdfAnnotation {
         return put(PdfName.Parent, parent);
     }
 
-    public PdfPopupAnnotation setOpen(PdfBoolean isOpen) {
-        return put(PdfName.Open, isOpen);
-    }
 }

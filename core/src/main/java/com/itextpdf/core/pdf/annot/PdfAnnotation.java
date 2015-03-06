@@ -237,6 +237,15 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsArray(PdfName.QuadPoints);
     }
 
+    public boolean getOpen() throws PdfException {
+        PdfBoolean open = getPdfObject().getAsBoolean(PdfName.Open);
+        return open == null ? false : open.getValue();
+    }
+
+    public <T extends PdfAnnotation> T setOpen(boolean open) {
+        return put(PdfName.Open, new PdfBoolean(open));
+    }
+
     public <T extends PdfAnnotation> T setQuadPoints(PdfArray quadPoints) {
         return put(PdfName.QuadPoints, quadPoints);
     }
