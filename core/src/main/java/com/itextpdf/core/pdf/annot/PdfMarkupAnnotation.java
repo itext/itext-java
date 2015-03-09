@@ -110,4 +110,21 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.ExData, exData);
     }
 
+    public PdfCaretAnnotation setRectangleDifferences(PdfArray rect) {
+        return put(PdfName.RD, rect);
+    }
+
+    public PdfArray getRectangleDifferences() throws PdfException {
+        return getPdfObject().getAsArray(PdfName.RD);
+    }
+
+    public PdfDictionary getBorderEffect() throws PdfException {
+        return getPdfObject().getAsDictionary(PdfName.BE);
+    }
+
+    public PdfLinkAnnotation setBorderEffect(PdfDictionary borderEffect) {
+        return put(PdfName.BE, borderEffect);
+    }
+
+
 }

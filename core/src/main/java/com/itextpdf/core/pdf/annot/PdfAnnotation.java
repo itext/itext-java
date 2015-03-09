@@ -159,7 +159,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getAppearanceObject(PdfName.D);
     }
 
-    public <T extends PdfAnnotation> T setAppearanceObject(PdfName appearanceType, PdfDictionary appearance) throws PdfException {
+    public <T extends PdfAnnotation> T setAppearance(PdfName appearanceType, PdfDictionary appearance) throws PdfException {
         PdfDictionary ap = getAppearanceDictionary();
         if (ap == null) {
             ap = new PdfDictionary();
@@ -169,20 +169,20 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
-    public <T extends PdfAnnotation> T setNormalAppearanceObject(PdfDictionary appearance) throws PdfException {
-        return setAppearanceObject(PdfName.N, appearance);
+    public <T extends PdfAnnotation> T setNormalAppearance(PdfDictionary appearance) throws PdfException {
+        return setAppearance(PdfName.N, appearance);
     }
 
-    public <T extends PdfAnnotation> T setRolloverAppearanceObject(PdfDictionary appearance) throws PdfException {
-        return setAppearanceObject(PdfName.R, appearance);
+    public <T extends PdfAnnotation> T setRolloverAppearance(PdfDictionary appearance) throws PdfException {
+        return setAppearance(PdfName.R, appearance);
     }
 
-    public <T extends PdfAnnotation> T setDownAppearanceObject(PdfDictionary appearance) throws PdfException {
-        return setAppearanceObject(PdfName.D, appearance);
+    public <T extends PdfAnnotation> T setDownAppearance(PdfDictionary appearance) throws PdfException {
+        return setAppearance(PdfName.D, appearance);
     }
 
     public <T extends PdfAnnotation> T setAppearance(PdfName appearanceType, PdfAnnotationAppearance appearance) throws PdfException {
-        return setAppearanceObject(appearanceType, appearance.getPdfObject());
+        return setAppearance(appearanceType, appearance.getPdfObject());
     }
 
     public <T extends PdfAnnotation> T setNormalAppearance(PdfAnnotationAppearance appearance) throws PdfException {
@@ -213,12 +213,16 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.Border, border);
     }
 
-    public PdfArray getColor() throws PdfException {
+    public PdfArray getColorObject() throws PdfException {
         return getPdfObject().getAsArray(PdfName.C);
     }
 
     public <T extends PdfAnnotation> T setColor(PdfArray color) {
         return put(PdfName.C, color);
+    }
+
+    public <T extends PdfAnnotation> T setColor(float[] color) {
+        return setColor(new PdfArray(color));
     }
 
     public int getStructParentIndex() throws PdfException {
@@ -248,6 +252,14 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     public <T extends PdfAnnotation> T setQuadPoints(PdfArray quadPoints) {
         return put(PdfName.QuadPoints, quadPoints);
+    }
+
+    public PdfDictionary getBorderStyle() throws PdfException {
+        return getPdfObject().getAsDictionary(PdfName.BS);
+    }
+
+    public PdfLinkAnnotation setBorderStyle(PdfDictionary borderStyle) {
+        return put(PdfName.BS, borderStyle);
     }
 
     static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document) throws PdfException {
@@ -284,8 +296,8 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             else if (PdfName.Caret.equals(subtype))
                 return (T) new PdfCaretAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Text.equals(subtype))
-                    annotation = (T) new PdfTextAnnotation((PdfDictionary) pdfObject, document);
-            else if (PdfName.Sound.equals(subtype)){
+                annotation = (T) new PdfTextAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.Sound.equals(subtype)) {
                 throw new UnsupportedOperationException();
             }
         }
@@ -303,7 +315,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             if (parent != null)
                 popup.setParent(parent);
         }
-        
+
         return annotation;
     }
 

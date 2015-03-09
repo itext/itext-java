@@ -16,9 +16,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
-
-import java.io.*;
 
 public class PdfAnnotationTest {
 
@@ -79,7 +78,7 @@ public class PdfAnnotationTest {
         canvas.release();
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com")).
-                setColor(new PdfArray(new float[]{1, 0, 0})));
+                setColor(new float[]{1, 0, 0}));
         page.flush();
 
         document.close();
@@ -107,13 +106,13 @@ public class PdfAnnotationTest {
         canvas.release();
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com")).
-                setColor(new PdfArray(new float[]{1, 0, 0})));
+                setColor(new float[]{1, 0, 0}));
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 540, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com/node")).
-                setColor(new PdfArray(new float[]{0, 1, 0})));
+                setColor(new float[]{0, 1, 0}));
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 490, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com/salesfaq")).
-                setColor(new PdfArray(new float[]{0, 0, 1})));
+                setColor(new float[]{0, 0, 1}));
         page.flush();
 
         document.close();
@@ -126,7 +125,7 @@ public class PdfAnnotationTest {
         Assert.assertEquals(3, page.getAnnotsSize());
         List<PdfAnnotation> annotations = page.getAnnotations();
         Assert.assertEquals(3, annotations.size());
-        PdfLinkAnnotation link = (PdfLinkAnnotation)annotations.get(0);
+        PdfLinkAnnotation link = (PdfLinkAnnotation) annotations.get(0);
         Assert.assertEquals(page, link.getPage());
         document.close();
 
@@ -153,7 +152,7 @@ public class PdfAnnotationTest {
 
     @Test
     public void caretTest() throws IOException, PdfException, DocumentException, InterruptedException {
-        String filename =  destinationFolder + "CaretAnnotation.pdf";
+        String filename = destinationFolder + "CaretAnnotation.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -200,5 +199,26 @@ public class PdfAnnotationTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    public void addFreeTextAnnotation01() throws Exception {
+        PdfDocument document = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "freeTextAnnotation01.pdf")));
+
+        PdfPage page = document.addNewPage();
+
+        new PdfCanvas(page).beginText().setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 24).moveText(100, 600).showText("Annotated text").endText().release();
+        PdfFreeTextAnnotation textannot = new PdfFreeTextAnnotation(document, new Rectangle(300, 700, 150, 20), "").
+                setContents(new PdfString("FreeText annotation")).setColor(new float[]{1, 0, 0});
+        textannot.setIntent(PdfName.FreeTextCallout);
+        textannot.setCalloutLine(new float[]{120, 616, 180, 680, 300, 710}).setLineEndingStyle(PdfName.OpenArrow);
+        page.addAnnotation(textannot);
+        textannot.flush();
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "freeTextAnnotation01.pdf", sourceFolder + "cmp_freeTextAnnotation01.pdf", destinationFolder, "diff_"));
+    }
+
 
 }

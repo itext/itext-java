@@ -68,6 +68,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName BaseFont = createDirectName("BaseFont");
     public static final PdfName B = createDirectName("B");
     public static final PdfName BBox = createDirectName("BBox");
+    public static final PdfName BE = createDirectName("BE");
     public static final PdfName BG = createDirectName("BG");
     public static final PdfName BG2 = createDirectName("BG2");
     public static final PdfName BibEntry = createDirectName("BibEntry");
@@ -96,6 +97,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName CCITTFaxDecode = createDirectName("CCITTFaxDecode");
     public static final PdfName CF = createDirectName("CF");
     public static final PdfName CFM = createDirectName("CFM");
+    public static final PdfName CL = createDirectName("CL");
+    public static final PdfName ClosedArrow = createDirectName("ClosedArrow");
     public static final PdfName Code = createDirectName("Code");
     public static final PdfName Colors = createDirectName("Colors");
     public static final PdfName ColorSpace = createDirectName("ColorSpace");
@@ -133,6 +136,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Domain = createDirectName("Domain");
     public static final PdfName DP = createDirectName("DP");
     public static final PdfName Draft = createDirectName("Draft");
+    public static final PdfName DS = createDirectName("DS");
     public static final PdfName E = createDirectName("E");
     public static final PdfName EFF = createDirectName("EFF");
     public static final PdfName EFOpen = createDirectName("EFOpen");
@@ -173,6 +177,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Form = createDirectName("Form");
     public static final PdfName ForPublicRelease = createDirectName("ForPublicRelease");
     public static final PdfName FreeText = createDirectName("FreeText");
+    public static final PdfName FreeTextCallout = createDirectName("FreeTextCallout");
+    public static final PdfName FreeTextTypeWriter = createDirectName("FreeTextTypeWriter");
     public static final PdfName Formula = createDirectName("Formula");
     public static final PdfName Function = createDirectName("Function");
     public static final PdfName Functions = createDirectName("Functions");
@@ -224,6 +230,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Lbl = createDirectName("Lbl");
     public static final PdfName LBody = createDirectName("LBody");
     public static final PdfName LC = createDirectName("LC");
+    public static final PdfName LE = createDirectName("LE");
     public static final PdfName Length = createDirectName("Length");
     public static final PdfName LI = createDirectName("LI");
     public static final PdfName Link = createDirectName("Link");
@@ -279,6 +286,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName op = createDirectName("op");
     public static final PdfName Open = createDirectName("Open");
     public static final PdfName OpenAction = createDirectName("OpenAction");
+    public static final PdfName OpenArrow = createDirectName("OpenArrow");
     public static final PdfName Operation = createDirectName("Operation");
     public static final PdfName OPM = createDirectName("OPM");
     public static final PdfName Or = createDirectName("Or");
@@ -309,6 +317,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Private = createDirectName("Private");
     public static final PdfName Producer = createDirectName("Producer");
     public static final PdfName Properties = createDirectName("Properties");
+    public static final PdfName Q = createDirectName("Q");
     public static final PdfName Quote = createDirectName("Quote");
     public static final PdfName QuadPoints = createDirectName("QuadPoints");
     public static final PdfName R = createDirectName("R");

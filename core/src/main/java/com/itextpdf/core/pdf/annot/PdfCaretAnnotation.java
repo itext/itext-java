@@ -2,7 +2,10 @@ package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfString;
 
 public class PdfCaretAnnotation extends PdfMarkupAnnotation {
 
@@ -19,16 +22,8 @@ public class PdfCaretAnnotation extends PdfMarkupAnnotation {
         return PdfName.Caret;
     }
 
-    public PdfCaretAnnotation setRectangleDifferences(PdfArray rect){
-        return put(PdfName.RD, rect);
-    }
-
-    public PdfCaretAnnotation setSymbol(PdfString symbol){
+    public PdfCaretAnnotation setSymbol(PdfString symbol) {
         return put(PdfName.Sy, symbol);
-    }
-
-    public PdfArray getRectangleDifferences() throws PdfException {
-        return getPdfObject().getAsArray(PdfName.RD);
     }
 
     public PdfString getSymbol() throws PdfException {

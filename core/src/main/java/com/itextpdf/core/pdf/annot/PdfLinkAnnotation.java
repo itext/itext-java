@@ -30,7 +30,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return getPdfObject().get(PdfName.Dest);
     }
 
-    public PdfLinkAnnotation setDestinationObject(PdfObject destination) {
+    public PdfLinkAnnotation setDestination(PdfObject destination) {
         return put(PdfName.Dest, destination);
     }
 
@@ -42,7 +42,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return getPdfObject().getAsDictionary(PdfName.A);
     }
 
-    public PdfLinkAnnotation setActionObject(PdfDictionary action) {
+    public PdfLinkAnnotation setAction(PdfDictionary action) {
         return put(PdfName.A, action);
     }
 
@@ -62,7 +62,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return getPdfObject().getAsDictionary(PdfName.PA);
     }
 
-    public PdfLinkAnnotation setUriActionObject(PdfDictionary action) {
+    public PdfLinkAnnotation setUriAction(PdfDictionary action) {
         return put(PdfName.PA, action);
     }
 
@@ -70,13 +70,6 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return put(PdfName.PA, action);
     }
 
-    public PdfDictionary getBorderStyle() throws PdfException {
-        return getPdfObject().getAsDictionary(PdfName.BS);
-    }
-
-    public PdfLinkAnnotation setBorderStyle(PdfDictionary borderStyle) {
-        return put(PdfName.BS, borderStyle);
-    }
 
 
 }
