@@ -301,6 +301,12 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 return (T) new PdfCaretAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Text.equals(subtype))
                 annotation = (T) new PdfTextAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.FreeText.equals(subtype))
+                annotation = (T) new PdfFreeTextAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.Square.equals(subtype))
+                annotation = (T) new PdfSquareAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.Circle.equals(subtype))
+                annotation = (T) new PdfCircleAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Sound.equals(subtype)) {
                 throw new UnsupportedOperationException();
             }
