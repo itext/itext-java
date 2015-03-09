@@ -110,7 +110,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.ExData, exData);
     }
 
-    public PdfCaretAnnotation setRectangleDifferences(PdfArray rect) {
+    public <T extends PdfMarkupAnnotation> T setRectangleDifferences(PdfArray rect) {
         return put(PdfName.RD, rect);
     }
 
@@ -122,8 +122,20 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return getPdfObject().getAsDictionary(PdfName.BE);
     }
 
-    public PdfLinkAnnotation setBorderEffect(PdfDictionary borderEffect) {
+    public <T extends PdfMarkupAnnotation> T setBorderEffect(PdfDictionary borderEffect) {
         return put(PdfName.BE, borderEffect);
+    }
+
+    public PdfArray getInteriorColor() throws PdfException {
+        return getPdfObject().getAsArray(PdfName.IC);
+    }
+
+    public <T extends PdfMarkupAnnotation> T setInteriorColor(PdfArray interiorColor) {
+        return put(PdfName.IC, interiorColor);
+    }
+
+    public <T extends PdfMarkupAnnotation> T setInteriorColor(float[] interiorColor) {
+        return setInteriorColor(new PdfArray(interiorColor));
     }
 
 

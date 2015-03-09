@@ -77,6 +77,10 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.Contents, contents);
     }
 
+    public <T extends PdfAnnotation> T setContents(String contents) {
+        return setContents(new PdfString(contents));
+    }
+
     public PdfDictionary getPageObject() throws PdfException {
         return getPdfObject().getAsDictionary(PdfName.P);
     }

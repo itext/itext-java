@@ -97,6 +97,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName CCITTFaxDecode = createDirectName("CCITTFaxDecode");
     public static final PdfName CF = createDirectName("CF");
     public static final PdfName CFM = createDirectName("CFM");
+    public static final PdfName Circle = createDirectName("Circle");
     public static final PdfName CL = createDirectName("CL");
     public static final PdfName ClosedArrow = createDirectName("ClosedArrow");
     public static final PdfName Code = createDirectName("Code");
@@ -200,6 +201,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Highlight = createDirectName("Highlight");
     public static final PdfName HT = createDirectName("HT");
     public static final PdfName I = createDirectName("I");
+    public static final PdfName IC = createDirectName("IC");
     public static final PdfName ICCBased = createDirectName("ICCBased");
     public static final PdfName ID = createDirectName("ID");
     public static final PdfName Identity = createDirectName("Identity");
@@ -358,6 +360,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Sold = createDirectName("Sold");
     public static final PdfName Sound = createDirectName("Sound");
     public static final PdfName Span = createDirectName("Span");
+    public static final PdfName Square = createDirectName("Square");
     public static final PdfName Squiggly = createDirectName("Squiggly");
     public static final PdfName Stamp = createDirectName("Stamp");
     public static final PdfName Standard = createDirectName("Standard");

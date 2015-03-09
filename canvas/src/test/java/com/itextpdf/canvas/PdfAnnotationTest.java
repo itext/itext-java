@@ -220,5 +220,23 @@ public class PdfAnnotationTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "freeTextAnnotation01.pdf", sourceFolder + "cmp_freeTextAnnotation01.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void addSquareAndCircleAnnotations01() throws Exception {
+        PdfDocument document = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "squareAndCircleAnnotations01.pdf")));
+
+        PdfPage page = document.addNewPage();
+
+        PdfSquareAnnotation square = new PdfSquareAnnotation(document, new Rectangle(100, 700, 100, 100)).setInteriorColor(new float[]{1, 0, 0}).setColor(new float[]{0, 1, 0}).setContents("Red Square");
+        page.addAnnotation(square);
+        PdfCircleAnnotation circle = new PdfCircleAnnotation(document, new Rectangle(300, 700, 100, 100)).setInteriorColor(new float[]{0, 1, 0}).setColor(new float[]{0, 0, 1}).setContents(new PdfString("Green Circle"));
+        page.addAnnotation(circle);
+        page.flush();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "squareAndCircleAnnotations01.pdf", sourceFolder + "cmp_squareAndCircleAnnotations01.pdf", destinationFolder, "diff_"));
+    }
+
+
 
 }
