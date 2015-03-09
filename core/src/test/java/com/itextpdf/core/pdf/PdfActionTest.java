@@ -32,6 +32,7 @@ public class PdfActionTest {
 
     @Test
     public void actionTest02() throws Exception {
+
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "actionTest02.pdf"));
         PdfDocument document = createDocument(writer, false);
 
@@ -40,6 +41,7 @@ public class PdfActionTest {
         document.close();
 
         System.out.println(String.format("Please open document %s at page 2 and make sure that you're automatically redirected to %s site.", destinationFolder + "actionTest02.pdf", "http://itextpdf.com"));
+
     }
 
     private PdfDocument createDocument(PdfWriter writer, boolean flushPages) throws PdfException {
