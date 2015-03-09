@@ -2,10 +2,12 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.fonts.PdfStandardFont;
+import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.*;
+import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
@@ -16,8 +18,9 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
+
+import java.io.*;
 
 public class PdfAnnotationTest {
 
@@ -78,7 +81,7 @@ public class PdfAnnotationTest {
         canvas.release();
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com")).
-                setColor(new float[]{1, 0, 0}));
+                setColor(new PdfArray(new float[]{1, 0, 0})));
         page.flush();
 
         document.close();
@@ -106,13 +109,13 @@ public class PdfAnnotationTest {
         canvas.release();
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com")).
-                setColor(new float[]{1, 0, 0}));
+                setColor(new PdfArray(new float[]{1, 0, 0})));
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 540, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com/node")).
-                setColor(new float[]{0, 1, 0}));
+                setColor(new PdfArray(new float[]{0, 1, 0})));
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 490, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com/salesfaq")).
-                setColor(new float[]{0, 0, 1}));
+                setColor(new PdfArray(new float[]{0, 0, 1})));
         page.flush();
 
         document.close();
@@ -125,7 +128,7 @@ public class PdfAnnotationTest {
         Assert.assertEquals(3, page.getAnnotsSize());
         List<PdfAnnotation> annotations = page.getAnnotations();
         Assert.assertEquals(3, annotations.size());
-        PdfLinkAnnotation link = (PdfLinkAnnotation) annotations.get(0);
+        PdfLinkAnnotation link = (PdfLinkAnnotation)annotations.get(0);
         Assert.assertEquals(page, link.getPage());
         document.close();
 
@@ -152,7 +155,7 @@ public class PdfAnnotationTest {
 
     @Test
     public void caretTest() throws IOException, PdfException, DocumentException, InterruptedException {
-        String filename = destinationFolder + "CaretAnnotation.pdf";
+        String filename =  destinationFolder + "caretAnnotation.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -237,6 +240,317 @@ public class PdfAnnotationTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "squareAndCircleAnnotations01.pdf", sourceFolder + "cmp_squareAndCircleAnnotations01.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void fileAttachmentTest() throws IOException, PdfException, DocumentException, InterruptedException {
+        String filename = destinationFolder + "fileAttachmentAnnotation.pdf";
 
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        writer1.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
 
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfStream stream = new PdfStream(pdfDoc1, new FileInputStream(sourceFolder+"sample.wav"));
+        stream.put(PdfName.Type, PdfName.EmbeddedFile);
+
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.Type, PdfName.Filespec);
+        dict.put(PdfName.F, new PdfString("sample.wav"));
+        dict.put(PdfName.UF, new PdfString("sample.wav"));
+
+        PdfDictionary EF = new PdfDictionary();
+        EF.put(PdfName.F, stream);
+        EF.put(PdfName.UF, stream);
+        dict.put(PdfName.EF, EF);
+        PdfFileSpec spec = new PdfFileSpec(dict, pdfDoc1);
+
+        PdfFileAttachmentAnnotation fileAttach = new PdfFileAttachmentAnnotation(pdfDoc1, new Rectangle(100, 100), spec);
+        fileAttach.setIconName(PdfName.Paperclip);
+        page1.addAnnotation(fileAttach);
+
+        page1.flush();
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_fileAttachmentAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void rubberStampTest() throws DocumentException, IOException, PdfException, InterruptedException{
+        String filename =  destinationFolder + "rubberStampAnnotation01.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfStampAnnotation stamp = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 0, 100, 50));
+        stamp.setStampName(PdfName.Approved);
+        PdfStampAnnotation stamp1 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 50, 100, 50));
+        stamp1.setStampName(PdfName.AsIs);
+        PdfStampAnnotation stamp2 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 100, 100, 50));
+        stamp2.setStampName(PdfName.Confidential);
+        PdfStampAnnotation stamp3 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 150, 100, 50));
+        stamp3.setStampName(PdfName.Departmental);
+        PdfStampAnnotation stamp4 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 200, 100, 50));
+        stamp4.setStampName(PdfName.Draft);
+        PdfStampAnnotation stamp5 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 250, 100, 50));
+        stamp5.setStampName(PdfName.Experimental);
+        PdfStampAnnotation stamp6 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 300, 100, 50));
+        stamp6.setStampName(PdfName.Expired);
+        PdfStampAnnotation stamp7 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 350, 100, 50));
+        stamp7.setStampName(PdfName.Final);
+        PdfStampAnnotation stamp8 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 400, 100, 50));
+        stamp8.setStampName(PdfName.ForComment);
+        PdfStampAnnotation stamp9 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 450, 100, 50));
+        stamp9.setStampName(PdfName.ForPublicRelease);
+        PdfStampAnnotation stamp10 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 500, 100, 50));
+        stamp10.setStampName(PdfName.NotApproved);
+        PdfStampAnnotation stamp11 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 550, 100, 50));
+        stamp11.setStampName(PdfName.NotForPublicRelease);
+        PdfStampAnnotation stamp12 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 600, 100, 50));
+        stamp12.setStampName(PdfName.Sold);
+        PdfStampAnnotation stamp13 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 650, 100, 50));
+        stamp13.setStampName(PdfName.TopSecret);
+        page1.addAnnotation(stamp);
+        page1.addAnnotation(stamp1);
+        page1.addAnnotation(stamp2);
+        page1.addAnnotation(stamp3);
+        page1.addAnnotation(stamp4);
+        page1.addAnnotation(stamp5);
+        page1.addAnnotation(stamp6);
+        page1.addAnnotation(stamp7);
+        page1.addAnnotation(stamp8);
+        page1.addAnnotation(stamp9);
+        page1.addAnnotation(stamp10);
+        page1.addAnnotation(stamp11);
+        page1.addAnnotation(stamp12);
+        page1.addAnnotation(stamp13);
+        page1.flush();
+
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_rubberStampAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void rubberStampWrongStampTest() throws DocumentException, IOException, PdfException, InterruptedException{
+        String filename =  destinationFolder + "rubberStampAnnotation02.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfStampAnnotation stamp = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 0, 100, 50));
+
+        stamp.setStampName(PdfName.StrikeOut);
+
+        page1.addAnnotation(stamp);
+        page1.flush();
+
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_rubberStampAnnotation02.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.assertNull(errorMessage);
+        }
+    }
+
+    @Test
+    public void inkTest() throws IOException, PdfException, DocumentException, InterruptedException {
+        String filename = destinationFolder + "inkAnnotation01.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        float[] array1 = {100, 100, 100, 200, 200, 200, 300, 300};
+        PdfArray firstPoint = new PdfArray(array1);
+
+        PdfArray resultArray = new PdfArray(firstPoint);
+
+        PdfDictionary borderStyle = new PdfDictionary();
+        borderStyle.put(PdfName.Type, PdfName.Border);
+        borderStyle.put(PdfName.W, new PdfNumber(3));
+
+        PdfInkAnnotation ink = new PdfInkAnnotation(pdfDoc1, new Rectangle(0, 0, 575, 842), resultArray);
+        ink.setBorderStyle(borderStyle);
+        float[] rgb = {1, 0, 0};
+        PdfArray colors = new PdfArray(rgb);
+        ink.setColor(colors);
+        page1.addAnnotation(ink);
+
+        page1.flush();
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_inkAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.assertNull(errorMessage);
+        }
+    }
+
+    @Test
+    public void textMarkupTest01() throws IOException, PdfException, DocumentException, InterruptedException {
+        String filename =  destinationFolder + "textMarkupAnnotation01.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        //Initialize canvas and write text to it
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("Underline!")
+                .endText()
+                .restoreState();
+
+        float[] points = {36, 765, 109, 765, 36, 746, 109, 746};
+        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createUnderline(pdfDoc1, PageSize.A4, points);
+        markup.setContents(new PdfString("TextMarkup"));
+        float[] rgb = {1, 0, 0};
+        PdfArray colors = new PdfArray(rgb);
+        markup.setColor(colors);
+        page1.addAnnotation(markup);
+        page1.flush();
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.assertNull(errorMessage);
+        }
+    }
+
+    @Test
+    public void textMarkupTest02() throws IOException, PdfException, DocumentException, InterruptedException {
+        String filename =  destinationFolder + "textMarkupAnnotation02.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        //Initialize canvas and write text to it
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("Highlight!")
+                .endText()
+                .restoreState();
+
+        float[] points = {36, 765, 109, 765, 36, 746, 109, 746};
+        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createHighLight(pdfDoc1, PageSize.A4, points);
+        markup.setContents(new PdfString("TextMarkup"));
+        float[] rgb = {1, 0, 0};
+        PdfArray colors = new PdfArray(rgb);
+        markup.setColor(colors);
+        page1.addAnnotation(markup);
+        page1.flush();
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation02.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.assertNull(errorMessage);
+        }
+    }
+
+    @Test
+    public void textMarkupTest03() throws IOException, PdfException, DocumentException, InterruptedException {
+        String filename =  destinationFolder + "textMarkupAnnotation03.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        //Initialize canvas and write text to it
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("Squiggly!")
+                .endText()
+                .restoreState();
+
+        float[] points = {36, 765, 109, 765, 36, 746, 109, 746};
+        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createSquiggly(pdfDoc1, PageSize.A4, points);
+        markup.setContents(new PdfString("TextMarkup"));
+        float[] rgb = {1, 0, 0};
+        PdfArray colors = new PdfArray(rgb);
+        markup.setColor(colors);
+        page1.addAnnotation(markup);
+        page1.flush();
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation03.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.assertNull(errorMessage);
+        }
+    }
+
+    @Test
+    public void textMarkupTest04() throws IOException, PdfException, DocumentException, InterruptedException {
+        String filename =  destinationFolder + "textMarkupAnnotation04.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        //Initialize canvas and write text to it
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("Strikeout!")
+                .endText()
+                .restoreState();
+
+        float[] points = {36, 765, 109, 765, 36, 746, 109, 746};
+        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createStrikeout(pdfDoc1, PageSize.A4, points);
+        markup.setContents(new PdfString("TextMarkup"));
+        float[] rgb = {1, 0, 0};
+        PdfArray colors = new PdfArray(rgb);
+        markup.setColor(colors);
+        page1.addAnnotation(markup);
+        page1.flush();
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation04.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
 }

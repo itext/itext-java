@@ -258,12 +258,12 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.QuadPoints, quadPoints);
     }
 
-    public PdfDictionary getBorderStyle() throws PdfException {
-        return getPdfObject().getAsDictionary(PdfName.BS);
+    public <T extends PdfAnnotation> T setBorderStyle(PdfDictionary borderStyle){
+        return put(PdfName.BS, borderStyle);
     }
 
-    public PdfLinkAnnotation setBorderStyle(PdfDictionary borderStyle) {
-        return put(PdfName.BS, borderStyle);
+    public PdfDictionary getBorderStyle() throws PdfException {
+        return getPdfObject().getAsDictionary(PdfName.BS);
     }
 
     static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document) throws PdfException {
@@ -296,20 +296,19 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             else if (PdfName._3D.equals(subtype))
                 throw new UnsupportedOperationException();
             else if (PdfName.Highlight.equals(subtype) || PdfName.Underline.equals(subtype) || PdfName.Squiggly.equals(subtype) || PdfName.StrikeOut.equals(subtype))
-                throw new UnsupportedOperationException();
+                annotation = (T) new PdfTextMarkupAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Caret.equals(subtype))
-                return (T) new PdfCaretAnnotation((PdfDictionary) pdfObject, document);
+                annotation = (T) new PdfCaretAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Text.equals(subtype))
                 annotation = (T) new PdfTextAnnotation((PdfDictionary) pdfObject, document);
-            else if (PdfName.FreeText.equals(subtype))
-                annotation = (T) new PdfFreeTextAnnotation((PdfDictionary) pdfObject, document);
-            else if (PdfName.Square.equals(subtype))
-                annotation = (T) new PdfSquareAnnotation((PdfDictionary) pdfObject, document);
-            else if (PdfName.Circle.equals(subtype))
-                annotation = (T) new PdfCircleAnnotation((PdfDictionary) pdfObject, document);
-            else if (PdfName.Sound.equals(subtype)) {
+            else if (PdfName.Sound.equals(subtype))
                 throw new UnsupportedOperationException();
-            }
+            else if (PdfName.Stamp.equals(subtype))
+                annotation = (T) new PdfStampAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.FileAttachment.equals(subtype))
+                annotation = (T) new PdfFileAttachmentAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.Ink.equals(subtype))
+                annotation = (T) new PdfInkAnnotation((PdfDictionary) pdfObject, document);
         }
         if (annotation instanceof PdfMarkupAnnotation) {
             PdfMarkupAnnotation markup = (PdfMarkupAnnotation) annotation;

@@ -19,14 +19,6 @@ public class PdfTextAnnotation extends PdfMarkupAnnotation {
         return PdfName.Text;
     }
 
-    public PdfName getIconName() throws PdfException {
-        return getPdfObject().getAsName(PdfName.Name);
-    }
-
-    public PdfTextAnnotation setIconName(PdfName name) {
-        return put(PdfName.Name, name);
-    }
-
     public PdfString getState() throws PdfException {
         return getPdfObject().getAsString(PdfName.State);
     }

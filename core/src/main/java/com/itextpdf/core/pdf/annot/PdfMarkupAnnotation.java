@@ -139,4 +139,13 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
 
+    public PdfName getIconName() throws PdfException {
+        return getPdfObject().getAsName(PdfName.Name);
+    }
+
+    public <T extends PdfMarkupAnnotation> T setIconName(PdfName name) {
+        return put(PdfName.Name, name);
+    }
+
+
 }
