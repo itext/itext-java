@@ -309,6 +309,10 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 annotation = (T) new PdfFileAttachmentAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Ink.equals(subtype))
                 annotation = (T) new PdfInkAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.PrinterMark.equals(subtype))
+                annotation = (T) new PdfPrinterMarkAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.TrapNet.equals(subtype))
+                annotation = (T) new PdfTrapNetworkAnnotation((PdfDictionary) pdfObject, document);
         }
         if (annotation instanceof PdfMarkupAnnotation) {
             PdfMarkupAnnotation markup = (PdfMarkupAnnotation) annotation;

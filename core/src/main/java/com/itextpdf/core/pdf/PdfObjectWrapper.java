@@ -49,7 +49,7 @@ public class PdfObjectWrapper<T extends PdfObject> {
 
     public <T1 extends PdfObjectWrapper<T>> T1 put(PdfName key, PdfObject value) {
         if (value != null) {
-            if (getPdfObject().isDictionary())
+            if (getPdfObject().isDictionary() || getPdfObject().isStream())
                 ((PdfDictionary) getPdfObject()).put(key, value);
             else
                 throw new UnsupportedOperationException();

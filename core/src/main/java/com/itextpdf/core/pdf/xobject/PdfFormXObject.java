@@ -55,4 +55,45 @@ public class PdfFormXObject extends PdfXObject {
         super.flush();
     }
 
+    //Additional entries in form dictionary for Trap Network annotation
+    public PdfFormXObject setProcessColorModel(PdfName model){
+        return put(PdfName.PCM, model);
+    }
+
+    public PdfName getProcessColorModel() throws PdfException {
+        return getPdfObject().getAsName(PdfName.PCM);
+    }
+
+    public PdfFormXObject setSeparationColorNames(PdfArray colorNames){
+        return put(PdfName.SeparationColorNames, colorNames);
+    }
+
+    public PdfArray getSeparationColorNames() throws PdfException {
+        return getPdfObject().getAsArray(PdfName.SeparationColorNames);
+    }
+
+    public PdfFormXObject setTrapRegions(PdfArray regions){
+        return put(PdfName.TrapRegions, regions);
+    }
+
+    public PdfArray getTrapRegions() throws PdfException {
+        return getPdfObject().getAsArray(PdfName.TrapRegions);
+    }
+
+    public PdfFormXObject setTrapStyles(PdfString trapStyles){
+        return put(PdfName.TrapStyles, trapStyles);
+    }
+
+    public PdfString getTrapStyles() throws PdfException {
+        return getPdfObject().getAsString(PdfName.TrapStyles);
+    }
+
+    //Additional entries in form dictionary for Printer Mark annotation
+    public PdfFormXObject setMarkStyle(PdfString markStyle) {
+        return put(PdfName.MarkStyle, markStyle);
+    }
+
+    public PdfString getMarkStyle() throws PdfException {
+        return getPdfObject().getAsString(PdfName.MarkStyle);
+    }
 }

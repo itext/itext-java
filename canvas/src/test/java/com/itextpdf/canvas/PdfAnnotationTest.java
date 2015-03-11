@@ -1,6 +1,7 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.fonts.PdfStandardFont;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
@@ -9,6 +10,7 @@ import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.*;
 import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
@@ -18,6 +20,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import java.io.*;
@@ -552,5 +556,83 @@ public class PdfAnnotationTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void printerMarkText() throws PdfException, IOException {
+        String filename =  destinationFolder + "printerMarkAnnotation01.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvasText = new PdfCanvas(page1);
+        canvasText
+                .saveState()
+                .beginText()
+                .moveText(36, 790)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("This is Printer Mark annotation:")
+                .endText()
+                .restoreState();
+        PdfFormXObject form = new PdfFormXObject(pdfDoc1, PageSize.A4);
+
+        PdfCanvas canvas = new PdfCanvas(form);
+        canvas
+                .saveState()
+                .circle(265, 795, 5)
+                .setColor(Color.Green, true)
+                .fill()
+                .restoreState();
+        canvas.release();
+
+        PdfPrinterMarkAnnotation printer = new PdfPrinterMarkAnnotation(pdfDoc1, PageSize.A4, form);
+
+        page1.addAnnotation(printer);
+        page1.flush();
+        pdfDoc1.close();
+    }
+
+    @Test
+    public void trapNetworkText() throws PdfException, IOException {
+        String filename = destinationFolder + "trapNetworkAnnotation01.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page = pdfDoc1.addNewPage();
+
+        PdfCanvas canvasText = new PdfCanvas(page);
+
+        canvasText
+        .saveState()
+                .beginText()
+                .moveText(36, 790)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("This is Trap Network annotation:")
+                .endText()
+                .restoreState();
+
+        PdfFormXObject form = new PdfFormXObject(pdfDoc1, PageSize.A4);
+        PdfCanvas canvas = new PdfCanvas(form);
+        canvas
+                .saveState()
+                .circle(272, 795, 5)
+                .setColor(Color.Green, true)
+                .fill()
+                .restoreState();
+        canvas.release();
+
+        form.setProcessColorModel(PdfName.DeviceN);
+        PdfTrapNetworkAnnotation trap = new PdfTrapNetworkAnnotation(pdfDoc1, PageSize.A4, form);
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(2014, 12, 31);
+        trap.setLastModified(new PdfDate(calendar));
+
+        page.addAnnotation(trap);
+        page.flush();
+        pdfDoc1.close();
     }
 }
