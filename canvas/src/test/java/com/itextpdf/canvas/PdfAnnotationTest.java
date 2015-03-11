@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -559,7 +560,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void printerMarkText() throws PdfException, IOException {
+    public void printerMarkText() throws PdfException, IOException, InterruptedException, DocumentException {
         String filename =  destinationFolder + "printerMarkAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -592,10 +593,16 @@ public class PdfAnnotationTest {
         page1.addAnnotation(printer);
         page1.flush();
         pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_printerMarkAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     @Test
-    public void trapNetworkText() throws PdfException, IOException {
+    public void trapNetworkText() throws PdfException, IOException, InterruptedException, DocumentException {
         String filename = destinationFolder + "trapNetworkAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -628,11 +635,18 @@ public class PdfAnnotationTest {
         form.setProcessColorModel(PdfName.DeviceN);
         PdfTrapNetworkAnnotation trap = new PdfTrapNetworkAnnotation(pdfDoc1, PageSize.A4, form);
         Calendar calendar = new GregorianCalendar();
-        calendar.set(2014, 12, 31);
+        calendar.set(2014, Calendar.APRIL, 30, 0, 0, 0);
+        //calendar.set(date);
         trap.setLastModified(new PdfDate(calendar));
 
         page.addAnnotation(trap);
         page.flush();
         pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_trapNetworkAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }
