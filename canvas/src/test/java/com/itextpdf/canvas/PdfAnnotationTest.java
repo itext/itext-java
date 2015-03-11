@@ -20,10 +20,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import java.io.*;
 
@@ -634,10 +631,6 @@ public class PdfAnnotationTest {
 
         form.setProcessColorModel(PdfName.DeviceN);
         PdfTrapNetworkAnnotation trap = new PdfTrapNetworkAnnotation(pdfDoc1, PageSize.A4, form);
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(2014, Calendar.APRIL, 30, 0, 0, 0);
-        //calendar.set(date);
-        trap.setLastModified(new PdfDate(calendar));
 
         page.addAnnotation(trap);
         page.flush();
