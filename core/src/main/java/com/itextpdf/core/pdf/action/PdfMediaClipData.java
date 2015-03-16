@@ -14,14 +14,13 @@ public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfMediaClipData(PdfDocument pdfDocument, String file, PdfFileSpec fs, String mimeType) throws PdfException {
         this(new PdfDictionary(), pdfDocument);
-        getPdfObject().put(PdfName.Type, PdfName.MediaClip);
-        getPdfObject().put(PdfName.S, PdfName.MCD);
-        getPdfObject().put(PdfName.N, new PdfString(String.format("Media clip for %s", file)));
-        getPdfObject().put(PdfName.CT, new PdfString(mimeType));
         PdfDictionary dic = new PdfDictionary().makeIndirect(pdfDocument);
         dic.put(PdfName.TF, TEMPACCESS);
-        getPdfObject().put(PdfName.P, dic);
-        getPdfObject().put(PdfName.D, dic);
+        put(PdfName.Type, PdfName.MediaClip).put(PdfName.S, PdfName.MCD).
+                put(PdfName.N, new PdfString(String.format("Media clip for %s", file))).
+                put(PdfName.CT, new PdfString(mimeType)).
+                put(PdfName.P, dic).
+                put(PdfName.D, fs.getPdfObject());
     }
 
 }

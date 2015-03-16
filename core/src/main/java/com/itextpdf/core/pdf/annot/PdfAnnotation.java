@@ -273,6 +273,39 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return makeAnnotation(pdfObject, document, null);
     }
 
+    public <T extends PdfAnnotation> T setTitle(PdfString title){
+        return put(PdfName.T, title);
+    }
+
+    public PdfString getTitle() throws PdfException {
+        return getPdfObject().getAsString(PdfName.T);
+    }
+
+    public <T extends PdfAnnotation> T setAppearanceCharacteristics(PdfDictionary characteristics){
+        return put(PdfName.MK, characteristics);
+    }
+
+    public PdfDictionary getAppearanceCharacteristics() throws PdfException {
+        return getPdfObject().getAsDictionary(PdfName.MK);
+    }
+
+    public <T extends PdfAnnotation> T setAction(PdfDictionary action){
+        return put(PdfName.A, action);
+    }
+
+    public PdfDictionary getAction() throws PdfException {
+        return getPdfObject().getAsDictionary(PdfName.A);
+    }
+
+    public <T extends PdfAnnotation> T setAdditionalAction(PdfDictionary additionalAction){
+        return put(PdfName.AA, additionalAction);
+    }
+
+    public PdfDictionary getAdditionalAction() throws PdfException {
+        return getPdfObject().getAsDictionary(PdfName.AA);
+    }
+
+
     static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document, PdfAnnotation parent) throws PdfException {
         T annotation = null;
         if (pdfObject.isIndirectReference())
@@ -289,11 +322,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             else if (PdfName.Widget.equals(subtype))
                 throw new UnsupportedOperationException();
             else if (PdfName.Screen.equals(subtype))
-                throw new UnsupportedOperationException();
-            else if (PdfName.PrinterMark.equals(subtype))
-                throw new UnsupportedOperationException();
-            else if (PdfName.TrapNet.equals(subtype))
-                throw new UnsupportedOperationException();
+                annotation = (T) new PdfScreenAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Watermark.equals(subtype))
                 throw new UnsupportedOperationException();
             else if (PdfName._3D.equals(subtype))
@@ -305,7 +334,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             else if (PdfName.Text.equals(subtype))
                 annotation = (T) new PdfTextAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Sound.equals(subtype))
-                throw new UnsupportedOperationException();
+                annotation = (T) new PdfSoundAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Stamp.equals(subtype))
                 annotation = (T) new PdfStampAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.FileAttachment.equals(subtype))

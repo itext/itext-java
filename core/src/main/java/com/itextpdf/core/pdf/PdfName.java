@@ -454,6 +454,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName View = createDirectName("View");
     public static final PdfName ViewState = createDirectName("ViewState");
     public static final PdfName VisiblePages = createDirectName("VisiblePages");
+    public static final PdfName Volatile = createDirectName("Volatile");
     public static final PdfName Volume = createDirectName("Volume");
     public static final PdfName W = createDirectName("W");
     public static final PdfName Warichu = createDirectName("Warichu");

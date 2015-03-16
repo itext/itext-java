@@ -17,6 +17,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.sound.sampled.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -253,19 +254,7 @@ public class PdfAnnotationTest {
 
         PdfPage page1 = pdfDoc1.addNewPage();
 
-        PdfStream stream = new PdfStream(pdfDoc1, new FileInputStream(sourceFolder+"sample.wav"));
-        stream.put(PdfName.Type, PdfName.EmbeddedFile);
-
-        PdfDictionary dict = new PdfDictionary();
-        dict.put(PdfName.Type, PdfName.Filespec);
-        dict.put(PdfName.F, new PdfString("sample.wav"));
-        dict.put(PdfName.UF, new PdfString("sample.wav"));
-
-        PdfDictionary EF = new PdfDictionary();
-        EF.put(PdfName.F, stream);
-        EF.put(PdfName.UF, stream);
-        dict.put(PdfName.EF, EF);
-        PdfFileSpec spec = new PdfFileSpec(dict, pdfDoc1);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", "sample.wav", true);
 
         PdfFileAttachmentAnnotation fileAttach = new PdfFileAttachmentAnnotation(pdfDoc1, new Rectangle(100, 100), spec);
         fileAttach.setIconName(PdfName.Paperclip);
@@ -611,7 +600,7 @@ public class PdfAnnotationTest {
         PdfCanvas canvasText = new PdfCanvas(page);
 
         canvasText
-        .saveState()
+                .saveState()
                 .beginText()
                 .moveText(36, 790)
                 .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
@@ -641,5 +630,357 @@ public class PdfAnnotationTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void soundTestAif() throws DocumentException, IOException, PdfException, InterruptedException, UnsupportedAudioFileException {
+        String filename = destinationFolder + "soundAnnotation02.pdf";
+        String audioFile = sourceFolder + "sample.aif";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        InputStream is = new FileInputStream(audioFile);
+        String string = "";
+        for (int i = 0; i < 4; i++) {
+            string = string + (char) is.read();
+        }
+        if (string.equals("RIFF")) {
+            is = new FileInputStream(audioFile);
+            is.read();
+        } else {
+            is = new FileInputStream(audioFile);
+        }
+
+        PdfStream sound1 = new PdfStream(pdfDoc1, is);
+        sound1.put(PdfName.R, new PdfNumber(32117));
+        sound1.put(PdfName.E, PdfName.Signed);
+        sound1.put(PdfName.B, new PdfNumber(16));
+        sound1.put(PdfName.C, new PdfNumber(1));
+
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), sound1);
+
+        page1.addAnnotation(sound);
+        page1.flush();
+
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation02.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void soundTestAiff() throws DocumentException, IOException, PdfException, InterruptedException {
+        String filename = destinationFolder + "soundAnnotation03.pdf";
+        String audioFile = sourceFolder + "sample.aiff";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        InputStream is = new FileInputStream(audioFile);
+        String string = "";
+        for (int i = 0; i < 4; i++) {
+            string = string + (char) is.read();
+        }
+        if (string.equals("RIFF")) {
+            is = new FileInputStream(audioFile);
+            is.read();
+        } else {
+            is = new FileInputStream(audioFile);
+        }
+
+        PdfStream sound1 = new PdfStream(pdfDoc1, is);
+        sound1.put(PdfName.R, new PdfNumber(44100));
+        sound1.put(PdfName.E, PdfName.Signed);
+        sound1.put(PdfName.B, new PdfNumber(16));
+        sound1.put(PdfName.C, new PdfNumber(1));
+
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), sound1);
+
+        page1.addAnnotation(sound);
+        page1.flush();
+
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation03.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void soundTestSnd() throws DocumentException, IOException, PdfException, InterruptedException, UnsupportedAudioFileException {
+        String filename = destinationFolder + "soundAnnotation04.pdf";
+        String audioFile = sourceFolder + "sample.snd";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        InputStream is = new FileInputStream(audioFile);
+
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), is, 44100, PdfName.Signed, 2, 16);
+
+        page1.addAnnotation(sound);
+        page1.flush();
+
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation04.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void soundTestWav() throws DocumentException, IOException, PdfException, InterruptedException, UnsupportedAudioFileException {
+        String filename = destinationFolder + "soundAnnotation01.pdf";
+        String audioFile = sourceFolder + "sample.wav";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        InputStream is = new FileInputStream(audioFile);
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), is, 48000, PdfName.Signed, 2, 16);
+
+        page1.addAnnotation(sound);
+        page1.flush();
+
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void soundTestWav01() throws DocumentException, IOException, PdfException, InterruptedException, UnsupportedAudioFileException {
+        String filename = destinationFolder + "soundAnnotation05.pdf";
+        String audioFile = sourceFolder + "sample.wav";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        InputStream is = new FileInputStream(audioFile);
+        String header = "";
+        for (int i = 0; i < 4; i++) {
+            header = header + (char) is.read();
+        }
+        if (header.equals("RIFF")) {
+            is = new FileInputStream(audioFile);
+            is.read();
+        } else {
+            is = new FileInputStream(audioFile);
+        }
+
+        PdfStream soundStream = new PdfStream(pdfDoc1, is);
+
+        soundStream.put(PdfName.R, new PdfNumber(48000));
+        soundStream.put(PdfName.E, PdfName.Signed);
+        soundStream.put(PdfName.B, new PdfNumber(16));
+        soundStream.put(PdfName.C, new PdfNumber(2));
+
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), soundStream);
+
+        page1.addAnnotation(sound);
+        page1.flush();
+
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation05.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void screenTestExternalWavFile() throws IOException, PdfException, DocumentException, InterruptedException {
+        String filename = destinationFolder + "screenAnnotation01.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 105)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("Click on the area below to play a sound.")
+                .endText()
+                .restoreState();
+        PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
+
+        PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc1, "c:\\morph\\itext6\\itextpdf\\canvas\\src\\test\\resources\\com\\itextpdf\\canvas\\PdfAnnotationTest\\" + "sample.wav", true);
+
+        PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
+                spec, "audio/x-wav", screen);
+
+        screen.setAction(action);
+
+        page1.addAnnotation(screen);
+        page1.flush();
+
+        pdfDoc1.close();
+
+//        CompareTool compareTool = new CompareTool();
+//        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_screenAnnotation01.pdf", destinationFolder, "diff_");
+//        if (errorMessage != null) {
+//            Assert.fail(errorMessage);
+//        }
+    }
+
+    @Test
+    public void screenTestEmbeddedWavFile01() throws IOException, PdfException, InterruptedException, DocumentException {
+        String filename = destinationFolder + "screenAnnotation02.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 105)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("Click on the area below to play a sound.")
+                .endText()
+                .restoreState();
+        PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
+
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", "sample.wav", true);
+
+        PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
+                spec, "audio/x-wav", screen);
+
+        screen.setAction(action);
+
+        page1.addAnnotation(screen);
+        page1.flush();
+
+        pdfDoc1.close();
+
+//        CompareTool compareTool = new CompareTool();
+//        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_screenAnnotation02.pdf", destinationFolder, "diff_");
+//        if (errorMessage != null) {
+//            Assert.fail(errorMessage);
+//        }
+    }
+
+    @Test
+    public void screenTestEmbeddedWavFile02() throws IOException, PdfException, InterruptedException, DocumentException {
+        String filename = destinationFolder + "screenAnnotation03.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 105)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("Click on the area below to play a sound.")
+                .endText()
+                .restoreState();
+        PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
+
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, new FileInputStream(sourceFolder + "sample.wav"), "sample.wav", true);
+
+        PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
+                spec, "audio/x-wav", screen);
+
+        screen.setAction(action);
+
+        page1.addAnnotation(screen);
+        page1.flush();
+
+        pdfDoc1.close();
+
+//        CompareTool compareTool = new CompareTool();
+//        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_screenAnnotation03.pdf", destinationFolder, "diff_");
+//        if (errorMessage != null) {
+//            Assert.fail(errorMessage);
+//        }
+    }
+
+    @Test
+    public void screenTestEmbeddedWavFile03() throws IOException, PdfException, InterruptedException, DocumentException {
+        String filename = destinationFolder + "screenAnnotation04.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 105)
+                .setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Helvetica), 16)
+                .showText("Click on the area below to play a sound.")
+                .endText()
+                .restoreState();
+        PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
+
+        InputStream is = new FileInputStream(sourceFolder + "sample.wav");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int reads = is.read();
+
+        while (reads != -1){
+            baos.write(reads);
+            reads = is.read();
+        }
+
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, baos.toByteArray(), "sample.wav", true);
+
+        PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
+                spec, "audio/x-wav", screen);
+
+        screen.setAction(action);
+
+        page1.addAnnotation(screen);
+        page1.flush();
+
+        pdfDoc1.close();
+
+//        CompareTool compareTool = new CompareTool();
+//        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_screenAnnotation04.pdf", destinationFolder, "diff_");
+//        if (errorMessage != null) {
+//            Assert.fail(errorMessage);
+//        }
     }
 }
