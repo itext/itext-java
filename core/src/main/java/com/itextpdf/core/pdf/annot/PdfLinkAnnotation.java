@@ -23,7 +23,10 @@ public class PdfLinkAnnotation extends PdfAnnotation {
 
     public PdfLinkAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
         super(document, rect);
-        put(PdfName.Subtype, PdfName.Link);
+    }
+
+    public PdfName getSubtype() throws PdfException {
+        return PdfName.Link;
     }
 
     public PdfObject getDestinationObject() throws PdfException {

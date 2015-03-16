@@ -17,7 +17,7 @@ public class PdfStampAnnotation extends  PdfMarkupAnnotation {
     }
 
     @Override
-    public PdfName getSubtype() {
+    public PdfName getSubtype() throws PdfException {
         return PdfName.Stamp;
     }
 

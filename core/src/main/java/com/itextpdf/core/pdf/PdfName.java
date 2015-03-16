@@ -335,6 +335,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Perms = createDirectName("Perms");
     public static final PdfName PCM = createDirectName("PCM");
     public static final PdfName Pg = createDirectName("Pg");
+    public static final PdfName Polygon = createDirectName("Polygon");
+    public static final PdfName PolyLine = createDirectName("PolyLine");
     public static final PdfName Popup = createDirectName("Popup");
     public static final PdfName Predictor = createDirectName("Predictor");
     public static final PdfName Preferred = createDirectName("Preferred");
@@ -447,6 +449,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName V2 = createDirectName("V2");
     public static final PdfName VE = createDirectName("VE");
     public static final PdfName Version = createDirectName("Version");
+    public static final PdfName Vertices = createDirectName("Vertices");
     public static final PdfName VerticesPerRow = createDirectName("VerticesPerRow");
     public static final PdfName View = createDirectName("View");
     public static final PdfName ViewState = createDirectName("ViewState");

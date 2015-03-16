@@ -17,7 +17,7 @@ public class PdfCircleAnnotation extends PdfMarkupAnnotation {
     }
 
     @Override
-    public PdfName getSubtype() {
+    public PdfName getSubtype() throws PdfException {
         return PdfName.Circle;
     }
 }

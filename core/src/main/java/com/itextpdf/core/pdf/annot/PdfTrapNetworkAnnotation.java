@@ -12,10 +12,9 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
 
     public PdfTrapNetworkAnnotation(PdfDocument document, Rectangle rect, PdfFormXObject appearanceStream) throws PdfException {
         super(document, rect);
-        if (appearanceStream.getProcessColorModel() == null){
+        if (appearanceStream.getProcessColorModel() == null) {
             throw new PdfException("Process color model must be set in appearance stream for Trap Network annotation!");
         }
-        put(PdfName.Subtype, PdfName.TrapNet);
         setNormalAppearance(appearanceStream.getPdfObject());
         setFlags(PdfAnnotation.Print | PdfAnnotation.ReadOnly);
     }
@@ -24,7 +23,11 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
         super(pdfObject, document);
     }
 
-    public PdfTrapNetworkAnnotation setLastModified (PdfDate lastModified){
+    public PdfName getSubtype() throws PdfException {
+        return PdfName.TrapNet;
+    }
+
+    public PdfTrapNetworkAnnotation setLastModified(PdfDate lastModified) {
         return put(PdfName.LastModified, lastModified);
     }
 
@@ -48,11 +51,11 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
         return getPdfObject().getAsArray(PdfName.AnnotStates);
     }
 
-    public PdfTrapNetworkAnnotation setFauxedFonts(PdfArray fauxedFonts){
+    public PdfTrapNetworkAnnotation setFauxedFonts(PdfArray fauxedFonts) {
         return put(PdfName.FontFauxing, fauxedFonts);
     }
 
-    public PdfTrapNetworkAnnotation setFauxedFonts(List<PdfFont> fauxedFonts){
+    public PdfTrapNetworkAnnotation setFauxedFonts(List<PdfFont> fauxedFonts) {
         PdfArray arr = new PdfArray();
         for (PdfFont f : fauxedFonts)
             arr.add(f.getPdfObject());

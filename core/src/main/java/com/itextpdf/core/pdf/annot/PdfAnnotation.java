@@ -6,7 +6,7 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.layer.PdfOCG;
 
-public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
+abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Annotation flags.
@@ -45,11 +45,14 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     public PdfAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
         this(new PdfDictionary(), document);
         put(PdfName.Rect, new PdfArray(rect));
+        put(PdfName.Subtype, getSubtype());
     }
 
     public PdfAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
         super(pdfObject, document);
     }
+
+    abstract public PdfName getSubtype() throws PdfException;
 
     /**
      * Sets the layer this annotation belongs to.
@@ -258,7 +261,7 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.QuadPoints, quadPoints);
     }
 
-    public <T extends PdfAnnotation> T setBorderStyle(PdfDictionary borderStyle){
+    public <T extends PdfAnnotation> T setBorderStyle(PdfDictionary borderStyle) {
         return put(PdfName.BS, borderStyle);
     }
 
@@ -321,6 +324,8 @@ public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 annotation = (T) new PdfCircleAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Line.equals(subtype))
                 annotation = (T) new PdfLineAnnotation((PdfDictionary) pdfObject, document);
+            else if (PdfName.Polygon.equals(subtype) || PdfName.PolyLine.equals(subtype))
+                annotation = (T) new PdfPolyGeomAnnotation((PdfDictionary) pdfObject, document);
         }
         if (annotation instanceof PdfMarkupAnnotation) {
             PdfMarkupAnnotation markup = (PdfMarkupAnnotation) annotation;

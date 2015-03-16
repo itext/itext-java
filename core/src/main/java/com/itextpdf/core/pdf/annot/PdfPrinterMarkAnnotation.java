@@ -11,7 +11,6 @@ public class PdfPrinterMarkAnnotation extends PdfAnnotation {
 
     public PdfPrinterMarkAnnotation(PdfDocument document, Rectangle rect, PdfFormXObject appearanceStream) throws PdfException {
         super(document, rect);
-        put(PdfName.Subtype, PdfName.PrinterMark);
         setNormalAppearance(appearanceStream.getPdfObject());
         setFlags(PdfAnnotation.Print | PdfAnnotation.ReadOnly);
     }
@@ -20,7 +19,11 @@ public class PdfPrinterMarkAnnotation extends PdfAnnotation {
         super(pdfObject, document);
     }
 
-    public PdfMarkupAnnotation setArbitraryTypeName(PdfName arbitraryTypeName){
+    public PdfName getSubtype() throws PdfException {
+        return PdfName.PrinterMark;
+    }
+
+    public PdfMarkupAnnotation setArbitraryTypeName(PdfName arbitraryTypeName) {
         return put(PdfName.MN, arbitraryTypeName);
     }
 

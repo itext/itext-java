@@ -11,14 +11,11 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
 
     public PdfMarkupAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
         super(document, rect);
-        put(PdfName.Subtype, getSubtype());
     }
 
     public PdfMarkupAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
         super(pdfObject, document);
     }
-
-    abstract public PdfName getSubtype();
 
     public PdfString getText() throws PdfException {
         return getPdfObject().getAsString(PdfName.T);

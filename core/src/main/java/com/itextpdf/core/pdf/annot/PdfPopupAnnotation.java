@@ -10,11 +10,14 @@ public class PdfPopupAnnotation extends PdfAnnotation {
 
     public PdfPopupAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
         super(document, rect);
-        put(PdfName.Subtype, PdfName.Popup);
     }
 
     public PdfPopupAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
         super(pdfObject, document);
+    }
+
+    public PdfName getSubtype() throws PdfException {
+        return PdfName.Popup;
     }
 
     public PdfDictionary getParentObject() throws PdfException {

@@ -41,8 +41,8 @@ public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
     }
 
     @Override
-    public PdfName getSubtype() {
-        return null;
+    public PdfName getSubtype() throws PdfException {
+        return getPdfObject().getAsName(PdfName.Subtype);
     }
 
     private void setSubtype(PdfName subtype){
