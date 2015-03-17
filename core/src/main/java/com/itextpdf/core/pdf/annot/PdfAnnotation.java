@@ -289,16 +289,8 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsDictionary(PdfName.MK);
     }
 
-    public <T extends PdfAnnotation> T setAction(PdfDictionary action){
-        return put(PdfName.A, action);
-    }
-
     public PdfDictionary getAction() throws PdfException {
         return getPdfObject().getAsDictionary(PdfName.A);
-    }
-
-    public <T extends PdfAnnotation> T setAdditionalAction(PdfDictionary additionalAction){
-        return put(PdfName.AA, additionalAction);
     }
 
     public PdfDictionary getAdditionalAction() throws PdfException {
