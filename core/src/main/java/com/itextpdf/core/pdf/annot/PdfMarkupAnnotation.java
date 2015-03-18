@@ -144,5 +144,20 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.Name, name);
     }
 
+    public <T extends PdfMarkupAnnotation> T setDrawnAfter(PdfString appearanceString) {
+        return put(PdfName.DA, appearanceString);
+    }
 
+    public PdfString getDrawnAfter() throws PdfException {
+        return getPdfObject().getAsString(PdfName.DA);
+    }
+
+    public int getJustification() throws PdfException {
+        PdfNumber q = getPdfObject().getAsNumber(PdfName.Q);
+        return q == null ? 0 : q.getIntValue();
+    }
+
+    public <T extends PdfMarkupAnnotation> T setJustification(int justification) {
+        return put(PdfName.Q, new PdfNumber(justification));
+    }
 }

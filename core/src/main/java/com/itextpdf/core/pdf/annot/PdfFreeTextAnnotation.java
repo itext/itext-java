@@ -15,7 +15,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
 
     public PdfFreeTextAnnotation(PdfDocument document, Rectangle rect, String appearanceString) throws PdfException {
         super(document, rect);
-        put(PdfName.DA, new PdfString(appearanceString));
+        setDrawnAfter(new PdfString(appearanceString));
     }
 
     public PdfFreeTextAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
@@ -25,15 +25,6 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     @Override
     public PdfName getSubtype() throws PdfException {
         return PdfName.FreeText;
-    }
-
-    public int getJustification() throws PdfException {
-        PdfNumber q = getPdfObject().getAsNumber(PdfName.Q);
-        return q == null ? 0 : q.getIntValue();
-    }
-
-    public PdfFreeTextAnnotation setJustification(int justification) {
-        return put(PdfName.Q, new PdfNumber(justification));
     }
 
     public PdfString getDefaultStyleString() throws PdfException {

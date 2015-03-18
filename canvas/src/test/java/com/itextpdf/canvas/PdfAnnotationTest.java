@@ -983,4 +983,120 @@ public class PdfAnnotationTest {
 //            Assert.fail(errorMessage);
 //        }
     }
+
+    @Test
+    public void waterMarkTest() throws PdfException, IOException, DocumentException, InterruptedException {
+        String filename = destinationFolder + "waterMarkAnnotation01.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        PdfWatermarkAnnotation watermark = new PdfWatermarkAnnotation(pdfDoc1, new Rectangle(400, 400, 200, 200));
+
+        float[] arr = {1, 0, 0, 1, 0, 0};
+
+        PdfFixedPrint fixedPrint = new PdfFixedPrint(pdfDoc1);
+        fixedPrint.setMatrix(arr);
+        fixedPrint.setHorizontalTranslation(0.5f);
+        fixedPrint.setVerticalTranslation(0);
+
+        watermark.setFixedPrint(fixedPrint);
+
+        PdfFormXObject form = new PdfFormXObject(pdfDoc1, new Rectangle(200, 200));
+
+        PdfCanvas canvas = new PdfCanvas(form);
+        canvas
+                .saveState()
+                .circle(100, 100, 50)
+                .setColor(Color.Black, true)
+                .fill()
+                .restoreState();
+        canvas.release();
+
+        watermark.setNormalAppearance(form.getPdfObject());
+        watermark.setFlags(PdfAnnotation.Print);
+
+        page1.addAnnotation(watermark);
+        page1.flush();
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_watermarkAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void redactionTest() throws PdfException, IOException, DocumentException, InterruptedException {
+        String filename = destinationFolder + "redactionAnnotation01.pdf";
+
+        FileOutputStream fos1 = new FileOutputStream(filename);
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+
+        PdfPage page1 = pdfDoc1.addNewPage();
+
+        float[] rgb = { 0, 0, 0};
+        float[] rgb1 = { 1, 0, 0};
+        PdfRedactAnnotation redact = new PdfRedactAnnotation(pdfDoc1, new Rectangle(180, 531, 120, 49));
+
+        PdfFormXObject formD = new PdfFormXObject(pdfDoc1, new Rectangle(180, 531, 120, 49));
+        PdfCanvas canvasD = new PdfCanvas(formD);
+        canvasD
+                .setFillColorGray(0)
+                .rectangle(180, 531, 120, 48)
+                .fill();
+        redact.setDownAppearance(formD.getPdfObject());
+
+        PdfFormXObject formN = new PdfFormXObject(pdfDoc1, new Rectangle(179, 530, 122, 51));
+        PdfCanvas canvasN = new PdfCanvas(formN);
+        canvasN
+                .setColor(Color.Red, true)
+                .setLineWidth(1.5f)
+                .setLineCapStyle(2)
+                .rectangle(180, 531, 120, 48)
+                .stroke()
+                .rectangle(181, 532,118, 47)
+                .closePath();
+        redact.setNormalAppearance(formN.getPdfObject());
+
+        PdfFormXObject formR = new PdfFormXObject(pdfDoc1, new Rectangle(180, 531, 120, 49));
+        PdfCanvas canvasR = new PdfCanvas(formR);
+        canvasR
+                .saveState()
+                .rectangle(180, 531, 120, 48)
+                .fill()
+                .restoreState()
+                .release();
+        redact.setRolloverAppearance(formR.getPdfObject());
+
+        PdfFormXObject formRO = new PdfFormXObject(pdfDoc1, new Rectangle(180, 531, 120, 49));
+        PdfCanvas canvasRO = new PdfCanvas(formRO);
+        canvasRO
+                .saveState()
+                .rectangle(180, 531, 120, 48)
+                .fill()
+                .restoreState()
+                .release();
+
+        redact.setRedactRolloverAppearance(formRO.getPdfObject());
+
+        redact.put(PdfName.OC, new PdfArray(rgb1));
+
+        redact.setColor(rgb1);
+        redact.setInteriorColor(rgb);
+        page1.addAnnotation(redact);
+        page1.flush();
+        pdfDoc1.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_redactionAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
 }

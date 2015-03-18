@@ -183,6 +183,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName FitH = createDirectName("FitH");
     public static final PdfName FitR = createDirectName("FitR");
     public static final PdfName FitV = createDirectName("FitV");
+    public static final PdfName FixedPrint = createDirectName("FixedPrint");
     public static final PdfName FL = createDirectName("FL");
     public static final PdfName FlateDecode = createDirectName("FlateDecode");
     public static final PdfName Font = createDirectName("Font");
@@ -319,6 +320,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName OPM = createDirectName("OPM");
     public static final PdfName Or = createDirectName("Or");
     public static final PdfName Order = createDirectName("Order");
+    public static final PdfName OverlayText = createDirectName("OverlayText");
     public static final PdfName P = createDirectName("P");
     public static final PdfName PA = createDirectName("PA");
     public static final PdfName Page = createDirectName("Page");
@@ -362,12 +364,14 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName RD = createDirectName("RD");
     public static final PdfName Recipients = createDirectName("Recipients");
     public static final PdfName Rect = createDirectName("Rect");
+    public static final PdfName Redact = createDirectName("Redact");
     public static final PdfName Reference = createDirectName("Reference");
     public static final PdfName RelativeColorimetric = createDirectName("RelativeColorimetric");
     public static final PdfName Rendition = createDirectName("Rendition");
     public static final PdfName Repeat = createDirectName("Repeat");
     public static final PdfName Resources = createDirectName("Resources");
     public static final PdfName RI = createDirectName("RI");
+    public static final PdfName RO = createDirectName("RO");
     public static final PdfName RoleMap = createDirectName("RoleMap");
     public static final PdfName Root = createDirectName("Root");
     public static final PdfName Rows = createDirectName("Rows");
