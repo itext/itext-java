@@ -1,5 +1,6 @@
 package com.itextpdf.canvas.color;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfPattern;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
@@ -19,16 +20,23 @@ public class PatternColor extends Color {
         this.pattern = coloredPattern;
     }
 
-    public PatternColor(PdfPattern.Tiling uncoloredPattern, Color color) {
+    public PatternColor(PdfPattern.Tiling uncoloredPattern, Color color) throws PdfException {
         this(uncoloredPattern, color.getColorSpace(), color.getColorValue());
     }
 
-    public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfColorSpace underlyingCS, float[] colorValue) {
-        super(new PdfSpecialCs.UncoloredTilingPattern(underlyingCS), colorValue);
+    public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfColorSpace underlyingCS, float[] colorValue) throws PdfException {
+        super(new PdfSpecialCs.UncoloredTilingPattern(uncoloredPattern.getDocument(), underlyingCS), colorValue);
         if (underlyingCS instanceof PdfSpecialCs.Pattern)
             throw new IllegalArgumentException("underlyingCS");
         this.pattern = uncoloredPattern;
         this.underlyingCS = underlyingCS;
+        this.colorValue = colorValue;
+    }
+
+    public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCS, float[] colorValue) throws PdfException {
+        super(uncoloredTilingCS, colorValue);
+        this.pattern = uncoloredPattern;
+        this.underlyingCS = uncoloredTilingCS.getUnderlyingColorSpace();
         this.colorValue = colorValue;
     }
 

@@ -159,10 +159,6 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
             super(PdfName.Pattern, pdfDocument);
         }
 
-        protected Pattern(PdfObject pdfObj) {
-            super(pdfObj);
-        }
-
         protected Pattern(PdfObject pdfObj, PdfDocument pdfDoc) throws PdfException {
             super(pdfObj, pdfDoc);
         }
@@ -177,10 +173,6 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
         public UncoloredTilingPattern(PdfArray pdfObject, PdfDocument pdfDocument) throws PdfException {
             super(pdfObject, pdfDocument);
-        }
-
-        public UncoloredTilingPattern(PdfColorSpace underlyingColorSpace) {
-            super(new PdfArray(Arrays.asList(PdfName.Pattern, underlyingColorSpace.getPdfObject())));
         }
 
         public UncoloredTilingPattern(PdfDocument pdfDocument, PdfColorSpace underlyingColorSpace) throws PdfException {
