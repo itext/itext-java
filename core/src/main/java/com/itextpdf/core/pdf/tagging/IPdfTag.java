@@ -7,6 +7,6 @@ public interface IPdfTag extends IPdfStructElem {
 
     public Integer getMcid() throws PdfException;
 
-    public Integer getStructParentIndex() throws PdfException;
+//    public Integer getStructParentIndex() throws PdfException;
 
 }

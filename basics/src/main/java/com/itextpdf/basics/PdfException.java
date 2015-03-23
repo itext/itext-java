@@ -18,6 +18,7 @@ public class PdfException extends Exception {
 
 
     public static final String AllFillBitsPrecedingEolCodeMustBe0 = "all.fill.bits.preceding.eol.code.must.be.0";
+    public static final String AnnotShallHaveReferenceToPage = "annot.shall.have.reference.to.page";
     public static final String AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible = "append.mode.requires.a.document.without.errors.even.if.recovery.was.possible";
     public static final String BadEndiannessTagNot0x4949Or0x4d4d = "bad.endianness.tag.not.0x4949.or.0x4d4d";
     public static final String BadMagicNumberShouldBe42 = "bad.magic.number.should.be.42";
@@ -106,6 +107,7 @@ public class PdfException extends Exception {
     public static final String ImageMaskCannotContainAnotherImageMask = "image.mask.cannot.contain.another.image.mask";
     public static final String ImageMaskIsNotAMaskDidYouDoMakeMask = "image.mask.is.not.a.mask.did.you.do.makemask";
     public static final String IncompletePalette = "incomplete.palette";
+    public static final String IncorrectMcrParent = "incorrect.mcr.parent";
     public static final String IncorrectNumberOfComponents = "incorrect.number.of.components";
 
     public static final String InfiniteIndirectReferenceChain = "infinite.indirect.reference.chain";

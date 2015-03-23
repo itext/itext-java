@@ -1,14 +1,10 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.core.fonts.PdfStandardFont;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.PdfReader;
-import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.pdf.tagging.IPdfTag;
-import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
-import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
-import com.itextpdf.core.pdf.tagging.PdfStructElem;
+import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.core.pdf.tagging.*;
 import com.itextpdf.testutils.CompareTool;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -245,7 +241,7 @@ public class PdfTaggingTest {
         PdfReader reader = new PdfReader(fis);
         PdfDocument source = new PdfDocument(reader);
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest05.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "tagging  Test05.pdf"));
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
 
@@ -365,6 +361,48 @@ public class PdfTaggingTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest10.pdf", sourceFolder + "cmp_taggingTest10.pdf", destinationFolder, "diff_"));
 
     }
+
+    @Test
+    public void taggingTest11() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest11.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document));
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(new PdfStandardFont(document, PdfStandardFont.Courier), 14);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
+        PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.showText("Click ");
+        canvas.closeTag();
+
+        PdfStructElem link = paragraph.addKid(new PdfStructElem(document, PdfName.Link, page));
+        canvas.openTag(link.addKid(new PdfMcrNumber(page, link)));
+        canvas.setFillColorRgb(0, 0, 1).showText("here");
+        PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(document, new Rectangle(80, 508, 40, 18)).setColor(new float[] {0, 0, 1});
+        page.addAnnotation(linkAnnotation);
+        link.addKid(new PdfObjRef(linkAnnotation, link));
+        canvas.closeTag();
+
+        PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
+        canvas.setFillColorRgb(0, 0, 0);
+        canvas.showText(" to visit iText site.");
+        canvas.closeTag();
+        canvas.endText();
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest11.pdf", sourceFolder + "cmp_taggingTest11.pdf", destinationFolder, "diff_"));
+    }
+
 
 
 

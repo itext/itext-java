@@ -1525,8 +1525,8 @@ public class PdfCanvas {
     public PdfCanvas openTag(final IPdfTag tag) throws PdfException {
         if (tag.getRole() == null)
             return this;
-        if ((tag.getStructParentIndex() == null) && !(tag instanceof PdfArtifact))
-            throw new PdfException(PdfException.StructureElementIsNotLinkedToStructParent, tag);
+//        if ((tag.getStructParentIndex() == null) && !(tag instanceof PdfArtifact))
+//            throw new PdfException(PdfException.StructureElementIsNotLinkedToStructParent, tag);
         return beginMarkedContent(tag.getRole(), tag.getMcid() == null ? null : new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
             put(PdfName.MCID, new PdfNumber(tag.getMcid()));
         }}));

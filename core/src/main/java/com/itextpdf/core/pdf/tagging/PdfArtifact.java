@@ -23,10 +23,10 @@ public class PdfArtifact implements IPdfTag {
         return null;
     }
 
-    @Override
-    public Integer getStructParentIndex() throws PdfException {
-        return null;
-    }
+//    @Override
+//    public Integer getStructParentIndex() throws PdfException {
+//        return null;
+//    }
 
     @Override
     public IPdfStructElem getParent() throws PdfException {

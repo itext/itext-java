@@ -50,17 +50,17 @@ abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper imple
         return null;
     }
 
-    @Override
-    public Integer getStructParentIndex() throws PdfException {
-        Integer structParentIndex = 0;
-        PdfDictionary page = getPageObject();
-        if (page != null) {
-            PdfNumber spi = page.getAsNumber(PdfName.StructParents);
-            if (spi != null)
-                structParentIndex = spi.getIntValue();
-        }
-        return structParentIndex;
-    }
+//    @Override
+//    public Integer getStructParentIndex() throws PdfException {
+//        Integer structParentIndex = 0;
+//        PdfDictionary page = getPageObject();
+//        if (page != null) {
+//            PdfNumber spi = page.getAsNumber(PdfName.StructParents);
+//            if (spi != null)
+//                structParentIndex = spi.getIntValue();
+//        }
+//        return structParentIndex;
+//    }
 
     protected abstract PdfDictionary getPageObject() throws PdfException;
 

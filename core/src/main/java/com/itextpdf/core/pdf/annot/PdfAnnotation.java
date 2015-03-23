@@ -269,11 +269,22 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsDictionary(PdfName.BS);
     }
 
+    /**
+     * Marks annotation to be tagged.
+     * Normally it shall be done for link annotations.
+     *
+     * @param <T>
+     * @return annotation itself.
+     */
+    public <T extends PdfAnnotation> T tag() {
+        return put(PdfName.StructParent, new PdfNumber(getDocument().getNextStructParentIndex()));
+    }
+
     static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document) throws PdfException {
         return makeAnnotation(pdfObject, document, null);
     }
 
-    public <T extends PdfAnnotation> T setTitle(PdfString title){
+    public <T extends PdfAnnotation> T setTitle(PdfString title) {
         return put(PdfName.T, title);
     }
 
@@ -281,7 +292,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsString(PdfName.T);
     }
 
-    public <T extends PdfAnnotation> T setAppearanceCharacteristics(PdfDictionary characteristics){
+    public <T extends PdfAnnotation> T setAppearanceCharacteristics(PdfDictionary characteristics) {
         return put(PdfName.MK, characteristics);
     }
 
@@ -309,14 +320,10 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
                 annotation = (T) new PdfLinkAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Popup.equals(subtype))
                 annotation = (T) new PdfPopupAnnotation((PdfDictionary) pdfObject, document);
-            else if (PdfName.Movie.equals(subtype))
-                throw new UnsupportedOperationException();
             else if (PdfName.Widget.equals(subtype))
                 throw new UnsupportedOperationException();
             else if (PdfName.Screen.equals(subtype))
                 annotation = (T) new PdfScreenAnnotation((PdfDictionary) pdfObject, document);
-            else if (PdfName.Watermark.equals(subtype))
-                throw new UnsupportedOperationException();
             else if (PdfName._3D.equals(subtype))
                 throw new UnsupportedOperationException();
             else if (PdfName.Highlight.equals(subtype) || PdfName.Underline.equals(subtype) || PdfName.Squiggly.equals(subtype) || PdfName.StrikeOut.equals(subtype))

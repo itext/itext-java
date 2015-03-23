@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf.tagging;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.annot.PdfAnnotation;
 
 import java.util.*;
 
@@ -89,6 +90,13 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public PdfStructElem(PdfDocument document, PdfName role, PdfPage page) throws PdfException {
         this(document, role);
         getPdfObject().put(PdfName.Pg, page.getPdfObject());
+    }
+
+    public PdfStructElem(PdfDocument document, PdfName role, PdfAnnotation annot) throws PdfException {
+        this(document, role);
+        if (annot.getPage() == null)
+            throw new PdfException(PdfException.AnnotShallHaveReferenceToPage);
+        getPdfObject().put(PdfName.Pg, annot.getPage().getPdfObject());
     }
 
     public PdfStructElem(PdfDocument document, final PdfName role) throws PdfException {
@@ -179,6 +187,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public PdfMcr addKid(int index, PdfMcr kid) throws PdfException {
+        if (this != kid.getParent())
+            throw new PdfException(PdfException.IncorrectMcrParent);
         addKidObject(index, kid.getPdfObject());
         return kid;
     }
@@ -213,6 +223,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
                     kids.add(new PdfStructElem(d));
                 else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
                     kids.add(new PdfMcrDictionary(d, this));
+                else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))
+                    kids.add(new PdfObjRef(d, this));
                 break;
             case PdfObject.Array:
                 PdfArray a = (PdfArray) k;
@@ -226,6 +238,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
                                     kids.add(new PdfStructElem(d));
                                 else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
                                     kids.add(new PdfMcrDictionary(d, this));
+                                else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))
+                                    kids.add(new PdfObjRef(d, this));
                             }
                             break;
                         case PdfObject.Number:

@@ -8,6 +8,8 @@ import java.util.*;
 
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
+    protected HashMap<PdfDictionary, Integer> objRefs = new HashMap<PdfDictionary, Integer>();
+
     static private List<PdfName> ignoreKeysForCopy = new ArrayList<PdfName>() {{
         add(PdfName.K);
         add(PdfName.P);
@@ -143,11 +145,23 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             PdfArray numsBranch = new PdfArray();
             if (getDocument().getWriter() != null)
                 numsBranch.makeIndirect(getDocument());
+            List<PdfObjRef> objRefs = new ArrayList<PdfObjRef>();
             for (IPdfTag tag : tags) {
-                numsBranch.add(((PdfStructElem) tag.getParent()).getPdfObject());
+                if (tag instanceof PdfObjRef) {
+                    objRefs.add((PdfObjRef) tag);
+                } else {
+                    numsBranch.add(((PdfStructElem) tag.getParent()).getPdfObject());
+                }
             }
-            nums.add(new PdfNumber(i));
+            nums.add(new PdfNumber(page.getStructParentIndex()));
             nums.add(numsBranch);
+            for (PdfObjRef objRef : objRefs) {
+                Integer structParent = this.objRefs.get(objRef.getPdfObject());
+                if (structParent != null) {
+                    nums.add(new PdfNumber(structParent));
+                    nums.add(((PdfStructElem) objRef.getParent()).getPdfObject());
+                }
+            }
         }
         getParentTreeObject().remove(PdfName.Kids);
         getParentTreeObject().put(PdfName.Nums, nums);
@@ -217,6 +231,17 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
 
 
+    }
+
+    public void registerObjRef(PdfObjRef objRef) throws PdfException {
+        if (objRef == null)
+            return;
+        PdfDictionary o = ((PdfDictionary) objRef.getPdfObject()).getAsDictionary(PdfName.Obj);
+        if (o != null) {
+            PdfNumber n = o.getAsNumber(PdfName.StructParent);
+            if (n != null)
+                objRefs.put((PdfDictionary) objRef.getPdfObject(), n.getIntValue());
+        }
     }
 
     private PdfDictionary getObjectsToCopy(IPdfTag tag, Set<PdfDictionary> objectsToCopy) throws PdfException {

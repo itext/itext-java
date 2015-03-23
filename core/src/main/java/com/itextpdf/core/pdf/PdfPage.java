@@ -6,10 +6,7 @@ import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.tagging.IPdfTag;
-import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
-import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
-import com.itextpdf.core.pdf.tagging.PdfStructElem;
+import com.itextpdf.core.pdf.tagging.*;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;
 import com.itextpdf.core.xmp.XMPMetaFactory;
@@ -27,6 +24,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private PdfResources resources = null;
     private Integer mcid = null;
+    private Integer structParents = null;
 
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
@@ -40,8 +38,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Type, PdfName.Page);
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
         if (pdfDocument.isTagged()) {
-            Integer structParentIndex = pdfDocument.structParentIndex++;
-            getPdfObject().put(PdfName.StructParents, new PdfNumber(structParentIndex));
+            structParents = pdfDocument.getNextStructParentIndex();
+            getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
         }
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
@@ -152,13 +150,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             add(PdfName.StructParents);
         }}, true);
         PdfPage page = new PdfPage(dictionary, toDocument);
-        if (toDocument.isTagged())
-            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(toDocument.structParentIndex++));
+        if (toDocument.isTagged()) {
+            page.structParents = toDocument.getNextStructParentIndex();
+            page.getPdfObject().put(PdfName.StructParents, new PdfNumber(page.structParents));
+        }
         return page;
     }
 
     @Override
     public void flush() throws PdfException {
+        if (getDocument().isTagged() && structParents == null) {
+            PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
+            if (n != null)
+                structParents = n.getIntValue();
+        }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
@@ -223,8 +228,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Integer getStructParentIndex() throws PdfException {
-        PdfNumber spi = getPdfObject().getAsNumber(PdfName.StructParents);
-        return spi == null ? null : spi.getIntValue();
+        if (structParents == null) {
+            structParents = getPdfObject().getAsNumber(PdfName.StructParents).getIntValue();
+        }
+        return structParents;
     }
 
     /**
@@ -254,8 +261,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots != null) {
             for (int i = 0; i < annots.size(); i++) {
                 PdfDictionary annot = annots.getAsDictionary(i);
-                if (annot != null)
-                    annotations.add(PdfAnnotation.makeAnnotation(annot, getDocument()).setPage(this));
+                annotations.add(PdfAnnotation.makeAnnotation(annot, getDocument()).setPage(this));
             }
         }
         return annotations;
@@ -310,7 +316,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 PdfDictionary d = (PdfDictionary) k;
                 if (PdfName.MCR.equals(d.getAsName(PdfName.Type)) && getPdfObject() == d.getAsDictionary(PdfName.Pg))
                     putTo.add(new PdfMcrDictionary(d, new PdfStructElem(getFrom, getDocument())));
-                else
+                else if (getFrom.getAsDictionary(PdfName.Pg) == getPdfObject() && PdfName.OBJR.equals(d.getAsName(PdfName.Type))) {
+                    PdfDictionary pg = d.getAsDictionary(PdfName.Pg);
+                    if (pg == null || pg == getPdfObject())
+                        putTo.add(new PdfObjRef(d, new PdfStructElem(getFrom, getDocument())));
+                } else
                     getPageTags(d, putTo);
                 break;
             case PdfObject.Array:
@@ -326,7 +336,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                             PdfDictionary dItem = (PdfDictionary) aItem;
                             if (PdfName.MCR.equals(dItem.getAsName(PdfName.Type)) && getPdfObject() == dItem.getAsDictionary(PdfName.Pg))
                                 putTo.add(new PdfMcrDictionary(dItem, new PdfStructElem(getFrom, getDocument())));
-                            else
+                            else if (getFrom.getAsDictionary(PdfName.Pg) == getPdfObject() && PdfName.OBJR.equals(dItem.getAsName(PdfName.Type))) {
+                                PdfDictionary pg = dItem.getAsDictionary(PdfName.Pg);
+                                if (pg == null || pg == getPdfObject())
+                                    putTo.add(new PdfObjRef(dItem, new PdfStructElem(getFrom, getDocument())));
+                            } else
                                 getPageTags(dItem, putTo);
                             break;
                         default:
