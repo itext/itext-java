@@ -1112,13 +1112,7 @@ public class PdfCanvas {
             else
                 currentGs.setStrokeColor(newColor);
         }
-        if (colorSpace.getPdfObject().getIndirectReference() != null) {
-            if (!setColorValueOnly) {
-                PdfName name = resources.addColorSpace(colorSpace);
-                contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS);
-            }
-            contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? scn : SCN);
-        } else if (colorSpace instanceof PdfDeviceCs.Gray)
+        if (colorSpace instanceof PdfDeviceCs.Gray)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? g : G);
         else if (colorSpace instanceof PdfDeviceCs.Rgb)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? rg : RG);
@@ -1130,6 +1124,13 @@ public class PdfCanvas {
         else if (colorSpace instanceof PdfSpecialCs.Pattern)
             contentStream.getOutputStream().write(PdfName.Pattern).writeSpace().writeBytes(fill ? cs : CS).
                     writeNewLine().write(resources.addPattern(pattern)).writeSpace().writeBytes(fill ? scn : SCN);
+        else if (colorSpace.getPdfObject().getIndirectReference() != null) {
+            if (!setColorValueOnly) {
+                PdfName name = resources.addColorSpace(colorSpace);
+                contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS);
+            }
+            contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? scn : SCN);
+        }
         return this;
     }
 
