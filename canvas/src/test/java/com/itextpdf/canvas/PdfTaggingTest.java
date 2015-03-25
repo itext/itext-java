@@ -241,7 +241,7 @@ public class PdfTaggingTest {
         PdfReader reader = new PdfReader(fis);
         PdfDocument source = new PdfDocument(reader);
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "tagging  Test05.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest05.pdf"));
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
 
