@@ -1,18 +1,17 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.pdf.navigation.PdfStringDestination;
 import com.itextpdf.core.xmp.XMPException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class PdfDocumentTest {
 
@@ -1217,6 +1216,19 @@ public class PdfDocumentTest {
         }
         reader.close();
 
+    }
+
+    @Test
+    public void outlinesTest() throws IOException, PdfException {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
+
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfOutline outlines = pdfDoc.getCatalog().getOutlines();
+        List<PdfOutline> children = outlines.getAllChildren().get(0).getAllChildren();
+
+        Assert.assertEquals(outlines.getTitle(), "Outlines");
+        Assert.assertEquals(children.size(), 13);
+        Assert.assertTrue(children.get(0).getDestination() instanceof PdfStringDestination);
     }
 
     static void verifyPdfPagesCount(PdfObject root) throws PdfException {

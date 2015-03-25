@@ -133,6 +133,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName DefaultRGB = createDirectName("DefaultRGB");
     public static final PdfName Design = createDirectName("Design");
     public static final PdfName Dest = createDirectName("Dest");
+    public static final PdfName Dests = createDirectName("Dests");
     public static final PdfName DeviceCMY = createDirectName("DeviceCMY");
     public static final PdfName DeviceCMYK = createDirectName("DeviceCMYK");
     public static final PdfName DeviceGray = createDirectName("DeviceGray");
@@ -246,6 +247,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Lab = createDirectName("Lab");
     public static final PdfName Lang = createDirectName("Lang");
     public static final PdfName Language = createDirectName("Language");
+    public static final PdfName Last = createDirectName("Last");
     public static final PdfName LastModified = createDirectName("LastModified");
     public static final PdfName LastPage = createDirectName("LastPage");
     public static final PdfName Launch = createDirectName("Launch");
@@ -291,6 +293,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName N = createDirectName("N");
     public static final PdfName Name = createDirectName("Name");
     public static final PdfName Named = createDirectName("Named");
+    public static final PdfName Names = createDirectName("Names");
     public static final PdfName NewWindow = createDirectName("NewWindow");
     public static final PdfName Next = createDirectName("Next");
     public static final PdfName NextPage = createDirectName("NextPage");
@@ -322,6 +325,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName OPM = createDirectName("OPM");
     public static final PdfName Or = createDirectName("Or");
     public static final PdfName Order = createDirectName("Order");
+    public static final PdfName Outlines = createDirectName("Outlines");
     public static final PdfName OverlayText = createDirectName("OverlayText");
     public static final PdfName P = createDirectName("P");
     public static final PdfName PA = createDirectName("PA");

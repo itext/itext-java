@@ -1,14 +1,23 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.layer.PdfOCProperties;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
+import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.core.pdf.navigation.PdfNamedDestination;
+import com.itextpdf.core.pdf.navigation.PdfStringDestination;
+
+import java.util.HashMap;
 
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     protected final PdfPagesTree pageTree;
     protected PdfOCProperties ocProperties;
+
+    private final static String OutlineRoot = "Outlines";
+    private boolean replaceNamedDestinations = true;
 
     protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject);
@@ -118,5 +127,38 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      */
     protected boolean isOCPropertiesMayHaveChanged() {
         return ocProperties != null;
+    }
+
+    public PdfOutline getOutlines() throws PdfException {
+
+        PdfDictionary outlines = getPdfObject().getAsDictionary(PdfName.Outlines);
+        if (outlines == null){
+            return null;
+        }
+
+        PdfOutline outline = new PdfOutline(OutlineRoot, outlines, null);
+        getNextItem(outlines.getAsDictionary(PdfName.First), outline);
+
+        return outline;
+    }
+
+    private void getNextItem(PdfDictionary item, PdfOutline parent) throws PdfException {
+
+        PdfOutline outline = new PdfOutline(item.getAsString(PdfName.Title).toUnicodeString(), item, parent);
+        PdfObject dest = item.get(PdfName.Dest);
+        if (dest != null) {
+            outline.setDestination(PdfDestination.makeDestination(dest));
+        }
+
+        parent.addChild(outline);
+
+        PdfDictionary processItem = item.getAsDictionary(PdfName.First);
+        if (processItem != null){
+            getNextItem(processItem, outline);
+        }
+        processItem = item.getAsDictionary(PdfName.Next);
+        if (processItem != null){
+            getNextItem(processItem, parent);
+        }
     }
 }

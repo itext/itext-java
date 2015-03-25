@@ -260,6 +260,9 @@ public class PdfEncodings {
             return new String(c);
         }
         try {
+            if (encoding.equals(UnicodeBig)){
+                return new String(bytes, 4, bytes.length-4, encoding);
+            }
             return new String(bytes, encoding);
         } catch (UnsupportedEncodingException e) {
             throw new PdfException(PdfException.PdfEncodings, e);
