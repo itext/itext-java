@@ -143,6 +143,7 @@ public class PdfException extends Exception {
     public static final String NoValidEncryptionMode = "no.valid.encryption.mode";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
     public static final String OnlyBmpCanBeWrappedInWmf = "only.bmp.can.be.wrapped.in.wmf";
+    public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "page.1.cannot.be.added.to.document.2.because.it.belongs.to.document.3";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
     public static final String PdfEncodings = "pdf.encodings";
     public static final String PdfEncryption = "pdf.encryption";

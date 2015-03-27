@@ -36,12 +36,16 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     public void addPage(PdfPage page) throws PdfException {
         if (page.isFlushed())
             throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
+        if (page.getDocument() != getDocument())
+            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, getDocument(), page.getDocument());
         pageTree.addPage(page);
     }
 
     public void addPage(int index, PdfPage page) throws PdfException {
         if (page.isFlushed())
             throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
+        if (page.getDocument() != getDocument())
+            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, getDocument(), page.getDocument());
         pageTree.addPage(index, page);
     }
 
