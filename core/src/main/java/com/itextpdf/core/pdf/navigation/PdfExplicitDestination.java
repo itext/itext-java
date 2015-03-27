@@ -3,6 +3,8 @@ package com.itextpdf.core.pdf.navigation;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
+import java.util.HashMap;
+
 public class PdfExplicitDestination extends PdfDestination<PdfArray> {
 
     public PdfExplicitDestination() {
@@ -15,6 +17,16 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
 
     public PdfExplicitDestination(PdfArray pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
+    }
+
+    @Override
+    public PdfObject getDestinationPage(HashMap<Object, PdfObject> names) throws PdfException {
+        return getPdfObject().get(0, false);
+    }
+
+    @Override
+    public PdfDestination replaceNamedDestination(HashMap<Object, PdfObject> names) {
+        return this;
     }
 
     static public PdfExplicitDestination createXYZ(PdfPage page, float left, float top, float zoom) {

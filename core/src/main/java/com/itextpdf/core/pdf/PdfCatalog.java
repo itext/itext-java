@@ -1,15 +1,11 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.layer.PdfOCProperties;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
-import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
-import com.itextpdf.core.pdf.navigation.PdfNamedDestination;
-import com.itextpdf.core.pdf.navigation.PdfStringDestination;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
@@ -17,7 +13,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     protected PdfOCProperties ocProperties;
 
     private final static String OutlineRoot = "Outlines";
+    private PdfOutline outlines;
     private boolean replaceNamedDestinations = true;
+    private HashMap<PdfObject, ArrayList<PdfOutline>> pagesWithOutlines = new HashMap<PdfObject, ArrayList<PdfOutline>>();
 
     protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject);
@@ -125,6 +123,18 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    public boolean isReplaceNamedDestinations() {
+        return replaceNamedDestinations;
+    }
+
+    public void setReplaceNamedDestinations(boolean replaceNamedDestinations) {
+        this.replaceNamedDestinations = replaceNamedDestinations;
+    }
+
+    public HashMap<PdfObject, ArrayList<PdfOutline>> getPagesWithOutlines() {
+        return pagesWithOutlines;
+    }
+
     /**
      * True indicates that getOCProperties() was called, may have been modified,
      * and thus its dictionary needs to be reconstructed.
@@ -133,36 +143,148 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return ocProperties != null;
     }
 
-    public PdfOutline getOutlines() throws PdfException {
+    PdfOutline getOutlines(boolean updateOutlines) throws PdfException {
 
-        PdfDictionary outlines = getPdfObject().getAsDictionary(PdfName.Outlines);
-        if (outlines == null){
+        if (outlines!= null && !updateOutlines)
+            return outlines;
+        if (outlines != null)
+            outlines.clear();
+
+        HashMap<Object, PdfObject> names = getNamedDestinations();
+        PdfDictionary outlineRoot = getPdfObject().getAsDictionary(PdfName.Outlines);
+        if (outlineRoot == null){
             return null;
         }
 
-        PdfOutline outline = new PdfOutline(OutlineRoot, outlines, null);
-        getNextItem(outlines.getAsDictionary(PdfName.First), outline);
+        outlines = new PdfOutline(OutlineRoot, outlineRoot, null);
+        getNextItem(outlineRoot.getAsDictionary(PdfName.First), outlines, names);
 
-        return outline;
+        return outlines;
     }
 
-    private void getNextItem(PdfDictionary item, PdfOutline parent) throws PdfException {
+    private void addOutlineToPage(PdfOutline outline, HashMap<Object, PdfObject> names) throws PdfException {
+
+        PdfObject obj = outline.getDestination().getDestinationPage(names);
+        ArrayList<PdfOutline> outs = pagesWithOutlines.get(obj);
+        if (outs == null) {
+            outs = new ArrayList<PdfOutline>();
+            pagesWithOutlines.put(obj, outs);
+        }
+        outs.add(outline);
+    }
+
+    private void getNextItem(PdfDictionary item, PdfOutline parent, HashMap<Object, PdfObject> names) throws PdfException {
 
         PdfOutline outline = new PdfOutline(item.getAsString(PdfName.Title).toUnicodeString(), item, parent);
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {
-            outline.setDestination(PdfDestination.makeDestination(dest));
+            PdfDestination destination = PdfDestination.makeDestination(dest);
+            outline.setDestination(destination);
+            if (replaceNamedDestinations){
+                destination.replaceNamedDestination(names);
+            }
+            addOutlineToPage(outline, names);
         }
-
         parent.addChild(outline);
 
         PdfDictionary processItem = item.getAsDictionary(PdfName.First);
         if (processItem != null){
-            getNextItem(processItem, outline);
+            getNextItem(processItem, outline, names);
         }
         processItem = item.getAsDictionary(PdfName.Next);
         if (processItem != null){
-            getNextItem(processItem, parent);
+            getNextItem(processItem, parent, names);
         }
+    }
+
+    private HashMap<Object, PdfObject> getNamedDestinations() throws PdfException {
+        HashMap<Object, PdfObject> names = getNamedDestinationsFromNames();
+        names.putAll(getNamedDestinationsFromStrings());
+        return names;
+    }
+
+    private HashMap<Object, PdfObject> getNamedDestinationsFromNames() throws PdfException {
+        HashMap<Object, PdfObject> names = new HashMap<Object, PdfObject>();
+        PdfDictionary destinations = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Dests);
+        if(destinations != null){
+            Set<PdfName> keys = destinations.keySet();
+            for (PdfName key : keys){
+                PdfArray array = getNameArray(destinations.get(key));
+                if (array == null){
+                    continue;
+                }
+                names.put(key, array);
+            }
+            return names;
+        }
+        return names;
+    }
+
+    private HashMap<String, PdfObject> getNamedDestinationsFromStrings() throws PdfException {
+        PdfDictionary dictionary = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Names);
+        if(dictionary != null){
+            dictionary = dictionary.getAsDictionary(PdfName.Dests);
+            if (dictionary != null){
+                HashMap<String, PdfObject> names = readTree(dictionary);
+                for (Iterator<Map.Entry<String, PdfObject>> it = names.entrySet().iterator(); it.hasNext();) {
+                    Map.Entry<String, PdfObject> entry = it.next();
+                    PdfArray arr = getNameArray(entry.getValue());
+                    if (arr != null)
+                        entry.setValue(arr);
+                    else
+                        it.remove();
+                }
+                return names;
+            }
+        }
+
+        return new HashMap<String, PdfObject>();
+    }
+
+    private HashMap<String, PdfObject> readTree(PdfDictionary dictionary) throws PdfException {
+        HashMap<String, PdfObject> items = new HashMap<String, PdfObject>();
+        if (dictionary != null){
+            iterateItems(dictionary, items, null);
+        }
+        return items;
+    }
+
+    private PdfString iterateItems(PdfDictionary dictionary, HashMap<String, PdfObject> items, PdfString leftOver) throws PdfException {
+        PdfArray names = dictionary.getAsArray(PdfName.Names);
+        if (names != null){
+            for (int k = 0; k < names.size(); k++){
+                PdfString name;
+                if (leftOver == null)
+                    name = names.getAsString(k++);
+                else {
+                    name = leftOver;
+                    leftOver = null;
+                }
+                if(k < names.size()){
+                    items.put(name.toUnicodeString(), names.get(k));
+                }
+                else {
+                    return name;
+                }
+            }
+        } else if ((names = dictionary.getAsArray(PdfName.Kids)) != null){
+            for (int k = 0; k < names.size(); k++){
+                PdfDictionary kid = names.getAsDictionary(k);
+                leftOver = iterateItems(kid, items, leftOver);
+            }
+        }
+        return null;
+    }
+
+    private PdfArray getNameArray(PdfObject obj) throws PdfException {
+        if(obj == null)
+            return null;
+        if (obj.isArray())
+            return (PdfArray)obj;
+        else if (obj.isDictionary()) {
+            PdfArray arr = ((PdfDictionary)obj).getAsArray(PdfName.D);
+            return arr;
+        }
+        return null;
     }
 }

@@ -715,6 +715,10 @@ public class PdfDocument implements IEventDispatcher {
         this.closeWriter = closeWriter;
     }
 
+    public PdfOutline getOutlines(boolean updateOutlines) throws PdfException {
+        return catalog.getOutlines(updateOutlines);
+    }
+
     /**
      * Initializes document.
      *

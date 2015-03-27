@@ -1,8 +1,9 @@
 package com.itextpdf.core.pdf.navigation;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.*;
+
+import java.util.HashMap;
 
 public class PdfNamedDestination extends PdfDestination<PdfName> {
 
@@ -16,5 +17,22 @@ public class PdfNamedDestination extends PdfDestination<PdfName> {
 
     public PdfNamedDestination(PdfName pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
+    }
+
+    @Override
+    public PdfObject getDestinationPage(final HashMap<Object, PdfObject> names) throws PdfException {
+        PdfArray array = (PdfArray) names.get(getPdfObject());
+
+        return array.get(0, false);
+    }
+
+    @Override
+     public PdfDestination replaceNamedDestination(final HashMap<Object, PdfObject> names){
+
+        PdfArray array = (PdfArray) names.get(getPdfObject());
+        if (array != null){
+            return PdfDestination.makeDestination(array);
+        }
+        return null;
     }
 }

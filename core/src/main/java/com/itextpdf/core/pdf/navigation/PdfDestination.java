@@ -3,7 +3,9 @@ package com.itextpdf.core.pdf.navigation;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
-public class PdfDestination<T extends PdfObject> extends PdfObjectWrapper<T> {
+import java.util.HashMap;
+
+public abstract class PdfDestination<T extends PdfObject> extends PdfObjectWrapper<T> {
 
     public PdfDestination(T pdfObject) {
         super(pdfObject);
@@ -12,6 +14,10 @@ public class PdfDestination<T extends PdfObject> extends PdfObjectWrapper<T> {
     public PdfDestination(T pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
     }
+
+    public abstract PdfObject getDestinationPage(HashMap<Object, PdfObject> names) throws PdfException;
+
+    public abstract PdfDestination replaceNamedDestination(HashMap<Object, PdfObject> names) throws PdfException;
 
     public static PdfDestination makeDestination(PdfObject pdfObject) {
 

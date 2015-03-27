@@ -290,6 +290,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annots.size();
     }
 
+    public List<PdfOutline> getOutlines(boolean updateOutlines) throws PdfException {
+        getDocument().getOutlines(updateOutlines);
+        return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject().getIndirectReference());
+    }
+
     protected void makeIndirect(PdfDocument pdfDocument) throws PdfException {
         getPdfObject().makeIndirect(pdfDocument);
     }
@@ -382,5 +387,4 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         return maxMcid == null ? 0 : maxMcid + 1;
     }
-
 }

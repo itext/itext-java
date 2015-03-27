@@ -1223,12 +1223,25 @@ public class PdfDocumentTest {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
 
         PdfDocument pdfDoc = new PdfDocument(reader);
-        PdfOutline outlines = pdfDoc.getCatalog().getOutlines();
+        PdfOutline outlines = pdfDoc.getOutlines(false);
         List<PdfOutline> children = outlines.getAllChildren().get(0).getAllChildren();
 
         Assert.assertEquals(outlines.getTitle(), "Outlines");
         Assert.assertEquals(children.size(), 13);
         Assert.assertTrue(children.get(0).getDestination() instanceof PdfStringDestination);
+    }
+
+    @Test
+    public void outlinesWithPagesTest() throws IOException, PdfException {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
+
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfPage page = pdfDoc.getPage(52);
+        List<PdfOutline> pageOutlines = page.getOutlines(true);
+
+        Assert.assertEquals(pageOutlines.size(), 3);
+        Assert.assertTrue(pageOutlines.get(0).getTitle().equals("Safari"));
+        Assert.assertEquals(pageOutlines.get(0).getAllChildren().size(), 4);
     }
 
     static void verifyPdfPagesCount(PdfObject root) throws PdfException {

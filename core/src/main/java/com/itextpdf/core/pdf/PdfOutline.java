@@ -1,7 +1,6 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.pdf.navigation.PdfDestination;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +31,7 @@ public class PdfOutline {
     }
 
     public List<PdfOutline> getAllChildren(){
-        List<PdfOutline> clone = new ArrayList<PdfOutline>();
-        clone.addAll(children);
-        return clone;
+        return children;
     }
 
     public PdfOutline getParent(){
@@ -47,5 +44,9 @@ public class PdfOutline {
 
     public void setDestination(PdfDestination destination){
         this.destination = destination;
+    }
+
+    public void clear(){
+        children.clear();
     }
 }
