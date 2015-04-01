@@ -17,6 +17,14 @@ public class PdfSplitter {
         this.pdfDocument = pdfDocument;
     }
 
+    /**
+     * Splits the document by page numbers.
+     * @param pageNumbers the numbers of pages from which another document is to be started.
+     *                    If the first element is not 1, then 1 is implied (i.e. the first split document will start from page 1 in any case).
+     * @param documentReady the event listener which is called when another document is ready.
+     *                      You can close this document in this listener, for instance.
+     * @throws PdfException
+     */
     public void splitByPageNumbers(List<Integer> pageNumbers, IDocumentReadyListener documentReady) throws PdfException {
         int currentPageNumber = 1;
 
@@ -34,6 +42,13 @@ public class PdfSplitter {
         }
     }
 
+    /**
+     * Splits the document by page numbers.
+     * @param pageNumbers the numbers of pages from which another document is to be started.
+     *                    If the first element is not 1, then 1 is implied (i.e. the first split document will start from page 1 in any case).
+     * @return the list of resultant documents. By warned that they are not closed.
+     * @throws PdfException
+     */
     public List<PdfDocument> splitByPageNumbers(List<Integer> pageNumbers) throws PdfException {
         final List<PdfDocument> splitDocuments = new ArrayList<PdfDocument>();
 
@@ -47,6 +62,13 @@ public class PdfSplitter {
         return splitDocuments;
     }
 
+    /**
+     * Splits a document into smaller documents with no more than @pageCount pages each.
+     * @param pageCount the biggest possible number of pages in a split document.
+     * @param documentReady the event listener which is called when another document is ready.
+     *                      You can close this document in this listener, for instance.
+     * @throws PdfException
+     */
     public void splitByPageCount(int pageCount, IDocumentReadyListener documentReady) throws PdfException {
         for (int startPage = 1; startPage <= pdfDocument.getNumOfPages(); startPage += pageCount) {
             int endPage = Math.min(startPage + pageCount - 1, pdfDocument.getNumOfPages());
@@ -58,6 +80,12 @@ public class PdfSplitter {
         }
     }
 
+    /**
+     * Splits a document into smaller documents with no more than @pageCount pages each.
+     * @param pageCount the biggest possible number of pages in a split document.
+     * @return the list of resultant documents. By warned that they are not closed.
+     * @throws PdfException
+     */
     public List<PdfDocument> splitByPageCount(int pageCount) throws PdfException {
         final List<PdfDocument> splitDocuments = new ArrayList<PdfDocument>();
 
@@ -71,6 +99,13 @@ public class PdfSplitter {
         return splitDocuments;
     }
 
+    /**
+     * Extracts the specified page ranges from a document.
+     * @param pageRanges the list of page ranges for each of the resultant document.
+     * @return the list of the resultant documents for each of the specified page range.
+     *          Be warned that these documents are not closed.
+     * @throws PdfException
+     */
     public List<PdfDocument> extractPageRanges(List<PageRange> pageRanges) throws PdfException {
         List<PdfDocument> splitDocuments = new ArrayList<PdfDocument>();
 
@@ -83,6 +118,13 @@ public class PdfSplitter {
         return splitDocuments;
     }
 
+    /**
+     * Extracts the specified page ranges from a document.
+     * @param pageRange the page range to be extracted from the document.
+     * @return the resultant document containing the pages specified by the provided page range.
+     *          Be warned that this document is not closed.
+     * @throws PdfException
+     */
     public PdfDocument extractPageRange(PageRange pageRange) throws PdfException {
         return extractPageRanges(Arrays.asList(pageRange)).get(0);
     }
@@ -91,6 +133,12 @@ public class PdfSplitter {
         return pdfDocument;
     }
 
+    /**
+     * This method is called when another split document is to be created.
+     * You can override this method and return your own {@see PdfWriter} depending on your needs.
+     * @param documentPageRange the page range of the original document to be included in the document being created now.
+     * @return the PdfWriter instance for the document which is being created.
+     */
     protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
         return new PdfWriter(new ByteArrayOutputStream());
     }
@@ -114,6 +162,10 @@ public class PdfSplitter {
         public PageRange() {
         }
 
+        /**
+         * You can call specify the page range in a string form, for example: "1-12, 15, 45-66".
+         * @param pageRange the page range.
+         */
         public PageRange(String pageRange) {
             pageRange = pageRange.replaceAll("\\s+","");
             Pattern sequencePattern = Pattern.compile("(\\d+)-(\\d+)");
@@ -143,8 +195,8 @@ public class PdfSplitter {
             return this;
         }
 
-        public Set<Integer> getAllPages() {
-            Set<Integer> allPages = new HashSet<Integer>();
+        public TreeSet<Integer> getAllPages() {
+            TreeSet<Integer> allPages = new TreeSet<Integer>();
             for (int ind = 0; ind < sequenceStarts.size(); ind++) {
                 for (int pageInRange = sequenceStarts.get(ind); pageInRange <= sequenceEnds.get(ind); pageInRange++) {
                     allPages.add(pageInRange);

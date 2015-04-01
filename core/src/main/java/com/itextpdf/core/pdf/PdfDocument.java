@@ -655,13 +655,13 @@ public class PdfDocument implements IEventDispatcher {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy      list of pages to be copied.
+     * @param pagesToCopy      list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) throws PdfException {
+    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) throws PdfException {
         List<PdfPage> copiedPages = new ArrayList<PdfPage>();
         LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
         for (Integer pageNum : pagesToCopy) {
@@ -690,12 +690,12 @@ public class PdfDocument implements IEventDispatcher {
      * Use this method if you want to copy pages across tagged documents.
      * This will keep resultant PDF structure consistent.
      *
-     * @param pagesToCopy list of pages to be copied.
+     * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument  a document to copy pages to.
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument) throws PdfException {
+    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument) throws PdfException {
         return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1);
     }
 
