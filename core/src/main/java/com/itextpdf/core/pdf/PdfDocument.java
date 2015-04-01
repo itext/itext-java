@@ -661,7 +661,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) throws PdfException {
+    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) throws PdfException {
         List<PdfPage> copiedPages = new ArrayList<PdfPage>();
         LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
         for (Integer pageNum : pagesToCopy) {
@@ -695,7 +695,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument) throws PdfException {
+    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument) throws PdfException {
         return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1);
     }
 
