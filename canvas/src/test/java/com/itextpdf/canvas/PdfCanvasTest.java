@@ -15,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1210,7 +1211,7 @@ public class PdfCanvasTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(document, com.itextpdf.core.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes)));
+        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(document, com.itextpdf.core.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes, Charset.forName("UTF-8"))));
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.setFillColor(new Indexed(indexed, 85)).rectangle(50, 500, 50, 50).fill();
         canvas.setFillColor(new Indexed(indexed, 127)).rectangle(150, 500, 50, 50).fill();

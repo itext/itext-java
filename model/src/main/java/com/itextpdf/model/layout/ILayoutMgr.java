@@ -20,7 +20,7 @@ public interface ILayoutMgr {
     public void setCanvas(PdfCanvas canvas);
 
     /**
-     * Places the elemnt to a document.
+     * Places the element to a document.
      * Layout manager decides if to write element to canvas immediately or cache it or whatever...
      *
      * @param element

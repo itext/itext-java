@@ -1,7 +1,6 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfObjectWrapper<T extends PdfObject> {
 
@@ -40,7 +39,7 @@ public class PdfObjectWrapper<T extends PdfObject> {
     }
 
     public <T1 extends PdfObjectWrapper> T1 copy(PdfDocument document) throws PdfException {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not implemented");
     }
 
     public <T1 extends PdfObjectWrapper> T1 copy() throws PdfException {

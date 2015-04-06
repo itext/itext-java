@@ -5,7 +5,10 @@ import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +16,10 @@ public class PdfSplitter {
 
     private PdfDocument pdfDocument;
 
+    /**
+     * Creates a new instance of PdfSplitter class.
+     * @param pdfDocument the document to be split.
+     */
     public PdfSplitter(PdfDocument pdfDocument) {
         this.pdfDocument = pdfDocument;
     }
