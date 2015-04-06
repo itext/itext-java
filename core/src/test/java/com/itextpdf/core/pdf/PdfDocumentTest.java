@@ -1,12 +1,12 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.navigation.PdfStringDestination;
 import com.itextpdf.core.xmp.XMPException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.text.DocumentException;
+import org.junit.*;
 
 import java.io.*;
 import java.util.Calendar;
@@ -1239,9 +1239,183 @@ public class PdfDocumentTest {
         PdfPage page = pdfDoc.getPage(52);
         List<PdfOutline> pageOutlines = page.getOutlines(true);
 
-        Assert.assertEquals(pageOutlines.size(), 3);
+        Assert.assertEquals(3, pageOutlines.size());
         Assert.assertTrue(pageOutlines.get(0).getTitle().equals("Safari"));
         Assert.assertEquals(pageOutlines.get(0).getAllChildren().size(), 4);
+    }
+
+    @Test
+    public void stampingTestWithTaggedStructure() throws PdfException, IOException {
+        String filename = sourceFolder + "iphone_user_guide.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        FileOutputStream fos = new FileOutputStream(destinationFolder+"stampingDocWithTaggedStructure.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        pdfDoc.close();
+    }
+
+    @Before
+    public void setupAddOutlinesToDocumentTest() throws PdfException, IOException {
+        String filename = sourceFolder + "iphone_user_guide.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        FileOutputStream fos = new FileOutputStream(destinationFolder+"addOutlinesResult.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        pdfDoc.setTagged();
+
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+
+        PdfOutline firstPage = outlines.addOutline("firstPage");
+        PdfOutline firstPageChild = firstPage.addOutline("firstPageChild");
+        PdfOutline secondPage = outlines.addOutline("secondPage");
+        PdfOutline secondPageChild = secondPage.addOutline("secondPageChild");
+        firstPage.addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(1)));
+        firstPageChild.addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(1)));
+        secondPage.addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(2)));
+        secondPageChild.addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(2)));
+        outlines.getAllChildren().get(0).getAllChildren().get(1).addOutline("testOutline", 1).addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(102)));
+
+        pdfDoc.close();
+    }
+    @Test
+    public void addOutlinesToDocumentTest() throws IOException, PdfException, InterruptedException, DocumentException {
+        String filename = destinationFolder+"addOutlinesResult.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+        Assert.assertEquals(3, outlines.getAllChildren().size());
+        Assert.assertEquals("firstPageChild", outlines.getAllChildren().get(1).getAllChildren().get(0).getTitle());
+    }
+
+    @Before
+    public void setupRemovePageWithOutlinesTest() throws IOException, PdfException {
+        String filename = sourceFolder + "iphone_user_guide.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        FileOutputStream fos = new FileOutputStream(destinationFolder+"removePagesWithOutlinesResult.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+        pdfDoc.removePage(102);
+
+        pdfDoc.close();
+    }
+
+    @Test
+    public void removePageWithOutlinesTest() throws IOException, PdfException {
+        String filename = destinationFolder + "removePagesWithOutlinesResult.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+        PdfPage page = pdfDoc.getPage(102);
+        List<PdfOutline> pageOutlines =  page.getOutlines(false);
+        Assert.assertEquals(4, pageOutlines.size());
+    }
+
+    @Before
+    @Test
+    public void setupUpdateOutlineTitle() throws IOException, PdfException {
+        String filename = sourceFolder + "iphone_user_guide.pdf";
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        FileOutputStream fos = new FileOutputStream(destinationFolder+"updateOutlineTitleResult.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+        outlines.getAllChildren().get(0).getAllChildren().get(1).setTitle("New Title");
+
+        pdfDoc.close();
+    }
+
+    @Test
+    public void updateOutlineTitle() throws IOException, PdfException {
+        String filename = destinationFolder + "updateOutlineTitleResult.pdf";
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+        PdfOutline outline = outlines.getAllChildren().get(0).getAllChildren().get(1);
+
+        Assert.assertEquals("New Title", outline.getTitle());
+    }
+
+    @Before
+    public void setupAddOutlineInNotOutlineMode() throws IOException, PdfException {
+        String filename = sourceFolder + "iphone_user_guide.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        FileOutputStream fos = new FileOutputStream(destinationFolder+"addOutlinesWithoutOutlineModeResult.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfOutline outlines = new PdfOutline(pdfDoc);
+
+        PdfOutline firstPage = outlines.addOutline("firstPage");
+        PdfOutline firstPageChild = firstPage.addOutline("firstPageChild");
+        PdfOutline secondPage = outlines.addOutline("secondPage");
+        PdfOutline secondPageChild = secondPage.addOutline("secondPageChild");
+        firstPage.addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(1)));
+        firstPageChild.addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(1)));
+        secondPage.addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(2)));
+        secondPageChild.addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(2)));
+
+        pdfDoc.close();
+    }
+
+    @Test
+    public void addOutlineInNotOutlineMode() throws IOException, PdfException {
+        String filename = destinationFolder + "addOutlinesWithoutOutlineModeResult.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+
+        List<PdfOutline> pageOutlines = pdfDoc.getPage(102).getOutlines(true);
+        Assert.assertEquals(10, pageOutlines.size());
+    }
+
+    @Before
+    public void setupCreateDocWithOutlines() throws PdfException, IOException, DocumentException, InterruptedException {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder+"documentWithOutlines.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getCatalog().setPageMode(PdfName.UseOutlines);
+
+        PdfPage firstPage = pdfDoc.addNewPage();
+        PdfPage secondPage = pdfDoc.addNewPage();
+
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+
+        PdfOutline rootOutline = new PdfOutline(pdfDoc);
+        PdfOutline firstOutline = rootOutline.addOutline("First Page");
+        PdfOutline secondOutline = rootOutline.addOutline("Second Page");
+        firstOutline.addDestination(PdfExplicitDestination.createFit(firstPage));
+        secondOutline.addDestination(PdfExplicitDestination.createFit(secondPage));
+
+        pdfDoc.close();
+    }
+
+    @Test
+    public void createDocWithOutlines() throws PdfException, IOException, DocumentException, InterruptedException {
+
+        String filename = destinationFolder + "documentWithOutlines.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+
+        Assert.assertEquals(2, outlines.getAllChildren().size());
+        Assert.assertEquals("First Page", outlines.getAllChildren().get(0).getTitle());
     }
 
     static void verifyPdfPagesCount(PdfObject root) throws PdfException {

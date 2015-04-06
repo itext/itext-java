@@ -15,7 +15,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private final static String OutlineRoot = "Outlines";
     private PdfOutline outlines;
     private boolean replaceNamedDestinations = true;
+    //This HashMap contents all pages of the document and outlines associated to them
     private HashMap<PdfObject, ArrayList<PdfOutline>> pagesWithOutlines = new HashMap<PdfObject, ArrayList<PdfOutline>>();
+    //This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
+    private boolean outlineMode;
 
     protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject);
@@ -61,11 +64,15 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     public boolean removePage(PdfPage page) throws PdfException {
         //TODO log removing flushed page
+        if(outlineMode)
+            removeOutlines(page);
         return pageTree.removePage(page);
     }
 
     public PdfPage removePage(int pageNum) throws PdfException {
         //TODO log removing flushed page
+        if(outlineMode)
+            removeOutlines(getPage(pageNum));
         return pageTree.removePage(pageNum);
     }
 
@@ -131,8 +138,25 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         this.replaceNamedDestinations = replaceNamedDestinations;
     }
 
-    public HashMap<PdfObject, ArrayList<PdfOutline>> getPagesWithOutlines() {
-        return pagesWithOutlines;
+    /**
+     * This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
+     * @return
+     */
+    public boolean isOutlineMode() {
+        return outlineMode;
+    }
+
+    /**
+     * This method sets a page mode of the document
+     * @param pageMode
+     * @return
+     */
+    public PdfCatalog setPageMode(PdfName pageMode){
+        return put(PdfName.PageMode, pageMode);
+    }
+
+    public PdfName getPageMode() throws PdfException {
+        return getPdfObject().getAsName(PdfName.PageMode);
     }
 
     /**
@@ -143,27 +167,66 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return ocProperties != null;
     }
 
-    PdfOutline getOutlines(boolean updateOutlines) throws PdfException {
+    /**
+     * this method return map containing all pages of the document with associated outlines.
+      * @return
+     */
+    HashMap<PdfObject, ArrayList<PdfOutline>> getPagesWithOutlines() {
+        return pagesWithOutlines;
+    }
 
+    /**
+     * This method returns a complete outline tree of the whole document.
+     * @param updateOutlines - if this flag is true, the method read the whole document and creates outline tree.
+     *                       If false the method gets cached outline tree (if it was cached via calling getOutlines method before).
+     * @return
+     * @throws PdfException
+     */
+    PdfOutline getOutlines(boolean updateOutlines) throws PdfException {
         if (outlines!= null && !updateOutlines)
             return outlines;
         if (outlines != null)
             outlines.clear();
 
+        outlineMode = true;
         HashMap<Object, PdfObject> names = getNamedDestinations();
         PdfDictionary outlineRoot = getPdfObject().getAsDictionary(PdfName.Outlines);
         if (outlineRoot == null){
             return null;
         }
 
-        outlines = new PdfOutline(OutlineRoot, outlineRoot, null);
+        outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
         getNextItem(outlineRoot.getAsDictionary(PdfName.First), outlines, names);
 
         return outlines;
     }
 
-    private void addOutlineToPage(PdfOutline outline, HashMap<Object, PdfObject> names) throws PdfException {
+    /**
+     * This method sets the root outline element in the catalog.
+     * @param outline
+     * @throws PdfException
+     */
+    void addRootOutline(PdfOutline outline) throws PdfException {
+        if (!outlineMode)
+            return;
 
+        if (pagesWithOutlines.size() == 0) {
+            put(PdfName.Outlines, outline.getContent());
+        }
+    }
+
+    /**
+     * This method removes all outlines associated with a given page
+     * @param page
+     * @throws PdfException
+     */
+    private void removeOutlines(PdfPage page) throws PdfException {
+        for(PdfOutline outline: pagesWithOutlines.get(page.getPdfObject().getIndirectReference())){
+            outline.removeOutline();
+        }
+    }
+
+    private void addOutlineToPage(PdfOutline outline, HashMap<Object, PdfObject> names) throws PdfException {
         PdfObject obj = outline.getDestination().getDestinationPage(names);
         ArrayList<PdfOutline> outs = pagesWithOutlines.get(obj);
         if (outs == null) {
@@ -174,7 +237,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void getNextItem(PdfDictionary item, PdfOutline parent, HashMap<Object, PdfObject> names) throws PdfException {
-
         PdfOutline outline = new PdfOutline(item.getAsString(PdfName.Title).toUnicodeString(), item, parent);
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {
@@ -185,7 +247,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             }
             addOutlineToPage(outline, names);
         }
-        parent.addChild(outline);
+        parent.getAllChildren().add(outline);
 
         PdfDictionary processItem = item.getAsDictionary(PdfName.First);
         if (processItem != null){

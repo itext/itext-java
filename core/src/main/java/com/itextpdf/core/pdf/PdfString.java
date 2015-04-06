@@ -102,10 +102,11 @@ public class PdfString extends PdfPrimitiveObject {
         if (content == null) {
             generateContent();
         }
+        byte[] b = decodeContent();
         if (content.length >= 4 && content[0] == -61 && content[1] == (byte)-66 && content[2] == -61 && content[3] == -65) {
-            return PdfEncodings.convertToString(content, PdfEncodings.UnicodeBig);
+            return PdfEncodings.convertToString(b, PdfEncodings.UnicodeBig);
         } else {
-            return PdfEncodings.convertToString(content, PdfEncodings.PdfDocEncoding);
+            return PdfEncodings.convertToString(b, PdfEncodings.PdfDocEncoding);
         }
     }
 

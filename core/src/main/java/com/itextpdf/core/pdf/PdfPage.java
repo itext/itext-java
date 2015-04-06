@@ -290,6 +290,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annots.size();
     }
 
+    /**
+     * This method gets outlines of a current page
+     * @param updateOutlines
+     * @return return all outlines of a current page
+     * @throws PdfException
+     */
     public List<PdfOutline> getOutlines(boolean updateOutlines) throws PdfException {
         getDocument().getOutlines(updateOutlines);
         return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject().getIndirectReference());
