@@ -515,7 +515,7 @@ public final class BmpImageHelper {
     private static byte[] getPalette(int group,BmpParameters bmp) {
         if (bmp.palette == null)
             return null;
-        byte np[] = new byte[bmp.palette.length / group * 3];
+        byte[] np = new byte[bmp.palette.length / group * 3];
         int e = bmp.palette.length / group;
         for (int k = 0; k < e; ++k) {
             int src = k * group;

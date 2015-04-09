@@ -51,8 +51,9 @@ public class PatternColor extends Color {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass() || !super.equals(o)) return false;
-
+        if (o == null || getClass() != o.getClass() || !super.equals(o)){
+            return false;
+        }
         return pattern.equals(((PatternColor)o).pattern) && Objects.equals(underlyingCS, ((PatternColor)o).underlyingCS)
                 && Objects.equals(colorValue, ((PatternColor)o).colorValue);
     }

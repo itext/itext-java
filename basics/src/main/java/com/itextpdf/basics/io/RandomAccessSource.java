@@ -32,7 +32,7 @@ public interface RandomAccessSource {
     public long length();
 
     /**
-     * Closes this source.  The underlying data structure or source (if any) will also be closed
+     * Closes this source. The underlying data structure or source (if any) will also be closed
      * @throws IOException
      */
     public void close() throws IOException;
