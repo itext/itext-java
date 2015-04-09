@@ -9,6 +9,7 @@ import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.core.xmp.*;
 import com.itextpdf.core.xmp.options.PropertyOptions;
@@ -673,11 +674,17 @@ public class PdfDocument implements IEventDispatcher {
     public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) throws PdfException {
         List<PdfPage> copiedPages = new ArrayList<PdfPage>();
         LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
+        HashMap<PdfPage, List<PdfOutline>> page2Outlines = new HashMap<PdfPage, List<PdfOutline>>();
+        Set<PdfOutline> outlinesToCopy = new HashSet<PdfOutline>();
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage(pageNum);
+            List<PdfOutline> pageOutlines = page.getOutlines(false);
+            if (pageOutlines != null)
+                outlinesToCopy.addAll(pageOutlines);
             PdfPage newPage = page.copy(toDocument);
             copiedPages.add(newPage);
             page2page.put(page, newPage);
+            page2Outlines.put(newPage, pageOutlines);
             if (insertBeforePage < toDocument.getNumOfPages() + 1) {
                 toDocument.addPage(insertBeforePage, newPage);
             } else {
@@ -691,6 +698,10 @@ public class PdfDocument implements IEventDispatcher {
             else
                 getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
         }
+        if(catalog.isOutlineMode()){
+            copyOutlines(outlinesToCopy, toDocument, page2Outlines);
+        }
+
         return copiedPages;
     }
 
@@ -806,5 +817,69 @@ public class PdfDocument implements IEventDispatcher {
      */
     protected List<PdfFont> getDocumentFonts() {
         return documentFonts;
+    }
+
+    /**
+     * This method copies all given outlines
+     * @param outlines outlines to be copied
+     * @param toDocument document where outlines should be copied
+     * @param page2Outlines Map of pages to be copied and outlines associated with them. This map is used for creating destinations in target document.
+     * @throws PdfException
+     */
+    private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, HashMap<PdfPage, List<PdfOutline>> page2Outlines) throws PdfException {
+
+        HashSet<PdfOutline> parents = new HashSet<PdfOutline>();
+        HashSet<PdfOutline> outlinesToCopy = new HashSet<PdfOutline>();
+        outlinesToCopy.addAll(outlines);
+
+        for (PdfOutline outline : outlines){
+            getAllOutlinesToCopy(outline, outlinesToCopy);
+        }
+        for (PdfOutline outline : outlinesToCopy){
+            for(Map.Entry<PdfPage, List<PdfOutline>> entry : page2Outlines.entrySet())
+                if (entry.getValue() != null && entry.getValue().contains(outline)){
+                    outline.addDestination(PdfExplicitDestination.createFit(entry.getKey()));
+                }
+        }
+        for (PdfOutline outline : outlines){
+            parents.add(getParent(outline, outlinesToCopy));
+        }
+        PdfOutline rootOutline = toDocument.getOutlines(false);
+        if (rootOutline == null)
+            rootOutline = new PdfOutline(toDocument);
+        for (PdfOutline parent : parents) {
+            rootOutline.addOutline(parent);
+        }
+    }
+
+    /**
+     * This method gets all outlines to be copied including parent outlines
+     * @param outline current outline
+     * @param outlinesToCopy a Set of outlines to be copied
+     */
+    private void getAllOutlinesToCopy(PdfOutline outline, Set<PdfOutline> outlinesToCopy){
+        PdfOutline parent = outline.getParent();
+        //note there's no need to continue recursion if the current outline parent is root (first condition) or
+        // if it is already in the Set of outlines to be copied (second condition)
+        if (parent.getTitle().equals("Outlines") || !outlinesToCopy.add(parent))
+            return;
+        getAllOutlinesToCopy(parent, outlinesToCopy);
+    }
+
+    /**
+     * This method gets parent of given outline and removes all unnecessary child of this parent.
+     * @param outline
+     * @param outlinesToCopy set of outlines to be copied
+     * @return parent outline
+     */
+    private PdfOutline getParent(PdfOutline outline, Set<PdfOutline> outlinesToCopy){
+        PdfOutline parent = outline.getParent();
+        List<PdfOutline> children = parent.getAllChildren();
+        children.retainAll(outlinesToCopy);
+
+        if (parent.getTitle().equals("Outlines"))
+            return outline;
+        outlinesToCopy.add(parent);
+        return getParent(parent, outlinesToCopy);
     }
 }

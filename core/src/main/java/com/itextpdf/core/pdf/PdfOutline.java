@@ -45,6 +45,11 @@ public class PdfOutline {
         return title;
     }
 
+    public void setTitle(String title){
+        this.title = title;
+        this.content.put(PdfName.Title, new PdfString(title));
+    }
+
     public PdfDictionary getContent() {
         return content;
     }
@@ -67,7 +72,8 @@ public class PdfOutline {
     }
 
     /**
-     * Adds an <CODE>PdfOutline</CODE> as a child to existing <CODE>PdfOutline</CODE> and put it in the end of the existing <CODE>PdfOutline</CODE> children list
+     * Adds an <CODE>PdfOutline</CODE> as a child to existing <CODE>PdfOutline</CODE>
+     * and put it in the end of the existing <CODE>PdfOutline</CODE> children list
      * @param title an outline title
      * @return a created outline
      * @throws PdfException
@@ -77,9 +83,11 @@ public class PdfOutline {
     }
 
     /**
-     * Adds an <CODE>PdfOutline</CODE> as a child to existing <CODE>PdfOutline</CODE> and put it to specified position in the existing <CODE>PdfOutline</CODE> children list
+     * Adds an {@code PdfOutline} as a child to existing <CODE>PdfOutline</CODE>
+     * and put it to specified position in the existing <CODE>PdfOutline</CODE> children list
      * @param title an outline title
-     * @param position a position in the current outline child List where a new outline should be added
+     * @param position a position in the current outline child List where a new outline should be added.
+     *                 If the position equals -1, then the outline will be put in the end of children list.
      * @return created outline
      * @throws PdfException
      */
@@ -162,8 +170,15 @@ public class PdfOutline {
         }
     }
 
-    public void setTitle(String title){
-        this.title = title;
-        this.content.put(PdfName.Title, new PdfString(title));
+    public PdfOutline addOutline(PdfOutline outline) throws PdfException {
+        PdfOutline newOutline = addOutline(outline.getTitle());
+        newOutline.addDestination(outline.getDestination());
+
+        List<PdfOutline> children = outline.getAllChildren();
+        for(PdfOutline child : children){
+            newOutline.addOutline(child);
+        }
+
+        return newOutline;
     }
 }

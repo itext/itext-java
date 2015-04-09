@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TreeSet;
 
 public class PdfDocumentTest {
 
@@ -1416,6 +1417,31 @@ public class PdfDocumentTest {
 
         Assert.assertEquals(2, outlines.getAllChildren().size());
         Assert.assertEquals("First Page", outlines.getAllChildren().get(0).getTitle());
+    }
+
+
+    @Test
+    public void copyPagesWithOutlines() throws IOException, PdfException {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder+"copyPagesWithOutlines01.pdf"));
+
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfDocument pdfDoc1 = new PdfDocument(writer);
+
+        TreeSet<Integer> pages = new TreeSet<Integer>();
+        pages.add(1);
+        pages.add(2);
+        pages.add(3);
+        pages.add(5);
+        pages.add(52);
+        pages.add(102);
+        PdfOutline outlines = pdfDoc.getOutlines(false);
+        pdfDoc.copyPages(pages, pdfDoc1);
+        pdfDoc.close();
+
+        Assert.assertEquals(6, pdfDoc1.getNumOfPages());
+        Assert.assertEquals(4, outlines.getAllChildren().get(0).getAllChildren().size());
+        pdfDoc1.close();
     }
 
     static void verifyPdfPagesCount(PdfObject root) throws PdfException {

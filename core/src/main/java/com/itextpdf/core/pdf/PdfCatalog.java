@@ -19,6 +19,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private HashMap<PdfObject, ArrayList<PdfOutline>> pagesWithOutlines = new HashMap<PdfObject, ArrayList<PdfOutline>>();
     //This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
     private boolean outlineMode;
+    private HashMap<Object, PdfObject> names = new HashMap<Object, PdfObject>();
 
     protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject);
@@ -189,7 +190,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             outlines.clear();
 
         outlineMode = true;
-        HashMap<Object, PdfObject> names = getNamedDestinations();
+        names = getNamedDestinations();
         PdfDictionary outlineRoot = getPdfObject().getAsDictionary(PdfName.Outlines);
         if (outlineRoot == null){
             return null;
@@ -213,6 +214,17 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (pagesWithOutlines.size() == 0) {
             put(PdfName.Outlines, outline.getContent());
         }
+    }
+
+    /**
+     * This method gets Names tree from the catalog.
+     * @return
+     * @throws PdfException
+     */
+    HashMap<Object, PdfObject> getNamedDestinations() throws PdfException {
+        HashMap<Object, PdfObject> names = getNamedDestinatnionsFromNames();
+        names.putAll(getNamedDestinatnionsFromStrings());
+        return names;
     }
 
     /**
@@ -259,13 +271,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private HashMap<Object, PdfObject> getNamedDestinations() throws PdfException {
-        HashMap<Object, PdfObject> names = getNamedDestinationsFromNames();
-        names.putAll(getNamedDestinationsFromStrings());
-        return names;
-    }
-
-    private HashMap<Object, PdfObject> getNamedDestinationsFromNames() throws PdfException {
+    private HashMap<Object, PdfObject> getNamedDestinatnionsFromNames() throws PdfException {
         HashMap<Object, PdfObject> names = new HashMap<Object, PdfObject>();
         PdfDictionary destinations = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Dests);
         if(destinations != null){
@@ -282,7 +288,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return names;
     }
 
-    private HashMap<String, PdfObject> getNamedDestinationsFromStrings() throws PdfException {
+    private HashMap<String, PdfObject> getNamedDestinatnionsFromStrings() throws PdfException {
         PdfDictionary dictionary = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Names);
         if(dictionary != null){
             dictionary = dictionary.getAsDictionary(PdfName.Dests);
