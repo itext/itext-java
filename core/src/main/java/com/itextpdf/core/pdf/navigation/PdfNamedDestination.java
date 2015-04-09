@@ -23,7 +23,7 @@ public class PdfNamedDestination extends PdfDestination<PdfName> {
     public PdfObject getDestinationPage(final HashMap<Object, PdfObject> names) throws PdfException {
         PdfArray array = (PdfArray) names.get(getPdfObject());
 
-        return array.get(0, false);
+        return array != null ? array.get(0, false) : null;
     }
 
     @Override

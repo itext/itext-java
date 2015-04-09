@@ -678,19 +678,21 @@ public class PdfDocument implements IEventDispatcher {
         Set<PdfOutline> outlinesToCopy = new HashSet<PdfOutline>();
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage(pageNum);
-            List<PdfOutline> pageOutlines = page.getOutlines(false);
-            if (pageOutlines != null)
-                outlinesToCopy.addAll(pageOutlines);
             PdfPage newPage = page.copy(toDocument);
             copiedPages.add(newPage);
             page2page.put(page, newPage);
-            page2Outlines.put(newPage, pageOutlines);
             if (insertBeforePage < toDocument.getNumOfPages() + 1) {
                 toDocument.addPage(insertBeforePage, newPage);
             } else {
                 toDocument.addPage(newPage);
             }
             insertBeforePage++;
+            if (catalog.isOutlineMode()){
+                List<PdfOutline> pageOutlines = page.getOutlines(false);
+                if (pageOutlines != null)
+                    outlinesToCopy.addAll(pageOutlines);
+                page2Outlines.put(newPage, pageOutlines);
+            }
         }
         if (toDocument.isTagged()) {
             if (insertBeforePage > toDocument.getNumOfPages())
