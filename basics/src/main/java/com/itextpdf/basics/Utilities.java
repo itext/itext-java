@@ -92,6 +92,7 @@ public class Utilities {
         buf.append('(');
         for (byte b : bytes) {
             switch (b) {
+
                 case '\r':
                     buf.append(escR);
                     break;
@@ -113,7 +114,13 @@ public class Utilities {
                     buf.append('\\').append(b);
                     break;
                 default:
-                    buf.append(b);
+                    if (b < 8 && b >= 0) {
+                        buf.append("\\00").append(Integer.toOctalString(b));
+                    } else if (b >= 8 && b < 32) {
+                        buf.append("\\0").append(Integer.toOctalString(b));
+                    } else {
+                        buf.append(b);
+                    }
             }
         }
         buf.append(')');

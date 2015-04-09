@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a
  * JAVA-{@code String}-object.
- * <p>
+ * <p/>
  * A string is a sequence of characters delimited by parenthesis.
  * If a string is too long to be conveniently placed on a single line, it may
  * be split across multiple lines by using the backslash character (\) at the
@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
  * way to represent characters outside the printable ASCII character set.<br>
  * This object is described in the 'Portable Document Format Reference Manual
  * version 1.7' section 3.2.3 (page 53-56).
- *
+ * <p/>
  * {@link PdfObject}
  */
 public class PdfString extends PdfPrimitiveObject {
@@ -42,7 +42,7 @@ public class PdfString extends PdfPrimitiveObject {
         this(value, null);
     }
 
-    protected PdfString(byte[] content, boolean hexWriting) {
+    public PdfString(byte[] content, boolean hexWriting) {
         super(content);
         this.hexWriting = hexWriting;
     }
@@ -102,13 +102,15 @@ public class PdfString extends PdfPrimitiveObject {
         if (content == null) {
             generateContent();
         }
+
         byte[] b = decodeContent();
-        if (content.length >= 4 && content[0] == -61 && content[1] == (byte)-66 && content[2] == -61 && content[3] == -65) {
+        if (b.length >= 2 && b[0] == -2 && b[1] == -1) {
             return PdfEncodings.convertToString(b, PdfEncodings.UnicodeBig);
         } else {
             return PdfEncodings.convertToString(b, PdfEncodings.PdfDocEncoding);
         }
     }
+
 
     @Override
     public String toString() {
@@ -139,13 +141,13 @@ public class PdfString extends PdfPrimitiveObject {
      *
      * @return byte array
      */
-    protected byte[] getIsoBytes(){
+    protected byte[] getIsoBytes() {
         return com.itextpdf.basics.io.OutputStream.getIsoBytes(getValue());
     }
 
     protected void generateValue() {
         assert content != null : "No byte[] content to generate value";
-        value = new String(decodeContent(), Charset.forName(defaultCharset));
+        value = new String(convertBytesToChars(decodeContent()));
     }
 
     @Override
@@ -174,6 +176,7 @@ public class PdfString extends PdfPrimitiveObject {
 
     /**
      * Encrypt content of {@code value} and set as content. {@code generateContent()} won't be called.
+     *
      * @param encrypt @see PdfEncryption
      * @return true if value was encrypted, otherwise false.
      */
@@ -189,33 +192,35 @@ public class PdfString extends PdfPrimitiveObject {
     /**
      * Escape special symbols or convert to hexadecimal string.
      * This method don't change either {@code value} or {@code content} ot the {@code PdfString}.
+     *
      * @param bytes byte array to manipulate with.
      * @return Hexadecimal string or string with escaped symbols in byte array view.
      */
     protected byte[] encodeBytes(byte[] bytes) {
-        if(hexWriting) {
+        if (hexWriting) {
             ByteBuffer buf = new ByteBuffer(bytes.length * 2);
             for (byte b : bytes) {
                 buf.appendHex(b);
             }
             return buf.getInternalBuffer();
         } else {
-            ByteBuffer buf =  Utilities.createBufferedEscapedString(bytes);
+            ByteBuffer buf = Utilities.createBufferedEscapedString(bytes);
             return buf.toByteArray(1, buf.size() - 2);
         }
     }
 
     /**
      * Resolve escape symbols or hexadecimal symbols.
-     *
+     * <p/>
      * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
      * so we can convert it directly to byte array.
+     *
      * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
     protected byte[] decodeContent() {
         ByteBuffer buffer = new ByteBuffer(content.length);
         if (hexWriting) {       // <6954657874ae...>
-            for (int i = 0; i < content.length;) {
+            for (int i = 0; i < content.length; ) {
                 int v1 = ByteBuffer.getHex(content[i++]);
                 if (i == content.length) {
                     buffer.appendAsCharBytes(v1 << 4);
@@ -226,7 +231,7 @@ public class PdfString extends PdfPrimitiveObject {
                 buffer.appendAsCharBytes((v1 << 4) + v2);
             }
         } else {                // ((iText\( some version)...)
-            for(int i = 0; i < content.length;) {
+            for (int i = 0; i < content.length; ) {
                 int ch = content[i++];
                 if (ch == '\\') {
                     boolean lineBreak = false;
@@ -306,8 +311,23 @@ public class PdfString extends PdfPrimitiveObject {
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
         super.copyContent(from, document);
-        PdfString string = (PdfString)from;
+        PdfString string = (PdfString) from;
         value = string.value;
         hexWriting = string.hexWriting;
     }
+
+    private char[] convertBytesToChars(byte[] b) {
+        int length = b.length;
+        char[] cc = new char[length];
+        for (int i = 0; i < length; i++) {
+            if (hexWriting) {
+                cc[i] = (char) (b[i] & 0xff);
+            } else {
+                cc[i] = (char) (b[i]);
+            }
+        }
+        return cc;
+    }
+
+
 }

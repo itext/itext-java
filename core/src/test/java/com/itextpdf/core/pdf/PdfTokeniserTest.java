@@ -3,13 +3,19 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class PdfTokeniserTest {
@@ -76,6 +82,40 @@ public class PdfTokeniserTest {
                 PdfTokeniser.TokenType.EndDic,
                 PdfTokeniser.TokenType.EndOfFile
         );
+    }
+
+
+    @Test
+    public void encodingTest() throws IOException, PdfException, DocumentException {
+
+        RandomAccessSourceFactory factory;
+        PdfTokeniser tok;
+        PdfString pdfString;
+
+        // hex string parse and check
+        String testHexString = "<0D0A09557365729073204775696465>";
+        factory = new RandomAccessSourceFactory();
+        tok = new PdfTokeniser(new RandomAccessFileOrArray(factory.createSource(testHexString.getBytes())));
+        tok.nextToken();
+        pdfString = new PdfString(tok.getByteContent(), tok.isHexString());
+        Assert.assertEquals("\r\n\tUser\u0090s Guide", pdfString.getValue());
+
+
+        String testUnicodeString = "ΑΒΓΗ€•♣⋅";
+        pdfString = new PdfString(testUnicodeString.getBytes("UnicodeBig"), false);
+        Assert.assertEquals(testUnicodeString, pdfString.toUnicodeString());
+
+
+        pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), true);
+        Assert.assertEquals("Привет", pdfString.toUnicodeString());
+
+        // not implemented yet
+        //pdfString = new PdfString("FEFF001B7275001B041F04400438043204350442".getBytes(), true);
+        //Assert.assertEquals("Привет", pdfString.toUnicodeString());
+
+        pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), false);
+        Assert.assertEquals("FEFF041F04400438043204350442", pdfString.toUnicodeString());
+
     }
 
     @Test

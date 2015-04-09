@@ -79,12 +79,13 @@ public class ByteBuffer {
      */
     public void appendAsCharBytes(int b) {
         assert b >= 0 && b < 256 : b;
-        if (b < 128) {
+        append((byte) b);
+        /*if (b < 128) {
             append((byte) b);
         } else {
             append((byte) (192 | b >> 6));
             append((byte) (128 | b & 63));
-        }
+        }*/
     }
 
     public byte get(int index) {
