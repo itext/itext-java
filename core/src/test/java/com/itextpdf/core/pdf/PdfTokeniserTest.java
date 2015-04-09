@@ -100,18 +100,12 @@ public class PdfTokeniserTest {
         pdfString = new PdfString(tok.getByteContent(), tok.isHexString());
         Assert.assertEquals("\r\n\tUser\u0090s Guide", pdfString.getValue());
 
-
         String testUnicodeString = "ΑΒΓΗ€•♣⋅";
         pdfString = new PdfString(testUnicodeString.getBytes("UnicodeBig"), false);
         Assert.assertEquals(testUnicodeString, pdfString.toUnicodeString());
 
-
         pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), true);
         Assert.assertEquals("Привет", pdfString.toUnicodeString());
-
-        // not implemented yet
-        //pdfString = new PdfString("FEFF001B7275001B041F04400438043204350442".getBytes(), true);
-        //Assert.assertEquals("Привет", pdfString.toUnicodeString());
 
         pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), false);
         Assert.assertEquals("FEFF041F04400438043204350442", pdfString.toUnicodeString());
