@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.core.fonts.PdfType1Font;
+import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfStamper;
