@@ -1,7 +1,9 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.fonts.PdfStandardFont;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.core.fonts.PdfType1Font;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -44,7 +46,7 @@ public class PdfLayerTest {
         PdfCanvas canvas = new PdfCanvas(pdfDoc, 1);
 
         PdfLayer newLayer = new PdfLayer("appended", pdfDoc);
-        canvas.beginLayer(newLayer).beginText().setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 18).
+        canvas.beginLayer(newLayer).beginText().setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 18).
                 moveText(200, 600).showText("APPENDED CONTENT").endText().endLayer();
 
         List<PdfLayer> allLayers = pdfDoc.getCatalog().getOCProperties(true).getLayers();

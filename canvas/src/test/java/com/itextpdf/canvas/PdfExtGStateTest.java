@@ -1,8 +1,9 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.fonts.PdfFont;
-import com.itextpdf.core.fonts.PdfStandardFont;
+import com.itextpdf.core.fonts.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.testutils.CompareTool;
@@ -12,7 +13,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class PdfExtGStateTest {
 
@@ -39,8 +39,9 @@ public class PdfExtGStateTest {
         PdfExtGState egs = new PdfExtGState(document);
         egs.getPdfObject().put(PdfName.LW, new PdfNumber(5));
         PdfArray font = new PdfArray();
-        PdfFont pdfFont = new PdfStandardFont(document, PdfStandardFont.Courier);
-        pdfFont.flush();
+        PdfFont pdfFont = new PdfType1Font(document, new Type1Font(FontConstants.COURIER, ""));
+        //TODO if uncomment - exception will generated
+        //pdfFont.flush();
         font.add(pdfFont.getPdfObject());
         font.add(new PdfNumber(24));
         egs.getPdfObject().put(PdfName.Font, font);

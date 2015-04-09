@@ -1,8 +1,10 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.canvas.color.*;
-import com.itextpdf.core.fonts.PdfStandardFont;
+import com.itextpdf.core.fonts.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
@@ -162,7 +164,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 16)
+                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 16)
                 .showText("Hello Helvetica!")
                 .endText()
                 .restoreState();
@@ -171,7 +173,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 700)
-                .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.HelveticaBoldOblique), 16)
+                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA_BOLDOBLIQUE, "")), 16)
                 .showText("Hello Helvetica Bold Oblique!")
                 .endText()
                 .restoreState();
@@ -180,7 +182,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 650)
-                .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Courier), 16)
+                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.COURIER, "")), 16)
                 .showText("Hello Courier!")
                 .endText()
                 .restoreState();
@@ -189,7 +191,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 600)
-                .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.TimesItalic), 16)
+                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.TIMES_ITALIC, "")), 16)
                 .showText("Hello Times Italic!")
                 .endText()
                 .restoreState();
@@ -198,7 +200,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 550)
-                .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Symbol), 16)
+                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.SYMBOL, "")), 16)
                 .showText("Hello Ellada!")
                 .endText()
                 .restoreState();
@@ -207,7 +209,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 500)
-                .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.ZapfDingbats), 16)
+                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.ZAPFDINGBATS, "")), 16)
                 .showText("Hello ZapfDingbats!")
                 .endText()
                 .restoreState();
@@ -345,7 +347,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -391,7 +393,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -437,7 +439,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -482,7 +484,7 @@ public class PdfCanvasTest {
             canvas.saveState()
                     .beginText()
                     .moveText(36, 650)
-                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Courier), 16)
+                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.COURIER, "")), 16)
                     .showText("Page " + (i + 1))
                     .endText();
 
@@ -529,7 +531,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -576,7 +578,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -623,7 +625,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -670,7 +672,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfStandardFont(pdfDoc, PdfStandardFont.Helvetica), 72)
+                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -696,8 +698,10 @@ public class PdfCanvasTest {
 
     @Test
     public void copyPagesTest1() throws IOException, PdfException, DocumentException, InterruptedException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages1_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
+        String file1 = destinationFolder + "copyPages1_1.pdf";
+        String file2 = destinationFolder + "copyPages1_2.pdf";
+
+        PdfWriter writer1 = new PdfWriter(new FileOutputStream(file1));
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
 
         PdfPage page1 = pdfDoc1.addNewPage();
@@ -705,36 +709,42 @@ public class PdfCanvasTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+        canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
         canvas.release();
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages1_2.pdf");
+        page1.flush();
+        pdfDoc1.close();
+
+        PdfReader reader1 = new PdfReader(new FileInputStream(file1));
+        pdfDoc1 = new PdfDocument(reader1);
+        page1 = pdfDoc1.getPage(1);
+
+        FileOutputStream fos2 = new FileOutputStream(file2);
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         PdfPage page2 = page1.copy(pdfDoc2);
         pdfDoc2.addPage(page2);
 
-        page1.flush();
         page2.flush();
-
-        pdfDoc1.close();
         pdfDoc2.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages1_2.pdf");
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(file2);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertNotNull(page.get(com.itextpdf.text.pdf.PdfName.PARENT));
         reader.close();
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "copyPages1_1.pdf", destinationFolder + "copyPages1_2.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(file1, file2, destinationFolder, "diff_"));
     }
 
     @Test
     public void copyPagesTest2() throws IOException, PdfException, DocumentException, InterruptedException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages2_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
+        String file1 = destinationFolder + "copyPages2_1.pdf";
+        String file2 = destinationFolder + "copyPages2_2.pdf";
+
+        PdfWriter writer1 = new PdfWriter(new FileOutputStream(file1));
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
 
         for (int i = 0; i < 10; i++) {
@@ -743,15 +753,18 @@ public class PdfCanvasTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+            canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
             canvas.release();
+            page1.flush();
         }
+        pdfDoc1.close();
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages2_2.pdf");
-        PdfWriter writer2 = new PdfWriter(fos2);
+        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)));
+
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(file2));
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         for (int i = 9; i >= 0; i--) {
             PdfPage page2 = pdfDoc1.getPage(i + 1).copy(pdfDoc2);
@@ -761,15 +774,15 @@ public class PdfCanvasTest {
         pdfDoc1.close();
         pdfDoc2.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages2_2.pdf");
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(file2);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
         com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
         Assert.assertNotNull(page.get(com.itextpdf.text.pdf.PdfName.PARENT));
         reader.close();
 
         CompareTool cmpTool = new CompareTool();
-        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages2_1.pdf");
-        com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages2_2.pdf");
+        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(file1);
+        com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(file2);
 
         for (int i = 0; i < 10; i++) {
             com.itextpdf.text.pdf.PdfDictionary page1 = reader1.getPageN(i + 1);
@@ -783,8 +796,10 @@ public class PdfCanvasTest {
 
     @Test
     public void copyPagesTest3() throws IOException, PdfException, DocumentException, InterruptedException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages3_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
+        String file1 = destinationFolder + "copyPages3_1.pdf";
+        String file2 = destinationFolder + "copyPages3_2.pdf";
+
+        PdfWriter writer1 = new PdfWriter(new FileOutputStream(file1));
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
 
         PdfPage page1 = pdfDoc1.addNewPage();
@@ -792,14 +807,19 @@ public class PdfCanvasTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+        canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!!!");
         canvas.endText();
         canvas.release();
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages3_2.pdf");
-        PdfWriter writer2 = new PdfWriter(fos2);
+        page1.flush();
+        pdfDoc1.close();
+
+        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)));
+        page1 = pdfDoc1.getPage(1);
+
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(file2));
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         for (int i = 0; i < 10; i++) {
             PdfPage page2 = page1.copy(pdfDoc2);
@@ -813,10 +833,10 @@ public class PdfCanvasTest {
 
 
         CompareTool cmpTool = new CompareTool();
-        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages3_1.pdf");
+        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(file1);
         Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
         com.itextpdf.text.pdf.PdfDictionary p1 = reader1.getPageN(1);
-        com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages3_2.pdf");
+        com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(file2);
         Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
         for (int i = 0; i < 10; i++) {
             com.itextpdf.text.pdf.PdfDictionary p2 = reader2.getPageN(i + 1);
@@ -828,7 +848,8 @@ public class PdfCanvasTest {
 
     @Test
     public void copyPagesTest4() throws IOException, PdfException, DocumentException, InterruptedException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages4_1.pdf");
+        String file1 = destinationFolder + "copyPages4_1.pdf";
+        FileOutputStream fos1 = new FileOutputStream(file1);
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
 
@@ -838,12 +859,15 @@ public class PdfCanvasTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+            canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
             canvas.release();
         }
+
+        pdfDoc1.close();
+        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)));
 
         for (int i = 0; i < 5; i++) {
             FileOutputStream fos2 = new FileOutputStream(destinationFolder + String.format("copyPages4_%d.pdf", i + 2));
@@ -858,7 +882,7 @@ public class PdfCanvasTest {
 
 
         CompareTool cmpTool = new CompareTool();
-        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages4_1.pdf");
+        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(file1);
         Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
 
         for (int i = 0; i < 5; i++) {
@@ -876,23 +900,30 @@ public class PdfCanvasTest {
     @Test
     public void copyPagesTest5() throws IOException, PdfException, DocumentException, InterruptedException {
 
-        List<PdfDocument> docs = new ArrayList<PdfDocument>();
+        int documentCount = 3;
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < documentCount; i++) {
             FileOutputStream fos1 = new FileOutputStream(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
             PdfWriter writer1 = new PdfWriter(fos1);
             PdfDocument pdfDoc1 = new PdfDocument(writer1);
-            docs.add(pdfDoc1);
             PdfPage page1 = pdfDoc1.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page1);
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+            canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
             canvas.release();
+            pdfDoc1.close();
+        }
+
+        List<PdfDocument> docs = new ArrayList<PdfDocument>();
+        for (int i = 0; i < documentCount; i++) {
+            FileInputStream fos1 = new FileInputStream(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
+            PdfDocument pdfDoc1 = new PdfDocument(new PdfReader(fos1));
+            docs.add(pdfDoc1);
         }
 
         FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages5_4.pdf");
@@ -923,8 +954,12 @@ public class PdfCanvasTest {
 
     @Test
     public void copyPagesTest6() throws IOException, PdfException, DocumentException, InterruptedException {
+        String file1 = destinationFolder + "copyPages6_1.pdf";
+        String file2 = destinationFolder + "copyPages6_2.pdf";
+        String file3 = destinationFolder + "copyPages6_3.pdf";
+        String file1_upd = destinationFolder + "copyPages6_1_upd.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyPages6_1.pdf");
+        FileOutputStream fos1 = new FileOutputStream(file1);
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
         PdfPage page1 = pdfDoc1.addNewPage();
@@ -932,21 +967,34 @@ public class PdfCanvasTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(new PdfStandardFont(pdfDoc1, PdfStandardFont.Courier), 12);
+        canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
         canvas.release();
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages6_2.pdf");
+        pdfDoc1.close();
+        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)));
+
+        FileOutputStream fos2 = new FileOutputStream(file2);
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         pdfDoc2.addPage(pdfDoc1.getPage(1).copy(pdfDoc2));
 
-        FileOutputStream fos3 = new FileOutputStream(destinationFolder + "copyPages6_3.pdf");
+        pdfDoc2.close();
+        pdfDoc2 = new PdfDocument(new PdfReader(new FileInputStream(file2)));
+
+        FileOutputStream fos3 = new FileOutputStream(file3);
         PdfWriter writer3 = new PdfWriter(fos3);
         PdfDocument pdfDoc3 = new PdfDocument(writer3);
         pdfDoc3.addPage(pdfDoc2.getPage(1).copy(pdfDoc3));
+
+        pdfDoc3.close();
+        pdfDoc3 = new PdfDocument(new PdfReader(new FileInputStream(file3)));
+
+        pdfDoc1.close();
+        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)),
+                new PdfWriter(new FileOutputStream(file1_upd)));
 
         pdfDoc1.addPage(pdfDoc3.getPage(1).copy(pdfDoc1));
 
@@ -957,18 +1005,21 @@ public class PdfCanvasTest {
 
         CompareTool cmpTool = new CompareTool();
         for (int i = 0; i < 3; i++) {
-            com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages6_1.pdf");
+            com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(file1);
             Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
-            com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages6_2.pdf");
+            com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(file2);
             Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
-            com.itextpdf.text.pdf.PdfReader reader3 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages6_3.pdf");
+            com.itextpdf.text.pdf.PdfReader reader3 = new com.itextpdf.text.pdf.PdfReader(file3);
             Assert.assertEquals("Rebuilt", false, reader3.isRebuilt());
-            Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(1), reader1.getPageN(2)));
-            Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(2), reader2.getPageN(1)));
-            Assert.assertTrue(cmpTool.compareDictionaries(reader2.getPageN(1), reader3.getPageN(1)));
+            com.itextpdf.text.pdf.PdfReader reader4 = new com.itextpdf.text.pdf.PdfReader(file1_upd);
+            Assert.assertEquals("Rebuilt", false, reader4.isRebuilt());
+            Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(1), reader4.getPageN(2)));
+            Assert.assertTrue(cmpTool.compareDictionaries(reader4.getPageN(2), reader2.getPageN(1)));
+            Assert.assertTrue(cmpTool.compareDictionaries(reader2.getPageN(1), reader4.getPageN(1)));
             reader1.close();
             reader2.close();
             reader3.close();
+            reader4.close();
         }
 
     }

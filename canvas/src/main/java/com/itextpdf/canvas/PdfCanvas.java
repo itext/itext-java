@@ -1811,7 +1811,7 @@ public class PdfCanvas {
     private void showText2(final String text) throws PdfException {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-        byte b[] = PdfEncodings.convertToBytes(text, PdfEncodings.WinAnsi);
+        byte b[] = currentGs.getFont().convertToBytes(text);
         Utilities.writeEscapedString(contentStream.getOutputStream(), b);
     }
 

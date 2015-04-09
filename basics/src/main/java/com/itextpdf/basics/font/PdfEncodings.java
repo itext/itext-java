@@ -14,22 +14,29 @@ import java.util.HashMap;
 
 public class PdfEncodings {
 
-    public static final String EmptyString = "";
-    /**
-     * This is the default encoding to be used for converting Strings into
-     * bytes and vice versa. The default encoding is PdfDocEncoding.
-     */
+    //-Encodings--------------------------------------------------------------------------------------------------------
+
+    /** The Unicode encoding with horizontal writing. */
+    public static final String IDENTITY_H = "Identity-H";
+    /** The Unicode encoding with vertical writing. */
+    public static final String IDENTITY_V = "Identity-V";
+    /** A possible encoding. */
+    public static final String CP1250 = "Cp1250";
+    /** A possible encoding. */
+    public static final String CP1252 = "Cp1252";
+    /** A possible encoding. */
+    public static final String CP1257 = "Cp1257";
+    /** A possible encoding. */
+    public static final String WINANSI = "Cp1252";
+    /** A possible encoding. */
+    public static final String MACROMAN = "MacRoman";
+    /** This is the encoding to be used to output text in Unicode. */
+    public static final String UnicodeBig = "UnicodeBig";
+    /** This is the default encoding to be used for converting Strings into
+     * bytes and vice versa. The default encoding is PdfDocEncoding. */
     public static final String PdfDocEncoding = "PDF";
 
-    /**
-     * This is the encoding to be used to output text in Unicode.
-     */
-    public static final String UnicodeBig = "UnicodeBig";
-
-    /**
-     * WinANSI encoding.
-     */
-    public static final String WinAnsi = "Cp1252";
+    public static final String EmptyString = "";
 
     static final char winansiByteToChar[] = {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -47,7 +54,7 @@ public class PdfEncodings {
             192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207,
             208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
             224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
-            240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255};
+            240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
     static final char pdfEncodingByteToChar[] = {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -65,7 +72,7 @@ public class PdfEncodings {
             192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207,
             208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
             224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
-            240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255};
+            240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
     public static final IntHashtable winansi = new IntHashtable();
 
@@ -113,7 +120,7 @@ public class PdfEncodings {
             return b;
         }
         IntHashtable hash = null;
-        if (encoding.equals(WinAnsi))
+        if (encoding.equals(WINANSI))
             hash = winansi;
         else if (encoding.equals(PdfDocEncoding))
             hash = pdfEncoding;
@@ -183,7 +190,7 @@ public class PdfEncodings {
         if (encoding == null || encoding.length() == 0)
             return new byte[]{(byte) ch};
         IntHashtable hash = null;
-        if (encoding.equals(WinAnsi))
+        if (encoding.equals(WINANSI))
             hash = winansi;
         else if (encoding.equals(PdfDocEncoding))
             hash = pdfEncoding;
@@ -235,7 +242,7 @@ public class PdfEncodings {
         if (bytes == null)
             return EmptyString;
         if (encoding == null || encoding.length() == 0) {
-            char c[] = new char[bytes.length];
+            char[] c = new char[bytes.length];
             for (int k = 0; k < bytes.length; ++k)
                 c[k] = (char) (bytes[k] & 0xff);
             return new String(c);
@@ -246,23 +253,20 @@ public class PdfEncodings {
             if (text != null)
                 return text;
         }
-        char ch[] = null;
-        if (encoding.equals(WinAnsi))
+        char[] ch = null;
+        if (encoding.equals(WINANSI))
             ch = winansiByteToChar;
         else if (encoding.equals(PdfDocEncoding))
             ch = pdfEncodingByteToChar;
         if (ch != null) {
             int len = bytes.length;
-            char c[] = new char[len];
+            char[] c = new char[len];
             for (int k = 0; k < len; ++k) {
                 c[k] = ch[bytes[k] & 0xff];
             }
             return new String(c);
         }
         try {
-            if (encoding.equals(UnicodeBig)){
-                return new String(bytes, 4, bytes.length-4, encoding);
-            }
             return new String(bytes, encoding);
         } catch (UnsupportedEncodingException e) {
             throw new PdfException(PdfException.PdfEncodings, e);
@@ -315,8 +319,8 @@ public class PdfEncodings {
         }
 
         public byte[] charToByte(String text, String encoding) {
-            char cc[] = text.toCharArray();
-            byte b[] = new byte[cc.length];
+            char[] cc = text.toCharArray();
+            byte[] b = new byte[cc.length];
             int ptr = 0;
             int len = cc.length;
             for (int k = 0; k < len; ++k) {
@@ -331,7 +335,7 @@ public class PdfEncodings {
             }
             if (ptr == len)
                 return b;
-            byte b2[] = new byte[ptr];
+            byte[] b2 = new byte[ptr];
             System.arraycopy(b, 0, b2, 0, ptr);
             return b2;
         }
@@ -368,8 +372,8 @@ public class PdfEncodings {
         private static IntHashtable c2b = new IntHashtable();
 
         public byte[] charToByte(String text, String encoding) {
-            char cc[] = text.toCharArray();
-            byte b[] = new byte[cc.length];
+            char[] cc = text.toCharArray();
+            byte[] b = new byte[cc.length];
             int ptr = 0;
             int len = cc.length;
             for (int k = 0; k < len; ++k) {
@@ -384,7 +388,7 @@ public class PdfEncodings {
             }
             if (ptr == len)
                 return b;
-            byte b2[] = new byte[ptr];
+            byte[] b2 = new byte[ptr];
             System.arraycopy(b, 0, b2, 0, ptr);
             return b2;
         }
@@ -403,7 +407,7 @@ public class PdfEncodings {
 
         public String byteToChar(byte[] b, String encoding) {
             int len = b.length;
-            char cc[] = new char[len];
+            char[] cc = new char[len];
             int ptr = 0;
             for (int k = 0; k < len; ++k) {
                 int c = b[k] & 0xff;
@@ -454,8 +458,8 @@ public class PdfEncodings {
         }
 
         public byte[] charToByte(String text, String encoding) {
-            char cc[] = text.toCharArray();
-            byte b[] = new byte[cc.length];
+            char[] cc = text.toCharArray();
+            byte[] b = new byte[cc.length];
             int ptr = 0;
             int len = cc.length;
             for (int k = 0; k < len; ++k) {
@@ -466,7 +470,7 @@ public class PdfEncodings {
             }
             if (ptr == len)
                 return b;
-            byte b2[] = new byte[ptr];
+            byte[] b2 = new byte[ptr];
             System.arraycopy(b, 0, b2, 0, ptr);
             return b2;
         }
@@ -481,7 +485,7 @@ public class PdfEncodings {
 
         public String byteToChar(byte[] b, String encoding) {
             int len = b.length;
-            char cc[] = new char[len];
+            char[] cc = new char[len];
             int ptr = 0;
             for (int k = 0; k < len; ++k) {
                 int c = b[k] & 0xff;
@@ -553,8 +557,8 @@ public class PdfEncodings {
         }
 
         public byte[] charToByte(String text, String encoding) {
-            char ch[] = text.toCharArray();
-            byte b[] = new byte[ch.length];
+            char[] ch = text.toCharArray();
+            byte[] b = new byte[ch.length];
             int ptr = 0;
             int len = ch.length;
             for (int k = 0; k < len; ++k) {
@@ -564,7 +568,7 @@ public class PdfEncodings {
             }
             if (ptr == len)
                 return b;
-            byte b2[] = new byte[ptr];
+            byte[] b2 = new byte[ptr];
             System.arraycopy(b, 0, b2, 0, ptr);
             return b2;
         }

@@ -1,6 +1,7 @@
 package com.itextpdf.core.fonts;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
@@ -14,22 +15,45 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfFont(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
+        getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
-    public PdfFont(PdfDocument pdfDocument) throws PdfException {
+    protected PdfFont(PdfDocument pdfDocument) throws PdfException {
         this(new PdfDictionary(), pdfDocument);
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
     /**
-     * Makes font from the dictionary.
-     *
-     * @param dictionary  a dictionary to construct font from.
-     * @param pdfDocument a document font belongs to.
-     * @return constructed font.
+     * Converts the text into bytes to be placed in the document.
+     * The conversion is done according to the font and the encoding and the characters
+     * used are stored.
+     * @param text the text to convert
+     * @return the conversion
      */
-    static public PdfFont makeFont(PdfDictionary dictionary, PdfDocument pdfDocument) {
-        return null;
+    public byte[] convertToBytes(String text) {
+        //TODO when implement document fonts, throw exception
+        //throw new IllegalStateException();
+        return PdfEncodings.convertToBytes(text, "");
+    }
+
+    /**
+     * Returns the width of a certain character of this font.
+     *
+     * @param ch	a certain character.
+     * @return a width in Text Space.
+     */
+    public float getWidth(int ch) {
+        throw new IllegalStateException();
+    }
+
+    /**
+     * Returns the width of a string of this font.
+     *
+     * @param s	a string content.
+     * @return a width of string in Text Space.
+     */
+    public float getWidth(String s) {
+        throw new IllegalStateException();
     }
 
     @Override

@@ -29,9 +29,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private Map<PdfObject, PdfName> resourceToName = new HashMap<PdfObject, PdfName>();
     private Map<PdfName, Map<PdfName, PdfObject>> nameToResource = new HashMap<PdfName, Map<PdfName, PdfObject>>();
 
-    /**
-     * The font value counter for the fonts in the document.
-     */
+    /** The font value counter for the fonts in the document. */
     private ResourceNumber fontNumber = new ResourceNumber();
     private ResourceNumber imageNumber = new ResourceNumber();
     private ResourceNumber formNumber = new ResourceNumber();
@@ -51,10 +49,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfName addFont(PdfFont font) throws PdfException {
-        return addResource(font, PdfName.Font, F, fontNumber);
-    }
-
-    public PdfName addFont(PdfObject font) throws PdfException {
+        font.getDocument().getDocumentFonts().add(font);
         return addResource(font, PdfName.Font, F, fontNumber);
     }
 

@@ -7,6 +7,7 @@ import com.itextpdf.core.events.EventDispatcher;
 import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
+import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.core.xmp.*;
@@ -84,6 +85,8 @@ public class PdfDocument implements IEventDispatcher {
 
     protected boolean closeReader = true;
     protected boolean closeWriter = true;
+
+    protected List<PdfFont> documentFonts = new ArrayList<PdfFont>();
 
     /**
      * Open PDF document in reading mode.
@@ -395,32 +398,26 @@ public class PdfDocument implements IEventDispatcher {
         defaultPageSize = pageSize;
     }
 
-    @Override
     public void addEventHandler(String type, IEventHandler handler) {
         eventDispatcher.addEventHandler(type, handler);
     }
 
-    @Override
     public void dispatchEvent(com.itextpdf.core.events.Event event) {
         eventDispatcher.dispatchEvent(event);
     }
 
-    @Override
     public void dispatchEvent(com.itextpdf.core.events.Event event, boolean delayed) {
         eventDispatcher.dispatchEvent(event, delayed);
     }
 
-    @Override
     public boolean hasEventHandler(String type) {
         return eventDispatcher.hasEventHandler(type);
     }
 
-    @Override
     public void removeEventHandler(String type, IEventHandler handler) {
         eventDispatcher.removeEventHandler(type, handler);
     }
 
-    @Override
     public void removeAllHandlers() {
         eventDispatcher.removeAllHandlers();
     }
@@ -444,9 +441,9 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Returns true if the document is opened in append mode, and false otherwise.
+     * Returns {@code true} if the document is opened in append mode, and {@code false} otherwise.
      *
-     * @return
+     * @return {@code true} if the document is opened in append mode, and {@code false} otherwise.
      */
     public boolean isAppendMode() {
         return appendMode;
@@ -524,8 +521,9 @@ public class PdfDocument implements IEventDispatcher {
                 }
                 PdfObject crypto = null;
                 if (appendMode) {
-                    if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified())
+                    if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
                         structTreeRoot.flush();
+                    }
                     if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
                         catalog.getOCProperties(false).flush();
                     }
@@ -537,14 +535,20 @@ public class PdfDocument implements IEventDispatcher {
                     if (info.getPdfObject().isModified()) {
                         info.flush();
                     }
+                    for (PdfFont font: documentFonts) {
+                        if (font.getPdfObject().getIndirectReference().checkState(PdfIndirectReference.Modified)) {
+                            font.flush();
+                        }
+                    }
                     writer.flushModifiedWaitingObjects();
                     if (writer.crypto != null) {
                         assert reader.getCryptoRef() != null : "Conflict with source encryption";
                         crypto = reader.getCryptoRef();
                     }
                 } else {
-                    if (structTreeRoot != null)
+                    if (structTreeRoot != null) {
                         structTreeRoot.flush();
+                    }
                     if (catalog.isOCPropertiesMayHaveChanged()) {
                         catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                         catalog.getOCProperties(false).flush();
@@ -552,6 +556,9 @@ public class PdfDocument implements IEventDispatcher {
                     catalog.getPdfObject().put(PdfName.Pages, catalog.pageTree.generateTree());
                     catalog.getPdfObject().flush(false);
                     info.flush();
+                    for (PdfFont font: documentFonts) {
+                        font.flush();
+                    }
                     writer.flushWaitingObjects();
                 }
 
@@ -581,11 +588,13 @@ public class PdfDocument implements IEventDispatcher {
                 // For crypto purposes new documentId always generated.
                 fileId = PdfEncryption.createInfoId(originalFileID, isModified);
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
-                if (isCloseWriter())
+                if (isCloseWriter()) {
                     writer.close();
+                }
             }
-            if (reader != null && isCloseReader())
+            if (reader != null && isCloseReader()) {
                 reader.close();
+            }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotCloseDocument, e, this);
         }
@@ -788,5 +797,14 @@ public class PdfDocument implements IEventDispatcher {
      */
     protected PdfTrailer getTrailer() {
         return trailer;
+    }
+
+
+    /**
+     * TODO
+     * @return List of {@see PdfFonts}.
+     */
+    protected List<PdfFont> getDocumentFonts() {
+        return documentFonts;
     }
 }
