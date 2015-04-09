@@ -244,7 +244,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return first page of the document.
      */
     public PdfPage getFirstPage() throws PdfException {
-        return getPage(PdfPage.FirstPage);
+        return getPage(1);
     }
 
     /**
@@ -253,7 +253,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return last page.
      */
     public PdfPage getLastPage() throws PdfException {
-        return getPage(PdfPage.LastPage);
+        return getPage(getNumOfPages());
     }
 
     /**

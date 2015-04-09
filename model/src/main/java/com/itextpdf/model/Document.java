@@ -1,23 +1,15 @@
 package com.itextpdf.model;
 
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.model.elements.IElement;
-import com.itextpdf.model.layout.DefaultLayoutMgr;
-import com.itextpdf.model.layout.ILayoutMgr;
-import com.itextpdf.model.layout.shapes.BoxShape;
-import com.itextpdf.model.layout.shapes.ILayoutShape;
-
-import java.util.ArrayList;
+import com.itextpdf.model.element.IElement;
+import com.itextpdf.model.renderer.DocumentRenderer;
 
 public class Document {
 
-    protected ILayoutMgr layoutMgr;
     protected PdfDocument pdfDocument;
-    protected PdfPage page = null;
+    protected DocumentRenderer documentRenderer;
 
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
@@ -26,7 +18,6 @@ public class Document {
     public Document(PdfDocument pdfDoc, PageSize pageSize) {
         pdfDocument = pdfDoc;
         pdfDocument.setDefaultPageSize(pageSize);
-        layoutMgr = new DefaultLayoutMgr(this);
     }
 
     /**
@@ -43,37 +34,7 @@ public class Document {
      * @return
      */
     public Document add(IElement element) throws PdfException {
-        if (page == null)
-            newPage();
-        layoutMgr.placeElement(element);
-        return this;
-    }
-
-    /**
-     * Requests a new page with a default page size.
-     *
-     * @return
-     */
-    public Document newPage() throws PdfException {
-        return newPage(pdfDocument.getDefaultPageSize());
-    }
-
-    /**
-     * Requests a new pages with a certain page size.
-     *
-     * @param pageSize
-     * @return
-     */
-    public Document newPage(PageSize pageSize) throws PdfException {
-        if (page != null) {
-            page.flush();
-        }
-        PdfPage page = pdfDocument.addNewPage(pageSize);
-        layoutMgr.setCanvas(new PdfCanvas(page));
-        final BoxShape boxShape = new BoxShape(pageSize);
-        layoutMgr.setShapes(new ArrayList<ILayoutShape>() {{
-            add(boxShape);
-        }});
+        ensureDocumentRendererNotNull().addChild(element.makeRenderer());
         return this;
     }
 
@@ -86,22 +47,13 @@ public class Document {
         return pdfDocument;
     }
 
-    /**
-     * Gets current layout manager.
-     *
-     * @return
-     */
-    public ILayoutMgr getLayoutMgr() {
-        return layoutMgr;
+    public void setRenderer(DocumentRenderer documentRenderer) {
+        this.documentRenderer = documentRenderer;
     }
 
-    /**
-     * Sets layout manager.
-     *
-     * @param layoutMgr
-     */
-    public void setLayoutMgr(ILayoutMgr layoutMgr) {
-        this.layoutMgr = layoutMgr;
+    private DocumentRenderer ensureDocumentRendererNotNull() {
+        if (documentRenderer == null)
+            documentRenderer = new DocumentRenderer(this);
+        return documentRenderer;
     }
-
 }

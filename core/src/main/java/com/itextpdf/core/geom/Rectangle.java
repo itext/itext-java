@@ -1,6 +1,6 @@
 package com.itextpdf.core.geom;
 
-public class Rectangle {
+public class Rectangle implements Cloneable {
 
     protected float x;
     protected float y;
@@ -50,4 +50,13 @@ public class Rectangle {
         this.height = height;
     }
 
+    public Rectangle moveDown(float move) {
+        y -= move;
+        return this;
+    }
+
+    @Override
+    public Rectangle clone() {
+        return new Rectangle(x, y, width, height);
+    }
 }
