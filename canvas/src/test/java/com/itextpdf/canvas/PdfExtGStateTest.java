@@ -2,8 +2,8 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
-import com.itextpdf.core.fonts.PdfFont;
-import com.itextpdf.core.fonts.PdfType1Font;
+import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.testutils.CompareTool;

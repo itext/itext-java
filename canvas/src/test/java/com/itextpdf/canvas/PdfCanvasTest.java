@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.canvas.color.*;
-import com.itextpdf.core.fonts.PdfType1Font;
+import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;

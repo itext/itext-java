@@ -3,7 +3,7 @@ package com.itextpdf.canvas;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.DeviceGray;
-import com.itextpdf.core.fonts.PdfFont;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
