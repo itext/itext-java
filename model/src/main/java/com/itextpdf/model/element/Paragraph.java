@@ -1,21 +1,12 @@
 package com.itextpdf.model.element;
 
-public class Paragraph extends BlockElement {
+public class Paragraph extends BlockElement<Paragraph> {
+
+    public Paragraph() {
+    }
 
     public Paragraph(String text) {
         add(new Text(text));
-    }
-
-    @Override
-    public Paragraph add(BlockElement element) {
-        super.add(element);
-        return this;
-    }
-
-    @Override
-    public Paragraph add(InlineElement element) {
-        super.add(element);
-        return this;
     }
 
     public Paragraph add(String text) {

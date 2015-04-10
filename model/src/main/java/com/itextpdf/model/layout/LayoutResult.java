@@ -11,12 +11,14 @@ public class LayoutResult {
 
     protected int status;
     protected LayoutArea occupiedArea;
+    protected IRenderer splitRenderer;
     protected IRenderer overflowRenderer;
     protected PageSize newPageSize;
 
-    public LayoutResult(int status, LayoutArea occupiedArea, IRenderer overflowRenderer) {
+    public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer) {
         this.status = status;
         this.occupiedArea = occupiedArea;
+        this.splitRenderer = splitRenderer;
         this.overflowRenderer = overflowRenderer;
     }
 
@@ -26,6 +28,10 @@ public class LayoutResult {
 
     public LayoutArea getOccupiedArea() {
         return occupiedArea;
+    }
+
+    public IRenderer getSplitRenderer() {
+        return splitRenderer;
     }
 
     public IRenderer getOverflowRenderer() {

@@ -11,5 +11,6 @@ public class Property {
     public static int BOTTOM = 7;
     public static int LEFT = 8;
     public static int RIGHT = 9;
+    public static int FONT = 10;
 
 }

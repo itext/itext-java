@@ -1,5 +1,6 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.fonts.PdfFont;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
@@ -21,12 +22,26 @@ public abstract class AbstractElement implements IElement {
         return (T) this;
     }
 
+    @Override
     public <T> T getProperty(Integer propertyKey) {
-        return (T)properties.get(propertyKey);
+        return (T) properties.get(propertyKey);
+    }
+
+    @Override
+    public <T> T getDefaultProperty(Integer propertyKey) {
+        return null;
+    }
+
+    public Float getWidth() {
+        return getProperty(Property.WIDTH);
     }
 
     public <T extends AbstractElement> T setWidth(float width) {
         return setProperty(Property.WIDTH, width);
+    }
+
+    public Float getHeight() {
+        return getProperty(Property.HEIGHT);
     }
 
     public <T extends AbstractElement> T setHeight(float height) {
@@ -53,4 +68,12 @@ public abstract class AbstractElement implements IElement {
             setProperty(Property.Y, y);
     }
 
+    public <T extends AbstractElement> T setFont(PdfFont font) {
+        return setProperty(Property.FONT, font);
+    }
+
+    @Override
+    public boolean isBreakable() {
+        return true;
+    }
 }

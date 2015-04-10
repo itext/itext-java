@@ -3,25 +3,26 @@ package com.itextpdf.model.element;
 import com.itextpdf.model.renderer.BlockRenderer;
 import com.itextpdf.model.renderer.IRenderer;
 
-public abstract class BlockElement extends AbstractElement implements IAccessibleElement {
+public abstract class BlockElement<T extends BlockElement> extends AbstractElement implements IAccessibleElement {
 
     public BlockElement() {
     }
 
-    // TODO avoid copying implementations for convenient builder
-    public BlockElement add(BlockElement element) {
+    // TODO All in-flow children of a block flow must be blocks, or all in-flow children of a block flow must be inlines.
+    // https://www.webkit.org/blog/115/webcore-rendering-ii-blocks-and-inlines/
+    public T add(BlockElement element) {
         renderer.addChild(element.makeRenderer());
-        return this;
+        return (T) this;
     }
 
-    public BlockElement add(InlineElement element) {
+    public T add(InlineElement element) {
         makeRenderer().addChild(element.makeRenderer());
-        return this;
+        return (T) this;
     }
 
-    public BlockElement add(ILeafElement element) {
+    public T add(ILeafElement element) {
         makeRenderer().addChild(element.makeRenderer());
-        return this;
+        return (T) this;
     }
 
     @Override

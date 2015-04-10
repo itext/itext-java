@@ -1,6 +1,7 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.element.PageBreak;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
@@ -21,26 +22,29 @@ public class PageBreakRenderer implements IRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        return new LayoutResult(LayoutResult.NOTHING, layoutContext.getArea(), null).setNewPageSize(pageBreak.getPageSize());
-    }
-
-    @Override
-    public IRenderer split() {
-        throw new RuntimeException();
+        LayoutArea occupiedArea = layoutContext.getArea().clone();
+        occupiedArea.getBBox().setHeight(0);
+        occupiedArea.getBBox().setWidth(0);
+        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, null).setNewPageSize(pageBreak.getPageSize());
     }
 
     @Override
     public LayoutArea getNextArea() {
-        throw new RuntimeException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public void draw(PdfCanvas canvas) {
-        throw new RuntimeException();
+    public void draw(PdfDocument document, PdfCanvas canvas) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public LayoutArea getOccupiedArea() {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> T getProperty(int key) {
+        throw new UnsupportedOperationException();
     }
 }

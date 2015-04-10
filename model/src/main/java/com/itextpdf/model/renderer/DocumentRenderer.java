@@ -34,9 +34,10 @@ public class DocumentRenderer extends AbstractRenderer {
         LayoutResult result = null;
         if (currentArea == null)
             currentArea = getNextArea();
-        while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea))).getStatus() != LayoutResult.FULL) {
+        while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
             if (result.getStatus() == LayoutResult.PARTIAL) {
                 resultRenderers.add(renderer);
+                getNextArea();
             } else if (result.getStatus() == LayoutResult.NOTHING) {
                 if (result.getNewPageSize() != null)
                     getNextPageArea(result.getNewPageSize());
@@ -54,7 +55,7 @@ public class DocumentRenderer extends AbstractRenderer {
             for (IRenderer resultRenderer: resultRenderers) {
                 try {
                     PdfPage correspondingPage = document.getPdfDocument().getPage(resultRenderer.getOccupiedArea().getPageNumber());
-                    resultRenderer.draw(new PdfCanvas(correspondingPage));
+                    resultRenderer.draw(document.getPdfDocument(), new PdfCanvas(correspondingPage));
                 } catch (PdfException exc) {
                     throw new RuntimeException(exc);
                 }
@@ -68,15 +69,10 @@ public class DocumentRenderer extends AbstractRenderer {
     }
 
     @Override
-    public IRenderer split() {
-        throw new RuntimeException();
-    }
-
-    @Override
     public LayoutArea getNextArea() {
         try {
             PdfPage newPage = document.getPdfDocument().addNewPage();
-            return (currentArea = new LayoutArea(document.getPdfDocument().getNumOfPages(), newPage.getMediaBox()));
+            return (currentArea = new LayoutArea(document.getPdfDocument().getNumOfPages(), document.getPdfDocument().getDefaultPageSize().getEffectiveArea()));
         } catch (PdfException exc) {
             throw new RuntimeException();
         }
@@ -85,7 +81,7 @@ public class DocumentRenderer extends AbstractRenderer {
     public LayoutArea getNextPageArea(PageSize pageSize) {
         try {
             PdfPage newPage = document.getPdfDocument().addNewPage(pageSize);
-            return (currentArea = new LayoutArea(document.getPdfDocument().getNumOfPages(), newPage.getMediaBox()));
+            return (currentArea = new LayoutArea(document.getPdfDocument().getNumOfPages(), pageSize.getEffectiveArea()));
         } catch (PdfException exc) {
             throw new RuntimeException();
         }
