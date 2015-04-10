@@ -32,15 +32,17 @@ public class BlockRenderer extends AbstractRenderer {
                     resultRenderers.add(childRenderer);
 
                     BlockRenderer splitRenderer = new BlockRenderer((BlockElement) modelElement);
-                    splitRenderer.childRenderers = childRenderers.subList(0, childPos);
+                    splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                     splitRenderer.childRenderers.add(result.getSplitRenderer());
                     splitRenderer.occupiedArea = occupiedArea.clone();
+                    splitRenderer.parent = parent;
 
                     BlockRenderer overflowRenderer = new BlockRenderer((BlockElement) modelElement);
                     List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
                     overflowRendererChildren.add(result.getOverflowRenderer());
-                    overflowRendererChildren.addAll(childRenderers.subList(childPos, childRenderers.size()));
+                    overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                     overflowRenderer.childRenderers = overflowRendererChildren;
+                    overflowRenderer.parent = parent;
 
                     return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
                 } else if (result.getStatus() == LayoutResult.NOTHING) {

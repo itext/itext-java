@@ -2,7 +2,7 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.fonts.PdfFont;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.element.IElement;
 import com.itextpdf.model.layout.LayoutArea;
@@ -32,6 +32,7 @@ public abstract class AbstractRenderer implements IRenderer {
     @Override
     public void addChild(IRenderer renderer) {
         childRenderers.add(renderer);
+        renderer.setParent(this);
     }
 
     @Override
@@ -43,6 +44,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public <T> T getProperty(int key) {
+        // TODO distinguish between inherit and non-inherit properties.
         Object ownProperty = getOwnProperty(key);
         if (ownProperty != null)
             return (T) ownProperty;
@@ -73,6 +75,11 @@ public abstract class AbstractRenderer implements IRenderer {
         for (IRenderer child : childRenderers) {
             child.draw(document, canvas);
         }
+    }
+
+    public IRenderer setParent(IRenderer parent) {
+        this.parent = parent;
+        return this;
     }
 
     protected void drawBorder(PdfCanvas canvas) {

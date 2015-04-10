@@ -13,4 +13,6 @@ public class Property {
     public static int RIGHT = 9;
     public static int FONT = 10;
 
+    // TODO inherit
+
 }

@@ -3,7 +3,7 @@ package com.itextpdf.model;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
-import com.itextpdf.core.fonts.PdfType1Font;
+import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.model.element.Paragraph;
@@ -32,7 +32,7 @@ public class OverflowTest {
         Document document = new Document(pdfDocument);
 
         StringBuilder text = new StringBuilder();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 29; i++) {
             text.append("This is a waaaaay tooo long text...");
         }
 

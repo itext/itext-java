@@ -36,7 +36,7 @@ public class DocumentRenderer extends AbstractRenderer {
             currentArea = getNextArea();
         while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
             if (result.getStatus() == LayoutResult.PARTIAL) {
-                resultRenderers.add(renderer);
+                resultRenderers.add(result.getSplitRenderer());
                 getNextArea();
             } else if (result.getStatus() == LayoutResult.NOTHING) {
                 if (result.getNewPageSize() != null)

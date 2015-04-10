@@ -47,4 +47,9 @@ public class PageBreakRenderer implements IRenderer {
     public <T> T getProperty(int key) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public IRenderer setParent(IRenderer parent) {
+        return this;
+    }
 }

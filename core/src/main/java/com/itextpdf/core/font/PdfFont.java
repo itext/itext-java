@@ -1,4 +1,4 @@
-package com.itextpdf.core.fonts;
+package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;

@@ -15,5 +15,6 @@ public interface IRenderer {
     void draw(PdfDocument document, PdfCanvas canvas);
     LayoutArea getOccupiedArea();
     <T> T getProperty(int key);
+    IRenderer setParent(IRenderer parent);
 
 }

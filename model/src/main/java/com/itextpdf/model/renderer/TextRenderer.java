@@ -4,8 +4,8 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.fonts.PdfFont;
-import com.itextpdf.core.fonts.PdfType1Font;
+import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.element.Property;
@@ -52,7 +52,11 @@ public class TextRenderer extends AbstractRenderer {
                 // TODO memory optimization
                 TextRenderer splitRenderer = new TextRenderer((Text)modelElement, text.substring(0, initialLineTextPos));
                 splitRenderer.occupiedArea = occupiedArea.clone();
+                splitRenderer.parent = parent;
+
                 TextRenderer overflowRenderer = new TextRenderer((Text)modelElement, text.substring(initialLineTextPos));
+                overflowRenderer.parent = parent;
+
                 return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, splitRenderer, overflowRenderer);
             } else {
                 occupiedArea.getBBox().moveDown(maxHeight);
