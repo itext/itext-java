@@ -253,7 +253,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return last page.
      */
     public PdfPage getLastPage() throws PdfException {
-        return getPage(PdfPage.LastPage);
+        return getPage(getNumOfPages());
     }
 
     /**
