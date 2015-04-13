@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.element.IElement;
 import com.itextpdf.model.layout.LayoutArea;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 public abstract class AbstractRenderer implements IRenderer {
 
     protected List<IRenderer> childRenderers = new ArrayList<IRenderer>();
-    protected IElement modelElement;
+    protected IPropertyContainer modelElement;
     // TODO
     protected boolean flushed = false;
     protected LayoutArea occupiedArea;

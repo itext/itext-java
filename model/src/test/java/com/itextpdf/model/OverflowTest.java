@@ -7,6 +7,9 @@ import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.model.element.Paragraph;
+import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.text.DocumentException;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -25,19 +28,22 @@ public class OverflowTest {
     }
 
     @Test
-    public void textOverflowTest01() throws IOException, PdfException {
+    public void textOverflowTest01() throws IOException, PdfException, InterruptedException, DocumentException {
         String outFileName = destinationFolder + "textOverflowTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_textOverflowTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
 
         Document document = new Document(pdfDocument);
 
         StringBuilder text = new StringBuilder();
-        for (int i = 0; i < 29; i++) {
+        for (int i = 0; i < 1000; i++) {
             text.append("This is a waaaaay tooo long text...");
         }
 
         document.add(new Paragraph(text.toString()).setFont(new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, ""))));
 
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 }

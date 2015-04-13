@@ -25,6 +25,7 @@ public class DocumentRenderer extends AbstractRenderer {
     public DocumentRenderer(Document document, boolean immediateFlush) {
         this.document = document;
         this.immediateFlush = immediateFlush;
+        this.modelElement = document;
     }
 
     @Override

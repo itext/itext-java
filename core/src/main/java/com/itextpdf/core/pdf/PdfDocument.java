@@ -87,7 +87,7 @@ public class PdfDocument implements IEventDispatcher {
     protected boolean closeReader = true;
     protected boolean closeWriter = true;
 
-    protected List<PdfFont> documentFonts = new ArrayList<PdfFont>();
+    protected Set<PdfFont> documentFonts = new HashSet<PdfFont>();
 
     /**
      * Open PDF document in reading mode.
@@ -817,7 +817,7 @@ public class PdfDocument implements IEventDispatcher {
      * TODO
      * @return List of {@see PdfFonts}.
      */
-    protected List<PdfFont> getDocumentFonts() {
+    protected Set<PdfFont> getDocumentFonts() {
         return documentFonts;
     }
 

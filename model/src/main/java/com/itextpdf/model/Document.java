@@ -6,7 +6,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.element.IElement;
 import com.itextpdf.model.renderer.DocumentRenderer;
 
-public class Document {
+public class Document implements IPropertyContainer {
 
     protected PdfDocument pdfDocument;
     protected DocumentRenderer documentRenderer;
@@ -55,5 +55,15 @@ public class Document {
         if (documentRenderer == null)
             documentRenderer = new DocumentRenderer(this);
         return documentRenderer;
+    }
+
+    @Override
+    public <T> T getProperty(Integer propertyKey) {
+        return null;
+    }
+
+    @Override
+    public <T> T getDefaultProperty(Integer propertyKey) {
+        return null;
     }
 }

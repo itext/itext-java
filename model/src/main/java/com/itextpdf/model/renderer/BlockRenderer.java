@@ -19,6 +19,9 @@ public class BlockRenderer extends AbstractRenderer {
     // https://www.webkit.org/blog/115/webcore-rendering-ii-blocks-and-inlines/
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+
+        // TODO getCommonArea
+
         LayoutArea layoutArea = layoutContext.getArea();
         occupiedArea = new LayoutArea(layoutArea.getPageNumber(), new Rectangle(layoutArea.getBBox().getX(), layoutArea.getBBox().getY() + layoutArea.getBBox().getHeight(), layoutArea.getBBox().getWidth(), 0));
         boolean anythingPlaced = false;
