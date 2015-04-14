@@ -161,6 +161,17 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * This method gets Names tree from the catalog.
+     * @return
+     * @throws PdfException
+     */
+    public HashMap<Object, PdfObject> getNamedDestinations() throws PdfException {
+        HashMap<Object, PdfObject> names = getNamedDestinatnionsFromNames();
+        names.putAll(getNamedDestinatnionsFromStrings());
+        return names;
+    }
+
+    /**
      * True indicates that getOCProperties() was called, may have been modified,
      * and thus its dictionary needs to be reconstructed.
      */
@@ -214,17 +225,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (pagesWithOutlines.size() == 0) {
             put(PdfName.Outlines, outline.getContent());
         }
-    }
-
-    /**
-     * This method gets Names tree from the catalog.
-     * @return
-     * @throws PdfException
-     */
-    HashMap<Object, PdfObject> getNamedDestinations() throws PdfException {
-        HashMap<Object, PdfObject> names = getNamedDestinatnionsFromNames();
-        names.putAll(getNamedDestinatnionsFromStrings());
-        return names;
     }
 
     /**

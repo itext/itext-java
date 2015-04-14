@@ -10,7 +10,7 @@ import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
-import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -781,17 +781,17 @@ public class PdfCanvasTest {
         reader.close();
 
         CompareTool cmpTool = new CompareTool();
-        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(file1);
-        com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(file2);
+        PdfDocument doc1 = new PdfDocument(new PdfReader(file1));
+        PdfDocument doc2 = new PdfDocument(new PdfReader(file2));
 
         for (int i = 0; i < 10; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page1 = reader1.getPageN(i + 1);
-            com.itextpdf.text.pdf.PdfDictionary page2 = reader2.getPageN(10 - i);
+            PdfDictionary page1 = doc1.getPage(i + 1).getPdfObject();
+            PdfDictionary page2 = doc2.getPage(10 - i).getPdfObject();
             Assert.assertTrue(cmpTool.compareDictionaries(page1, page2));
         }
 
-        reader1.close();
-        reader2.close();
+        doc1.close();
+        doc2.close();
     }
 
     @Test
@@ -833,17 +833,19 @@ public class PdfCanvasTest {
 
 
         CompareTool cmpTool = new CompareTool();
-        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(file1);
-        Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
-        com.itextpdf.text.pdf.PdfDictionary p1 = reader1.getPageN(1);
-        com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(file2);
-        Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
+        PdfReader reader1 = new PdfReader(file1);
+        PdfDocument doc1 = new PdfDocument(reader1);
+        Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
+        PdfDictionary p1 = doc1.getPage(1).getPdfObject();
+        PdfReader reader2 = new PdfReader(file2);
+        PdfDocument doc2 = new PdfDocument(reader2);
+        Assert.assertEquals("Rebuilt", false, reader2.hasRebuiltXref());
         for (int i = 0; i < 10; i++) {
-            com.itextpdf.text.pdf.PdfDictionary p2 = reader2.getPageN(i + 1);
+            PdfDictionary p2 = doc2.getPage(i + 1).getPdfObject();
             Assert.assertTrue(cmpTool.compareDictionaries(p1, p2));
         }
-        reader1.close();
-        reader2.close();
+        doc1.close();
+        doc2.close();
     }
 
     @Test
@@ -882,18 +884,19 @@ public class PdfCanvasTest {
 
 
         CompareTool cmpTool = new CompareTool();
-        com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(file1);
-        Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
+        PdfReader reader1 = new PdfReader(file1);
+        PdfDocument doc1 = new PdfDocument(reader1);
+        Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
 
         for (int i = 0; i < 5; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page1 = reader1.getPageN(i + 1);
-            com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + String.format("copyPages4_%d.pdf", i + 2));
-            com.itextpdf.text.pdf.PdfDictionary page = reader2.getPageN(1);
+            PdfDictionary page1 = doc1.getPage(i + 1).getPdfObject();
+            PdfDocument doc2 = new PdfDocument(new PdfReader(destinationFolder + String.format("copyPages4_%d.pdf", i + 2)));
+            PdfDictionary page = doc2.getPage(1).getPdfObject();
             Assert.assertTrue(cmpTool.compareDictionaries(page1, page));
-            reader2.close();
+            doc2.close();
         }
 
-        reader1.close();
+        doc1.close();
     }
 
 
@@ -939,15 +942,17 @@ public class PdfCanvasTest {
 
         CompareTool cmpTool = new CompareTool();
         for (int i = 0; i < 3; i++) {
-            com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
-            Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
-            com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copyPages5_4.pdf");
-            Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
-            com.itextpdf.text.pdf.PdfDictionary page1 = reader1.getPageN(1);
-            com.itextpdf.text.pdf.PdfDictionary page2 = reader2.getPageN(i + 1);
+            PdfReader reader1 = new PdfReader(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
+            PdfDocument doc1 = new PdfDocument(reader1);
+            Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
+            PdfReader reader2 = new PdfReader(destinationFolder + "copyPages5_4.pdf");
+            PdfDocument doc2 = new PdfDocument(reader2);
+            Assert.assertEquals("Rebuilt", false, reader2.hasRebuiltXref());
+            PdfDictionary page1 = doc1.getPage(1).getPdfObject();
+            PdfDictionary page2 = doc2.getPage(i + 1).getPdfObject();
             Assert.assertTrue(cmpTool.compareDictionaries(page1, page2));
-            reader1.close();
-            reader2.close();
+            doc1.close();
+            doc2.close();
         }
 
     }
@@ -1005,21 +1010,25 @@ public class PdfCanvasTest {
 
         CompareTool cmpTool = new CompareTool();
         for (int i = 0; i < 3; i++) {
-            com.itextpdf.text.pdf.PdfReader reader1 = new com.itextpdf.text.pdf.PdfReader(file1);
-            Assert.assertEquals("Rebuilt", false, reader1.isRebuilt());
-            com.itextpdf.text.pdf.PdfReader reader2 = new com.itextpdf.text.pdf.PdfReader(file2);
-            Assert.assertEquals("Rebuilt", false, reader2.isRebuilt());
-            com.itextpdf.text.pdf.PdfReader reader3 = new com.itextpdf.text.pdf.PdfReader(file3);
-            Assert.assertEquals("Rebuilt", false, reader3.isRebuilt());
-            com.itextpdf.text.pdf.PdfReader reader4 = new com.itextpdf.text.pdf.PdfReader(file1_upd);
-            Assert.assertEquals("Rebuilt", false, reader4.isRebuilt());
-            Assert.assertTrue(cmpTool.compareDictionaries(reader1.getPageN(1), reader4.getPageN(2)));
-            Assert.assertTrue(cmpTool.compareDictionaries(reader4.getPageN(2), reader2.getPageN(1)));
-            Assert.assertTrue(cmpTool.compareDictionaries(reader2.getPageN(1), reader4.getPageN(1)));
-            reader1.close();
-            reader2.close();
-            reader3.close();
-            reader4.close();
+            PdfReader reader1 = new PdfReader(file1);
+            PdfDocument doc1 = new PdfDocument(reader1);
+            Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
+            PdfReader reader2 = new PdfReader(file2);
+            PdfDocument doc2 = new PdfDocument(reader2);
+            Assert.assertEquals("Rebuilt", false, reader2.hasRebuiltXref());
+            PdfReader reader3 = new PdfReader(file3);
+            PdfDocument doc3 = new PdfDocument(reader3);
+            Assert.assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
+            PdfReader reader4 = new PdfReader(file1_upd);
+            PdfDocument doc4 = new PdfDocument(reader4);
+            Assert.assertEquals("Rebuilt", false, reader4.hasRebuiltXref());
+            Assert.assertTrue(cmpTool.compareDictionaries(doc1.getPage(1).getPdfObject(), doc4.getPage(2).getPdfObject()));
+            Assert.assertTrue(cmpTool.compareDictionaries(doc4.getPage(2).getPdfObject(), doc2.getPage(1).getPdfObject()));
+            Assert.assertTrue(cmpTool.compareDictionaries(doc2.getPage(1).getPdfObject(), doc4.getPage(1).getPdfObject()));
+            doc1.close();
+            doc2.close();
+            doc3.close();
+            doc4.close();
         }
 
     }

@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
