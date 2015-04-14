@@ -87,4 +87,12 @@ public class Rectangle implements Cloneable {
     public Rectangle clone() {
         return new Rectangle(x, y, width, height);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Rectangle))
+            return false;
+        Rectangle that = (Rectangle) obj;
+        return x == that.x && y == that.y && width == that.width && height == that.height;
+    }
 }

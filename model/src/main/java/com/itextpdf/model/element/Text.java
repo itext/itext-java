@@ -22,4 +22,8 @@ public class Text extends AbstractElement implements ILeafElement {
     public String getText() {
         return text;
     }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }

@@ -99,6 +99,10 @@ public class TextRenderer extends AbstractRenderer {
         }
     }
 
+    public String getText() {
+        return text;
+    }
+
     @Override
     protected TextRenderer createSplitRenderer() {
         return new TextRenderer((Text)modelElement, null);

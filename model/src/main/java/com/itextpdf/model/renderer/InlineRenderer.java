@@ -90,11 +90,6 @@ public class InlineRenderer extends AbstractRenderer {
     }
 
     @Override
-    public LayoutArea getNextArea() {
-        throw new RuntimeException();
-    }
-
-    @Override
     protected InlineRenderer createOverflowRenderer() {
         return new InlineRenderer(modelElement);
     }

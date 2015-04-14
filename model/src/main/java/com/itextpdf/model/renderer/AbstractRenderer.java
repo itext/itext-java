@@ -12,9 +12,9 @@ import java.util.*;
 
 public abstract class AbstractRenderer implements IRenderer {
 
+    // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<IRenderer>();
     protected IPropertyContainer modelElement;
-    // TODO
     protected boolean flushed = false;
     protected LayoutArea occupiedArea;
     protected IRenderer parent;
@@ -34,10 +34,13 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public LayoutArea getNextArea() {
-        if (parent != null)
-            return parent.getNextArea();
-        throw new RuntimeException("Next area is not available");
+    public IPropertyContainer getModelElement() {
+        return modelElement;
+    }
+
+    @Override
+    public List<IRenderer> getChildRenderers() {
+        return childRenderers;
     }
 
     @Override
@@ -73,6 +76,12 @@ public abstract class AbstractRenderer implements IRenderer {
         for (IRenderer child : childRenderers) {
             child.draw(document, canvas);
         }
+
+        flushed = true;
+    }
+
+    public boolean isFlushed() {
+        return flushed;
     }
 
     public IRenderer setParent(IRenderer parent) {

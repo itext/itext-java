@@ -28,4 +28,12 @@ public class LayoutArea implements Cloneable {
     public LayoutArea clone() {
         return new LayoutArea(pageNumber, bBox.clone());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof LayoutArea))
+            return false;
+        LayoutArea that = (LayoutArea) obj;
+        return pageNumber == that.pageNumber && bBox.equals(that.bBox);
+    }
 }

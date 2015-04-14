@@ -2,10 +2,13 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.element.PageBreak;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
+
+import java.util.List;
 
 public class PageBreakRenderer implements IRenderer {
 
@@ -29,11 +32,6 @@ public class PageBreakRenderer implements IRenderer {
     }
 
     @Override
-    public LayoutArea getNextArea() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
         throw new UnsupportedOperationException();
     }
@@ -51,5 +49,20 @@ public class PageBreakRenderer implements IRenderer {
     @Override
     public IRenderer setParent(IRenderer parent) {
         return this;
+    }
+
+    @Override
+    public IPropertyContainer getModelElement() {
+        return null;
+    }
+
+    @Override
+    public List<IRenderer> getChildRenderers() {
+        return null;
+    }
+
+    @Override
+    public boolean isFlushed() {
+        return false;
     }
 }

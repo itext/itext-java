@@ -35,7 +35,7 @@ public class DocumentRenderer extends AbstractRenderer {
         LayoutResult result = null;
         if (currentArea == null)
             currentArea = getNextArea();
-        // TODO flush modes
+
         while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
             if (result.getStatus() == LayoutResult.PARTIAL) {
                 resultRenderers.add(result.getSplitRenderer());
@@ -53,6 +53,7 @@ public class DocumentRenderer extends AbstractRenderer {
         if (renderer != null)
             resultRenderers.add(renderer);
 
+        // TODO flush by page, not by elements?
         if (immediateFlush) {
             for (IRenderer resultRenderer: resultRenderers) {
                 try {
@@ -63,6 +64,22 @@ public class DocumentRenderer extends AbstractRenderer {
                 }
             }
         }
+
+        childRenderers.remove(childRenderers.size() - 1);
+        childRenderers.addAll(resultRenderers);
+    }
+
+    public void flush() {
+        for (IRenderer resultRenderer: childRenderers) {
+            if (resultRenderer.isFlushed())
+                continue;
+            try {
+                PdfPage correspondingPage = document.getPdfDocument().getPage(resultRenderer.getOccupiedArea().getPageNumber());
+                resultRenderer.draw(document.getPdfDocument(), new PdfCanvas(correspondingPage));
+            } catch (PdfException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
     }
 
     @Override
@@ -70,7 +87,6 @@ public class DocumentRenderer extends AbstractRenderer {
         throw new RuntimeException();
     }
 
-    @Override
     public LayoutArea getNextArea() {
         try {
             PdfPage newPage = document.getPdfDocument().addNewPage();
