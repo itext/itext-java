@@ -37,60 +37,78 @@ public class BlockRenderer extends AbstractRenderer {
                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
                 layoutArea.getBBox().setHeight(layoutArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
-                if (result.getStatus() == LayoutResult.PARTIAL) {
+                // have more areas
+                if (currentAreaPos + 1 < areas.size()) {
+                    if (result.getStatus() == LayoutResult.PARTIAL) {
+                        childRenderers.set(childPos, result.getSplitRenderer());
+                        // TODO linkedList would make it faster
+                        childRenderers.add(childPos + 1, result.getOverflowRenderer());
+                    } else {
+                        childRenderers.set(childPos, result.getOverflowRenderer());
+                        childPos--;
+                    }
+                    layoutArea = areas.get(++currentAreaPos);
+                    break;
+                } else {
+                    if (result.getStatus() == LayoutResult.PARTIAL) {
 
-                    layoutArea.getBBox().setHeight(layoutArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
+                        layoutArea.getBBox().setHeight(layoutArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
-                    if (currentAreaPos + 1 == areas.size()) {
+                        if (currentAreaPos + 1 == areas.size()) {
 
-                        resultRenderers.add(childRenderer);
+                            resultRenderers.add(childRenderer);
 
+                            BlockRenderer splitRenderer = createSplitRenderer();
+                            splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
+                            splitRenderer.childRenderers.add(result.getSplitRenderer());
+                            splitRenderer.occupiedArea = occupiedArea.clone();
+                            splitRenderer.parent = parent;
+                            splitRenderer.modelElement = modelElement;
+
+                            BlockRenderer overflowRenderer = createOverflowRenderer();
+                            List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
+                            overflowRendererChildren.add(result.getOverflowRenderer());
+                            overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
+                            overflowRenderer.childRenderers = overflowRendererChildren;
+                            overflowRenderer.parent = parent;
+                            overflowRenderer.modelElement = modelElement;
+
+                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
+                        } else {
+                            childRenderers.set(childPos, result.getSplitRenderer());
+                            // TODO linkedList
+                            childRenderers.add(childPos + 1, result.getOverflowRenderer());
+                            layoutArea = areas.get(++currentAreaPos);
+                            break;
+                        }
+                    } else if (result.getStatus() == LayoutResult.NOTHING) {
                         BlockRenderer splitRenderer = createSplitRenderer();
-                        splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
-                        splitRenderer.childRenderers.add(result.getSplitRenderer());
-                        splitRenderer.occupiedArea = occupiedArea.clone();
                         splitRenderer.parent = parent;
                         splitRenderer.modelElement = modelElement;
+                        splitRenderer.occupiedArea = result.getOccupiedArea();
+                        splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
                         BlockRenderer overflowRenderer = createOverflowRenderer();
+                        overflowRenderer.parent = parent;
+                        overflowRenderer.modelElement = modelElement;
                         List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
                         overflowRendererChildren.add(result.getOverflowRenderer());
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                         overflowRenderer.childRenderers = overflowRendererChildren;
-                        overflowRenderer.parent = parent;
-                        overflowRenderer.modelElement = modelElement;
 
-                        return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
-                    } else {
-                        childRenderers.set(childPos, result.getSplitRenderer());
-                        // TODO linkedList
-                        childRenderers.add(childPos + 1, result.getOverflowRenderer());
-                        layoutArea = areas.get(++currentAreaPos);
-                        break;
+
+                        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, splitRenderer, overflowRenderer);
                     }
-                } else if (result.getStatus() == LayoutResult.NOTHING) {
-                    BlockRenderer splitRenderer = createSplitRenderer();
-                    splitRenderer.parent = parent;
-                    splitRenderer.modelElement = modelElement;
-                    splitRenderer.occupiedArea = result.getOccupiedArea();
-                    splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
-
-                    BlockRenderer overflowRenderer = createOverflowRenderer();
-                    overflowRenderer.parent = parent;
-                    overflowRenderer.modelElement = modelElement;
-                    List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
-                    overflowRendererChildren.add(result.getOverflowRenderer());
-                    overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
-                    overflowRenderer.childRenderers = overflowRendererChildren;
-
-
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, splitRenderer, overflowRenderer);
                 }
+
+
             }
 
             anythingPlaced = true;
 
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+            if (result.getStatus() == LayoutResult.FULL)
+                layoutArea.getBBox().setHeight(layoutArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
             resultRenderers.add(childRenderer);
         }
