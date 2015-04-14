@@ -20,10 +20,13 @@ public class BlockRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
 
+        List<LayoutArea> areas = initElementAreas(layoutContext);
+        int currentAreaPos = 0;
+
         // TODO getCommonArea
 
-        LayoutArea layoutArea = layoutContext.getArea();
-        occupiedArea = new LayoutArea(layoutArea.getPageNumber(), new Rectangle(layoutArea.getBBox().getX(), layoutArea.getBBox().getY() + layoutArea.getBBox().getHeight(), layoutArea.getBBox().getWidth(), 0));
+        LayoutArea layoutArea = areas.get(currentAreaPos);
+        occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), null);
         boolean anythingPlaced = false;
         for (int childPos = 0; childPos < childRenderers.size(); childPos++) {
             IRenderer childRenderer = childRenderers.get(childPos);
@@ -31,39 +34,84 @@ public class BlockRenderer extends AbstractRenderer {
             LayoutResult result;
             LayoutArea currentArea = layoutArea.clone();
             while ((result = childRenderer.layout(new LayoutContext(currentArea))).getStatus() != LayoutResult.FULL) {
+                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+                layoutArea.getBBox().setHeight(layoutArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
+
                 if (result.getStatus() == LayoutResult.PARTIAL) {
-                    resultRenderers.add(childRenderer);
 
-                    BlockRenderer splitRenderer = new BlockRenderer((BlockElement) modelElement);
-                    splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
-                    splitRenderer.childRenderers.add(result.getSplitRenderer());
-                    splitRenderer.occupiedArea = occupiedArea.clone();
+                    layoutArea.getBBox().setHeight(layoutArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
+
+                    if (currentAreaPos + 1 == areas.size()) {
+
+                        resultRenderers.add(childRenderer);
+
+                        BlockRenderer splitRenderer = createSplitRenderer();
+                        splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
+                        splitRenderer.childRenderers.add(result.getSplitRenderer());
+                        splitRenderer.occupiedArea = occupiedArea.clone();
+                        splitRenderer.parent = parent;
+                        splitRenderer.modelElement = modelElement;
+
+                        BlockRenderer overflowRenderer = createOverflowRenderer();
+                        List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
+                        overflowRendererChildren.add(result.getOverflowRenderer());
+                        overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
+                        overflowRenderer.childRenderers = overflowRendererChildren;
+                        overflowRenderer.parent = parent;
+                        overflowRenderer.modelElement = modelElement;
+
+                        return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
+                    } else {
+                        childRenderers.set(childPos, result.getSplitRenderer());
+                        // TODO linkedList
+                        childRenderers.add(childPos + 1, result.getOverflowRenderer());
+                        layoutArea = areas.get(++currentAreaPos);
+                        break;
+                    }
+                } else if (result.getStatus() == LayoutResult.NOTHING) {
+                    BlockRenderer splitRenderer = createSplitRenderer();
                     splitRenderer.parent = parent;
+                    splitRenderer.modelElement = modelElement;
+                    splitRenderer.occupiedArea = result.getOccupiedArea();
+                    splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
-                    BlockRenderer overflowRenderer = new BlockRenderer((BlockElement) modelElement);
+                    BlockRenderer overflowRenderer = createOverflowRenderer();
+                    overflowRenderer.parent = parent;
+                    overflowRenderer.modelElement = modelElement;
                     List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
                     overflowRendererChildren.add(result.getOverflowRenderer());
                     overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                     overflowRenderer.childRenderers = overflowRendererChildren;
-                    overflowRenderer.parent = parent;
 
-                    return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
-                } else if (result.getStatus() == LayoutResult.NOTHING) {
-                    BlockRenderer splitRenderer = new BlockRenderer((BlockElement) modelElement);
-                    BlockRenderer overflowRenderer = new BlockRenderer((BlockElement) modelElement);
+
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, splitRenderer, overflowRenderer);
                 }
             }
 
             anythingPlaced = true;
 
-            occupiedArea.getBBox().moveDown(result.getOccupiedArea().getBBox().getHeight()).
-                    setHeight(occupiedArea.getBBox().getHeight() + result.getOccupiedArea().getBBox().getHeight());
-            layoutArea.getBBox().setHeight(layoutArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
+            occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+
             resultRenderers.add(childRenderer);
         }
 
+        ensureOccupiedAreaNotNull(layoutContext.getArea());
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+    }
+
+    @Override
+    protected BlockRenderer createSplitRenderer() {
+        return new BlockRenderer((BlockElement) modelElement);
+    }
+
+    @Override
+    protected BlockRenderer createOverflowRenderer() {
+        return new BlockRenderer((BlockElement) modelElement);
+    }
+
+    private void ensureOccupiedAreaNotNull(LayoutArea area) {
+        if (occupiedArea.getBBox() == null)
+            occupiedArea.setBBox(area.getBBox().clone().moveDown(-area.getBBox().getHeight()).setHeight(0));
     }
 
 

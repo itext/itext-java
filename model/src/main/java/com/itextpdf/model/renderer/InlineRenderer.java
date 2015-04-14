@@ -1,13 +1,20 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.element.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutRect;
 import com.itextpdf.model.layout.LayoutResult;
 
+import java.util.ArrayList;
+
 public class InlineRenderer extends AbstractRenderer {
+
+    public InlineRenderer (IPropertyContainer modelElement) {
+        super(modelElement);
+    }
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
@@ -32,6 +39,27 @@ public class InlineRenderer extends AbstractRenderer {
                     LayoutResult childResult = childRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), bbox)));
                     curWidth = area.getBBox().getWidth();
                     maxHeight = Math.max(maxHeight, childResult.getOccupiedArea().getBBox().getHeight());
+
+                    if (childResult.getStatus() != LayoutResult.FULL) {
+                        occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), childResult.getOccupiedArea().getBBox()));
+
+                        InlineRenderer splitRenderer = new InlineRenderer(modelElement);
+                        splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
+                        splitRenderer.childRenderers.add(childResult.getSplitRenderer());
+                        splitRenderer.occupiedArea = occupiedArea.clone();
+                        splitRenderer.parent = parent;
+                        splitRenderer.modelElement = modelElement;
+
+                        InlineRenderer overflowRenderer = new InlineRenderer(modelElement);
+                        overflowRenderer.childRenderers = new ArrayList<>();
+                        overflowRenderer.childRenderers.add(childResult.getOverflowRenderer());
+                        overflowRenderer.childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
+
+                        overflowRenderer.parent = parent;
+                        overflowRenderer.modelElement = modelElement;
+
+                        return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
+                    }
                 }
                 childPos++;
             }
@@ -39,10 +67,17 @@ public class InlineRenderer extends AbstractRenderer {
             if (maxHeight > area.getBBox().getHeight()) {
                 // the line does not fit because of height - full overflow
                 // TODO set parent, occupied area, params
-                InlineRenderer splitRenderer = new InlineRenderer();
+                InlineRenderer splitRenderer = new InlineRenderer(modelElement);
                 splitRenderer.childRenderers = childRenderers.subList(0, lineInitialChildPos);
-                InlineRenderer overflowRenderer = new InlineRenderer();
+                splitRenderer.occupiedArea = occupiedArea.clone();
+                splitRenderer.parent = parent;
+                splitRenderer.modelElement = modelElement;
+
+                InlineRenderer overflowRenderer = new InlineRenderer(modelElement);
                 overflowRenderer.childRenderers = childRenderers.subList(lineInitialChildPos, childRenderers.size());
+                overflowRenderer.parent = parent;
+                overflowRenderer.modelElement = modelElement;
+
                 return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, splitRenderer, overflowRenderer);
             } else {
                 occupiedArea.getBBox().moveDown(maxHeight);
@@ -57,6 +92,16 @@ public class InlineRenderer extends AbstractRenderer {
     @Override
     public LayoutArea getNextArea() {
         throw new RuntimeException();
+    }
+
+    @Override
+    protected InlineRenderer createOverflowRenderer() {
+        return new InlineRenderer(modelElement);
+    }
+
+    @Override
+    protected InlineRenderer createSplitRenderer() {
+        return new InlineRenderer(modelElement);
     }
 
     protected LayoutRect getElementSize(IRenderer renderer) {

@@ -20,6 +20,10 @@ public class LayoutArea implements Cloneable {
         return bBox;
     }
 
+    public void setBBox(Rectangle bbox) {
+        this.bBox = bbox;
+    }
+
     @Override
     public LayoutArea clone() {
         return new LayoutArea(pageNumber, bBox.clone());

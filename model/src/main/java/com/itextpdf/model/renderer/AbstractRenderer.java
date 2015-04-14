@@ -5,13 +5,10 @@ import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
-import com.itextpdf.model.element.IElement;
 import com.itextpdf.model.layout.LayoutArea;
+import com.itextpdf.model.layout.LayoutContext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbstractRenderer implements IRenderer {
 
@@ -26,7 +23,7 @@ public abstract class AbstractRenderer implements IRenderer {
     public AbstractRenderer() {
     }
 
-    public AbstractRenderer(IElement modelElement) {
+    public AbstractRenderer(IPropertyContainer modelElement) {
         this.modelElement = modelElement;
     }
 
@@ -81,6 +78,18 @@ public abstract class AbstractRenderer implements IRenderer {
     public IRenderer setParent(IRenderer parent) {
         this.parent = parent;
         return this;
+    }
+
+    public List<LayoutArea> initElementAreas(LayoutContext context) {
+        return Collections.singletonList(context.getArea());
+    }
+
+    protected <T extends AbstractRenderer> T createSplitRenderer() {
+        return null;
+    }
+
+    protected <T extends AbstractRenderer> T createOverflowRenderer() {
+        return null;
     }
 
     protected void drawBorder(PdfCanvas canvas) {

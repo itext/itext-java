@@ -99,6 +99,16 @@ public class TextRenderer extends AbstractRenderer {
         }
     }
 
+    @Override
+    protected TextRenderer createSplitRenderer() {
+        return new TextRenderer((Text)modelElement, null);
+    }
+
+    @Override
+    protected TextRenderer createOverflowRenderer() {
+        return new TextRenderer((Text)modelElement, null);
+    }
+
     private Rectangle getGlyphSize(char ch) {
         return new Rectangle(20, 20);
     }

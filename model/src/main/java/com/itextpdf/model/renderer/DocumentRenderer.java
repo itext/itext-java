@@ -35,6 +35,7 @@ public class DocumentRenderer extends AbstractRenderer {
         LayoutResult result = null;
         if (currentArea == null)
             currentArea = getNextArea();
+        // TODO flush modes
         while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
             if (result.getStatus() == LayoutResult.PARTIAL) {
                 resultRenderers.add(result.getSplitRenderer());

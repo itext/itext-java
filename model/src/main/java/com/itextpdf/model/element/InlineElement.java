@@ -28,7 +28,7 @@ public abstract class InlineElement extends AbstractElement implements IAccessib
     @Override
     public IRenderer makeRenderer() {
         if (renderer == null)
-            renderer = new InlineRenderer();
+            renderer = new InlineRenderer(this);
         return renderer;
     }
 }
