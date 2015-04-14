@@ -119,6 +119,7 @@ public class PdfTokeniserTest {
                 "/Root 46 0 R" +
                 "/Info 44 0 R" +
                 "/ID[<736f6d652068657820737472696e672>(some simple string )<8C2547D58D4BD2C6F3D32B830BE3259D2>-70.1--0.2]" +
+                "/Name1 --15" +
                 "/Prev ---116.23 >>";
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         PdfTokeniser tok = new PdfTokeniser(new RandomAccessFileOrArray(factory.createSource(data.getBytes())));
@@ -200,10 +201,20 @@ public class PdfTokeniserTest {
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokeniser.TokenType.Number);
         num = new PdfNumber(tok.getByteContent());
-        Assert.assertEquals("0.2", num.toString());
+        Assert.assertEquals("-0.2", num.toString());
 
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokeniser.TokenType.EndArray);
+
+        tok.nextValidToken();
+        Assert.assertSame(tok.getTokenType(), PdfTokeniser.TokenType.Name);
+        name = new PdfName(tok.getByteContent());
+        Assert.assertEquals("Name1", name.getValue());
+
+        tok.nextValidToken();
+        Assert.assertSame(tok.getTokenType(), PdfTokeniser.TokenType.Number);
+        num = new PdfNumber(tok.getByteContent());
+        Assert.assertEquals("0", num.toString());
 
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokeniser.TokenType.Name);

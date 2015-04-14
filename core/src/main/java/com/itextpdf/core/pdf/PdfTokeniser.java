@@ -379,22 +379,32 @@ public class PdfTokeniser {
             default: {
                 if (ch == '-' || ch == '+' || ch == '.' || (ch >= '0' && ch <= '9')) {
                     type = TokenType.Number;
+                    boolean isReal = false;
+                    int numberOfMinuses = 0;
                     if (ch == '-') {
                         // Take care of number like "--234". If Acrobat can read them so must we.
-                        boolean minus = false;
                         do {
-                            minus = !minus;
+                            ++numberOfMinuses;
                             ch = file.read();
                         } while (ch == '-');
-                        if (minus)
-                            outBuf.append('-');
+                        outBuf.append('-');
                     } else {
                         outBuf.append(ch);
+                        // We don't need to check if the number is real over here
+                        // as we need to know that fact only in case if there are any minuses.
                         ch = file.read();
                     }
                     while (ch != -1 && ((ch >= '0' && ch <= '9') || ch == '.')) {
+                        if (ch == '.')
+                            isReal = true;
                         outBuf.append(ch);
                         ch = file.read();
+                    }
+                    if (numberOfMinuses > 1 && !isReal) {
+                        // Numbers of integer type and with more than one minus before them
+                        // are interpreted by Acrobat as zero.
+                        outBuf.reset();
+                        outBuf.append('0');
                     }
                 } else {
                     type = TokenType.Other;

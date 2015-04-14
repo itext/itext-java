@@ -4,7 +4,6 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.navigation.PdfStringDestination;
 import com.itextpdf.core.xmp.XMPException;
-import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import org.junit.*;
 

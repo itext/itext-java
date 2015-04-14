@@ -291,10 +291,10 @@ public class PdfString extends PdfPrimitiveObject {
                     if (lineBreak)
                         continue;
                 } else if (ch == '\r') {
-                    ch = content[i++];
-                    if (ch != '\n') {
+                    // in this case current char is '\n' and we have to skip next '\n' if it presents.
+                    ch = '\n';
+                    if (i < content.length && content[i++] != '\n') {
                         i--;
-                        ch = '\n';
                     }
                 }
                 buffer.append(ch);
