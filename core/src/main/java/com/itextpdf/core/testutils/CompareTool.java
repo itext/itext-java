@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.core.xmp.*;
 import com.itextpdf.core.xmp.options.SerializeOptions;
+import org.bouncycastle.util.Strings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -933,7 +934,19 @@ public class CompareTool {
     }
 
     private String[] convertInfo(PdfDocumentInfo info) throws PdfException {
-        String[] convertedInfo = new String[]{info.getTitle(), info.getAuthor(), info.getSubject(), info.getKeywords()};
+        String[] convertedInfo = new String[]{"", "", "", ""};
+        String infoValue = info.getTitle();
+        if (infoValue != null)
+            convertedInfo[0] = infoValue;
+        infoValue = info.getAuthor();
+        if (infoValue != null)
+            convertedInfo[1] = infoValue;
+        infoValue = info.getSubject();
+        if (infoValue != null)
+            convertedInfo[2] = infoValue;
+        infoValue = info.getKeywords();
+        if (infoValue != null)
+            convertedInfo[3] = infoValue;
         return convertedInfo;
     }
 
