@@ -7,7 +7,9 @@ import com.itextpdf.model.element.IElement;
 import com.itextpdf.model.renderer.DocumentRenderer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Document implements IPropertyContainer {
 
@@ -15,6 +17,7 @@ public class Document implements IPropertyContainer {
     protected DocumentRenderer documentRenderer;
     protected boolean immediateFlush = true;
     protected List<IElement> childElements = new ArrayList<>();
+    protected Map<Integer, Object> properties = new HashMap<>();
 
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
@@ -47,7 +50,7 @@ public class Document implements IPropertyContainer {
      */
     public Document add(IElement element) throws PdfException {
         childElements.add(element);
-        ensureDocumentRendererNotNull().addChild(element.makeRenderer());
+        ensureDocumentRendererNotNull().addChild(element.createRendererSubTree());
         return this;
     }
 
@@ -81,18 +84,23 @@ public class Document implements IPropertyContainer {
         }
         documentRenderer = new DocumentRenderer(this, immediateFlush);
         for (IElement element : childElements) {
-            ensureDocumentRendererNotNull().addChild(element.makeRenderer());
+            documentRenderer.addChild(element.createRendererSubTree());
         }
     }
 
     @Override
     public <T> T getProperty(Integer propertyKey) {
-        return null;
+        return (T) properties.get(propertyKey);
     }
 
     @Override
     public <T> T getDefaultProperty(Integer propertyKey) {
         return null;
+    }
+
+    public Document setProperty(Integer propertyKey, Object value) {
+        properties.put(propertyKey, value);
+        return this;
     }
 
     private DocumentRenderer ensureDocumentRendererNotNull() {

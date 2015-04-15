@@ -14,9 +14,12 @@ public class Text extends AbstractElement implements ILeafElement {
 
     @Override
     public IRenderer makeRenderer() {
-        if (renderer == null)
-            renderer = new TextRenderer(this, text);
-        return renderer;
+        if (nextRenderer != null) {
+            IRenderer renderer = nextRenderer;
+            nextRenderer = null;
+            return renderer;
+        }
+        return new TextRenderer(this, text);
     }
 
     public String getText() {

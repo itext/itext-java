@@ -69,6 +69,7 @@ public class DocumentRenderer extends AbstractRenderer {
         childRenderers.addAll(resultRenderers);
     }
 
+    // Drawing of content. Might need to rename.
     public void flush() {
         for (IRenderer resultRenderer: childRenderers) {
             if (resultRenderer.isFlushed())

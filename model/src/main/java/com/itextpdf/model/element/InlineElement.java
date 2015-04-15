@@ -11,18 +11,13 @@ public abstract class InlineElement extends AbstractElement implements IAccessib
     }
 
     InlineElement add(InlineElement element) {
-        makeRenderer().addChild(element.makeRenderer());
+        childElements.add(element);
         return this;
     }
 
     InlineElement add(ILeafElement element) {
-        makeRenderer().addChild(element.makeRenderer());
+        childElements.add(element);
         return this;
-    }
-
-    @Override
-    public void setRenderer(IRenderer renderer) {
-        this.renderer = renderer;
     }
 
     @Override

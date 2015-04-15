@@ -66,7 +66,7 @@ public class InlineRenderer extends AbstractRenderer {
 
             if (maxHeight > area.getBBox().getHeight()) {
                 // the line does not fit because of height - full overflow
-                // TODO set parent, occupied area, params
+                // TODO set parent, occupied area, params. A separate method should be created for that.
                 InlineRenderer splitRenderer = new InlineRenderer(modelElement);
                 splitRenderer.childRenderers = childRenderers.subList(0, lineInitialChildPos);
                 splitRenderer.occupiedArea = occupiedArea.clone();

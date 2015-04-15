@@ -83,7 +83,6 @@ public class TextRenderer extends AbstractRenderer {
             while (textPos < text.length() && curWidth + (glyphSize = getGlyphSize(text.charAt(textPos))).getWidth() < occupiedArea.getBBox().getWidth()) {
                 try {
                     canvas.rectangle(startX + curWidth, currentY - glyphSize.getHeight(), glyphSize.getWidth(), glyphSize.getHeight()).stroke();
-                    // TODO property get default
                     PdfFont font = getPropertyAsFont(Property.FONT);
                     canvas.beginText().setFontAndSize(font == null ? new PdfType1Font(document, new Type1Font(FontConstants.HELVETICA, "")) : font, 12).moveText(startX + curWidth, currentY - glyphSize.getHeight()).showText(text.charAt(textPos) + "").endText();
                 } catch (PdfException | IOException e) {
@@ -101,6 +100,10 @@ public class TextRenderer extends AbstractRenderer {
 
     public String getText() {
         return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override

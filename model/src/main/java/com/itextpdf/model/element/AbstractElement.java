@@ -1,23 +1,37 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractElement implements IElement {
 
-    protected IRenderer renderer;
-    protected Map<Integer, Object> properties = new HashMap<Integer, Object>();
+    protected IRenderer nextRenderer;
+    protected Map<Integer, Object> properties = new HashMap<>();
+    protected List<IElement> childElements = new ArrayList<>();
 
     @Override
-    public void setRenderer(IRenderer renderer) {
-        this.renderer = renderer;
+    public void setNextRenderer(IRenderer renderer) {
+        this.nextRenderer = renderer;
     }
 
-    public <T extends AbstractElement> T setProperty(Integer propertyKey, Object value) {
+    @Override
+    public IRenderer createRendererSubTree() {
+        IRenderer rendererRoot = makeRenderer();
+        for (IElement child : childElements) {
+            rendererRoot.addChild(child.createRendererSubTree());
+        }
+        return rendererRoot;
+    }
+
+    @Override
+    public <T extends IPropertyContainer> T setProperty(Integer propertyKey, Object value) {
         properties.put(propertyKey, value);
         return (T) this;
     }

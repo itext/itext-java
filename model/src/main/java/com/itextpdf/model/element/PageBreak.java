@@ -25,8 +25,11 @@ public class PageBreak extends AbstractElement {
 
     @Override
     public IRenderer makeRenderer() {
-        if (renderer == null)
-            renderer = new PageBreakRenderer(this);
-        return renderer;
+        if (nextRenderer != null) {
+            IRenderer renderer = nextRenderer;
+            nextRenderer = null;
+            return renderer;
+        }
+        return new PageBreakRenderer(this);
     }
 }

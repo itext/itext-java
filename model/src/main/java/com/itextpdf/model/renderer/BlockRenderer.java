@@ -23,8 +23,6 @@ public class BlockRenderer extends AbstractRenderer {
         List<LayoutArea> areas = initElementAreas(layoutContext);
         int currentAreaPos = 0;
 
-        // TODO getCommonArea
-
         LayoutArea layoutArea = areas.get(currentAreaPos);
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), null);
         boolean anythingPlaced = false;
@@ -76,7 +74,6 @@ public class BlockRenderer extends AbstractRenderer {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
                         } else {
                             childRenderers.set(childPos, result.getSplitRenderer());
-                            // TODO linkedList
                             childRenderers.add(childPos + 1, result.getOverflowRenderer());
                             layoutArea = areas.get(++currentAreaPos);
                             break;

@@ -9,26 +9,30 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
     }
 
     // TODO All in-flow children of a block flow must be blocks, or all in-flow children of a block flow must be inlines.
+    // We will probably define layout strategy considering this.
     // https://www.webkit.org/blog/115/webcore-rendering-ii-blocks-and-inlines/
     public T add(BlockElement element) {
-        renderer.addChild(element.makeRenderer());
+        childElements.add(element);
         return (T) this;
     }
 
     public T add(InlineElement element) {
-        makeRenderer().addChild(element.makeRenderer());
+        childElements.add(element);
         return (T) this;
     }
 
     public T add(ILeafElement element) {
-        makeRenderer().addChild(element.makeRenderer());
+        childElements.add(element);
         return (T) this;
     }
 
     @Override
     public IRenderer makeRenderer() {
-        if (renderer == null)
-            renderer = new BlockRenderer(this);
-        return renderer;
+        if (nextRenderer != null) {
+            IRenderer renderer = nextRenderer;
+            nextRenderer = null;
+            return renderer;
+        }
+        return new BlockRenderer(this);
     }
 }

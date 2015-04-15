@@ -29,7 +29,7 @@ public class DefaultLayoutTest {
     }
 
     @Test
-    @Ignore("We should really think if it is worth supporting this smelly case. In case of pre-layout this won't work")
+    @Ignore("We should really think if it is worth supporting this smelly case. In case of pre-layout this probably won't work")
     public void multipleAdditionsOfSameModelElementTest() throws FileNotFoundException, PdfException {
         String outFileName = destinationFolder + "multipleAdditionsOfSameModelElementTest1.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

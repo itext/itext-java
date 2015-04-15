@@ -5,8 +5,9 @@ import com.itextpdf.model.renderer.IRenderer;
 
 public interface IElement extends IPropertyContainer{
 
-    void setRenderer(IRenderer renderer);
+    void setNextRenderer(IRenderer renderer);
     IRenderer makeRenderer();
+    IRenderer createRendererSubTree();
     boolean isBreakable();
 
 }
