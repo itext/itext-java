@@ -58,4 +58,8 @@ public class PageSize extends Rectangle {
         this.bottomMargin = bottomMargin;
         return this;
     }
+
+    public Rectangle getEffectiveArea() {
+        return new Rectangle(leftMargin, bottomMargin, width - leftMargin - rightMargin, height - bottomMargin - topMargin);
+    }
 }

@@ -19,9 +19,6 @@ import java.util.List;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
-    public final static int FirstPage = 1;
-    public final static int LastPage = Integer.MAX_VALUE;
-
     private PdfResources resources = null;
     private Integer mcid = null;
     private Integer structParents = null;

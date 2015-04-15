@@ -1,11 +1,15 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
+
+import java.io.IOException;
 
 /**
  * Nothing here...
@@ -21,6 +25,10 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected PdfFont(PdfDocument pdfDocument) throws PdfException {
         this(new PdfDictionary(), pdfDocument);
         getPdfObject().put(PdfName.Type, PdfName.Font);
+    }
+
+    public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws PdfException, IOException {
+        return new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, ""));
     }
 
     /**

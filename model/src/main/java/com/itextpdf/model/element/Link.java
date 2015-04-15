@@ -1,4 +1,4 @@
-package com.itextpdf.model.elements;
+package com.itextpdf.model.element;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
@@ -16,7 +16,7 @@ public class Link extends Span {
     }
 
     public Link(String text, PdfAction action) throws PdfException {
-        this(text, (PdfLinkAnnotation)new PdfLinkAnnotation(action.getDocument(), new Rectangle(0, 0, 0, 0)).setAction(action));
+        this(text, new PdfLinkAnnotation(action.getDocument(), new Rectangle(0, 0, 0, 0)).setAction(action));
     }
 
     public Link(String text, PdfDestination destination) throws PdfException {

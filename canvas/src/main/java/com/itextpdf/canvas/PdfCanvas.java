@@ -714,7 +714,7 @@ public class PdfCanvas {
     }
 
     /**
-     * Draws rectangle.
+     * Draws a rectangle.
      *
      * @param x      x coordinate of the starting point.
      * @param y      y coordinate of the starting point.
@@ -733,6 +733,15 @@ public class PdfCanvas {
                 writeSpace().
                 writeBytes(re);
         return this;
+    }
+
+    /**
+     * Draws a rectangle.
+     * @param rectangle a rectangle to be drawn
+     * @return current canvas.
+     */
+    public PdfCanvas rectangle(Rectangle rectangle) throws PdfException {
+        return rectangle(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
     }
 
     /**

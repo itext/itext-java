@@ -1,4 +1,4 @@
-package com.itextpdf.model.elements;
+package com.itextpdf.model.element;
 
 public interface IAccessibleElement extends IElement {
 }

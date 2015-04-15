@@ -1,38 +1,44 @@
 package com.itextpdf.model;
 
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.model.elements.IElement;
-import com.itextpdf.model.layout.DefaultLayoutMgr;
-import com.itextpdf.model.layout.ILayoutMgr;
-import com.itextpdf.model.layout.shapes.BoxShape;
-import com.itextpdf.model.layout.shapes.ILayoutShape;
+import com.itextpdf.model.element.IElement;
+import com.itextpdf.model.renderer.DocumentRenderer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class Document {
+public class Document implements IPropertyContainer {
 
-    protected ILayoutMgr layoutMgr;
     protected PdfDocument pdfDocument;
-    protected PdfPage page = null;
+    protected DocumentRenderer documentRenderer;
+    protected boolean immediateFlush = true;
+    protected List<IElement> childElements = new ArrayList<>();
+    protected Map<Integer, Object> properties = new HashMap<>();
 
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
     }
 
     public Document(PdfDocument pdfDoc, PageSize pageSize) {
-        pdfDocument = pdfDoc;
-        pdfDocument.setDefaultPageSize(pageSize);
-        layoutMgr = new DefaultLayoutMgr(this);
+        this(pdfDoc, pageSize, true);
+    }
+
+    public Document(PdfDocument pdfDoc, PageSize pageSize, boolean immediateFlush) {
+        this.pdfDocument = pdfDoc;
+        this.pdfDocument.setDefaultPageSize(pageSize);
+        this.immediateFlush = immediateFlush;
     }
 
     /**
      * Closes the document and associated PdfDocument.
      */
     public void close() throws PdfException {
+        if (documentRenderer != null && !immediateFlush)
+            documentRenderer.flush();
         pdfDocument.close();
     }
 
@@ -43,37 +49,8 @@ public class Document {
      * @return
      */
     public Document add(IElement element) throws PdfException {
-        if (page == null)
-            newPage();
-        layoutMgr.placeElement(element);
-        return this;
-    }
-
-    /**
-     * Requests a new page with a default page size.
-     *
-     * @return
-     */
-    public Document newPage() throws PdfException {
-        return newPage(pdfDocument.getDefaultPageSize());
-    }
-
-    /**
-     * Requests a new pages with a certain page size.
-     *
-     * @param pageSize
-     * @return
-     */
-    public Document newPage(PageSize pageSize) throws PdfException {
-        if (page != null) {
-            page.flush();
-        }
-        PdfPage page = pdfDocument.addNewPage(pageSize);
-        layoutMgr.setCanvas(new PdfCanvas(page));
-        final BoxShape boxShape = new BoxShape(pageSize);
-        layoutMgr.setShapes(new ArrayList<ILayoutShape>() {{
-            add(boxShape);
-        }});
+        childElements.add(element);
+        ensureDocumentRendererNotNull().addChild(element.createRendererSubTree());
         return this;
     }
 
@@ -86,22 +63,49 @@ public class Document {
         return pdfDocument;
     }
 
-    /**
-     * Gets current layout manager.
-     *
-     * @return
-     */
-    public ILayoutMgr getLayoutMgr() {
-        return layoutMgr;
+    public DocumentRenderer getRenderer() {
+        return documentRenderer;
     }
 
-    /**
-     * Sets layout manager.
-     *
-     * @param layoutMgr
-     */
-    public void setLayoutMgr(ILayoutMgr layoutMgr) {
-        this.layoutMgr = layoutMgr;
+    public void setRenderer(DocumentRenderer documentRenderer) {
+        this.documentRenderer = documentRenderer;
     }
 
+    public void flush() {
+        documentRenderer.flush();
+    }
+
+    public void relayout() {
+        try {
+            while (pdfDocument.getNumOfPages() > 0)
+                pdfDocument.removePage(pdfDocument.getNumOfPages());
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
+        }
+        documentRenderer = new DocumentRenderer(this, immediateFlush);
+        for (IElement element : childElements) {
+            documentRenderer.addChild(element.createRendererSubTree());
+        }
+    }
+
+    @Override
+    public <T> T getProperty(Integer propertyKey) {
+        return (T) properties.get(propertyKey);
+    }
+
+    @Override
+    public <T> T getDefaultProperty(Integer propertyKey) {
+        return null;
+    }
+
+    public Document setProperty(Integer propertyKey, Object value) {
+        properties.put(propertyKey, value);
+        return this;
+    }
+
+    private DocumentRenderer ensureDocumentRendererNotNull() {
+        if (documentRenderer == null)
+            documentRenderer = new DocumentRenderer(this, immediateFlush);
+        return documentRenderer;
+    }
 }
