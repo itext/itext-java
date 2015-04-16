@@ -107,6 +107,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ClosedArrow = createDirectName("ClosedArrow");
     public static final PdfName CO = createDirectName("CO");
     public static final PdfName Code = createDirectName("Code");
+    public static final PdfName CharProcs = createDirectName("CharProcs");
     public static final PdfName Colorants = createDirectName("Colorants");
     public static final PdfName Colors = createDirectName("Colors");
     public static final PdfName ColorSpace = createDirectName("ColorSpace");
@@ -405,6 +406,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName RT = createDirectName("RT");
     public static final PdfName Ruby = createDirectName("Ruby");
     public static final PdfName RunLengthDecode = createDirectName("RunLengthDecode");
+    public static final PdfName Stream = createDirectName("Stream");
     public static final PdfName S = createDirectName("S");
     public static final PdfName SA = createDirectName("SA");
     public static final PdfName Saturation = createDirectName("Saturation");
@@ -467,6 +469,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName TrapStyles = createDirectName("TrapStyles");
     public static final PdfName Type = createDirectName("Type");
     public static final PdfName Type1 = createDirectName("Type1");
+    public static final PdfName Type3 = createDirectName("Type3");
     public static final PdfName U = createDirectName("U");
     public static final PdfName UCR = createDirectName("UCR");
     public static final PdfName UCR2 = createDirectName("UCR2");
