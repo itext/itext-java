@@ -13,7 +13,7 @@ import com.itextpdf.core.pdf.annot.*;
 import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
