@@ -41,7 +41,7 @@ public class PdfFontTest {
 
 
         //String filename = SourceFolder+"type3Font.pdf";
-        String filename = "d:/type3Font.pdf";
+        String filename = DestinationFolder + "type3Font.pdf";
         String testString = "A A A A E E E";
 
         //writing type3 font characters
@@ -97,7 +97,7 @@ public class PdfFontTest {
         PdfDocument document = new PdfDocument(reader);
         PdfPage page = document.getPage(PageCount);
         String content = new String(page.getContentStream(0).getBytes());
-        Assert.assertTrue(content.contains("("+testString+")"));
+        Assert.assertTrue(content.contains("(" + testString + ")"));
     }
 
     @Test
