@@ -35,7 +35,7 @@ public class PdfType3Font extends PdfFont {
 
     private boolean isColor = false;
 
-    /**array of six numbers specifying the font matrix, mapping glyph space to text space */
+    /** array of six numbers specifying the font matrix, mapping glyph space to text space */
     private double[] fontMatrix = {0.001, 0, 0, 0.001, 0, 0};
 
     /**

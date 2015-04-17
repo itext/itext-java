@@ -156,8 +156,6 @@ public class PdfStream extends PdfDictionary {
         return length;
     }
 
-
-
     /**
      * Gets decoded stream bytes.
      *

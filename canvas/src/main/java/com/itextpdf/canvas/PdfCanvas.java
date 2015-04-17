@@ -95,7 +95,6 @@ public class PdfCanvas {
     static final private byte[] Tz = OutputStream.getIsoBytes("Tz\n");
     static final private byte[] TStar = OutputStream.getIsoBytes("T*\n");
 
-
     static private final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
     static private final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
     static private final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
@@ -109,9 +108,6 @@ public class PdfCanvas {
     protected int mcDepth;
     protected int mcid = 0;
     protected ArrayList<Integer> layerDepth;
-
-
-
 
     /**
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
@@ -228,7 +224,6 @@ public class PdfCanvas {
         contentStream.getOutputStream().writeBytes(BT);
         return this;
     }
-
 
     /**
      * Ends text block (PDF ET operator).
