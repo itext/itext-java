@@ -3,7 +3,6 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
-import com.itextpdf.basics.origfont.TextEncodings;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -352,7 +351,7 @@ class TrueTypeFontSubset {
         byte buf[] = new byte[length];
         rf.readFully(buf);
         try {
-            return new String(buf, TextEncodings.WinAnsi);
+            return new String(buf, PdfEncodings.WINANSI);
         } catch (Exception e) {
             throw new PdfRuntimeException("TrueType font", e);
         }
@@ -371,7 +370,7 @@ class TrueTypeFontSubset {
     }
 
     protected void writeFontString(String s) {
-        byte b[] = TextEncodings.convertToBytes(s, TextEncodings.WinAnsi);
+        byte b[] = PdfEncodings.convertToBytes(s, PdfEncodings.WINANSI);
         System.arraycopy(b, 0, outFont, fontPtr, b.length);
         fontPtr += b.length;
     }
