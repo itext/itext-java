@@ -102,6 +102,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName CCITTFaxDecode = createDirectName("CCITTFaxDecode");
     public static final PdfName CF = createDirectName("CF");
     public static final PdfName CFM = createDirectName("CFM");
+    public static final PdfName CIDSet = createDirectName("CIDSet");
     public static final PdfName Circle = createDirectName("Circle");
     public static final PdfName CL = createDirectName("CL");
     public static final PdfName ClosedArrow = createDirectName("ClosedArrow");
@@ -465,6 +466,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName TrapNet = createDirectName("TrapNet");
     public static final PdfName TrapRegions = createDirectName("TrapRegions");
     public static final PdfName TrapStyles = createDirectName("TrapStyles");
+    public static final PdfName TrueType = createDirectName("TrueType");
     public static final PdfName Type = createDirectName("Type");
     public static final PdfName Type1 = createDirectName("Type1");
     public static final PdfName U = createDirectName("U");

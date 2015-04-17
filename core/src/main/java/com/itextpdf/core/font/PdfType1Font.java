@@ -71,6 +71,14 @@ public class PdfType1Font extends PdfFont {
         this.forceWidthsOutput = forceWidthsOutput;
     }
 
+    public boolean isSubset() {
+        return subset;
+    }
+
+    public void setSubset(boolean subset) {
+        this.subset = subset;
+    }
+
     @Override
     public byte[] convertToBytes(String text) {
         byte[] content = fontProgram.convertToBytes(text);
@@ -141,11 +149,12 @@ public class PdfType1Font extends PdfFont {
             getPdfObject().put(PdfName.FirstChar, new PdfNumber(firstChar));
             getPdfObject().put(PdfName.LastChar, new PdfNumber(lastChar));
             PdfArray wd = new PdfArray();
+            int[] widths = fontProgram.getRawWidths();
             for (int k = firstChar; k <= lastChar; ++k) {
                 if (shortTag[k] == 0) {
                     wd.add(new PdfNumber(0));
                 } else {
-                    wd.add(new PdfNumber(getWidth(k)));
+                    wd.add(new PdfNumber(widths[k]));
                 }
             }
             getPdfObject().put(PdfName.Widths, wd);
@@ -165,7 +174,7 @@ public class PdfType1Font extends PdfFont {
      * @throws PdfException if there is an error reading the font.
      */
     protected PdfStream getFullFontStream() throws PdfException {
-        byte[] fontStreamBytes = fontProgram.getFontStreamBytes(embedded);
+        byte[] fontStreamBytes = fontProgram.getFontStreamBytes();
         if (fontStreamBytes == null) {
             return null;
         }
@@ -191,7 +200,8 @@ public class PdfType1Font extends PdfFont {
         fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontProgram.getAscender()));
         fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontProgram.getCapHeight()));
         fontDescriptor.put(PdfName.Descent, new PdfNumber(fontProgram.getDescender()));
-        Rectangle fontBBox = new Rectangle(fontProgram.getLlx(), fontProgram.getLly(), fontProgram.getUrx(), fontProgram.getUry());
+        Rectangle fontBBox = new Rectangle(fontProgram.getLlx(), fontProgram.getLly(),
+                fontProgram.getUrx(), fontProgram.getUry());
         fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontBBox));
         fontDescriptor.put(PdfName.FontName, new PdfName(fontProgram.getFontName()));
         fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontProgram.getItalicAngle()));

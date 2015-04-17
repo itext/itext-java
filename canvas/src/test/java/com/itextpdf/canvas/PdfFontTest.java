@@ -3,7 +3,9 @@ package com.itextpdf.canvas;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.core.font.PdfTrueTypeFont;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfOutputStream;
@@ -301,4 +303,75 @@ public class PdfFontTest {
         cb.fill();
         document.close();
     }
+
+    @Test
+    public void createDocumentWithTrueTypeFont1() throws IOException, PdfException {
+        String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "abserif4_5.ttf"));
+        TrueTypeFont trueType = new TrueTypeFont("Aboriginal Serif", "WinAnsi", ttf);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, trueType, true);
+        pdfTrueTypeFont.setSubset(true);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+    }
+
+    @Test
+    public void createDocumentWithTrueTypeFont2() throws IOException, PdfException {
+        String filename = destinationFolder + "DocumentWithTrueTypeFont2.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "Puritan2.otf"));
+        TrueTypeFont trueType = new TrueTypeFont("Puritan", "WinAnsi", ttf);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, trueType, true);
+        pdfTrueTypeFont.setSubset(true);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+    }
+
 }

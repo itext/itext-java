@@ -9,7 +9,8 @@ import java.util.StringTokenizer;
 
 public class Type1Font {
 
-    private Type1Parser type1Parser;
+    /** Type 1 font parser. */
+    private Type1Parser fontParser;
 
     /** The Postscript font name. */
     private String FontName;
@@ -20,54 +21,54 @@ public class Type1Font {
 
     /** The font's encoding name. This encoding is 'StandardEncoding' or 'AdobeStandardEncoding' for a font
      * that can be totally encoded according to the characters names. For all other names the font is treated as symbolic. */
-    protected String EncodingScheme = "FontSpecific";
+    private String EncodingScheme = "FontSpecific";
     /** Font encoding. */
-    FontEncoding encoding;
+    private FontEncoding encoding;
     /** Contains the smallest box enclosing the character contours. */
-    protected int[][] charBBoxes = new int[256][];
+    private int[][] charBBoxes = new int[256][];
     /** Table of characters widths for this encoding. */
-    protected int[] widths = new int[256];
+    private int[] widths = new int[256];
     /** The weight of the font: normal, bold, etc. */
-    protected String Weight = "";
+    private String Weight = "";
     /** The italic angle of the font, usually 0.0 or negative. */
-    protected float ItalicAngle = 0.0f;
+    private float ItalicAngle = 0.0f;
     /** {@code true} if all the characters have the same width. */
-    protected boolean IsFixedPitch = false;
+    private boolean IsFixedPitch = false;
     /** The character set of the font. */
-    protected String CharacterSet;
+    private String CharacterSet;
     /** The llx of the FontBox. */
-    protected int llx = -50;
+    private int llx = -50;
     /** The lly of the FontBox. */
-    protected int lly = -200;
+    private int lly = -200;
     /** The lurx of the FontBox. */
-    protected int urx = 1000;
+    private int urx = 1000;
     /** The ury of the FontBox. */
-    protected int ury = 900;
+    private int ury = 900;
     /** The underline position. */
-    protected int UnderlinePosition = -100;
+    private int UnderlinePosition = -100;
     /** The underline thickness. */
-    protected int UnderlineThickness = 50;
+    private int UnderlineThickness = 50;
     /** A variable. */
-    protected int CapHeight = 700;
+    private int CapHeight = 700;
     /** A variable. */
-    protected int XHeight = 480;
+    private int XHeight = 480;
     /** A variable. */
-    protected int Ascender = 800;
+    private int Ascender = 800;
     /** A variable. */
-    protected int Descender = -200;
+    private int Descender = -200;
     /** A variable. */
-    protected int StdHW;
+    private int StdHW;
     /** A variable. */
-    protected int StdVW = 80;
+    private int StdVW = 80;
     /** Represents the section CharMetrics in the AFM file. Each value of this array
      * contains a {@code Object[4]} with an Integer, Integer, String and int[].
      * This is the code, width, name and char bbox. The key is the name of the char
      * and also an Integer with the char number. */
-    protected HashMap<Object, Object[]> CharMetrics = new HashMap<Object, Object[]>();
+    private HashMap<Object, Object[]> CharMetrics = new HashMap<Object, Object[]>();
     /** Represents the section KernPairs in the AFM file. The key is the name of the first character
      * and the value is a {@code Object[]} with two elements for each kern pair. Position 0 is the name of
      * the second character and position 1 is the kerning distance. This is repeated for all the pairs. */
-    protected HashMap<String, Object[]> KernPairs = new HashMap<String, Object[]>();
+    private HashMap<String, Object[]> KernPairs = new HashMap<String, Object[]>();
 
     /** Types of records in a PFB file. ASCII is 1 and BINARY is 2. They have to appear in the PFB file in this sequence. */
     private static final int PFB_TYPES[] = {1, 2, 1};
@@ -77,7 +78,7 @@ public class Type1Font {
 
 
     public Type1Font(String name, String encoding, byte[] afm, byte[] pfb) throws PdfException, IOException {
-        type1Parser = new Type1Parser(name, afm, pfb);
+        fontParser = new Type1Parser(name, afm, pfb);
         process(encoding);
     }
 
@@ -86,7 +87,7 @@ public class Type1Font {
     }
 
     public boolean isBuiltInFont() {
-        return type1Parser.isBuiltInFont();
+        return fontParser.isBuiltInFont();
     }
 
     public String getFontName() {
@@ -354,18 +355,26 @@ public class Type1Font {
      */
     public int getWidth(int ch) {
         if (encoding.isFastWinansi()) {
-            if (ch < 128 || ch >= 160 && ch <= 255)
+            if (ch < 128 || ch >= 160 && ch <= 255) {
                 return widths[ch];
-            else
+            } else {
                 return widths[PdfEncodings.winansi.get(ch)];
-        }
-        else {
+            }
+        } else {
             int total = 0;
-            byte mbytes[] = encoding.convertToBytes(ch);
-            for (int k = 0; k < mbytes.length; ++k)
-                total += widths[0xff & mbytes[k]];
+            byte bytes[] = encoding.convertToBytes(ch);
+            for (byte b : bytes) {
+                total += widths[0xff & b];
+            }
             return total;
         }
+    }
+
+    /**
+     * Gets table of characters widths for this simple font encoding.
+     */
+    public int[] getRawWidths() {
+        return widths;
     }
 
     /**
@@ -379,19 +388,66 @@ public class Type1Font {
             int len = text.length();
             for (int k = 0; k < len; ++k) {
                 char char1 = text.charAt(k);
-                if (char1 < 128 || char1 >= 160 && char1 <= 255)
+                if (char1 < 128 || char1 >= 160 && char1 <= 255) {
                     total += widths[char1];
-                else
+                } else {
                     total += widths[PdfEncodings.winansi.get(char1)];
+                }
             }
             return total;
         }
         else {
-            byte mbytes[] = convertToBytes(text);
-            for (int k = 0; k < mbytes.length; ++k)
-                total += widths[0xff & mbytes[k]];
+            byte bytes[] = encoding.convertToBytes(text);
+            for (byte b : bytes) {
+                total += widths[0xff & b];
+            }
         }
         return total;
+    }
+
+    /**
+     * Gets the descent of a <CODE>String</CODE> in normalized 1000 units. The descent will always be
+     * less than or equal to zero even if all the characters have an higher descent.
+     * @param text the <CODE>String</CODE> to get the descent of
+     * @return the descent in normalized 1000 units
+     */
+    public int getDescent(String text) {
+        int min = 0;
+        char chars[] = text.toCharArray();
+        for (char ch : chars) {
+            int bbox[] = getCharBBox(ch);
+            if (bbox != null && bbox[1] < min) {
+                min = bbox[1];
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Gets the ascent of a <CODE>String</CODE> in normalized 1000 units. The ascent will always be
+     * greater than or equal to zero even if all the characters have a lower ascent.
+     * @param text the <CODE>String</CODE> to get the ascent of
+     * @return the ascent in normalized 1000 units
+     */
+    public int getAscent(String text) {
+        int max = 0;
+        char chars[] = text.toCharArray();
+        for (char ch : chars) {
+            int bbox[] = getCharBBox(ch);
+            if (bbox != null && bbox[3] > max) {
+                max = bbox[3];
+            }
+        }
+        return max;
+    }
+
+    public int[] getCharBBox(char ch) {
+        byte b[] = encoding.convertToBytes(ch);
+        if (b.length == 0) {
+            return null;
+        } else {
+            return charBBoxes[b[0] & 0xff];
+        }
     }
 
     /**
@@ -404,24 +460,24 @@ public class Type1Font {
         return encoding.convertToBytes(text);
     }
 
-    public byte[] getFontStreamBytes(boolean embedded) throws PdfException {
-        if (type1Parser.isBuiltInFont() || !embedded)
+    public byte[] getFontStreamBytes() throws PdfException {
+        if (fontParser.isBuiltInFont())
             return null;
         if (fontStreamBytes != null)
             return fontStreamBytes;
         RandomAccessFileOrArray raf = null;
         try {
-            raf = type1Parser.getPostscriptBinary();
+            raf = fontParser.getPostscriptBinary();
             int fileLength = (int)raf.length();
             fontStreamBytes = new byte[fileLength - 18];
             fontStreamLengths = new int[3];
             int bytePtr = 0;
             for (int k = 0; k < 3; ++k) {
                 if (raf.read() != 0x80) {
-                    throw new PdfException("start.marker.missing.in.1").setMessageParams(type1Parser.getPfbName());
+                    throw new PdfException("start.marker.missing.in.1").setMessageParams(fontParser.getPfbName());
                 }
                 if (raf.read() != PFB_TYPES[k])
-                    throw new PdfException("incorrect.segment.type.in.1").setMessageParams(type1Parser.getPfbName());
+                    throw new PdfException("incorrect.segment.type.in.1").setMessageParams(fontParser.getPfbName());
                 int size = raf.read();
                 size += raf.read() << 8;
                 size += raf.read() << 16;
@@ -430,7 +486,7 @@ public class Type1Font {
                 while (size != 0) {
                     int got = raf.read(fontStreamBytes, bytePtr, size);
                     if (got < 0) {
-                        throw new PdfException("premature.end.in.1").setMessageParams(type1Parser.getPfbName());
+                        throw new PdfException("premature.end.in.1").setMessageParams(fontParser.getPfbName());
                     }
                     bytePtr += got;
                     size -= got;
@@ -453,7 +509,7 @@ public class Type1Font {
     }
 
     protected void process(String baseEncoding) throws PdfException, IOException {
-        RandomAccessFileOrArray raf = type1Parser.getMetricsFile();
+        RandomAccessFileOrArray raf = fontParser.getMetricsFile();
         String line;
         boolean startKernPairs = false;
         while ((line = raf.readLine()) != null)
@@ -505,7 +561,7 @@ public class Type1Font {
             }
         }
         if (!startKernPairs) {
-            throw new PdfException("missing.startcharmetrics.in.1").setMessageParams(type1Parser.getName());
+            throw new PdfException("missing.startcharmetrics.in.1").setMessageParams(fontParser.getName());
         }
         while ((line = raf.readLine()) != null) {
             StringTokenizer tok = new StringTokenizer(line);
@@ -548,7 +604,7 @@ public class Type1Font {
             CharMetrics.put(N, metrics);
         }
         if (startKernPairs) {
-            throw new PdfException("missing.endcharmetrics.in.1").setMessageParams(type1Parser.getName());
+            throw new PdfException("missing.endcharmetrics.in.1").setMessageParams(fontParser.getName());
         }
         if (!CharMetrics.containsKey("nonbreakingspace")) {
             Object[] space = CharMetrics.get("space");
@@ -598,11 +654,11 @@ public class Type1Font {
                 }
             }
         } else if (!endOfMetrics) {
-            throw new PdfException("missing.endfontmetrics.in.1").setMessageParams(type1Parser.getName());
+            throw new PdfException("missing.endfontmetrics.in.1").setMessageParams(fontParser.getName());
         }
 
         if (startKernPairs) {
-            throw new PdfException("missing.endkernpairs.in.1").setMessageParams(type1Parser.getName());
+            throw new PdfException("missing.endkernpairs.in.1").setMessageParams(fontParser.getName());
         }
         raf.close();
 

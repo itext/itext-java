@@ -4,6 +4,7 @@ import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 
 public class FontEncoding {
+
     /** Converts {@code char} directly to {@code byte} by casting. */
     private boolean directTextToByte;
     /** Base font encoding. */
