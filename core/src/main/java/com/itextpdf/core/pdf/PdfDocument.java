@@ -533,6 +533,21 @@ public class PdfDocument implements IEventDispatcher {
                         catalog.getPdfObject().put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
                     }
+
+                    if (catalog.destinationTree != null){
+                        PdfObject destinationRoot = catalog.destinationTree.generateTree();
+
+                        if (catalog.getPdfObject().isModified() || destinationRoot.isModified()) {
+                            PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
+                            if (names == null){
+                                names = new PdfDictionary();
+                                names.makeIndirect(this);
+                            }
+                            names.put(PdfName.Dests, destinationRoot);
+                            catalog.getPdfObject().put(PdfName.Names, names);
+                        }
+                    }
+
                     if (info.getPdfObject().isModified()) {
                         info.flush();
                     }
@@ -555,6 +570,20 @@ public class PdfDocument implements IEventDispatcher {
                         catalog.getOCProperties(false).flush();
                     }
                     catalog.getPdfObject().put(PdfName.Pages, catalog.pageTree.generateTree());
+
+                    if (catalog.destinationTree != null){
+                        PdfObject destinationRoot = catalog.destinationTree.generateTree();
+                        if (destinationRoot != null){
+                            PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
+                            if (names == null){
+                                names = new PdfDictionary();
+                                names.makeIndirect(this);
+                            }
+                            names.put(PdfName.Dests, destinationRoot);
+                            catalog.getPdfObject().put(PdfName.Names, names);
+                        }
+                    }
+
                     catalog.getPdfObject().flush(false);
                     info.flush();
                     for (PdfFont font: documentFonts) {
@@ -739,6 +768,16 @@ public class PdfDocument implements IEventDispatcher {
 
     public PdfOutline getOutlines(boolean updateOutlines) throws PdfException {
         return catalog.getOutlines(updateOutlines);
+    }
+
+    /**
+     * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
+     * @param key Name of the destination.
+     * @param value An object destination refers to.
+     * @throws PdfException
+     */
+    public void addNewName(PdfObject key, PdfObject value) throws PdfException {
+        catalog.addNewDestinationName(key, value);
     }
 
     /**
