@@ -138,6 +138,7 @@ public class PdfException extends Exception {
     public static final String LzwFlavourNotSupported = "lzw.flavour.not.supported";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
+    public static final String NameAlreadyExistsInTheNameTree = "name.already.exist.in.the.name.tree";
     public static final String NoCompatibleEncryptionFound = "no.compatible.encryption.found";
     public static final String NotAPlaceableWindowsMetafile = "not.a.placeable.windows.metafile";
     public static final String NoValidEncryptionMode = "no.valid.encryption.mode";

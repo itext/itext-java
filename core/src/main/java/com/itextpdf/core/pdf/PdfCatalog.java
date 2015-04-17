@@ -10,6 +10,7 @@ import java.util.*;
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     protected final PdfPagesTree pageTree;
+    protected PdfNameTree destinationTree = null;
     protected PdfOCProperties ocProperties;
 
     private final static String OutlineRoot = "Outlines";
@@ -20,6 +21,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     //This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
     private boolean outlineMode;
     private HashMap<Object, PdfObject> names = new HashMap<Object, PdfObject>();
+    private boolean isNamedDestinationsGot = false;
 
     protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject);
@@ -168,6 +170,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     public HashMap<Object, PdfObject> getNamedDestinations() throws PdfException {
         HashMap<Object, PdfObject> names = getNamedDestinatnionsFromNames();
         names.putAll(getNamedDestinatnionsFromStrings());
+        isNamedDestinationsGot = true;
         return names;
     }
 
@@ -185,6 +188,25 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      */
     HashMap<PdfObject, ArrayList<PdfOutline>> getPagesWithOutlines() {
         return pagesWithOutlines;
+    }
+
+    /**
+     * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
+     * @param key Name of the destination.
+     * @param value An object destination refers to.
+     * @throws PdfException
+     */
+    void addNewDestinationName(PdfObject key, PdfObject value) throws PdfException {
+        if (!isNamedDestinationsGot)
+            names = getNamedDestinations();
+        if (names.containsKey(key))
+            throw new PdfException(PdfException.NameAlreadyExistsInTheNameTree);
+
+        if (destinationTree == null){
+            destinationTree = new PdfNameTree(this, PdfName.Dests);
+        }
+        destinationTree.addNewName(key, value);
+        names.put(key, value);
     }
 
     /**
