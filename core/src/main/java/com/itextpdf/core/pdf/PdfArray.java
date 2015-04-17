@@ -40,6 +40,13 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         }
     }
 
+    public PdfArray(double[] numbers) {
+        list = new ArrayList<PdfObject>(numbers.length);
+        for (double f : numbers) {
+            list.add(new PdfNumber(f));
+        }
+    }
+
     public PdfArray(int[] numbers) {
         list = new ArrayList<PdfObject>(numbers.length);
         for (float i : numbers) {
