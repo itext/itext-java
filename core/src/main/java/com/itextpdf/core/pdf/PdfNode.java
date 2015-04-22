@@ -8,6 +8,7 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
     private PdfArray kids;
     private PdfArray names;
     private PdfArray limits;
+    private PdfDocument document;
 
     /**
      * Creates a Node in the current document
@@ -17,7 +18,8 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfNode(PdfDocument pdfDocument) throws PdfException {
         super(new PdfDictionary());
-        getPdfObject().makeIndirect(pdfDocument);
+        this.document = pdfDocument;
+        getPdfObject().makeIndirect(document);
         kids = new PdfArray();
         names = new PdfArray();
         limits = new PdfArray();
@@ -49,7 +51,7 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
 
         names.add(key);
         PdfDictionary dict = new PdfDictionary();
-        dict.makeIndirect(getDocument());
+        dict.makeIndirect(this.document);
         dict.put(PdfName.D, value);
         names.add(dict.getIndirectReference());
         if (limits.size() == 2)

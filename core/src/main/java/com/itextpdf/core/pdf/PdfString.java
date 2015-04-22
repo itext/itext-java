@@ -258,9 +258,9 @@ public class PdfString extends PdfPrimitiveObject {
                             break;
                         case '\r':
                             lineBreak = true;
-                            ch = content[i++];
-                            if (ch != '\n')
+                            if (i < content.length && content[i++] != '\n') {
                                 i--;
+                            }
                             break;
                         case '\n':
                             lineBreak = true;

@@ -542,9 +542,9 @@ public class PdfDocument implements IEventDispatcher {
                             if (names == null){
                                 names = new PdfDictionary();
                                 names.makeIndirect(this);
+                                names.put(PdfName.Dests, destinationRoot);
+                                catalog.getPdfObject().put(PdfName.Names, names);
                             }
-                            names.put(PdfName.Dests, destinationRoot);
-                            catalog.getPdfObject().put(PdfName.Names, names);
                         }
                     }
 
@@ -578,9 +578,9 @@ public class PdfDocument implements IEventDispatcher {
                             if (names == null){
                                 names = new PdfDictionary();
                                 names.makeIndirect(this);
+                                names.put(PdfName.Dests, destinationRoot);
+                                catalog.getPdfObject().put(PdfName.Names, names);
                             }
-                            names.put(PdfName.Dests, destinationRoot);
-                            catalog.getPdfObject().put(PdfName.Names, names);
                         }
                     }
 

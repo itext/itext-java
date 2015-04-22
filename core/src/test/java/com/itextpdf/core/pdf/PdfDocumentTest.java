@@ -2,8 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
-import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
-import com.itextpdf.core.pdf.navigation.PdfStringDestination;
+import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.text.DocumentException;
 import org.junit.*;
@@ -11,8 +10,6 @@ import org.junit.*;
 import java.io.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.TreeSet;
 
 public class PdfDocumentTest {
 
@@ -1217,6 +1214,55 @@ public class PdfDocumentTest {
         }
         reader.close();
 
+    }
+
+    @Test
+    public void addOutlinesWithNamedDestinations01() throws IOException, PdfException, InterruptedException, DocumentException {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
+        String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        PdfArray array1 = new PdfArray();
+        array1.add(pdfDoc.getPage(2).getPdfObject());
+        array1.add(PdfName.XYZ);
+        array1.add(new PdfNumber(36));
+        array1.add(new PdfNumber(806));
+        array1.add(new PdfNumber(0));
+
+        PdfArray array2 = new PdfArray();
+        array2.add(pdfDoc.getPage(3).getPdfObject());
+        array2.add(PdfName.XYZ);
+        array2.add(new PdfNumber(36));
+        array2.add(new PdfNumber(806));
+        array2.add(new PdfNumber(1.25));
+
+        PdfArray array3 = new PdfArray();
+        array3.add(pdfDoc.getPage(4).getPdfObject());
+        array3.add(PdfName.XYZ);
+        array3.add(new PdfNumber(36));
+        array3.add(new PdfNumber(806));
+        array3.add(new PdfNumber(1));
+
+        pdfDoc.addNewName(new PdfString("test1"), array2);
+        pdfDoc.addNewName(new PdfString("test2"), array3);
+        pdfDoc.addNewName(new PdfString("test3"), array1);
+
+        PdfOutline root = pdfDoc.getOutlines(false);
+        if (root == null)
+            root = new PdfOutline(pdfDoc);
+
+        PdfOutline firstOutline = root.addOutline("Test1");
+        firstOutline.addDestination(PdfDestination.makeDestination(new PdfString("test1")));
+        PdfOutline secondOutline = root.addOutline("Test2");
+        secondOutline.addDestination(PdfDestination.makeDestination(new PdfString("test2")));
+        PdfOutline thirdOutline = root.addOutline("Test3");
+        thirdOutline.addDestination(PdfDestination.makeDestination(new PdfString("test3")));
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_outlinesWithNamedDestinations01.pdf", destinationFolder, "diff_"));
     }
 
     @Test

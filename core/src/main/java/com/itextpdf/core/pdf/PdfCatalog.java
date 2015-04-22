@@ -223,7 +223,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             outlines.clear();
 
         outlineMode = true;
-        names = getNamedDestinations();
+        if (!isNamedDestinationsGot)
+            names = getNamedDestinations();
         PdfDictionary outlineRoot = getPdfObject().getAsDictionary(PdfName.Outlines);
         if (outlineRoot == null){
             return null;
