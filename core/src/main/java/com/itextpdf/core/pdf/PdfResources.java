@@ -147,6 +147,14 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return names;
     }
 
+    public PdfArray getProcSet() throws PdfException {
+        return getPdfObject().getAsArray(PdfName.ProcSet);
+    }
+
+    public void setProcSet(PdfArray array) {
+        getPdfObject().put(PdfName.ProcSet, array);
+    }
+
     public Set<PdfName> getResourceNames(PdfName resType) {
         Map<PdfName, PdfObject> resourceCategory = nameToResource.get(resType);
         return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet();
@@ -187,6 +195,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
                 nameToResource.put(resourceType, new HashMap<PdfName, PdfObject>());
             }
             PdfDictionary resources = dictionary.getAsDictionary(resourceType);
+            if (resources == null)
+                continue;
             for (PdfName resourceName : resources.keySet()) {
                 PdfObject resource = resources.get(resourceName, false);
                 resourceToName.put(resource, resourceName);

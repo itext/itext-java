@@ -378,6 +378,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName PrinterMark = createDirectName("PrinterMark");
     public static final PdfName PrintState = createDirectName("PrintState");
     public static final PdfName Private = createDirectName("Private");
+    public static final PdfName ProcSet = createDirectName("ProcSet");
     public static final PdfName Producer = createDirectName("Producer");
     public static final PdfName Properties = createDirectName("Properties");
     public static final PdfName Pushpin = createDirectName("PushPin");
