@@ -6,7 +6,7 @@ import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 
-public class Link extends Span {
+public class Link extends Text {
 
     protected PdfLinkAnnotation linkAnnotation;
 

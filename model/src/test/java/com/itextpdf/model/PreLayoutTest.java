@@ -3,19 +3,19 @@ package com.itextpdf.model;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.model.element.Paragraph;
-import com.itextpdf.model.element.Property;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.renderer.BlockRenderer;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.TextRenderer;
-import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -55,7 +55,13 @@ public class PreLayoutTest {
             if (i % 10 == 0) {
                 Text pageNumberText = new Text("Page #: {pageNumber}");
 
-                IRenderer renderer = pageNumberText.makeRenderer();
+                IRenderer renderer = new TextRenderer(pageNumberText, pageNumberText.getText()) {
+                    @Override
+                    public void draw(PdfDocument document, PdfCanvas canvas) {
+                        lines.set(0, lines.get(0).replace("{pageNumber}", String.valueOf(occupiedArea.getPageNumber())));
+                        super.draw(document, canvas);
+                    }
+                };
                 pageNumberText.setNextRenderer(renderer);
                 pageNumberRenderers.add(renderer);
 
@@ -116,14 +122,14 @@ public class PreLayoutTest {
             }
         }
         StringBuilder text = new StringBuilder();
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 1200; i++) {
             text.append("A very long text is here...");
         }
         Paragraph twoColumnParagraph = new Paragraph();
         twoColumnParagraph.setNextRenderer(new TwoColumnParagraphRenderer(twoColumnParagraph));
         Text textElement = new Text(text.toString());
-        twoColumnParagraph.add(textElement);
-        document.add(twoColumnParagraph.setFont(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, ""))));
+        twoColumnParagraph.add(textElement).setFont(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")));
+        document.add(twoColumnParagraph);
 
         document.add(new Paragraph("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
 

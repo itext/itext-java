@@ -4,14 +4,14 @@ import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.PageBreakRenderer;
 
-public class PageBreak extends AbstractElement {
+public class AreaBreak extends AbstractElement {
 
     protected PageSize pageSize;
 
-    public PageBreak() {
+    public AreaBreak() {
     }
 
-    public PageBreak(PageSize pageSize) {
+    public AreaBreak(PageSize pageSize) {
         this.pageSize = pageSize;
     }
 

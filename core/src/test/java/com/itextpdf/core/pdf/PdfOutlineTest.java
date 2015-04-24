@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.navigation.PdfStringDestination;
-import com.itextpdf.testutils.CompareTool;
+import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import org.junit.*;
 
