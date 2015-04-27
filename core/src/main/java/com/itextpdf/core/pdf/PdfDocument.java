@@ -399,26 +399,32 @@ public class PdfDocument implements IEventDispatcher {
         defaultPageSize = pageSize;
     }
 
+    @Override
     public void addEventHandler(String type, IEventHandler handler) {
         eventDispatcher.addEventHandler(type, handler);
     }
 
+    @Override
     public void dispatchEvent(com.itextpdf.core.events.Event event) {
         eventDispatcher.dispatchEvent(event);
     }
 
+    @Override
     public void dispatchEvent(com.itextpdf.core.events.Event event, boolean delayed) {
         eventDispatcher.dispatchEvent(event, delayed);
     }
 
+    @Override
     public boolean hasEventHandler(String type) {
         return eventDispatcher.hasEventHandler(type);
     }
 
+    @Override
     public void removeEventHandler(String type, IEventHandler handler) {
         eventDispatcher.removeEventHandler(type, handler);
     }
 
+    @Override
     public void removeAllHandlers() {
         eventDispatcher.removeAllHandlers();
     }
