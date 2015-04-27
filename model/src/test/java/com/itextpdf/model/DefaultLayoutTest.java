@@ -1,12 +1,13 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.model.element.PageBreak;
+import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Paragraph;
-import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -37,7 +38,7 @@ public class DefaultLayoutTest {
         Document document = new Document(pdfDocument);
 
         Paragraph p = new Paragraph("Hello. I am a paragraph. I want you to process me correctly");
-        document.add(p).add(p).add(new PageBreak(PageSize.Default)).add(p);
+        document.add(p).add(p).add(new AreaBreak(PageSize.Default)).add(p);
 
         document.close();
     }
@@ -50,10 +51,10 @@ public class DefaultLayoutTest {
 
         Document document = new Document(pdfDocument);
 
-        String str = "Hello. I am a paragraph. I want you to process me correctly";
-        document.add(new Paragraph(str)).
+        String str = "Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.";
+        document.add(new Paragraph(str).setBackgroundColor(Color.Green)).
                 add(new Paragraph(str)).
-                add(new PageBreak(PageSize.Default)).
+                add(new AreaBreak(PageSize.Default)).
                 add(new Paragraph(str));
 
         document.close();

@@ -1,7 +1,9 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.IPropertyContainer;
+import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
@@ -10,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractElement implements IElement {
+public abstract class AbstractElement<T extends AbstractElement> implements IElement {
 
     protected IRenderer nextRenderer;
     protected Map<Integer, Object> properties = new HashMap<>();
@@ -50,7 +52,7 @@ public abstract class AbstractElement implements IElement {
         return getProperty(Property.WIDTH);
     }
 
-    public <T extends AbstractElement> T setWidth(float width) {
+    public T setWidth(float width) {
         return setProperty(Property.WIDTH, width);
     }
 
@@ -58,11 +60,11 @@ public abstract class AbstractElement implements IElement {
         return getProperty(Property.HEIGHT);
     }
 
-    public <T extends AbstractElement> T setHeight(float height) {
+    public T setHeight(float height) {
         return setProperty(Property.HEIGHT, height);
     }
 
-    public <T extends AbstractElement> T setRelativePosition(float left, float top, float right, float bottom) {
+    public T setRelativePosition(float left, float top, float right, float bottom) {
         return setProperty(Property.POSITION, LayoutPosition.RELATIVE).
             setProperty(Property.LEFT, left).
             setProperty(Property.RIGHT, right).
@@ -70,20 +72,36 @@ public abstract class AbstractElement implements IElement {
             setProperty(Property.BOTTOM, bottom);
     }
 
-    public <T extends AbstractElement> T setFixedPosition(float x, float y) {
+    public T setFixedPosition(float x, float y) {
         return setProperty(Property.POSITION, LayoutPosition.FIXED).
             setProperty(Property.X, x).
             setProperty(Property.Y, y);
     }
 
-    public <T extends AbstractElement> T setAbsolutePosition(float x, float y) {
+    public T setAbsolutePosition(float x, float y) {
         return setProperty(Property.POSITION, LayoutPosition.ABSOLUTE).
             setProperty(Property.X, x).
             setProperty(Property.Y, y);
     }
 
-    public <T extends AbstractElement> T setFont(PdfFont font) {
+    public T setFont(PdfFont font) {
         return setProperty(Property.FONT, font);
+    }
+
+    public T setFontColor(Color fontColor) {
+        return setProperty(Property.FONT_COLOR, fontColor);
+    }
+
+    public T setFontSize(float fontSize) {
+        return setProperty(Property.FONT_SIZE, fontSize);
+    }
+
+    public T setBackgroundColor(Color backgroundColor) {
+        return setBackgroundColor(backgroundColor, 0, 0, 0, 0);
+    }
+
+    public T setBackgroundColor(Color backgroundColor, float extraLeft, final float extraTop, final float extraRight, float extraBottom) {
+        return setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.itextpdf.model.element;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ImageRenderer;
 
-public class Image extends AbstractElement implements ILeafElement {
+public class Image extends AbstractElement implements ILeafElement, IAccessibleElement {
     @Override
     public IRenderer makeRenderer() {
         if (nextRenderer != null) {

@@ -1,29 +1,12 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.BlockRenderer;
 import com.itextpdf.model.renderer.IRenderer;
 
-public abstract class BlockElement<T extends BlockElement> extends AbstractElement implements IAccessibleElement {
+public abstract class BlockElement<T extends BlockElement> extends AbstractElement<T> implements IAccessibleElement {
 
     public BlockElement() {
-    }
-
-    // TODO All in-flow children of a block flow must be blocks, or all in-flow children of a block flow must be inlines.
-    // We will probably define layout strategy considering this.
-    // https://www.webkit.org/blog/115/webcore-rendering-ii-blocks-and-inlines/
-    public T add(BlockElement element) {
-        childElements.add(element);
-        return (T) this;
-    }
-
-    public T add(InlineElement element) {
-        childElements.add(element);
-        return (T) this;
-    }
-
-    public T add(ILeafElement element) {
-        childElements.add(element);
-        return (T) this;
     }
 
     @Override
@@ -35,4 +18,77 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         }
         return new BlockRenderer(this);
     }
+
+    public Float getMarginLeft() {
+        return getProperty(Property.MARGIN_LEFT);
+    }
+
+    public T setMarginLeft(float value) {
+        return setProperty(Property.MARGIN_LEFT, value);
+    }
+
+    public Float getMarginRight() {
+        return getProperty(Property.MARGIN_RIGHT);
+    }
+
+    public T setMarginRight(float value) {
+        return setProperty(Property.MARGIN_RIGHT, value);
+    }
+
+    public Float getMarginTop() {
+        return getProperty(Property.MARGIN_TOP);
+    }
+
+    public T setMarginTop(float value) {
+        return setProperty(Property.MARGIN_TOP, value);
+    }
+
+    public Float getMarginBottom() {
+        return getProperty(Property.MARGIN_BOTTOM);
+    }
+
+    public T setMarginBottom(float value) {
+        return setProperty(Property.MARGIN_BOTTOM, value);
+    }
+
+    public T setMargins(float marginTop, float marginRight, float marginBottom, float marginLeft) {
+        return (T) setMarginTop(marginTop).setMarginRight(marginRight).setMarginBottom(marginBottom).setMarginLeft(marginLeft);
+    }
+
+    public Float getPaddingLeft() {
+        return getProperty(Property.PADDING_LEFT);
+    }
+
+    public T setPaddingLeft(float value) {
+        return setProperty(Property.PADDING_LEFT, value);
+    }
+
+    public Float getPaddingRight() {
+        return getProperty(Property.PADDING_RIGHT);
+    }
+
+    public T setPaddingRight(float value) {
+        return setProperty(Property.PADDING_RIGHT, value);
+    }
+
+    public Float getPaddingTop() {
+        return getProperty(Property.PADDING_TOP);
+    }
+
+    public T setPaddingTop(float value) {
+        return setProperty(Property.PADDING_TOP, value);
+    }
+
+    public Float getPaddingBottom() {
+        return getProperty(Property.PADDING_BOTTOM);
+    }
+
+    public T setPaddingBottom(float value) {
+        return setProperty(Property.PADDING_BOTTOM, value);
+    }
+
+    public T setPaddings(float paddingTop, float paddingRight, float paddingBottom, float paddingLeft) {
+        return (T) setMarginTop(paddingTop).setMarginRight(paddingRight).setMarginBottom(paddingBottom).setMarginLeft(paddingLeft);
+    }
+
 }

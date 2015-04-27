@@ -3,19 +3,19 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
-import com.itextpdf.model.element.PageBreak;
+import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
 
 import java.util.List;
 
-public class PageBreakRenderer implements IRenderer {
+public class AreaBreakRenderer implements IRenderer {
 
-    protected PageBreak pageBreak;
+    protected AreaBreak areaBreak;
 
-    public PageBreakRenderer(PageBreak pageBreak) {
-        this.pageBreak = pageBreak;
+    public AreaBreakRenderer(AreaBreak areaBreak) {
+        this.areaBreak = areaBreak;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class PageBreakRenderer implements IRenderer {
         LayoutArea occupiedArea = layoutContext.getArea().clone();
         occupiedArea.getBBox().setHeight(0);
         occupiedArea.getBBox().setWidth(0);
-        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, null).setNewPageSize(pageBreak.getPageSize());
+        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, null).setNewPageSize(areaBreak.getPageSize());
     }
 
     @Override

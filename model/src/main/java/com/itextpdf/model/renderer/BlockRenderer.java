@@ -15,8 +15,6 @@ public class BlockRenderer extends AbstractRenderer {
         super(modelElement);
     }
 
-    // TODO All in-flow children of a block flow must be blocks, or all in-flow children of a block flow must be inlines.
-    // https://www.webkit.org/blog/115/webcore-rendering-ii-blocks-and-inlines/
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
 

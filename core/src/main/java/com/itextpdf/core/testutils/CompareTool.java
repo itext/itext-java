@@ -8,7 +8,6 @@ import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.core.xmp.*;
 import com.itextpdf.core.xmp.options.SerializeOptions;
-import org.bouncycastle.util.Strings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -24,7 +23,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.io.OutputStream;
 import java.util.*;
 
 public class CompareTool {
@@ -73,6 +71,7 @@ public class CompareTool {
     }
 
     public void setGenerateCompareByContentXmlReport(boolean generateCompareByContentXmlReport) {
+        this.generateCompareByContentXmlReport = generateCompareByContentXmlReport;
         this.generateCompareByContentXmlReport = generateCompareByContentXmlReport;
     }
 

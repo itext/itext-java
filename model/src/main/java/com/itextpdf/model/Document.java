@@ -1,11 +1,18 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.model.element.AreaBreak;
+import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.element.IElement;
+import com.itextpdf.model.element.Image;
 import com.itextpdf.model.renderer.DocumentRenderer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,9 +55,21 @@ public class Document implements IPropertyContainer {
      * @param element
      * @return
      */
-    public Document add(IElement element) throws PdfException {
+    public Document add(BlockElement element) throws PdfException {
         childElements.add(element);
         ensureDocumentRendererNotNull().addChild(element.createRendererSubTree());
+        return this;
+    }
+
+    public Document add(Image image) {
+        childElements.add(image);
+        ensureDocumentRendererNotNull().addChild(image.createRendererSubTree());
+        return this;
+    }
+
+    public Document add(AreaBreak areaBreak) {
+        childElements.add(areaBreak);
+        ensureDocumentRendererNotNull().addChild(areaBreak.createRendererSubTree());
         return this;
     }
 
@@ -95,7 +114,22 @@ public class Document implements IPropertyContainer {
 
     @Override
     public <T> T getDefaultProperty(Integer propertyKey) {
-        return null;
+        try {
+            switch (propertyKey) {
+                case Property.FONT:
+                    return (T) new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, ""));
+                case Property.FONT_SIZE:
+                    return (T) new Integer(12);
+                case Property.TEXT_RENDERING_MODE:
+                    return (T) Integer.valueOf(Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL);
+                case Property.TEXT_RISE:
+                    return (T) new Float(0);
+                default:
+                    return null;
+            }
+        } catch (PdfException | IOException exc) {
+            throw new RuntimeException(exc);
+        }
     }
 
     public Document setProperty(Integer propertyKey, Object value) {
