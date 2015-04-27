@@ -15,12 +15,12 @@ import java.util.*;
 public abstract class AbstractRenderer implements IRenderer {
 
     // TODO linkedList?
-    protected List<IRenderer> childRenderers = new ArrayList<IRenderer>();
+    protected List<IRenderer> childRenderers = new ArrayList<>();
     protected IPropertyContainer modelElement;
     protected boolean flushed = false;
     protected LayoutArea occupiedArea;
     protected IRenderer parent;
-    protected Map<Integer, Object> properties = new HashMap<Integer, Object>();
+    protected Map<Integer, Object> properties = new HashMap<>();
 
     public AbstractRenderer() {
     }
@@ -51,13 +51,13 @@ public abstract class AbstractRenderer implements IRenderer {
         Object ownProperty = getOwnProperty(key);
         if (ownProperty != null)
             return (T) ownProperty;
-        Object modelProperty = modelElement.getProperty(key);
+        Object modelProperty = modelElement != null ? modelElement.getProperty(key) : null;
         if (modelProperty != null)
             return (T) modelProperty;
-        Object baseProperty = parent != null ? parent.getProperty(key) : null;
+        Object baseProperty = parent != null && Property.isPropertyInherited(key, modelElement, parent.getModelElement()) ? parent.getProperty(key) : null;
         if (baseProperty != null)
             return (T) baseProperty;
-        return modelElement.getDefaultProperty(key);
+        return modelElement != null ? (T) modelElement.getDefaultProperty(key) : null;
     }
 
     public <T> T getOwnProperty(int key) {

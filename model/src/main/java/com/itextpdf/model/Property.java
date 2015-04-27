@@ -4,11 +4,7 @@ import com.itextpdf.canvas.color.Color;
 
 public class Property {
 
-    // TODO test which makes sure there is no overlapping in numbers
-
-    private Property() {
-    }
-
+    // TODO test which makes sure there is no overlapping in numbers, or a handy mechanism to generate them.
     public static final int X = 1;
     public static final int Y = 2;
     public static final int WIDTH = 3;
@@ -40,7 +36,14 @@ public class Property {
     public static final int PADDING_LEFT = 29;
     public static final int PADDING_RIGHT = 30;
 
-    // TODO some properties are inherited, some are not.
+    private Property() {
+    }
+
+    public static boolean isPropertyInherited(int propertyKey, IPropertyContainer parent, IPropertyContainer descendant) {
+        if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE)
+            return true;
+        return false;
+    }
 
 
     public enum BaseDirection {

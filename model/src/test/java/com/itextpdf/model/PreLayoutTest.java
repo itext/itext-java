@@ -13,8 +13,8 @@ import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
-import com.itextpdf.model.renderer.BlockRenderer;
 import com.itextpdf.model.renderer.IRenderer;
+import com.itextpdf.model.renderer.ParagraphRenderer;
 import com.itextpdf.model.renderer.TextRenderer;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
@@ -58,7 +58,7 @@ public class PreLayoutTest {
                 IRenderer renderer = new TextRenderer(pageNumberText, pageNumberText.getText()) {
                     @Override
                     public void draw(PdfDocument document, PdfCanvas canvas) {
-                        lines.set(0, lines.get(0).replace("{pageNumber}", String.valueOf(occupiedArea.getPageNumber())));
+                        line = line.replace("{pageNumber}", String.valueOf(occupiedArea.getPageNumber()));
                         super.draw(document, canvas);
                     }
                 };
@@ -92,33 +92,45 @@ public class PreLayoutTest {
 
         document.add(new Paragraph("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
 
-        class TwoColumnParagraphRenderer extends BlockRenderer {
+        class TwoColumnParagraphRenderer extends ParagraphRenderer {
+
+            int oneColumnPage = -1;
+
             public TwoColumnParagraphRenderer(Paragraph modelElement) {
                 super(modelElement);
+            }
+
+            public TwoColumnParagraphRenderer(Paragraph modelElement, int oneColumnPage) {
+                this(modelElement);
+                this.oneColumnPage = oneColumnPage;
             }
 
             @Override
             public List<LayoutArea> initElementAreas(LayoutContext context) {
                 LayoutArea area = context.getArea();
                 List<LayoutArea> areas = new ArrayList<LayoutArea>();
-                LayoutArea firstArea = area.clone();
-                LayoutArea secondArea = area.clone();
-                firstArea.getBBox().setWidth(firstArea.getBBox().getWidth() / 2);
-                secondArea.getBBox().setX(secondArea.getBBox().getX() + secondArea.getBBox().getWidth() / 2);
-                secondArea.getBBox().setWidth(firstArea.getBBox().getWidth());
-                areas.add(firstArea);
-                areas.add(secondArea);
+                if (context.getArea().getPageNumber() != oneColumnPage) {
+                    LayoutArea firstArea = area.clone();
+                    LayoutArea secondArea = area.clone();
+                    firstArea.getBBox().setWidth(firstArea.getBBox().getWidth() / 2);
+                    secondArea.getBBox().setX(secondArea.getBBox().getX() + secondArea.getBBox().getWidth() / 2);
+                    secondArea.getBBox().setWidth(firstArea.getBBox().getWidth());
+                    areas.add(firstArea);
+                    areas.add(secondArea);
+                } else {
+                    areas.add(area);
+                }
                 return areas;
             }
 
             @Override
-            protected BlockRenderer createSplitRenderer() {
-                return new TwoColumnParagraphRenderer((Paragraph) modelElement);
+            protected ParagraphRenderer createSplitRenderer() {
+                return new TwoColumnParagraphRenderer((Paragraph) modelElement, oneColumnPage);
             }
 
             @Override
-            protected BlockRenderer createOverflowRenderer() {
-                return new TwoColumnParagraphRenderer((Paragraph) modelElement);
+            protected ParagraphRenderer createOverflowRenderer() {
+                return new TwoColumnParagraphRenderer((Paragraph) modelElement, oneColumnPage);
             }
         }
         StringBuilder text = new StringBuilder();
@@ -133,18 +145,16 @@ public class PreLayoutTest {
 
         document.add(new Paragraph("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
 
+        int paragraphLastPageNumber = -1;
         List<IRenderer> documentChildRenderers = document.getRenderer().getChildRenderers();
-        for (int i = documentChildRenderers.size() - 1; i >= 0; i--)
+        for (int i = documentChildRenderers.size() - 1; i >= 0; i--) {
             if (documentChildRenderers.get(i).getModelElement() == twoColumnParagraph) {
-                TwoColumnParagraphRenderer renderer = (TwoColumnParagraphRenderer) documentChildRenderers.get(i);
-                if (renderer.getChildRenderers().size() == 2) {
-                    int len = ((TextRenderer)renderer.getChildRenderers().get(1)).getText().length();
-                    textElement.setText(textElement.getText().substring(0, textElement.getText().length() - len));
-                }
+                paragraphLastPageNumber = documentChildRenderers.get(i).getOccupiedArea().getPageNumber();
                 break;
             }
+        }
 
-        twoColumnParagraph.setNextRenderer(new TwoColumnParagraphRenderer(twoColumnParagraph));
+        twoColumnParagraph.setNextRenderer(new TwoColumnParagraphRenderer(twoColumnParagraph, paragraphLastPageNumber));
         document.relayout();
 
         //Close document. Drawing of content is happened on close

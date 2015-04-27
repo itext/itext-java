@@ -13,7 +13,6 @@ import com.itextpdf.model.element.Text;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -52,7 +51,6 @@ public class OverflowTest {
     }
 
     @Test
-    @Ignore("Clever functionality not implemented yet")
     public void textOverflowTest02() throws IOException, PdfException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest02.pdf";
@@ -72,7 +70,6 @@ public class OverflowTest {
     }
 
     @Test
-    @Ignore("Clever functionality not implemented yet")
     public void textOverflowTest03() throws IOException, PdfException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest03.pdf";

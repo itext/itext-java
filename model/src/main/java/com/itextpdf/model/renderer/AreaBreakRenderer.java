@@ -10,11 +10,11 @@ import com.itextpdf.model.layout.LayoutResult;
 
 import java.util.List;
 
-public class PageBreakRenderer implements IRenderer {
+public class AreaBreakRenderer implements IRenderer {
 
     protected AreaBreak areaBreak;
 
-    public PageBreakRenderer(AreaBreak areaBreak) {
+    public AreaBreakRenderer(AreaBreak areaBreak) {
         this.areaBreak = areaBreak;
     }
 
