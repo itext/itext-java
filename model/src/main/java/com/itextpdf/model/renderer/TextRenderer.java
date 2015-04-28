@@ -15,10 +15,10 @@ import com.itextpdf.model.layout.LayoutResult;
 
 public class TextRenderer extends AbstractRenderer {
 
-    protected String text;
     protected static final float TEXT_SPACE_COEFF = 1000;
+    protected String text;
     protected String line;
-    protected float yOffset;
+    protected float yLineOffset;
 
     public TextRenderer(Text textElement, String text) {
         super(textElement);
@@ -43,9 +43,13 @@ public class TextRenderer extends AbstractRenderer {
         Float characterSpacing = getProperty(Property.CHARACTER_SPACING);
         PdfFont font = getPropertyAsFont(Property.FONT);
         Float hScale = getProperty(Property.HORIZONTAL_SCALING);
+        float ascender = 800;
+        float descender = -200;
 
         StringBuilder currentLine = new StringBuilder();
 
+        float currentLineAscender = 0;
+        float currentLineDescender = 0;
         float currentLineHeight = 0;
         int initialLineTextPos = currentTextPos;
         float currentLineWidth = 0;
@@ -60,6 +64,8 @@ public class TextRenderer extends AbstractRenderer {
             int nonBreakablePartEnd = text.length() - 1;
             float nonBreakablePartFullWidth = 0;
             float nonBreakablePartWidthWhichDoesNotExceedAllowedWidth = 0;
+            float nonBreakablePartMaxAscender = 0;
+            float nonBreakablePartMaxDescender = 0;
             float nonBreakablePartMaxHeight = 0;
             int firstCharacterWhichExceedsAllowedWidth = -1;
             for (int ind = currentTextPos; ind < text.length(); ind++) {
@@ -74,7 +80,9 @@ public class TextRenderer extends AbstractRenderer {
                     nonBreakablePartWidthWhichDoesNotExceedAllowedWidth += glyphWidth;
 
                 nonBreakablePartFullWidth += glyphWidth;
-                nonBreakablePartMaxHeight = fontSize + textRise;
+                nonBreakablePartMaxAscender = ascender;
+                nonBreakablePartMaxDescender = descender;
+                nonBreakablePartMaxHeight = (nonBreakablePartMaxAscender - nonBreakablePartMaxDescender) * fontSize / TEXT_SPACE_COEFF + textRise;
 
                 if (nonBreakablePartFullWidth > layoutBox.getWidth()) {
                     // we have extracted all the information we wanted and we do not want to continue.
@@ -91,6 +99,8 @@ public class TextRenderer extends AbstractRenderer {
             if (firstCharacterWhichExceedsAllowedWidth == -1) {
                 // can fit the whole word in a line
                 currentLine.append(text.substring(currentTextPos, nonBreakablePartEnd + 1));
+                currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
+                currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                 currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                 currentTextPos = nonBreakablePartEnd + 1;
                 currentLineWidth += nonBreakablePartFullWidth;
@@ -106,14 +116,15 @@ public class TextRenderer extends AbstractRenderer {
                     if (nonBreakablePartFullWidth > layoutBox.getWidth()) {
                         // if the word is too long for a single line we will have to split it
                         currentLine.append(text.substring(currentTextPos, firstCharacterWhichExceedsAllowedWidth));
+                        currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
+                        currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                         currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                         currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
                         currentTextPos = firstCharacterWhichExceedsAllowedWidth;
                     }
 
                     line = currentLine.toString();
-                    yOffset = currentLineHeight;
-                    anythingPlaced = true;
+                    yLineOffset = currentLineAscender * fontSize / TEXT_SPACE_COEFF;
 
                     occupiedArea.getBBox().moveDown(currentLineHeight);
                     occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);
@@ -121,7 +132,6 @@ public class TextRenderer extends AbstractRenderer {
                     layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
 
                     currentLine.setLength(0);
-                    currentLineWidth = 0;
 
                     TextRenderer[] split = split(currentTextPos);
                     return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
@@ -135,8 +145,7 @@ public class TextRenderer extends AbstractRenderer {
             }
 
             line = currentLine.toString();
-            yOffset = currentLineHeight;
-            anythingPlaced = true;
+            yLineOffset = currentLineAscender * fontSize / TEXT_SPACE_COEFF;
             currentLine.setLength(0);
 
             occupiedArea.getBBox().moveDown(currentLineHeight);
@@ -152,7 +161,6 @@ public class TextRenderer extends AbstractRenderer {
     public void draw(PdfDocument document, PdfCanvas canvas) {
         super.draw(document, canvas);
 
-        float topBBoxY = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight();
         float leftBBoxX = occupiedArea.getBBox().getX();
 
         if (line != null && line.length() != 0) {
@@ -163,7 +171,7 @@ public class TextRenderer extends AbstractRenderer {
             Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
 
             try {
-                canvas.saveState().beginText().setFontAndSize(font, fontSize).moveText(leftBBoxX, topBBoxY - yOffset);
+                canvas.saveState().beginText().setFontAndSize(font, fontSize).moveText(leftBBoxX, getYLine());
                 if (textRenderingMode != Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL) {
                     canvas.setTextRenderingMode(textRenderingMode);
                 }
@@ -191,25 +199,40 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected void drawBackground(PdfCanvas canvas) {
+    public void drawBackground(PdfDocument document, PdfCanvas canvas) {
         try {
             Property.Background background = getProperty(Property.BACKGROUND);
             Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
-            float topBBoxY = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight();
+            float bottomBBoxY = occupiedArea.getBBox().getY();
             float leftBBoxX = occupiedArea.getBBox().getX();
             if (background != null) {
-                // TODO ASCENDER, DESCENDER
                 canvas.saveState().setFillColor(background.getColor());
-                float currentY = topBBoxY;
-                currentY -= yOffset;
-                canvas.rectangle(leftBBoxX - background.getExtraLeft(), currentY + textRise - background.getExtraBottom(),
+                canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + textRise - background.getExtraBottom(),
                         occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                        yOffset - textRise + background.getExtraTop() + background.getExtraBottom());
+                        occupiedArea.getBBox().getHeight() - textRise + background.getExtraTop() + background.getExtraBottom());
                 canvas.fill().restoreState();
             }
         } catch (Exception exc) {
             throw new RuntimeException(exc);
         }
+    }
+
+    public float getAscent() {
+        return yLineOffset;
+    }
+
+    public float getDescent() {
+        return -(occupiedArea.getBBox().getHeight() - yLineOffset);
+    }
+
+    public float getYLine() {
+        return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset - getPropertyAsFloat(Property.TEXT_RISE);
+    }
+
+    public void moveYLineTo(float y) {
+        float curYLine = getYLine();
+        float delta = y - curYLine;
+        occupiedArea.getBBox().setY(occupiedArea.getBBox().getY() + delta);
     }
 
     public String getText() {
@@ -238,7 +261,7 @@ public class TextRenderer extends AbstractRenderer {
         splitRenderer.occupiedArea = occupiedArea.clone();
         splitRenderer.parent = parent;
         splitRenderer.line = line;
-        splitRenderer.yOffset = yOffset;
+        splitRenderer.yLineOffset = yLineOffset;
 
         TextRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.setText(text.substring(initialOverflowTextPos));

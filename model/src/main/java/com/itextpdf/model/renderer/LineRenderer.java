@@ -17,7 +17,8 @@ public class LineRenderer extends AbstractRenderer {
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveDown(-layoutBox.getHeight()).setHeight(0));
 
         float curWidth = 0;
-        float maxHeight = 0;
+        float maxAscent = 0;
+        float maxDescent = 0;
         int childPos = 0;
 
         boolean anythingPlaced = false;
@@ -30,15 +31,18 @@ public class LineRenderer extends AbstractRenderer {
                 Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), childSize.getWidth(), layoutBox.getHeight());
                 childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
                 curWidth += childSize.getWidth();
-                maxHeight = Math.max(maxHeight, childResult.getOccupiedArea().getBBox().getHeight());
             } else {
                 Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
                 childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
                 curWidth += childResult.getOccupiedArea().getBBox().getWidth();
-                maxHeight = Math.max(maxHeight, childResult.getOccupiedArea().getBBox().getHeight());
-
-                occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
             }
+
+            float childAscent = childRenderer instanceof TextRenderer ? ((TextRenderer) childRenderer).getAscent() : 0;
+            float childDescent = childRenderer instanceof TextRenderer ? ((TextRenderer)childRenderer).getDescent() : 0;
+            maxAscent = Math.max(maxAscent, childAscent);
+            maxDescent = Math.min(maxDescent, childDescent);
+            float maxHeight = maxAscent - maxDescent;
+            occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
             if (childResult.getStatus() != LayoutResult.FULL) {
                 LineRenderer[] split = split();
@@ -50,7 +54,7 @@ public class LineRenderer extends AbstractRenderer {
                 split[1].childRenderers.add(childResult.getOverflowRenderer());
                 split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
-                split[0].adjustChildrenYLine();
+                split[0].adjustChildrenYLine(maxAscent, maxDescent);
                 return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
             } else {
                 anythingPlaced = true;
@@ -59,7 +63,7 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (anythingPlaced) {
-            adjustChildrenYLine();
+            adjustChildrenYLine(maxAscent, maxDescent);
             return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
         } else {
             return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
@@ -93,9 +97,14 @@ public class LineRenderer extends AbstractRenderer {
         return new LayoutRect(width, height);
     }
 
-    protected LineRenderer adjustChildrenYLine() {
+    protected LineRenderer adjustChildrenYLine(float maxAscent, float maxDescent) {
+        float actualYLine = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - maxAscent;
         for (IRenderer renderer : childRenderers) {
-            renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY());
+            if (renderer instanceof TextRenderer) {
+                ((TextRenderer) renderer).moveYLineTo(actualYLine);
+            } else {
+                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY());
+            }
         }
         return this;
     }

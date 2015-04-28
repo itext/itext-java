@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Paragraph;
+import com.itextpdf.model.element.Text;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -52,7 +53,7 @@ public class DefaultLayoutTest {
         Document document = new Document(pdfDocument);
 
         String str = "Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.";
-        document.add(new Paragraph(str).setBackgroundColor(Color.Green)).
+        document.add(new Paragraph(new Text(str).setBackgroundColor(Color.Red)).setBackgroundColor(Color.Green)).
                 add(new Paragraph(str)).
                 add(new AreaBreak(PageSize.Default)).
                 add(new Paragraph(str));
