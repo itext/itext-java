@@ -41,7 +41,8 @@ public class Property {
     }
 
     public static boolean isPropertyInherited(int propertyKey, IPropertyContainer parent, IPropertyContainer descendant) {
-        if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE)
+        if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE ||
+                propertyKey == FIRST_LINE_INDENT)
             return true;
         return false;
     }

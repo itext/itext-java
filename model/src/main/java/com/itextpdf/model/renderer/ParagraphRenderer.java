@@ -45,7 +45,9 @@ public class ParagraphRenderer extends AbstractRenderer {
         float leadingValue = 0;
 
         while (currentRenderer != null) {
-            LayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
+            float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+            Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), layoutBox.getWidth() - lineIndent, layoutBox.getHeight());
+            LayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), childLayoutBox)));
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {
@@ -94,7 +96,13 @@ public class ParagraphRenderer extends AbstractRenderer {
 
     @Override
     protected ParagraphRenderer createOverflowRenderer() {
-        return new ParagraphRenderer(modelElement);
+        ParagraphRenderer overflowRenderer = new ParagraphRenderer(modelElement);
+        // Reset first line indent in case of overflow.
+        float firstLineIndent = getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+        if (firstLineIndent != 0) {
+            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
+        }
+        return overflowRenderer;
     }
 
     @Override
