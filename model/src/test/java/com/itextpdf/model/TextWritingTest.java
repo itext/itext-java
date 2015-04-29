@@ -90,4 +90,30 @@ public class TextWritingTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void leadingTest01() throws IOException, PdfException, InterruptedException {
+        String outFileName = destinationFolder + "leadingTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_leadingTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p1 = new Paragraph("first, leading of 150")
+                .setFixedLeading(150);
+        document.add(p1);
+
+        Paragraph p2 = new Paragraph("second, leading of 500")
+                .setFixedLeading(500);
+        document.add(p2);
+
+        Paragraph p3 = new Paragraph();
+        p3.add(new Text("third, leading of 20"))
+                .setFixedLeading(20);
+        document.add(p3);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 }

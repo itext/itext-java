@@ -112,8 +112,8 @@ public class PreLayoutTest {
                 if (context.getArea().getPageNumber() != oneColumnPage) {
                     LayoutArea firstArea = area.clone();
                     LayoutArea secondArea = area.clone();
-                    firstArea.getBBox().setWidth(firstArea.getBBox().getWidth() / 2);
-                    secondArea.getBBox().setX(secondArea.getBBox().getX() + secondArea.getBBox().getWidth() / 2);
+                    firstArea.getBBox().setWidth(firstArea.getBBox().getWidth() / 2 - 5);
+                    secondArea.getBBox().setX(secondArea.getBBox().getX() + secondArea.getBBox().getWidth() / 2 + 5);
                     secondArea.getBBox().setWidth(firstArea.getBBox().getWidth());
                     areas.add(firstArea);
                     areas.add(secondArea);

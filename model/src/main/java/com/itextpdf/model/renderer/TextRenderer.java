@@ -217,12 +217,16 @@ public class TextRenderer extends AbstractRenderer {
         }
     }
 
+    public void trimFirst() {
+        text = text.replaceAll("^\\s+", "");
+    }
+
     public float getAscent() {
         return yLineOffset;
     }
 
     public float getDescent() {
-        return -(occupiedArea.getBBox().getHeight() - yLineOffset);
+        return -(occupiedArea.getBBox().getHeight() - yLineOffset - getPropertyAsFloat(Property.TEXT_RISE));
     }
 
     public float getYLine() {
