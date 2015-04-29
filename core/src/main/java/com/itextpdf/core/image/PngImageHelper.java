@@ -33,7 +33,7 @@ public class PngImageHelper {
         int compressionMethod;
         int filterMethod;
         int interlaceMethod;
-        PdfDictionary additional = null;
+        PdfDictionary additional = new PdfDictionary();
         byte[] imageData;
         byte[] smask;
         byte[] trans;
@@ -56,37 +56,59 @@ public class PngImageHelper {
         IccProfile iccProfile;
     }
 
-    /** Some PNG specific values. */
+    /**
+     * Some PNG specific values.
+     */
     public static final int[] PNGID = {137, 80, 78, 71, 13, 10, 26, 10};
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String IHDR = "IHDR";
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String PLTE = "PLTE";
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String IDAT = "IDAT";
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String IEND = "IEND";
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String tRNS = "tRNS";
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String pHYs = "pHYs";
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String gAMA = "gAMA";
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String cHRM = "cHRM";
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String sRGB = "sRGB";
 
-    /** A PNG marker. */
+    /**
+     * A PNG marker.
+     */
     public static final String iCCP = "iCCP";
 
     private static final int TRANSFERSIZE = 4096;
@@ -102,7 +124,7 @@ public class PngImageHelper {
         if (image.getOriginalType() != Image.PNG)
             throw new IllegalArgumentException("PNG image expected");
         PngParameters png = new PngParameters();
-        png.image = (PngImage)image;
+        png.image = (PngImage) image;
         InputStream is = null;
         try {
             if (png.image.getUrl() != null) {
@@ -127,7 +149,8 @@ public class PngImageHelper {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ignored) { }
+                } catch (IOException ignored) {
+                }
             }
         }
 
@@ -227,8 +250,7 @@ public class PngImageHelper {
             }
             png.image.setDpi(png.dpiX, png.dpiY);
             png.image.setXYRatio(png.XYRatio);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new PdfRuntimeException(PdfException.PngImageException, e);
         }
     }
@@ -245,8 +267,7 @@ public class PngImageHelper {
                 return PdfName.DeviceGray;
             else
                 return PdfName.DeviceRGB;
-        }
-        else {
+        } else {
             PdfArray array = new PdfArray();
             PdfDictionary dic = new PdfDictionary();
             if ((png.colorType & 2) == 0) {
@@ -256,8 +277,7 @@ public class PngImageHelper {
                 dic.put(PdfName.Gamma, new PdfNumber(png.gamma));
                 dic.put(PdfName.WhitePoint, new PdfLiteral("[1 1 1]"));
                 array.add(dic);
-            }
-            else {
+            } else {
                 PdfObject wp = new PdfLiteral("[1 1 1]");
                 array.add(PdfName.CalRGB);
                 if (png.gamma != 1f) {
@@ -269,19 +289,19 @@ public class PngImageHelper {
                     dic.put(PdfName.Gamma, gm);
                 }
                 if (png.hasCHRM) {
-                    float z = png.yW*((png.xG-png.xB)*png.yR-(png.xR-png.xB)*png.yG+(png.xR-png.xG)*png.yB);
-                    float YA = png.yR*((png.xG-png.xB)*png.yW-(png.xW-png.xB)*png.yG+(png.xW-png.xG)*png.yB)/z;
-                    float XA = YA*png.xR/png.yR;
-                    float ZA = YA*((1-png.xR)/png.yR-1);
-                    float YB = -png.yG*((png.xR-png.xB)*png.yW-(png.xW-png.xB)*png.yR+(png.xW-png.xR)*png.yB)/z;
-                    float XB = YB*png.xG/png.yG;
-                    float ZB = YB*((1-png.xG)/png.yG-1);
-                    float YC = png.yB*((png.xR-png.xG)*png.yW-(png.xW-png.xG)*png.yW+(png.xW-png.xR)*png.yG)/z;
-                    float XC = YC*png.xB/png.yB;
-                    float ZC = YC*((1-png.xB)/png.yB-1);
-                    float XW = XA+XB+XC;
+                    float z = png.yW * ((png.xG - png.xB) * png.yR - (png.xR - png.xB) * png.yG + (png.xR - png.xG) * png.yB);
+                    float YA = png.yR * ((png.xG - png.xB) * png.yW - (png.xW - png.xB) * png.yG + (png.xW - png.xG) * png.yB) / z;
+                    float XA = YA * png.xR / png.yR;
+                    float ZA = YA * ((1 - png.xR) / png.yR - 1);
+                    float YB = -png.yG * ((png.xR - png.xB) * png.yW - (png.xW - png.xB) * png.yR + (png.xW - png.xR) * png.yB) / z;
+                    float XB = YB * png.xG / png.yG;
+                    float ZB = YB * ((1 - png.xG) / png.yG - 1);
+                    float YC = png.yB * ((png.xR - png.xG) * png.yW - (png.xW - png.xG) * png.yW + (png.xW - png.xR) * png.yG) / z;
+                    float XC = YC * png.xB / png.yB;
+                    float ZC = YC * ((1 - png.xB) / png.yB - 1);
+                    float XW = XA + XB + XC;
                     float YW = 1;//YA+YB+YC;
-                    float ZW = ZA+ZB+ZC;
+                    float ZW = ZA + ZB + ZC;
                     PdfArray wpa = new PdfArray();
                     wpa.add(new PdfNumber(XW));
                     wpa.add(new PdfNumber(YW));
@@ -308,7 +328,7 @@ public class PngImageHelper {
 
     private static void readPng(InputStream is, PngParameters png) throws IOException, PdfException {
         for (int i = 0; i < PNGID.length; i++) {
-            if (PNGID[i] != is.read())	{
+            if (PNGID[i] != is.read()) {
                 throw new IOException("file.is.not.a.valid.png");
             }
         }
@@ -327,8 +347,7 @@ public class PngImageHelper {
                     png.idat.write(buffer, 0, size);
                     len -= size;
                 }
-            }
-            else if (tRNS.equals(marker)) {
+            } else if (tRNS.equals(marker)) {
                 switch (png.colorType) {
                     case 0:
                         if (len >= 2) {
@@ -350,8 +369,7 @@ public class PngImageHelper {
                                 png.transRedGray = red;
                                 png.transGreen = green;
                                 png.transBlue = blue;
-                            }
-                            else
+                            } else
                                 png.additional.put(PdfName.Mask, new PdfLiteral(String.format("[%d %d %d %d %d %d]", red, red, green, green, blue, blue)));
                         }
                         break;
@@ -359,14 +377,13 @@ public class PngImageHelper {
                         if (len > 0) {
                             png.trans = new byte[len];
                             for (int k = 0; k < len; ++k)
-                                png.trans[k] = (byte)is.read();
+                                png.trans[k] = (byte) is.read();
                             len = 0;
                         }
                         break;
                 }
                 Utilities.skip(is, len);
-            }
-            else if (IHDR.equals(marker)) {
+            } else if (IHDR.equals(marker)) {
                 png.width = getInt(is);
                 png.height = getInt(is);
 
@@ -375,8 +392,7 @@ public class PngImageHelper {
                 png.compressionMethod = is.read();
                 png.filterMethod = is.read();
                 png.interlaceMethod = is.read();
-            }
-            else if (PLTE.equals(marker)) {
+            } else if (PLTE.equals(marker)) {
                 if (png.colorType == 3) {
                     PdfArray colorspace = new PdfArray();
                     colorspace.add(PdfName.Indexed);
@@ -389,25 +405,21 @@ public class PngImageHelper {
                     png.colorTable = colorTableBuf.toByteArray();
                     colorspace.add(new PdfString(PdfEncodings.convertToString(png.colorTable, null)));
                     png.additional.put(PdfName.ColorSpace, colorspace);
-                }
-                else {
+                } else {
                     Utilities.skip(is, len);
                 }
-            }
-            else if (pHYs.equals(marker)) {
+            } else if (pHYs.equals(marker)) {
                 int dx = getInt(is);
                 int dy = getInt(is);
                 int unit = is.read();
                 if (unit == 1) {
-                    png.dpiX = (int)(dx * 0.0254f + 0.5f);
-                    png.dpiY = (int)(dy * 0.0254f + 0.5f);
-                }
-                else {
+                    png.dpiX = (int) (dx * 0.0254f + 0.5f);
+                    png.dpiY = (int) (dy * 0.0254f + 0.5f);
+                } else {
                     if (dy != 0)
-                        png.XYRatio = (float)dx / (float)dy;
+                        png.XYRatio = (float) dx / (float) dy;
                 }
-            }
-            else if (cHRM.equals(marker)) {
+            } else if (cHRM.equals(marker)) {
                 png.xW = getInt(is) / 100000f;
                 png.yW = getInt(is) / 100000f;
                 png.xR = getInt(is) / 100000f;
@@ -416,9 +428,8 @@ public class PngImageHelper {
                 png.yG = getInt(is) / 100000f;
                 png.xB = getInt(is) / 100000f;
                 png.yB = getInt(is) / 100000f;
-                png.hasCHRM = !(Math.abs(png.xW)<0.0001f||Math.abs(png.yW)<0.0001f||Math.abs(png.xR)<0.0001f||Math.abs(png.yR)<0.0001f||Math.abs(png.xG)<0.0001f||Math.abs(png.yG)<0.0001f||Math.abs(png.xB)<0.0001f||Math.abs(png.yB)<0.0001f);
-            }
-            else if (sRGB.equals(marker)) {
+                png.hasCHRM = !(Math.abs(png.xW) < 0.0001f || Math.abs(png.yW) < 0.0001f || Math.abs(png.xR) < 0.0001f || Math.abs(png.yR) < 0.0001f || Math.abs(png.xG) < 0.0001f || Math.abs(png.yG) < 0.0001f || Math.abs(png.xB) < 0.0001f || Math.abs(png.yB) < 0.0001f);
+            } else if (sRGB.equals(marker)) {
                 int ri = is.read();
                 png.intent = intents[ri];
                 png.gamma = 2.2f;
@@ -431,8 +442,7 @@ public class PngImageHelper {
                 png.xB = 0.15f;
                 png.yB = 0.06f;
                 png.hasCHRM = true;
-            }
-            else if (gAMA.equals(marker)) {
+            } else if (gAMA.equals(marker)) {
                 int gm = getInt(is);
                 if (gm != 0) {
                     png.gamma = 100000f / gm;
@@ -448,8 +458,7 @@ public class PngImageHelper {
                         png.hasCHRM = true;
                     }
                 }
-            }
-            else if (iCCP.equals(marker)) {
+            } else if (iCCP.equals(marker)) {
                 do {
                     --len;
                 } while (is.read() != 0);
@@ -468,15 +477,12 @@ public class PngImageHelper {
                 icccom = null;
                 try {
                     png.iccProfile = IccProfile.getInstance(iccp);
-                }
-                catch (RuntimeException e) {
+                } catch (RuntimeException e) {
                     png.iccProfile = null;
                 }
-            }
-            else if (IEND.equals(marker)) {
+            } else if (IEND.equals(marker)) {
                 break;
-            }
-            else {
+            } else {
                 Utilities.skip(is, len);
             }
             Utilities.skip(is, 4);
@@ -534,26 +540,25 @@ public class PngImageHelper {
 
         if (png.interlaceMethod != 1) {
             decodePass(0, 0, 1, 1, png.width, png.height, png);
-        }
-        else {
-            decodePass(0, 0, 8, 8, (png.width + 7)/8, (png.height + 7)/8, png);
-            decodePass(4, 0, 8, 8, (png.width + 3)/8, (png.height + 7)/8, png);
-            decodePass(0, 4, 4, 8, (png.width + 3)/4, (png.height + 3)/8, png);
-            decodePass(2, 0, 4, 4, (png.width + 1)/4, (png.height + 3)/4, png);
-            decodePass(0, 2, 2, 4, (png.width + 1)/2, (png.height + 1)/4, png);
-            decodePass(1, 0, 2, 2, png.width/2, (png.height + 1)/2, png);
-            decodePass(0, 1, 1, 2, png.width, png.height/2, png);
+        } else {
+            decodePass(0, 0, 8, 8, (png.width + 7) / 8, (png.height + 7) / 8, png);
+            decodePass(4, 0, 8, 8, (png.width + 3) / 8, (png.height + 7) / 8, png);
+            decodePass(0, 4, 4, 8, (png.width + 3) / 4, (png.height + 3) / 8, png);
+            decodePass(2, 0, 4, 4, (png.width + 1) / 4, (png.height + 3) / 4, png);
+            decodePass(0, 2, 2, 4, (png.width + 1) / 2, (png.height + 1) / 4, png);
+            decodePass(1, 0, 2, 2, png.width / 2, (png.height + 1) / 2, png);
+            decodePass(0, 1, 1, 2, png.width, png.height / 2, png);
         }
 
     }
 
-    private static void decodePass( int xOffset, int yOffset, int xStep, int yStep,
-                     int passWidth, int passHeight, PngParameters png) {
+    private static void decodePass(int xOffset, int yOffset, int xStep, int yStep,
+                                   int passWidth, int passHeight, PngParameters png) {
         if ((passWidth == 0) || (passHeight == 0)) {
             return;
         }
 
-        int bytesPerRow = (png.inputBands*passWidth*png.bitDepth + 7)/8;
+        int bytesPerRow = (png.inputBands * passWidth * png.bitDepth + 7) / 8;
         byte[] curr = new byte[bytesPerRow];
         byte[] prior = new byte[bytesPerRow];
 
@@ -618,7 +623,7 @@ public class PngImageHelper {
         }
         if (png.imageData != null) {
             dstX = xOffset;
-            int yStride = (sizes*png.width*(png.bitDepth == 16 ? 8 : png.bitDepth)+ 7)/8;
+            int yStride = (sizes * png.width * (png.bitDepth == 16 ? 8 : png.bitDepth) + 7) / 8;
             for (srcX = 0; srcX < width; srcX++) {
                 setPixel(png.imageData, out, png.inputBands * srcX, sizes, dstX, y, png.bitDepth, yStride);
                 dstX += step;
@@ -636,8 +641,7 @@ public class PngImageHelper {
                     setPixel(png.smask, out, png.inputBands * srcX + sizes, 1, dstX, y, 8, yStride);
                     dstX += step;
                 }
-            }
-            else { //colorType 3
+            } else { //colorType 3
                 int yStride = png.width;
                 int v[] = new int[1];
                 dstX = xOffset;
@@ -651,8 +655,7 @@ public class PngImageHelper {
                     dstX += step;
                 }
             }
-        }
-        else if (png.genBWMask) {
+        } else if (png.genBWMask) {
             switch (png.colorType) {
                 case 3: {
                     int yStride = (png.width + 7) / 8;
@@ -699,10 +702,9 @@ public class PngImageHelper {
         if (bitDepth == 8) {
             int pos = bytesPerRow * y + x;
             return image[pos] & 0xff;
-        }
-        else {
+        } else {
             int pos = bytesPerRow * y + x / (8 / bitDepth);
-            int v = image[pos] >> (8 - bitDepth * (x % (8 / bitDepth))- bitDepth);
+            int v = image[pos] >> (8 - bitDepth * (x % (8 / bitDepth)) - bitDepth);
             return v & ((1 << bitDepth) - 1);
         }
     }
@@ -711,16 +713,14 @@ public class PngImageHelper {
         if (bitDepth == 8) {
             int pos = bytesPerRow * y + size * x;
             for (int k = 0; k < size; ++k)
-                image[pos + k] = (byte)data[k + offset];
-        }
-        else if (bitDepth == 16) {
+                image[pos + k] = (byte) data[k + offset];
+        } else if (bitDepth == 16) {
             int pos = bytesPerRow * y + size * x;
             for (int k = 0; k < size; ++k)
-                image[pos + k] = (byte)(data[k + offset] >>> 8);
-        }
-        else {
+                image[pos + k] = (byte) (data[k + offset] >>> 8);
+        } else {
             int pos = bytesPerRow * y + x / (8 / bitDepth);
-            int v = data[offset] << (8 - bitDepth * (x % (8 / bitDepth))- bitDepth);
+            int v = data[offset] << (8 - bitDepth * (x % (8 / bitDepth)) - bitDepth);
             image[pos] |= v;
         }
     }
@@ -761,7 +761,7 @@ public class PngImageHelper {
             val = curr[i] & 0xff;
             val += curr[i - bpp] & 0xff;
 
-            curr[i] = (byte)val;
+            curr[i] = (byte) val;
         }
     }
 
@@ -771,7 +771,7 @@ public class PngImageHelper {
             int raw = curr[i] & 0xff;
             int prior = prev[i] & 0xff;
 
-            curr[i] = (byte)(raw + prior);
+            curr[i] = (byte) (raw + prior);
         }
     }
 
@@ -783,7 +783,7 @@ public class PngImageHelper {
             raw = curr[i] & 0xff;
             priorRow = prev[i] & 0xff;
 
-            curr[i] = (byte)(raw + priorRow/2);
+            curr[i] = (byte) (raw + priorRow / 2);
         }
 
         for (int i = bpp; i < count; i++) {
@@ -791,7 +791,7 @@ public class PngImageHelper {
             priorPixel = curr[i - bpp] & 0xff;
             priorRow = prev[i] & 0xff;
 
-            curr[i] = (byte)(raw + (priorPixel + priorRow)/2);
+            curr[i] = (byte) (raw + (priorPixel + priorRow) / 2);
         }
     }
 
@@ -818,7 +818,7 @@ public class PngImageHelper {
             raw = curr[i] & 0xff;
             priorRow = prev[i] & 0xff;
 
-            curr[i] = (byte)(raw + priorRow);
+            curr[i] = (byte) (raw + priorRow);
         }
 
         for (int i = bpp; i < count; i++) {
@@ -827,7 +827,7 @@ public class PngImageHelper {
             priorRow = prev[i] & 0xff;
             priorRowPixel = prev[i - bpp] & 0xff;
 
-            curr[i] = (byte)(raw + paethPredictor(priorPixel,
+            curr[i] = (byte) (raw + paethPredictor(priorPixel,
                     priorRow,
                     priorRowPixel));
         }
@@ -842,8 +842,8 @@ public class PngImageHelper {
     /**
      * Gets an <CODE>int</CODE> from an <CODE>InputStream</CODE>.
      *
-     * @param		is      an <CODE>InputStream</CODE>
-     * @return		the value of an <CODE>int</CODE>
+     * @param        is an <CODE>InputStream</CODE>
+     * @return the value of an <CODE>int</CODE>
      */
     public static int getInt(InputStream is) throws IOException {
         return (is.read() << 24) + (is.read() << 16) + (is.read() << 8) + is.read();
@@ -852,8 +852,8 @@ public class PngImageHelper {
     /**
      * Gets a <CODE>word</CODE> from an <CODE>InputStream</CODE>.
      *
-     * @param		is      an <CODE>InputStream</CODE>
-     * @return		the value of an <CODE>int</CODE>
+     * @param        is an <CODE>InputStream</CODE>
+     * @return the value of an <CODE>int</CODE>
      */
     public static int getWord(InputStream is) throws IOException {
         return (is.read() << 8) + is.read();
@@ -862,13 +862,13 @@ public class PngImageHelper {
     /**
      * Gets a <CODE>String</CODE> from an <CODE>InputStream</CODE>.
      *
-     * @param		is      an <CODE>InputStream</CODE>
-     * @return		the value of an <CODE>int</CODE>
+     * @param        is an <CODE>InputStream</CODE>
+     * @return the value of an <CODE>int</CODE>
      */
     public static String getString(InputStream is) throws IOException {
         StringBuilder buf = new StringBuilder();
         for (int i = 0; i < 4; i++) {
-            buf.append((char)is.read());
+            buf.append((char) is.read());
         }
         return buf.toString();
     }

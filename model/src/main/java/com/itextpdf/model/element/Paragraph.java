@@ -36,8 +36,28 @@ public class Paragraph extends BlockElement<Paragraph> {
         return new ParagraphRenderer(this);
     }
 
+    @Override
+    public <T> T getDefaultProperty(Integer propertyKey) {
+        switch (propertyKey) {
+            case Property.LEADING:
+                return (T) new Property.Leading(Property.Leading.MULTIPLIED, 1.5f);
+            default:
+                return null;
+        }
+    }
+
     public Paragraph setFirstLineIndent(float indent) {
         setProperty(Property.FIRST_LINE_INDENT, indent);
+        return this;
+    }
+
+    public Paragraph setFixedLeading(float leading) {
+        setProperty(Property.LEADING, new Property.Leading(Property.Leading.FIXED, leading));
+        return this;
+    }
+
+    public Paragraph setMultipliedLeading(float leading) {
+        setProperty(Property.LEADING, new Property.Leading(Property.Leading.MULTIPLIED, leading));
         return this;
     }
 

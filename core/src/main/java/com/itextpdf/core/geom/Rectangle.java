@@ -83,6 +83,21 @@ public class Rectangle implements Cloneable {
         return this;
     }
 
+    public Rectangle moveUp(float move) {
+        y += move;
+        return this;
+    }
+
+    public Rectangle moveRight(float move) {
+        x += move;
+        return this;
+    }
+
+    public Rectangle moveLeft(float move) {
+        x -= move;
+        return this;
+    }
+
     @Override
     public Rectangle clone() {
         return new Rectangle(x, y, width, height);

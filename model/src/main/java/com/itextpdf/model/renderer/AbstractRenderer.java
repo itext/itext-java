@@ -83,13 +83,36 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
-        drawBackground(canvas);
-        drawBorder(canvas);
+        drawBackground(document, canvas);
+        drawBorder(document, canvas);
         for (IRenderer child : childRenderers) {
             child.draw(document, canvas);
         }
 
         flushed = true;
+    }
+
+    public void drawBackground(PdfDocument document, PdfCanvas canvas) {
+        try {
+            Property.Background background = getProperty(Property.BACKGROUND);
+            if (background != null) {
+                canvas.saveState().setFillColor(background.getColor()).
+                        rectangle(occupiedArea.getBBox().getX() - background.getExtraLeft(), occupiedArea.getBBox().getY() - background.getExtraBottom(),
+                                occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
+                                occupiedArea.getBBox().getHeight() + background.getExtraTop() + background.getExtraBottom()).
+                        fill().restoreState();
+            }
+        } catch (PdfException exc) {
+            throw new RuntimeException(exc);
+        }
+    }
+
+    public void drawBorder(PdfDocument document, PdfCanvas canvas) {
+//        try {
+//            canvas.rectangle(occupiedArea.getBBox()).stroke();
+//        } catch (PdfException exc) {
+//            throw new RuntimeException(exc);
+//        }
     }
 
     public boolean isFlushed() {
@@ -112,28 +135,4 @@ public abstract class AbstractRenderer implements IRenderer {
     protected <T extends AbstractRenderer> T createOverflowRenderer() {
         return null;
     }
-
-    protected void drawBackground(PdfCanvas canvas) {
-        try {
-            Property.Background background = getProperty(Property.BACKGROUND);
-            if (background != null) {
-                canvas.saveState().setFillColor(background.getColor()).
-                        rectangle(occupiedArea.getBBox().getX() - background.getExtraLeft(), occupiedArea.getBBox().getY() - background.getExtraBottom(),
-                                occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                                occupiedArea.getBBox().getHeight() + background.getExtraTop() + background.getExtraBottom()).
-                        fill().restoreState();
-            }
-        } catch (PdfException exc) {
-            throw new RuntimeException(exc);
-        }
-    }
-
-    protected void drawBorder(PdfCanvas canvas) {
-        try {
-            canvas.rectangle(occupiedArea.getBBox()).stroke();
-        } catch (PdfException exc) {
-            throw new RuntimeException(exc);
-        }
-    }
-
 }
