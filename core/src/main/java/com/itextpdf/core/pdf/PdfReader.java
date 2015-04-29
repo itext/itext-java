@@ -714,13 +714,9 @@ public class PdfReader {
                 PdfIndirectReference reference = table.get(num);
                 if (reference != null) {
                     if (reference.getGenNr() != tokens.getGenNr()) {
-                        if (fixedXref) {
-                            Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                            logger.warn(String.format("Invalid indirect reference %d %d R", tokens.getObjNr(), tokens.getGenNr()));
-                            return null;
-                        } else {
-                            throw new PdfException(PdfException.InvalidIndirectReference1);
-                        }
+                        Logger logger = LoggerFactory.getLogger(PdfReader.class);
+                        logger.warn(String.format("Invalid indirect reference %d %d R", tokens.getObjNr(), tokens.getGenNr()));
+                        return null;
                     }
                     return reference;
                 } else {

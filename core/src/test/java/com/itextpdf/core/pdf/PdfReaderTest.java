@@ -1006,7 +1006,7 @@ public class PdfReaderTest {
         PdfObject fontF1 = document.getPage(997).getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.Font).get(new PdfName("F1"));
         Assert.assertNull(fontF1);
 
-        //There is an offset mismatch in xref table and object for 3093
+        //There is a generation number mismatch in xref table and object for 3093
         try{
             document.getPdfObject(3093);
         } catch (PdfException ex){
