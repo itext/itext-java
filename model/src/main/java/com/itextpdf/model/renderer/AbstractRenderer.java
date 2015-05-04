@@ -64,6 +64,12 @@ public abstract class AbstractRenderer implements IRenderer {
         return (T) properties.get(key);
     }
 
+    @Override
+    public <T extends IRenderer> T setProperty(Integer propertyKey, Object value) {
+        properties.put(propertyKey, value);
+        return (T) this;
+    }
+
     public PdfFont getPropertyAsFont(int key) {
         return getProperty(key);
     }

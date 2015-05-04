@@ -3,8 +3,7 @@ package com.itextpdf.basics.font;
 public class FontConstants {
 
     /** The path to the font resources. */
-    protected static final String RESOURCE_PATH = "com/itextpdf/basics/font/";
-
+    public static final String RESOURCE_PATH = "com/itextpdf/basics/font/";
 
     //-Font types-------------------------------------------------------------------------------------------------------
 

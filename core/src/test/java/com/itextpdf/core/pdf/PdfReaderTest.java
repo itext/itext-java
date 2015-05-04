@@ -1001,15 +1001,29 @@ public class PdfReaderTest {
         }
 
         boolean exception = false;
+
+        int i;
+        PdfObject fontF1 = document.getPage(997).getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.Font).get(new PdfName("F1"));
+        Assert.assertNull(fontF1);
+
+        //There is a generation number mismatch in xref table and object for 3093
+        try{
+            document.getPdfObject(3093);
+        } catch (PdfException ex){
+            exception = true;
+        }
+        Assert.assertTrue(exception);
+        exception = false;
+
         try {
-            for (int i = 11; i < document.getNumOfPages() + 1; i++) {
+            for (i = 11; i < document.getNumOfPages() + 1; i++) {
                 PdfPage page = document.getPage(i);
                 page.getContentStream(0).getBytes();
             }
         } catch (PdfException ex) {
             exception = true;
         }
-        Assert.assertTrue(exception);
+        Assert.assertFalse(exception);
         reader.close();
         document.close();
     }
@@ -1416,6 +1430,22 @@ public class PdfReaderTest {
             pdfDoc.close();
             PdfReader.correctStreamLength = true;
         }
+    }
+
+    @Test(timeout = 1000)
+    public void freeReferencesTest() throws IOException, PdfException {
+        String filename = sourceFolder + "freeReferences.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+        Assert.assertNull(pdfDoc.getPdfObject(8));
+        //Assert.assertFalse(pdfDoc.getReader().fixedXref);
+        Assert.assertFalse(pdfDoc.getReader().rebuiltXref);
+
+        pdfDoc.close();
+
     }
 
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) throws PdfException {

@@ -2,6 +2,7 @@ package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
@@ -42,22 +43,57 @@ public class TrueTypeFont {
 
     protected int maxGlyphId;
 
+    protected boolean isVertical;
+
     /** The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
      * are the glyph number for the first character and the lower 16 bits are the
      * glyph number for the second character. The value is the amount of kerning in
-     * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative.
-     */
+     * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative. */
     protected IntHashtable kerning = new IntHashtable();
 
     protected FontEncoding encoding;
+    // TODO Duplicated with FontEncoding.baseEncoding.
+    protected String baseEncoding;
 
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
 
-    public TrueTypeFont(String name, String encoding, byte[] ttf) throws IOException, PdfException {
+    public TrueTypeFont(String name, String baseEncoding, byte[] ttf) throws IOException, PdfException {
         fontParser = new OpenTypeParser(name, ttf);
-        process(encoding);
+        postscriptFontName = fontParser.getFontName();
+        fullFontName = fontParser.getFullName();
+        familyFontName = fontParser.getFamilyName();
+        allNameEntries = fontParser.getAllNameEntries();
+
+        head = fontParser.readHeadTable();
+        hhea = fontParser.readHheaTable();
+        os_2 = fontParser.readOs2Table(head.unitsPerEm);
+        post = fontParser.readPostTable();
+        if (post == null) {
+            post = new OpenTypeParser.PostTable();
+            post.italicAngle = -Math.atan2(hhea.caretSlopeRun, hhea.caretSlopeRise) * 180 / Math.PI;
+        }
+        maxGlyphId = fontParser.readMaxGlyphId();
+        glyphWidthsByIndex = fontParser.readGlyphWidths(hhea.numberOfHMetrics, head.unitsPerEm);
+        cmaps = fontParser.readCMaps();
+        kerning = fontParser.readKerning(head.unitsPerEm);
+        bBoxes = fontParser.readBbox(head.unitsPerEm);
+        this.baseEncoding = baseEncoding;
+        if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
+            isUnicode = true;
+            isVertical = this.baseEncoding.endsWith("V");
+        } else {
+            isUnicode = false;
+            encoding = new FontEncoding(this.baseEncoding, cmaps.isFontSpecific);
+            charBBoxes = new int[256][];
+            widths = new int[256];
+            if (encoding.hasSpecialEncoding()) {
+                createSpecialEncoding();
+            } else {
+                createEncoding();
+            }
+        }
     }
 
     public FontEncoding getEncoding() {
@@ -80,7 +116,7 @@ public class TrueTypeFont {
      */
     public byte[] convertToBytes(String text) {
         if (isUnicode) {
-            throw new java.lang.IllegalStateException("Not implemented yet");
+            throw new UnsupportedOperationException("For Identity H/V encoding use CMap methods.");
         } else {
             return encoding.convertToBytes(text);
         }
@@ -118,7 +154,27 @@ public class TrueTypeFont {
     public int getWidth(String text) {
         int total = 0;
         if (isUnicode) {
-            throw new java.lang.IllegalStateException("Not implemented yet");
+            if (isVertical)
+                return text.length() * 1000;
+            if (cmaps.isFontSpecific) {
+                char chars[] = text.toCharArray();
+                for (char ch : chars) {
+                    if ((ch & 0xff00) == 0 || (ch & 0xff00) == 0xf000) {
+                        total += getRawWidth(ch & 0xff, null);
+                    }
+                }
+            } else {
+                int len = text.length();
+                for (int k = 0; k < len; ++k) {
+                    if (Utilities.isSurrogatePair(text, k)) {
+                        total += getRawWidth(Utilities.convertToUtf32(text, k), baseEncoding);
+                        ++k;
+                    } else {
+                        total += getRawWidth(text.charAt(k), baseEncoding);
+                    }
+                }
+            }
+            return total;
         } else if (encoding.isFastWinansi()) {
             for (int k = 0; k < text.length(); ++k) {
                 char ch = text.charAt(k);
@@ -149,8 +205,9 @@ public class TrueTypeFont {
         char chars[] = text.toCharArray();
         for (char ch : chars) {
             int bbox[] = getCharBBox(ch);
-            if (bbox != null && bbox[1] < min)
+            if (bbox != null && bbox[1] < min) {
                 min = bbox[1];
+            }
         }
         return min;
     }
@@ -166,8 +223,9 @@ public class TrueTypeFont {
         char chars[] = text.toCharArray();
         for (char ch : chars) {
             int bbox[] = getCharBBox(ch);
-            if (bbox != null && bbox[3] > max)
+            if (bbox != null && bbox[3] > max) {
                 max = bbox[3];
+            }
         }
         return max;
     }
@@ -358,41 +416,6 @@ public class TrueTypeFont {
 
     public byte[] getSubset(HashSet glyphs, boolean subset) throws IOException, PdfException {
         return fontParser.getSubset(glyphs, subset);
-    }
-
-    protected void process(String baseEncoding) throws PdfException, IOException {
-        postscriptFontName = fontParser.getFontName();
-        fullFontName = fontParser.getFullName();
-        familyFontName = fontParser.getFamilyName();
-        allNameEntries = fontParser.getAllNameEntries();
-
-        head = fontParser.readHeadTable();
-        hhea = fontParser.readHheaTable();
-        os_2 = fontParser.readOs2Table(head.unitsPerEm);
-        post = fontParser.readPostTable();
-        if (post == null) {
-            post = new OpenTypeParser.PostTable();
-            post.italicAngle = -Math.atan2(hhea.caretSlopeRun, hhea.caretSlopeRise) * 180 / Math.PI;
-        }
-        maxGlyphId = fontParser.readMaxGlyphId();
-        glyphWidthsByIndex = fontParser.readGlyphWidths(hhea.numberOfHMetrics, head.unitsPerEm);
-        cmaps = fontParser.readCMaps();
-        kerning = fontParser.readKerning(head.unitsPerEm);
-        bBoxes = fontParser.readBbox(head.unitsPerEm);
-        if (baseEncoding.equals(PdfEncodings.IDENTITY_H) || baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
-            isUnicode = true;
-            throw new java.lang.IllegalStateException("Not implemented yet");
-        } else {
-            isUnicode = false;
-            encoding = new FontEncoding(baseEncoding, cmaps.isFontSpecific);
-            charBBoxes = new int[256][];
-            widths = new int[256];
-            if (encoding.hasSpecialEncoding()) {
-                createSpecialEncoding();
-            } else {
-                createEncoding();
-            }
-        }
     }
 
     /**

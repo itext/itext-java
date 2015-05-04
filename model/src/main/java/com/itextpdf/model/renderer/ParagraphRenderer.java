@@ -2,6 +2,7 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.model.IPropertyContainer;
+import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
@@ -38,42 +39,70 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         LineRenderer currentRenderer = (LineRenderer) childRenderers.get(0);
         childRenderers.clear();
-        while (currentRenderer != null) {
-            LayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
-            if (result.getStatus() == LayoutResult.FULL) {
-                childRenderers.add(currentRenderer);
-                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
-                return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
-            } else if (result.getStatus() == LayoutResult.NOTHING) {
-                // TODO avoid infinite loop
-                ParagraphRenderer[] split = split();
-                split[0].childRenderers = new ArrayList<>(childRenderers);
-                split[1].childRenderers.add(result.getOverflowRenderer());
 
+        float lastYLine = layoutBox.getY() + layoutBox.getHeight();
+        Property.Leading leading = getProperty(Property.LEADING);
+        float leadingValue = 0;
+
+        while (currentRenderer != null) {
+            float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+            Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), layoutBox.getWidth() - lineIndent, layoutBox.getHeight());
+            LayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), childLayoutBox)));
+
+            LineRenderer processedRenderer = null;
+            if (result.getStatus() == LayoutResult.FULL) {
+                processedRenderer = currentRenderer;
+            } else if (result.getStatus() == LayoutResult.PARTIAL) {
+                processedRenderer = (LineRenderer) result.getSplitRenderer();
+            }
+
+            leadingValue = processedRenderer != null && leading != null ? processedRenderer.getLeadingValue(leading) : 0;
+            boolean doesNotFit = result.getStatus() == LayoutResult.NOTHING ||
+                    processedRenderer != null && leading != null && processedRenderer.getOccupiedArea().getBBox().getHeight() + processedRenderer.getLeadingValue(leading) - processedRenderer.getMaxAscent() > layoutBox.getHeight();
+
+            if (doesNotFit) {
+                // TODO avoid infinite loop
                 if (currentAreaPos + 1 < areas.size()) {
                     layoutBox = areas.get(++currentAreaPos).getBBox();
                     area = areas.get(currentAreaPos);
+                    lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     continue;
                 } else {
+                    ParagraphRenderer[] split = split();
+                    split[0].childRenderers = new ArrayList<>(childRenderers);
+                    split[1].childRenderers.add(currentRenderer);
                     return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
                 }
-            } else if (result.getStatus() == LayoutResult.PARTIAL) {
-                anythingPlaced = true;
-                childRenderers.add(result.getSplitRenderer());
-                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+            } else {
+                if (leading != null) {
+                    processedRenderer.move(0, lastYLine - leadingValue - processedRenderer.getYLine());
+                    lastYLine = processedRenderer.getYLine();
+                }
+                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
+                layoutBox.setHeight(processedRenderer.getOccupiedArea().getBBox().getY() - layoutBox.getY());
+                childRenderers.add(processedRenderer);
 
-                layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
+                anythingPlaced = true;
+
                 currentRenderer = (LineRenderer) result.getOverflowRenderer();
             }
         }
+
+        occupiedArea.getBBox().moveDown(leadingValue / 2);
+        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + leadingValue / 2);
 
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
     @Override
     protected ParagraphRenderer createOverflowRenderer() {
-        return new ParagraphRenderer(modelElement);
+        ParagraphRenderer overflowRenderer = new ParagraphRenderer(modelElement);
+        // Reset first line indent in case of overflow.
+        float firstLineIndent = getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+        if (firstLineIndent != 0) {
+            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
+        }
+        return overflowRenderer;
     }
 
     @Override

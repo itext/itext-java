@@ -35,12 +35,14 @@ public class Property {
     public static final int PADDING_BOTTOM = 28;
     public static final int PADDING_LEFT = 29;
     public static final int PADDING_RIGHT = 30;
+    public static final int LEADING = 31;
 
     private Property() {
     }
 
     public static boolean isPropertyInherited(int propertyKey, IPropertyContainer parent, IPropertyContainer descendant) {
-        if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE)
+        if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE ||
+                propertyKey == FIRST_LINE_INDENT)
             return true;
         return false;
     }
@@ -104,6 +106,27 @@ public class Property {
 
         public float getExtraBottom() {
             return extraBottom;
+        }
+    }
+
+    public static class Leading {
+        public static final int FIXED = 1;
+        public static final int MULTIPLIED = 2;
+
+        protected int type;
+        protected float value;
+
+        public Leading(int type, float value) {
+            this.type = type;
+            this.value = value;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public float getValue() {
+            return value;
         }
     }
 

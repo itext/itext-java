@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.core.pdf.PdfTokeniser;
+import com.itextpdf.basics.io.PdfTokeniser;
 
 import java.io.ByteArrayOutputStream;
 

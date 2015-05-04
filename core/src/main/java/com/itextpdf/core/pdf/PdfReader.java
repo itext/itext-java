@@ -15,6 +15,8 @@ import com.itextpdf.core.security.ExternalDecryptionProcess;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.RecipientInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -713,7 +715,13 @@ public class PdfReader {
                 PdfIndirectReference reference = table.get(num);
                 if (reference != null) {
                     if (reference.getGenNr() != tokens.getGenNr()) {
-                        return null;
+                        if (fixedXref) {
+                            Logger logger = LoggerFactory.getLogger(PdfReader.class);
+                            logger.warn(String.format("Invalid indirect reference %d %d R", tokens.getObjNr(), tokens.getGenNr()));
+                            return null;
+                        } else {
+                            throw new PdfException(PdfException.InvalidIndirectReference1);
+                        }
                     }
                     return reference;
                 } else {
