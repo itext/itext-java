@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.ByteBuffer;
+import com.itextpdf.basics.io.PdfTokeniser;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSource;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
@@ -712,7 +713,7 @@ public class PdfReader {
                 PdfIndirectReference reference = table.get(num);
                 if (reference != null) {
                     if (reference.getGenNr() != tokens.getGenNr()) {
-                        throw new PdfException(PdfException.InvalidIndirectReference1).setMessageParams(reference);
+                        return null;
                     }
                     return reference;
                 } else {
@@ -996,7 +997,7 @@ public class PdfReader {
         PdfXrefTable xref = pdfDocument.getXref();
         tokens.seek(0);
         ByteBuffer buffer = new ByteBuffer(24);
-        PdfTokeniser lineTokeniser = new PdfTokeniser(new RandomAccessFileOrArray(new PdfTokeniser.ReusableRandomAccessSource(buffer)));
+        PdfTokeniser lineTokeniser = new PdfTokeniser(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
         for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
@@ -1025,7 +1026,7 @@ public class PdfReader {
         tokens.seek(0);
         trailer = null;
         ByteBuffer buffer = new ByteBuffer(24);
-        PdfTokeniser lineTokeniser = new PdfTokeniser(new RandomAccessFileOrArray(new PdfTokeniser.ReusableRandomAccessSource(buffer)));
+        PdfTokeniser lineTokeniser = new PdfTokeniser(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
         for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
@@ -1047,7 +1048,7 @@ public class PdfReader {
                     tokens.seek(pos);
                 }
             } else if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
-                int obj[] = PdfTokeniser.checkObjectStart(lineTokeniser);
+                int[] obj = PdfTokeniser.checkObjectStart(lineTokeniser);
                 if (obj == null)
                     continue;
                 int num = obj[0];
@@ -1189,6 +1190,46 @@ public class PdfReader {
             }
             pdfNumber.setValue(streamLength);
             pdfStream.updateLength(streamLength);
+        }
+    }
+
+    protected static class ReusableRandomAccessSource implements RandomAccessSource {
+        private ByteBuffer buffer;
+
+        public ReusableRandomAccessSource(ByteBuffer buffer) {
+            if (buffer == null) throw new NullPointerException();
+            this.buffer = buffer;
+        }
+
+        @Override
+        public int get(long offset) {
+            if (offset >= buffer.size()) return -1;
+            return 0xff & buffer.getInternalBuffer()[(int) offset];
+        }
+
+        @Override
+        public int get(long offset, byte[] bytes, int off, int len) {
+            if (buffer == null) throw new IllegalStateException("Already closed");
+
+            if (offset >= buffer.size())
+                return -1;
+
+            if (offset + len > buffer.size())
+                len = (int) (buffer.size() - offset);
+
+            System.arraycopy(buffer.getInternalBuffer(), (int) offset, bytes, off, len);
+
+            return len;
+        }
+
+        @Override
+        public long length() {
+            return buffer.size();
+        }
+
+        @Override
+        public void close() throws IOException {
+            buffer = null;
         }
     }
 }
