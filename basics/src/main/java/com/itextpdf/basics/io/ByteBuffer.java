@@ -71,23 +71,6 @@ public class ByteBuffer {
         return append(bytes[b & 0x0f]);
     }
 
-    /**
-     * Append char, represented as int. Using instead of StringBuilder.getBytes() method.
-     * Values above 128 encoded with two bytes.
-     *
-     * @param b char from 0 to 255.
-     */
-    public void appendAsCharBytes(int b) {
-        assert b >= 0 && b < 256 : b;
-        append((byte) b);
-        /*if (b < 128) {
-            append((byte) b);
-        } else {
-            append((byte) (192 | b >> 6));
-            append((byte) (128 | b & 63));
-        }*/
-    }
-
     public byte get(int index) {
         if (index >= count) {
             throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, count));

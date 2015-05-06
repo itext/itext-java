@@ -147,7 +147,7 @@ public class PdfString extends PdfPrimitiveObject {
 
     protected void generateValue() {
         assert content != null : "No byte[] content to generate value";
-        value = new String(convertBytesToChars(decodeContent()));
+        value = convertBytesToString(decodeContent());
     }
 
     @Override
@@ -223,12 +223,12 @@ public class PdfString extends PdfPrimitiveObject {
             for (int i = 0; i < content.length; ) {
                 int v1 = ByteBuffer.getHex(content[i++]);
                 if (i == content.length) {
-                    buffer.appendAsCharBytes(v1 << 4);
+                    buffer.append(v1 << 4);
                     break;
                 }
                 int v2 = content[i++];
                 v2 = ByteBuffer.getHex(v2);
-                buffer.appendAsCharBytes((v1 << 4) + v2);
+                buffer.append((v1 << 4) + v2);
             }
         } else {                // ((iText\( some version)...)
             for (int i = 0; i < content.length; ) {
@@ -316,17 +316,12 @@ public class PdfString extends PdfPrimitiveObject {
         hexWriting = string.hexWriting;
     }
 
-    private char[] convertBytesToChars(byte[] b) {
-        int length = b.length;
-        char[] cc = new char[length];
-        for (int i = 0; i < length; i++) {
-            if (hexWriting) {
-                cc[i] = (char) (b[i] & 0xff);
-            } else {
-                cc[i] = (char) (b[i]);
-            }
+    private String convertBytesToString(byte[] bytes) {
+        StringBuilder buffer = new StringBuilder(bytes.length);
+        for (byte b : bytes) {
+            buffer.append((char) (b & 0xff));
         }
-        return cc;
+        return buffer.toString();
     }
 
 

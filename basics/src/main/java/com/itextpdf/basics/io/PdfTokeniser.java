@@ -293,7 +293,7 @@ public class PdfTokeniser {
                     ch = file.read();
                     if (delims[ch + 1])
                         break;
-                    outBuf.appendAsCharBytes(ch);
+                    outBuf.append(ch);
                 }
                 backOnePosition(ch);
                 break;
@@ -361,12 +361,12 @@ public class PdfTokeniser {
                         if (nesting == -1)
                             break;
                     } else if (ch == '\\') {
-                        outBuf.appendAsCharBytes('\\');
+                        outBuf.append('\\');
                         ch = file.read();
                         if (ch < 0)
                             break;
                     }
-                    outBuf.appendAsCharBytes(ch);
+                    outBuf.append(ch);
                 }
                 if (ch == -1)
                     throwError(PdfException.ErrorReadingString);
@@ -405,7 +405,7 @@ public class PdfTokeniser {
                 } else {
                     type = TokenType.Other;
                     do {
-                        outBuf.appendAsCharBytes((char) ch);
+                        outBuf.append(ch);
                         ch = file.read();
                     } while (!delims[ch + 1]);
                 }
