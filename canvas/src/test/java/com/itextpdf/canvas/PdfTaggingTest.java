@@ -387,7 +387,7 @@ public class PdfTaggingTest {
         PdfStructElem link = paragraph.addKid(new PdfStructElem(document, PdfName.Link, page));
         canvas.openTag(link.addKid(new PdfMcrNumber(page, link)));
         canvas.setFillColorRgb(0, 0, 1).showText("here");
-        PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(document, new Rectangle(80, 508, 40, 18)).setColor(new float[] {0, 0, 1});
+        PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(document, new Rectangle(80, 508, 40, 18)).setColor(new float[] {0, 0, 1}).setBorder(new PdfArray(new float[]{0, 0, 1}));
         page.addAnnotation(linkAnnotation);
         link.addKid(new PdfObjRef(linkAnnotation, link));
         canvas.closeTag();

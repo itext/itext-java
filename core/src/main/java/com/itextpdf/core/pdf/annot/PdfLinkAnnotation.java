@@ -19,10 +19,14 @@ public class PdfLinkAnnotation extends PdfAnnotation {
 
     public PdfLinkAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
         super(pdfObject, document);
+        float[] borders = {0, 0, 0};
+        setBorder(new PdfArray(borders));
     }
 
     public PdfLinkAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
         super(document, rect);
+        float[] borders = {0, 0, 0};
+        setBorder(new PdfArray(borders));
     }
 
     public PdfName getSubtype() throws PdfException {

@@ -53,7 +53,7 @@ public class PdfAnnotationTest {
         canvas.showText("Link to page 2. Click here!");
         canvas.endText();
         canvas.release();
-        page1.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 560, 260, 25)).setDestination(PdfExplicitDestination.createFit(page2)));
+        page1.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 560, 260, 25)).setDestination(PdfExplicitDestination.createFit(page2)).setBorder(new PdfArray(new float[]{0, 0, 1})));
         page1.flush();
 
         canvas = new PdfCanvas(page2);
@@ -84,8 +84,10 @@ public class PdfAnnotationTest {
         canvas.showText("Click here to go to itextpdf site.");
         canvas.endText();
         canvas.release();
+
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com")).
+                setBorder(new PdfArray(new float[]{0, 0, 1})).
                 setColor(new PdfArray(new float[]{1, 0, 0})));
         page.flush();
 
@@ -112,14 +114,18 @@ public class PdfAnnotationTest {
         canvas.showText("Click here to go to itextpdf FAQ.");
         canvas.endText();
         canvas.release();
+        int[] borders = {0, 0, 1};
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com")).
+                setBorder(new PdfArray(borders)).
                 setColor(new PdfArray(new float[]{1, 0, 0})));
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 540, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com/node")).
+                setBorder(new PdfArray(borders)).
                 setColor(new PdfArray(new float[]{0, 1, 0})));
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 490, 300, 25)).
                 setAction(PdfAction.createURI(document, "http://itextpdf.com/salesfaq")).
+                setBorder(new PdfArray(borders)).
                 setColor(new PdfArray(new float[]{0, 0, 1})));
         page.flush();
 

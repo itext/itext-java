@@ -308,6 +308,14 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsDictionary(PdfName.AA);
     }
 
+    public <T extends PdfAnnotation> T setRectangle(PdfArray array){
+        return put(PdfName.Rect, array);
+    }
+
+    public PdfArray getRectangle() throws PdfException {
+        return getPdfObject().getAsArray(PdfName.Rect);
+    }
+
 
     static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document, PdfAnnotation parent) throws PdfException {
         T annotation = null;
