@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -122,6 +123,22 @@ public class PdfSplitterTest {
             Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument3_" + String.valueOf(i) + ".pdf",
                     sourceFolder + "cmp/" + "splitDocument3_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
+    }
+
+    @Test
+    public void splitDocumentByOutlineTest() throws IOException, PdfException, InterruptedException, DocumentException {
+
+        String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
+        PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+        PdfSplitter splitter = new PdfSplitter(inputPdfDoc);
+        List listTitles = new ArrayList();
+        listTitles.add("Syncing iPod Content from Your iTunes Library");
+        listTitles.add("Restoring or Transferring Your iPhone Settings");
+        List<PdfDocument> list = splitter.splitByOutlines(listTitles);
+        Assert.assertEquals(1,list.get(0).getNumOfPages());
+        Assert.assertEquals(2,list.get(1).getNumOfPages());
+        list.get(0).close();
+        list.get(1).close();
     }
 
 }
