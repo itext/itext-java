@@ -173,7 +173,7 @@ public class PdfOutlineTest {
         PdfOutline outlines = pdfDoc.getOutlines(false);
 
         List<PdfOutline> pageOutlines = pdfDoc.getPage(102).getOutlines(true);
-        Assert.assertEquals(10, pageOutlines.size());
+        Assert.assertEquals(5, pageOutlines.size());
     }
 
     @Before
@@ -233,7 +233,7 @@ public class PdfOutlineTest {
         pdfDoc.close();
 
         Assert.assertEquals(6, pdfDoc1.getNumOfPages());
-        Assert.assertEquals(4, outlines.getAllChildren().get(0).getAllChildren().size());
+        Assert.assertEquals(4, pdfDoc1.getOutlines(false).getAllChildren().get(0).getAllChildren().size());
         pdfDoc1.close();
     }
 

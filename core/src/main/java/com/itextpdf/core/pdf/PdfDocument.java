@@ -891,12 +891,15 @@ public class PdfDocument implements IEventDispatcher {
         for (PdfOutline outline : outlines){
             parents.add(getParent(outline, outlinesToCopy));
         }
+
+
         PdfOutline rootOutline = toDocument.getOutlines(false);
         if (rootOutline == null)
             rootOutline = new PdfOutline(toDocument);
         for (PdfOutline parent : parents) {
             rootOutline.addOutline(parent);
         }
+        getOutlines(true);
     }
 
     /**

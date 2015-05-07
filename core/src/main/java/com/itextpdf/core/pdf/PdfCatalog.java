@@ -219,8 +219,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     PdfOutline getOutlines(boolean updateOutlines) throws PdfException {
         if (outlines!= null && !updateOutlines)
             return outlines;
-        if (outlines != null)
+        if (outlines != null){
             outlines.clear();
+            pagesWithOutlines.clear();
+        }
 
         outlineMode = true;
         if (!isNamedDestinationsGot)
