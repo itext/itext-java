@@ -875,7 +875,6 @@ public class PdfDocument implements IEventDispatcher {
      */
     private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, HashMap<PdfPage, List<PdfOutline>> page2Outlines) throws PdfException {
 
-        HashSet<PdfOutline> parents = new HashSet<PdfOutline>();
         HashSet<PdfOutline> outlinesToCopy = new HashSet<PdfOutline>();
         outlinesToCopy.addAll(outlines);
 
@@ -888,18 +887,14 @@ public class PdfDocument implements IEventDispatcher {
                     outline.addDestination(PdfExplicitDestination.createFit(entry.getKey()));
                 }
         }
-        for (PdfOutline outline : outlines){
-            parents.add(getParent(outline, outlinesToCopy));
-        }
-
 
         PdfOutline rootOutline = toDocument.getOutlines(false);
-        if (rootOutline == null)
+        if (rootOutline == null){
             rootOutline = new PdfOutline(toDocument);
-        for (PdfOutline parent : parents) {
-            rootOutline.addOutline(parent);
+            rootOutline.setTitle("Outlines");
         }
-        getOutlines(true);
+
+        cloneOutlines(outlinesToCopy, toDocument, rootOutline, getOutlines(false));
     }
 
     /**
@@ -917,19 +912,21 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * This method gets parent of given outline and removes all unnecessary child of this parent.
-     * @param outline
-     * @param outlinesToCopy set of outlines to be copied
-     * @return parent outline
+     * This method copies create new outlines in the Document to copy.
+     * @param outlinesToCopy - Set of outlines to be copied
+     * @param toDocument - target Document
+     * @param newParent - new parent outline
+     * @param oldParent - old parent outline
+     * @throws PdfException
      */
-    private PdfOutline getParent(PdfOutline outline, Set<PdfOutline> outlinesToCopy){
-        PdfOutline parent = outline.getParent();
-        List<PdfOutline> children = parent.getAllChildren();
-        children.retainAll(outlinesToCopy);
+    private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfDocument toDocument, PdfOutline newParent, PdfOutline oldParent) throws PdfException {
 
-        if (parent.getTitle().equals("Outlines"))
-            return outline;
-        outlinesToCopy.add(parent);
-        return getParent(parent, outlinesToCopy);
+        for(PdfOutline outline : oldParent.getAllChildren()){
+            if (outlinesToCopy.contains(outline)){
+                PdfOutline child = newParent.addOutline(outline.getTitle());
+                child.addDestination(outline.getDestination());
+                cloneOutlines(outlinesToCopy, toDocument, child, outline);
+            }
+        }
     }
 }
