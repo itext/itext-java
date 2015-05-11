@@ -16,10 +16,12 @@ public interface IRenderer {
     void draw(PdfDocument document, PdfCanvas canvas);
     LayoutArea getOccupiedArea();
     <T> T getProperty(int key);
+    <T> T getProperty(int key, T defaultValue);
     <T extends IRenderer> T setProperty(Integer propertyKey, Object value);
     IRenderer setParent(IRenderer parent);
     IPropertyContainer getModelElement();
     List<IRenderer> getChildRenderers();
     boolean isFlushed();
+    void move(float dx, float dy);
 
 }

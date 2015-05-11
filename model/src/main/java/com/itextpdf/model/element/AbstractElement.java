@@ -45,7 +45,15 @@ public abstract class AbstractElement<T extends AbstractElement> implements IEle
 
     @Override
     public <T> T getDefaultProperty(Integer propertyKey) {
-        return null;
+        switch (propertyKey) {
+            case Property.MARGIN_TOP:
+            case Property.MARGIN_RIGHT:
+            case Property.MARGIN_BOTTOM:
+            case Property.MARGIN_LEFT:
+                return (T) Float.valueOf(0);
+            default:
+                return null;
+        }
     }
 
     public Float getWidth() {

@@ -14,6 +14,10 @@ public class Rectangle implements Cloneable {
         this.height = height;
     }
 
+    public Rectangle(float width, float height) {
+        this(0, 0, width, height);
+    }
+
     /**
      * Calculates the common rectangle which includes all the input rectangles.
      * @param rectangles list of input rectangles.
@@ -27,7 +31,7 @@ public class Rectangle implements Cloneable {
         for (Rectangle rectangle : rectangles) {
             if (rectangle == null)
                 continue;
-            Rectangle rec = (Rectangle) rectangle.clone();
+            Rectangle rec = rectangle.clone();
             if (rec.getY() < lly)
                 lly = rec.getY();
             if (rec.getX() < llx)
@@ -41,32 +45,31 @@ public class Rectangle implements Cloneable {
         return new Rectangle(llx, lly, urx-llx, ury-lly);
     }
 
-    public Rectangle(float width, float height) {
-        this(0, 0, width, height);
-    }
-
     public float getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public Rectangle setX(float x) {
         this.x = x;
+        return this;
     }
 
     public float getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public Rectangle setY(float y) {
         this.y = y;
+        return this;
     }
 
     public float getWidth() {
         return width;
     }
 
-    public void setWidth(float width) {
+    public Rectangle setWidth(float width) {
         this.width = width;
+        return this;
     }
 
     public float getHeight() {
@@ -95,6 +98,14 @@ public class Rectangle implements Cloneable {
 
     public Rectangle moveLeft(float move) {
         x -= move;
+        return this;
+    }
+
+    public Rectangle applyMargins(float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
+        x += leftIndent * (reverse ? -1 : 1);
+        width -= (leftIndent + rightIndent) * (reverse ? -1 : 1);
+        y += bottomIndent * (reverse ? -1 : 1);
+        height -= (topIndent + bottomIndent) * (reverse ? -1 : 1);
         return this;
     }
 

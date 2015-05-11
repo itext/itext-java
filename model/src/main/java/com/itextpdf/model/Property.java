@@ -36,6 +36,8 @@ public class Property {
     public static final int PADDING_LEFT = 29;
     public static final int PADDING_RIGHT = 30;
     public static final int LEADING = 31;
+    public static final int LIST_SYMBOL = 32;
+    public static final int LIST_SYMBOL_INDENT = 33;
 
     private Property() {
     }
@@ -130,4 +132,13 @@ public class Property {
         }
     }
 
+    public enum ListNumberingType {
+        DECIMAL,
+        ROMAN_LOWER,
+        ROMAN_UPPER,
+        ENGLISH_LOWER,
+        ENGLISH_UPPER,
+        GREEK_LOWER,
+        GREEK_UPPER
+    }
 }

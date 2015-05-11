@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
@@ -60,6 +61,12 @@ public abstract class AbstractRenderer implements IRenderer {
         return modelElement != null ? (T) modelElement.getDefaultProperty(key) : null;
     }
 
+    @Override
+    public <T> T getProperty(int key, T defaultValue) {
+        T result = getProperty(key);
+        return result != null ? result : defaultValue;
+    }
+
     public <T> T getOwnProperty(int key) {
         return (T) properties.get(key);
     }
@@ -102,10 +109,11 @@ public abstract class AbstractRenderer implements IRenderer {
         try {
             Property.Background background = getProperty(Property.BACKGROUND);
             if (background != null) {
+                Rectangle backgroundArea = applyMargins(occupiedArea.getBBox().clone(), false);
                 canvas.saveState().setFillColor(background.getColor()).
-                        rectangle(occupiedArea.getBBox().getX() - background.getExtraLeft(), occupiedArea.getBBox().getY() - background.getExtraBottom(),
-                                occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                                occupiedArea.getBBox().getHeight() + background.getExtraTop() + background.getExtraBottom()).
+                        rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
+                                backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
+                                backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
                         fill().restoreState();
             }
         } catch (PdfException exc) {
@@ -114,6 +122,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     public void drawBorder(PdfDocument document, PdfCanvas canvas) {
+        // TODO
 //        try {
 //            canvas.rectangle(occupiedArea.getBBox()).stroke();
 //        } catch (PdfException exc) {
@@ -130,6 +139,14 @@ public abstract class AbstractRenderer implements IRenderer {
         return this;
     }
 
+    public void move(float dx, float dy) {
+        occupiedArea.getBBox().moveRight(dx);
+        occupiedArea.getBBox().moveUp(dy);
+        for (IRenderer childRenderer : childRenderers) {
+            childRenderer.move(dx, dy);
+        }
+    }
+
     public List<LayoutArea> initElementAreas(LayoutContext context) {
         return Collections.singletonList(context.getArea());
     }
@@ -140,5 +157,15 @@ public abstract class AbstractRenderer implements IRenderer {
 
     protected <T extends AbstractRenderer> T createOverflowRenderer() {
         return null;
+    }
+
+    protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
+        return rect.applyMargins(getPropertyAsFloat(Property.MARGIN_TOP), getPropertyAsFloat(Property.MARGIN_RIGHT),
+                getPropertyAsFloat(Property.MARGIN_BOTTOM), getPropertyAsFloat(Property.MARGIN_LEFT), reverse);
+    }
+
+    protected Rectangle applyPaddings(Rectangle rect, boolean reverse) {
+        return rect.applyMargins(getPropertyAsFloat(Property.PADDING_TOP), getPropertyAsFloat(Property.PADDING_RIGHT),
+                getPropertyAsFloat(Property.PADDING_BOTTOM), getPropertyAsFloat(Property.PADDING_LEFT), reverse);
     }
 }

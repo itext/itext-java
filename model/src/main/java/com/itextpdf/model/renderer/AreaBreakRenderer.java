@@ -47,6 +47,11 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
+    public <T> T getProperty(int key, T defaultValue) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public <T extends IRenderer> T setProperty(Integer propertyKey, Object value) {
         throw new UnsupportedOperationException();
     }
@@ -69,5 +74,10 @@ public class AreaBreakRenderer implements IRenderer {
     @Override
     public boolean isFlushed() {
         return false;
+    }
+
+    @Override
+    public void move(float dx, float dy) {
+        throw new UnsupportedOperationException();
     }
 }

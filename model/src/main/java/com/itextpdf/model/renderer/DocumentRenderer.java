@@ -33,8 +33,12 @@ public class DocumentRenderer extends AbstractRenderer {
         super.addChild(renderer);
         List<IRenderer> resultRenderers = new ArrayList<IRenderer>();
         LayoutResult result = null;
-        if (currentArea == null)
+        if (currentArea == null) {
             currentArea = getNextArea();
+//            try {
+//                new PdfCanvas(document.getPdfDocument().getPage(currentArea.getPageNumber())).rectangle(currentArea.getBBox()).stroke();
+//            }  catch (Exception exc) {}
+        }
 
         while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
             if (result.getStatus() == LayoutResult.PARTIAL) {

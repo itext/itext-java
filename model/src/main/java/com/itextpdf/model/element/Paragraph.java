@@ -17,13 +17,18 @@ public class Paragraph extends BlockElement<Paragraph> {
         add(text);
     }
 
-    public Paragraph add(String text) {
+    public <T extends Paragraph> T add(String text) {
         return add(new Text(text));
     }
 
-    public Paragraph add(ILeafElement element) {
+    public <T extends Paragraph> T add(ILeafElement element) {
         childElements.add(element);
-        return this;
+        return (T) this;
+    }
+
+    public <T extends Paragraph> T add(BlockElement element) {
+        childElements.add(element);
+        return (T)this;
     }
 
     @Override
@@ -43,24 +48,27 @@ public class Paragraph extends BlockElement<Paragraph> {
                 return (T) new Property.Leading(Property.Leading.MULTIPLIED, 1.5f);
             case Property.FIRST_LINE_INDENT:
                 return (T) Float.valueOf(0);
+            case Property.MARGIN_TOP:
+            case Property.MARGIN_BOTTOM:
+                return (T) Float.valueOf(4);
             default:
-                return null;
+                return super.getDefaultProperty(propertyKey);
         }
     }
 
-    public Paragraph setFirstLineIndent(float indent) {
+    public <T extends Paragraph> T setFirstLineIndent(float indent) {
         setProperty(Property.FIRST_LINE_INDENT, indent);
-        return this;
+        return (T) this;
     }
 
-    public Paragraph setFixedLeading(float leading) {
+    public <T extends Paragraph> T setFixedLeading(float leading) {
         setProperty(Property.LEADING, new Property.Leading(Property.Leading.FIXED, leading));
-        return this;
+        return (T) this;
     }
 
-    public Paragraph setMultipliedLeading(float leading) {
+    public <T extends Paragraph> T setMultipliedLeading(float leading) {
         setProperty(Property.LEADING, new Property.Leading(Property.Leading.MULTIPLIED, leading));
-        return this;
+        return (T) this;
     }
 
 }

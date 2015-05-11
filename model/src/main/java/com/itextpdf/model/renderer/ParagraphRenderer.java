@@ -26,16 +26,25 @@ public class ParagraphRenderer extends AbstractRenderer {
         lineRenderer.addChild(renderer);
     }
 
+    public void addChildFront(IRenderer renderer) {
+        if (childRenderers.size() == 0) {
+            super.addChild(new LineRenderer());
+        }
+        LineRenderer lineRenderer = (LineRenderer) childRenderers.get(0);
+        lineRenderer.addChildFront(renderer);
+    }
+
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         List<LayoutArea> areas = initElementAreas(layoutContext);
         int currentAreaPos = 0;
 
-        LayoutArea area = areas.get(0);
-        Rectangle layoutBox = area.getBBox().clone();
-        occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(), area.getBBox().getWidth(), 0));
+        int pageNumber = areas.get(0).getPageNumber();
+        Rectangle layoutBox = applyMargins(areas.get(0).getBBox().clone(), false);
+        occupiedArea = new LayoutArea(pageNumber, new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), layoutBox.getWidth(), 0));
 
         boolean anythingPlaced = false;
+        boolean firstLineInBox = true;
 
         LineRenderer currentRenderer = (LineRenderer) childRenderers.get(0);
         childRenderers.clear();
@@ -44,10 +53,12 @@ public class ParagraphRenderer extends AbstractRenderer {
         Property.Leading leading = getProperty(Property.LEADING);
         float leadingValue = 0;
 
+        float lastLineHeight = 0;
+
         while (currentRenderer != null) {
             float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), layoutBox.getWidth() - lineIndent, layoutBox.getHeight());
-            LayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), childLayoutBox)));
+            LayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {
@@ -63,19 +74,24 @@ public class ParagraphRenderer extends AbstractRenderer {
             if (doesNotFit) {
                 // TODO avoid infinite loop
                 if (currentAreaPos + 1 < areas.size()) {
-                    layoutBox = areas.get(++currentAreaPos).getBBox();
-                    area = areas.get(currentAreaPos);
+                    layoutBox = applyMargins(areas.get(++currentAreaPos).getBBox().clone(), false);
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
+                    firstLineInBox = true;
                     continue;
                 } else {
                     ParagraphRenderer[] split = split();
                     split[0].childRenderers = new ArrayList<>(childRenderers);
                     split[1].childRenderers.add(currentRenderer);
+                    applyMargins(occupiedArea.getBBox(), true);
                     return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
                 }
             } else {
+                lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
                 if (leading != null) {
-                    processedRenderer.move(0, lastYLine - leadingValue - processedRenderer.getYLine());
+                    float deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
+                    if (firstLineInBox)
+                        deltaY = -(leadingValue - lastLineHeight) / 2;
+                    processedRenderer.move(0, deltaY);
                     lastYLine = processedRenderer.getYLine();
                 }
                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
@@ -83,13 +99,15 @@ public class ParagraphRenderer extends AbstractRenderer {
                 childRenderers.add(processedRenderer);
 
                 anythingPlaced = true;
+                firstLineInBox = false;
 
                 currentRenderer = (LineRenderer) result.getOverflowRenderer();
             }
         }
 
-        occupiedArea.getBBox().moveDown(leadingValue / 2);
-        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + leadingValue / 2);
+        occupiedArea.getBBox().moveDown((leadingValue - lastLineHeight) / 2);
+        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + (leadingValue - lastLineHeight) / 2);
+        applyMargins(occupiedArea.getBBox(), true);
 
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }

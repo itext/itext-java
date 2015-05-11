@@ -14,6 +14,11 @@ public class LineRenderer extends AbstractRenderer {
     protected float maxAscent;
     protected float maxDescent;
 
+    public void addChildFront(IRenderer child) {
+        childRenderers.add(0, child);
+        child.setParent(this);
+    }
+
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
@@ -98,15 +103,6 @@ public class LineRenderer extends AbstractRenderer {
                 return occupiedArea.getBBox().getHeight() * leading.getValue();
             default:
                 throw new IllegalStateException();
-        }
-    }
-
-    public void move(float dx, float dy) {
-        occupiedArea.getBBox().moveRight(dx);
-        occupiedArea.getBBox().moveUp(dy);
-        for (IRenderer childRenderer : childRenderers) {
-            childRenderer.getOccupiedArea().getBBox().moveRight(dx);
-            childRenderer.getOccupiedArea().getBBox().moveUp(dy);
         }
     }
 

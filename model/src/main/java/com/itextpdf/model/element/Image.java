@@ -4,6 +4,13 @@ import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ImageRenderer;
 
 public class Image extends AbstractElement implements ILeafElement, IAccessibleElement {
+
+    com.itextpdf.basics.image.Image image;
+
+    public Image(com.itextpdf.basics.image.Image image) {
+        this.image = image;
+    }
+
     @Override
     public IRenderer makeRenderer() {
         if (nextRenderer != null) {
@@ -11,6 +18,6 @@ public class Image extends AbstractElement implements ILeafElement, IAccessibleE
             nextRenderer = null;
             return renderer;
         }
-        return new ImageRenderer();
+        return new ImageRenderer(this);
     }
 }
