@@ -509,13 +509,19 @@ public class CompareTool {
         PdfObject cmpStructTree = cmpDocument.getCatalog().getPdfObject().get(PdfName.StructTreeRoot);
         PdfIndirectReference cmpStructTreeRef = cmpStructTree == null ? null : cmpStructTree.getIndirectReference();
         PdfIndirectReference outStructTreeRef = outStructTree == null ? null : outStructTree.getIndirectReference();
-        compareObjects(outStructTree, cmpStructTree, new ObjectPath(outStructTreeRef, cmpStructTreeRef), compareResult);
+        compareObjects(outStructTree, cmpStructTree, new ObjectPath(cmpStructTreeRef, outStructTreeRef), compareResult);
 
         PdfObject outOcProperties = outDocument.getCatalog().getPdfObject().get(PdfName.OCProperties);
         PdfObject cmpOcProperties = cmpDocument.getCatalog().getPdfObject().get(PdfName.OCProperties);
-        PdfIndirectReference cmpOcPropertiesRef = cmpOcProperties == null ? null : outOcProperties.getIndirectReference();
-        PdfIndirectReference outOcPropertiesRef = outOcProperties == null ? null : cmpOcProperties.getIndirectReference();
-        compareObjects(outOcProperties, cmpOcProperties, new ObjectPath(outOcPropertiesRef, cmpOcPropertiesRef), compareResult);
+        PdfIndirectReference cmpOcPropertiesRef = cmpOcProperties == null ? null : cmpOcProperties.getIndirectReference();
+        PdfIndirectReference outOcPropertiesRef = outOcProperties == null ? null : outOcProperties.getIndirectReference();
+        compareObjects(outOcProperties, cmpOcProperties, new ObjectPath(cmpOcPropertiesRef, outOcPropertiesRef), compareResult);
+
+        PdfObject outNames = outDocument.getCatalog().getPdfObject().get(PdfName.Names);
+        PdfObject cmpNames = cmpDocument.getCatalog().getPdfObject().get(PdfName.Names);
+        PdfIndirectReference cmpNamesRef = cmpNames == null ? null : cmpNames.getIndirectReference();
+        PdfIndirectReference outNamesRef = outNames == null ? null : outNames.getIndirectReference();
+        compareObjects(outNames, cmpNames, new ObjectPath(cmpNamesRef, outNamesRef), compareResult);
 
         outDocument.close();
         cmpDocument.close();
@@ -1134,7 +1140,7 @@ public class CompareTool {
 
         @Override
         public int hashCode() {
-            int hashCode = baseCmpObject.hashCode() * 31 + baseOutObject.hashCode();
+            int hashCode = (baseCmpObject != null ? baseCmpObject.hashCode() : 0) * 31 + (baseOutObject != null ? baseOutObject.hashCode() : 0);
             for (PathItem pathItem : path) {
                 hashCode *= 31;
                 hashCode += pathItem.hashCode();
