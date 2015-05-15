@@ -160,6 +160,10 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet();
     }
 
+    public Map<PdfName,PdfObject> getResource(PdfName pdfName){
+        return nameToResource.get(pdfName);
+    }
+
     protected PdfName addResource(PdfObjectWrapper resource, PdfName resType, String resPrefix, ResourceNumber resNumber) throws PdfException {
         return addResource(resource.getPdfObject(), resType, resPrefix, resNumber);
     }

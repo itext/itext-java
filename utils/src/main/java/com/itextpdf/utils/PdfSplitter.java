@@ -275,7 +275,6 @@ public class PdfSplitter {
                 for (PdfOutline pdfOutline : outlineList) {
                     if (pdfOutline.getTitle().equals(outlineTitle)) {
                         startPage = pdfDocument.getPageNum(pdfPage);
-                        pdfPage.getOutlines(false);
                         PdfOutline nextOutLine = getAbsoluteTreeNextOutline(pdfOutline);
                         if (nextOutLine != null) {
                             endPage = pdfDocument.getPageNum(getPageByOutline(i, nextOutLine)) - 1;
