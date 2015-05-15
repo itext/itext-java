@@ -458,7 +458,7 @@ public class PdfFontTest {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
-        String inputFileName =  sourceFolder+"type3font.pdf";
+        String inputFileName =  sourceFolder+"type3Font.pdf";
         String outputFileName =  destinationFolder +"new_type3Font.pdf";
         PdfReader reader =  new PdfReader(inputFileName);
         PdfWriter pdfWriter = new PdfWriter(new FileOutputStream(outputFileName));
