@@ -38,6 +38,11 @@ public class Property {
     public static final int LEADING = 31;
     public static final int LIST_SYMBOL = 32;
     public static final int LIST_SYMBOL_INDENT = 33;
+    public static final int TRANSFORMATION_MATRIX = 34;
+    public static final int ANGLE = 35;
+    public static final int X_DISTANCE = 36;
+    public static final int Y_DISTANCE = 37;
+    public static final int VERTICAL_SCALING = 38;
 
     private Property() {
     }

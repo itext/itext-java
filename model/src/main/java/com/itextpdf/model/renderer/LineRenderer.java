@@ -40,18 +40,21 @@ public class LineRenderer extends AbstractRenderer {
                 ((TextRenderer) childRenderer).trimFirst();
             }
 
-            if (childSize.getWidth() != null) {
-                Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), childSize.getWidth(), layoutBox.getHeight());
-                childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
-                curWidth += childSize.getWidth();
-            } else {
-                Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
-                childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
-                curWidth += childResult.getOccupiedArea().getBBox().getWidth();
+            Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
+            childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+            curWidth += childResult.getOccupiedArea().getBBox().getWidth();
+
+
+            float childAscent = 0;
+            float childDescent = 0;
+            if (childRenderer instanceof TextRenderer) {
+                childAscent = ((TextRenderer) childRenderer).getAscent();
+                childDescent = ((TextRenderer) childRenderer).getDescent();
+            } else if (childRenderer instanceof ImageRenderer) {
+                childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
             }
 
-            float childAscent = childRenderer instanceof TextRenderer ? ((TextRenderer) childRenderer).getAscent() : 0;
-            float childDescent = childRenderer instanceof TextRenderer ? ((TextRenderer)childRenderer).getDescent() : 0;
+
             maxAscent = Math.max(maxAscent, childAscent);
             maxDescent = Math.min(maxDescent, childDescent);
             float maxHeight = maxAscent - maxDescent;
