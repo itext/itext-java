@@ -57,7 +57,7 @@ abstract public class PdfObject {
             PdfWriter writer = getWriter();
             if (writer != null) {
                 writer.flushObject(this, canBeInObjStm && getType() != Stream
-                        && getType() != IndirectReference && getIndirectReference().getGenNr() == 0);
+                        && getType() != IndirectReference && getIndirectReference().getGenNumber() == 0);
             }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotFlushObject, e, this);

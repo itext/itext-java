@@ -43,7 +43,7 @@ class PdfXrefTable {
     public PdfIndirectReference add(PdfIndirectReference indirectReference) {
         if (indirectReference == null)
             return null;
-        int objNr = indirectReference.getObjNr();
+        int objNr = indirectReference.getObjNumber();
         this.count = Math.max(this.count, objNr);
         ensureCount(objNr);
         xref[objNr] = indirectReference;
@@ -90,8 +90,8 @@ class PdfXrefTable {
                 indirectReference.refersTo.setIndirectReference(null);
                 indirectReference.refersTo = null;
             }
-            if (indirectReference.getGenNr() < MaxGeneration)
-                freeReferences.add(indirectReference.getObjNr());
+            if (indirectReference.getGenNumber() < MaxGeneration)
+                freeReferences.add(indirectReference.getObjNumber());
         }
     }
 
@@ -132,7 +132,7 @@ class PdfXrefTable {
             PdfIndirectReference indirectReference = xref[i];
             if (indirectReference != null) {
                 if ((document.appendMode && !indirectReference.checkState(PdfIndirectReference.Modified)) ||
-                        (indirectReference.isFree() && indirectReference.getGenNr() == 0) ||
+                        (indirectReference.isFree() && indirectReference.getGenNumber() == 0) ||
                         (!indirectReference.checkState(PdfIndirectReference.Flushed))) {
                     indirectReference = null;
                 }
@@ -199,15 +199,15 @@ class PdfXrefTable {
                         xrefStream.getOutputStream().write(0);
                         //NOTE The object number of the next free object should be at this position due to spec.
                         xrefStream.getOutputStream().write(intToBytes(0));
-                        xrefStream.getOutputStream().write(shortToBytes(indirectReference.getGenNr()));
-                    } else if (indirectReference.getObjectStreamNumber() == 0) {
+                        xrefStream.getOutputStream().write(shortToBytes(indirectReference.getGenNumber()));
+                    } else if (indirectReference.getObjStreamNumber() == 0) {
                         xrefStream.getOutputStream().write(1);
                         assert indirectReference.getOffset() < Integer.MAX_VALUE;
                         xrefStream.getOutputStream().write(intToBytes((int) indirectReference.getOffset()));
-                        xrefStream.getOutputStream().write(shortToBytes(indirectReference.getGenNr()));
+                        xrefStream.getOutputStream().write(shortToBytes(indirectReference.getGenNumber()));
                     } else {
                         xrefStream.getOutputStream().write(2);
-                        xrefStream.getOutputStream().write(intToBytes(indirectReference.getObjectStreamNumber()));
+                        xrefStream.getOutputStream().write(intToBytes(indirectReference.getObjStreamNumber()));
                         xrefStream.getOutputStream().write(shortToBytes(indirectReference.getIndex()));
                     }
                 }
@@ -223,7 +223,7 @@ class PdfXrefTable {
                 for (int i = first; i < first + len; i++) {
                     PdfIndirectReference indirectReference = xref.get(i);
                     writer.writeString(objectOffsetFormatter.format(indirectReference.getOffset())).writeSpace().
-                            writeString(objectGenerationFormatter.format(indirectReference.getGenNr())).writeSpace();
+                            writeString(objectGenerationFormatter.format(indirectReference.getGenNumber())).writeSpace();
                     if (indirectReference.isFree()) {
                         writer.writeBytes(freeXRefEntry);
                     } else {
@@ -231,7 +231,7 @@ class PdfXrefTable {
                     }
                 }
             }
-            PdfDictionary trailer = document.getTrailer().getPdfObject();
+            PdfDictionary trailer = document.getTrailer();
             // Remove all unused keys in case stamp mode in case original file has full compression, but destination file has not.
             trailer.remove(PdfName.W);
             trailer.remove(PdfName.Index);
@@ -246,7 +246,7 @@ class PdfXrefTable {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
                 trailer.put(PdfName.Prev, lastXref);
             }
-            writer.write(document.getTrailer().getPdfObject());
+            writer.write(document.getTrailer());
 
         }
 

@@ -56,12 +56,12 @@ class PdfObjectStream extends PdfStream {
             throw new PdfException(PdfException.PdfObjectStreamReachMaxSize);
         }
         PdfOutputStream outputStream = getOutputStream();
-        indexStream.writeInteger(object.getIndirectReference().getObjNr()).
+        indexStream.writeInteger(object.getIndirectReference().getObjNumber()).
                 writeSpace().
                 writeLong(outputStream.getCurrentPos()).
                 writeSpace();
         outputStream.write(object);
-        object.getIndirectReference().setObjectStreamNumber(getIndirectReference().getObjNr());
+        object.getIndirectReference().setObjStreamNumber(getIndirectReference().getObjNumber());
         object.getIndirectReference().setIndex(size.getIntValue());
         outputStream.writeSpace();
         size.increment();

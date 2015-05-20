@@ -14,8 +14,11 @@ public class PdfDictionary extends PdfObject {
     }
 
     public PdfDictionary(Map<PdfName, PdfObject> map) {
-        for (Map.Entry<PdfName, PdfObject> entry : map.entrySet())
-            this.map.put(entry.getKey(), entry.getValue());
+        this.map.putAll(map);
+    }
+
+    public PdfDictionary(PdfDictionary dictionary) {
+        map.putAll(dictionary.map);
     }
 
     public int size() {

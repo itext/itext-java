@@ -243,13 +243,13 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     }
 
     protected void write(PdfIndirectReference indirectReference) throws PdfException {
-        if (indirectReference.getGenNr() == 0) {
-            writeInteger(indirectReference.getObjNr()).
+        if (indirectReference.getGenNumber() == 0) {
+            writeInteger(indirectReference.getObjNumber()).
                     writeBytes(endIndirectWithZeroGenNr);
         } else {
-            writeInteger(indirectReference.getObjNr()).
+            writeInteger(indirectReference.getObjNumber()).
                     writeSpace().
-                    writeInteger(indirectReference.getGenNr()).
+                    writeInteger(indirectReference.getGenNumber()).
                     writeBytes(endIndirect);
         }
     }

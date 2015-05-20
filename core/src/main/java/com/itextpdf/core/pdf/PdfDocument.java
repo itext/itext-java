@@ -58,7 +58,7 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Document trailed.
      */
-    protected PdfTrailer trailer = null;
+    protected PdfDictionary trailer = null;
 
     /**
      * Document info.
@@ -623,6 +623,13 @@ public class PdfDocument implements IEventDispatcher {
                 // if originalFIleID comes from crypto, it means that no need in checking modified state.
                 // For crypto purposes new documentId always generated.
                 fileId = PdfEncryption.createInfoId(originalFileID, isModified);
+
+                // The following two operators prevents the possible inconsistency between root and info
+                // entries existing in the trailer object and corresponding fields. This inconsistency
+                // may appear when user gets trailer and explicitly sets new root or info dictionaries.
+                trailer.put(PdfName.Root, catalog.getPdfObject());
+                trailer.put(PdfName.Info, info.getPdfObject());
+
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 if (isCloseWriter()) {
                     writer.close();
@@ -787,6 +794,15 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
+     * Gets document trailer.
+     *
+     * @return document trailer.
+     */
+    public PdfDictionary getTrailer() {
+        return trailer;
+    }
+
+    /**
      * Initializes document.
      *
      * @throws PdfException
@@ -796,9 +812,9 @@ public class PdfDocument implements IEventDispatcher {
             if (reader != null) {
                 reader.pdfDocument = this;
                 reader.readPdf();
-                trailer = new PdfTrailer(reader.trailer);
-                catalog = new PdfCatalog((PdfDictionary) trailer.getPdfObject().get(PdfName.Root, true), this);
-                info = new PdfDocumentInfo((PdfDictionary) trailer.getPdfObject().get(PdfName.Info, true), this);
+                trailer = new PdfDictionary(reader.trailer);
+                catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true), this);
+                info = new PdfDocumentInfo((PdfDictionary) trailer.get(PdfName.Info, true), this);
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
                     structTreeRoot = new PdfStructTreeRoot(str, this);
@@ -812,9 +828,9 @@ public class PdfDocument implements IEventDispatcher {
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this).addCreationDate();
-                    trailer = new PdfTrailer();
-                    trailer.setCatalog(catalog);
-                    trailer.setInfo(info);
+                    trailer = new PdfDictionary();
+                    trailer.put(PdfName.Root, catalog.getPdfObject());
+                    trailer.put(PdfName.Info, info.getPdfObject());
                 } else {
                     info.addModDate();
                 }
@@ -846,15 +862,6 @@ public class PdfDocument implements IEventDispatcher {
      */
     protected PdfXrefTable getXref() {
         return xref;
-    }
-
-    /**
-     * Gets document trailer.
-     *
-     * @return document trailer.
-     */
-    protected PdfTrailer getTrailer() {
-        return trailer;
     }
 
 

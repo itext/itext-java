@@ -164,7 +164,7 @@ public class PdfString extends PdfPrimitiveObject {
             byte[] decodedContent = decodeContent();
             content = null;
             if (getIndirectReference() != null) {
-                decrypt.setHashKey(getIndirectReference().getObjNr(), getIndirectReference().getGenNr());
+                decrypt.setHashKey(getIndirectReference().getObjNumber(), getIndirectReference().getGenNumber());
             } else {
                 decrypt.setHashKey(0, 0);
             }

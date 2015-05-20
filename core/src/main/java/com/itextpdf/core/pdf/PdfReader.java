@@ -269,7 +269,7 @@ public class PdfReader {
                     filter.release();
                 }
                 if (!skip) {
-                    decrypt.setHashKey(stream.getIndirectReference().getObjNr(), stream.getIndirectReference().getGenNr());
+                    decrypt.setHashKey(stream.getIndirectReference().getObjNumber(), stream.getIndirectReference().getGenNumber());
                     bytes = decrypt.decryptByteArray(bytes);
                 }
             }
@@ -615,7 +615,7 @@ public class PdfReader {
     }
 
     protected void readObjectStream(PdfStream objectStream) throws PdfException, IOException {
-        int objectStreamNumber = objectStream.getIndirectReference().getObjNr();
+        int objectStreamNumber = objectStream.getIndirectReference().getObjNumber();
         int first = objectStream.getAsNumber(PdfName.First).getIntValue();
         int n = objectStream.getAsNumber(PdfName.N).getIntValue();
         byte[] bytes = readStreamBytes(objectStream, true);
@@ -657,7 +657,7 @@ public class PdfReader {
                 }
                 PdfIndirectReference reference = pdfDocument.getXref().get(objNumber[k]);
                 // Check if this object has no incremental updates (e.g. no append mode)
-                if (reference.getObjectStreamNumber() == objectStreamNumber) {
+                if (reference.getObjStreamNumber() == objectStreamNumber) {
                     reference.setRefersTo(obj);
                     obj.setIndirectReference(reference);
                 }
@@ -714,11 +714,11 @@ public class PdfReader {
                 PdfXrefTable table = pdfDocument.getXref();
                 PdfIndirectReference reference = table.get(num);
                 if (reference != null) {
-                    if (reference.getGenNr() != tokens.getGenNr()) {
+                    if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
                             logger.warn(String.format("Invalid indirect reference %d %d R", tokens.getObjNr(), tokens.getGenNr()));
-                            return null;
+                            return new PdfNull();
                         } else {
                             throw new PdfException(PdfException.InvalidIndirectReference1);
                         }
@@ -866,7 +866,7 @@ public class PdfReader {
                 PdfIndirectReference reference = xref.get(num);
                 if (reference == null) {
                     reference = new PdfIndirectReference(pdfDocument, num, gen, pos);
-                } else if (reference.checkState(PdfIndirectReference.Reading) && reference.getGenNr() == gen) {
+                } else if (reference.checkState(PdfIndirectReference.Reading) && reference.getGenNumber() == gen) {
                     reference.setOffset(pos);
                 } else {
                     continue;
@@ -980,7 +980,7 @@ public class PdfReader {
                         break;
                     case 2:
                         newReference = new PdfIndirectReference(pdfDocument, base, 0, field3);
-                        newReference.setObjectStreamNumber((int) field2);
+                        newReference.setObjStreamNumber((int) field2);
                         break;
                     default:
                         throw new PdfException(PdfException.InvalidXrefStream);
@@ -988,11 +988,11 @@ public class PdfReader {
                 if (xref.get(base) == null) {
                     xref.add(newReference);
                 } else if (xref.get(base).checkState(PdfIndirectReference.Reading)
-                        && xref.get(base).getObjNr() == newReference.getObjNr()
-                        && xref.get(base).getGenNr() == newReference.getGenNr()) {
+                        && xref.get(base).getObjNumber() == newReference.getObjNumber()
+                        && xref.get(base).getGenNumber() == newReference.getGenNumber()) {
                     PdfIndirectReference reference = xref.get(base);
                     reference.setOffset(newReference.getOffset());
-                    reference.setObjectStreamNumber(newReference.getObjectStreamNumber());
+                    reference.setObjStreamNumber(newReference.getObjStreamNumber());
                 }
                 ++start;
             }
@@ -1018,7 +1018,7 @@ public class PdfReader {
                 int num = obj[0];
                 int gen = obj[1];
                 PdfIndirectReference reference = xref.get(num);
-                if (reference != null && reference.getGenNr() == gen) {
+                if (reference != null && reference.getGenNumber() == gen) {
                     reference.fixOffset(pos);
                 }
             }
@@ -1061,7 +1061,7 @@ public class PdfReader {
                     continue;
                 int num = obj[0];
                 int gen = obj[1];
-                if (xref.get(num) == null || xref.get(num).getGenNr() <= gen) {
+                if (xref.get(num) == null || xref.get(num).getGenNumber() <= gen) {
                     xref.add(new PdfIndirectReference(pdfDocument, num, gen, pos));
                 }
             }
@@ -1108,9 +1108,9 @@ public class PdfReader {
         if (reference.refersTo != null)
             return reference.refersTo;
         try {
-            if (reference.getObjectStreamNumber() > 0) {
+            if (reference.getObjStreamNumber() > 0) {
                 PdfStream objectStream = (PdfStream) pdfDocument.getXref().
-                        get(reference.getObjectStreamNumber()).getRefersTo(false);
+                        get(reference.getObjStreamNumber()).getRefersTo(false);
                 readObjectStream(objectStream);
                 return reference.refersTo;
             } else if (reference.getOffset() > 0) {
@@ -1119,13 +1119,13 @@ public class PdfReader {
                     tokens.seek(reference.getOffset());
                     tokens.nextValidToken();
                     if (tokens.getTokenType() != PdfTokeniser.TokenType.Obj
-                            || tokens.getObjNr() != reference.getObjNr()
-                            || tokens.getGenNr() != reference.getGenNr()) {
+                            || tokens.getObjNr() != reference.getObjNumber()
+                            || tokens.getGenNr() != reference.getGenNumber()) {
                         tokens.throwError(PdfException.InvalidOffsetForObject1, reference.toString());
                     }
                     object = readObject(false);
                 } catch (PdfException ex) {
-                    if (fixXref && reference.getObjectStreamNumber() == 0) {
+                    if (fixXref && reference.getObjStreamNumber() == 0) {
                         fixXref();
                         object = readObject(reference, false);
                     } else {
@@ -1134,7 +1134,7 @@ public class PdfReader {
                 }
                 return object != null ? object.setIndirectReference(reference) : null;
             } else {
-                return null;
+                return new PdfNull();
             }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotReadPdfObject, e);

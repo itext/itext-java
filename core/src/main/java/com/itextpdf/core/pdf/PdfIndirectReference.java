@@ -84,11 +84,11 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         assert offset >= 0;
     }
 
-    public int getObjNr() {
+    public int getObjNumber() {
         return objNr;
     }
 
-    public int getGenNr() {
+    public int getGenNumber() {
         return genNr;
     }
 
@@ -122,7 +122,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.refersTo = refersTo;
     }
 
-    public int getObjectStreamNumber() {
+    public int getObjStreamNumber() {
         return objectStreamNumber;
     }
 
@@ -229,10 +229,10 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         if (checkState(OriginalObjectStream)) {
             states.append("OriginalObjectStream; ");
         }
-        return java.lang.String.format("%d %d R%s", getObjNr(), getGenNr(), states.substring(0, states.length() - 1));
+        return java.lang.String.format("%d %d R%s", getObjNumber(), getGenNumber(), states.substring(0, states.length() - 1));
     }
 
-    protected void setObjectStreamNumber(int objectStreamNumber) {
+    protected void setObjStreamNumber(int objectStreamNumber) {
         this.objectStreamNumber = objectStreamNumber;
     }
 

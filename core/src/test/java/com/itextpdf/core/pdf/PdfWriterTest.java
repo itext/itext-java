@@ -463,7 +463,7 @@ public class PdfWriterTest {
         String streamContent = "Some text content with strange symbols ∞²";
         PdfStream stream = new PdfStream(document, new ByteArrayInputStream(streamContent.getBytes()));
         stream.flush();
-        int streamIndirectNumber = stream.getIndirectReference().getObjNr();
+        int streamIndirectNumber = stream.getIndirectReference().getObjNumber();
         document.close();
 
 //        com.itextpdf.text.pdf.PdfReader reader = new PdfReader(filename);

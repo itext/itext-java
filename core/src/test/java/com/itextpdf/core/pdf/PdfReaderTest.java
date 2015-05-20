@@ -345,7 +345,7 @@ public class PdfReaderTest {
 
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
         document.addPage(1000, testPage);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNr() < xrefSize);
+        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() < xrefSize);
 
         for (int i = 1; i < document.getNumOfPages() + 1; i++) {
             PdfPage page = document.getPage(i);
@@ -1229,7 +1229,7 @@ public class PdfReaderTest {
         }
 
         Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
-        Assert.assertNotNull("Invalid trailer", document.getTrailer().getPdfObject().get(PdfName.ID));
+        Assert.assertNotNull("Invalid trailer", document.getTrailer().get(PdfName.ID));
 
         reader.close();
         document.close();
@@ -1256,7 +1256,7 @@ public class PdfReaderTest {
         }
 
         Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
-        Assert.assertNotNull("Invalid trailer", document.getTrailer().getPdfObject().get(PdfName.ID));
+        Assert.assertNotNull("Invalid trailer", document.getTrailer().get(PdfName.ID));
 
         reader.close();
         document.close();
@@ -1432,7 +1432,7 @@ public class PdfReaderTest {
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
     public void freeReferencesTest() throws IOException, PdfException {
         String filename = sourceFolder + "freeReferences.pdf";
 
@@ -1440,7 +1440,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(fis);
         PdfDocument pdfDoc = new PdfDocument(reader);
 
-        Assert.assertNull(pdfDoc.getPdfObject(8));
+        Assert.assertTrue(pdfDoc.getPdfObject(8) instanceof PdfNull);
         //Assert.assertFalse(pdfDoc.getReader().fixedXref);
         Assert.assertFalse(pdfDoc.getReader().rebuiltXref);
 

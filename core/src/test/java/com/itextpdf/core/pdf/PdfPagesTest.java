@@ -92,7 +92,7 @@ public class PdfPagesTest {
         PdfPage testPage = document.removePage(1000);
         Assert.assertTrue(testPage.getPdfObject().getIndirectReference() == null);
         document.addPage(1000, testPage);
-        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNr() < xrefSize);
+        Assert.assertTrue(testPage.getPdfObject().getIndirectReference().getObjNumber() < xrefSize);
 
         for (int i = 0; i < pages.length; i++) {
             Assert.assertEquals("Remove page", true, document.removePage(pages[i]));
@@ -194,7 +194,7 @@ public class PdfPagesTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         PdfPage removedPage = pdfDoc.addNewPage();
-        int removedPageObjectNumber = removedPage.getPdfObject().getIndirectReference().getObjNr();
+        int removedPageObjectNumber = removedPage.getPdfObject().getIndirectReference().getObjNumber();
         removedPage.flush();
         pdfDoc.removePage(removedPage);
 
