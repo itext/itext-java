@@ -1,0 +1,43 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted
+# to LF line endings on checkout.
+*.afm text eol=lf
+*.cmap text eol=lf
+*.crt text eol=lf
+*.cs text eol=lf
+*.html text eol=lf
+*.java text eol=lf ident
+*.lng text eol=lf
+*.md text eol=lf
+*.pom text eol=lf
+*.properties text eol=lf
+*.txt text eol=lf
+*.xfdf text eol=lf
+*.xml text eol=lf
+
+# Declare files that will always have CRLF line endings on checkout.
+*.bat text eol=crlf
+*.csproj text eol=crlf
+*.sln text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.bmp binary
+*.cmp binary
+*.dib binary
+*.gif binary
+*.j2k binary
+*.jb2 binary
+*.jp2 binary
+*.jpg binary
+*.key binary
+*.otf binary
+*.pdf binary
+*.pfb binary
+*.png binary
+*.tif binary
+*.tiff binary
+*.ttc binary
+*.ttf binary
+*.wmf binary
