@@ -120,7 +120,7 @@ public class PdfSplitterTest {
         }
 
         for (int i = 1; i <= 2; i++) {
-            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument3_" + String.valueOf(i) + ".pdf",
+            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument3_" + i + ".pdf",
                     sourceFolder + "cmp/" + "splitDocument3_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
     }
@@ -141,4 +141,33 @@ public class PdfSplitterTest {
         list.get(1).close();
     }
 
+    @Test
+    public void splitDocumentBySize() throws IOException, PdfException, InterruptedException {
+        String inputFileName = sourceFolder + "splitBySize.pdf";
+        PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+        PdfSplitter splitter = new PdfSplitter(inputPdfDoc) {
+
+            int partNumber = 1;
+
+            @Override
+            protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
+                try {
+                    return new PdfWriter(new FileOutputStream(destinationFolder + "splitBySize_part" + String.valueOf(partNumber++) + ".pdf"));
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException();
+                }
+            }
+        };
+
+        List<PdfDocument> documents = splitter.splitBySize(100000);
+
+        for (PdfDocument doc : documents) {
+            doc.close();
+        }
+
+        for (int i = 1; i <= 4; ++i) {
+            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitBySize_part" + i + ".pdf",
+                                                                 sourceFolder + "cmp/" + "splitBySize_part" + i + ".pdf", destinationFolder, "diff_"));
+        }
+    }
 }

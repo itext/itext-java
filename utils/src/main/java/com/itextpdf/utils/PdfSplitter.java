@@ -23,6 +23,27 @@ public class PdfSplitter {
     }
 
     /**
+     * Splits the document basing on the given size.
+     *
+     * @param size <strog>Preferred</strog> size for splitting.
+     * @return The documents which the source document was split into.
+     *         Be warned that these documents are not closed.
+     */
+    public List<PdfDocument> splitBySize(long size) throws PdfException {
+        List<PageRange> splitRanges = new ArrayList<PageRange>();
+        int currentPage = 1;
+        int numOfPages = pdfDocument.getNumOfPages();
+
+        while (currentPage <= numOfPages) {
+            PageRange nextRange = getNextRange(currentPage, numOfPages, size);
+            splitRanges.add(nextRange);
+            currentPage = nextRange.getAllPages().last() + 1;
+        }
+
+        return extractPageRanges(splitRanges);
+    }
+
+    /**
      * Splits the document by page numbers.
      *
      * @param pageNumbers   the numbers of pages from which another document is to be started.
@@ -338,5 +359,37 @@ public class PdfSplitter {
             nextPdfOutline = getAbsoluteTreeNextOutline(outline.getParent());
         }
         return nextPdfOutline;
+    }
+
+    private PageRange getNextRange(int startPage, int endPage, long size) throws PdfException {
+        PdfResourceCounter counter = new PdfResourceCounter(pdfDocument.getTrailer());
+        Map<Integer, PdfObject> resources = counter.getResources();
+        long lengthWithoutXref = counter.getLength(null); // initialize with trailer length
+        int currentPage = startPage;
+        boolean oversized = false;
+
+        do {
+            PdfPage page = pdfDocument.getPage(currentPage++);
+            counter = new PdfResourceCounter(page.getPdfObject());
+            lengthWithoutXref += counter.getLength(resources);
+            resources.putAll(counter.getResources());
+
+            if (lengthWithoutXref + xrefLength(resources.size()) > size) {
+                oversized = true;
+            }
+        } while (currentPage <= endPage && !oversized);
+
+        // true if at least the first page to be copied didn't cause the oversize
+        if (oversized && (currentPage - 1) != startPage) {
+            // we shouldn't copy previous page because it caused
+            // the oversize and it isn't the first page to be copied
+            --currentPage;
+        }
+
+        return new PageRange().addPageSequence(startPage, currentPage - 1);
+    }
+
+    private long xrefLength(int size) {
+        return 20l * (size + 1);
     }
 }
