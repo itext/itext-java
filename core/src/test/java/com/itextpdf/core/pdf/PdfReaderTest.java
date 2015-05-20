@@ -323,7 +323,7 @@ public class PdfReaderTest {
         Assert.assertEquals(PdfObject.Stream, document.getXref().get(5).getRefersTo().getType());
         Assert.assertEquals(PdfObject.Dictionary, document.getXref().get(6).getRefersTo().getType());
         for (int i = 7; i < document.getXref().size(); i++)
-            Assert.assertNull(document.getXref().get(i).getRefersTo());
+            Assert.assertTrue(document.getXref().get(i).getRefersTo() instanceof PdfNull);
 
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
@@ -854,7 +854,7 @@ public class PdfReaderTest {
         boolean exception = false;
         try {
             new PdfDocument(reader);
-        } catch (PdfException ex) {
+        } catch (ClassCastException ex) {
             exception = true;
         }
 
@@ -1004,7 +1004,7 @@ public class PdfReaderTest {
 
         int i;
         PdfObject fontF1 = document.getPage(997).getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.Font).get(new PdfName("F1"));
-        Assert.assertNull(fontF1);
+        Assert.assertTrue(fontF1 instanceof PdfNull);
 
         //There is a generation number mismatch in xref table and object for 3093
         try{

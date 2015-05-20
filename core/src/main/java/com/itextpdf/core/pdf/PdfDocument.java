@@ -814,7 +814,11 @@ public class PdfDocument implements IEventDispatcher {
                 reader.readPdf();
                 trailer = new PdfDictionary(reader.trailer);
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true), this);
-                info = new PdfDocumentInfo((PdfDictionary) trailer.get(PdfName.Info, true), this);
+
+                PdfObject infoDict = trailer.get(PdfName.Info, true);
+                info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ?
+                        (PdfDictionary) infoDict : new PdfDictionary(), this);
+
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
                     structTreeRoot = new PdfStructTreeRoot(str, this);
