@@ -2,6 +2,7 @@ package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -62,6 +63,10 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     public float getWidth(String s) {
         throw new IllegalStateException();
+    }
+
+    public FontProgram getFontProgram() {
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     @Override

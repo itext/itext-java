@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-public class Type1Font {
+public class Type1Font extends FontProgram {
 
     /** Type 1 font parser. */
     private Type1Parser fontParser;
@@ -71,7 +71,7 @@ public class Type1Font {
     private HashMap<String, Object[]> KernPairs = new HashMap<String, Object[]>();
 
     /** Types of records in a PFB file. ASCII is 1 and BINARY is 2. They have to appear in the PFB file in this sequence. */
-    private static final int PFB_TYPES[] = {1, 2, 1};
+    private static final int[] PFB_TYPES = {1, 2, 1};
 
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
@@ -171,18 +171,22 @@ public class Type1Font {
         }
     }
 
+    @Override
     public int getLlx() {
         return llx;
     }
 
+    @Override
     public int getLly() {
         return lly;
     }
 
+    @Override
     public int getUrx() {
         return urx;
     }
 
+    @Override
     public int getUry() {
         return ury;
     }
@@ -195,6 +199,7 @@ public class Type1Font {
         return UnderlineThickness;
     }
 
+    @Override
     public int getCapHeight() {
         return CapHeight;
     }
@@ -203,11 +208,13 @@ public class Type1Font {
         return XHeight;
     }
 
-    public int getAscender() {
+    @Override
+    public int getAscent() {
         return Ascender;
     }
 
-    public int getDescender() {
+    @Override
+    public int getDescent() {
         return Descender;
     }
 
@@ -219,16 +226,41 @@ public class Type1Font {
         return StdVW;
     }
 
+    @Override
+    public int getStemV() {
+        return getStdVW();
+    }
+
     public boolean isFixedPitch() {
         return IsFixedPitch;
     }
 
+    @Override
     public float getItalicAngle() {
         return ItalicAngle;
     }
 
     public String getWeight() {
         return Weight;
+    }
+
+    @Override
+    public int getFlags() {
+        int flags = 0;
+        if (isFixedPitch()) {
+            flags |= 1;
+        }
+        flags |= getEncoding().isFontSpecific() ? 4 : 32;
+        if (getItalicAngle() < 0) {
+            flags |= 64;
+        }
+        if (getFontName().contains("Caps") || getFontName().endsWith("SC")) {
+            flags |= 131072;
+        }
+        if (getWeight().equals("Bold")) {
+            flags |= 262144;
+        }
+        return flags;
     }
 
     public String getCharacterSet() {
@@ -260,7 +292,7 @@ public class Type1Font {
         if (second == null) {
             return 0;
         }
-        Object obj[] = KernPairs.get(first);
+        Object[] obj = KernPairs.get(first);
         if (obj == null) {
             return 0;
         }
@@ -287,7 +319,7 @@ public class Type1Font {
         String second = AdobeGlyphList.unicodeToName(char2);
         if (second == null)
             return false;
-        Object obj[] = KernPairs.get(first);
+        Object[] obj = KernPairs.get(first);
         if (obj == null) {
             obj = new Object[]{second, kern};
             KernPairs.put(first, obj);
@@ -300,7 +332,7 @@ public class Type1Font {
             }
         }
         int size = obj.length;
-        Object obj2[] = new Object[size + 2];
+        Object[] obj2 = new Object[size + 2];
         System.arraycopy(obj, 0, obj2, 0, size);
         obj2[size] = second;
         obj2[size + 1] = kern;
@@ -317,7 +349,7 @@ public class Type1Font {
      * @return the width of the char
      */
     public int getRawWidth(int c, String name) {
-        Object metrics[];
+        Object[] metrics;
         if (name == null) { // font specific
             metrics = CharMetrics.get(c);
         } else {
@@ -333,7 +365,7 @@ public class Type1Font {
     }
 
     public int[] getRawCharBBox(int c, String name) {
-        Object metrics[];
+        Object[] metrics;
         if (name == null) { // font specific
             metrics = CharMetrics.get(Integer.valueOf(c));
         } else {
@@ -362,7 +394,7 @@ public class Type1Font {
             }
         } else {
             int total = 0;
-            byte bytes[] = encoding.convertToBytes(ch);
+            byte[] bytes = encoding.convertToBytes(ch);
             for (byte b : bytes) {
                 total += widths[0xff & b];
             }
@@ -397,7 +429,7 @@ public class Type1Font {
             return total;
         }
         else {
-            byte bytes[] = encoding.convertToBytes(text);
+            byte[] bytes = encoding.convertToBytes(text);
             for (byte b : bytes) {
                 total += widths[0xff & b];
             }
@@ -413,9 +445,9 @@ public class Type1Font {
      */
     public int getDescent(String text) {
         int min = 0;
-        char chars[] = text.toCharArray();
+        char[] chars = text.toCharArray();
         for (char ch : chars) {
-            int bbox[] = getCharBBox(ch);
+            int[] bbox = getCharBBox(ch);
             if (bbox != null && bbox[1] < min) {
                 min = bbox[1];
             }
@@ -431,9 +463,9 @@ public class Type1Font {
      */
     public int getAscent(String text) {
         int max = 0;
-        char chars[] = text.toCharArray();
+        char[] chars = text.toCharArray();
         for (char ch : chars) {
-            int bbox[] = getCharBBox(ch);
+            int[] bbox = getCharBBox(ch);
             if (bbox != null && bbox[3] > max) {
                 max = bbox[3];
             }
@@ -442,7 +474,7 @@ public class Type1Font {
     }
 
     public int[] getCharBBox(char ch) {
-        byte b[] = encoding.convertToBytes(ch);
+        byte[] b = encoding.convertToBytes(ch);
         if (b.length == 0) {
             return null;
         } else {
@@ -609,7 +641,8 @@ public class Type1Font {
                 } else if (ident.equals("N")) {
                     N = tokc.nextToken();
                 } else if (ident.equals("B")) {
-                    B = new int[]{Integer.parseInt(tokc.nextToken()),
+                    B = new int[] {
+                            Integer.parseInt(tokc.nextToken()),
                             Integer.parseInt(tokc.nextToken()),
                             Integer.parseInt(tokc.nextToken()),
                             Integer.parseInt(tokc.nextToken())};
@@ -655,12 +688,12 @@ public class Type1Font {
                     String first = tok.nextToken();
                     String second = tok.nextToken();
                     Integer width = (int) Float.parseFloat(tok.nextToken());
-                    Object relates[] = KernPairs.get(first);
+                    Object[] relates = KernPairs.get(first);
                     if (relates == null) {
                         KernPairs.put(first, new Object[]{second, width});
                     } else {
                         int n = relates.length;
-                        Object relates2[] = new Object[n + 2];
+                        Object[] relates2 = new Object[n + 2];
                         System.arraycopy(relates, 0, relates2, 0, n);
                         relates2[n] = second;
                         relates2[n + 1] = width;
@@ -705,7 +738,7 @@ public class Type1Font {
             String s;
             String name;
             char ch;
-            byte b[] = new byte[1];
+            byte[] b = new byte[1];
 
             for (int k = 0; k < 256; ++k) {
                 b[0] = (byte)k;

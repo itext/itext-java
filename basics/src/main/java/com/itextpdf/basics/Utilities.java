@@ -7,6 +7,7 @@ import com.itextpdf.basics.io.RandomAccessSource;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.zip.InflaterInputStream;
 
 public class Utilities {
@@ -359,5 +360,14 @@ public class Utilities {
             return Character.toString((char)codePoint);
         codePoint -= 0x10000;
         return new String(new char[]{(char)(codePoint / 0x400 + 0xd800), (char)(codePoint % 0x400 + 0xdc00)});
+    }
+
+    public static int[]  toArray(Collection<Integer> collection) {
+        int[] array = new int[1];
+        int k = 0;
+        for (Integer key : collection) {
+            array[k++] = key;
+        }
+        return array;
     }
 }

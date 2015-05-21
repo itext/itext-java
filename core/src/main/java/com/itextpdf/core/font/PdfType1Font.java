@@ -197,34 +197,20 @@ public class PdfType1Font extends PdfFont {
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(getDocument());
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
-        fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontProgram.getAscender()));
+        fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontProgram.getAscent()));
         fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontProgram.getCapHeight()));
-        fontDescriptor.put(PdfName.Descent, new PdfNumber(fontProgram.getDescender()));
+        fontDescriptor.put(PdfName.Descent, new PdfNumber(fontProgram.getDescent()));
         Rectangle fontBBox = new Rectangle(fontProgram.getLlx(), fontProgram.getLly(),
                 fontProgram.getUrx(), fontProgram.getUry());
         fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontBBox));
         fontDescriptor.put(PdfName.FontName, new PdfName(fontProgram.getFontName()));
         fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontProgram.getItalicAngle()));
-        fontDescriptor.put(PdfName.StemV, new PdfNumber(fontProgram.getStdVW()));
+        fontDescriptor.put(PdfName.StemV, new PdfNumber(fontProgram.getStemV()));
         if (fontStream != null) {
             fontDescriptor.put(PdfName.FontFile, fontStream);
             fontStream.flush();
         }
-        int flags = 0;
-        if (fontProgram.isFixedPitch()) {
-            flags |= 1;
-        }
-        flags |= fontProgram.getEncoding().isFontSpecific() ? 4 : 32;
-        if (fontProgram.getItalicAngle() < 0) {
-            flags |= 64;
-        }
-        if (fontProgram.getFontName().contains("Caps") || fontProgram.getFontName().endsWith("SC")) {
-            flags |= 131072;
-        }
-        if (fontProgram.getWeight().equals("Bold")) {
-            flags |= 262144;
-        }
-        fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
+        fontDescriptor.put(PdfName.Flags, new PdfNumber(fontProgram.getFlags()));
         return fontDescriptor;
     }
 }

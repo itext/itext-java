@@ -50,7 +50,7 @@ class TrueTypeFontSubset {
     protected boolean includeCmap;
     protected boolean includeExtras;
     protected boolean locaShortTable;
-    protected int locaTable[];
+    protected int[] locaTable;
     protected HashSet<Integer> glyphsUsed;
     protected ArrayList<Integer> glyphsInList;
     protected int tableGlyphOffset;
@@ -103,9 +103,9 @@ class TrueTypeFontSubset {
     }
 
     protected void assembleFont() throws IOException {
-        int tableLocation[];
+        int[] tableLocation;
         int fullFontSize = 0;
-        String tableNames[];
+        String[] tableNames;
         if (includeExtras) {
             tableNames = tableNamesExtra;
         } else {
@@ -209,8 +209,7 @@ class TrueTypeFontSubset {
     }
 
     protected void readLoca() throws IOException, PdfException {
-        int tableLocation[];
-        tableLocation = tableDirectory.get("head");
+        int[] tableLocation = tableDirectory.get("head");
         if (tableLocation == null) {
             throw new PdfException("table.1.does.not.exist.in.2", "head").setMessageParams(fileName);
         }
@@ -287,8 +286,7 @@ class TrueTypeFontSubset {
     }
 
     protected void flatGlyphs() throws IOException, PdfException {
-        int tableLocation[];
-        tableLocation = tableDirectory.get("glyf");
+        int[] tableLocation = tableDirectory.get("glyf");
         if (tableLocation == null)
             throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
         Integer glyph0 = 0;

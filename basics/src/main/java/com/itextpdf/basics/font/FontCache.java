@@ -38,12 +38,13 @@ public class FontCache {
      * @return {@code true} if it is CJKFont.
      */
     public static boolean isCidFont(String fontName, String enc) {
-        if (!registryNames.containsKey("fonts"))
+        if (!registryNames.containsKey("fonts")) {
             return false;
-        if (!registryNames.get("fonts").contains(fontName))
+        } else if (!registryNames.get("fonts").contains(fontName)) {
             return false;
-        if (enc.equals(PdfEncodings.IDENTITY_H) || enc.equals(PdfEncodings.IDENTITY_V))
+        } else if (enc.equals(PdfEncodings.IDENTITY_H) || enc.equals(PdfEncodings.IDENTITY_V)) {
             return true;
+        }
         String registry = (String) allFonts.get(fontName).get("Registry");
         Set<String> encodings = registryNames.get(registry);
         return encodings != null && encodings.contains(enc);
@@ -71,13 +72,8 @@ public class FontCache {
     }
 
     public static CMapCidUni getCid2UniCmap(String uniMap) {
-        CMapCidUni cmap = new CMapCidUni();
-        try {
-            CMapParser.parseCid(uniMap, cmap, new CMapLocationResource());
-        } catch (IOException e) {
-            throw new PdfRuntimeException(PdfException.IoException, e);
-        }
-        return cmap;
+        CMapCidUni cidUni = new CMapCidUni();
+        return parseCmap(uniMap, cidUni);
     }
 
     public static CMapUniCid getUni2CidCmap(String uniMap) {
@@ -95,7 +91,7 @@ public class FontCache {
         return parseCmap(cmap, cidByte);
     }
 
-    public static Map<String, Object> getType1Metrics(String fontName) {
+    public static FontProgram getFont(String fontName) {
         return null;
     }
 
@@ -109,8 +105,9 @@ public class FontCache {
             String[] sp = value.split(" ");
             Set<String> hs = new HashSet<String>();
             for (String s : sp) {
-                if (s.length() > 0)
+                if (s.length() > 0) {
                     hs.add(s);
+                }
             }
             registryNames.put((String) key, hs);
         }

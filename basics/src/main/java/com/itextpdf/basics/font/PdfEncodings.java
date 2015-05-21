@@ -238,7 +238,7 @@ public class PdfEncodings {
      * @param encoding the encoding
      * @return the converted {@code String}
      */
-    public static String convertToString(byte bytes[], String encoding) throws PdfException {
+    public static String convertToString(byte bytes[], String encoding) {
         if (bytes == null)
             return EmptyString;
         if (encoding == null || encoding.length() == 0) {
@@ -269,7 +269,7 @@ public class PdfEncodings {
         try {
             return new String(bytes, encoding);
         } catch (UnsupportedEncodingException e) {
-            throw new PdfException(PdfException.PdfEncodings, e);
+            throw new PdfRuntimeException(PdfException.PdfEncodings, e);
         }
     }
 

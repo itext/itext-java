@@ -336,15 +336,7 @@ public class PdfTrueTypeFont extends PdfFont {
                 fontDescriptor.put(PdfName.FontFile2, fontStream);
             }
         }
-        int flags = 0;
-        if (fontProgram.isFixedPitch())
-            flags |= 1;
-        flags |= fontProgram.getEncoding().isFontSpecific() ? 4 : 32;
-        if ((fontProgram.getMacStyle() & 2) != 0)
-            flags |= 64;
-        if ((fontProgram.getMacStyle() & 1) != 0)
-            flags |= 262144;
-        fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
+        fontDescriptor.put(PdfName.Flags, new PdfNumber(fontProgram.getFlags()));
         return fontDescriptor;
     }
 

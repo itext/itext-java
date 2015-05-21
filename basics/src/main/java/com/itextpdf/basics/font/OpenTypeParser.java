@@ -178,7 +178,7 @@ class OpenTypeParser {
     protected HashMap<String, int[]> tables;
 
     public OpenTypeParser(String name, byte[] ttf) throws IOException, PdfException {
-        String nameBase = getBaseName(name);
+        String nameBase = FontProgram.getBaseName(name);
         String ttcName = getTTCName(nameBase);
         if (nameBase.length() < name.length()) {
             style = name.substring(nameBase.length());
@@ -935,21 +935,5 @@ class OpenTypeParser {
             }
         }
         return h;
-    }
-
-    /**
-     * Gets the name without the modifiers Bold, Italic or BoldItalic.
-     * @param name the full name of the font
-     * @return the name without the modifiers Bold, Italic or BoldItalic
-     */
-    private static String getBaseName(String name) {
-        if (name.endsWith(",Bold"))
-            return name.substring(0, name.length() - 5);
-        else if (name.endsWith(",Italic"))
-            return name.substring(0, name.length() - 7);
-        else if (name.endsWith(",BoldItalic"))
-            return name.substring(0, name.length() - 11);
-        else
-            return name;
     }
 }

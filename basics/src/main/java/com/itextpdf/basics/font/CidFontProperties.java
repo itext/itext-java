@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-public class CjkFontProperties {
+public class CidFontProperties {
 
     /** The path to the font resources. */
     public static final String RESOURCE_PATH_CMAP = FontConstants.RESOURCE_PATH + "cmap/";
@@ -29,7 +29,7 @@ public class CjkFontProperties {
      * @param enc the encoding.
      * @return {@code true} if it is CJKFont.
      */
-    public static boolean isCjkFont(String fontName, String enc) {
+    public static boolean isCidFont(String fontName, String enc) {
         if (!registryNames.containsKey("fonts"))
             return false;
         if (!registryNames.get("fonts").contains(fontName))
