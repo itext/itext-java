@@ -363,7 +363,7 @@ public class Utilities {
     }
 
     public static int[]  toArray(Collection<Integer> collection) {
-        int[] array = new int[1];
+        int[] array = new int[collection.size()];
         int k = 0;
         for (Integer key : collection) {
             array[k++] = key;

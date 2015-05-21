@@ -2,6 +2,7 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.font.CidFont;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
@@ -9,6 +10,7 @@ import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.font.PdfType3Font;
 import com.itextpdf.canvas.font.Type3Glyph;
 import com.itextpdf.core.font.PdfTrueTypeFont;
+import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -21,6 +23,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -38,10 +41,80 @@ public class PdfFontTest {
         new File(destinationFolder).mkdirs();
     }
 
+    @Test
+    public void createDocumentWithKozmin() throws IOException, PdfException {
+        int pageCount = 1;
+        String filename = destinationFolder + "DocumentWithKozmin.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Type3 test";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        CidFont KozMin = new CidFont("KozMinPro-Regular");
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, KozMin, "UniJIS-UCS2-H"), 72)
+                    .showText("Hello World")
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+            canvas.release();
+            page.flush();
+        }
+        pdfDoc.close();
+    }
+
+    @Test @Ignore
+    public void createDocumentWithTrueTypeAsType0() throws IOException, PdfException {
+        int pageCount = 1;
+        String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0.pdf";
+
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Type3 test";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "abserif4_5.ttf"));
+        TrueTypeFont abSerif = new TrueTypeFont("Aboriginal Serif", "Identity-H", ttf);
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, abSerif, "Identity-H", true), 72)
+                    .showText("Hello World")
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+            canvas.release();
+            page.flush();
+        }
+        pdfDoc.close();
+    }
 
     @Test
     public void createDocumentWithType3Font() throws IOException, PdfException {
-        String filename = destinationFolder + "type3Font.pdf";
+        String filename = destinationFolder + "DocumentWithType3Font.pdf";
         String testString = "A A A A E E E ~ é";
 
         //writing type3 font characters
@@ -398,8 +471,8 @@ public class PdfFontTest {
                 setCreator(creator).
                 setTitle(title);
         byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "abserif4_5.ttf"));
-        TrueTypeFont trueType = new TrueTypeFont("Aboriginal Serif", "WinAnsi", ttf);
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, trueType, true);
+        TrueTypeFont abSerif = new TrueTypeFont("Aboriginal Serif", "WinAnsi", ttf);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, abSerif, true);
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -433,8 +506,8 @@ public class PdfFontTest {
                 setCreator(creator).
                 setTitle(title);
         byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "Puritan2.otf"));
-        TrueTypeFont trueType = new TrueTypeFont("Puritan", "WinAnsi", ttf);
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, trueType, true);
+        TrueTypeFont puritan = new TrueTypeFont("Puritan", "WinAnsi", ttf);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, puritan, true);
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);

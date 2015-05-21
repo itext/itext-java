@@ -13,7 +13,7 @@ public class CMapCidByte extends AbstractCMap {
     @Override
     void addChar(String mark, CMapObject code) {
         if (code.isNumber()) {
-            byte[] ser = toByteArray(mark);
+            byte[] ser = decodeStringToByte(mark);
             map.put((int)code.getValue(), ser);
         }
     }

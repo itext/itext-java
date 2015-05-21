@@ -49,13 +49,14 @@ public abstract class AbstractCMap {
     abstract void addChar(String mark, CMapObject code);
     
     void addRange(String from, String to, CMapObject code) {
-        byte[] a1 = toByteArray(from);
-        byte[] a2 = toByteArray(to);
-        if (a1.length != a2.length || a1.length == 0)
+        byte[] a1 = decodeStringToByte(from);
+        byte[] a2 = decodeStringToByte(to);
+        if (a1.length != a2.length || a1.length == 0) {
             throw new IllegalArgumentException("Invalid map.");
+        }
         byte[] sout = null;
         if (code.isString()) {
-            sout = toByteArray(code.toString());
+            sout = decodeStringToByte(code.toString());
         }
         int start = a1[a1.length - 1] & 0xff;
         int end = a2[a2.length - 1] & 0xff;
@@ -77,16 +78,24 @@ public abstract class AbstractCMap {
         }
     }
     
-    protected static byte[] toByteArray(String value) {
-        if (PdfEncodings.isPdfDocEncoding(value)) {
-            return PdfEncodings.convertToBytes(value, PdfEncodings.PdfDocEncoding);
-        } else {
-            return PdfEncodings.convertToBytes(value, null);
+//    protected static byte[] toByteArray(String value) {
+//        if (PdfEncodings.isPdfDocEncoding(value)) {
+//            return PdfEncodings.convertToBytes(value, PdfEncodings.PdfDocEncoding);
+//        } else {
+//            return PdfEncodings.convertToBytes(value, null);
+//        }
+//    }
+
+    public static byte[] decodeStringToByte(String range) {
+        byte[] bytes = new byte[range.length()];
+        for (int i = 0; i < range.length(); i++) {
+            bytes[i] = (byte)range.charAt(i);
         }
+        return bytes;
     }
 
     protected String toUnicodeString(String value, boolean isHexWriting) {
-        byte[] bytes = toByteArray(value);
+        byte[] bytes = decodeStringToByte(value);
         if (isHexWriting) {
             return PdfEncodings.convertToString(bytes, "UnicodeBigUnmarked");
         } else {

@@ -9,6 +9,7 @@ public class CMapObject {
     protected static final int Literal = 5;
     protected static final int Array = 6;
     protected static final int Dictionary = 7;
+    protected static final int Token = 8;
 
     private int type;
     private Object value;
@@ -53,6 +54,10 @@ public class CMapObject {
 
     public boolean isDictionary() {
         return type == Dictionary;
+    }
+
+    public boolean isToken() {
+        return type == Token;
     }
 
     /**

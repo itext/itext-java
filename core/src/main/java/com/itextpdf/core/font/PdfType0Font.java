@@ -25,10 +25,10 @@ public class PdfType0Font extends PdfFont {
     protected CMapEncoding cmapEncoding;
     protected HashMap<Integer, int[]> longTag;
 
-    public PdfType0Font(PdfDocument document, TrueTypeFont font, String cmap, String embed) throws PdfException {
+    public PdfType0Font(PdfDocument document, TrueTypeFont font, String cmap, boolean embed) throws PdfException {
         super(document);
         if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
-            throw new PdfRuntimeException("");
+            throw new PdfRuntimeException("only.identity.cmaps.supports.with.truetype");
         }
         throw new UnsupportedOperationException();
     }
@@ -42,6 +42,7 @@ public class PdfType0Font extends PdfFont {
         if (!CidFontProperties.isCidFont(font.getFontName(), cmap)) {
             throw new PdfException("font.1.with.2.encoding.is.not.a.cjk.font").setMessageParams(font.getFontName(), cmap);
         }
+        this.font = font;
         vertical = cmap.endsWith("V");
         String uniMap = "";
         for (String name : CidFontProperties.getRegistryNames().get(font.getRegistry() + "_Uni")) {
@@ -53,6 +54,7 @@ public class PdfType0Font extends PdfFont {
             }
         }
         cmapEncoding = new CMapEncoding(cmap, uniMap);
+        longTag = new HashMap<>();
     }
 
     @Override
@@ -92,8 +94,11 @@ public class PdfType0Font extends PdfFont {
         name += "-" + cmapEncoding.getCmapName();
         getPdfObject().put(PdfName.BaseFont, new PdfName(name));
         getPdfObject().put(PdfName.Encoding, new PdfName(cmapEncoding.getCmapName()));
-        PdfDictionary cidFont = getCidFont();
+        PdfDictionary fontDescriptor = getFontDescriptor();
+        PdfDictionary cidFont = getCidFont(fontDescriptor);
         getPdfObject().put(PdfName.DescendantFonts, new PdfArray(cidFont));
+        fontDescriptor.flush();
+        cidFont.flush();
     }
 
     private PdfDictionary getFontDescriptor() throws PdfException {
@@ -115,13 +120,13 @@ public class PdfType0Font extends PdfFont {
         return fontDescriptor;
     }
 
-    private PdfDictionary getCidFont() throws PdfException {
+    private PdfDictionary getCidFont(PdfDictionary fontDescriptor) throws PdfException {
         PdfDictionary cidFont = new PdfDictionary();
         cidFont.makeIndirect(getDocument());
         cidFont.put(PdfName.Type, PdfName.Font);
         cidFont.put(PdfName.Subtype, PdfName.CIDFontType0);
         cidFont.put(PdfName.BaseFont, new PdfName(font.getFontName() + font.getStyle()));
-        cidFont.put(PdfName.FontDescriptor, getFontDescriptor());
+        cidFont.put(PdfName.FontDescriptor, fontDescriptor);
         int[] keys = Utilities.toArray(longTag.keySet());
         Arrays.sort(keys);
         String w = convertToHCIDMetrics(keys, ((CidFont)font).getHMetrics());

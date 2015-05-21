@@ -16,7 +16,7 @@ import java.io.InputStream;
 public class CMapLocationResource implements CMapLocation{
 
     public PdfTokeniser getLocation(String location) throws IOException {
-        String fullName = FontConstants.RESOURCE_PATH + "cmaps/" + location;
+        String fullName = FontConstants.RESOURCE_PATH + "cmap/" + location;
         InputStream inp = StreamUtil.getResourceStream(fullName);
         if (inp == null) {
             throw new PdfRuntimeException("the.cmap.1.was.not.found").setMessageParams(fullName);

@@ -62,7 +62,7 @@ public class CMapContentParser {
                 throw new PdfRuntimeException("dictionary.key.1.is.not.a.name").setMessageParams(tokeniser.getStringValue());
             String name = tokeniser.getStringValue();
             CMapObject obj = readObject();
-            if (obj.isLiteral()) {
+            if (obj.isToken()) {
                 if (obj.toString().equals(">>")) {
                     tokeniser.throwError(PdfException.UnexpectedGtGt);
                 }
@@ -84,7 +84,7 @@ public class CMapContentParser {
         ArrayList<CMapObject> array = new ArrayList<CMapObject>();
         while (true) {
             CMapObject obj = readObject();
-            if (obj.isLiteral()) {
+            if (obj.isToken()) {
                 if (obj.toString().equals("]")) {
                     break;
                 }
@@ -107,9 +107,8 @@ public class CMapContentParser {
             return null;
         TokenType type = tokeniser.getTokenType();
         switch (type) {
-            case StartDic: {
+            case StartDic:
                 return readDictionary();
-            }
             case StartArray:
                 return new CMapObject(CMapObject.Array, readArray());
             case String:
@@ -125,13 +124,17 @@ public class CMapContentParser {
             case Number:
                 CMapObject numObject = new CMapObject(CMapObject.Number, null);
                 try {
-                    numObject.setValue(java.lang.Double.parseDouble(tokeniser.getStringValue()));
+                    numObject.setValue((int)java.lang.Double.parseDouble(tokeniser.getStringValue()));
                 } catch (NumberFormatException e) {
-                    numObject.setValue(java.lang.Double.NaN);
+                    numObject.setValue(Integer.MIN_VALUE);
                 }
                 return numObject;
             case Other:
                 return new CMapObject(CMapObject.Literal, tokeniser.getStringValue());
+            case EndArray:
+                return new CMapObject(CMapObject.Token, "]");
+            case EndDic:
+                return new CMapObject(CMapObject.Token, ">>");
             default:
                 return new CMapObject(0, "");
         }
@@ -175,12 +178,12 @@ public class CMapContentParser {
         for (int i = 0; i < content.length; ) {
             int v1 = ByteBuffer.getHex(content[i++]);
             if (i == content.length) {
-                buffer.append(v1 << 4);
+                buffer.append((char)(v1 << 4));
                 break;
             }
             int v2 = content[i++];
             v2 = ByteBuffer.getHex(v2);
-            buffer.append((v1 << 4) + v2);
+            buffer.append((char)((v1 << 4) + v2));
         }
         return buffer.toString();
     }
@@ -255,7 +258,7 @@ public class CMapContentParser {
                     i--;
                 }
             }
-            buffer.append(ch);
+            buffer.append((char)ch);
         }
         return buffer.toString();
     }

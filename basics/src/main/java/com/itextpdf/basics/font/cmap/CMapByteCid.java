@@ -29,7 +29,7 @@ public class CMapByteCid extends AbstractCMap {
     @Override
     void addChar(String mark, CMapObject code) {
         if (code.isNumber()) {
-            encodeSequence(toByteArray(mark), (char)code.getValue());
+            encodeSequence(decodeStringToByte(mark), (char)code.getValue());
         }
     }
 

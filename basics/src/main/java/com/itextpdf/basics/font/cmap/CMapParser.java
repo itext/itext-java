@@ -22,10 +22,10 @@ public class CMapParser {
     private static final String UseCmap = "usecmap";
 
 
-    private static final String Registry = "/Registry";
-    private static final String Ordering = "/Ordering";
-    private static final String Supplement = "/Supplement";
-    private static final String CMapName = "/CMapName";
+    private static final String Registry = "Registry";
+    private static final String Ordering = "Ordering";
+    private static final String Supplement = "Supplement";
+    private static final String CMapName = "CMapName";
 
     private static final int MaxLevel = 10;
 

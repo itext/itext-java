@@ -125,6 +125,7 @@ public class CidFont extends FontProgram {
             style = fontName.substring(nameBase.length());
         } else {
             name = fontName;
+            style = "";
         }
     }
 
@@ -141,7 +142,6 @@ public class CidFont extends FontProgram {
         flags = Integer.parseInt((String)fontDesc.get("Flags"));
         String fontBBox = (String)fontDesc.get("FontBBox");
         StringTokenizer tk = new StringTokenizer(fontBBox, " []\r\n\t\f");
-        tk.nextToken();
         llx = Integer.parseInt(tk.nextToken());
         lly = Integer.parseInt(tk.nextToken());
         urx = Integer.parseInt(tk.nextToken());
