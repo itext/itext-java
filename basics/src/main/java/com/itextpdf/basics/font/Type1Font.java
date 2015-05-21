@@ -512,52 +512,70 @@ public class Type1Font {
         RandomAccessFileOrArray raf = fontParser.getMetricsFile();
         String line;
         boolean startKernPairs = false;
-        while ((line = raf.readLine()) != null)
-        {
+        label:
+        while ((line = raf.readLine()) != null) {
             StringTokenizer tok = new StringTokenizer(line, " ,\n\r\t\f");
             if (!tok.hasMoreTokens())
                 continue;
             String ident = tok.nextToken();
-            if (ident.equals("FontName")) {
-                FontName = tok.nextToken("\u00ff").substring(1);
-            } else if (ident.equals("FullName")) {
-                FullName = tok.nextToken("\u00ff").substring(1);
-            } else if (ident.equals("FamilyName")) {
-                FamilyName = tok.nextToken("\u00ff").substring(1);
-            } else if (ident.equals("Weight")) {
-                Weight = tok.nextToken("\u00ff").substring(1);
-            } else if (ident.equals("ItalicAngle")) {
-                ItalicAngle = Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("IsFixedPitch")) {
-                IsFixedPitch = tok.nextToken().equals("true");
-            } else if (ident.equals("CharacterSet")) {
-                CharacterSet = tok.nextToken("\u00ff").substring(1);
-            } else if (ident.equals("FontBBox")) {
-                llx = (int)Float.parseFloat(tok.nextToken());
-                lly = (int)Float.parseFloat(tok.nextToken());
-                urx = (int)Float.parseFloat(tok.nextToken());
-                ury = (int)Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("UnderlinePosition")) {
-                UnderlinePosition = (int) Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("UnderlineThickness")) {
-                UnderlineThickness = (int) Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("EncodingScheme")) {
-                EncodingScheme = tok.nextToken("\u00ff").substring(1).trim();
-            } else if (ident.equals("CapHeight")) {
-                CapHeight = (int) Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("XHeight")) {
-                XHeight = (int) Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("Ascender")) {
-                Ascender = (int) Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("Descender")) {
-                Descender = (int) Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("StdHW")) {
-                StdHW = (int) Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("StdVW")) {
-                StdVW = (int) Float.parseFloat(tok.nextToken());
-            } else if (ident.equals("StartCharMetrics")) {
-                startKernPairs = true;
-                break;
+            switch (ident) {
+                case "FontName":
+                    FontName = tok.nextToken("\u00ff").substring(1);
+                    break;
+                case "FullName":
+                    FullName = tok.nextToken("\u00ff").substring(1);
+                    break;
+                case "FamilyName":
+                    FamilyName = tok.nextToken("\u00ff").substring(1);
+                    break;
+                case "Weight":
+                    Weight = tok.nextToken("\u00ff").substring(1);
+                    break;
+                case "ItalicAngle":
+                    ItalicAngle = Float.parseFloat(tok.nextToken());
+                    break;
+                case "IsFixedPitch":
+                    IsFixedPitch = tok.nextToken().equals("true");
+                    break;
+                case "CharacterSet":
+                    CharacterSet = tok.nextToken("\u00ff").substring(1);
+                    break;
+                case "FontBBox":
+                    llx = (int) Float.parseFloat(tok.nextToken());
+                    lly = (int) Float.parseFloat(tok.nextToken());
+                    urx = (int) Float.parseFloat(tok.nextToken());
+                    ury = (int) Float.parseFloat(tok.nextToken());
+                    break;
+                case "UnderlinePosition":
+                    UnderlinePosition = (int) Float.parseFloat(tok.nextToken());
+                    break;
+                case "UnderlineThickness":
+                    UnderlineThickness = (int) Float.parseFloat(tok.nextToken());
+                    break;
+                case "EncodingScheme":
+                    EncodingScheme = tok.nextToken("\u00ff").substring(1).trim();
+                    break;
+                case "CapHeight":
+                    CapHeight = (int) Float.parseFloat(tok.nextToken());
+                    break;
+                case "XHeight":
+                    XHeight = (int) Float.parseFloat(tok.nextToken());
+                    break;
+                case "Ascender":
+                    Ascender = (int) Float.parseFloat(tok.nextToken());
+                    break;
+                case "Descender":
+                    Descender = (int) Float.parseFloat(tok.nextToken());
+                    break;
+                case "StdHW":
+                    StdHW = (int) Float.parseFloat(tok.nextToken());
+                    break;
+                case "StdVW":
+                    StdVW = (int) Float.parseFloat(tok.nextToken());
+                    break;
+                case "StartCharMetrics":
+                    startKernPairs = true;
+                    break label;
             }
         }
         if (!startKernPairs) {
