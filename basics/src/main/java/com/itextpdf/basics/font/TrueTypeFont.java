@@ -2,15 +2,17 @@ package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
-public class TrueTypeFont {
+public class TrueTypeFont extends FontProgram {
 
     private OpenTypeParser fontParser;
 
@@ -43,7 +45,11 @@ public class TrueTypeFont {
 
     protected int maxGlyphId;
 
+    //TODO doublicated with PdfType0Font.isVertical.
     protected boolean isVertical;
+
+    /** A variable. */
+    private int stemV = 80;
 
     /** The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
@@ -83,9 +89,10 @@ public class TrueTypeFont {
         if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
             isUnicode = true;
             isVertical = this.baseEncoding.endsWith("V");
+
         } else {
             isUnicode = false;
-            encoding = new FontEncoding(this.baseEncoding, cmaps.isFontSpecific);
+            encoding = new FontEncoding(this.baseEncoding, cmaps.fontSpecific);
             charBBoxes = new int[256][];
             widths = new int[256];
             if (encoding.hasSpecialEncoding()) {
@@ -96,14 +103,20 @@ public class TrueTypeFont {
         }
     }
 
+    public boolean allowEmbedding() {
+        return os_2.fsType == 2;
+    }
+
     public FontEncoding getEncoding() {
         return encoding;
     }
 
+    @Override
     public String getFontName() {
         return postscriptFontName;
     }
 
+    @Override
     public String getStyle() {
         return fontParser.getStyle();
     }
@@ -111,12 +124,48 @@ public class TrueTypeFont {
     /**
      * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
      * to the font's encoding.
+     * Be careful in use. PdfFont should convertToBytes() for any text for PDF.
      * @param text the <CODE>String</CODE> to be converted
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
     public byte[] convertToBytes(String text) {
         if (isUnicode) {
-            throw new UnsupportedOperationException("For Identity H/V encoding use CMap methods.");
+            int len = text.length();
+            int metrics[] = null;
+            char glyph[] = new char[len];
+            int i = 0;
+            if (cmaps.fontSpecific) {
+                byte[] b = PdfEncodings.convertToBytes(text, "symboltt");
+                len = b.length;
+                for (int k = 0; k < len; ++k) {
+                    metrics = getMetrics(b[k] & 0xff);
+                    if (metrics == null) {
+                        continue;
+                    }
+                    glyph[i++] = (char)metrics[0];
+                }
+            } else {
+                for (int k = 0; k < len; ++k) {
+                    int val;
+                    if (Utilities.isSurrogatePair(text, k)) {
+                        val = Utilities.convertToUtf32(text, k);
+                        k++;
+                    } else {
+                        val = text.charAt(k);
+                    }
+                    metrics = getMetrics(val);
+                    if (metrics == null) {
+                        continue;
+                    }
+                    glyph[i++] = (char)metrics[0];
+                }
+            }
+            String s = new String(glyph, 0, i);
+            try {
+                return s.getBytes("UnicodeBigUnmarked");
+            } catch (UnsupportedEncodingException e) {
+                throw new PdfRuntimeException("TrueTypeFont", e);
+            }
         } else {
             return encoding.convertToBytes(text);
         }
@@ -129,7 +178,17 @@ public class TrueTypeFont {
      */
     public int getWidth(int ch) {
         if (isUnicode) {
-            throw new java.lang.IllegalStateException("Not implemented yet");
+            if (isVertical) {
+                return 1000;
+            } else if (cmaps.fontSpecific) {
+                if ((ch & 0xff00) == 0 || (ch & 0xff00) == 0xf000) {
+                    return getRawWidth(ch & 0xff, null);
+                } else {
+                    return 0;
+                }
+            } else {
+                return getRawWidth(ch, baseEncoding);
+            }
         } else if (encoding.isFastWinansi()) {
             if (ch < 128 || ch >= 160 && ch <= 255) {
                 return widths[ch];
@@ -154,10 +213,10 @@ public class TrueTypeFont {
     public int getWidth(String text) {
         int total = 0;
         if (isUnicode) {
-            if (isVertical)
+            if (isVertical) {
                 return text.length() * 1000;
-            if (cmaps.isFontSpecific) {
-                char chars[] = text.toCharArray();
+            } else if (cmaps.fontSpecific) {
+                char[] chars = text.toCharArray();
                 for (char ch : chars) {
                     if ((ch & 0xff00) == 0 || (ch & 0xff00) == 0xf000) {
                         total += getRawWidth(ch & 0xff, null);
@@ -202,9 +261,9 @@ public class TrueTypeFont {
      */
     public int getDescent(String text) {
         int min = 0;
-        char chars[] = text.toCharArray();
+        char[] chars = text.toCharArray();
         for (char ch : chars) {
-            int bbox[] = getCharBBox(ch);
+            int[] bbox = getCharBBox(ch);
             if (bbox != null && bbox[1] < min) {
                 min = bbox[1];
             }
@@ -220,14 +279,19 @@ public class TrueTypeFont {
      */
     public int getAscent(String text) {
         int max = 0;
-        char chars[] = text.toCharArray();
+        char[] chars = text.toCharArray();
         for (char ch : chars) {
-            int bbox[] = getCharBBox(ch);
+            int[] bbox = getCharBBox(ch);
             if (bbox != null && bbox[3] > max) {
                 max = bbox[3];
             }
         }
         return max;
+    }
+
+    @Override
+    public int getStemV() {
+        return stemV;
     }
 
     public int[] getCharBBox(int c) {
@@ -239,7 +303,7 @@ public class TrueTypeFont {
                 return null;
             return bBoxes[m[0]];
         } else {
-            byte b[] = encoding.convertToBytes(c);
+            byte[] b = encoding.convertToBytes(c);
             if (b.length == 0) {
                 return null;
             } else {
@@ -258,15 +322,14 @@ public class TrueTypeFont {
                 return cmaps.cmapExt.get(Integer.valueOf(c));
             }
             HashMap<Integer, int[]> map;
-            if (cmaps.isFontSpecific) {
+            if (cmaps.fontSpecific) {
                 map = cmaps.cmap10;
             } else {
                 map = cmaps.cmap31;
             }
             if (map == null) {
                 return null;
-            }
-            if (cmaps.isFontSpecific) {
+            } else if (cmaps.fontSpecific) {
                 if ((c & 0xffffff00) == 0 || (c & 0xffffff00) == 0xf000) {
                     return map.get(Integer.valueOf(c & 0xff));
                 } else {
@@ -278,17 +341,13 @@ public class TrueTypeFont {
         } else {
             if (cmaps.cmapExt != null) {
                 return cmaps.cmapExt.get(Integer.valueOf(c));
-            }
-            if (!cmaps.isFontSpecific && cmaps.cmap31 != null) {
+            } else if (!cmaps.fontSpecific && cmaps.cmap31 != null) {
                 return cmaps.cmap31.get(Integer.valueOf(c));
-            }
-            if (cmaps.isFontSpecific && cmaps.cmap10 != null) {
+            } else if (cmaps.fontSpecific && cmaps.cmap10 != null) {
                 return cmaps.cmap10.get(Integer.valueOf(c));
-            }
-            if (cmaps.cmap31 != null) {
+            } else if (cmaps.cmap31 != null) {
                 return cmaps.cmap31.get(Integer.valueOf(c));
-            }
-            if (cmaps.cmap10 != null) {
+            } else if (cmaps.cmap10 != null) {
                 return cmaps.cmap10.get(Integer.valueOf(c));
             }
             return null;
@@ -299,15 +358,32 @@ public class TrueTypeFont {
         return fontParser.isCff();
     }
 
-    public byte[] getFontStreamBytes() throws PdfException, IOException {
+    public HashMap<Integer, int[]> getActiveCmap() {
+        if (!cmaps.fontSpecific && cmaps.cmap31 != null) {
+            return cmaps.cmap31;
+        } else if (cmaps.fontSpecific && cmaps.cmap10 != null) {
+            return cmaps.cmap10;
+        } else if (cmaps.cmap31 != null) {
+            return cmaps.cmap31;
+        } else {
+            return cmaps.cmap10;
+        }
+    }
+
+    public byte[] getFontStreamBytes() throws PdfException {
         if (fontStreamBytes != null)
             return fontStreamBytes;
-        if (fontParser.isCff()) {
-            fontStreamBytes = fontParser.readCffFont();
-        } else {
-            fontStreamBytes = fontParser.getFullFont();
+        try {
+            if (fontParser.isCff()) {
+                fontStreamBytes = fontParser.readCffFont();
+            } else {
+                fontStreamBytes = fontParser.getFullFont();
+            }
+            fontStreamLengths = new int[] {fontStreamBytes.length};
+        } catch (IOException e) {
+            fontStreamBytes = null;
+            throw new PdfException(PdfException.IoException, e);
         }
-        fontStreamLengths = new int[] {fontStreamBytes.length};
         return fontStreamBytes;
     }
 
@@ -372,6 +448,69 @@ public class TrueTypeFont {
         return 0;
     }
 
+    public int getFlags() {
+        int flags = 0;
+        if (isFixedPitch()) {
+            flags |= 1;
+        }
+        flags |= isFontSpecific() ? 4 : 32;
+        if ((getMacStyle() & 2) != 0) {
+            flags |= 64;
+        }
+        if ((getMacStyle() & 1) != 0) {
+            flags |= 262144;
+        }
+        return flags;
+    }
+
+    //TODO
+    @Override
+    public int getLlx() {
+        return 0;
+    }
+
+    //TODO
+    @Override
+    public int getLly() {
+        return 0;
+    }
+
+    //TODO
+    @Override
+    public int getUrx() {
+        return 0;
+    }
+
+    //TODO
+    @Override
+    public int getUry() {
+        return 0;
+    }
+
+    //TODO
+    @Override
+    public int getCapHeight() {
+        return 0;
+    }
+
+    //TODO
+    @Override
+    public int getAscent() {
+        return 0;
+    }
+
+    //TODO
+    @Override
+    public int getDescent() {
+        return 0;
+    }
+
+    //TODO
+    @Override
+    public float getItalicAngle() {
+        return 0;
+    }
+
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
      * and <CODE>ITALICANGLE</CODE>.
@@ -384,6 +523,10 @@ public class TrueTypeFont {
 
     public boolean isFixedPitch(){
         return post.isFixedPitch;
+    }
+
+    public boolean isFontSpecific() {
+        return cmaps.fontSpecific;
     }
 
     public int getMacStyle(){
@@ -405,7 +548,6 @@ public class TrueTypeFont {
         return widths;
     }
 
-
     /**
      * The offset from the start of the file to the table directory.
      * It is 0 for TTF and may vary for TTC depending on the chosen font.
@@ -414,8 +556,12 @@ public class TrueTypeFont {
         return fontParser.directoryOffset;
     }
 
-    public byte[] getSubset(HashSet glyphs, boolean subset) throws IOException, PdfException {
-        return fontParser.getSubset(glyphs, subset);
+    public byte[] getSubset(Set<Integer> glyphs, boolean subset) throws PdfException {
+        try {
+            return fontParser.getSubset(glyphs, subset);
+        } catch (IOException e) {
+            throw new PdfException(PdfException.IoException, e);
+        }
     }
 
     /**
@@ -443,7 +589,7 @@ public class TrueTypeFont {
         if (map == null) {
             return null;
         }
-        int metric[] = map.get(Integer.valueOf(c));
+        int[] metric = map.get(Integer.valueOf(c));
         if (metric == null || bBoxes == null) {
             return null;
         }
@@ -463,7 +609,7 @@ public class TrueTypeFont {
             String s;
             String name;
             char ch;
-            byte b[] = new byte[1];
+            byte[] b = new byte[1];
 
             for (int k = 0; k < 256; ++k) {
                 b[0] = (byte)k;

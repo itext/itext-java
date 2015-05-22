@@ -3,6 +3,7 @@ package com.itextpdf.core.font;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.core.geom.Rectangle;
@@ -15,8 +16,6 @@ import com.itextpdf.core.pdf.PdfStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,23 +26,27 @@ public class PdfTrueTypeFont extends PdfFont {
     private TrueTypeFont fontProgram;
     /** Forces the output of the width array. Only matters for the 14 built-in fonts. */
     protected boolean forceWidthsOutput = false;
-    /** true if the font is to be embedded in the PDF. */
-    private boolean embedded = false;
     /** Indicates if all the glyphs and widths for that particular encoding should be included in the document. */
     private boolean subset = false;
     /** The array used with single byte encodings. */
     private byte[] shortTag = new byte[256];
 
-    protected ArrayList<int[]> subsetRanges;
-
-    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont trueTypeFont, boolean embedded) throws PdfException {
+    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf, boolean embedded) throws PdfException {
         super(new PdfDictionary(), pdfDocument);
-        fontProgram = trueTypeFont;
+        fontProgram = ttf;
         this.embedded = embedded;
+        if (embedded && !ttf.allowEmbedding()) {
+            throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
+        }
     }
 
     public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont trueTypeFont) throws PdfException {
         this(pdfDocument, trueTypeFont, false);
+    }
+
+    @Override
+    public FontProgram getFontProgram() {
+        return fontProgram;
     }
 
     /**
@@ -80,26 +83,6 @@ public class PdfTrueTypeFont extends PdfFont {
      */
     public void setForceWidthsOutput(boolean forceWidthsOutput) {
         this.forceWidthsOutput = forceWidthsOutput;
-    }
-
-    public boolean isSubset() {
-        return subset;
-    }
-
-    public void setSubset(boolean subset) {
-        this.subset = subset;
-    }
-
-    /**
-     * Adds a character range when subsetting. The range is an <CODE>int</CODE> array
-     * where the first element is the start range inclusive and the second element is the
-     * end range inclusive. Several ranges are allowed in the same array.
-     * @param range the character range
-     */
-    public void addSubsetRange(int[] range) {
-        if (subsetRanges == null)
-            subsetRanges = new ArrayList<int[]>();
-        subsetRanges.add(range);
     }
 
     @Override
@@ -141,9 +124,9 @@ public class PdfTrueTypeFont extends PdfFont {
             if (fontProgram.isCff()) {
                 try {
                     byte[] fontStreamBytes = fontProgram.getFontStreamBytes();
-                    fontStream = getFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
+                    fontStream = getFontStream(fontStreamBytes, new int[] {fontStreamBytes.length});
                     fontStream.put(PdfName.Subtype, new PdfName("Type1C"));
-                } catch (IOException e) {
+                } catch (PdfException e) {
                     Logger logger = LoggerFactory.getLogger(PdfTrueTypeFont.class);
                     logger.error(e.getMessage());
                     fontStream = null;
@@ -177,12 +160,13 @@ public class PdfTrueTypeFont extends PdfFont {
                 try {
                     byte[] fontStreamBytes;
                     if (subset || fontProgram.getDirectoryOffset() != 0 || subsetRanges != null) {
-                        fontStreamBytes = fontProgram.getSubset((HashSet) glyphs.clone(), subset);
+                        //clone glyphs due to possible cache issue
+                        fontStreamBytes = fontProgram.getSubset(new HashSet<Integer>(glyphs), subset);
                     } else {
                         fontStreamBytes = fontProgram.getFontStreamBytes();
                     }
                     fontStream = getFontStream(fontStreamBytes, new int[] {fontStreamBytes.length});
-                } catch (IOException e) {
+                } catch (PdfException e) {
                     Logger logger = LoggerFactory.getLogger(PdfTrueTypeFont.class);
                     logger.error(e.getMessage());
                     fontStream = null;
@@ -241,31 +225,16 @@ public class PdfTrueTypeFont extends PdfFont {
         }
         getPdfObject().put(PdfName.Widths, wd);
 
-        PdfDictionary fontDescriptor = getFontDescriptor(fontStream, subsetPrefix);
-        if (fontDescriptor != null) {
-            getPdfObject().put(PdfName.FontDescriptor, fontDescriptor);
-            fontDescriptor.flush();
-        }
+        PdfDictionary fontDescriptor = getFontDescriptor(getDocument(), fontProgram, fontStream, subsetPrefix);
+        getPdfObject().put(PdfName.FontDescriptor, fontDescriptor);
+        fontDescriptor.flush();
     }
 
     protected void addRangeUni(HashSet<Integer> longTag) {
         if (!subset && (subsetRanges != null || fontProgram.getDirectoryOffset() > 0)) {
-            int[] rg;
-            if (subsetRanges == null && fontProgram.getDirectoryOffset() > 0) {
-                rg = new int[]{0, 0xffff};
-            } else {
-                rg = compactRanges(subsetRanges);
-            }
-            HashMap<Integer, int[]> usemap;
-            if (!fontProgram.getEncoding().isFontSpecific() && fontProgram.getCmap31() != null) {
-                usemap = fontProgram.getCmap31();
-            } else if (fontProgram.getEncoding().isFontSpecific() && fontProgram.getCmap10() != null) {
-                usemap = fontProgram.getCmap10();
-            } else if (fontProgram.getCmap31() != null) {
-                usemap = fontProgram.getCmap31();
-            } else {
-                usemap = fontProgram.getCmap10();
-            }
+            int[] rg = subsetRanges == null && fontProgram.getDirectoryOffset() > 0
+                    ? new int[]{0, 0xffff} : compactRanges(subsetRanges);
+            HashMap<Integer, int[]> usemap = fontProgram.getActiveCmap();
             assert usemap != null;
             for (Map.Entry<Integer, int[]> e: usemap.entrySet()) {
                 int[] v = e.getValue();
@@ -289,101 +258,37 @@ public class PdfTrueTypeFont extends PdfFont {
     }
 
     /**
-     * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
-     * otherwise the font is read and output in a PdfStream object.
-     * @return the PdfStream containing the font or {@code null}.
-     * @throws PdfException if there is an error reading the font.
-     */
-    protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) throws PdfException {
-        if (fontStreamBytes == null) {
-            return null;
-        }
-        PdfStream fontStream = new PdfStream(getDocument(), fontStreamBytes);
-        for (int k = 0; k < fontStreamLengths.length; ++k) {
-            fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
-        }
-        return fontStream;
-    }
-
-    /**
      * Generates the font descriptor for this font or {@code null} if it is one of the 14 built in fonts.
      * @param fontStream the PdfStream containing the font or {@code null}.
      * @param subsetPrefix the subset prefix.
      * @return the PdfDictionary containing the font descriptor or {@code null}.
      */
-    private PdfDictionary getFontDescriptor(PdfStream fontStream, String subsetPrefix) throws PdfException {
+    protected static PdfDictionary getFontDescriptor(PdfDocument document, TrueTypeFont ttf, PdfStream fontStream, String subsetPrefix) throws PdfException {
         PdfDictionary fontDescriptor = new PdfDictionary();
-        fontDescriptor.makeIndirect(getDocument());
+        fontDescriptor.makeIndirect(document);
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
-        fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontProgram.getFontDescriptor(FontConstants.ASCENT)));
-        fontDescriptor.put(PdfName.Descent, new PdfNumber(fontProgram.getFontDescriptor(FontConstants.DESCENT)));
-        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontProgram.getFontDescriptor(FontConstants.CAPHEIGHT)));
+        fontDescriptor.put(PdfName.Ascent, new PdfNumber(ttf.getFontDescriptor(FontConstants.ASCENT)));
+        fontDescriptor.put(PdfName.Descent, new PdfNumber(ttf.getFontDescriptor(FontConstants.DESCENT)));
+        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(ttf.getFontDescriptor(FontConstants.CAPHEIGHT)));
 
         Rectangle fontBBox = new Rectangle(
-                fontProgram.getFontDescriptor(FontConstants.BBOXLLX),
-                fontProgram.getFontDescriptor(FontConstants.BBOXLLY),
-                fontProgram.getFontDescriptor(FontConstants.BBOXURX),
-                fontProgram.getFontDescriptor(FontConstants.BBOXURY)
+                ttf.getFontDescriptor(FontConstants.BBOXLLX),
+                ttf.getFontDescriptor(FontConstants.BBOXLLY),
+                ttf.getFontDescriptor(FontConstants.BBOXURX),
+                ttf.getFontDescriptor(FontConstants.BBOXURY)
         );
         fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontBBox));
-        fontDescriptor.put(PdfName.FontName, new PdfName(subsetPrefix + fontProgram.getFontName() + fontProgram.getStyle()));
-        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontProgram.getFontDescriptor(FontConstants.ITALICANGLE)));
+        fontDescriptor.put(PdfName.FontName, new PdfName(subsetPrefix + ttf.getFontName() + ttf.getStyle()));
+        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(ttf.getFontDescriptor(FontConstants.ITALICANGLE)));
         fontDescriptor.put(PdfName.StemV, new PdfNumber(80));
         if (fontStream != null) {
-            if (fontProgram.isCff()) {
+            if (ttf.isCff()) {
                 fontDescriptor.put(PdfName.FontFile3, fontStream);
             } else {
                 fontDescriptor.put(PdfName.FontFile2, fontStream);
             }
         }
-        int flags = 0;
-        if (fontProgram.isFixedPitch())
-            flags |= 1;
-        flags |= fontProgram.getEncoding().isFontSpecific() ? 4 : 32;
-        if ((fontProgram.getMacStyle() & 2) != 0)
-            flags |= 64;
-        if ((fontProgram.getMacStyle() & 1) != 0)
-            flags |= 262144;
-        fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
+        fontDescriptor.put(PdfName.Flags, new PdfNumber(ttf.getFlags()));
         return fontDescriptor;
     }
-
-    /** Creates a unique subset prefix to be added to the font name when the font is embedded and subset.
-     * @return the subset prefix
-     */
-    private static String createSubsetPrefix() {
-        StringBuilder s = new StringBuilder("");
-        for (int k = 0; k < 6; ++k)
-            s.append((char)(Math.random() * 26 + 'A'));
-        return s + "+";
-    }
-
-    private static int[] compactRanges(ArrayList<int[]> ranges) {
-        ArrayList<int[]> simp = new ArrayList<int[]>();
-        for (int[] range : ranges) {
-            for (int j = 0; j < range.length; j += 2) {
-                simp.add(new int[]{Math.max(0, Math.min(range[j], range[j + 1])), Math.min(0xffff, Math.max(range[j], range[j + 1]))});
-            }
-        }
-        for (int k1 = 0; k1 < simp.size() - 1; ++k1) {
-            for (int k2 = k1 + 1; k2 < simp.size(); ++k2) {
-                int[] r1 = simp.get(k1);
-                int[] r2 = simp.get(k2);
-                if (r1[0] >= r2[0] && r1[0] <= r2[1] || r1[1] >= r2[0] && r1[0] <= r2[1]) {
-                    r1[0] = Math.min(r1[0], r2[0]);
-                    r1[1] = Math.max(r1[1], r2[1]);
-                    simp.remove(k2);
-                    --k2;
-                }
-            }
-        }
-        int[] s = new int[simp.size() * 2];
-        for (int k = 0; k < simp.size(); ++k) {
-            int[] r = simp.get(k);
-            s[k * 2] = r[0];
-            s[k * 2 + 1] = r[1];
-        }
-        return s;
-    }
-
 }

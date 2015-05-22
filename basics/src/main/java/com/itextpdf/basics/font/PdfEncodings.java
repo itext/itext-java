@@ -32,6 +32,8 @@ public class PdfEncodings {
     public static final String MACROMAN = "MacRoman";
     /** This is the encoding to be used to output text in Unicode. */
     public static final String UnicodeBig = "UnicodeBig";
+    /** This is the encoding to be used to output text for Identity-H/V CMaps. */
+    public static final String UnicodeBigUnmarked = "UnicodeBigUnmarked";
     /** This is the default encoding to be used for converting Strings into
      * bytes and vice versa. The default encoding is PdfDocEncoding. */
     public static final String PdfDocEncoding = "PDF";
@@ -120,10 +122,11 @@ public class PdfEncodings {
             return b;
         }
         IntHashtable hash = null;
-        if (encoding.equals(WINANSI))
+        if (encoding.equals(WINANSI)) {
             hash = winansi;
-        else if (encoding.equals(PdfDocEncoding))
+        } else if (encoding.equals(PdfDocEncoding)) {
             hash = pdfEncoding;
+        }
         if (hash != null) {
             char cc[] = text.toCharArray();
             int len = cc.length;
@@ -238,7 +241,7 @@ public class PdfEncodings {
      * @param encoding the encoding
      * @return the converted {@code String}
      */
-    public static String convertToString(byte bytes[], String encoding) throws PdfException {
+    public static String convertToString(byte bytes[], String encoding) {
         if (bytes == null)
             return EmptyString;
         if (encoding == null || encoding.length() == 0) {
@@ -269,7 +272,7 @@ public class PdfEncodings {
         try {
             return new String(bytes, encoding);
         } catch (UnsupportedEncodingException e) {
-            throw new PdfException(PdfException.PdfEncodings, e);
+            throw new PdfRuntimeException(PdfException.PdfEncodings, e);
         }
     }
 
