@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf.xobject;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
+import com.itextpdf.basics.image.RawImage;
 import com.itextpdf.core.image.*;
 import com.itextpdf.core.pdf.*;
 
@@ -113,6 +114,9 @@ public class PdfImageXObject extends PdfXObject {
                 break;
         }
 
+        if (image.getOriginalType() == Image.RAW){
+            RawImageHelper.updatePdfStream((RawImage)image, null, stream);
+        }
         stream.put(PdfName.Width, new PdfNumber(image.getWidth()));
         stream.put(PdfName.Height, new PdfNumber(image.getHeight()));
         return stream;
