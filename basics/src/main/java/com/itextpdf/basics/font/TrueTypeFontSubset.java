@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Subsets a True Type font by removing the unneeded glyphs from the font.
@@ -51,7 +52,7 @@ class TrueTypeFontSubset {
     protected boolean includeExtras;
     protected boolean locaShortTable;
     protected int[] locaTable;
-    protected HashSet<Integer> glyphsUsed;
+    protected Set<Integer> glyphsUsed;
     protected ArrayList<Integer> glyphsInList;
     protected int tableGlyphOffset;
     protected int[] newLocaTable;
@@ -70,7 +71,7 @@ class TrueTypeFontSubset {
      * @param glyphsUsed the glyphs used
      * @param includeCmap {@code true} if the table cmap is to be included in the generated font
      */
-    TrueTypeFontSubset(String fileName, RandomAccessFileOrArray rf, HashSet<Integer> glyphsUsed, int directoryOffset, boolean includeCmap, boolean includeExtras) {
+    TrueTypeFontSubset(String fileName, RandomAccessFileOrArray rf, Set<Integer> glyphsUsed, int directoryOffset, boolean includeCmap, boolean includeExtras) {
         this.fileName = fileName;
         this.rf = rf;
         this.glyphsUsed = glyphsUsed;

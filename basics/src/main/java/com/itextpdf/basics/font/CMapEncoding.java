@@ -12,8 +12,6 @@ import java.io.ByteArrayOutputStream;
 
 public class CMapEncoding {
 
-    public static final String UnicodeBigUnmarked = "UnicodeBigUnmarked";
-
     private String cmap;
     private String uniMap;
 
@@ -30,6 +28,17 @@ public class CMapEncoding {
     private CMapByteCid byte2Cid;
 
     private final byte[] EMPTY = {};
+
+    /**
+     *
+     * @param cmap CMap name.
+     */
+    public CMapEncoding(String cmap) {
+        this.cmap = cmap;
+        if (cmap.equals(PdfEncodings.IDENTITY_H) || cmap.equals(PdfEncodings.IDENTITY_V)) {
+            isDirect = true;
+        }
+    }
 
     /**
      *
@@ -54,6 +63,10 @@ public class CMapEncoding {
 
     public boolean isDirect() {
         return isDirect;
+    }
+
+    public boolean hasUniMap() {
+        return uniMap != null && uniMap.length() > 0;
     }
 
     public String getRegistry() {
@@ -101,7 +114,7 @@ public class CMapEncoding {
             if (directTextToBytes) {
                 return PdfEncodings.convertToBytes(text, null);
             } else {
-                return PdfEncodings.convertToBytes(text, UnicodeBigUnmarked);
+                return PdfEncodings.convertToBytes(text, PdfEncodings.UnicodeBigUnmarked);
             }
         }
         try {
@@ -136,7 +149,7 @@ public class CMapEncoding {
             if (directTextToBytes) {
                 return PdfEncodings.convertToBytes((char)ch, null);
             } else {
-                return PdfEncodings.convertToBytes((char)ch, UnicodeBigUnmarked);
+                return PdfEncodings.convertToBytes((char)ch, PdfEncodings.UnicodeBigUnmarked);
             }
         }
         return cid2Byte.lookup(uni2Cid.lookup(ch));

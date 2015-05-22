@@ -18,8 +18,6 @@ public class PdfType1Font extends PdfFont {
     private Type1Font fontProgram;
     /** Forces the output of the width array. Only matters for the 14 built-in fonts. */
     protected boolean forceWidthsOutput = false;
-    /** true if the font is to be embedded in the PDF. */
-    private boolean embedded = false;
     /** Indicates if all the glyphs and widths for that particular encoding should be included in the document. */
     private boolean subset = false;
     /** The array used with single byte encodings. */

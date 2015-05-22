@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 //TODO see TtfUnicodeWriter
 class OpenTypeParser {
@@ -139,7 +140,7 @@ class OpenTypeParser {
          * is the glyph number and position 1 is the glyph width normalized to 1000 units. */
         HashMap<Integer, int[]> cmap31;
         HashMap<Integer, int[]> cmapExt;
-        boolean isFontSpecific = false;
+        boolean fontSpecific = false;
     }
 
     /** The file name. */
@@ -265,7 +266,7 @@ class OpenTypeParser {
         }
     }
 
-    public byte[] getSubset(HashSet<Integer> glyphs, boolean subset) throws IOException, PdfException {
+    public byte[] getSubset(Set<Integer> glyphs, boolean subset) throws IOException, PdfException {
         TrueTypeFontSubset sb = new TrueTypeFontSubset(fileName,
                 raf.createView(), glyphs, directoryOffset, true, !subset);
         return sb.process();
@@ -622,7 +623,7 @@ class OpenTypeParser {
             int platSpecId = raf.readUnsignedShort();
             int offset = raf.readInt();
             if (platId == 3 && platSpecId == 0) {
-                cmaps.isFontSpecific = true;
+                cmaps.fontSpecific = true;
                 map30 = offset;
             } else if (platId == 3 && platSpecId == 1) {
                 map31 = offset;
@@ -640,7 +641,7 @@ class OpenTypeParser {
                     cmaps.cmap10 = readFormat0();
                     break;
                 case 4:
-                    cmaps.cmap10 = readFormat4(cmaps.isFontSpecific);
+                    cmaps.cmap10 = readFormat4(cmaps.fontSpecific);
                     break;
                 case 6:
                     cmaps.cmap10 = readFormat6();
@@ -651,14 +652,14 @@ class OpenTypeParser {
             raf.seek(table_location[0] + map31);
             int format = raf.readUnsignedShort();
             if (format == 4) {
-                cmaps.cmap31 = readFormat4(cmaps.isFontSpecific);
+                cmaps.cmap31 = readFormat4(cmaps.fontSpecific);
             }
         }
         if (map30 > 0) {
             raf.seek(table_location[0] + map30);
             int format = raf.readUnsignedShort();
             if (format == 4) {
-                cmaps.cmap10 = readFormat4(cmaps.isFontSpecific);
+                cmaps.cmap10 = readFormat4(cmaps.fontSpecific);
             }
         }
         if (mapExt > 0) {
@@ -669,7 +670,7 @@ class OpenTypeParser {
                     cmaps.cmapExt = readFormat0();
                     break;
                 case 4:
-                    cmaps.cmapExt = readFormat4(cmaps.isFontSpecific);
+                    cmaps.cmapExt = readFormat4(cmaps.fontSpecific);
                     break;
                 case 6:
                     cmaps.cmapExt = readFormat6();
