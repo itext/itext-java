@@ -5,10 +5,11 @@ import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.codec.TIFFFaxDecoder;
 import com.itextpdf.basics.image.RawImage;
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
 public final class RawImageHelper {
 
-    protected static void updatePdfStream(RawImage image, PdfDictionary additional, PdfStream stream) throws PdfException {
+    public static void updatePdfStream(RawImage image, PdfDictionary additional, PdfStream stream) throws PdfException {
         if (!image.isRawImage())
             throw new IllegalArgumentException("Raw image expected.");
         // will also have the CCITT parameters
@@ -62,6 +63,9 @@ public final class RawImageHelper {
             stream.put(PdfName.BitsPerComponent, new PdfNumber(image.getBpc()));
             if (image.isDeflated()) {
                 stream.put(PdfName.Filter, PdfName.FlateDecode);
+            }
+            if (image.getImageMask() != null){
+                stream.put(PdfName.SMask, new PdfImageXObject(stream.getDocument(), image.getImageMask()).getPdfObject());
             }
         }
     }
