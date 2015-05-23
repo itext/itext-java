@@ -5,6 +5,21 @@ public class FontConstants {
     /** The path to the font resources. */
     public static final String RESOURCE_PATH = "com/itextpdf/basics/font/";
 
+    //-Font styles------------------------------------------------------------------------------------------------------
+
+    /** this is a possible style. */
+    public static final int NORMAL = 0;
+    /** this is a possible style. */
+    public static final int BOLD = 1;
+    /** this is a possible style. */
+    public static final int ITALIC = 2;
+    /** this is a possible style. */
+    public static final int UNDERLINE = 4;
+    /** this is a possible style. */
+    public static final int STRIKETHRU = 8;
+    /** this is a possible style. */
+    public static final int BOLDITALIC = BOLD | ITALIC;
+
     //-Font types-------------------------------------------------------------------------------------------------------
 
     /** Type 1 PostScript font. */

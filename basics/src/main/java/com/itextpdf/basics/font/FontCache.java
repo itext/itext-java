@@ -31,7 +31,24 @@ public class FontCache {
     }
 
     /**
-     * Checks if its a valid CJKFont font.
+     * Find and constructs a {@code FontProgram}-object.
+     *
+     * @param embedded true if the font is to be embedded in the PDF
+     * @return the Font constructed based on the parameters
+     * @param fontname the name of the font
+     * @param encoding the encoding of the font
+     * @param style the style of this font
+     */
+
+    public static FontProgram getFont(String fontname, String encoding, boolean embedded, int style) {
+        //TODO FontProgram has no embedded property, but this parameter is useful to avoid Font,
+        //TODO which can't be embedded due to license.
+        return null;
+    }
+
+
+    /**
+     * Checks if its one of the predefined CID fonts.
      *
      * @param fontName the font name.
      * @param enc      the encoding.
@@ -50,9 +67,9 @@ public class FontCache {
         return encodings != null && encodings.contains(enc);
     }
 
-    public static String getCompatibleFont(String enc) {
+    public static String getCompatibleCidFont(String cmap) {
         for (Map.Entry<String, Set<String>> e : registryNames.entrySet()) {
-            if (e.getValue().contains(enc)) {
+            if (e.getValue().contains(cmap)) {
                 String registry = e.getKey();
                 for (Map.Entry<String, HashMap<String, Object>> e1 : allFonts.entrySet()) {
                     if (registry.equals(e1.getValue().get("Registry")))
