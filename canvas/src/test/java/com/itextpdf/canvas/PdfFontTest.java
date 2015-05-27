@@ -18,6 +18,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
@@ -336,8 +337,8 @@ public class PdfFontTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.pfb"));
-        byte[] afm = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.afm"));
+        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream("d:/cmr10.pfb"));
+        byte[] afm = Utilities.inputStreamToArray(new FileInputStream("d:/cmr10.afm"));
         Type1Font type1Font = new Type1Font("CMR10.afm", "", afm, pfb);
         PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, type1Font, true);
         PdfPage page = pdfDoc.addNewPage();
@@ -371,8 +372,8 @@ public class PdfFontTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.pfb"));
-        byte[] afm = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.pfm"));
+        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream("d:/cmr10.pfb"));
+        byte[] afm = Utilities.inputStreamToArray(new FileInputStream("d:/cmr10.pfm"));
         Type1Font type1Font = new Type1Font("CMR10.pfm", "", afm, pfb);
         PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, type1Font, true);
         PdfPage page = pdfDoc.addNewPage();
@@ -563,6 +564,128 @@ public class PdfFontTest {
         outputPdfDoc.close();
 
         Assert.assertEquals(6,pdfType3Font.getCharGlyphs().size());
+    }
+
+    @Test
+    public void testNewType1FontBasedExistingFont() throws IOException, PdfException {
+        final String author = "Dmitry Trusevich";
+        final String creator = "iText 6";
+        final String title = "Type3 font iText 6 Document";
+        String inputFileName1 =  sourceFolder + "DocumentWithCMR10Afm.pdf";
+
+
+        PdfReader reader1 =  new PdfReader(inputFileName1);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+        String filename = destinationFolder + "DocumentWithCMR10Afm_new.pdf";
+        PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc,pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfType1Font, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+    }
+
+    @Test
+    public void testNewTrueTypeFont1BasedExistingFont() throws IOException, PdfException, InterruptedException {
+        final String author = "Dmitry Trusevich";
+        final String creator = "iText 6";
+        final String title = "Type3 font iText 6 Document";
+        String inputFileName1 =  sourceFolder + "DocumentWithTrueTypeFont1.pdf";
+
+
+        PdfReader reader1 =  new PdfReader(inputFileName1);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+
+
+        String filename = destinationFolder + "DocumentWithTrueTypeFont1_new.pdf";
+
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc,pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_DocumentWithTrueTypeFont1_new.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void testNewTrueTypeFont2BasedExistingFont() throws IOException, PdfException, InterruptedException {
+        final String author = "Dmitry Trusevich";
+        final String creator = "iText 6";
+        final String title = "Type3 font iText 6 Document";
+        String inputFileName1 = sourceFolder +  "DocumentWithTrueTypeFont2.pdf";
+
+
+        PdfReader reader1 =  new PdfReader(inputFileName1);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+        PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
+
+        String filename = destinationFolder + "DocumentWithTrueTypeFont2_new.pdf";
+
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc,pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder +  "cmp_DocumentWithTrueTypeFont2_new.pdf", destinationFolder, "diff_"));
+
     }
 
 }

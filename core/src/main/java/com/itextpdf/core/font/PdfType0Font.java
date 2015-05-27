@@ -259,8 +259,8 @@ public class PdfType0Font extends PdfFont {
         fontDescriptor.put(PdfName.FontName, new PdfName(font.getFontName() + font.getStyle()));
         Rectangle fontBBox = new Rectangle(font.getLlx(), font.getLly(), font.getUrx(), font.getUry());
         fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontBBox));
-        fontDescriptor.put(PdfName.Ascent, new PdfNumber(font.getAscent()));
-        fontDescriptor.put(PdfName.Descent, new PdfNumber(font.getDescent()));
+        fontDescriptor.put(PdfName.Ascent, new PdfNumber(font.getAscender()));
+        fontDescriptor.put(PdfName.Descent, new PdfNumber(font.getDescender()));
         fontDescriptor.put(PdfName.CapHeight, new PdfNumber(font.getCapHeight()));
         fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(font.getItalicAngle()));
         fontDescriptor.put(PdfName.Flags, new PdfNumber(font.getFlags()));

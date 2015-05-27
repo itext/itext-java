@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 
-class Type1Parser {
+public class Type1Parser {
 
     public static final HashSet<String> BuiltinFonts14 = new HashSet<String>();
 

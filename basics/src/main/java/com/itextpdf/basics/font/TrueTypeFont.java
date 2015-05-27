@@ -16,27 +16,44 @@ public class TrueTypeFont extends FontProgram {
 
     private OpenTypeParser fontParser;
 
-    protected String postscriptFontName;
+    //protected String postscriptFontName;
+
     protected String[][] fullFontName;
     protected String[][] familyFontName;
     protected String[][] allNameEntries;
 
-    /** The content of 'HEAD' table. */
+    /**
+     * The content of 'HEAD' table.
+     */
     protected OpenTypeParser.FontHeader head;
-    /** The content of 'HHEA' table. */
+    /**
+     * The content of 'HHEA' table.
+     */
     protected OpenTypeParser.HorizontalHeader hhea;
-    /** The content of 'OS/2' table. */
+    /**
+     * The content of 'OS/2' table.
+     */
     protected OpenTypeParser.WindowsMetrics os_2;
-    /** The content of 'POST' table. */
+    /**
+     * The content of 'POST' table.
+     */
     protected OpenTypeParser.PostTable post;
-    /** The content of 'CMAP' table. */
+    /**
+     * The content of 'CMAP' table.
+     */
     protected OpenTypeParser.Cmaps cmaps;
-    /** The width of the glyphs. This is essentially the content of table
-     * 'hmtx' normalized to 1000 units. */
+    /**
+     * The width of the glyphs. This is essentially the content of table
+     * 'hmtx' normalized to 1000 units.
+     */
     protected int[] glyphWidthsByIndex;
-    /** Contains the smallest box enclosing the character contours. */
+    /**
+     * Contains the smallest box enclosing the character contours.
+     */
     private int[][] charBBoxes;
-    /** Table of characters widths for this encoding. */
+    /**
+     * Table of characters widths for this encoding.
+     */
     private int[] widths;
 
     private boolean isUnicode;
@@ -48,17 +65,17 @@ public class TrueTypeFont extends FontProgram {
     //TODO doublicated with PdfType0Font.isVertical.
     protected boolean isVertical;
 
-    /** A variable. */
-    private int stemV = 80;
+
 
     /** The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
      * are the glyph number for the first character and the lower 16 bits are the
      * glyph number for the second character. The value is the amount of kerning in
-     * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative. */
+     * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative.
+     */
     protected IntHashtable kerning = new IntHashtable();
 
-    protected FontEncoding encoding;
+
     // TODO Duplicated with FontEncoding.baseEncoding.
     protected String baseEncoding;
 
@@ -67,7 +84,8 @@ public class TrueTypeFont extends FontProgram {
 
     public TrueTypeFont(String name, String baseEncoding, byte[] ttf) throws IOException, PdfException {
         fontParser = new OpenTypeParser(name, ttf);
-        postscriptFontName = fontParser.getFontName();
+        //postscriptFontName =
+        setFontName(fontParser.getFontName());
         fullFontName = fontParser.getFullName();
         familyFontName = fontParser.getFamilyName();
         allNameEntries = fontParser.getAllNameEntries();
@@ -103,18 +121,20 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
+    public TrueTypeFont(String encoding) throws PdfException, IOException {
+        this.encoding = new FontEncoding(encoding, true);
+    }
+
     public boolean allowEmbedding() {
         return os_2.fsType == 2;
     }
 
-    public FontEncoding getEncoding() {
-        return encoding;
-    }
 
-    @Override
+
+    /*@Override
     public String getFontName() {
         return postscriptFontName;
-    }
+    }*/
 
     @Override
     public String getStyle() {
@@ -124,7 +144,6 @@ public class TrueTypeFont extends FontProgram {
     /**
      * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
      * to the font's encoding.
-     * Be careful in use. PdfFont should convertToBytes() for any text for PDF.
      * @param text the <CODE>String</CODE> to be converted
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
@@ -173,6 +192,7 @@ public class TrueTypeFont extends FontProgram {
 
     /**
      * Gets the width of a {@code char} in normalized 1000 units.
+     *
      * @param ch the unicode {@code char} to get the width of
      * @return the width in normalized 1000 units
      */
@@ -198,7 +218,7 @@ public class TrueTypeFont extends FontProgram {
         } else {
             int total = 0;
             byte[] bytes = encoding.convertToBytes(ch);
-            for (byte b : bytes){
+            for (byte b : bytes) {
                 total += widths[b & 0xff];
             }
             return total;
@@ -207,6 +227,7 @@ public class TrueTypeFont extends FontProgram {
 
     /**
      * Gets the width of a {@code String} in normalized 1000 units.
+     *
      * @param text the {@code String} to get the width of
      * @return the width in normalized 1000 units
      */
@@ -253,66 +274,10 @@ public class TrueTypeFont extends FontProgram {
         return total;
     }
 
-    /**
-     * Gets the descent of a <CODE>String</CODE> in normalized 1000 units. The descent will always be
-     * less than or equal to zero even if all the characters have an higher descent.
-     * @param text the <CODE>String</CODE> to get the descent of
-     * @return the descent in normalized 1000 units
-     */
-    public int getDescent(String text) {
-        int min = 0;
-        char[] chars = text.toCharArray();
-        for (char ch : chars) {
-            int[] bbox = getCharBBox(ch);
-            if (bbox != null && bbox[1] < min) {
-                min = bbox[1];
-            }
-        }
-        return min;
-    }
 
     /**
-     * Gets the ascent of a <CODE>String</CODE> in normalized 1000 units. The ascent will always be
-     * greater than or equal to zero even if all the characters have a lower ascent.
-     * @param text the <CODE>String</CODE> to get the ascent of
-     * @return the ascent in normalized 1000 units
-     */
-    public int getAscent(String text) {
-        int max = 0;
-        char[] chars = text.toCharArray();
-        for (char ch : chars) {
-            int[] bbox = getCharBBox(ch);
-            if (bbox != null && bbox[3] > max) {
-                max = bbox[3];
-            }
-        }
-        return max;
-    }
-
-    @Override
-    public int getStemV() {
-        return stemV;
-    }
-
-    public int[] getCharBBox(int c) {
-        if(isUnicode) {
-            if (bBoxes == null)
-                return null;
-            int[] m = getMetrics(c);
-            if (m == null)
-                return null;
-            return bBoxes[m[0]];
-        } else {
-            byte[] b = encoding.convertToBytes(c);
-            if (b.length == 0) {
-                return null;
-            } else {
-                return charBBoxes[b[0] & 0xff];
-            }
-        }
-    }
-
-    /** Gets the glyph index and metrics for a character.
+     * Gets the glyph index and metrics for a character.
+     *
      * @param c the character
      * @return an {@code int} array with {glyph index, width}
      */
@@ -391,10 +356,12 @@ public class TrueTypeFont extends FontProgram {
         return fontStreamLengths;
     }
 
-    /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
+    /**
+     * Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
      * and <CODE>ITALICANGLE</CODE>.
-     * @param key the parameter to be extracted
+     *
+     * @param key      the parameter to be extracted
      * @param fontSize the font size in points
      * @return the parameter in points
      */
@@ -407,7 +374,7 @@ public class TrueTypeFont extends FontProgram {
             case FontConstants.DESCENT:
                 return os_2.sTypoDescender * fontSize / head.unitsPerEm;
             case FontConstants.ITALICANGLE:
-                return (float)post.italicAngle;
+                return (float) post.italicAngle;
             case FontConstants.BBOXLLX:
                 return fontSize * head.xMin / head.unitsPerEm;
             case FontConstants.BBOXLLY:
@@ -463,57 +430,12 @@ public class TrueTypeFont extends FontProgram {
         return flags;
     }
 
-    //TODO
-    @Override
-    public int getLlx() {
-        return 0;
-    }
 
-    //TODO
-    @Override
-    public int getLly() {
-        return 0;
-    }
-
-    //TODO
-    @Override
-    public int getUrx() {
-        return 0;
-    }
-
-    //TODO
-    @Override
-    public int getUry() {
-        return 0;
-    }
-
-    //TODO
-    @Override
-    public int getCapHeight() {
-        return 0;
-    }
-
-    //TODO
-    @Override
-    public int getAscent() {
-        return 0;
-    }
-
-    //TODO
-    @Override
-    public int getDescent() {
-        return 0;
-    }
-
-    //TODO
-    @Override
-    public float getItalicAngle() {
-        return 0;
-    }
 
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
      * and <CODE>ITALICANGLE</CODE>.
+     *
      * @param key the parameter to be extracted
      * @return the parameter in points
      */
@@ -521,7 +443,7 @@ public class TrueTypeFont extends FontProgram {
         return getFontDescriptor(key, 1000);
     }
 
-    public boolean isFixedPitch(){
+    public boolean isFixedPitch() {
         return post.isFixedPitch;
     }
 
@@ -567,7 +489,8 @@ public class TrueTypeFont extends FontProgram {
     /**
      * Gets the width from the font according to the unicode char {@code c}.
      * If the {@code name} is null it's a symbolic font.
-     * @param c the unicode char
+     *
+     * @param c    the unicode char
      * @param name not used in {@code TrueTypeFont}.
      * @return the width of the char
      */
@@ -594,88 +517,5 @@ public class TrueTypeFont extends FontProgram {
             return null;
         }
         return bBoxes[metric[0]];
-    }
-
-    /**
-     * Creates the {@code widths} and the {@code differences} arrays.
-     */
-    protected void createEncoding() throws PdfException {
-        if (encoding.isFontSpecific()) {
-            for (int k = 0; k < 256; ++k) {
-                widths[k] = getRawWidth(k, null);
-                charBBoxes[k] = getRawCharBBox(k, null);
-            }
-        } else {
-            String s;
-            String name;
-            char ch;
-            byte[] b = new byte[1];
-
-            for (int k = 0; k < 256; ++k) {
-                b[0] = (byte)k;
-                s = PdfEncodings.convertToString(b, encoding.getBaseEncoding());
-                if (s.length() > 0) {
-                    ch = s.charAt(0);
-                } else {
-                    ch = '?';
-                }
-                name = AdobeGlyphList.unicodeToName(ch);
-                if (name == null) {
-                    name = FontConstants.notdef;
-                }
-                encoding.setDifferences(k, name);
-                encoding.setUnicodeDifferences(k, ch);
-                widths[k] = getRawWidth(ch, name);
-                charBBoxes[k] = getRawCharBBox(ch, name);
-            }
-        }
-    }
-
-    /**
-     * Creates the {@code widths} and the {@code differences} arrays in case special user map-encoding.
-     * Encoding starts with '# simple …' or '# full …'.
-     */
-    protected void createSpecialEncoding() {
-        StringTokenizer tok = new StringTokenizer(encoding.getBaseEncoding().substring(1), " ,\t\n\r\f");
-        if (tok.nextToken().equals("full")) {
-            while (tok.hasMoreTokens()) {
-                String order = tok.nextToken();
-                String name = tok.nextToken();
-                char uni = (char)Integer.parseInt(tok.nextToken(), 16);
-                int orderK;
-                if (order.startsWith("'")) {
-                    orderK = order.charAt(1);
-                } else {
-                    orderK = Integer.parseInt(order);
-                }
-                orderK %= 256;
-                encoding.getSpecialMap().put(uni, orderK);
-                encoding.setDifferences(orderK, name);
-                encoding.setUnicodeDifferences(orderK, uni);
-
-                widths[orderK] = getRawWidth(uni, name);
-                charBBoxes[orderK] = getRawCharBBox(uni, name);
-            }
-        } else {
-            int k = 0;
-            if (tok.hasMoreTokens()) {
-                k = Integer.parseInt(tok.nextToken());
-            }
-            while (tok.hasMoreTokens() && k < 256) {
-                String hex = tok.nextToken();
-                int uni = Integer.parseInt(hex, 16) % 0x10000;
-                String name = AdobeGlyphList.unicodeToName(uni);
-                if (name != null) {
-                    encoding.getSpecialMap().put(uni, k);
-                    encoding.setDifferences(k, name);
-                    encoding.setUnicodeDifferences(k, (char)uni);
-
-                    widths[k] = getRawWidth(uni, name);
-                    charBBoxes[k] = getRawCharBBox(uni, name);
-                    ++k;
-                }
-            }
-        }
-        encoding.fillEmptyDifferences();
     }
 }

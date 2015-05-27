@@ -1,27 +1,42 @@
 package com.itextpdf.core.font;
 
+import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.font.*;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.*;
 
-public class PdfType1Font extends PdfFont {
-    /** Type1 font program. */
-    private Type1Font fontProgram;
-    /** Forces the output of the width array. Only matters for the 14 built-in fonts. */
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Map;
+
+public class PdfType1Font extends PdfSimpleFont<Type1Font> {
+
+    /**
+     * Forces the output of the width array. Only matters for the 14 built-in fonts.
+     */
     protected boolean forceWidthsOutput = false;
-    /** Indicates if all the glyphs and widths for that particular encoding should be included in the document. */
+    /**
+     * Indicates if all the glyphs and widths for that particular encoding should be included in the document.
+     */
     private boolean subset = false;
-    /** The array used with single byte encodings. */
+    /**
+     * The array used with single byte encodings.
+     */
     private byte[] shortTag = new byte[256];
+
+
+    public PdfType1Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws PdfException, IOException {
+        super(new PdfDictionary(), pdfDocument);
+        this.fontDictionary = fontDictionary;
+        isCopy = true;
+        checkFontDictionary(PdfName.Type1);
+        init();
+    }
+
+    public PdfType1Font(PdfDocument pdfDocument, PdfIndirectReference indirectReference) throws PdfException, IOException {
+        this(pdfDocument, (PdfDictionary) indirectReference.getRefersTo());
+    }
 
     public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, boolean embedded) throws PdfException {
         super(new PdfDictionary(), pdfDocument);
@@ -33,10 +48,11 @@ public class PdfType1Font extends PdfFont {
         this(pdfDocument, type1Font, false);
     }
 
+
     /**
      * Returns the width of a certain character of this font.
      *
-     * @param ch	a certain character.
+     * @param ch a certain character.
      * @return a width in Text Space.
      */
     public float getWidth(int ch) {
@@ -46,7 +62,7 @@ public class PdfType1Font extends PdfFont {
     /**
      * Returns the width of a string of this font.
      *
-     * @param s	a string content.
+     * @param s a string content.
      * @return a width of string in Text Space.
      */
     public float getWidth(String s) {
@@ -55,6 +71,7 @@ public class PdfType1Font extends PdfFont {
 
     /**
      * Gets the state of the property.
+     *
      * @return value of property forceWidthsOutput
      */
     public boolean isForceWidthsOutput() {
@@ -63,6 +80,7 @@ public class PdfType1Font extends PdfFont {
 
     /**
      * Set to {@code true} to force the generation of the widths array.
+     *
      * @param forceWidthsOutput {@code true} to force the generation of the widths array
      */
     public void setForceWidthsOutput(boolean forceWidthsOutput) {
@@ -88,6 +106,38 @@ public class PdfType1Font extends PdfFont {
 
     @Override
     public void flush() throws PdfException {
+        if (isCopy) {
+            flushCopyFontData();
+        } else {
+            flushFontData();
+        }
+    }
+
+    /**
+     * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
+     * otherwise the font is read and output in a PdfStream object.
+     *
+     * @return the PdfStream containing the font or {@code null}.
+     * @throws PdfException if there is an error reading the font.
+     */
+    protected PdfStream getFullFontStream() throws PdfException {
+        byte[] fontStreamBytes = fontProgram.getFontStreamBytes();
+        if (fontStreamBytes == null) {
+            return null;
+        }
+        PdfStream fontStream = new PdfStream(getDocument(), fontStreamBytes);
+        int[] fontStreamLengths = fontProgram.getFontStreamLengths();
+        for (int k = 0; k < fontStreamLengths.length; ++k) {
+            fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
+        }
+        return fontStream;
+    }
+
+    private void flushCopyFontData() throws PdfException {
+        super.flush();
+    }
+
+    private void flushFontData() throws PdfException {
         getPdfObject().put(PdfName.Subtype, PdfName.Type1);
         getPdfObject().put(PdfName.BaseFont, new PdfName(fontProgram.getFontName()));
         int firstChar;
@@ -147,7 +197,7 @@ public class PdfType1Font extends PdfFont {
             getPdfObject().put(PdfName.FirstChar, new PdfNumber(firstChar));
             getPdfObject().put(PdfName.LastChar, new PdfNumber(lastChar));
             PdfArray wd = new PdfArray();
-            int[] widths = fontProgram.getRawWidths();
+            int[] widths = fontProgram.getWidths();
             for (int k = firstChar; k <= lastChar; ++k) {
                 if (shortTag[k] == 0) {
                     wd.add(new PdfNumber(0));
@@ -166,38 +216,22 @@ public class PdfType1Font extends PdfFont {
     }
 
     /**
-     * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
-     * otherwise the font is read and output in a PdfStream object.
-     * @return the PdfStream containing the font or {@code null}.
-     * @throws PdfException if there is an error reading the font.
-     */
-    protected PdfStream getFullFontStream() throws PdfException {
-        byte[] fontStreamBytes = fontProgram.getFontStreamBytes();
-        if (fontStreamBytes == null) {
-            return null;
-        }
-        PdfStream fontStream = new PdfStream(getDocument(), fontStreamBytes);
-        int[] fontStreamLengths = fontProgram.getFontStreamLengths();
-        for (int k = 0; k < fontStreamLengths.length; ++k) {
-            fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
-        }
-        return fontStream;
-    }
-
-    /**
      * Generates the font descriptor for this font or {@code null} if it is one of the 14 built in fonts.
+     *
      * @param fontStream the PdfStream containing the font or {@code null}.
      * @return the PdfDictionary containing the font descriptor or {@code null}.
      */
+
+
     private PdfDictionary getFontDescriptor(PdfStream fontStream) throws PdfException {
         if (fontProgram.isBuiltInFont())
             return null;
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(getDocument());
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
-        fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontProgram.getAscent()));
+        fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontProgram.getAscender()));
         fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontProgram.getCapHeight()));
-        fontDescriptor.put(PdfName.Descent, new PdfNumber(fontProgram.getDescent()));
+        fontDescriptor.put(PdfName.Descent, new PdfNumber(fontProgram.getDescender()));
         Rectangle fontBBox = new Rectangle(fontProgram.getLlx(), fontProgram.getLly(),
                 fontProgram.getUrx(), fontProgram.getUry());
         fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontBBox));
@@ -211,4 +245,15 @@ public class PdfType1Font extends PdfFont {
         fontDescriptor.put(PdfName.Flags, new PdfNumber(fontProgram.getFlags()));
         return fontDescriptor;
     }
+
+    @Override
+    protected Type1Font initializeTypeFontForCopy(String encodingName) throws PdfException, IOException {
+        return new Type1Font(encodingName);
+    }
+
+    @Override
+    protected Type1Font initializeTypeFont(String fontName, String encodingName) throws IOException, PdfException {
+        return new Type1Font(fontName, encodingName);
+    }
+
 }

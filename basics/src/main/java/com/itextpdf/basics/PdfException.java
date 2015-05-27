@@ -191,6 +191,7 @@ public class PdfException extends Exception {
     public static final String XrefTableDoesntHaveSuitableItemForObject1 = "xref.table.doesn't.have.suitable.item.for.object.1";
     public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
     public static final String YouCannotFlushStructTreeRootManually = "you.cannot.flush.structtreeroot.manually";
+    public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
 
     protected Object object;
     protected String composedMessage;

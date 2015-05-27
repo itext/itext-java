@@ -37,26 +37,6 @@ public class PdfType3Font extends PdfFont {
      */
     private double[] fontMatrix = {0.001, 0, 0, 0.001, 0, 0};
     PdfArray differences = new PdfArray();
-    private PdfDictionary fontDictionary;
-
-    public static final int standartEncoding[] = {
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            32, 33, 34, 35, 36, 37, 38, 8217, 40, 41, 42, 43, 44, 45, 46, 47,
-            48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-            64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-            80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-            8216, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
-            112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 161, 162, 163, 8260, 165, 402, 167, 164, 39, 8220, 171, 8249, 8250, 64257, 64258,
-            0, 8211, 8224, 8225, 183, 0, 182, 8226, 8218, 8222, 8221, 187, 8230, 8240, 0, 191,
-            0, 96, 180, 710, 732, 175, 728, 729, 168, 0, 730, 184, 0, 733, 731, 711,
-            8212, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 198, 0, 170, 0, 0, 0, 0, 321, 216, 338, 186, 0, 0, 0, 0,
-            0, 230, 0, 0, 0, 305, 0, 0, 322, 248, 339, 223, 0, 0, 0, 0
-    };
 
     /**
      * Creates a Type3 font.
@@ -76,7 +56,8 @@ public class PdfType3Font extends PdfFont {
     public PdfType3Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws PdfException {
         super(pdfDocument);
         this.fontDictionary = fontDictionary;
-        checkFontDictionary();
+        this.isCopy = true;
+        checkFontDictionary(PdfName.Type3);
         init();
     }
 
@@ -292,12 +273,7 @@ public class PdfType3Font extends PdfFont {
         super.flush();
     }
 
-    private void checkFontDictionary() throws PdfException {
-        if (this.fontDictionary == null || this.fontDictionary.get(PdfName.Subtype) == null
-                || !this.fontDictionary.get(PdfName.Subtype).equals(PdfName.Type3)) {
-            throw new PdfRuntimeException("Dictionary doesn't contain font data");
-        }
-    }
+
 
 
     private void init() throws PdfException {

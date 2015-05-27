@@ -1,6 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
@@ -12,11 +13,13 @@ import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
 import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map;
 
 /**
@@ -24,6 +27,11 @@ import java.util.Map;
  * We do not yet know how the font class should look like.
  */
 public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
+
+    protected PdfDictionary fontDictionary;
+
+    protected boolean isCopy = false;
+
 
     /** true if the font is to be embedded in the PDF. */
     protected boolean embedded = false;
@@ -48,6 +56,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Converts the text into bytes to be placed in the document.
      * The conversion is done according to the font and the encoding and the characters
      * used are stored.
+     *
      * @param text the text to convert
      * @return the conversion
      */
@@ -60,7 +69,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Returns the width of a certain character of this font.
      *
-     * @param ch	a certain character.
+     * @param ch a certain character.
      * @return a width in Text Space.
      */
     public float getWidth(int ch) {
@@ -70,7 +79,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Returns the width of a string of this font.
      *
-     * @param s	a string content.
+     * @param s a string content.
      * @return a width of string in Text Space.
      */
     public float getWidth(String s) {
@@ -120,7 +129,55 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public PdfFont copy(PdfDocument document) throws PdfException {
-        return new PdfFont((PdfDictionary)getPdfObject().copy(document), document);
+        return new PdfFont((PdfDictionary) getPdfObject().copy(document), document);
+    }
+
+    protected void checkFontDictionary(PdfName fontType) throws PdfException {
+        if (this.fontDictionary == null || this.fontDictionary.get(PdfName.Subtype) == null
+                || !this.fontDictionary.get(PdfName.Subtype).equals(fontType)) {
+            throw new PdfRuntimeException(PdfException.DictionaryNotContainFontData).setMessageParams(fontType.getValue());
+        }
+    }
+
+    protected void checkTrueTypeFontDictionary() throws PdfException {
+        if (this.fontDictionary == null || this.fontDictionary.get(PdfName.Subtype) == null
+                || !(this.fontDictionary.get(PdfName.Subtype).equals(PdfName.TrueType) || this.fontDictionary.get(PdfName.Subtype).equals(PdfName.Type1))) {
+            throw new PdfRuntimeException(PdfException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
+        }
+    }
+
+    protected PdfStream copyFontFileStream(PdfStream fileStream) throws PdfException {
+        PdfStream newFileStream = new PdfStream(getDocument(), fileStream.getBytes());
+        for (Map.Entry<PdfName, PdfObject> entry : fileStream.entrySet()) {
+            newFileStream.put(entry.getKey(), entry.getValue());
+        }
+        return newFileStream;
+    }
+
+    protected boolean isSymbolic() throws PdfException {
+        PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
+        if (fontDescriptor == null)
+            return false;
+        PdfNumber flags = fontDescriptor.getAsNumber(PdfName.Flags);
+        if (flags == null)
+            return false;
+        return (flags.getIntValue() & 0x04) != 0;
+    }
+
+    protected int[] getFillWidths(PdfArray widths, PdfNumber firstObj, PdfNumber lastObj) throws PdfException {
+        int wd[] = new int[256];
+        if (firstObj != null && lastObj != null && widths != null) {
+            int first = firstObj.getIntValue();
+            int nSize = first + widths.size();
+            int[] tmp = new int[nSize];
+            System.arraycopy(wd, 0, tmp, 0, first);
+            wd = tmp;
+            for (int k = 0; k < widths.size(); ++k) {
+                wd[first + k] = widths.getAsNumber(k).getIntValue();
+            }
+        }
+        return wd;
+
     }
 
     /** Creates a unique subset prefix to be added to the font name when the font is embedded and subset.

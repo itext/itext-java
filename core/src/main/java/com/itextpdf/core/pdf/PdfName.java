@@ -68,6 +68,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName AuthEvent = createDirectName("AuthEvent");
     public static final PdfName Author = createDirectName("Author");
     public static final PdfName BaseFont = createDirectName("BaseFont");
+    public static final PdfName BaseEncoding = createDirectName("BaseEncoding");
     public static final PdfName B = createDirectName("B");
     public static final PdfName BBox = createDirectName("BBox");
     public static final PdfName BE = createDirectName("BE");

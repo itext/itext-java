@@ -9,69 +9,64 @@ import java.util.StringTokenizer;
 
 public class Type1Font extends FontProgram {
 
-    /** Type 1 font parser. */
+    /**
+     * Type 1 font parser.
+     */
     private Type1Parser fontParser;
 
-    /** The Postscript font name. */
-    private String FontName;
-    /** The full name of the font. */
-    private String FullName;
-    /** The family name of the font. */
-    private String FamilyName;
+    /**
+     * The full name of the font.
+     */
+    private String fullName;
+    /**
+     * The family name of the font.
+     */
+    private String familyName;
 
-    /** The font's encoding name. This encoding is 'StandardEncoding' or 'AdobeStandardEncoding' for a font
-     * that can be totally encoded according to the characters names. For all other names the font is treated as symbolic. */
-    private String EncodingScheme = "FontSpecific";
-    /** Font encoding. */
-    private FontEncoding encoding;
-    /** Contains the smallest box enclosing the character contours. */
-    private int[][] charBBoxes = new int[256][];
-    /** Table of characters widths for this encoding. */
-    private int[] widths = new int[256];
-    /** The weight of the font: normal, bold, etc. */
-    private String Weight = "";
-    /** The italic angle of the font, usually 0.0 or negative. */
-    private float ItalicAngle = 0.0f;
-    /** {@code true} if all the characters have the same width. */
-    private boolean IsFixedPitch = false;
-    /** The character set of the font. */
-    private String CharacterSet;
-    /** The llx of the FontBox. */
-    private int llx = -50;
-    /** The lly of the FontBox. */
-    private int lly = -200;
-    /** The lurx of the FontBox. */
-    private int urx = 1000;
-    /** The ury of the FontBox. */
-    private int ury = 900;
-    /** The underline position. */
-    private int UnderlinePosition = -100;
-    /** The underline thickness. */
-    private int UnderlineThickness = 50;
-    /** A variable. */
-    private int CapHeight = 700;
-    /** A variable. */
-    private int XHeight = 480;
-    /** A variable. */
-    private int Ascender = 800;
-    /** A variable. */
-    private int Descender = -200;
-    /** A variable. */
-    private int StdHW;
-    /** A variable. */
-    private int StdVW = 80;
-    /** Represents the section CharMetrics in the AFM file. Each value of this array
+
+    /**
+     * The weight of the font: normal, bold, etc.
+     */
+    private String weight = "";
+
+    /**
+     * {@code true} if all the characters have the same width.
+     */
+    private boolean isFixedPitch = false;
+    /**
+     * The character set of the font.
+     */
+    private String characterSet;
+
+
+    /**
+     * The underline position.
+     */
+    private int underlinePosition = -100;
+    /**
+     * The underline thickness.
+     */
+    private int underlineThickness = 50;
+
+    /**
+     * Represents the section CharMetrics in the AFM file. Each value of this array
      * contains a {@code Object[4]} with an Integer, Integer, String and int[].
      * This is the code, width, name and char bbox. The key is the name of the char
-     * and also an Integer with the char number. */
-    private HashMap<Object, Object[]> CharMetrics = new HashMap<Object, Object[]>();
-    /** Represents the section KernPairs in the AFM file. The key is the name of the first character
+     * and also an Integer with the char number.
+     */
+    private HashMap<Object, Object[]> charMetrics = new HashMap<Object, Object[]>();
+    /**
+     * Represents the section KernPairs in the AFM file. The key is the name of the first character
      * and the value is a {@code Object[]} with two elements for each kern pair. Position 0 is the name of
-     * the second character and position 1 is the kerning distance. This is repeated for all the pairs. */
-    private HashMap<String, Object[]> KernPairs = new HashMap<String, Object[]>();
+     * the second character and position 1 is the kerning distance. This is repeated for all the pairs.
+     */
+    private HashMap<String, Object[]> kernPairs = new HashMap<String, Object[]>();
 
-    /** Types of records in a PFB file. ASCII is 1 and BINARY is 2. They have to appear in the PFB file in this sequence. */
-    private static final int[] PFB_TYPES = {1, 2, 1};
+    /**
+     * Types of records in a PFB file. ASCII is 1 and BINARY is 2. They have to appear in the PFB file in this sequence.
+     */
+    private static final int PFB_TYPES[] = {1, 2, 1};
+
 
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
@@ -82,6 +77,14 @@ public class Type1Font extends FontProgram {
         process(encoding);
     }
 
+    public Type1Font(String baseEncoding) throws PdfException, IOException {
+        boolean fontSpecific = true;
+        if (encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding")) {
+            fontSpecific = false;
+        }
+        this.encoding = new FontEncoding(baseEncoding, fontSpecific);
+    }
+
     public Type1Font(String name, String encoding) throws PdfException, IOException {
         this(name, encoding, null, null);
     }
@@ -90,28 +93,22 @@ public class Type1Font extends FontProgram {
         return fontParser.isBuiltInFont();
     }
 
-    public String getFontName() {
-        return FontName;
-    }
-
     public String getFullName() {
-        return FullName;
+        return fullName;
     }
 
     public String getFamilyName() {
-        return FamilyName;
+        return familyName;
     }
 
-    public FontEncoding getEncoding() {
-        return encoding;
-    }
 
     /**
      * Gets the font parameter identified by {@code key}. Valid values
      * for {@code key} are {@code ASCENT}, {@code CAPHEIGHT}, {@code DESCENT},
      * {@code ITALICANGLE}, {@code BBOXLLX}, {@code BBOXLLY}, {@code BBOXURX}
      * and {@code BBOXURY}.
-     * @param key the parameter to be extracted.
+     *
+     * @param key      the parameter to be extracted.
      * @param fontSize the font size in points.
      * @return the parameter in points.
      */
@@ -119,30 +116,30 @@ public class Type1Font extends FontProgram {
         switch (key) {
             case FontConstants.AWT_ASCENT:
             case FontConstants.ASCENT:
-                return Ascender * fontSize / 1000;
+                return getAscender() * fontSize / 1000;
             case FontConstants.CAPHEIGHT:
-                return CapHeight * fontSize / 1000;
+                return getCapHeight() * fontSize / 1000;
             case FontConstants.AWT_DESCENT:
             case FontConstants.DESCENT:
-                return Descender * fontSize / 1000;
+                return getDescender() * fontSize / 1000;
             case FontConstants.ITALICANGLE:
-                return ItalicAngle;
+                return getItalicAngle();
             case FontConstants.BBOXLLX:
-                return llx * fontSize / 1000;
+                return getLlx() * fontSize / 1000;
             case FontConstants.BBOXLLY:
-                return lly * fontSize / 1000;
+                return getLly() * fontSize / 1000;
             case FontConstants.BBOXURX:
-                return urx * fontSize / 1000;
+                return getUrx() * fontSize / 1000;
             case FontConstants.BBOXURY:
-                return ury * fontSize / 1000;
+                return getUry() * fontSize / 1000;
             case FontConstants.AWT_LEADING:
                 return 0;
             case FontConstants.AWT_MAXADVANCE:
-                return (urx - llx) * fontSize / 1000;
+                return (getUrx() - getLlx()) * fontSize / 1000;
             case FontConstants.UNDERLINE_POSITION:
-                return UnderlinePosition * fontSize / 1000;
+                return underlinePosition * fontSize / 1000;
             case FontConstants.UNDERLINE_THICKNESS:
-                return UnderlineThickness * fontSize / 1000;
+                return underlineThickness * fontSize / 1000;
         }
         return 0;
     }
@@ -153,98 +150,49 @@ public class Type1Font extends FontProgram {
      * {@code DESCENT}, {@code AWT_DESCENT},
      * {@code ITALICANGLE}, {@code BBOXLLX}, {@code BBOXLLY}, {@code BBOXURX}
      * and {@code BBOXURY}.
-     * @param key the parameter to be updated.
+     *
+     * @param key   the parameter to be updated.
      * @param value the parameter value.
      */
     public void setFontDescriptor(int key, float value) {
         switch (key) {
             case FontConstants.AWT_ASCENT:
             case FontConstants.ASCENT:
-                Ascender = (int)value;
+                setAscender((int) value);
                 break;
             case FontConstants.AWT_DESCENT:
             case FontConstants.DESCENT:
-                Descender = (int)value;
+                setDescender((int) value);
                 break;
             default:
                 break;
         }
     }
 
-    @Override
-    public int getLlx() {
-        return llx;
-    }
-
-    @Override
-    public int getLly() {
-        return lly;
-    }
-
-    @Override
-    public int getUrx() {
-        return urx;
-    }
-
-    @Override
-    public int getUry() {
-        return ury;
-    }
 
     public int getUnderlinePosition() {
-        return UnderlinePosition;
+        return underlinePosition;
     }
 
     public int getUnderlineThickness() {
-        return UnderlineThickness;
+        return underlineThickness;
     }
 
-    @Override
-    public int getCapHeight() {
-        return CapHeight;
-    }
 
-    public int getXHeight() {
-        return XHeight;
-    }
-
-    @Override
-    public int getAscent() {
-        return Ascender;
-    }
-
-    @Override
-    public int getDescent() {
-        return Descender;
-    }
-
-    public int getStdHW() {
-        return StdHW;
-    }
-
-    public int getStdVW() {
-        return StdVW;
-    }
-
-    @Override
     public int getStemV() {
         return getStdVW();
     }
 
     public boolean isFixedPitch() {
-        return IsFixedPitch;
+        return isFixedPitch;
     }
 
-    @Override
-    public float getItalicAngle() {
-        return ItalicAngle;
-    }
 
     public String getWeight() {
-        return Weight;
+        return weight;
     }
 
-    @Override
+
     public int getFlags() {
         int flags = 0;
         if (isFixedPitch()) {
@@ -264,21 +212,36 @@ public class Type1Font extends FontProgram {
     }
 
     public String getCharacterSet() {
-        return CharacterSet;
+        return characterSet;
+    }
+
+
+    public void setFullName(String fullName) {
+        fullName = fullName;
+    }
+
+    public void setFamilyName(String familyName) {
+        familyName = familyName;
+    }
+
+    public void setWeight(String weight) {
+        weight = weight;
     }
 
     /**
      * Checks if the font has any kerning pairs.
+     *
      * @return {@code true} if the font has any kerning pairs.
      */
     public boolean hasKernPairs() {
-        return !KernPairs.isEmpty();
+        return !kernPairs.isEmpty();
     }
 
     /**
      * Gets the kerning between two Unicode characters. The characters
      * are converted to names and this names are used to find the kerning
      * pairs in the {@code HashMap} {@code KernPairs}.
+     *
      * @param char1 the first char
      * @param char2 the second char
      * @return the kerning to be applied
@@ -292,7 +255,7 @@ public class Type1Font extends FontProgram {
         if (second == null) {
             return 0;
         }
-        Object[] obj = KernPairs.get(first);
+        Object[] obj = kernPairs.get(first);
         if (obj == null) {
             return 0;
         }
@@ -306,9 +269,10 @@ public class Type1Font extends FontProgram {
 
     /**
      * Sets the kerning between two Unicode chars.
+     *
      * @param char1 the first char.
      * @param char2 the second char.
-     * @param kern the kerning to apply in normalized 1000 units.
+     * @param kern  the kerning to apply in normalized 1000 units.
      * @return {@code true} if the kerning was applied, {@code false} otherwise.
      */
     public boolean setKerning(int char1, int char2, int kern) {
@@ -319,10 +283,10 @@ public class Type1Font extends FontProgram {
         String second = AdobeGlyphList.unicodeToName(char2);
         if (second == null)
             return false;
-        Object[] obj = KernPairs.get(first);
+        Object[] obj = kernPairs.get(first);
         if (obj == null) {
             obj = new Object[]{second, kern};
-            KernPairs.put(first, obj);
+            kernPairs.put(first, obj);
             return true;
         }
         for (int k = 0; k < obj.length; k += 2) {
@@ -336,7 +300,7 @@ public class Type1Font extends FontProgram {
         System.arraycopy(obj, 0, obj2, 0, size);
         obj2[size] = second;
         obj2[size + 1] = kern;
-        KernPairs.put(first, obj2);
+        kernPairs.put(first, obj2);
         return true;
     }
 
@@ -344,19 +308,20 @@ public class Type1Font extends FontProgram {
      * Gets the width from the font according to the {@code name} or,
      * if the {@code name} is null, meaning it is a symbolic font,
      * the char {@code c}.
-     * @param c the char if the font is symbolic
+     *
+     * @param c    the char if the font is symbolic
      * @param name the glyph name
      * @return the width of the char
      */
-    public int getRawWidth(int c, String name) {
+    protected int getRawWidth(int c, String name) {
         Object[] metrics;
         if (name == null) { // font specific
-            metrics = CharMetrics.get(c);
+            metrics = charMetrics.get(c);
         } else {
             if (name.equals(".notdef")) {
                 return 0;
             }
-            metrics = CharMetrics.get(name);
+            metrics = charMetrics.get(name);
         }
         if (metrics != null) {
             return (Integer) metrics[1];
@@ -364,15 +329,15 @@ public class Type1Font extends FontProgram {
         return 0;
     }
 
-    public int[] getRawCharBBox(int c, String name) {
+    protected int[] getRawCharBBox(int c, String name) {
         Object[] metrics;
         if (name == null) { // font specific
-            metrics = CharMetrics.get(Integer.valueOf(c));
+            metrics = charMetrics.get(Integer.valueOf(c));
         } else {
             if (name.equals(FontConstants.notdef)) {
                 return null;
             }
-            metrics = CharMetrics.get(name);
+            metrics = charMetrics.get(name);
         }
         if (metrics != null) {
             return (int[]) metrics[3];
@@ -382,6 +347,7 @@ public class Type1Font extends FontProgram {
 
     /**
      * Gets the width of a {@code char} in normalized 1000 units.
+     *
      * @param ch the unicode {@code char} to get the width of
      * @return the width in normalized 1000 units
      */
@@ -402,15 +368,10 @@ public class Type1Font extends FontProgram {
         }
     }
 
-    /**
-     * Gets table of characters widths for this simple font encoding.
-     */
-    public int[] getRawWidths() {
-        return widths;
-    }
 
     /**
      * Gets the width of a {@code String} in normalized 1000 units.
+     *
      * @param text the {@code String} to get the width of
      * @return the width in normalized 1000 units
      */
@@ -427,9 +388,8 @@ public class Type1Font extends FontProgram {
                 }
             }
             return total;
-        }
-        else {
-            byte[] bytes = encoding.convertToBytes(text);
+        } else {
+            byte bytes[] = encoding.convertToBytes(text);
             for (byte b : bytes) {
                 total += widths[0xff & b];
             }
@@ -437,54 +397,11 @@ public class Type1Font extends FontProgram {
         return total;
     }
 
-    /**
-     * Gets the descent of a <CODE>String</CODE> in normalized 1000 units. The descent will always be
-     * less than or equal to zero even if all the characters have an higher descent.
-     * @param text the <CODE>String</CODE> to get the descent of
-     * @return the descent in normalized 1000 units
-     */
-    public int getDescent(String text) {
-        int min = 0;
-        char[] chars = text.toCharArray();
-        for (char ch : chars) {
-            int[] bbox = getCharBBox(ch);
-            if (bbox != null && bbox[1] < min) {
-                min = bbox[1];
-            }
-        }
-        return min;
-    }
-
-    /**
-     * Gets the ascent of a <CODE>String</CODE> in normalized 1000 units. The ascent will always be
-     * greater than or equal to zero even if all the characters have a lower ascent.
-     * @param text the <CODE>String</CODE> to get the ascent of
-     * @return the ascent in normalized 1000 units
-     */
-    public int getAscent(String text) {
-        int max = 0;
-        char[] chars = text.toCharArray();
-        for (char ch : chars) {
-            int[] bbox = getCharBBox(ch);
-            if (bbox != null && bbox[3] > max) {
-                max = bbox[3];
-            }
-        }
-        return max;
-    }
-
-    public int[] getCharBBox(char ch) {
-        byte[] b = encoding.convertToBytes(ch);
-        if (b.length == 0) {
-            return null;
-        } else {
-            return charBBoxes[b[0] & 0xff];
-        }
-    }
 
     /**
      * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
      * to the font's encoding.
+     *
      * @param text the <CODE>String</CODE> to be converted
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
@@ -500,7 +417,7 @@ public class Type1Font extends FontProgram {
         RandomAccessFileOrArray raf = null;
         try {
             raf = fontParser.getPostscriptBinary();
-            int fileLength = (int)raf.length();
+            int fileLength = (int) raf.length();
             fontStreamBytes = new byte[fileLength - 18];
             fontStreamLengths = new int[3];
             int bytePtr = 0;
@@ -531,7 +448,8 @@ public class Type1Font extends FontProgram {
             if (raf != null) {
                 try {
                     raf.close();
-                } catch (Exception ignored) { }
+                } catch (Exception ignored) {
+                }
             }
         }
     }
@@ -552,58 +470,58 @@ public class Type1Font extends FontProgram {
             String ident = tok.nextToken();
             switch (ident) {
                 case "FontName":
-                    FontName = tok.nextToken("\u00ff").substring(1);
+                    setFontName(tok.nextToken("\u00ff").substring(1));
                     break;
                 case "FullName":
-                    FullName = tok.nextToken("\u00ff").substring(1);
+                    fullName = tok.nextToken("\u00ff").substring(1);
                     break;
                 case "FamilyName":
-                    FamilyName = tok.nextToken("\u00ff").substring(1);
+                    familyName = tok.nextToken("\u00ff").substring(1);
                     break;
                 case "Weight":
-                    Weight = tok.nextToken("\u00ff").substring(1);
+                    weight = tok.nextToken("\u00ff").substring(1);
                     break;
                 case "ItalicAngle":
-                    ItalicAngle = Float.parseFloat(tok.nextToken());
+                    setItalicAngle(Float.parseFloat(tok.nextToken()));
                     break;
                 case "IsFixedPitch":
-                    IsFixedPitch = tok.nextToken().equals("true");
+                    isFixedPitch = tok.nextToken().equals("true");
                     break;
                 case "CharacterSet":
-                    CharacterSet = tok.nextToken("\u00ff").substring(1);
+                    characterSet = tok.nextToken("\u00ff").substring(1);
                     break;
                 case "FontBBox":
-                    llx = (int) Float.parseFloat(tok.nextToken());
-                    lly = (int) Float.parseFloat(tok.nextToken());
-                    urx = (int) Float.parseFloat(tok.nextToken());
-                    ury = (int) Float.parseFloat(tok.nextToken());
+                    setLlx((int) Float.parseFloat(tok.nextToken()));
+                    setLly((int) Float.parseFloat(tok.nextToken()));
+                    setUrx((int) Float.parseFloat(tok.nextToken()));
+                    setUry((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "UnderlinePosition":
-                    UnderlinePosition = (int) Float.parseFloat(tok.nextToken());
+                    underlinePosition = (int) Float.parseFloat(tok.nextToken());
                     break;
                 case "UnderlineThickness":
-                    UnderlineThickness = (int) Float.parseFloat(tok.nextToken());
+                    underlineThickness = (int) Float.parseFloat(tok.nextToken());
                     break;
                 case "EncodingScheme":
-                    EncodingScheme = tok.nextToken("\u00ff").substring(1).trim();
+                    encodingScheme = tok.nextToken("\u00ff").substring(1).trim();
                     break;
                 case "CapHeight":
-                    CapHeight = (int) Float.parseFloat(tok.nextToken());
+                    setCapHeight((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "XHeight":
-                    XHeight = (int) Float.parseFloat(tok.nextToken());
+                    setxHeight((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "Ascender":
-                    Ascender = (int) Float.parseFloat(tok.nextToken());
+                    setAscender((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "Descender":
-                    Descender = (int) Float.parseFloat(tok.nextToken());
+                    setDescender((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "StdHW":
-                    StdHW = (int) Float.parseFloat(tok.nextToken());
+                    setStdHW((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "StdVW":
-                    StdVW = (int) Float.parseFloat(tok.nextToken());
+                    setStdVW((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "StartCharMetrics":
                     startKernPairs = true;
@@ -641,7 +559,7 @@ public class Type1Font extends FontProgram {
                 } else if (ident.equals("N")) {
                     N = tokc.nextToken();
                 } else if (ident.equals("B")) {
-                    B = new int[] {
+                    B = new int[]{
                             Integer.parseInt(tokc.nextToken()),
                             Integer.parseInt(tokc.nextToken()),
                             Integer.parseInt(tokc.nextToken()),
@@ -650,17 +568,17 @@ public class Type1Font extends FontProgram {
             }
             Object[] metrics = new Object[]{C, WX, N, B};
             if (C >= 0) {
-                CharMetrics.put(C, metrics);
+                charMetrics.put(C, metrics);
             }
-            CharMetrics.put(N, metrics);
+            charMetrics.put(N, metrics);
         }
         if (startKernPairs) {
             throw new PdfException("missing.endcharmetrics.in.1").setMessageParams(fontParser.getName());
         }
-        if (!CharMetrics.containsKey("nonbreakingspace")) {
-            Object[] space = CharMetrics.get("space");
+        if (!charMetrics.containsKey("nonbreakingspace")) {
+            Object[] space = charMetrics.get("space");
             if (space != null)
-                CharMetrics.put("nonbreakingspace", space);
+                charMetrics.put("nonbreakingspace", space);
         }
         boolean endOfMetrics = false;
         while ((line = raf.readLine()) != null) {
@@ -688,16 +606,16 @@ public class Type1Font extends FontProgram {
                     String first = tok.nextToken();
                     String second = tok.nextToken();
                     Integer width = (int) Float.parseFloat(tok.nextToken());
-                    Object[] relates = KernPairs.get(first);
+                    Object[] relates = kernPairs.get(first);
                     if (relates == null) {
-                        KernPairs.put(first, new Object[]{second, width});
+                        kernPairs.put(first, new Object[]{second, width});
                     } else {
                         int n = relates.length;
                         Object[] relates2 = new Object[n + 2];
                         System.arraycopy(relates, 0, relates2, 0, n);
                         relates2[n] = second;
                         relates2[n + 1] = width;
-                        KernPairs.put(first, relates2);
+                        kernPairs.put(first, relates2);
                     }
                 } else if (ident.equals("EndKernPairs")) {
                     startKernPairs = false;
@@ -714,7 +632,7 @@ public class Type1Font extends FontProgram {
         raf.close();
 
         boolean fontSpecific = true;
-        if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
+        if (encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding")) {
             fontSpecific = false;
         }
         encoding = new FontEncoding(baseEncoding, fontSpecific);
@@ -723,88 +641,5 @@ public class Type1Font extends FontProgram {
         } else {
             createEncoding();
         }
-    }
-
-    /**
-     * Creates the {@code widths} and the {@code differences} arrays.
-     */
-    protected void createEncoding() throws PdfException {
-        if (encoding.isFontSpecific()) {
-            for (int k = 0; k < 256; ++k) {
-                widths[k] = getRawWidth(k, null);
-                charBBoxes[k] = getRawCharBBox(k, null);
-            }
-        } else {
-            String s;
-            String name;
-            char ch;
-            byte[] b = new byte[1];
-
-            for (int k = 0; k < 256; ++k) {
-                b[0] = (byte)k;
-                s = PdfEncodings.convertToString(b, encoding.getBaseEncoding());
-                if (s.length() > 0) {
-                    ch = s.charAt(0);
-                } else {
-                    ch = '?';
-                }
-                name = AdobeGlyphList.unicodeToName(ch);
-                if (name == null) {
-                    name = FontConstants.notdef;
-                }
-                encoding.setDifferences(k, name);
-                encoding.setUnicodeDifferences(k, ch);
-                widths[k] = getRawWidth(ch, name);
-                charBBoxes[k] = getRawCharBBox(ch, name);
-            }
-        }
-    }
-
-    /**
-     * Creates the {@code widths} and the {@code differences} arrays in case special user map-encoding.
-     * Encoding starts with '# simple …' or '# full …'.
-     */
-    protected void createSpecialEncoding() {
-        StringTokenizer tok = new StringTokenizer(encoding.getBaseEncoding().substring(1), " ,\t\n\r\f");
-        if (tok.nextToken().equals("full")) {
-            while (tok.hasMoreTokens()) {
-                String order = tok.nextToken();
-                String name = tok.nextToken();
-                char uni = (char)Integer.parseInt(tok.nextToken(), 16);
-                int orderK;
-                if (order.startsWith("'")) {
-                    orderK = order.charAt(1);
-                } else {
-                    orderK = Integer.parseInt(order);
-                }
-                orderK %= 256;
-                encoding.getSpecialMap().put(uni, orderK);
-                encoding.setDifferences(orderK, name);
-                encoding.setUnicodeDifferences(orderK, uni);
-
-                widths[orderK] = getRawWidth(uni, name);
-                charBBoxes[orderK] = getRawCharBBox(uni, name);
-            }
-        } else {
-            int k = 0;
-            if (tok.hasMoreTokens()) {
-                k = Integer.parseInt(tok.nextToken());
-            }
-            while (tok.hasMoreTokens() && k < 256) {
-                String hex = tok.nextToken();
-                int uni = Integer.parseInt(hex, 16) % 0x10000;
-                String name = AdobeGlyphList.unicodeToName(uni);
-                if (name != null) {
-                    encoding.getSpecialMap().put(uni, k);
-                    encoding.setDifferences(k, name);
-                    encoding.setUnicodeDifferences(k, (char)uni);
-
-                    widths[k] = getRawWidth(uni, name);
-                    charBBoxes[k] = getRawCharBBox(uni, name);
-                    ++k;
-                }
-            }
-        }
-        encoding.fillEmptyDifferences();
     }
 }
