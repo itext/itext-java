@@ -25,15 +25,13 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      * @return the subset prefix
      */
 
-    public T getFontProgram(){
+    public T getFontProgram() {
         return fontProgram;
     }
 
     protected abstract T initializeTypeFontForCopy(String encodingName) throws PdfException, IOException;
 
     protected abstract T initializeTypeFont(String fontName, String encodingName) throws IOException, PdfException;
-
-
 
 
     protected void init() throws PdfException, IOException {
@@ -48,7 +46,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
         if (encodingObj == null) {
 
-            if (Type1Parser.BuiltinFonts14.contains(baseFont.getValue())) {
+            if (FontConstants.builtinFonts14.contains(baseFont.getValue())) {
                 fillEncoding(baseFont);
             } else {
                 fillEncoding(null);
@@ -96,7 +94,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             fontProgram.setWidths(getFillWidths(widths, firstChar, lastChar));
         }
 
-        if (Type1Parser.BuiltinFonts14.contains(fontProgram.getFontName())) {
+        if (FontConstants.builtinFonts14.contains(fontProgram.getFontName())) {
             fontProgram = initializeTypeFont(fontProgram.getFontName(), fontProgram.getEncoding().getBaseEncoding());
         }
 

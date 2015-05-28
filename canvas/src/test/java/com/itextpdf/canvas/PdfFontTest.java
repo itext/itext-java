@@ -337,8 +337,8 @@ public class PdfFontTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream("d:/cmr10.pfb"));
-        byte[] afm = Utilities.inputStreamToArray(new FileInputStream("d:/cmr10.afm"));
+        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.pfb"));
+        byte[] afm = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.afm"));
         Type1Font type1Font = new Type1Font("CMR10.afm", "", afm, pfb);
         PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, type1Font, true);
         PdfPage page = pdfDoc.addNewPage();
@@ -372,8 +372,8 @@ public class PdfFontTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream("d:/cmr10.pfb"));
-        byte[] afm = Utilities.inputStreamToArray(new FileInputStream("d:/cmr10.pfm"));
+        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.pfb"));
+        byte[] afm = Utilities.inputStreamToArray(new FileInputStream(sourceFolder +"cmr10.pfm"));
         Type1Font type1Font = new Type1Font("CMR10.pfm", "", afm, pfb);
         PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, type1Font, true);
         PdfPage page = pdfDoc.addNewPage();

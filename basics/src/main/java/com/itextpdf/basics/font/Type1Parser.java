@@ -10,26 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 
-public class Type1Parser {
-
-    public static final HashSet<String> BuiltinFonts14 = new HashSet<String>();
-
-    static {
-        BuiltinFonts14.add(FontConstants.COURIER);
-        BuiltinFonts14.add(FontConstants.COURIER_BOLD);
-        BuiltinFonts14.add(FontConstants.COURIER_BOLDOBLIQUE);
-        BuiltinFonts14.add(FontConstants.COURIER_OBLIQUE);
-        BuiltinFonts14.add(FontConstants.HELVETICA);
-        BuiltinFonts14.add(FontConstants.HELVETICA_BOLD);
-        BuiltinFonts14.add(FontConstants.HELVETICA_BOLDOBLIQUE);
-        BuiltinFonts14.add(FontConstants.HELVETICA_OBLIQUE);
-        BuiltinFonts14.add(FontConstants.SYMBOL);
-        BuiltinFonts14.add(FontConstants.TIMES_ROMAN);
-        BuiltinFonts14.add(FontConstants.TIMES_BOLD);
-        BuiltinFonts14.add(FontConstants.TIMES_BOLDITALIC);
-        BuiltinFonts14.add(FontConstants.TIMES_ITALIC);
-        BuiltinFonts14.add(FontConstants.ZAPFDINGBATS);
-    }
+class Type1Parser {
 
     private String name;
     private byte[] pfb;
@@ -57,7 +38,7 @@ public class Type1Parser {
         InputStream is = null;
         isBuiltInFont = false;
         RandomAccessSourceFactory sourceFactory = new RandomAccessSourceFactory();
-        if (BuiltinFonts14.contains(name)) {
+        if (FontConstants.builtinFonts14.contains(name)) {
             isBuiltInFont = true;
             byte buf[] = new byte[1024];
             try {

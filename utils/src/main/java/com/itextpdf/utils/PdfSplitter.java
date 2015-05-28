@@ -281,7 +281,7 @@ public class PdfSplitter {
         return documentList;
     }
 
-    public PdfDocument splitByOutline(String outlineTitle) throws PdfException {
+    private PdfDocument splitByOutline(String outlineTitle) throws PdfException {
 
         int startPage = -1;
         int endPage = -1;
@@ -320,7 +320,7 @@ public class PdfSplitter {
         return toDocument;
     }
 
-    public PdfPage getPageByOutline(int fromPage, PdfOutline outline) throws PdfException {
+    private PdfPage getPageByOutline(int fromPage, PdfOutline outline) throws PdfException {
         int size = pdfDocument.getNumOfPages();
         for (int i = fromPage; i <= size; i++) {
             PdfPage pdfPage = pdfDocument.getPage(i);
@@ -342,7 +342,7 @@ public class PdfSplitter {
      * @param outline *
      * @throws PdfException
      */
-    public PdfOutline getAbsoluteTreeNextOutline(PdfOutline outline) throws PdfException {
+    private PdfOutline getAbsoluteTreeNextOutline(PdfOutline outline) throws PdfException {
 
         PdfObject nextPdfObject = outline.getContent().get(PdfName.Next);
         PdfOutline nextPdfOutline = null;

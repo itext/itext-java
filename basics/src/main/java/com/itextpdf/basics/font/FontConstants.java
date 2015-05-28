@@ -1,82 +1,157 @@
 package com.itextpdf.basics.font;
 
+import java.util.HashSet;
+
 public class FontConstants {
 
-    /** The path to the font resources. */
+    public static final HashSet<String> builtinFonts14 = new HashSet<String>();
+
+    static {
+        builtinFonts14.add(FontConstants.COURIER);
+        builtinFonts14.add(FontConstants.COURIER_BOLD);
+        builtinFonts14.add(FontConstants.COURIER_BOLDOBLIQUE);
+        builtinFonts14.add(FontConstants.COURIER_OBLIQUE);
+        builtinFonts14.add(FontConstants.HELVETICA);
+        builtinFonts14.add(FontConstants.HELVETICA_BOLD);
+        builtinFonts14.add(FontConstants.HELVETICA_BOLDOBLIQUE);
+        builtinFonts14.add(FontConstants.HELVETICA_OBLIQUE);
+        builtinFonts14.add(FontConstants.SYMBOL);
+        builtinFonts14.add(FontConstants.TIMES_ROMAN);
+        builtinFonts14.add(FontConstants.TIMES_BOLD);
+        builtinFonts14.add(FontConstants.TIMES_BOLDITALIC);
+        builtinFonts14.add(FontConstants.TIMES_ITALIC);
+        builtinFonts14.add(FontConstants.ZAPFDINGBATS);
+    }
+
+    /**
+     * The path to the font resources.
+     */
     public static final String RESOURCE_PATH = "com/itextpdf/basics/font/";
 
     //-Font styles------------------------------------------------------------------------------------------------------
 
-    /** this is a possible style. */
+    /**
+     * this is a possible style.
+     */
     public static final int NORMAL = 0;
-    /** this is a possible style. */
+    /**
+     * this is a possible style.
+     */
     public static final int BOLD = 1;
-    /** this is a possible style. */
+    /**
+     * this is a possible style.
+     */
     public static final int ITALIC = 2;
-    /** this is a possible style. */
+    /**
+     * this is a possible style.
+     */
     public static final int UNDERLINE = 4;
-    /** this is a possible style. */
+    /**
+     * this is a possible style.
+     */
     public static final int STRIKETHRU = 8;
-    /** this is a possible style. */
+    /**
+     * this is a possible style.
+     */
     public static final int BOLDITALIC = BOLD | ITALIC;
 
     //-Font types-------------------------------------------------------------------------------------------------------
 
-    /** Type 1 PostScript font. */
+    /**
+     * Type 1 PostScript font.
+     */
     public static final int Type1Font = 1;
-    /** Compact Font Format PostScript font. */
+    /**
+     * Compact Font Format PostScript font.
+     */
     public static final int Type1CompactFont = 2;
-    /** TrueType or OpenType with TrueType outlines font. */
+    /**
+     * TrueType or OpenType with TrueType outlines font.
+     */
     public static final int TrueTypeFont = 3;
-    /** CIDFont Type0 (Type1 outlines). */
+    /**
+     * CIDFont Type0 (Type1 outlines).
+     */
     public static final int CIDFontType0Font = 4;
-    /** CIDFont Type2 (TrueType outlines). */
+    /**
+     * CIDFont Type2 (TrueType outlines).
+     */
     public static final int CIDFontType2Font = 5;
-    /** OpenType with Type1 outlines. */
+    /**
+     * OpenType with Type1 outlines.
+     */
     public static final int OpenTypeFont = 6;
 
     //-Default fonts----------------------------------------------------------------------------------------------------
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String COURIER = "Courier";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String COURIER_BOLD = "Courier-Bold";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String COURIER_OBLIQUE = "Courier-Oblique";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String COURIER_BOLDOBLIQUE = "Courier-BoldOblique";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String HELVETICA = "Helvetica";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String HELVETICA_BOLD = "Helvetica-Bold";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String HELVETICA_OBLIQUE = "Helvetica-Oblique";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String HELVETICA_BOLDOBLIQUE = "Helvetica-BoldOblique";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String SYMBOL = "Symbol";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String TIMES_ROMAN = "Times-Roman";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String TIMES_BOLD = "Times-Bold";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String TIMES_ITALIC = "Times-Italic";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String TIMES_BOLDITALIC = "Times-BoldItalic";
 
-    /** This is a possible value of a base 14 type 1 font */
+    /**
+     * This is a possible value of a base 14 type 1 font
+     */
     public static final String ZAPFDINGBATS = "ZapfDingbats";
 
     //-Font Descriptor--------------------------------------------------------------------------------------------------
@@ -102,41 +177,77 @@ public class FontConstants {
      * negative for fonts that slope to the right, as almost all italic fonts do.
      */
     public static final int ITALICANGLE = 4;
-    /** The lower left x glyph coordinate. */
+    /**
+     * The lower left x glyph coordinate.
+     */
     public static final int BBOXLLX = 5;
-    /** The lower left y glyph coordinate. */
+    /**
+     * The lower left y glyph coordinate.
+     */
     public static final int BBOXLLY = 6;
-    /** The upper right x glyph coordinate. */
+    /**
+     * The upper right x glyph coordinate.
+     */
     public static final int BBOXURX = 7;
-    /** The upper right y glyph coordinate. */
+    /**
+     * The upper right y glyph coordinate.
+     */
     public static final int BBOXURY = 8;
-    /** AWT Font property. */
+    /**
+     * AWT Font property.
+     */
     public static final int AWT_ASCENT = 9;
-    /** AWT Font property. */
+    /**
+     * AWT Font property.
+     */
     public static final int AWT_DESCENT = 10;
-    /** AWT Font property. */
+    /**
+     * AWT Font property.
+     */
     public static final int AWT_LEADING = 11;
-    /** AWT Font property. */
+    /**
+     * AWT Font property.
+     */
     public static final int AWT_MAXADVANCE = 12;
-    /** The underline position. Usually a negative value. */
+    /**
+     * The underline position. Usually a negative value.
+     */
     public static final int UNDERLINE_POSITION = 13;
-    /** The underline thickness. */
+    /**
+     * The underline thickness.
+     */
     public static final int UNDERLINE_THICKNESS = 14;
-    /** The strikethrough position. */
+    /**
+     * The strikethrough position.
+     */
     public static final int STRIKETHROUGH_POSITION = 15;
-    /** The strikethrough thickness. */
+    /**
+     * The strikethrough thickness.
+     */
     public static final int STRIKETHROUGH_THICKNESS = 16;
-    /** The recommended vertical size for subscripts for this font. */
+    /**
+     * The recommended vertical size for subscripts for this font.
+     */
     public static final int SUBSCRIPT_SIZE = 17;
-    /** The recommended vertical offset from the baseline for subscripts for this font. Usually a negative value. */
+    /**
+     * The recommended vertical offset from the baseline for subscripts for this font. Usually a negative value.
+     */
     public static final int SUBSCRIPT_OFFSET = 18;
-    /** The recommended vertical size for superscripts for this font. */
+    /**
+     * The recommended vertical size for superscripts for this font.
+     */
     public static final int SUPERSCRIPT_SIZE = 19;
-    /** The recommended vertical offset from the baseline for superscripts for this font. */
+    /**
+     * The recommended vertical offset from the baseline for superscripts for this font.
+     */
     public static final int SUPERSCRIPT_OFFSET = 20;
-    /** The weight class of the font, as defined by the font author. */
+    /**
+     * The weight class of the font, as defined by the font author.
+     */
     public static final int WEIGHT_CLASS = 21;
-    /** The width class of the font, as defined by the font author. */
+    /**
+     * The width class of the font, as defined by the font author.
+     */
     public static final int WIDTH_CLASS = 22;
     /**
      * The entry of PDF FontDescriptor dictionary.
@@ -148,7 +259,9 @@ public class FontConstants {
 
     //-Internal constants-----------------------------------------------------------------------------------------------
 
-    /** A not defined character in a custom PDF encoding. */
+    /**
+     * A not defined character in a custom PDF encoding.
+     */
     public static final String notdef = ".notdef";
 
     //-TrueType constants-----------------------------------------------------------------------------------------------
@@ -157,7 +270,8 @@ public class FontConstants {
 
     //-True Type Code pages---------------------------------------------------------------------------------------------
 
-    /** The code pages possible for a True Type font.
+    /**
+     * The code pages possible for a True Type font.
      */
     protected static final String TrueTypeCodePages[] = {
             "1252 Latin 1",
