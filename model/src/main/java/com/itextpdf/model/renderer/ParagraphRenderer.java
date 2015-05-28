@@ -41,6 +41,11 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         int pageNumber = areas.get(0).getPageNumber();
         Rectangle layoutBox = applyMargins(areas.get(0).getBBox().clone(), false);
+        Float blockWidth = getPropertyAsFloat(Property.WIDTH);
+        if (blockWidth != null && blockWidth < layoutBox.getWidth()) {
+            layoutBox.setWidth(blockWidth);
+        }
+        applyPaddings(layoutBox, false);
         occupiedArea = new LayoutArea(pageNumber, new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), layoutBox.getWidth(), 0));
 
         boolean anythingPlaced = false;
@@ -75,6 +80,7 @@ public class ParagraphRenderer extends AbstractRenderer {
                 // TODO avoid infinite loop
                 if (currentAreaPos + 1 < areas.size()) {
                     layoutBox = applyMargins(areas.get(++currentAreaPos).getBBox().clone(), false);
+                    layoutBox = applyPaddings(layoutBox, false);
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
                     continue;
@@ -82,6 +88,7 @@ public class ParagraphRenderer extends AbstractRenderer {
                     ParagraphRenderer[] split = split();
                     split[0].childRenderers = new ArrayList<>(childRenderers);
                     split[1].childRenderers.add(currentRenderer);
+                    applyPaddings(occupiedArea.getBBox(), true);
                     applyMargins(occupiedArea.getBBox(), true);
                     return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
                 }
@@ -107,6 +114,7 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         occupiedArea.getBBox().moveDown((leadingValue - lastLineHeight) / 2);
         occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + (leadingValue - lastLineHeight) / 2);
+        applyPaddings(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
 
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);

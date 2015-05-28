@@ -88,7 +88,7 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
     }
 
     public T setPaddings(float paddingTop, float paddingRight, float paddingBottom, float paddingLeft) {
-        return (T) setMarginTop(paddingTop).setMarginRight(paddingRight).setMarginBottom(paddingBottom).setMarginLeft(paddingLeft);
+        return (T) setPaddingTop(paddingTop).setPaddingRight(paddingRight).setPaddingBottom(paddingBottom).setPaddingLeft(paddingLeft);
     }
 
 }

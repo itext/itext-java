@@ -2,7 +2,6 @@ package com.itextpdf.model.element;
 
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
@@ -33,24 +32,30 @@ public abstract class AbstractElement<T extends AbstractElement> implements IEle
     }
 
     @Override
-    public <T extends IPropertyContainer> T setProperty(Integer propertyKey, Object value) {
+    public <T extends IElement> T setProperty(int propertyKey, Object value) {
         properties.put(propertyKey, value);
         return (T) this;
     }
 
     @Override
-    public <T> T getProperty(Integer propertyKey) {
+    public <T> T getProperty(int propertyKey) {
         return (T) properties.get(propertyKey);
     }
 
     @Override
-    public <T> T getDefaultProperty(Integer propertyKey) {
+    public <T> T getDefaultProperty(int propertyKey) {
         switch (propertyKey) {
             case Property.MARGIN_TOP:
             case Property.MARGIN_RIGHT:
             case Property.MARGIN_BOTTOM:
             case Property.MARGIN_LEFT:
+            case Property.PADDING_TOP:
+            case Property.PADDING_RIGHT:
+            case Property.PADDING_BOTTOM:
+            case Property.PADDING_LEFT:
                 return (T) Float.valueOf(0);
+            case Property.POSITION:
+                return (T)Integer.valueOf(LayoutPosition.FIXED);
             default:
                 return null;
         }
@@ -110,6 +115,26 @@ public abstract class AbstractElement<T extends AbstractElement> implements IEle
 
     public T setBackgroundColor(Color backgroundColor, float extraLeft, final float extraTop, final float extraRight, float extraBottom) {
         return setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
+    }
+
+    public T setBorder(Property.BorderConfig borderConfig) {
+        return setProperty(Property.BORDER, borderConfig);
+    }
+
+    public T setBorderTop(Property.BorderConfig borderConfig) {
+        return setProperty(Property.BORDER_TOP, borderConfig);
+    }
+
+    public T setBorderRight(Property.BorderConfig borderConfig) {
+        return setProperty(Property.BORDER_RIGHT, borderConfig);
+    }
+
+    public T setBorderBottom(Property.BorderConfig borderConfig) {
+        return setProperty(Property.BORDER_BOTTOM, borderConfig);
+    }
+
+    public T setBorderLeft(Property.BorderConfig borderConfig) {
+        return setProperty(Property.BORDER_LEFT, borderConfig);
     }
 
     @Override

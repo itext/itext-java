@@ -42,7 +42,7 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     @Override
-    public <T> T getDefaultProperty(Integer propertyKey) {
+    public <T> T getDefaultProperty(int propertyKey) {
         switch (propertyKey) {
             case Property.LEADING:
                 if (childElements.size() == 1 && childElements.get(0) instanceof Image)

@@ -10,6 +10,7 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
+import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.layout.LayoutResult;
 
 
@@ -74,6 +75,11 @@ public class TextRenderer extends AbstractRenderer {
             float nonBreakablePartMaxHeight = 0;
             int firstCharacterWhichExceedsAllowedWidth = -1;
             for (int ind = currentTextPos; ind < text.length(); ind++) {
+                if (text.charAt(ind) == '\n') {
+                    firstCharacterWhichExceedsAllowedWidth = ind + 1;
+                    break;
+                }
+
                 int charCode = getCharCode(ind);
                 if (noPrint(charCode))
                     continue;
@@ -170,6 +176,11 @@ public class TextRenderer extends AbstractRenderer {
     public void draw(PdfDocument document, PdfCanvas canvas) {
         super.draw(document, canvas);
 
+        int position = getPropertyAsInteger(Property.POSITION);
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(false);
+        }
+
         float leftBBoxX = occupiedArea.getBBox().getX();
 
         if (line != null && line.length() != 0) {
@@ -204,6 +215,10 @@ public class TextRenderer extends AbstractRenderer {
             } catch (PdfException exc) {
                 throw new RuntimeException(exc);
             }
+        }
+
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(false);
         }
     }
 

@@ -10,6 +10,7 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
+import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.layout.LayoutResult;
 
 public class ImageRenderer extends AbstractRenderer {
@@ -81,16 +82,25 @@ public class ImageRenderer extends AbstractRenderer {
     public void draw(PdfDocument document, PdfCanvas canvas){
         super.draw(document, canvas);
 
+        int position = getPropertyAsInteger(Property.POSITION);
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(false);
+        }
+
         try{
-            if (fixedXPosition != null || fixedXPosition != null){
-                canvas.addXObject(((Image)(getModelElement())).getxObject(), (float) matrix[0], (float) matrix[2], (float) matrix[1], (float) matrix[3], fixedXPosition, fixedYPosition);
+            if (fixedXPosition != null || fixedYPosition != null){
+                canvas.addXObject(((Image)(getModelElement())).getxObject(), matrix[0], matrix[2], matrix[1], matrix[3], fixedXPosition, fixedYPosition);
             }
             else{
-                canvas.addXObject(((Image)(getModelElement())).getxObject(), (float) matrix[0], (float) matrix[2], (float) matrix[1], (float) matrix[3], occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY() + pivotY);
+                canvas.addXObject(((Image)(getModelElement())).getxObject(), matrix[0], matrix[2], matrix[1], matrix[3], occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY() + pivotY);
             }
 
         } catch (PdfException ex){
             throw new RuntimeException(ex);
+        }
+
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(true);
         }
     }
 
