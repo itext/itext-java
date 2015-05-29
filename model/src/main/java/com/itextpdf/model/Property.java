@@ -48,6 +48,7 @@ public class Property {
     public static final int BORDER_BOTTOM = 41;
     public static final int BORDER_LEFT = 42;
     public static final int BORDER_RIGHT = 43;
+    public static final int PAGE_NUMBER = 44;
 
     private Property() {
     }

@@ -8,6 +8,7 @@ import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ParagraphRenderer extends AbstractRenderer {
@@ -36,7 +37,15 @@ public class ParagraphRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        List<LayoutArea> areas = initElementAreas(layoutContext);
+        List<LayoutArea> areas;
+        if (isPositioned()) {
+            float x = getPropertyAsFloat(Property.X);
+            Rectangle parentBBox = layoutContext.getArea().getBBox();
+            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(parentBBox.getX() + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
+        }
+        else {
+            areas = initElementAreas(layoutContext);
+        }
         int currentAreaPos = 0;
 
         int pageNumber = areas.get(0).getPageNumber();
@@ -114,7 +123,15 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         occupiedArea.getBBox().moveDown((leadingValue - lastLineHeight) / 2);
         occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + (leadingValue - lastLineHeight) / 2);
+        Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
         applyPaddings(occupiedArea.getBBox(), true);
+        if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
+            occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
+        }
+        if (isPositioned()) {
+            float y = getPropertyAsFloat(Property.Y);
+            move(0, layoutBox.getY() + y - occupiedArea.getBBox().getY());
+        }
         applyMargins(occupiedArea.getBBox(), true);
 
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);

@@ -18,6 +18,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();
+    protected List<IRenderer> positionedRenderers = new ArrayList<>();
     protected IPropertyContainer modelElement;
     protected boolean flushed = false;
     protected LayoutArea occupiedArea;
@@ -33,8 +34,35 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public void addChild(IRenderer renderer) {
-        childRenderers.add(renderer);
-        renderer.setParent(this);
+        // https://www.webkit.org/blog/116/webcore-rendering-iii-layout-basics
+        // "The rules can be summarized as follows:"...
+        Integer positioning = renderer.getProperty(Property.POSITION);
+        if (positioning == null || positioning == LayoutPosition.RELATIVE || positioning == LayoutPosition.STATIC) {
+            childRenderers.add(renderer);
+            renderer.setParent(this);
+        } else if (positioning == LayoutPosition.FIXED) {
+            AbstractRenderer root = this;
+            while (root.parent instanceof AbstractRenderer) {
+                root = (AbstractRenderer)root.parent;
+            }
+            if (root == this) {
+                positionedRenderers.add(renderer);
+                renderer.setParent(this);
+            } else {
+                root.addChild(renderer);
+            }
+        } else if (positioning == LayoutPosition.ABSOLUTE) {
+            AbstractRenderer root = this;
+            while (root.getPropertyAsInteger(Property.POSITION) == LayoutPosition.STATIC && root.parent instanceof AbstractRenderer) {
+                root = (AbstractRenderer)root.parent;
+            }
+            if (root == this) {
+                positionedRenderers.add(renderer);
+                renderer.setParent(this);
+            } else {
+                root.addChild(renderer);
+            }
+        }
     }
 
     @Override
@@ -82,7 +110,7 @@ public abstract class AbstractRenderer implements IRenderer {
     public <T> T getDefaultProperty(int propertyKey) {
         switch (propertyKey) {
             case Property.POSITION:
-                return (T) Integer.valueOf(LayoutPosition.FIXED);
+                return (T) Integer.valueOf(LayoutPosition.STATIC);
             default:
                 return null;
         }
@@ -215,5 +243,10 @@ public abstract class AbstractRenderer implements IRenderer {
 
         if (dxRight != 0 || dyUp != 0)
             move(dxRight, dyUp);
+    }
+
+    protected boolean isPositioned() {
+        Object positioning = getProperty(Property.POSITION);
+        return Integer.valueOf(LayoutPosition.ABSOLUTE).equals(positioning) || Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
     }
 }

@@ -4,7 +4,7 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.BlockRenderer;
 import com.itextpdf.model.renderer.IRenderer;
 
-public abstract class BlockElement<T extends BlockElement> extends AbstractElement<T> implements IAccessibleElement {
+public abstract class BlockElement<T extends BlockElement> extends AbstractElement<T> implements IAccessibleElement<T> {
 
     public BlockElement() {
     }

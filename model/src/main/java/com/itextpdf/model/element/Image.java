@@ -5,7 +5,7 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ImageRenderer;
 
-public class Image extends AbstractElement<Image> implements ILeafElement, IAccessibleElement {
+public class Image extends AbstractElement<Image> implements ILeafElement<Image>, IAccessibleElement<Image> {
 
     protected PdfImageXObject xObject;
 

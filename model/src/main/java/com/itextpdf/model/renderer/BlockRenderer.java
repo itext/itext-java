@@ -11,8 +11,6 @@ import java.util.List;
 
 public class BlockRenderer extends AbstractRenderer {
 
-    protected List<IRenderer> positionedRenderers = new ArrayList<>();
-
     public BlockRenderer(BlockElement modelElement) {
         super(modelElement);
     }

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractElement<T extends AbstractElement> implements IElement {
+public abstract class AbstractElement<Type extends AbstractElement> implements IElement<Type> {
 
     protected IRenderer nextRenderer;
     protected Map<Integer, Object> properties = new HashMap<>();
@@ -32,7 +32,7 @@ public abstract class AbstractElement<T extends AbstractElement> implements IEle
     }
 
     @Override
-    public <T extends IElement> T setProperty(int propertyKey, Object value) {
+    public <T extends Type> T setProperty(int propertyKey, Object value) {
         properties.put(propertyKey, value);
         return (T) this;
     }
@@ -55,7 +55,7 @@ public abstract class AbstractElement<T extends AbstractElement> implements IEle
             case Property.PADDING_LEFT:
                 return (T) Float.valueOf(0);
             case Property.POSITION:
-                return (T)Integer.valueOf(LayoutPosition.FIXED);
+                return (T)Integer.valueOf(LayoutPosition.STATIC);
             default:
                 return null;
         }
@@ -65,7 +65,7 @@ public abstract class AbstractElement<T extends AbstractElement> implements IEle
         return getProperty(Property.WIDTH);
     }
 
-    public T setWidth(float width) {
+    public Type setWidth(float width) {
         return setProperty(Property.WIDTH, width);
     }
 
@@ -73,67 +73,72 @@ public abstract class AbstractElement<T extends AbstractElement> implements IEle
         return getProperty(Property.HEIGHT);
     }
 
-    public T setHeight(float height) {
+    public Type setHeight(float height) {
         return setProperty(Property.HEIGHT, height);
     }
 
-    public T setRelativePosition(float left, float top, float right, float bottom) {
-        return setProperty(Property.POSITION, LayoutPosition.RELATIVE).
+    public Type setRelativePosition(float left, float top, float right, float bottom) {
+        return (Type) setProperty(Property.POSITION, LayoutPosition.RELATIVE).
             setProperty(Property.LEFT, left).
             setProperty(Property.RIGHT, right).
             setProperty(Property.TOP, top).
             setProperty(Property.BOTTOM, bottom);
     }
 
-    public T setFixedPosition(float x, float y) {
-        return setProperty(Property.POSITION, LayoutPosition.FIXED).
+    public Type setFixedPosition(float x, float y) {
+        return (Type) setProperty(Property.POSITION, LayoutPosition.FIXED).
             setProperty(Property.X, x).
             setProperty(Property.Y, y);
     }
 
-    public T setAbsolutePosition(float x, float y) {
-        return setProperty(Property.POSITION, LayoutPosition.ABSOLUTE).
+    public Type setFixedPosition(int pageNumber, float x, float y) {
+        return (Type) setFixedPosition(x, y).
+               setProperty(Property.PAGE_NUMBER, pageNumber);
+    }
+
+    public Type setAbsolutePosition(float x, float y) {
+        return (Type) setProperty(Property.POSITION, LayoutPosition.ABSOLUTE).
             setProperty(Property.X, x).
             setProperty(Property.Y, y);
     }
 
-    public T setFont(PdfFont font) {
+    public Type setFont(PdfFont font) {
         return setProperty(Property.FONT, font);
     }
 
-    public T setFontColor(Color fontColor) {
+    public Type setFontColor(Color fontColor) {
         return setProperty(Property.FONT_COLOR, fontColor);
     }
 
-    public T setFontSize(float fontSize) {
+    public Type setFontSize(float fontSize) {
         return setProperty(Property.FONT_SIZE, fontSize);
     }
 
-    public T setBackgroundColor(Color backgroundColor) {
+    public Type setBackgroundColor(Color backgroundColor) {
         return setBackgroundColor(backgroundColor, 0, 0, 0, 0);
     }
 
-    public T setBackgroundColor(Color backgroundColor, float extraLeft, final float extraTop, final float extraRight, float extraBottom) {
+    public Type setBackgroundColor(Color backgroundColor, float extraLeft, final float extraTop, final float extraRight, float extraBottom) {
         return setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
     }
 
-    public T setBorder(Property.BorderConfig borderConfig) {
+    public Type setBorder(Property.BorderConfig borderConfig) {
         return setProperty(Property.BORDER, borderConfig);
     }
 
-    public T setBorderTop(Property.BorderConfig borderConfig) {
+    public Type setBorderTop(Property.BorderConfig borderConfig) {
         return setProperty(Property.BORDER_TOP, borderConfig);
     }
 
-    public T setBorderRight(Property.BorderConfig borderConfig) {
+    public Type setBorderRight(Property.BorderConfig borderConfig) {
         return setProperty(Property.BORDER_RIGHT, borderConfig);
     }
 
-    public T setBorderBottom(Property.BorderConfig borderConfig) {
+    public Type setBorderBottom(Property.BorderConfig borderConfig) {
         return setProperty(Property.BORDER_BOTTOM, borderConfig);
     }
 
-    public T setBorderLeft(Property.BorderConfig borderConfig) {
+    public Type setBorderLeft(Property.BorderConfig borderConfig) {
         return setProperty(Property.BORDER_LEFT, borderConfig);
     }
 
