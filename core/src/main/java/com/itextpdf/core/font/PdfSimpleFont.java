@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
-    T fontProgram;
+    private T fontProgram;
 
     public PdfSimpleFont(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
         super(pdfObject, pdfDocument);
@@ -27,6 +27,10 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     public T getFontProgram() {
         return fontProgram;
+    }
+
+    protected void setFontProgram(T fontProgram) {
+        this.fontProgram = fontProgram;
     }
 
     protected abstract T initializeTypeFontForCopy(String encodingName) throws PdfException, IOException;
