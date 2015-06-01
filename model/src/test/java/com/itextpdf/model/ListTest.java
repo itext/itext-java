@@ -4,11 +4,10 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
-import com.itextpdf.model.element.AreaBreak;
-import com.itextpdf.model.element.List;
-import com.itextpdf.model.element.ListItem;
+import com.itextpdf.model.element.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -84,4 +83,20 @@ public class ListTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    @Ignore
+    public void divInListItemTest01() throws IOException, PdfException, InterruptedException {
+        String outFileName = destinationFolder + "divInListItemTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_divInListItemTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        ListItem item = new ListItem();
+        item.add(new Div().add(new Paragraph("text")));
+        document.add(new List().add(item));
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }

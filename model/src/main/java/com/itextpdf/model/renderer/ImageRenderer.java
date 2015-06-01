@@ -38,8 +38,8 @@ public class ImageRenderer extends AbstractRenderer {
         Float angle = getPropertyAsFloat(Property.ANGLE);
 
         try {
-            width = width == null ? ((Image)(getModelElement())).getxObject().getWidth() : width;
-            height = width/((Image)(getModelElement())).getxObject().getWidth() * ((Image)(getModelElement())).getxObject().getHeight();
+            width = width == null ? ((Image)(getModelElement())).getXObject().getWidth() : width;
+            height = width/((Image)(getModelElement())).getXObject().getWidth() * ((Image)(getModelElement())).getXObject().getHeight();
         } catch (PdfException e) {
             throw new RuntimeException(e);
         }
@@ -89,10 +89,10 @@ public class ImageRenderer extends AbstractRenderer {
 
         try{
             if (fixedXPosition != null || fixedYPosition != null){
-                canvas.addXObject(((Image)(getModelElement())).getxObject(), matrix[0], matrix[2], matrix[1], matrix[3], fixedXPosition, fixedYPosition);
+                canvas.addXObject(((Image)(getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3], fixedXPosition, fixedYPosition);
             }
             else{
-                canvas.addXObject(((Image)(getModelElement())).getxObject(), matrix[0], matrix[2], matrix[1], matrix[3], occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY() + pivotY);
+                canvas.addXObject(((Image)(getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3], occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY() + pivotY);
             }
 
         } catch (PdfException ex){

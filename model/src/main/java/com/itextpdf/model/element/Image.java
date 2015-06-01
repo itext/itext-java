@@ -38,11 +38,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         return new ImageRenderer(this);
     }
 
-    public PdfImageXObject getxObject() {
+    public PdfImageXObject getXObject() {
         return xObject;
     }
 
-    public void setxObject(PdfImageXObject xObject) {
+    public void setXObject(PdfImageXObject xObject) {
         this.xObject = xObject;
     }
 
