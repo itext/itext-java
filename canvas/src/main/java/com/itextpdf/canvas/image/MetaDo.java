@@ -1,10 +1,12 @@
 package com.itextpdf.canvas.image;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
@@ -537,57 +539,58 @@ public class MetaDo {
         state.cleanup(cb);
     }
 
-    public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) throws PdfException {
-//        TODO
-//        MetaFont font = state.getCurrentFont();
-//        float refX = state.transformX(x);
-//        float refY = state.transformY(y);
-//        float angle = state.transformAngle(font.getAngle());
-//        float sin = (float)Math.sin(angle);
-//        float cos = (float)Math.cos(angle);
-//        float fontSize = font.getFontSize(state);
-//        BaseFont bf = font.getFont();
-//        int align = state.getTextAlign();
-//        float textWidth = bf.getWidthPoint(text, fontSize);
-//        float tx = 0;
-//        float ty = 0;
-//        float descender = bf.getFontDescriptor(BaseFont.DESCENT, fontSize);
-//        float ury = bf.getFontDescriptor(BaseFont.BBOXURY, fontSize);
-//        cb.saveState();
-//        cb.concatMatrix(cos, sin, -sin, cos, refX, refY);
-//        if ((align & MetaState.TA_CENTER) == MetaState.TA_CENTER)
-//            tx = -textWidth / 2;
-//        else if ((align & MetaState.TA_RIGHT) == MetaState.TA_RIGHT)
-//            tx = -textWidth;
-//        if ((align & MetaState.TA_BASELINE) == MetaState.TA_BASELINE)
-//            ty = 0;
-//        else if ((align & MetaState.TA_BOTTOM) == MetaState.TA_BOTTOM)
-//            ty = -descender;
-//        else
-//            ty = -ury;
-//        Color textColor;
-//        if (state.getBackgroundMode() == MetaState.OPAQUE) {
-//            textColor = state.getCurrentBackgroundColor();
-//            cb.setFillColor(textColor);
-//            cb.rectangle(tx, ty + descender, textWidth, ury - descender);
-//            cb.fill();
-//        }
-//        textColor = state.getCurrentTextColor();
-//        cb.setFillColor(textColor);
-//        cb.beginText();
-//        cb.setFontAndSize(bf, fontSize);
-//        cb.setTextMatrix(tx, ty);
-//        cb.showText(text);
-//        cb.endText();
-//        if (font.isUnderline()) {
-//            cb.rectangle(tx, ty - fontSize / 4, textWidth, fontSize / 15);
-//            cb.fill();
-//        }
-//        if (font.isStrikeout()) {
-//            cb.rectangle(tx, ty + fontSize / 3, textWidth, fontSize / 15);
-//            cb.fill();
-//        }
-//        cb.restoreState();
+    public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) throws PdfException, IOException {
+
+        MetaFont font = state.getCurrentFont();
+        float refX = state.transformX(x);
+        float refY = state.transformY(y);
+        float angle = state.transformAngle(font.getAngle());
+        float sin = (float)Math.sin(angle);
+        float cos = (float)Math.cos(angle);
+        float fontSize = font.getFontSize(state);
+        FontProgram fp = font.getFont();
+        int align = state.getTextAlign();
+        float textWidth = fp.getWidthPoint(text, fontSize);
+        float tx = 0;
+        float ty = 0;
+        float descender = fp.getDescender();
+        float ury = fp.getUry();
+        cb.saveState();
+        cb.concatMatrix(cos, sin, -sin, cos, refX, refY);
+        if ((align & MetaState.TA_CENTER) == MetaState.TA_CENTER)
+            tx = -textWidth / 2;
+        else if ((align & MetaState.TA_RIGHT) == MetaState.TA_RIGHT)
+            tx = -textWidth;
+        if ((align & MetaState.TA_BASELINE) == MetaState.TA_BASELINE)
+            ty = 0;
+        else if ((align & MetaState.TA_BOTTOM) == MetaState.TA_BOTTOM)
+            ty = -descender;
+        else
+            ty = -ury;
+        Color textColor;
+        if (state.getBackgroundMode() == MetaState.OPAQUE) {
+            textColor = state.getCurrentBackgroundColor();
+            cb.setFillColor(textColor);
+            cb.rectangle(tx, ty + descender, textWidth, ury - descender);
+            cb.fill();
+        }
+        textColor = state.getCurrentTextColor();
+        cb.setFillColor(textColor);
+        cb.beginText();
+        //TODO
+        cb.setFontAndSize(PdfFont.getDefaultFont(document), fontSize);
+        cb.setTextMatrix(tx, ty);
+        cb.showText(text);
+        cb.endText();
+        if (font.isUnderline()) {
+            cb.rectangle(tx, ty - fontSize / 4, textWidth, fontSize / 15);
+            cb.fill();
+        }
+        if (font.isStrikeout()) {
+            cb.rectangle(tx, ty + fontSize / 3, textWidth, fontSize / 15);
+            cb.fill();
+        }
+        cb.restoreState();
     }
 
     public boolean isNullStrokeFill(boolean isRectangle) throws PdfException {

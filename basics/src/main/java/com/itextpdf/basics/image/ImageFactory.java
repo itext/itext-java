@@ -98,7 +98,7 @@ public final class ImageFactory {
 
     public static Image getBmpImage(byte[] bytes, boolean noHeader, int size) throws PdfException {
         byte[] imageType = readImageType(bytes);
-        if (imageTypeIs(imageType, bmp)) {
+        if (noHeader || imageTypeIs(imageType, bmp)) {
             return new BmpImage(bytes, noHeader, size);
         }
         throw new IllegalArgumentException("BMP image expected.");

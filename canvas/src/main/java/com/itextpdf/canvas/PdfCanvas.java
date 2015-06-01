@@ -1364,7 +1364,9 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            return wmf.createPdfForm(document);
+            PdfXObject xObject = wmf.createPdfForm(document);
+            addImage(xObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+            return xObject;
         } else if (asInline) {
             PdfImageXObject imageXObject = new PdfImageXObject(null, image);
             addInlineImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
@@ -1725,6 +1727,15 @@ public class PdfCanvas {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addImage(image);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
+        restoreState();
+        return this;
+    }
+
+    private PdfCanvas addImage(PdfXObject xObject, float a, float b, float c, float d, float e, float f) throws PdfException {
+        saveState();
+        concatMatrix(a, b, c, d, e, f);
+        PdfName name = resources.addImage(xObject.getPdfObject());
         contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
         restoreState();
         return this;

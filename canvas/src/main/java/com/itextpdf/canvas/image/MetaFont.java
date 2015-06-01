@@ -1,5 +1,9 @@
 package com.itextpdf.canvas.image;
 
+import com.itextpdf.basics.font.FontCache;
+import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.Type1Font;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -40,8 +44,7 @@ public class MetaFont extends MetaObject {
     int charset;
     int pitchAndFamily;
     String faceName = "arial";
-//    TODO
-//    BaseFont font = null;
+    FontProgram font = null;
 
     public MetaFont() {
         type = META_FONT;
@@ -76,70 +79,69 @@ public class MetaFont extends MetaObject {
         faceName = faceName.toLowerCase();
     }
 
-//    TODO
-//    public BaseFont getFont() {
-//        if (font != null)
-//            return font;
-//        BaseFont ff2 = FontFactory.getFont(faceName, BaseFont.CP1252, true, 10, ((italic != 0) ? Font.ITALIC : 0) | ((bold != 0) ? Font.BOLD : 0));
-//        font = ff2.getBaseFont();
-//        if (font != null)
-//            return font;
-//        String fontName;
-//        if (faceName.contains("courier") || faceName.contains("terminal")
-//            || faceName.contains("fixedsys")) {
-//            fontName = fontNames[MARKER_COURIER + italic + bold];
-//        }
-//        else if (faceName.contains("ms sans serif") || faceName.contains("arial")
-//            || faceName.contains("system")) {
-//            fontName = fontNames[MARKER_HELVETICA + italic + bold];
-//        }
-//        else if (faceName.contains("arial black")) {
-//            fontName = fontNames[MARKER_HELVETICA + italic + MARKER_BOLD];
-//        }
-//        else if (faceName.contains("times") || faceName.contains("ms serif")
-//            || faceName.contains("roman")) {
-//            fontName = fontNames[MARKER_TIMES + italic + bold];
-//        }
-//        else if (faceName.contains("symbol")) {
-//            fontName = fontNames[MARKER_SYMBOL];
-//        }
-//        else {
-//            int pitch = pitchAndFamily & 3;
-//            int family = (pitchAndFamily >> 4) & 7;
-//            switch (family) {
-//                case FF_MODERN:
-//                    fontName = fontNames[MARKER_COURIER + italic + bold];
-//                    break;
-//                case FF_ROMAN:
-//                    fontName = fontNames[MARKER_TIMES + italic + bold];
-//                    break;
-//                case FF_SWISS:
-//                case FF_SCRIPT:
-//                case FF_DECORATIVE:
-//                    fontName = fontNames[MARKER_HELVETICA + italic + bold];
-//                    break;
-//                default:
-//                {
-//                    switch (pitch) {
-//                        case FIXED_PITCH:
-//                            fontName = fontNames[MARKER_COURIER + italic + bold];
-//                            break;
-//                        default:
-//                            fontName = fontNames[MARKER_HELVETICA + italic + bold];
-//                            break;
-//                    }
-//                }
-//            }
-//        }
-//        try {
-//            font = BaseFont.createFont(fontName, "Cp1252", false);
-//        }
-//        catch (Exception e) {
-//            throw new ExceptionConverter(e);
-//        }
-//
-//        return font;
-//    }
+    public FontProgram getFont() {
+        if (font != null)
+            return font;
+        FontProgram ff2 = FontCache.getFont(faceName, "Cp1252", true, 10);
+        font = ff2;
+        if (font != null)
+            return font;
+        String fontName;
+        if (faceName.contains("courier") || faceName.contains("terminal")
+            || faceName.contains("fixedsys")) {
+            fontName = fontNames[MARKER_COURIER + italic + bold];
+        }
+        else if (faceName.contains("ms sans serif") || faceName.contains("arial")
+            || faceName.contains("system")) {
+            fontName = fontNames[MARKER_HELVETICA + italic + bold];
+        }
+        else if (faceName.contains("arial black")) {
+            fontName = fontNames[MARKER_HELVETICA + italic + MARKER_BOLD];
+        }
+        else if (faceName.contains("times") || faceName.contains("ms serif")
+            || faceName.contains("roman")) {
+            fontName = fontNames[MARKER_TIMES + italic + bold];
+        }
+        else if (faceName.contains("symbol")) {
+            fontName = fontNames[MARKER_SYMBOL];
+        }
+        else {
+            int pitch = pitchAndFamily & 3;
+            int family = (pitchAndFamily >> 4) & 7;
+            switch (family) {
+                case FF_MODERN:
+                    fontName = fontNames[MARKER_COURIER + italic + bold];
+                    break;
+                case FF_ROMAN:
+                    fontName = fontNames[MARKER_TIMES + italic + bold];
+                    break;
+                case FF_SWISS:
+                case FF_SCRIPT:
+                case FF_DECORATIVE:
+                    fontName = fontNames[MARKER_HELVETICA + italic + bold];
+                    break;
+                default:
+                {
+                    switch (pitch) {
+                        case FIXED_PITCH:
+                            fontName = fontNames[MARKER_COURIER + italic + bold];
+                            break;
+                        default:
+                            fontName = fontNames[MARKER_HELVETICA + italic + bold];
+                            break;
+                    }
+                }
+            }
+        }
+        try {
+            font = new Type1Font(fontName, "Cp1252");
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return font;
+    }
     
     public float getAngle() {
         return angle;

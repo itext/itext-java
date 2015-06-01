@@ -3,6 +3,8 @@ package com.itextpdf.canvas;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.image.Image;
+import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.color.*;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
@@ -1330,6 +1332,72 @@ public class PdfCanvasTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "colorTest08.pdf", sourceFolder + "cmp_colorTest08.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void wmfImageTest01() throws IOException, PdfException, InterruptedException {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest01.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        Image img = ImageFactory.getImage(sourceFolder + "example.wmf");
+        canvas.addImage(img, 0, 0, 0.1f, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest01.pdf", sourceFolder + "cmp_wmfImageTest01.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void wmfImageTest02() throws IOException, PdfException, InterruptedException {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest02.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        Image img = ImageFactory.getImage(sourceFolder + "butterfly.wmf");
+        canvas.addImage(img, 0, 0, 1, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest02.pdf", sourceFolder + "cmp_wmfImageTest02.pdf", destinationFolder, "diff_"));
+    }
 
 
+    @Test
+    public void wmfImageTest03() throws IOException, PdfException, InterruptedException {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest03.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        Image img = ImageFactory.getImage(sourceFolder + "type1.wmf");
+        canvas.addImage(img, 0, 0, 1, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest03.pdf", sourceFolder + "cmp_wmfImageTest03.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void wmfImageTest04() throws IOException, PdfException, InterruptedException {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest04.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        Image img = ImageFactory.getImage(sourceFolder + "type0.wmf");
+        canvas.addImage(img, 0, 0, 1, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest04.pdf", sourceFolder + "cmp_wmfImageTest04.pdf", destinationFolder, "diff_"));
+    }
 }
