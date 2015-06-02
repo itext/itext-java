@@ -2,7 +2,15 @@ package com.itextpdf.core.geom;
 
 public class PageSize extends Rectangle {
 
+    static public PageSize A0 = new PageSize(2384, 3370);
+    static public PageSize A1 = new PageSize(1684, 2384);
+    static public PageSize A2 = new PageSize(1190, 1684);
+    static public PageSize A3 = new PageSize(842, 1190);
     static public PageSize A4 = new PageSize(595, 842);
+    static public PageSize A5 = new PageSize(420, 595);
+    static public PageSize A6 = new PageSize(298, 420);
+    static public PageSize A7 = new PageSize(210, 298);
+    static public PageSize A8 = new PageSize(148, 210);
     static public PageSize Default = A4;
 
     protected float leftMargin = 36;
@@ -61,5 +69,12 @@ public class PageSize extends Rectangle {
 
     public Rectangle getEffectiveArea() {
         return new Rectangle(leftMargin, bottomMargin, width - leftMargin - rightMargin, height - bottomMargin - topMargin);
+    }
+
+    /**
+     * Rotates PageSize clockwise with all the margins, i.e. the margins are rotated as well.
+     */
+    public PageSize rotate() {
+        return new PageSize(height, width, bottomMargin, topMargin, leftMargin, rightMargin);
     }
 }

@@ -16,6 +16,8 @@ import com.itextpdf.model.layout.LayoutResult;
 
 public class TextRenderer extends AbstractRenderer {
 
+    // TODO Kerning
+
     protected static final float TEXT_SPACE_COEFF = 1000;
     protected String text;
     protected String line;

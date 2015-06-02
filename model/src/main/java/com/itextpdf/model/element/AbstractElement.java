@@ -142,6 +142,10 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         return setProperty(Property.BORDER_LEFT, borderConfig);
     }
 
+    public Type setAlignment(Property.Alignment alignment) {
+        return setProperty(Property.ALIGNMENT, alignment);
+    }
+
     @Override
     public boolean isBreakable() {
         return true;

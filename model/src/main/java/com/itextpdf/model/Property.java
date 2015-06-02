@@ -66,6 +66,7 @@ public class Property {
         RTL
     }
 
+    // TODO split into vertical and horizontal?
     public enum Alignment {
         LEFT,
         CENTER,
@@ -146,7 +147,7 @@ public class Property {
             return borderStyle;
         }
 
-        public static enum BorderStyle {
+        public enum BorderStyle {
             DOTTED,
             DASHED,
             SOLID,
@@ -188,4 +189,5 @@ public class Property {
         GREEK_LOWER,
         GREEK_UPPER
     }
+
 }
