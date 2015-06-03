@@ -98,7 +98,7 @@ public class BlockRenderer extends AbstractRenderer {
 
                         applyPaddings(occupiedArea.getBBox(), false);
                         applyMargins(occupiedArea.getBBox(), true);
-                        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, splitRenderer, overflowRenderer);
+                        return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, splitRenderer, overflowRenderer);
                     }
                 }
             }
