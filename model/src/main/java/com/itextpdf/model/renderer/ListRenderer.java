@@ -27,6 +27,9 @@ public class ListRenderer extends BlockRenderer {
         super(modelElement);
     }
 
+    // TODO underlying should not be applied
+    // https://jira.itextsupport.com/browse/SUP-952
+
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         List<IRenderer> symbolRenderers = new ArrayList<>();
