@@ -43,7 +43,12 @@ public class AreaBreakRenderer implements IRenderer {
 
     @Override
     public <T> T getProperty(int key) {
-        throw new UnsupportedOperationException();
+        return null;
+    }
+
+    @Override
+    public <T> T getDefaultProperty(int propertyKey) {
+        return null;
     }
 
     @Override
@@ -52,7 +57,7 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
-    public <T extends IRenderer> T setProperty(Integer propertyKey, Object value) {
+    public <T extends IRenderer> T setProperty(int propertyKey, Object value) {
         throw new UnsupportedOperationException();
     }
 

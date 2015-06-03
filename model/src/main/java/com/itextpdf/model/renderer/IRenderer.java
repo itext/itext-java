@@ -9,15 +9,13 @@ import com.itextpdf.model.layout.LayoutResult;
 
 import java.util.List;
 
-public interface IRenderer {
+public interface IRenderer extends IPropertyContainer<IRenderer> {
 
     void addChild(IRenderer renderer);
     LayoutResult layout(LayoutContext layoutContext);
     void draw(PdfDocument document, PdfCanvas canvas);
     LayoutArea getOccupiedArea();
-    <T> T getProperty(int key);
     <T> T getProperty(int key, T defaultValue);
-    <T extends IRenderer> T setProperty(Integer propertyKey, Object value);
     IRenderer setParent(IRenderer parent);
     IPropertyContainer getModelElement();
     List<IRenderer> getChildRenderers();

@@ -5,7 +5,7 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ImageRenderer;
 
-public class Image extends AbstractElement<Image> implements ILeafElement, IAccessibleElement {
+public class Image extends AbstractElement<Image> implements ILeafElement<Image>, IAccessibleElement<Image> {
 
     protected PdfImageXObject xObject;
 
@@ -38,11 +38,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
         return new ImageRenderer(this);
     }
 
-    public PdfImageXObject getxObject() {
+    public PdfImageXObject getXObject() {
         return xObject;
     }
 
-    public void setxObject(PdfImageXObject xObject) {
+    public void setXObject(PdfImageXObject xObject) {
         this.xObject = xObject;
     }
 

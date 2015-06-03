@@ -8,12 +8,12 @@ import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Text;
-import com.itextpdf.model.layout.LayoutArea;
-import com.itextpdf.model.layout.LayoutContext;
-import com.itextpdf.model.layout.LayoutResult;
+import com.itextpdf.model.layout.*;
 
 
 public class TextRenderer extends AbstractRenderer {
+
+    // TODO Kerning
 
     protected static final float TEXT_SPACE_COEFF = 1000;
     protected String text;
@@ -74,6 +74,11 @@ public class TextRenderer extends AbstractRenderer {
             float nonBreakablePartMaxHeight = 0;
             int firstCharacterWhichExceedsAllowedWidth = -1;
             for (int ind = currentTextPos; ind < text.length(); ind++) {
+                if (text.charAt(ind) == '\n') {
+                    firstCharacterWhichExceedsAllowedWidth = ind + 1;
+                    break;
+                }
+
                 int charCode = getCharCode(ind);
                 if (noPrint(charCode))
                     continue;
@@ -109,6 +114,7 @@ public class TextRenderer extends AbstractRenderer {
                 currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                 currentTextPos = nonBreakablePartEnd + 1;
                 currentLineWidth += nonBreakablePartFullWidth;
+                anythingPlaced = true;
             } else {
                 // must split the word
 
@@ -117,10 +123,12 @@ public class TextRenderer extends AbstractRenderer {
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
                     applyMargins(occupiedArea.getBBox(), true);
-                    return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
                 } else {
-                    if (nonBreakablePartFullWidth > layoutBox.getWidth()) {
+                    boolean wordSplit = false;
+                    if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced) {
                         // if the word is too long for a single line we will have to split it
+                        wordSplit = true;
                         currentLine.append(text.substring(currentTextPos, firstCharacterWhichExceedsAllowedWidth));
                         currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                         currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
@@ -141,7 +149,7 @@ public class TextRenderer extends AbstractRenderer {
 
                     TextRenderer[] split = split(currentTextPos);
                     applyMargins(occupiedArea.getBBox(), true);
-                    return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
+                    return new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
                 }
             }
         }
@@ -169,6 +177,11 @@ public class TextRenderer extends AbstractRenderer {
     @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
         super.draw(document, canvas);
+
+        int position = getPropertyAsInteger(Property.POSITION);
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(false);
+        }
 
         float leftBBoxX = occupiedArea.getBBox().getX();
 
@@ -204,6 +217,10 @@ public class TextRenderer extends AbstractRenderer {
             } catch (PdfException exc) {
                 throw new RuntimeException(exc);
             }
+        }
+
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(false);
         }
     }
 

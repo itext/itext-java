@@ -2,10 +2,7 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.model.Property;
-import com.itextpdf.model.layout.LayoutArea;
-import com.itextpdf.model.layout.LayoutContext;
-import com.itextpdf.model.layout.LayoutRect;
-import com.itextpdf.model.layout.LayoutResult;
+import com.itextpdf.model.layout.*;
 
 import java.util.ArrayList;
 
@@ -63,12 +60,18 @@ public class LineRenderer extends AbstractRenderer {
             if (childResult.getStatus() != LayoutResult.FULL) {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
-                if (childResult.getStatus() == LayoutResult.PARTIAL) {
-                    split[0].addChild(childResult.getSplitRenderer());
-                    anythingPlaced = true;
+                if (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isWordHasBeenSplit() && bbox.getWidth() < layoutBox.getWidth()) {
+                    split[1].childRenderers.add(childRenderer);
+                    split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
+                } else {
+                    if (childResult.getStatus() == LayoutResult.PARTIAL) {
+                        split[0].addChild(childResult.getSplitRenderer());
+                        anythingPlaced = true;
+                    }
+
+                    split[1].childRenderers.add(childResult.getOverflowRenderer());
+                    split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                 }
-                split[1].childRenderers.add(childResult.getOverflowRenderer());
-                split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
                 split[0].adjustChildrenYLine();
                 return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);

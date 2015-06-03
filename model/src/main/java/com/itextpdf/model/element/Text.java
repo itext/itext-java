@@ -5,7 +5,7 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.TextRenderer;
 
-public class Text extends AbstractElement<Text> implements ILeafElement, IAccessibleElement {
+public class Text extends AbstractElement<Text> implements ILeafElement<Text>, IAccessibleElement<Text> {
 
     protected String text;
 

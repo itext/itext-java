@@ -5,6 +5,7 @@ import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 public class DeviceGray extends Color {
 
     static final public DeviceGray White = new DeviceGray(1f);
+    static final public DeviceGray Gray = new DeviceGray(.5f);
     static final public DeviceGray Black = new DeviceGray();
 
     public DeviceGray(float value) {

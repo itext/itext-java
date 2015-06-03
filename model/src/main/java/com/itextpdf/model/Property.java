@@ -43,6 +43,12 @@ public class Property {
     public static final int X_DISTANCE = 36;
     public static final int Y_DISTANCE = 37;
     public static final int VERTICAL_SCALING = 38;
+    public static final int BORDER = 39;
+    public static final int BORDER_TOP = 40;
+    public static final int BORDER_BOTTOM = 41;
+    public static final int BORDER_LEFT = 42;
+    public static final int BORDER_RIGHT = 43;
+    public static final int PAGE_NUMBER = 44;
 
     private Property() {
     }
@@ -60,6 +66,7 @@ public class Property {
         RTL
     }
 
+    // TODO split into vertical and horizontal?
     public enum Alignment {
         LEFT,
         CENTER,
@@ -116,6 +123,42 @@ public class Property {
         }
     }
 
+    public static class BorderConfig {
+
+        protected Color color;
+        protected float width;
+        protected BorderStyle borderStyle;
+
+        public BorderConfig(Color color, float width, BorderStyle borderStyle) {
+            this.color = color;
+            this.width = width;
+            this.borderStyle = borderStyle;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public float getWidth() {
+            return width;
+        }
+
+        public BorderStyle getBorderStyle() {
+            return borderStyle;
+        }
+
+        public enum BorderStyle {
+            DOTTED,
+            DASHED,
+            SOLID,
+            DOUBLE,
+            GROOVE,
+            RIDGE,
+            INSET,
+            OUTSET
+        }
+    }
+
     public static class Leading {
         public static final int FIXED = 1;
         public static final int MULTIPLIED = 2;
@@ -146,4 +189,5 @@ public class Property {
         GREEK_LOWER,
         GREEK_UPPER
     }
+
 }

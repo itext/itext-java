@@ -10,6 +10,7 @@ import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.element.IElement;
 import com.itextpdf.model.element.Image;
+import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.DocumentRenderer;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Document implements IPropertyContainer {
+public class Document implements IPropertyContainer<Document> {
 
     protected PdfDocument pdfDocument;
     protected DocumentRenderer documentRenderer;
@@ -108,12 +109,12 @@ public class Document implements IPropertyContainer {
     }
 
     @Override
-    public <T> T getProperty(Integer propertyKey) {
+    public <T> T getProperty(int propertyKey) {
         return (T) properties.get(propertyKey);
     }
 
     @Override
-    public <T> T getDefaultProperty(Integer propertyKey) {
+    public <T> T getDefaultProperty(int propertyKey) {
         try {
             switch (propertyKey) {
                 case Property.FONT:
@@ -132,7 +133,8 @@ public class Document implements IPropertyContainer {
         }
     }
 
-    public Document setProperty(Integer propertyKey, Object value) {
+    @Override
+    public Document setProperty(int propertyKey, Object value) {
         properties.put(propertyKey, value);
         return this;
     }

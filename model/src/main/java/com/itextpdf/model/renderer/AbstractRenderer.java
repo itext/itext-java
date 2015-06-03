@@ -10,6 +10,7 @@ import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
+import com.itextpdf.model.layout.LayoutPosition;
 
 import java.util.*;
 
@@ -17,6 +18,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();
+    protected List<IRenderer> positionedRenderers = new ArrayList<>();
     protected IPropertyContainer modelElement;
     protected boolean flushed = false;
     protected LayoutArea occupiedArea;
@@ -32,8 +34,35 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public void addChild(IRenderer renderer) {
-        childRenderers.add(renderer);
-        renderer.setParent(this);
+        // https://www.webkit.org/blog/116/webcore-rendering-iii-layout-basics
+        // "The rules can be summarized as follows:"...
+        Integer positioning = renderer.getProperty(Property.POSITION);
+        if (positioning == null || positioning == LayoutPosition.RELATIVE || positioning == LayoutPosition.STATIC) {
+            childRenderers.add(renderer);
+            renderer.setParent(this);
+        } else if (positioning == LayoutPosition.FIXED) {
+            AbstractRenderer root = this;
+            while (root.parent instanceof AbstractRenderer) {
+                root = (AbstractRenderer)root.parent;
+            }
+            if (root == this) {
+                positionedRenderers.add(renderer);
+                renderer.setParent(this);
+            } else {
+                root.addChild(renderer);
+            }
+        } else if (positioning == LayoutPosition.ABSOLUTE) {
+            AbstractRenderer root = this;
+            while (root.getPropertyAsInteger(Property.POSITION) == LayoutPosition.STATIC && root.parent instanceof AbstractRenderer) {
+                root = (AbstractRenderer)root.parent;
+            }
+            if (root == this) {
+                positionedRenderers.add(renderer);
+                renderer.setParent(this);
+            } else {
+                root.addChild(renderer);
+            }
+        }
     }
 
     @Override
@@ -58,7 +87,7 @@ public abstract class AbstractRenderer implements IRenderer {
         Object baseProperty = parent != null && Property.isPropertyInherited(key, modelElement, parent.getModelElement()) ? parent.getProperty(key) : null;
         if (baseProperty != null)
             return (T) baseProperty;
-        return modelElement != null ? (T) modelElement.getDefaultProperty(key) : null;
+        return modelElement != null ? (T) modelElement.getDefaultProperty(key) : (T) getDefaultProperty(key);
     }
 
     @Override
@@ -72,10 +101,21 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public <T extends IRenderer> T setProperty(Integer propertyKey, Object value) {
+    public <T extends IRenderer> T setProperty(int propertyKey, Object value) {
         properties.put(propertyKey, value);
         return (T) this;
     }
+
+    @Override
+    public <T> T getDefaultProperty(int propertyKey) {
+        switch (propertyKey) {
+            case Property.POSITION:
+                return (T) Integer.valueOf(LayoutPosition.STATIC);
+            default:
+                return null;
+        }
+    }
+
 
     public PdfFont getPropertyAsFont(int key) {
         return getProperty(key);
@@ -90,16 +130,33 @@ public abstract class AbstractRenderer implements IRenderer {
         return value != null ? value.floatValue() : null;
     }
 
+    public Integer getPropertyAsInteger(int key) {
+        Object value = getProperty(key);
+        if (value instanceof Integer) {
+            return (Integer) value;
+        }
+        return null;
+    }
+
     public LayoutArea getOccupiedArea() {
         return occupiedArea;
     }
 
     @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
+        int position = getPropertyAsInteger(Property.POSITION);
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(false);
+        }
+
         drawBackground(document, canvas);
         drawBorder(document, canvas);
         for (IRenderer child : childRenderers) {
             child.draw(document, canvas);
+        }
+
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(true);
         }
 
         flushed = true;
@@ -122,12 +179,16 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     public void drawBorder(PdfDocument document, PdfCanvas canvas) {
-        // TODO
-//        try {
-//            canvas.rectangle(occupiedArea.getBBox()).stroke();
-//        } catch (PdfException exc) {
-//            throw new RuntimeException(exc);
-//        }
+        // TODO implement complete functionality with all settings. Take into account separate border sides configuration.
+        try {
+            Property.BorderConfig borderConfig = getProperty(Property.BORDER);
+            if (borderConfig != null) {
+                canvas.rectangle(occupiedArea.getBBox()).stroke();
+            }
+        }
+        catch (PdfException exc) {
+            throw new RuntimeException(exc);
+        }
     }
 
     public boolean isFlushed() {
@@ -139,11 +200,11 @@ public abstract class AbstractRenderer implements IRenderer {
         return this;
     }
 
-    public void move(float dx, float dy) {
-        occupiedArea.getBBox().moveRight(dx);
-        occupiedArea.getBBox().moveUp(dy);
+    public void move(float dxRight, float dyUp) {
+        occupiedArea.getBBox().moveRight(dxRight);
+        occupiedArea.getBBox().moveUp(dyUp);
         for (IRenderer childRenderer : childRenderers) {
-            childRenderer.move(dx, dy);
+            childRenderer.move(dxRight, dyUp);
         }
     }
 
@@ -167,5 +228,25 @@ public abstract class AbstractRenderer implements IRenderer {
     protected Rectangle applyPaddings(Rectangle rect, boolean reverse) {
         return rect.applyMargins(getPropertyAsFloat(Property.PADDING_TOP), getPropertyAsFloat(Property.PADDING_RIGHT),
                 getPropertyAsFloat(Property.PADDING_BOTTOM), getPropertyAsFloat(Property.PADDING_LEFT), reverse);
+    }
+
+    protected void applyAbsolutePositioningTranslation(boolean reverse) {
+        float top = getPropertyAsFloat(Property.TOP);
+        float bottom = getPropertyAsFloat(Property.BOTTOM);
+        float left = getPropertyAsFloat(Property.LEFT);
+        float right = getPropertyAsFloat(Property.RIGHT);
+
+        int reverseMultiplier = reverse ? -1 : 1;
+
+        float dxRight = left != 0 ? left * reverseMultiplier : -right * reverseMultiplier;
+        float dyUp = top != 0 ? -top * reverseMultiplier : bottom * reverseMultiplier;
+
+        if (dxRight != 0 || dyUp != 0)
+            move(dxRight, dyUp);
+    }
+
+    protected boolean isPositioned() {
+        Object positioning = getProperty(Property.POSITION);
+        return Integer.valueOf(LayoutPosition.ABSOLUTE).equals(positioning) || Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
     }
 }

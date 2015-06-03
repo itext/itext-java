@@ -1,12 +1,11 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
-import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Link;
 import com.itextpdf.model.element.Paragraph;
 import org.junit.Assert;
@@ -57,12 +56,11 @@ public class LinkTest {
         FileOutputStream file = new FileOutputStream(outFileName);
         PdfWriter writer = new PdfWriter(file);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        PdfPage page1 = pdfDoc.addNewPage();
-        PdfPage page = pdfDoc.addNewPage();
         Document doc = new Document(pdfDoc);
+        doc.add(new AreaBreak()).add(new AreaBreak());
 
         PdfArray array = new PdfArray();
-        array.add(page1.getPdfObject());
+        array.add(doc.getPdfDocument().getPage(1).getPdfObject());
         array.add(PdfName.XYZ);
         array.add(new PdfNumber(36));
         array.add(new PdfNumber(100));

@@ -1,7 +1,7 @@
 package com.itextpdf.model;
 
-public interface IPropertyContainer {
-    <T> T getProperty(Integer propertyKey);
-    <T> T getDefaultProperty(Integer propertyKey);
-    <T extends IPropertyContainer> T setProperty(Integer propertyKey, Object value);
+public interface IPropertyContainer<Type extends IPropertyContainer> {
+    <T> T getProperty(int propertyKey);
+    <T> T getDefaultProperty(int propertyKey);
+    <T extends Type> T setProperty(int propertyKey, Object value);
 }
