@@ -1,10 +1,12 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.DeviceGray;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.text.DocumentException;
@@ -73,4 +75,26 @@ public class LayoutPositioningTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void fixedPositioningTest01() throws IOException, PdfException, InterruptedException {
+        String outFileName = destinationFolder + "fixedPositioningTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_fixedPositioningTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        List list = new List(Property.ListNumberingType.ROMAN_UPPER).
+                setFixedPosition(2, 300, 300).
+                setBackgroundColor(Color.Blue).
+                setWidth(50).
+                setHeight(100);
+        list.add("Hello").
+            add("World").
+            add("!!!");
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }

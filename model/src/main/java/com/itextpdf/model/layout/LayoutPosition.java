@@ -17,7 +17,7 @@ public class LayoutPosition {
      */
     public static final int RELATIVE = 2;
 
-    // TODO
+    // TODO is there need in iText for this?
     public static final int ABSOLUTE = 3;
 
     /**

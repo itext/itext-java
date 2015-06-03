@@ -96,11 +96,11 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
                setProperty(Property.PAGE_NUMBER, pageNumber);
     }
 
-    public Type setAbsolutePosition(float x, float y) {
-        return (Type) setProperty(Property.POSITION, LayoutPosition.ABSOLUTE).
-            setProperty(Property.X, x).
-            setProperty(Property.Y, y);
-    }
+//    public Type setAbsolutePosition(float x, float y) {
+//        return (Type) setProperty(Property.POSITION, LayoutPosition.ABSOLUTE).
+//            setProperty(Property.X, x).
+//            setProperty(Property.Y, y);
+//    }
 
     public Type setFont(PdfFont font) {
         return setProperty(Property.FONT, font);

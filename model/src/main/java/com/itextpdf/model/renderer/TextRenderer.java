@@ -8,10 +8,7 @@ import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Text;
-import com.itextpdf.model.layout.LayoutArea;
-import com.itextpdf.model.layout.LayoutContext;
-import com.itextpdf.model.layout.LayoutPosition;
-import com.itextpdf.model.layout.LayoutResult;
+import com.itextpdf.model.layout.*;
 
 
 public class TextRenderer extends AbstractRenderer {
@@ -117,6 +114,7 @@ public class TextRenderer extends AbstractRenderer {
                 currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                 currentTextPos = nonBreakablePartEnd + 1;
                 currentLineWidth += nonBreakablePartFullWidth;
+                anythingPlaced = true;
             } else {
                 // must split the word
 
@@ -125,10 +123,12 @@ public class TextRenderer extends AbstractRenderer {
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
                     applyMargins(occupiedArea.getBBox(), true);
-                    return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
                 } else {
-                    if (nonBreakablePartFullWidth > layoutBox.getWidth()) {
+                    boolean wordSplit = false;
+                    if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced) {
                         // if the word is too long for a single line we will have to split it
+                        wordSplit = true;
                         currentLine.append(text.substring(currentTextPos, firstCharacterWhichExceedsAllowedWidth));
                         currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                         currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
@@ -149,7 +149,7 @@ public class TextRenderer extends AbstractRenderer {
 
                     TextRenderer[] split = split(currentTextPos);
                     applyMargins(occupiedArea.getBBox(), true);
-                    return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
+                    return new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
                 }
             }
         }

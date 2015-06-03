@@ -1,12 +1,14 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.model.Property;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BlockRenderer extends AbstractRenderer {
@@ -17,11 +19,24 @@ public class BlockRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        List<LayoutArea> areas = initElementAreas(layoutContext);
+        List<LayoutArea> areas;
+        if (isPositioned()) {
+            float x = getPropertyAsFloat(Property.X);
+            Rectangle parentBBox = layoutContext.getArea().getBBox();
+            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(parentBBox.getX() + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
+        }
+        else {
+            areas = initElementAreas(layoutContext);
+        }
         int currentAreaPos = 0;
 
         int pageNumber = areas.get(0).getPageNumber();
         Rectangle layoutBox = applyMargins(areas.get(0).getBBox().clone(), false);
+        Float blockWidth = getPropertyAsFloat(Property.WIDTH);
+        if (blockWidth != null && blockWidth < layoutBox.getWidth()) {
+            layoutBox.setWidth(blockWidth);
+        }
+        applyPaddings(layoutBox, false);
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), null);
 
         boolean anythingPlaced = false;
@@ -55,17 +70,14 @@ public class BlockRenderer extends AbstractRenderer {
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
                             splitRenderer.occupiedArea = occupiedArea.clone();
-                            splitRenderer.parent = parent;
-                            splitRenderer.modelElement = modelElement;
 
                             BlockRenderer overflowRenderer = createOverflowRenderer();
                             List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
                             overflowRendererChildren.add(result.getOverflowRenderer());
                             overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                             overflowRenderer.childRenderers = overflowRendererChildren;
-                            overflowRenderer.parent = parent;
-                            overflowRenderer.modelElement = modelElement;
 
+                            applyPaddings(occupiedArea.getBBox(), false);
                             applyMargins(occupiedArea.getBBox(), true);
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
                         } else {
@@ -84,6 +96,7 @@ public class BlockRenderer extends AbstractRenderer {
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                         overflowRenderer.childRenderers = overflowRendererChildren;
 
+                        applyPaddings(occupiedArea.getBBox(), false);
                         applyMargins(occupiedArea.getBBox(), true);
                         return new LayoutResult(LayoutResult.NOTHING, occupiedArea, splitRenderer, overflowRenderer);
                     }
@@ -99,6 +112,15 @@ public class BlockRenderer extends AbstractRenderer {
         }
 
         ensureOccupiedAreaNotNull(layoutContext.getArea());
+        Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
+        applyPaddings(occupiedArea.getBBox(), true);
+        if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
+            occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
+        }
+        if (isPositioned()) {
+            float y = getPropertyAsFloat(Property.Y);
+            move(0, layoutBox.getY() + y - occupiedArea.getBBox().getY());
+        }
         applyMargins(occupiedArea.getBBox(), true);
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
