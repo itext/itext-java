@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
@@ -12,7 +11,7 @@ public class PdfMcrDictionary extends PdfMcr<PdfDictionary> {
         super(pdfObject, parent);
     }
 
-    public PdfMcrDictionary(PdfPage page, PdfStructElem parent) throws PdfException {
+    public PdfMcrDictionary(PdfPage page, PdfStructElem parent) {
         super(new PdfDictionary(), parent);
         ((PdfDictionary)getPdfObject()).put(PdfName.Type, PdfName.MCR);
         ((PdfDictionary)getPdfObject()).put(PdfName.Pg, page.getPdfObject());
@@ -20,12 +19,12 @@ public class PdfMcrDictionary extends PdfMcr<PdfDictionary> {
     }
 
     @Override
-    public Integer getMcid() throws PdfException {
+    public Integer getMcid() {
         return ((PdfDictionary)getPdfObject()).getAsNumber(PdfName.MCID).getIntValue();
     }
 
     @Override
-    protected PdfDictionary getPageObject() throws PdfException {
+    protected PdfDictionary getPageObject() {
         PdfDictionary page = ((PdfDictionary)getPdfObject()).getAsDictionary(PdfName.Pg);
         if (page == null)
             page = parent.getPdfObject().getAsDictionary(PdfName.Pg);

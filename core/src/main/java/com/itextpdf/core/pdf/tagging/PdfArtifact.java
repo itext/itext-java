@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfName;
 
 import java.util.List;
@@ -14,27 +13,27 @@ public class PdfArtifact implements IPdfTag {
     }
 
     @Override
-    public PdfName getRole() throws PdfException {
+    public PdfName getRole() {
         return PdfName.Artifact;
     }
 
     @Override
-    public Integer getMcid() throws PdfException {
+    public Integer getMcid() {
         return null;
     }
 
 //    @Override
-//    public Integer getStructParentIndex() throws PdfException {
+//    public Integer getStructParentIndex() {
 //        return null;
 //    }
 
     @Override
-    public IPdfStructElem getParent() throws PdfException {
+    public IPdfStructElem getParent() {
         return null;
     }
 
     @Override
-    public List<IPdfStructElem> getKids() throws PdfException {
+    public List<IPdfStructElem> getKids() {
         return null;
     }
 }

@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -15,30 +14,30 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     public static final PdfName Polygon = PdfName.Polygon;
     public static final PdfName PolyLine = PdfName.PolyLine;
 
-    public PdfPolyGeomAnnotation(PdfDocument document, Rectangle rect, PdfName subtype, float vertices[]) throws PdfException {
+    public PdfPolyGeomAnnotation(PdfDocument document, Rectangle rect, PdfName subtype, float vertices[]) {
         super(document, rect);
         setSubtype(subtype);
         setVertices(vertices);
     }
 
-    public PdfPolyGeomAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfPolyGeomAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    static public PdfPolyGeomAnnotation createPolygon(PdfDocument document, Rectangle rect, float vertices[]) throws PdfException {
+    static public PdfPolyGeomAnnotation createPolygon(PdfDocument document, Rectangle rect, float vertices[]) {
         return new PdfPolyGeomAnnotation(document, rect, Polygon, vertices);
     }
 
-    static public PdfPolyGeomAnnotation createPolyLine(PdfDocument document, Rectangle rect, float vertices[]) throws PdfException {
+    static public PdfPolyGeomAnnotation createPolyLine(PdfDocument document, Rectangle rect, float vertices[]) {
         return new PdfPolyGeomAnnotation(document, rect, PolyLine, vertices);
     }
 
     @Override
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return getPdfObject().getAsName(PdfName.Subtype);
     }
 
-    public PdfArray getVertices() throws PdfException {
+    public PdfArray getVertices() {
         return getPdfObject().getAsArray(PdfName.Vertices);
     }
 
@@ -50,7 +49,7 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.Vertices, new PdfArray(vertices));
     }
 
-    public PdfArray getLineEndingStyles() throws PdfException {
+    public PdfArray getLineEndingStyles() {
         return getPdfObject().getAsArray(PdfName.LE);
     }
 
@@ -58,7 +57,7 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.LE, lineEndingStyles);
     }
 
-    public PdfDictionary getMeasure() throws PdfException {
+    public PdfDictionary getMeasure() {
         return getPdfObject().getAsDictionary(PdfName.Measure);
     }
 

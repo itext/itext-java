@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.basics.io.OutputStream;
 import org.junit.Assert;
@@ -32,7 +32,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void openSimpleDoc() throws IOException, PdfException {
+    public void openSimpleDoc() throws IOException {
         String filename = destinationFolder + "openSimpleDoc.pdf";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -71,7 +71,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void openSimpleDocWithFullCompression() throws IOException, PdfException {
+    public void openSimpleDocWithFullCompression() throws IOException {
         String filename = sourceFolder + "simpleCanvasWithFullCompression.pdf";
         com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new FileInputStream(filename));
         PdfDocument pdfDoc = new PdfDocument(reader);
@@ -102,7 +102,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void openDocWithFlateFilter() throws IOException, PdfException {
+    public void openDocWithFlateFilter() throws IOException {
         String filename = sourceFolder + "100PagesDocumentWithFlateFilter.pdf";
         com.itextpdf.core.pdf.PdfReader reader = new com.itextpdf.core.pdf.PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
@@ -132,7 +132,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void primitivesRead() throws PdfException, IOException {
+    public void primitivesRead() throws IOException {
         String filename = destinationFolder + "primitivesRead.pdf";
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -173,7 +173,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void indirectsChain1() throws PdfException, IOException {
+    public void indirectsChain1() throws IOException {
         String filename = destinationFolder + "indirectsChain1.pdf";
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -218,7 +218,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void indirectsChain2() throws PdfException, IOException {
+    public void indirectsChain2() throws IOException {
         String filename = destinationFolder + "indirectsChain2.pdf";
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -266,7 +266,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void indirectsChain3() throws PdfException, IOException {
+    public void indirectsChain3() throws IOException {
         String filename = sourceFolder + "indirectsChain3.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -299,7 +299,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void invalidIndirect() throws PdfException, IOException {
+    public void invalidIndirect() throws IOException {
         String filename = sourceFolder + "invalidIndirect.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -331,7 +331,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest01() throws IOException, PdfException {
+    public void pagesTest01() throws IOException {
         String filename = sourceFolder + "1000PagesDocument.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -374,7 +374,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest02() throws IOException, PdfException {
+    public void pagesTest02() throws IOException {
         String filename = sourceFolder + "1000PagesDocumentWithFullCompression.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -411,7 +411,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest03() throws IOException, PdfException {
+    public void pagesTest03() throws IOException {
         String filename = sourceFolder + "10PagesDocumentWithLeafs.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -449,7 +449,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest04() throws IOException, PdfException {
+    public void pagesTest04() throws IOException {
         String filename = sourceFolder + "PagesDocument.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -487,7 +487,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest05() throws IOException, PdfException {
+    public void pagesTest05() throws IOException {
         String filename = sourceFolder + "PagesDocument05.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -526,7 +526,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest06() throws IOException, PdfException {
+    public void pagesTest06() throws IOException {
         String filename = sourceFolder + "PagesDocument06.pdf";
 
         InputStream stream = new FileInputStream(filename);
@@ -561,7 +561,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest07() throws IOException, PdfException {
+    public void pagesTest07() throws IOException {
         String filename = sourceFolder + "PagesDocument07.pdf";
 
         InputStream stream = new FileInputStream(filename);
@@ -572,7 +572,7 @@ public class PdfReaderTest {
         boolean exception = false;
         try {
             document.getPage(1);
-        } catch (PdfException e) {
+        } catch (PdfRuntimeException e) {
             exception = true;
         }
         Assert.assertTrue(exception);
@@ -582,7 +582,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest08() throws IOException, PdfException {
+    public void pagesTest08() throws IOException {
         String filename = sourceFolder + "PagesDocument08.pdf";
 
         InputStream stream = new FileInputStream(filename);
@@ -593,7 +593,7 @@ public class PdfReaderTest {
         boolean exception = false;
         try {
             document.getPage(1);
-        } catch (PdfException e) {
+        } catch (PdfRuntimeException e) {
             exception = true;
         }
         Assert.assertTrue(exception);
@@ -603,7 +603,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest09() throws IOException, PdfException {
+    public void pagesTest09() throws IOException {
         String filename = sourceFolder + "PagesDocument09.pdf";
 
         InputStream stream = new FileInputStream(filename);
@@ -624,7 +624,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void pagesTest10() throws IOException, PdfException {
+    public void pagesTest10() throws IOException {
         String filename = sourceFolder + "1000PagesDocumentWithFullCompression.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -657,7 +657,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void correctSimpleDoc1() throws IOException, PdfException {
+    public void correctSimpleDoc1() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc1.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -675,7 +675,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void correctSimpleDoc2() throws IOException, PdfException {
+    public void correctSimpleDoc2() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc2.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -693,7 +693,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void correctSimpleDoc3() throws IOException, PdfException {
+    public void correctSimpleDoc3() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc3.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -711,7 +711,7 @@ public class PdfReaderTest {
     }
 
     @Test @Ignore //test with abnormal object declaration
-    public void correctSimpleDoc4() throws IOException, PdfException {
+    public void correctSimpleDoc4() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc4.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -729,7 +729,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest01() throws IOException, PdfException {
+    public void fixPdfTest01() throws IOException {
         String filename = sourceFolder + "OnlyTrailer.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -750,7 +750,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest02() throws IOException, PdfException {
+    public void fixPdfTest02() throws IOException {
         String filename = sourceFolder + "CompressionShift1.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -772,7 +772,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest03() throws IOException, PdfException {
+    public void fixPdfTest03() throws IOException {
         String filename = sourceFolder + "CompressionShift2.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -794,14 +794,14 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest04() throws IOException, PdfException {
+    public void fixPdfTest04() throws IOException {
         String filename = sourceFolder + "CompressionWrongObjStm.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         boolean exception = false;
         try {
             new PdfDocument(reader);
-        } catch (PdfException ex) {
+        } catch (PdfRuntimeException ex) {
             exception = true;
         }
 
@@ -810,14 +810,14 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest05() throws IOException, PdfException {
+    public void fixPdfTest05() throws IOException {
         String filename = sourceFolder + "CompressionWrongShift.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         boolean exception = false;
         try {
             new PdfDocument(reader);
-        } catch (PdfException ex) {
+        } catch (PdfRuntimeException ex) {
             exception = true;
         }
 
@@ -826,7 +826,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest06() throws IOException, PdfException {
+    public void fixPdfTest06() throws IOException {
         String filename = sourceFolder + "InvalidOffsets.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -847,7 +847,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest07() throws IOException, PdfException {
+    public void fixPdfTest07() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences1.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -863,7 +863,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest08() throws IOException, PdfException {
+    public void fixPdfTest08() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences2.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -888,7 +888,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest09() throws IOException, PdfException {
+    public void fixPdfTest09() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences3.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -913,7 +913,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest10() throws IOException, PdfException {
+    public void fixPdfTest10() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences4.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -940,7 +940,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest11() throws IOException, PdfException {
+    public void fixPdfTest11() throws IOException {
         String filename = sourceFolder + "XRefSectionWithoutSize.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -961,7 +961,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest12() throws IOException, PdfException {
+    public void fixPdfTest12() throws IOException {
         String filename = sourceFolder + "XRefWithBreaks.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -982,7 +982,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest13() throws IOException, PdfException {
+    public void fixPdfTest13() throws IOException {
         String filename = sourceFolder + "XRefWithInvalidGenerations1.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1009,7 +1009,7 @@ public class PdfReaderTest {
         //There is a generation number mismatch in xref table and object for 3093
         try{
             document.getPdfObject(3093);
-        } catch (PdfException ex){
+        } catch (PdfRuntimeException ex){
             exception = true;
         }
         Assert.assertTrue(exception);
@@ -1020,7 +1020,7 @@ public class PdfReaderTest {
                 PdfPage page = document.getPage(i);
                 page.getContentStream(0).getBytes();
             }
-        } catch (PdfException ex) {
+        } catch (PdfRuntimeException ex) {
             exception = true;
         }
         Assert.assertFalse(exception);
@@ -1029,14 +1029,14 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest14() throws IOException, PdfException {
+    public void fixPdfTest14() throws IOException {
         String filename = sourceFolder + "XRefWithInvalidGenerations2.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         boolean exception = false;
         try {
             new PdfDocument(reader);
-        } catch (PdfException ex) {
+        } catch (PdfRuntimeException ex) {
             exception = true;
         }
 
@@ -1045,7 +1045,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest15() throws IOException, PdfException {
+    public void fixPdfTest15() throws IOException {
         String filename = sourceFolder + "XRefWithInvalidGenerations3.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1066,7 +1066,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest16() throws IOException, PdfException {
+    public void fixPdfTest16() throws IOException {
         String filename = sourceFolder + "XrefWithInvalidOffsets.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1089,7 +1089,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void fixPdfTest17() throws IOException, PdfException {
+    public void fixPdfTest17() throws IOException {
         String filename = sourceFolder + "XrefWithNullOffsets.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1110,7 +1110,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void appendModeWith1000Pages() throws IOException, PdfException {
+    public void appendModeWith1000Pages() throws IOException {
         String filename = sourceFolder + "1000PagesDocumentAppended.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1135,7 +1135,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void appendModeWith1000PagesWithCompression() throws IOException, PdfException {
+    public void appendModeWith1000PagesWithCompression() throws IOException {
         String filename = sourceFolder + "1000PagesDocumentWithFullCompressionAppended.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1160,7 +1160,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void appendModeWith10Pages() throws IOException, PdfException {
+    public void appendModeWith10Pages() throws IOException {
         String filename = sourceFolder + "10PagesDocumentAppended.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1185,7 +1185,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void appendModeWith10PagesWithCompression() throws IOException, PdfException {
+    public void appendModeWith10PagesWithCompression() throws IOException {
         String filename = sourceFolder + "10PagesDocumentWithFullCompressionAppended.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1210,7 +1210,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void appendModeWith10PagesFix1() throws IOException, PdfException {
+    public void appendModeWith10PagesFix1() throws IOException {
         String filename = sourceFolder + "10PagesDocumentAppendedFix1.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1236,7 +1236,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void appendModeWith10PagesFix2() throws IOException, PdfException {
+    public void appendModeWith10PagesFix2() throws IOException {
         String filename = sourceFolder + "10PagesDocumentAppendedFix2.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1264,7 +1264,7 @@ public class PdfReaderTest {
 
 
     @Test(timeout = 1000)
-    public void StreamLengthCorrection1() throws IOException, PdfException {
+    public void StreamLengthCorrection1() throws IOException {
         synchronized (this) {
             String filename = sourceFolder + "10PagesDocumentWithInvalidStreamLength.pdf";
             PdfReader.correctStreamLength = true;
@@ -1285,7 +1285,7 @@ public class PdfReaderTest {
     }
 
     @Test(timeout = 1000)
-    public void StreamLengthCorrection2() throws IOException, PdfException {
+    public void StreamLengthCorrection2() throws IOException {
         synchronized (this) {
             String filename = sourceFolder + "simpleCanvasWithDrawingLength1.pdf";
             PdfReader.correctStreamLength = true;
@@ -1303,7 +1303,7 @@ public class PdfReaderTest {
     }
 
     @Test(timeout = 1000)
-    public void StreamLengthCorrection3() throws IOException, PdfException {
+    public void StreamLengthCorrection3() throws IOException {
         synchronized (this) {
             String filename = sourceFolder + "simpleCanvasWithDrawingLength2.pdf";
             PdfReader.correctStreamLength = true;
@@ -1321,7 +1321,7 @@ public class PdfReaderTest {
     }
 
     @Test(timeout = 1000)
-    public void StreamLengthCorrection4() throws IOException, PdfException {
+    public void StreamLengthCorrection4() throws IOException {
         synchronized (this) {
             String filename = sourceFolder + "simpleCanvasWithDrawingLength3.pdf";
             PdfReader.correctStreamLength = true;
@@ -1339,7 +1339,7 @@ public class PdfReaderTest {
     }
 
     @Test(timeout = 1000)
-    public void StreamLengthCorrection5() throws IOException, PdfException {
+    public void StreamLengthCorrection5() throws IOException {
         synchronized (this) {
             String filename = sourceFolder + "simpleCanvasWithDrawingLength4.pdf";
             PdfReader.correctStreamLength = true;
@@ -1357,7 +1357,7 @@ public class PdfReaderTest {
     }
 
     @Test(timeout = 1000)
-    public void StreamLengthCorrection6() throws IOException, PdfException {
+    public void StreamLengthCorrection6() throws IOException {
         synchronized (this) {
             String filename = sourceFolder + "simpleCanvasWithDrawingWithInvalidStreamLength1.pdf";
             PdfReader.correctStreamLength = true;
@@ -1375,7 +1375,7 @@ public class PdfReaderTest {
     }
 
     @Test(timeout = 1000)
-    public void StreamLengthCorrection7() throws IOException, PdfException {
+    public void StreamLengthCorrection7() throws IOException {
         synchronized (this) {
             String filename = sourceFolder + "simpleCanvasWithDrawingWithInvalidStreamLength2.pdf";
             PdfReader.correctStreamLength = true;
@@ -1393,7 +1393,7 @@ public class PdfReaderTest {
     }
 
     @Test(timeout = 1000)
-    public void StreamLengthCorrection8() throws IOException, PdfException {
+    public void StreamLengthCorrection8() throws IOException {
         synchronized (this) {
             String filename = sourceFolder + "simpleCanvasWithDrawingWithInvalidStreamLength3.pdf";
             PdfReader.correctStreamLength = true;
@@ -1411,7 +1411,7 @@ public class PdfReaderTest {
     }
 
     @Test(timeout = 1000)
-    public void StreamLengthCorrection9() throws IOException, PdfException {
+    public void StreamLengthCorrection9() throws IOException {
         synchronized (this) {
             String filename = sourceFolder + "10PagesDocumentWithInvalidStreamLength2.pdf";
             PdfReader.correctStreamLength = false;
@@ -1433,7 +1433,7 @@ public class PdfReaderTest {
     }
 
     @Test
-    public void freeReferencesTest() throws IOException, PdfException {
+    public void freeReferencesTest() throws IOException {
         String filename = sourceFolder + "freeReferences.pdf";
 
         FileInputStream fis = new FileInputStream(filename);
@@ -1448,7 +1448,7 @@ public class PdfReaderTest {
 
     }
 
-    private boolean objectTypeEqualTo(PdfObject object, PdfName type) throws PdfException {
+    private boolean objectTypeEqualTo(PdfObject object, PdfName type) {
         PdfName objectType = ((PdfDictionary)object).getAsName(PdfName.Type);
         return type.equals(objectType);
     }

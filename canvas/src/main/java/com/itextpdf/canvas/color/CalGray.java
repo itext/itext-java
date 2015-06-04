@@ -1,6 +1,5 @@
 package com.itextpdf.canvas.color;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 
@@ -10,11 +9,11 @@ public class CalGray extends Color {
         super(cs, new float[]{value});
     }
 
-    public CalGray(PdfDocument document, float[] whitePoint, float value) throws PdfException {
+    public CalGray(PdfDocument document, float[] whitePoint, float value) {
         super(new PdfCieBasedCs.CalGray(document, whitePoint), new float[]{value});
     }
 
-    public CalGray(PdfDocument document, float[] whitePoint, float[] blackPoint, float gamma, float value) throws PdfException {
+    public CalGray(PdfDocument document, float[] whitePoint, float[] blackPoint, float gamma, float value) {
         this(new PdfCieBasedCs.CalGray(document, whitePoint, blackPoint, gamma), value);
     }
 

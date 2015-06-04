@@ -1,6 +1,6 @@
 package com.itextpdf.utils;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -29,7 +29,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentTest01() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void splitDocumentTest01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
 
@@ -58,7 +58,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentTest02() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void splitDocumentTest02() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
 
@@ -82,7 +82,7 @@ public class PdfSplitterTest {
                     }
 
                     pdfDocument.close();
-                } catch (PdfException e) {
+                } catch (PdfRuntimeException e) {
                     e.printStackTrace();
                 }
             }
@@ -95,7 +95,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentTest03() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void splitDocumentTest03() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
 
@@ -126,7 +126,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentByOutlineTest() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void splitDocumentByOutlineTest() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
 
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
@@ -142,7 +142,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentBySize() throws IOException, PdfException, InterruptedException {
+    public void splitDocumentBySize() throws IOException, PdfRuntimeException, InterruptedException {
         String inputFileName = sourceFolder + "splitBySize.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
         PdfSplitter splitter = new PdfSplitter(inputPdfDoc) {

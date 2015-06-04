@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.layer;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfIndirectReference;
 import com.itextpdf.core.pdf.PdfObject;
 
@@ -18,6 +17,6 @@ public interface PdfOCG {
      * Gets the <CODE>PdfIndirectReference</CODE> that represents this layer.
      * @return the <CODE>PdfIndirectReference</CODE> that represents this layer
      */
-    PdfIndirectReference getIndirectReference() throws PdfException;
+    PdfIndirectReference getIndirectReference();
 
 }

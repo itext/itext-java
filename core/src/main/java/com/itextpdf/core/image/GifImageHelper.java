@@ -1,6 +1,5 @@
 package com.itextpdf.core.image;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.image.GifImage;
@@ -69,7 +68,7 @@ public final class GifImageHelper {
         PdfDictionary additional;
     }
 
-    public static void processImage(Image image, PdfStream pdfStream) throws PdfException {
+    public static void processImage(Image image, PdfStream pdfStream) {
         if (image.getOriginalType() != Image.GIF)
             throw new IllegalArgumentException("GIF image expected");
         GifParameters gif = new GifParameters();
@@ -95,7 +94,7 @@ public final class GifImageHelper {
             }
             process(is, gif);
         } catch (IOException e) {
-            throw new PdfException(PdfException.GifImageException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.GifImageException, e);
         } finally {
             if (is != null) {
                 try {
@@ -110,27 +109,27 @@ public final class GifImageHelper {
         }
     }
 
-    private static void updatePdfStream(PdfStream pdfStream, GifParameters gif) throws PdfException {
+    private static void updatePdfStream(PdfStream pdfStream, GifParameters gif) {
         RawImageHelper.updatePdfStream(gif.image, gif.additional, pdfStream);
     }
 
-    private static void process(InputStream is, GifParameters gif) throws IOException, PdfException {
+    private static void process(InputStream is, GifParameters gif) throws IOException {
         gif.in = new DataInputStream(new BufferedInputStream(is));
         readHeader(gif);
         readContents(gif);
         if (!gif.frameRead)
-            throw new PdfException(PdfException.CannotFind1Frame).setMessageParams(gif.image.getFrame());
+            throw new PdfRuntimeException(PdfRuntimeException.CannotFind1Frame).setMessageParams(gif.image.getFrame());
     }
 
     /**
      * Reads GIF file header information.
      */
-    private static void readHeader(GifParameters gif) throws IOException, PdfException {
+    private static void readHeader(GifParameters gif) throws IOException {
         StringBuilder id = new StringBuilder("");
         for (int i = 0; i < 6; i++)
             id.append((char)gif.in.read());
         if (!id.toString().startsWith("GIF8")) {
-            throw new PdfException(PdfException.GifSignatureNotFound);
+            throw new PdfRuntimeException(PdfRuntimeException.GifSignatureNotFound);
         }
 
         readLSD(gif);
@@ -290,7 +289,7 @@ public final class GifImageHelper {
                     gif.image.setTransparency(new int[]{gif.transIndex, gif.transIndex});
                 }
             } catch (Exception e) {
-                throw new PdfRuntimeException(PdfException.GifImageException, e);
+                throw new PdfRuntimeException(PdfRuntimeException.GifImageException, e);
             }
             return true;
         } else {

@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.layer.PdfOCProperties;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
@@ -23,37 +23,37 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private HashMap<Object, PdfObject> names = new HashMap<Object, PdfObject>();
     private boolean isNamedDestinationsGot = false;
 
-    protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject);
         if (pdfObject == null) {
-            throw new PdfException(PdfException.DocumentHasNoCatalogObject);
+            throw new PdfRuntimeException(PdfRuntimeException.DocumentHasNoCatalogObject);
         }
         getPdfObject().makeIndirect(pdfDocument);
         getPdfObject().put(PdfName.Type, PdfName.Catalog);
         pageTree = new PdfPagesTree(this);
     }
 
-    protected PdfCatalog(PdfDocument pdfDocument) throws PdfException {
+    protected PdfCatalog(PdfDocument pdfDocument) {
         this(new PdfDictionary(), pdfDocument);
     }
 
-    public void addPage(PdfPage page) throws PdfException {
+    public void addPage(PdfPage page) {
         if (page.isFlushed())
-            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
+            throw new PdfRuntimeException(PdfRuntimeException.FlushedPageCannotBeAddedOrInserted, page);
         if (page.getDocument() != null && page.getDocument() != getDocument())
-            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, getDocument(), page.getDocument());
+            throw new PdfRuntimeException(PdfRuntimeException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, getDocument(), page.getDocument());
         pageTree.addPage(page);
     }
 
-    public void addPage(int index, PdfPage page) throws PdfException {
+    public void addPage(int index, PdfPage page) {
         if (page.isFlushed())
-            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
+            throw new PdfRuntimeException(PdfRuntimeException.FlushedPageCannotBeAddedOrInserted, page);
         if (page.getDocument() != null && page.getDocument() != getDocument())
-            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, getDocument(), page.getDocument());
+            throw new PdfRuntimeException(PdfRuntimeException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, getDocument(), page.getDocument());
         pageTree.addPage(index, page);
     }
 
-    public PdfPage getPage(int pageNum) throws PdfException {
+    public PdfPage getPage(int pageNum) {
         return pageTree.getPage(pageNum);
     }
 
@@ -65,14 +65,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return pageTree.getPageNum(page);
     }
 
-    public boolean removePage(PdfPage page) throws PdfException {
+    public boolean removePage(PdfPage page) {
         //TODO log removing flushed page
         if(outlineMode)
             removeOutlines(page);
         return pageTree.removePage(page);
     }
 
-    public PdfPage removePage(int pageNum) throws PdfException {
+    public PdfPage removePage(int pageNum) {
         //TODO log removing flushed page
         if(outlineMode)
             removeOutlines(getPage(pageNum));
@@ -98,7 +98,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      *                          false to return null if /OCProperties entry in catalog is not present.
      * @return the Optional Content Properties Dictionary
      */
-    public PdfOCProperties getOCProperties(boolean createIfNotExists) throws PdfException {
+    public PdfOCProperties getOCProperties(boolean createIfNotExists) {
         if (ocProperties != null)
             return ocProperties;
         else {
@@ -116,8 +116,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * PdfCatalog will be flushed in PdfDocument.close(). User mustn't flush PdfCatalog!
      */
     @Override
-    public void flush() throws PdfException {
-        throw new PdfException(PdfException.YouCannotFlushPdfCatalogManually);
+    public void flush() {
+        throw new PdfRuntimeException(PdfRuntimeException.YouCannotFlushPdfCatalogManually);
     }
 
     public PdfCatalog setOpenAction(PdfDestination destination) {
@@ -128,7 +128,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.OpenAction, action);
     }
 
-    public PdfCatalog setAdditionalAction(PdfName key, PdfAction action) throws PdfException {
+    public PdfCatalog setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
         return this;
     }
@@ -158,16 +158,16 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.PageMode, pageMode);
     }
 
-    public PdfName getPageMode() throws PdfException {
+    public PdfName getPageMode() {
         return getPdfObject().getAsName(PdfName.PageMode);
     }
 
     /**
      * This method gets Names tree from the catalog.
      * @return
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public HashMap<Object, PdfObject> getNamedDestinations() throws PdfException {
+    public HashMap<Object, PdfObject> getNamedDestinations() {
         HashMap<Object, PdfObject> names = getNamedDestinatnionsFromNames();
         names.putAll(getNamedDestinatnionsFromStrings());
         isNamedDestinationsGot = true;
@@ -194,13 +194,13 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
      * @param key Name of the destination.
      * @param value An object destination refers to.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    void addNewDestinationName(PdfObject key, PdfObject value) throws PdfException {
+    void addNewDestinationName(PdfObject key, PdfObject value) {
         if (!isNamedDestinationsGot)
             names = getNamedDestinations();
         if (names.containsKey(key))
-            throw new PdfException(PdfException.NameAlreadyExistsInTheNameTree);
+            throw new PdfRuntimeException(PdfRuntimeException.NameAlreadyExistsInTheNameTree);
 
         if (destinationTree == null){
             destinationTree = new PdfNameTree(this, PdfName.Dests);
@@ -214,9 +214,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @param updateOutlines - if this flag is true, the method read the whole document and creates outline tree.
      *                       If false the method gets cached outline tree (if it was cached via calling getOutlines method before).
      * @return
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    PdfOutline getOutlines(boolean updateOutlines) throws PdfException {
+    PdfOutline getOutlines(boolean updateOutlines) {
         if (outlines!= null && !updateOutlines)
             return outlines;
         if (outlines != null){
@@ -241,9 +241,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method sets the root outline element in the catalog.
      * @param outline
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    void addRootOutline(PdfOutline outline) throws PdfException {
+    void addRootOutline(PdfOutline outline) {
         if (!outlineMode)
             return;
 
@@ -255,15 +255,15 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method removes all outlines associated with a given page
      * @param page
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private void removeOutlines(PdfPage page) throws PdfException {
+    private void removeOutlines(PdfPage page) {
         for(PdfOutline outline: pagesWithOutlines.get(page.getPdfObject().getIndirectReference())){
             outline.removeOutline();
         }
     }
 
-    private void addOutlineToPage(PdfOutline outline, HashMap<Object, PdfObject> names) throws PdfException {
+    private void addOutlineToPage(PdfOutline outline, HashMap<Object, PdfObject> names) {
         PdfObject obj = outline.getDestination().getDestinationPage(names);
         ArrayList<PdfOutline> outs = pagesWithOutlines.get(obj);
         if (outs == null) {
@@ -273,7 +273,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         outs.add(outline);
     }
 
-    private void getNextItem(PdfDictionary item, PdfOutline parent, HashMap<Object, PdfObject> names) throws PdfException {
+    private void getNextItem(PdfDictionary item, PdfOutline parent, HashMap<Object, PdfObject> names) {
         PdfOutline outline = new PdfOutline(item.getAsString(PdfName.Title).toUnicodeString(), item, parent);
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {
@@ -296,7 +296,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private HashMap<Object, PdfObject> getNamedDestinatnionsFromNames() throws PdfException {
+    private HashMap<Object, PdfObject> getNamedDestinatnionsFromNames() {
         HashMap<Object, PdfObject> names = new HashMap<Object, PdfObject>();
         PdfDictionary destinations = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Dests);
         if(destinations != null){
@@ -313,7 +313,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return names;
     }
 
-    private HashMap<String, PdfObject> getNamedDestinatnionsFromStrings() throws PdfException {
+    private HashMap<String, PdfObject> getNamedDestinatnionsFromStrings() {
         PdfDictionary dictionary = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Names);
         if(dictionary != null){
             dictionary = dictionary.getAsDictionary(PdfName.Dests);
@@ -334,7 +334,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return new HashMap<String, PdfObject>();
     }
 
-    private HashMap<String, PdfObject> readTree(PdfDictionary dictionary) throws PdfException {
+    private HashMap<String, PdfObject> readTree(PdfDictionary dictionary) {
         HashMap<String, PdfObject> items = new HashMap<String, PdfObject>();
         if (dictionary != null){
             iterateItems(dictionary, items, null);
@@ -342,7 +342,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return items;
     }
 
-    private PdfString iterateItems(PdfDictionary dictionary, HashMap<String, PdfObject> items, PdfString leftOver) throws PdfException {
+    private PdfString iterateItems(PdfDictionary dictionary, HashMap<String, PdfObject> items, PdfString leftOver) {
         PdfArray names = dictionary.getAsArray(PdfName.Names);
         if (names != null){
             for (int k = 0; k < names.size(); k++){
@@ -369,7 +369,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
-    private PdfArray getNameArray(PdfObject obj) throws PdfException {
+    private PdfArray getNameArray(PdfObject obj) {
         if(obj == null)
             return null;
         if (obj.isArray())

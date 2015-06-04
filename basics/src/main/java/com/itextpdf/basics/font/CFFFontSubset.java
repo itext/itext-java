@@ -1,8 +1,7 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
-import com.itextpdf.basics.io.RandomAccessSourceFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -315,7 +314,7 @@ public class CFFFontSubset extends CFFFont {
      * @return The new font stream
      * @throws IOException
      */
-    public byte[] Process(String fontName)throws PdfException {
+    public byte[] Process(String fontName){
         try
         {
             // Find the Font that we will be dealing with
@@ -336,7 +335,7 @@ public class CFFFontSubset extends CFFFont {
             byte[] Ret = BuildNewFile(j);
             return Ret;
         } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         } finally {
             try {
                 buf.close();

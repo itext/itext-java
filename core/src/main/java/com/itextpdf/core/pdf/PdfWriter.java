@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -73,9 +73,9 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @return object stream.
      * @throws IOException
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    protected PdfObjectStream getObjectStream() throws IOException, PdfException {
+    protected PdfObjectStream getObjectStream() throws IOException {
         if (!fullCompression)
             return null;
         if (objectStream == null) {
@@ -93,9 +93,9 @@ public class PdfWriter extends PdfOutputStream {
      * @param pdfObject     object to flush.
      * @param canBeInObjStm indicates whether object can be placed into object stream.
      * @throws IOException
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException, PdfException {
+    protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
         if (fullCompression && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
@@ -163,7 +163,7 @@ public class PdfWriter extends PdfOutputStream {
         }
     }
 
-    protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) throws PdfException {
+    protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) {
         if (object instanceof PdfIndirectReference)
             object = ((PdfIndirectReference) object).getRefersTo();
         PdfIndirectReference indirectReference = object.getIndirectReference();
@@ -197,9 +197,9 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @param object object to write.
      * @throws IOException
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    protected void writeToBody(PdfObject object) throws IOException, PdfException {
+    protected void writeToBody(PdfObject object) throws IOException {
         if (crypto != null) {
             crypto.setHashKey(object.getIndirectReference().getObjNumber(), object.getIndirectReference().getGenNumber());
         }
@@ -213,9 +213,9 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Writes PDF header.
      *
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    protected void writeHeader() throws PdfException {
+    protected void writeHeader() {
         writeByte((byte) '%').
                 writeString(document.getPdfVersion().getPdfVersion()).
                 writeString("\n%\u00e2\u00e3\u00cf\u00d3\n");
@@ -224,9 +224,9 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Flushes all objects which have not been flushed yet.
      *
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    protected void flushWaitingObjects() throws PdfException {
+    protected void flushWaitingObjects() {
         PdfXrefTable xref = document.getXref();
         boolean needFlush = true;
         while (needFlush) {
@@ -252,9 +252,9 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Flushes all modified objects which have not been flushed yet. Used in case incremental updates.
      *
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    protected void flushModifiedWaitingObjects() throws PdfException {
+    protected void flushModifiedWaitingObjects() {
         PdfXrefTable xref = document.getXref();
         for (int i = 1; i < xref.size(); i++) {
             PdfIndirectReference indirectReference = xref.get(i);

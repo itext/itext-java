@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.OutputStream;
 
 public class PdfNull extends PdfPrimitiveObject {
@@ -33,7 +32,7 @@ public class PdfNull extends PdfPrimitiveObject {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+    protected void copyContent(PdfObject from, PdfDocument document) {
 
     }
 }

@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.basics.io.OutputStream;
 
@@ -707,7 +706,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+    protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
         PdfName name = (PdfName) from;
         value = name.value;

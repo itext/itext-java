@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.function.PdfFunction;
 
@@ -16,26 +15,26 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         public static final int TensorProductPatchMesh = 7;
     }
 
-    public PdfShading(T pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfShading(T pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
     }
 
-    public PdfShading(T pdfObject, int type, PdfObject colorSpace, PdfDocument pdfDocument) throws PdfException {
+    public PdfShading(T pdfObject, int type, PdfObject colorSpace, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
 
         getPdfObject().put(PdfName.ShadingType, new PdfNumber(type));
         getPdfObject().put(PdfName.ColorSpace, colorSpace);
     }
 
-    public int getShadingType() throws PdfException {
+    public int getShadingType() {
         return getPdfObject().getAsInt(PdfName.ShadingType);
     }
 
-    public PdfObject getColorSpace() throws PdfException {
+    public PdfObject getColorSpace() {
         return getPdfObject().get(PdfName.ColorSpace);
     }
 
-    public PdfObject getFunction() throws PdfException {
+    public PdfObject getFunction() {
         return getPdfObject().get(PdfName.Function);
     }
 
@@ -55,21 +54,21 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
 
     static public class FunctionBased extends PdfShading<PdfDictionary> {
 
-        public FunctionBased(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+        public FunctionBased(PdfDictionary pdfObject, PdfDocument pdfDocument) {
             super(pdfObject, pdfDocument);
         }
 
-        public FunctionBased(PdfColorSpace colorSpace, PdfFunction function, PdfDocument pdfDocument) throws PdfException {
+        public FunctionBased(PdfColorSpace colorSpace, PdfFunction function, PdfDocument pdfDocument) {
             this(colorSpace.getPdfObject(), function, pdfDocument);
         }
 
-        public FunctionBased(PdfObject colorSpace, PdfFunction function, PdfDocument pdfDocument) throws PdfException {
+        public FunctionBased(PdfObject colorSpace, PdfFunction function, PdfDocument pdfDocument) {
             super(new PdfDictionary(), ShadingType.FunctionBased, colorSpace, pdfDocument);
 
             setFunction(function);
         }
 
-        public PdfArray getDomain() throws PdfException {
+        public PdfArray getDomain() {
             return getPdfObject().getAsArray(PdfName.Domain);
         }
 
@@ -83,7 +82,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public float[] getMatrix() throws PdfException {
+        public float[] getMatrix() {
             PdfArray matrix = getPdfObject().getAsArray(PdfName.Matrix);
             if (matrix == null)
                 return new float[] {1, 0, 0, 1, 0, 0};
@@ -105,11 +104,11 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
 
     static public class Axial extends PdfShading<PdfDictionary> {
 
-        public Axial(PdfDictionary pdfDictionary, PdfDocument pdfDocument) throws PdfException {
+        public Axial(PdfDictionary pdfDictionary, PdfDocument pdfDocument) {
             super(pdfDictionary, pdfDocument);
         }
 
-        public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1, PdfDocument pdfDocument) throws PdfException {
+        public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1, PdfDocument pdfDocument) {
             super(new PdfDictionary(), ShadingType.Axial, cs.getPdfObject(), pdfDocument);
 
             if (cs instanceof PdfSpecialCs.Pattern)
@@ -121,20 +120,20 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setFunction(func);
         }
 
-        public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1, boolean[] extend, PdfDocument pdfDocument) throws PdfException {
+        public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1, boolean[] extend, PdfDocument pdfDocument) {
             this(cs, x0, y0, color0, x1, y1, color1, pdfDocument);
 
             if (extend != null)
                 setExtend(extend[0], extend[1]);
         }
 
-        public Axial(PdfColorSpace cs, PdfArray coords, PdfFunction function, PdfDocument pdfDocument) throws PdfException {
+        public Axial(PdfColorSpace cs, PdfArray coords, PdfFunction function, PdfDocument pdfDocument) {
             super(new PdfDictionary(), ShadingType.Axial, cs.getPdfObject(), pdfDocument);
             setCoords(coords);
             setFunction(function);
         }
 
-        public PdfArray getCoords() throws PdfException {
+        public PdfArray getCoords() {
             return getPdfObject().getAsArray(PdfName.Coords);
         }
 
@@ -147,7 +146,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public float[] getDomain() throws PdfException {
+        public float[] getDomain() {
             PdfArray domain = getPdfObject().getAsArray(PdfName.Domain);
             if (domain == null)
                 return new float[] {0, 1};
@@ -159,7 +158,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public boolean[] getExtend() throws PdfException {
+        public boolean[] getExtend() {
             PdfArray extend = getPdfObject().getAsArray(PdfName.Extend);
             if (extend == null)
                 return new boolean[] {true, true};
@@ -174,11 +173,11 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
     }
 
     static public class Radial extends PdfShading<PdfDictionary> {
-        public Radial(PdfDictionary pdfDictionary, PdfDocument pdfDocument) throws PdfException {
+        public Radial(PdfDictionary pdfDictionary, PdfDocument pdfDocument) {
             super(pdfDictionary, pdfDocument);
         }
 
-        public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1, float[] color1, PdfDocument pdfDocument) throws PdfException {
+        public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1, float[] color1, PdfDocument pdfDocument) {
             super(new PdfDictionary(), ShadingType.Radial, cs.getPdfObject(), pdfDocument);
 
             setCoords(x0, y0, r0, x1, y1, r1);
@@ -187,20 +186,20 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setFunction(func);
         }
 
-        public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1, float[] color1, boolean[] extend, PdfDocument pdfDocument) throws PdfException {
+        public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1, float[] color1, boolean[] extend, PdfDocument pdfDocument) {
             this(cs, x0, y0, r0, color0, x1, y1, r1, color1, pdfDocument);
 
             if (extend != null)
                 setExtend(extend[0], extend[1]);
         }
 
-        public Radial(PdfColorSpace cs, PdfArray coords, PdfFunction function, PdfDocument pdfDocument) throws PdfException {
+        public Radial(PdfColorSpace cs, PdfArray coords, PdfFunction function, PdfDocument pdfDocument) {
             super(new PdfDictionary(), ShadingType.Radial, cs.getPdfObject(), pdfDocument);
             setCoords(coords);
             setFunction(function);
         }
 
-        public PdfArray getCoords() throws PdfException {
+        public PdfArray getCoords() {
             return getPdfObject().getAsArray(PdfName.Coords);
         }
 
@@ -213,7 +212,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public float[] getDomain() throws PdfException {
+        public float[] getDomain() {
             PdfArray domain = getPdfObject().getAsArray(PdfName.Domain);
             if (domain == null)
                 return new float[] {0, 1};
@@ -225,7 +224,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public boolean[] getExtend() throws PdfException {
+        public boolean[] getExtend() {
             PdfArray extend = getPdfObject().getAsArray(PdfName.Extend);
             if (extend == null)
                 return new boolean[] {true, true};
@@ -239,15 +238,15 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
     }
 
     static public class FreeFormGouraudShadedTriangleMesh extends PdfShading<PdfStream> {
-        public FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream, PdfDocument pdfDocument) throws PdfException {
+        public FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream, PdfDocument pdfDocument) {
             super(pdfStream, pdfDocument);
         }
 
-        public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float[] decode, PdfDocument pdfDocument) throws PdfException {
+        public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float[] decode, PdfDocument pdfDocument) {
             this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode), pdfDocument);
         }
 
-        public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode, PdfDocument pdfDocument) throws PdfException {
+        public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode, PdfDocument pdfDocument) {
             super(new PdfStream(pdfDocument), ShadingType.FreeFormGouraudShadedTriangleMesh, cs.getPdfObject(), pdfDocument);
 
             setBitsPerCoordinate(bitsPerCoordinate);
@@ -256,7 +255,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setDecode(decode);
         }
 
-        public int getBitsPerCoordinate() throws PdfException {
+        public int getBitsPerCoordinate() {
             return getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
@@ -265,7 +264,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public int getBitsPerComponent() throws PdfException {
+        public int getBitsPerComponent() {
             return getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
@@ -274,7 +273,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public int getBitsPerFlag() throws PdfException {
+        public int getBitsPerFlag() {
             return getPdfObject().getAsInt(PdfName.BitsPerFlag);
         }
 
@@ -283,7 +282,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public PdfArray getDecode() throws PdfException {
+        public PdfArray getDecode() {
             return getPdfObject().getAsArray(PdfName.Decode);
         }
 
@@ -297,15 +296,15 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
     }
 
     static public class LatticeFormGouraudShadedTriangleMesh extends PdfShading<PdfStream> {
-        public LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream, PdfDocument pdfDocument) throws PdfException {
+        public LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream, PdfDocument pdfDocument) {
             super(pdfStream, pdfDocument);
         }
 
-        public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int verticesPerRow, float[] decode, PdfDocument pdfDocument) throws PdfException {
+        public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int verticesPerRow, float[] decode, PdfDocument pdfDocument) {
             this(cs, bitsPerCoordinate, bitsPerComponent, verticesPerRow, new PdfArray(decode), pdfDocument);
         }
 
-        public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int verticesPerRow, PdfArray decode, PdfDocument pdfDocument) throws PdfException {
+        public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int verticesPerRow, PdfArray decode, PdfDocument pdfDocument) {
             super(new PdfStream(pdfDocument), ShadingType.LatticeFormGouraudShadedTriangleMesh, cs.getPdfObject(), pdfDocument);
 
             setBitsPerCoordinate(bitsPerCoordinate);
@@ -314,7 +313,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setDecode(decode);
         }
 
-        public int getBitsPerCoordinate() throws PdfException {
+        public int getBitsPerCoordinate() {
             return getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
@@ -323,7 +322,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public int getBitsPerComponent() throws PdfException {
+        public int getBitsPerComponent() {
             return getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
@@ -332,7 +331,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public int getVerticesPerRow() throws PdfException {
+        public int getVerticesPerRow() {
             return getPdfObject().getAsInt(PdfName.VerticesPerRow);
         }
 
@@ -341,7 +340,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public PdfArray getDecode() throws PdfException {
+        public PdfArray getDecode() {
             return getPdfObject().getAsArray(PdfName.Decode);
         }
 
@@ -355,15 +354,15 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
     }
 
     static public class CoonsPatchMesh extends PdfShading<PdfStream> {
-        public CoonsPatchMesh(PdfStream pdfStream, PdfDocument pdfDocument) throws PdfException {
+        public CoonsPatchMesh(PdfStream pdfStream, PdfDocument pdfDocument) {
             super(pdfStream, pdfDocument);
         }
 
-        public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float[] decode, PdfDocument pdfDocument) throws PdfException {
+        public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float[] decode, PdfDocument pdfDocument) {
             this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode), pdfDocument);
         }
 
-        public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode, PdfDocument pdfDocument) throws PdfException {
+        public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode, PdfDocument pdfDocument) {
             super(new PdfStream(pdfDocument), ShadingType.CoonsPatchMesh, cs.getPdfObject(), pdfDocument);
 
             setBitsPerCoordinate(bitsPerCoordinate);
@@ -372,7 +371,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setDecode(decode);
         }
 
-        public int getBitsPerCoordinate() throws PdfException {
+        public int getBitsPerCoordinate() {
             return getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
@@ -381,7 +380,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public int getBitsPerComponent() throws PdfException {
+        public int getBitsPerComponent() {
             return getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
@@ -390,7 +389,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public int getBitsPerFlag() throws PdfException {
+        public int getBitsPerFlag() {
             return getPdfObject().getAsInt(PdfName.BitsPerFlag);
         }
 
@@ -399,7 +398,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public PdfArray getDecode() throws PdfException {
+        public PdfArray getDecode() {
             return getPdfObject().getAsArray(PdfName.Decode);
         }
 
@@ -413,15 +412,15 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
     }
 
     static public class TensorProductPatchMesh extends PdfShading<PdfStream> {
-        public TensorProductPatchMesh(PdfStream pdfStream, PdfDocument pdfDocument) throws PdfException {
+        public TensorProductPatchMesh(PdfStream pdfStream, PdfDocument pdfDocument) {
             super(pdfStream, pdfDocument);
         }
 
-        public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float[] decode, PdfDocument pdfDocument) throws PdfException {
+        public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float[] decode, PdfDocument pdfDocument) {
             this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode), pdfDocument);
         }
 
-        public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode, PdfDocument pdfDocument) throws PdfException {
+        public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode, PdfDocument pdfDocument) {
             super(new PdfStream(pdfDocument), ShadingType.TensorProductPatchMesh, cs.getPdfObject(), pdfDocument);
 
             setBitsPerCoordinate(bitsPerCoordinate);
@@ -430,7 +429,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setDecode(decode);
         }
 
-        public int getBitsPerCoordinate() throws PdfException {
+        public int getBitsPerCoordinate() {
             return getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
@@ -439,7 +438,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public int getBitsPerComponent() throws PdfException {
+        public int getBitsPerComponent() {
             return getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
@@ -448,7 +447,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public int getBitsPerFlag() throws PdfException {
+        public int getBitsPerFlag() {
             return getPdfObject().getAsInt(PdfName.BitsPerFlag);
         }
 
@@ -457,7 +456,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public PdfArray getDecode() throws PdfException {
+        public PdfArray getDecode() {
             return getPdfObject().getAsArray(PdfName.Decode);
         }
 

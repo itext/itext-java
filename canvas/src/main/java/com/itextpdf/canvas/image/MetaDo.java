@@ -1,6 +1,6 @@
 package com.itextpdf.canvas.image;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
@@ -105,9 +105,9 @@ public class MetaDo {
         this.in = new InputMeta(in);
     }
 
-    public void readAll() throws PdfException, IOException {
+    public void readAll() throws IOException {
         if (in.readInt() != 0x9AC6CDD7) {
-            throw new PdfException(PdfException.NotAPlaceableWindowsMetafile);
+            throw new PdfRuntimeException(PdfRuntimeException.NotAPlaceableWindowsMetafile);
         }
         in.readWord();
         left = in.readShort();
@@ -539,7 +539,7 @@ public class MetaDo {
         state.cleanup(cb);
     }
 
-    public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) throws PdfException, IOException {
+    public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) throws IOException {
 
         MetaFont font = state.getCurrentFont();
         float refX = state.transformX(x);
@@ -593,7 +593,7 @@ public class MetaDo {
         cb.restoreState();
     }
 
-    public boolean isNullStrokeFill(boolean isRectangle) throws PdfException {
+    public boolean isNullStrokeFill(boolean isRectangle) {
         MetaPen pen = state.getCurrentPen();
         MetaBrush brush = state.getCurrentBrush();
         boolean noPen = pen.getStyle() == MetaPen.PS_NULL;
@@ -609,7 +609,7 @@ public class MetaDo {
         return result;
     }
 
-    public void strokeAndFill() throws PdfException {
+    public void strokeAndFill() {
         MetaPen pen = state.getCurrentPen();
         MetaBrush brush = state.getCurrentBrush();
         int penStyle = pen.getStyle();
@@ -645,9 +645,9 @@ public class MetaDo {
     }
 
     //TODO
-    public static byte[] wrapBMP(Image image) throws IOException, PdfException {
+    public static byte[] wrapBMP(Image image) throws IOException {
         if (image.getOriginalType() != Image.BMP)
-            throw new PdfException(PdfException.OnlyBmpCanBeWrappedInWmf);
+            throw new PdfRuntimeException(PdfRuntimeException.OnlyBmpCanBeWrappedInWmf);
         InputStream imgIn;
         byte data[] = null;
         if (image.getData() == null) {

@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
@@ -23,12 +23,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private Integer mcid = null;
     private Integer structParents = null;
 
-    protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
-    protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) throws PdfException {
+    protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
         super(new PdfDictionary(), pdfDocument);
         PdfStream contentStream = new PdfStream(pdfDocument);
         getPdfObject().put(PdfName.Contents, contentStream);
@@ -41,11 +41,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
-    protected PdfPage(PdfDocument pdfDocument) throws PdfException {
+    protected PdfPage(PdfDocument pdfDocument) {
         this(pdfDocument, pdfDocument.getDefaultPageSize());
     }
 
-    public PdfStream getContentStream(int index) throws PdfException {
+    public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
         if (index >= count)
             throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, count));
@@ -60,7 +60,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public int getContentStreamCount() throws PdfException {
+    public int getContentStreamCount() {
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         if (contents instanceof PdfStream)
             return 1;
@@ -71,13 +71,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public PdfStream getFirstContentStream() throws PdfException {
+    public PdfStream getFirstContentStream() {
         if (getContentStreamCount() > 0)
             return getContentStream(0);
         return null;
     }
 
-    public PdfStream getLastContentStream() throws PdfException {
+    public PdfStream getLastContentStream() {
         int count = getContentStreamCount();
         if (count > 0)
             return getContentStream(count - 1);
@@ -85,15 +85,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
 
-    public PdfStream newContentStreamBefore() throws PdfException {
+    public PdfStream newContentStreamBefore() {
         return newContentStream(true);
     }
 
-    public PdfStream newContentStreamAfter() throws PdfException {
+    public PdfStream newContentStreamAfter() {
         return newContentStream(false);
     }
 
-    public PdfResources getResources() throws PdfException {
+    public PdfResources getResources() {
         if (this.resources == null) {
             PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
             if (resources == null) {
@@ -111,7 +111,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param xmpMetadata The xmpMetadata to set.
      * @throws IOException
      */
-    public void setXmpMetadata(final byte[] xmpMetadata) throws IOException, PdfException {
+    public void setXmpMetadata(final byte[] xmpMetadata) throws IOException {
         PdfStream xmp = new PdfStream(getDocument());
         xmp.getOutputStream().write(xmpMetadata);
         xmp.put(PdfName.Type, PdfName.Metadata);
@@ -119,17 +119,17 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Metadata, xmp);
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta, final SerializeOptions serializeOptions) throws XMPException, IOException, PdfException {
+    public void setXmpMetadata(final XMPMeta xmpMeta, final SerializeOptions serializeOptions) throws XMPException, IOException, PdfRuntimeException {
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta) throws XMPException, IOException, PdfException {
+    public void setXmpMetadata(final XMPMeta xmpMeta) throws XMPException, IOException, PdfRuntimeException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
-    public PdfStream getXmpMetadata() throws XMPException, PdfException {
+    public PdfStream getXmpMetadata() throws XMPException, PdfRuntimeException {
         return getPdfObject().getAsStream(PdfName.Metadata);
     }
 
@@ -138,10 +138,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param toDocument a document to copy page to.
      * @return copied page.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
     @Override
-    public PdfPage copy(PdfDocument toDocument) throws PdfException {
+    public PdfPage copy(PdfDocument toDocument) {
         PdfDictionary dictionary = getPdfObject().copy(toDocument, new ArrayList<PdfName>() {{
             add(PdfName.Parent);
             add(PdfName.StructParents);
@@ -155,7 +155,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
         if (getDocument().isTagged() && structParents == null) {
             PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
             if (n != null)
@@ -170,11 +170,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         super.flush();
     }
 
-    public Rectangle getMediaBox() throws PdfException {
+    public Rectangle getMediaBox() {
         return getPdfObject().getAsRectangle(PdfName.MediaBox);
     }
 
-    public Rectangle getCropBox() throws PdfException {
+    public Rectangle getCropBox() {
         Rectangle cropBox = getPdfObject().getAsRectangle(PdfName.CropBox);
         if (cropBox == null)
             cropBox = getMediaBox();
@@ -185,9 +185,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Get decoded bytes for the whole page content.
      *
      * @return byte array.
-     * @throws PdfException in case any @see IOException.
+     * @throws PdfRuntimeException in case any @see IOException.
      */
-    public byte[] getContentBytes() throws PdfException {
+    public byte[] getContentBytes() {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int streamCount = getContentStreamCount();
@@ -196,7 +196,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
             return baos.toByteArray();
         } catch (IOException ioe) {
-            throw new PdfException(PdfException.CannotGetContentBytes, ioe, this);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotGetContentBytes, ioe, this);
         }
     }
 
@@ -205,9 +205,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param index index of stream inside Content.
      * @return byte array.
-     * @throws PdfException in case any @see IOException.
+     * @throws PdfRuntimeException in case any @see IOException.
      */
-    public byte[] getStreamBytes(int index) throws PdfException {
+    public byte[] getStreamBytes(int index) {
         return getContentStream(index).getBytes();
     }
 
@@ -215,16 +215,16 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Calculates and returns next available MCID reference.
      *
      * @return calculated MCID reference.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public int getNextMcid() throws PdfException {
+    public int getNextMcid() {
         if (mcid == null) {
             getPageTags();
         }
         return mcid++;
     }
 
-    public Integer getStructParentIndex() throws PdfException {
+    public Integer getStructParentIndex() {
         if (structParents == null) {
             structParents = getPdfObject().getAsNumber(PdfName.StructParents).getIntValue();
         }
@@ -236,9 +236,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Please use this method very carefully as it rereads all structure tree and is slow.
      *
      * @return
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public List<IPdfTag> getPageTags() throws PdfException {
+    public List<IPdfTag> getPageTags() {
         if (getDocument().getStructTreeRoot() == null)
             return null;
         List<IPdfTag> tags = new ArrayList<IPdfTag>();
@@ -247,12 +247,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return tags;
     }
 
-    public PdfPage setAdditionalAction(PdfName key, PdfAction action) throws PdfException {
+    public PdfPage setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
         return this;
     }
 
-    public List<PdfAnnotation> getAnnotations() throws PdfException {
+    public List<PdfAnnotation> getAnnotations() {
         List<PdfAnnotation> annotations = new ArrayList<PdfAnnotation>();
         PdfArray annots = getPdfObject().getAsArray(PdfName.Annots);
         if (annots != null) {
@@ -264,13 +264,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annotations;
     }
 
-    public PdfPage addAnnotation(PdfAnnotation annotation) throws PdfException {
+    public PdfPage addAnnotation(PdfAnnotation annotation) {
         PdfArray annots = getAnnots(true);
         annots.add(annotation.setPage(this).getPdfObject());
         return this;
     }
 
-    public PdfPage addAnnotation(int index, PdfAnnotation annotation) throws PdfException {
+    public PdfPage addAnnotation(int index, PdfAnnotation annotation) {
         if (getAnnotsSize() <= index)
             return addAnnotation(annotation);
         else {
@@ -280,7 +280,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public int getAnnotsSize() throws PdfException {
+    public int getAnnotsSize() {
         PdfArray annots = getAnnots(false);
         if (annots == null)
             return 0;
@@ -291,18 +291,18 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * This method gets outlines of a current page
      * @param updateOutlines
      * @return return all outlines of a current page
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public List<PdfOutline> getOutlines(boolean updateOutlines) throws PdfException {
+    public List<PdfOutline> getOutlines(boolean updateOutlines) {
         getDocument().getOutlines(updateOutlines);
         return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject().getIndirectReference());
     }
 
-    protected void makeIndirect(PdfDocument pdfDocument) throws PdfException {
+    protected void makeIndirect(PdfDocument pdfDocument) {
         getPdfObject().makeIndirect(pdfDocument);
     }
 
-    private PdfArray getAnnots(boolean create) throws PdfException {
+    private PdfArray getAnnots(boolean create) {
         PdfArray annots = getPdfObject().getAsArray(PdfName.Annots);
         if (annots == null && create) {
             annots = new PdfArray();
@@ -311,7 +311,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annots;
     }
 
-    private void getPageTags(PdfDictionary getFrom, List<IPdfTag> putTo) throws PdfException {
+    private void getPageTags(PdfDictionary getFrom, List<IPdfTag> putTo) {
         PdfObject k = getFrom.get(PdfName.K);
         if (k == null)
             return;
@@ -361,7 +361,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private PdfStream newContentStream(boolean before) throws PdfException {
+    private PdfStream newContentStream(boolean before) {
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         PdfArray array;
         if (contents instanceof PdfStream) {
@@ -371,7 +371,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
         } else {
-            throw new PdfException(PdfException.PdfPageShallHaveContent);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfPageShallHaveContent);
         }
         PdfStream contentStream = new PdfStream(getPdfObject().getDocument());
         if (before) {
@@ -382,7 +382,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return contentStream;
     }
 
-    private Integer getMcid(List<IPdfTag> tags) throws PdfException {
+    private Integer getMcid(List<IPdfTag> tags) {
         Integer maxMcid = null;
         for (IPdfTag tag : tags) {
             if (maxMcid == null || tag.getMcid() > maxMcid)

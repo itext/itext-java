@@ -1,7 +1,6 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.*;
@@ -52,13 +51,13 @@ public class PdfType0Font extends PdfFont {
     protected int cidFontType;
 
 
-    public PdfType0Font(PdfDocument document, TrueTypeFont ttf, String cmap) throws PdfException {
+    public PdfType0Font(PdfDocument document, TrueTypeFont ttf, String cmap) {
         super(document);
         if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
             throw new PdfRuntimeException("only.identity.cmaps.supports.with.truetype");
         }
         if (!ttf.allowEmbedding()) {
-            throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
+            throw new PdfRuntimeException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
         }
         this.font = ttf;
         this.embedded = true;
@@ -82,10 +81,10 @@ public class PdfType0Font extends PdfFont {
     // be able to create Type0 font based on predefined font.
     // Or not? Possible it will be convenient construct PdfType0Font based on custom CidFont.
     // There is no typography features in CJK fonts.
-    public PdfType0Font(PdfDocument document, CidFont font, String cmap) throws PdfException {
+    public PdfType0Font(PdfDocument document, CidFont font, String cmap) {
         super(document);
         if (!CidFontProperties.isCidFont(font.getFontName(), cmap)) {
-            throw new PdfException("font.1.with.2.encoding.is.not.a.cjk.font").setMessageParams(font.getFontName(), cmap);
+            throw new PdfRuntimeException("font.1.with.2.encoding.is.not.a.cjk.font").setMessageParams(font.getFontName(), cmap);
         }
         this.font = font;
         vertical = cmap.endsWith("V");
@@ -181,7 +180,7 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
         if (cidFontType == CidFontType0) {
             getPdfObject().put(PdfName.Type, PdfName.Font);
             getPdfObject().put(PdfName.Subtype, PdfName.Type0);
@@ -252,7 +251,7 @@ public class PdfType0Font extends PdfFont {
         }
     }
 
-    private PdfDictionary getFontDescriptor() throws PdfException {
+    private PdfDictionary getFontDescriptor() {
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(getDocument());
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
@@ -271,7 +270,7 @@ public class PdfType0Font extends PdfFont {
         return fontDescriptor;
     }
 
-    private PdfDictionary getCidFontType0(PdfDictionary fontDescriptor) throws PdfException {
+    private PdfDictionary getCidFontType0(PdfDictionary fontDescriptor) {
         PdfDictionary cidFont = new PdfDictionary();
         cidFont.makeIndirect(getDocument());
         cidFont.put(PdfName.Type, PdfName.Font);
@@ -306,7 +305,7 @@ public class PdfType0Font extends PdfFont {
      * @param metrics the horizontal width metrics
      * @return a stream
      */
-    public PdfDictionary getCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String subsetPrefix, int[][] metrics) throws PdfException {
+    public PdfDictionary getCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String subsetPrefix, int[][] metrics) {
         PdfDictionary cidFont = new PdfDictionary();
         cidFont.makeIndirect(getDocument());
         cidFont.put(PdfName.Type, PdfName.Font);
@@ -362,7 +361,7 @@ public class PdfType0Font extends PdfFont {
      *                contains the Unicode code
      * @return the stream representing this CMap or <CODE>null</CODE>
      */
-    public PdfStream getToUnicode(Object metrics[]) throws PdfException {
+    public PdfStream getToUnicode(Object metrics[]) {
         if (metrics.length == 0)
             return null;
         StringBuilder buf = new StringBuilder(

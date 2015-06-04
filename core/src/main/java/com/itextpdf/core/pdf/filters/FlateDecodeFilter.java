@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
@@ -18,7 +18,7 @@ import java.util.zip.InflaterInputStream;
 class FlateDecodeFilter implements FilterHandler{
 
     @Override
-    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) throws PdfException {
+    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         byte[] res = FlateDecode(b, true);
         if (res == null)
             res = FlateDecode(b, false);
@@ -59,7 +59,7 @@ class FlateDecodeFilter implements FilterHandler{
      * @param decodeParams PdfDictionary of decodeParams.
      * @return a byte array
      */
-    public static byte[] decodePredictor(final byte[] in, final PdfObject decodeParams) throws PdfException {
+    public static byte[] decodePredictor(final byte[] in, final PdfObject decodeParams) {
         if (decodeParams == null || decodeParams.getType() != PdfObject.Dictionary)
             return in;
         PdfDictionary dic = (PdfDictionary)decodeParams;
@@ -163,7 +163,7 @@ class FlateDecodeFilter implements FilterHandler{
                     break;
                 default:
                     // Error -- unknown filter type
-                    throw new PdfException(PdfException.PngFilterUnknown);
+                    throw new PdfRuntimeException(PdfRuntimeException.PngFilterUnknown);
             }
             try {
                 fout.write(curr);

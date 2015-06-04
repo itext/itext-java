@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.geom.Rectangle;
 
 import java.util.*;
@@ -37,75 +37,75 @@ public class PdfDictionary extends PdfObject {
         return map.containsValue(value);
     }
 
-    public PdfObject get(PdfName key) throws PdfException {
+    public PdfObject get(PdfName key) {
         return get(key, true);
     }
 
-    public PdfArray getAsArray(PdfName key) throws PdfException {
+    public PdfArray getAsArray(PdfName key) {
         PdfObject direct = get(key, true);
         if (direct != null && direct.getType() == PdfObject.Array)
             return (PdfArray)direct;
         return null;
     }
 
-    public PdfDictionary getAsDictionary(PdfName key) throws PdfException {
+    public PdfDictionary getAsDictionary(PdfName key) {
         PdfObject direct = get(key, true);
         if (direct != null && direct.getType() == PdfObject.Dictionary)
             return (PdfDictionary)direct;
         return null;
     }
 
-    public PdfStream getAsStream(PdfName key) throws PdfException {
+    public PdfStream getAsStream(PdfName key) {
         PdfObject direct = get(key, true);
         if (direct != null && direct.getType() == PdfObject.Stream)
             return (PdfStream)direct;
         return null;
     }
 
-    public PdfNumber getAsNumber(PdfName key) throws PdfException {
+    public PdfNumber getAsNumber(PdfName key) {
         PdfObject direct = get(key, true);
         if (direct != null && direct.getType() == PdfObject.Number)
             return (PdfNumber)direct;
         return null;
     }
 
-    public PdfName getAsName(PdfName key) throws PdfException {
+    public PdfName getAsName(PdfName key) {
         PdfObject direct = get(key, true);
         if (direct != null && direct.getType() == PdfObject.Name)
             return (PdfName)direct;
         return null;
     }
 
-    public PdfString getAsString(PdfName key) throws PdfException {
+    public PdfString getAsString(PdfName key) {
         PdfObject direct = get(key, true);
         if (direct != null && direct.getType() == PdfObject.String)
             return (PdfString)direct;
         return null;
     }
 
-    public PdfBoolean getAsBoolean(PdfName key) throws PdfException {
+    public PdfBoolean getAsBoolean(PdfName key) {
         PdfObject direct = get(key, true);
         if (direct != null && direct.getType() == PdfObject.Boolean)
             return (PdfBoolean)direct;
         return null;
     }
 
-    public Rectangle getAsRectangle(PdfName key) throws PdfException {
+    public Rectangle getAsRectangle(PdfName key) {
         PdfArray a = getAsArray(key);
         return a == null ? null : a.toRectangle();
     }
 
-    public Float getAsFloat(PdfName key) throws PdfException {
+    public Float getAsFloat(PdfName key) {
         PdfNumber number = getAsNumber(key);
         return number == null ? null : number.getFloatValue();
     }
 
-    public Integer getAsInt(PdfName key) throws PdfException {
+    public Integer getAsInt(PdfName key) {
         PdfNumber number = getAsNumber(key);
         return number == null ? null : number.getIntValue();
     }
 
-    public Boolean getAsBool(PdfName key) throws PdfException {
+    public Boolean getAsBool(PdfName key) {
         PdfBoolean b = getAsBoolean(key);
         return b == null ? null : b.getValue();
     }
@@ -162,9 +162,9 @@ public class PdfDictionary extends PdfObject {
      * @param excludeKeys list of objects to exclude when copying dictionary.
      * @param allowDuplicating {@link PdfObject}
      * @return copied dictionary.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfDictionary copy(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) throws PdfException {
+    public PdfDictionary copy(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) {
         Map<PdfName, PdfObject> excluded = new TreeMap<PdfName, PdfObject>();
         for (PdfName key : excludeKeys) {
             PdfObject obj = map.get(key);
@@ -179,9 +179,9 @@ public class PdfDictionary extends PdfObject {
     /**
      *
      * @param asDirect true is to extract direct object always.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfObject get(PdfName key, boolean asDirect) throws PdfException {
+    public PdfObject get(PdfName key, boolean asDirect) {
         if (!asDirect)
             return map.get(key);
         else {
@@ -199,7 +199,7 @@ public class PdfDictionary extends PdfObject {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+    protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
         PdfDictionary dictionary = (PdfDictionary) from;
         for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
@@ -210,7 +210,7 @@ public class PdfDictionary extends PdfObject {
     /**
      * Release content of PdfDictionary.
      */
-    protected void releaseContent() throws PdfException {
+    protected void releaseContent() {
         map = null;
     }
 }

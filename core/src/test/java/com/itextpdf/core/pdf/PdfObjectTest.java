@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,7 +9,7 @@ import java.util.HashMap;
 public class PdfObjectTest {
 
     @Test
-    public void indirectsChain1() throws PdfException {
+    public void indirectsChain1() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument document = new PdfDocument(writer);
@@ -25,7 +24,7 @@ public class PdfObjectTest {
     }
 
     @Test
-    public void indirectsChain2() throws PdfException {
+    public void indirectsChain2() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument document = new PdfDocument(writer);
@@ -45,7 +44,7 @@ public class PdfObjectTest {
     }
 
     @Test
-    public void indirectsChain3() throws PdfException {
+    public void indirectsChain3() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument document = new PdfDocument(writer);
@@ -66,7 +65,7 @@ public class PdfObjectTest {
     }
 
     @Test
-    public void indirectsChain4() throws PdfException {
+    public void indirectsChain4() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument document = new PdfDocument(writer);

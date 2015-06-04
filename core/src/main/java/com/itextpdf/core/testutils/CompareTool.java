@@ -1,6 +1,6 @@
 package com.itextpdf.core.testutils;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
@@ -76,33 +76,33 @@ public class CompareTool {
     }
 
 
-    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws InterruptedException, PdfException, IOException {
+    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws InterruptedException, PdfRuntimeException, IOException {
         return compareVisually(outPdf, cmpPdf, outPath, differenceImagePrefix, null);
     }
 
-    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, PdfException, IOException {
+    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, PdfRuntimeException, IOException {
         init(outPdf, cmpPdf);
         return compareVisually(outPath, differenceImagePrefix, ignoredAreas);
     }
 
-    public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws PdfException, InterruptedException, IOException {
+    public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws InterruptedException, IOException {
         return compareByContent(outPdf, cmpPdf, outPath, differenceImagePrefix, null);
     }
 
-    public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws PdfException, InterruptedException, IOException {
+    public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
         return compareByContent(outPath, differenceImagePrefix, ignoredAreas);
     }
 
-    public boolean compareDictionaries(PdfDictionary outDict, PdfDictionary cmpDict) throws IOException, PdfException {
+    public boolean compareDictionaries(PdfDictionary outDict, PdfDictionary cmpDict) throws IOException {
         return compareDictionariesExtended(outDict, cmpDict, null, null);
     }
 
-    public boolean compareStreams(PdfStream outStream, PdfStream cmpStream) throws IOException, PdfException {
+    public boolean compareStreams(PdfStream outStream, PdfStream cmpStream) throws IOException {
         return compareStreamsExtended(outStream, cmpStream, null, null);
     }
 
-    public boolean compareArrays(PdfArray outArray, PdfArray cmpArray) throws IOException, PdfException {
+    public boolean compareArrays(PdfArray outArray, PdfArray cmpArray) throws IOException {
         return compareArraysExtended(outArray, cmpArray, null, null);
     }
 
@@ -122,11 +122,11 @@ public class CompareTool {
         return cmpBoolean.getValue() == outBoolean.getValue();
     }
 
-    public String compareXmp(String outPdf, String cmpPdf) throws PdfException {
+    public String compareXmp(String outPdf, String cmpPdf) {
         return compareXmp(outPdf, cmpPdf, false);
     }
 
-    public String compareXmp(String outPdf, String cmpPdf, boolean ignoreDateAndProducerProperties) throws PdfException {
+    public String compareXmp(String outPdf, String cmpPdf, boolean ignoreDateAndProducerProperties) {
         init(outPdf, cmpPdf);
         PdfDocument cmpDocument = null;
         PdfDocument outDocument = null;
@@ -182,7 +182,7 @@ public class CompareTool {
         return compareXmls(new FileInputStream(xmlFilePath1), new FileInputStream(xmlFilePath2));
     }
 
-    public String compareDocumentInfo(String outPdf, String cmpPdf) throws IOException, PdfException {
+    public String compareDocumentInfo(String outPdf, String cmpPdf) throws IOException {
         System.out.print("[itext] INFO  Comparing document info.......");
         String message = null;
         PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf));
@@ -206,7 +206,7 @@ public class CompareTool {
         return message;
     }
 
-    public String compareLinkAnnotations(String outPdf, String cmpPdf) throws IOException, PdfException {
+    public String compareLinkAnnotations(String outPdf, String cmpPdf) throws IOException {
         System.out.print("[itext] INFO  Comparing link annotations....");
         String message = null;
         PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf));
@@ -276,11 +276,11 @@ public class CompareTool {
         else cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
     }
 
-    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, PdfException, IOException {
+    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, PdfRuntimeException, IOException {
         return compareVisually(outPath, differenceImagePrefix, ignoredAreas, null);
     }
 
-    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages) throws IOException, PdfException, InterruptedException {
+    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages) throws IOException, PdfRuntimeException, InterruptedException {
         if (gsExec == null)
             return undefinedGsPath;
         if (!(new File(gsExec).exists())) {
@@ -357,7 +357,7 @@ public class CompareTool {
         return null;
     }
 
-    private void createIgnoredAreasPdfs(String outPath, Map<Integer, List<Rectangle>> ignoredAreas) throws PdfException, IOException {
+    private void createIgnoredAreasPdfs(String outPath, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException {
         PdfWriter outWriter = new PdfWriter(new FileOutputStream(outPath + ignoredAreasPrefix + outPdfName));
         PdfWriter cmpWriter = new PdfWriter(new FileOutputStream(outPath + ignoredAreasPrefix + cmpPdfName));
 
@@ -400,7 +400,7 @@ public class CompareTool {
         init(outPath + ignoredAreasPrefix + outPdfName, outPath + ignoredAreasPrefix + cmpPdfName);
     }
 
-    private PdfStream getPageContentStream(PdfPage page) throws PdfException {
+    private PdfStream getPageContentStream(PdfPage page) {
         PdfStream stream = page.getContentStream(page.getContentStreamCount() - 1);
         return stream.getOutputStream() == null ? page.newContentStreamAfter() : stream;
     }
@@ -482,7 +482,7 @@ public class CompareTool {
         bre.close();
     }
 
-    private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws PdfException, InterruptedException, IOException {
+    private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         System.out.print("[itext] INFO  Comparing by content..........");
         PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf));
         List<PdfDictionary> outPages = new ArrayList<PdfDictionary>();
@@ -549,7 +549,7 @@ public class CompareTool {
         }
     }
 
-    private void loadPagesFromReader(PdfDocument doc, List<PdfDictionary> pages, List<PdfIndirectReference> pagesRef) throws PdfException {
+    private void loadPagesFromReader(PdfDocument doc, List<PdfDictionary> pages, List<PdfIndirectReference> pagesRef) {
         int numOfPages = doc.getCatalog().getNumOfPages();
         for (int i = 0; i < numOfPages; ++i) {
             pages.add(doc.getCatalog().getPage(i + 1).getPdfObject());
@@ -576,7 +576,7 @@ public class CompareTool {
     }
 
 
-    private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult) throws IOException, PdfException {
+    private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult) throws IOException {
         if (cmpDict != null && outDict == null || outDict != null && cmpDict == null) {
             compareResult.addError(currentPath, "One of the dictionaries is null, the other is not.");
             return false;
@@ -618,7 +618,7 @@ public class CompareTool {
         return dictsAreSame;
     }
 
-    private boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) throws IOException, PdfException {
+    private boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) throws IOException {
         PdfObject outDirectObj = null;
         PdfObject cmpDirectObj = null;
         if (outObj != null)
@@ -703,7 +703,7 @@ public class CompareTool {
         return true;
     }
 
-    private boolean compareStreamsExtended(PdfStream outStream, PdfStream cmpStream, ObjectPath currentPath, CompareResult compareResult) throws IOException, PdfException {
+    private boolean compareStreamsExtended(PdfStream outStream, PdfStream cmpStream, ObjectPath currentPath, CompareResult compareResult) throws IOException {
         boolean toDecode = PdfName.FlateDecode.equals(outStream.get(PdfName.Filter));
         byte[] outStreamBytes = outStream.getBytes(toDecode);
         byte[] cmpStreamBytes = cmpStream.getBytes(toDecode);
@@ -733,7 +733,7 @@ public class CompareTool {
         }
     }
 
-    private boolean compareArraysExtended(PdfArray outArray, PdfArray cmpArray, ObjectPath currentPath, CompareResult compareResult) throws IOException, PdfException {
+    private boolean compareArraysExtended(PdfArray outArray, PdfArray cmpArray, ObjectPath currentPath, CompareResult compareResult) throws IOException {
         if (outArray == null) {
             if (compareResult != null && currentPath != null)
                 compareResult.addError(currentPath, "Found null. Expected PdfArray.");
@@ -777,7 +777,7 @@ public class CompareTool {
         }
     }
 
-    private boolean compareStringsExtended(PdfString outString, PdfString cmpString, ObjectPath currentPath, CompareResult compareResult) throws PdfException {
+    private boolean compareStringsExtended(PdfString outString, PdfString cmpString, ObjectPath currentPath, CompareResult compareResult) {
         if (Arrays.equals(convertPdfStringToBytes(cmpString), convertPdfStringToBytes(outString))) {
             return true;
         } else {
@@ -844,7 +844,7 @@ public class CompareTool {
         return doc2.isEqualNode(doc1);
     }
 
-    private List<PdfLinkAnnotation> getLinkAnnotations(int pageNum, PdfDocument document) throws PdfException {
+    private List<PdfLinkAnnotation> getLinkAnnotations(int pageNum, PdfDocument document) {
         List<PdfLinkAnnotation> linkAnnotations = new ArrayList<PdfLinkAnnotation>();
         List<PdfAnnotation> annotations = document.getCatalog().getPage(pageNum).getAnnotations();
         for (PdfAnnotation annotation : annotations) {
@@ -855,7 +855,7 @@ public class CompareTool {
         return linkAnnotations;
     }
 
-    private boolean compareLinkAnnotations(PdfLinkAnnotation cmpLink, PdfLinkAnnotation outLink,PdfDocument cmpDocument, PdfDocument outDocument) throws PdfException {
+    private boolean compareLinkAnnotations(PdfLinkAnnotation cmpLink, PdfLinkAnnotation outLink,PdfDocument cmpDocument, PdfDocument outDocument) {
         // Compare link rectangles, page numbers the links refer to, and simple parameters (non-indirect, non-arrays, non-dictionaries)
         PdfObject cmpDestObject = cmpLink.getDestinationObject();
         PdfObject outDestObject = outLink.getDestinationObject();
@@ -927,7 +927,7 @@ public class CompareTool {
         return true;
     }
 
-    private int getExplicitDestinationPageNum(PdfArray explicitDest) throws PdfException {
+    private int getExplicitDestinationPageNum(PdfArray explicitDest) {
         PdfIndirectReference pageReference = (PdfIndirectReference) explicitDest.get(0, false);
 
         PdfDocument doc = pageReference.getDocument();
@@ -938,7 +938,7 @@ public class CompareTool {
         throw new IllegalArgumentException("PdfLinkAnnotation comparison: Page not found.");
     }
 
-    private String[] convertInfo(PdfDocumentInfo info) throws PdfException {
+    private String[] convertInfo(PdfDocumentInfo info) {
         String[] convertedInfo = new String[]{"", "", "", ""};
         String infoValue = info.getTitle();
         if (infoValue != null)

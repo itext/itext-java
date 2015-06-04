@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import java.io.*;
@@ -12,16 +11,16 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
         The first byte of the audio stream data should be deleted, then wav file will be played correctly.
         Otherwise it will be broken. Other supporting file types don't have such problem.
      */
-    public PdfSoundAnnotation(PdfDocument document, Rectangle rect, PdfStream sound) throws PdfException {
+    public PdfSoundAnnotation(PdfDocument document, Rectangle rect, PdfStream sound) {
         super(document, rect);
         put(PdfName.Sound, sound);
     }
 
-    public PdfSoundAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfSoundAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    public PdfSoundAnnotation(PdfDocument document, Rectangle rect, InputStream soundStream, float sampleRate, PdfName encoding, int channels, int sampleSizeInBits) throws PdfException, IOException {
+    public PdfSoundAnnotation(PdfDocument document, Rectangle rect, InputStream soundStream, float sampleRate, PdfName encoding, int channels, int sampleSizeInBits) throws IOException {
         super(document, rect);
         PdfStream sound = new PdfStream(document, correctInputStreamForWavFile(soundStream));
         sound.put(PdfName.R, new PdfNumber(sampleRate));
@@ -50,7 +49,7 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
         return PdfName.Sound;
     }
 
-    public PdfStream getSound() throws PdfException {
+    public PdfStream getSound() {
         return getPdfObject().getAsStream(PdfName.Sound);
     }
 }

@@ -1,6 +1,6 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.core.geom.PageSize;
@@ -38,7 +38,7 @@ public class PdfXObjectTest {
     }
 
     @Test
-    public void createDocumentFromImages1() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void createDocumentFromImages1() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         final String destinationDocument = destinationFolder + "documentFromImages1.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
         PdfWriter writer = new PdfWriter(fos);
@@ -71,7 +71,7 @@ public class PdfXObjectTest {
     }
 
     @Test
-    public void createDocumentFromImages2() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void createDocumentFromImages2() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         final String destinationDocument = destinationFolder + "documentFromImages2.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
         PdfWriter writer = new PdfWriter(fos);
@@ -91,7 +91,7 @@ public class PdfXObjectTest {
     }
 
     @Test
-    public void createDocumentWithForms() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void createDocumentWithForms() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         final String destinationDocument = destinationFolder + "documentWithForms1.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
         PdfWriter writer = new PdfWriter(fos);

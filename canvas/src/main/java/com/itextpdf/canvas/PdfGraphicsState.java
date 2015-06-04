@@ -1,6 +1,5 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.DeviceGray;
 import com.itextpdf.core.font.PdfFont;
@@ -75,7 +74,7 @@ public class PdfGraphicsState {
         this.strokeColor = strokeColor;
     }
 
-    public void updateFromExtGState(PdfDictionary extGState) throws PdfException {
+    public void updateFromExtGState(PdfDictionary extGState) {
         Float lw = extGState.getAsFloat(PdfName.LW);
         if (lw != null)
             lineWidth = lw;
@@ -165,7 +164,7 @@ public class PdfGraphicsState {
             textKnockout = tk;
     }
 
-    public void updateFromExtGState(PdfExtGState extGState) throws PdfException {
+    public void updateFromExtGState(PdfExtGState extGState) {
         updateFromExtGState(extGState.getPdfObject());
     }
 

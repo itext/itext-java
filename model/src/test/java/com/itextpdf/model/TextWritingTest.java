@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.canvas.color.Color;
@@ -32,7 +32,7 @@ public class TextWritingTest {
     }
 
     @Test
-    public void textRiseTest01() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void textRiseTest01() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         // CountryChunks example
         String outFileName = destinationFolder + "textRiseTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textRiseTest01.pdf";
@@ -59,7 +59,7 @@ public class TextWritingTest {
     }
 
     @Test
-    public void textRenderingModeTest01() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void textRenderingModeTest01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String outFileName = destinationFolder + "textRenderingModeTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textRenderingModeTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -92,7 +92,7 @@ public class TextWritingTest {
     }
 
     @Test
-    public void leadingTest01() throws IOException, PdfException, InterruptedException {
+    public void leadingTest01() throws IOException, PdfRuntimeException, InterruptedException {
         String outFileName = destinationFolder + "leadingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_leadingTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -118,7 +118,7 @@ public class TextWritingTest {
     }
 
     @Test
-    public void firstLineIndentTest01() throws IOException, PdfException, InterruptedException {
+    public void firstLineIndentTest01() throws IOException, PdfRuntimeException, InterruptedException {
         String outFileName = destinationFolder + "firstLineIndentTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_firstLineIndentTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

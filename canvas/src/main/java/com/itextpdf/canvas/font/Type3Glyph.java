@@ -1,6 +1,6 @@
 package com.itextpdf.canvas.font;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.PdfCanvas;
@@ -27,11 +27,11 @@ public class Type3Glyph extends PdfCanvas {
 
     private boolean isColor = false;
 
-    public Type3Glyph(PdfDocument pdfDocument) throws PdfException {
+    public Type3Glyph(PdfDocument pdfDocument) {
         super(new PdfStream(pdfDocument), null);
     }
 
-    public Type3Glyph(PdfDocument pdfDocument, byte[] bytes) throws PdfException {
+    public Type3Glyph(PdfDocument pdfDocument, byte[] bytes) {
         super(new PdfStream(pdfDocument, bytes), null);
         if (bytes != null) {
             fillBBFromBytes(bytes);
@@ -91,7 +91,7 @@ public class Type3Glyph extends PdfCanvas {
         this.isColor = isColor;
     }
 
-    public void writeMetrics(float wx, float llx, float lly, float urx, float ury, boolean isColor) throws PdfException {
+    public void writeMetrics(float wx, float llx, float lly, float urx, float ury, boolean isColor) {
 
         this.isColor = isColor;
         this.wx = wx;
@@ -128,9 +128,9 @@ public class Type3Glyph extends PdfCanvas {
         }
     }
 
-    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean inlineImage) throws PdfException {
+    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean inlineImage) {
         if (!isColor && (!image.isMask() || !(image.getBpc() == 1 || image.getBpc() > 0xff))) {
-            throw new PdfException("not.colorized.typed3.fonts.only.accept.mask.images");
+            throw new PdfRuntimeException("not.colorized.typed3.fonts.only.accept.mask.images");
         }
 
         return super.addImage(image, a, b, c, d, e, f, inlineImage);

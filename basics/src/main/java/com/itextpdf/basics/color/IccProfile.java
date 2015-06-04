@@ -1,5 +1,5 @@
 /*
- * $Id: ICC_Profile.java 6134 2013-12-23 13:15:14Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2014 iText Group NV
@@ -44,7 +44,7 @@
  */
 package com.itextpdf.basics.color;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -59,10 +59,10 @@ public class IccProfile {
     protected IccProfile() {
     }
 
-    public static IccProfile getInstance(byte[] data, int numComponents) throws PdfException {
+    public static IccProfile getInstance(byte[] data, int numComponents) {
         if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
                 || data[38] != 0x73 || data[39] != 0x70)
-            throw new PdfException(PdfException.InvalidIccProfile);
+            throw new PdfRuntimeException(PdfRuntimeException.InvalidIccProfile);
         try {
             IccProfile icc = new IccProfile();
             icc.data = data;
@@ -72,26 +72,26 @@ public class IccProfile {
             icc.numComponents = nc;
             // invalid ICC
             if (nc != numComponents) {
-                throw new PdfException(PdfException.WrongNumberOfComponentsInIccProfile).setMessageParams(nc, numComponents);
+                throw new PdfRuntimeException(PdfRuntimeException.WrongNumberOfComponentsInIccProfile).setMessageParams(nc, numComponents);
             }
             return icc;
         } catch (UnsupportedEncodingException e) {
-            throw new PdfException(PdfException.InvalidIccProfile, e);
+            throw new PdfRuntimeException(PdfRuntimeException.InvalidIccProfile, e);
         }
     }
 
-    public static IccProfile getInstance(byte[] data) throws PdfException {
+    public static IccProfile getInstance(byte[] data) {
         try {
             Integer cs;
             cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
             int numComponents = cs == null ? 0 : cs;
             return getInstance(data, numComponents);
         } catch (UnsupportedEncodingException e) {
-            throw new PdfException(PdfException.InvalidIccProfile, e);
+            throw new PdfRuntimeException(PdfRuntimeException.InvalidIccProfile, e);
         }
     }
 
-    public static IccProfile getInstance(InputStream file) throws PdfException {
+    public static IccProfile getInstance(InputStream file) {
         try {
             byte[] head = new byte[128];
             int remain = head.length;
@@ -99,13 +99,13 @@ public class IccProfile {
             while (remain > 0) {
                 int n = file.read(head, ptr, remain);
                 if (n < 0)
-                    throw new PdfException(PdfException.InvalidIccProfile);
+                    throw new PdfRuntimeException(PdfRuntimeException.InvalidIccProfile);
                 remain -= n;
                 ptr += n;
             }
             if (head[36] != 0x61 || head[37] != 0x63
                     || head[38] != 0x73 || head[39] != 0x70)
-                throw new PdfException(PdfException.InvalidIccProfile);
+                throw new PdfRuntimeException(PdfRuntimeException.InvalidIccProfile);
             remain = (head[0] & 0xff) << 24 | (head[1] & 0xff) << 16
                     | (head[2] & 0xff) << 8 | head[3] & 0xff;
             byte[] icc = new byte[remain];
@@ -115,23 +115,23 @@ public class IccProfile {
             while (remain > 0) {
                 int n = file.read(icc, ptr, remain);
                 if (n < 0)
-                    throw new PdfException(PdfException.InvalidIccProfile);
+                    throw new PdfRuntimeException(PdfRuntimeException.InvalidIccProfile);
                 remain -= n;
                 ptr += n;
             }
             return getInstance(icc);
         } catch (Exception ex) {
-            throw new PdfException(PdfException.InvalidIccProfile, ex);
+            throw new PdfRuntimeException(PdfRuntimeException.InvalidIccProfile, ex);
         }
     }
 
-    public static IccProfile getInstance(String filename) throws PdfException {
+    public static IccProfile getInstance(String filename) {
         FileInputStream fs = null;
         try {
             fs = new FileInputStream(filename);
             return getInstance(fs);
         } catch (Exception ex) {
-            throw new PdfException(PdfException.InvalidIccProfile, ex);
+            throw new PdfRuntimeException(PdfRuntimeException.InvalidIccProfile, ex);
         } finally {
             try {
                 if (fs != null)

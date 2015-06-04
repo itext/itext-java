@@ -1,7 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
-
 public class PdfObjectWrapper<T extends PdfObject> {
 
     private T pdfObject = null;
@@ -10,7 +8,7 @@ public class PdfObjectWrapper<T extends PdfObject> {
         this.pdfObject = pdfObject;
     }
 
-    public PdfObjectWrapper(T pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfObjectWrapper(T pdfObject, PdfDocument pdfDocument) {
         this(pdfObject);
         pdfObject.makeIndirect(pdfDocument);
     }
@@ -26,7 +24,7 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return this;
     }
 
-    public void flush() throws PdfException {
+    public void flush() {
         pdfObject.flush();
     }
 
@@ -38,11 +36,11 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return pdfObject.getDocument();
     }
 
-    public <T1 extends PdfObjectWrapper> T1 copy(PdfDocument document) throws PdfException {
+    public <T1 extends PdfObjectWrapper> T1 copy(PdfDocument document) {
         throw new RuntimeException("Not implemented");
     }
 
-    public <T1 extends PdfObjectWrapper> T1 copy() throws PdfException {
+    public <T1 extends PdfObjectWrapper> T1 copy() {
         return copy(getDocument());
     }
 

@@ -2,7 +2,7 @@ package com.itextpdf.canvas.font;
 
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
@@ -42,7 +42,7 @@ public class PdfType3Font extends PdfFont {
      *
      * @param pdfDocument pdfDocument and only images as masks can be used
      */
-    public PdfType3Font(PdfDocument pdfDocument, boolean isColor) throws PdfException {
+    public PdfType3Font(PdfDocument pdfDocument, boolean isColor) {
         super(pdfDocument);
         this.isColor = isColor;
     }
@@ -52,7 +52,7 @@ public class PdfType3Font extends PdfFont {
      *
      * @param pdfDocument pdfDocument and only images as masks can be used
      */
-    public PdfType3Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws PdfException {
+    public PdfType3Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) {
         super(pdfDocument);
         this.fontDictionary = fontDictionary;
         this.isCopy = true;
@@ -60,7 +60,7 @@ public class PdfType3Font extends PdfFont {
         init();
     }
 
-    public PdfType3Font(PdfDocument pdfDocument, PdfIndirectReference indirectReference) throws PdfException {
+    public PdfType3Font(PdfDocument pdfDocument, PdfIndirectReference indirectReference) {
         this(pdfDocument, (PdfDictionary) indirectReference.getRefersTo());
     }
 
@@ -115,7 +115,7 @@ public class PdfType3Font extends PdfFont {
      * @param charArray the array of characters to match this glyph.
      * @return glyphs array
      */
-    public List<Type3Glyph> createGlyphs(char charArray[]) throws PdfException {
+    public List<Type3Glyph> createGlyphs(char charArray[]) {
         if (charArray == null || charArray.length == 0) {
             return Collections.emptyList();
         }
@@ -126,7 +126,7 @@ public class PdfType3Font extends PdfFont {
         return listGlyph;
     }
 
-    public Type3Glyph createGlyph(char c) throws PdfException {
+    public Type3Glyph createGlyph(char c) {
         return createGlyph(c, this.wx, this.llx, this.lly, this.urx, this.ury);
     }
 
@@ -144,7 +144,7 @@ public class PdfType3Font extends PdfFont {
      * @param ury the Y upper right corner of the glyph bounding box. If the <CODE>colorize</CODE> option is
      * @return a content where the glyph can be defined
      */
-    public Type3Glyph createGlyph(char c, float wx, float llx, float lly, float urx, float ury) throws PdfException {
+    public Type3Glyph createGlyph(char c, float wx, float llx, float lly, float urx, float ury) {
         usedSlot[c] = true;
         Integer ck = Integer.valueOf(c);
         Type3Glyph glyph = charGlyphs.get(ck);
@@ -233,7 +233,7 @@ public class PdfType3Font extends PdfFont {
 
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
 
         int firstChar = 0;
         int lastChar = 0;
@@ -244,7 +244,7 @@ public class PdfType3Font extends PdfFont {
             firstChar++;
 
         if (firstChar == usedSlot.length) {
-            throw new PdfException("no.glyphs.defined.for.type3.font");
+            throw new PdfRuntimeException("no.glyphs.defined.for.type3.font");
         }
 
         lastChar = usedSlot.length - 1;
@@ -275,7 +275,7 @@ public class PdfType3Font extends PdfFont {
 
 
 
-    private void init() throws PdfException {
+    private void init() {
         Rectangle fontBBoxRec = fontDictionary.getAsArray(PdfName.FontBBox).toRectangle();
         PdfDictionary charProcsDic = fontDictionary.getAsDictionary(PdfName.CharProcs);
         PdfArray fontMatrixArray = fontDictionary.getAsArray(PdfName.FontMatrix);
@@ -334,7 +334,7 @@ public class PdfType3Font extends PdfFont {
         }*/
     }
 
-    private int[] getWidths() throws PdfException {
+    private int[] getWidths() {
         PdfArray newWidths = fontDictionary.getAsArray(PdfName.Widths);
         PdfNumber first = fontDictionary.getAsNumber(PdfName.FirstChar);
         PdfNumber last = fontDictionary.getAsNumber(PdfName.LastChar);

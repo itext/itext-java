@@ -1,7 +1,5 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
-
 import java.util.StringTokenizer;
 
 public abstract class FontProgram {
@@ -291,7 +289,7 @@ public abstract class FontProgram {
     /**
      * Creates the {@code widths} and the {@code differences} arrays.
      */
-    protected void createEncoding() throws PdfException {
+    protected void createEncoding() {
         if (encoding.isFontSpecific()) {
             for (int k = 0; k < 256; ++k) {
                 widths[k] = getRawWidth(k, null);

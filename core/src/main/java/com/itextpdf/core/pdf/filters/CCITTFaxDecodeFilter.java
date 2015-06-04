@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.codec.TIFFConstants;
 import com.itextpdf.basics.codec.TIFFFaxDecoder;
 import com.itextpdf.basics.codec.TIFFFaxDecompressor;
@@ -16,11 +16,11 @@ import com.itextpdf.core.pdf.PdfObject;
 public class CCITTFaxDecodeFilter  implements FilterHandler {
 
     @Override
-    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) throws PdfException {
+    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         PdfNumber wn = streamDictionary.getAsNumber(PdfName.Width);
         PdfNumber hn = streamDictionary.getAsNumber(PdfName.Height);
         if (wn == null || hn == null)
-            throw new PdfException(PdfException.FilterCcittfaxdecodeIsOnlySupportedForImages);
+            throw new PdfRuntimeException(PdfRuntimeException.FilterCcittfaxdecodeIsOnlySupportedForImages);
         int width = wn.getIntValue();
         int height = hn.getIntValue();
 

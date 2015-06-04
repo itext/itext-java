@@ -1,6 +1,6 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.*;
 import com.itextpdf.core.pdf.*;
 
@@ -11,11 +11,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     private T fontProgram;
 
-    public PdfSimpleFont(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfSimpleFont(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
     }
 
-    protected PdfSimpleFont(PdfDocument pdfDocument) throws PdfException {
+    protected PdfSimpleFont(PdfDocument pdfDocument) {
         super(pdfDocument);
     }
 
@@ -33,12 +33,12 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         this.fontProgram = fontProgram;
     }
 
-    protected abstract T initializeTypeFontForCopy(String encodingName) throws PdfException, IOException;
+    protected abstract T initializeTypeFontForCopy(String encodingName) throws IOException;
 
-    protected abstract T initializeTypeFont(String fontName, String encodingName) throws IOException, PdfException;
+    protected abstract T initializeTypeFont(String fontName, String encodingName) throws IOException, PdfRuntimeException;
 
 
-    protected void init() throws PdfException, IOException {
+    protected void init() throws IOException {
 
         PdfName baseFont = fontDictionary.getAsName(PdfName.BaseFont);
         getPdfObject().put(PdfName.Subtype, fontDictionary.getAsName(PdfName.Subtype));
@@ -222,7 +222,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return encodingName;
     }
 
-    private void initFontProgram(PdfObject encoding) throws PdfException, IOException {
+    private void initFontProgram(PdfObject encoding) throws IOException {
         if (encoding == null) {
             fontProgram = initializeTypeFontForCopy(PdfEncodings.EmptyString);
         } else if (encoding.isName()) {
@@ -239,7 +239,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
     }
 
-    private void fillEncoding(PdfName encoding) throws PdfException {
+    private void fillEncoding(PdfName encoding) {
         if (encoding == null && isSymbolic()) {
             for (int k = 0; k < 256; ++k) {
                 fontProgram.getEncoding().getSpecialMap().put(k, k);
@@ -268,7 +268,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
     }
 
-    private void fillDifference(PdfArray diffs) throws PdfException {
+    private void fillDifference(PdfArray diffs) {
         if (diffs != null) {
             int currentNumber = 0;
             for (int k = 0; k < diffs.size(); ++k) {

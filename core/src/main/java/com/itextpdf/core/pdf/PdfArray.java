@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.geom.Rectangle;
 
 import java.util.*;
@@ -137,7 +137,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         list.clear();
     }
 
-    public PdfObject get(int index) throws PdfException {
+    public PdfObject get(int index) {
         return get(index, true);
     }
 
@@ -192,9 +192,9 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     /**
      *
      * @param asDirect true is to extract direct object always.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfObject get(int index, boolean asDirect) throws PdfException {
+    public PdfObject get(int index, boolean asDirect) {
         if (!asDirect)
             return list.get(index);
         else {
@@ -206,76 +206,76 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         }
     }
 
-    public PdfArray getAsArray(int index) throws PdfException {
+    public PdfArray getAsArray(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Array)
             return (PdfArray)direct;
         return null;
     }
 
-    public PdfDictionary getAsDictionary(int index) throws PdfException {
+    public PdfDictionary getAsDictionary(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Dictionary)
             return (PdfDictionary)direct;
         return null;
     }
 
-    public PdfStream getAsStream(int index) throws PdfException {
+    public PdfStream getAsStream(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Stream)
             return (PdfStream)direct;
         return null;
     }
 
-    public PdfNumber getAsNumber(int index) throws PdfException {
+    public PdfNumber getAsNumber(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Number)
             return (PdfNumber)direct;
         return null;
     }
 
-    public PdfName getAsName(int index) throws PdfException {
+    public PdfName getAsName(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Name)
             return (PdfName)direct;
         return null;
     }
 
-    public PdfString getAsString(int index) throws PdfException {
+    public PdfString getAsString(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.String)
             return (PdfString)direct;
         return null;
     }
 
-    public PdfBoolean getAsBoolean(int index) throws PdfException {
+    public PdfBoolean getAsBoolean(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Boolean)
             return (PdfBoolean)direct;
         return null;
     }
 
-    public Rectangle getAsRectangle(int index) throws PdfException {
+    public Rectangle getAsRectangle(int index) {
         PdfArray a = getAsArray(index);
         return a == null ? null : a.toRectangle();
     }
 
-    public Float getAsFloat(int index) throws PdfException {
+    public Float getAsFloat(int index) {
         PdfNumber number = getAsNumber(index);
         return number == null ? null : number.getFloatValue();
     }
 
-    public Integer getAsInt(int index) throws PdfException {
+    public Integer getAsInt(int index) {
         PdfNumber number = getAsNumber(index);
         return number == null ? null : number.getIntValue();
     }
 
-    public Boolean getAsBool(int index) throws PdfException {
+    public Boolean getAsBool(int index) {
         PdfBoolean b = getAsBoolean(index);
         return b == null ? null : b.getValue();
     }
 
-    public Rectangle toRectangle() throws PdfException {
+    public Rectangle toRectangle() {
         try {
             float x1 = getAsNumber(0).getFloatValue();
             float y1 = getAsNumber(1).getFloatValue();
@@ -283,7 +283,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
             float y2 = getAsNumber(3).getFloatValue();
             return new Rectangle(x1, y1, x2 - x1, y2 - y1);
         } catch (Exception e) {
-            throw new PdfException(PdfException.CannotConvertPdfArrayToRectanle, e, this);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotConvertPdfArrayToRectanle, e, this);
         }
     }
 
@@ -293,7 +293,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+    protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
         PdfArray array = (PdfArray)from;
         for (PdfObject entry : array) {

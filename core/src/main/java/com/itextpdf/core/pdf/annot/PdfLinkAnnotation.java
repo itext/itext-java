@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
@@ -17,23 +16,23 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     static public final PdfName Outline = PdfName.O;
     static public final PdfName Push = PdfName.P;
 
-    public PdfLinkAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfLinkAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
         float[] borders = {0, 0, 0};
         setBorder(new PdfArray(borders));
     }
 
-    public PdfLinkAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
+    public PdfLinkAnnotation(PdfDocument document, Rectangle rect) {
         super(document, rect);
         float[] borders = {0, 0, 0};
         setBorder(new PdfArray(borders));
     }
 
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.Link;
     }
 
-    public PdfObject getDestinationObject() throws PdfException {
+    public PdfObject getDestinationObject() {
         return getPdfObject().get(PdfName.Dest);
     }
 
@@ -45,7 +44,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return put(PdfName.Dest, destination);
     }
 
-    public PdfDictionary getActionObject() throws PdfException {
+    public PdfDictionary getActionObject() {
         return getPdfObject().getAsDictionary(PdfName.A);
     }
 
@@ -57,7 +56,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return put(PdfName.A, action);
     }
 
-    public PdfName getHighlightMode() throws PdfException {
+    public PdfName getHighlightMode() {
         return getPdfObject().getAsName(PdfName.H);
     }
 
@@ -65,7 +64,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return put(PdfName.H, hlMode);
     }
 
-    public PdfDictionary getUriActionObject() throws PdfException {
+    public PdfDictionary getUriActionObject() {
         return getPdfObject().getAsDictionary(PdfName.PA);
     }
 

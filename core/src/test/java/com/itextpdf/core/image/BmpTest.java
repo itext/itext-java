@@ -1,6 +1,6 @@
 package com.itextpdf.core.image;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import org.junit.Assert;
@@ -13,7 +13,7 @@ public class BmpTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/image/";
 
     @Test
-    public void openBmp1() throws IOException, PdfException {
+    public void openBmp1() throws IOException {
         Image img = ImageFactory.getImage(sourceFolder + "WP_20140410_001.bmp");
         BmpImageHelper.processImage(img, null);
         Assert.assertEquals(2592, img.getWidth(), 0);
@@ -22,7 +22,7 @@ public class BmpTest {
     }
 
     @Test
-    public void openBmp2() throws IOException, PdfException {
+    public void openBmp2() throws IOException {
         Image img = ImageFactory.getImage(sourceFolder + "WP_20140410_001_gray.bmp");
         BmpImageHelper.processImage(img, null);
         Assert.assertEquals(2592, img.getWidth(), 0);
@@ -31,7 +31,7 @@ public class BmpTest {
     }
 
     @Test
-    public void openBmp3() throws IOException, PdfException {
+    public void openBmp3() throws IOException {
         Image img = ImageFactory.getImage(sourceFolder + "WP_20140410_001_monochrome.bmp");
         BmpImageHelper.processImage(img, null);
         Assert.assertEquals(2592, img.getWidth(), 0);

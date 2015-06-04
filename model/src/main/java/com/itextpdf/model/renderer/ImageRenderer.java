@@ -1,6 +1,5 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.geom.AffineTransform;
 import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.canvas.PdfCanvas;
@@ -37,12 +36,8 @@ public class ImageRenderer extends AbstractRenderer {
         width = getPropertyAsFloat(Property.WIDTH);
         Float angle = getPropertyAsFloat(Property.ANGLE);
 
-        try {
-            width = width == null ? ((Image)(getModelElement())).getXObject().getWidth() : width;
-            height = width/((Image)(getModelElement())).getXObject().getWidth() * ((Image)(getModelElement())).getXObject().getHeight();
-        } catch (PdfException e) {
-            throw new RuntimeException(e);
-        }
+        width = width == null ? ((Image) (getModelElement())).getXObject().getWidth() : width;
+        height = width / ((Image) (getModelElement())).getXObject().getWidth() * ((Image) (getModelElement())).getXObject().getHeight();
 
         Float horizontalScaling = getPropertyAsFloat(Property.HORIZONTAL_SCALING);
         Float verticalScaling = getPropertyAsFloat(Property.VERTICAL_SCALING);
@@ -87,16 +82,10 @@ public class ImageRenderer extends AbstractRenderer {
             applyAbsolutePositioningTranslation(false);
         }
 
-        try{
-            if (fixedXPosition != null || fixedYPosition != null){
-                canvas.addXObject(((Image)(getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3], fixedXPosition, fixedYPosition);
-            }
-            else{
-                canvas.addXObject(((Image)(getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3], occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY() + pivotY);
-            }
-
-        } catch (PdfException ex){
-            throw new RuntimeException(ex);
+        if (fixedXPosition != null || fixedYPosition != null){
+            canvas.addXObject(((Image)(getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3], fixedXPosition, fixedYPosition);
+        } else {
+            canvas.addXObject(((Image)(getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3], occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY() + pivotY);
         }
 
         if (position == LayoutPosition.RELATIVE) {

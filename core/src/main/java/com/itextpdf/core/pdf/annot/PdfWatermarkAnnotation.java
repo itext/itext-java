@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -8,16 +7,16 @@ import com.itextpdf.core.pdf.PdfName;
 
 public class PdfWatermarkAnnotation extends PdfAnnotation {
 
-    public PdfWatermarkAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
+    public PdfWatermarkAnnotation(PdfDocument document, Rectangle rect) {
         super(document, rect);
     }
 
-    public PdfWatermarkAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfWatermarkAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
     @Override
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.Watermark;
     }
 
@@ -25,7 +24,7 @@ public class PdfWatermarkAnnotation extends PdfAnnotation {
         return put(PdfName.FixedPrint, fixedPrint);
     }
 
-    public PdfDictionary getFixedPrint() throws PdfException {
+    public PdfDictionary getFixedPrint() {
         return getPdfObject().getAsDictionary(PdfName.FixedPrint);
     }
 }

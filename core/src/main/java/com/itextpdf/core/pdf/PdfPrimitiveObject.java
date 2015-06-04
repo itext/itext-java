@@ -1,7 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
-
 import java.util.Arrays;
 
 abstract class PdfPrimitiveObject extends PdfObject {
@@ -36,7 +34,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
     protected abstract void generateContent();
 
     @Override
-    public <T extends PdfObject> T makeIndirect(PdfDocument document) throws PdfException {
+    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
         //TODO log makingIndirect for directObjects
         if (directOnly) return null;
         return super.makeIndirect(document);
@@ -52,7 +50,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+    protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
         PdfPrimitiveObject object = (PdfPrimitiveObject) from;
         if (object.content != null)

@@ -1,6 +1,6 @@
 package com.itextpdf.core.image;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.codec.Jbig2SegmentReader;
 import com.itextpdf.basics.image.Jbig2Image;
 import com.itextpdf.basics.image.Image;
@@ -37,7 +37,7 @@ public class Jbig2ImageHelper {
         }
     }
 
-    public static void processImage(Image jbig2, PdfStream pdfStream) throws PdfException {
+    public static void processImage(Image jbig2, PdfStream pdfStream) {
         if (jbig2.getOriginalType() != Image.JBIG2)
             throw new IllegalArgumentException("JBIG2 image expected");
         Jbig2Image image = (Jbig2Image)jbig2;
@@ -48,7 +48,7 @@ public class Jbig2ImageHelper {
     }
 
 
-    private static void updatePdfStream(PdfStream pdfStream, Jbig2Image image) throws PdfException {
+    private static void updatePdfStream(PdfStream pdfStream, Jbig2Image image) {
         byte[] data;
         if (image.getUrl() != null) {
             InputStream is = null;
@@ -65,7 +65,7 @@ public class Jbig2ImageHelper {
                 baos.flush();
                 baos.close();
             } catch (IOException e) {
-                throw new PdfException(PdfException.Jbig2ImageException, e);
+                throw new PdfRuntimeException(PdfRuntimeException.Jbig2ImageException, e);
             } finally {
                 if (is != null) {
                     try {
@@ -105,7 +105,7 @@ public class Jbig2ImageHelper {
             pdfStream.put(PdfName.BitsPerComponent, new PdfNumber(1));
             pdfStream.getOutputStream().write(p.getData(true));
         } catch (IOException e) {
-            throw new PdfException(PdfException.Jbig2ImageException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.Jbig2ImageException, e);
         }
     }
 }

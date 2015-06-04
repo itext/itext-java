@@ -1,6 +1,6 @@
 package com.itextpdf.core.crypto;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
 import java.io.IOException;
 
@@ -18,7 +18,7 @@ public class OutputStreamEncryption extends java.io.OutputStream {
     /**
      * Creates a new instance of OutputStreamCounter
      */
-    public OutputStreamEncryption(java.io.OutputStream out, byte key[], int off, int len, int revision) throws PdfException {
+    public OutputStreamEncryption(java.io.OutputStream out, byte key[], int off, int len, int revision) {
         this.out = out;
         aes = (revision == AES_128 || revision == AES_256);
         if (aes) {
@@ -29,7 +29,7 @@ public class OutputStreamEncryption extends java.io.OutputStream {
             try {
                 write(iv);
             } catch (IOException e) {
-                throw new PdfException(PdfException.PdfEncryption, e);
+                throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
             }
         } else {
             arcfour = new ARCFOUREncryption();
@@ -37,7 +37,7 @@ public class OutputStreamEncryption extends java.io.OutputStream {
         }
     }
 
-    public OutputStreamEncryption(java.io.OutputStream out, byte key[], int revision) throws PdfException {
+    public OutputStreamEncryption(java.io.OutputStream out, byte key[], int revision) {
         this(out, key, 0, key.length, revision);
     }
 
@@ -52,11 +52,7 @@ public class OutputStreamEncryption extends java.io.OutputStream {
      * @throws java.io.IOException if an I/O error occurs.
      */
     public void close() throws IOException {
-        try {
-            finish();
-        } catch (PdfException e) {
-            throw new IOException(e);
-        }
+        finish();
         out.close();
     }
 
@@ -155,7 +151,7 @@ public class OutputStreamEncryption extends java.io.OutputStream {
         }
     }
 
-    public void finish() throws PdfException {
+    public void finish() {
         if (!finished) {
             finished = true;
             if (aes) {
@@ -163,7 +159,7 @@ public class OutputStreamEncryption extends java.io.OutputStream {
                 try {
                     out.write(b, 0, b.length);
                 } catch (IOException e) {
-                    throw new PdfException(PdfException.PdfEncryption, e);
+                    throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
                 }
             }
         }

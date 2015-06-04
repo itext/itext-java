@@ -1,6 +1,5 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
@@ -192,31 +191,27 @@ public class TextRenderer extends AbstractRenderer {
             int textRenderingMode = (int) getProperty(Property.TEXT_RENDERING_MODE) & 3;
             Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
 
-            try {
-                canvas.saveState().beginText().setFontAndSize(font, fontSize).moveText(leftBBoxX, getYLine());
-                if (textRenderingMode != Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL) {
-                    canvas.setTextRenderingMode(textRenderingMode);
-                }
-                if (textRenderingMode == Property.TextRenderingMode.TEXT_RENDERING_MODE_STROKE || textRenderingMode == Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE) {
-                    Float strokeWidth = getPropertyAsFloat(Property.STROKE_WIDTH);
-                    if (strokeWidth != null && strokeWidth != 1f) {
-                        canvas.setLineWidth(strokeWidth);
-                    }
-                    Color strokeColor = getPropertyAsColor(Property.STROKE_COLOR);
-                    if (strokeColor == null)
-                        strokeColor = textColor;
-                    if (strokeColor != null)
-                        canvas.setStrokeColor(strokeColor);
-                }
-                if (textColor != null)
-                    canvas.setFillColor(textColor);
-                if (textRise != null && textRise != 0)
-                    canvas.setTextRise(textRise);
-                canvas.showText(line);
-                canvas.endText().restoreState();
-            } catch (PdfException exc) {
-                throw new RuntimeException(exc);
+            canvas.saveState().beginText().setFontAndSize(font, fontSize).moveText(leftBBoxX, getYLine());
+            if (textRenderingMode != Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL) {
+                canvas.setTextRenderingMode(textRenderingMode);
             }
+            if (textRenderingMode == Property.TextRenderingMode.TEXT_RENDERING_MODE_STROKE || textRenderingMode == Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE) {
+                Float strokeWidth = getPropertyAsFloat(Property.STROKE_WIDTH);
+                if (strokeWidth != null && strokeWidth != 1f) {
+                    canvas.setLineWidth(strokeWidth);
+                }
+                Color strokeColor = getPropertyAsColor(Property.STROKE_COLOR);
+                if (strokeColor == null)
+                    strokeColor = textColor;
+                if (strokeColor != null)
+                    canvas.setStrokeColor(strokeColor);
+            }
+            if (textColor != null)
+                canvas.setFillColor(textColor);
+            if (textRise != null && textRise != 0)
+                canvas.setTextRise(textRise);
+            canvas.showText(line);
+            canvas.endText().restoreState();
         }
 
         if (position == LayoutPosition.RELATIVE) {

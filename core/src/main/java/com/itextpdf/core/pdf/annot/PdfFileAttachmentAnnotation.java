@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -10,25 +9,25 @@ import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 
 public class PdfFileAttachmentAnnotation extends PdfMarkupAnnotation {
 
-    public PdfFileAttachmentAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
+    public PdfFileAttachmentAnnotation(PdfDocument document, Rectangle rect) {
         super(document, rect);
     }
 
-    public PdfFileAttachmentAnnotation(PdfDocument document, Rectangle rect, PdfFileSpec file) throws PdfException {
+    public PdfFileAttachmentAnnotation(PdfDocument document, Rectangle rect, PdfFileSpec file) {
         this(document, rect);
         put(PdfName.FS, file);
     }
 
-    public PdfFileAttachmentAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfFileAttachmentAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
     @Override
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.FileAttachment;
     }
 
-    public PdfObject getFileSpecObject() throws PdfException {
+    public PdfObject getFileSpecObject() {
         return getPdfObject().get(PdfName.FS);
     }
 

@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
@@ -8,19 +7,19 @@ public class PdfPopupAnnotation extends PdfAnnotation {
 
     protected PdfAnnotation parent;
 
-    public PdfPopupAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
+    public PdfPopupAnnotation(PdfDocument document, Rectangle rect) {
         super(document, rect);
     }
 
-    public PdfPopupAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfPopupAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.Popup;
     }
 
-    public PdfDictionary getParentObject() throws PdfException {
+    public PdfDictionary getParentObject() {
         return getPdfObject().getAsDictionary(PdfName.Parent);
     }
 

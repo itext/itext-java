@@ -1,30 +1,29 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
 public class PdfLineAnnotation extends PdfMarkupAnnotation {
 
-    public PdfLineAnnotation(PdfDocument document, Rectangle rect, float[] line) throws PdfException {
+    public PdfLineAnnotation(PdfDocument document, Rectangle rect, float[] line) {
         super(document, rect);
         put(PdfName.L, new PdfArray(line));
     }
 
-    public PdfLineAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfLineAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
     @Override
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.Line;
     }
 
-    public PdfArray getLine() throws PdfException {
+    public PdfArray getLine() {
         return getPdfObject().getAsArray(PdfName.L);
     }
 
-    public PdfArray getLineEndingStyles() throws PdfException {
+    public PdfArray getLineEndingStyles() {
         return getPdfObject().getAsArray(PdfName.LE);
     }
 
@@ -32,7 +31,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.LE, lineEndingStyles);
     }
 
-    public float getLeaderLine() throws PdfException {
+    public float getLeaderLine() {
         PdfNumber n = getPdfObject().getAsNumber(PdfName.LE);
         return n == null ? 0 : n.getFloatValue();
     }
@@ -41,7 +40,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.LE, new PdfNumber(leaderLine));
     }
 
-    public float getLeaderLineExtension() throws PdfException {
+    public float getLeaderLineExtension() {
         PdfNumber n = getPdfObject().getAsNumber(PdfName.LLE);
         return n == null ? 0 : n.getFloatValue();
     }
@@ -50,7 +49,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.LLE, new PdfNumber(leaderLineExtension));
     }
 
-    public float getLeaderLineOffset() throws PdfException {
+    public float getLeaderLineOffset() {
         PdfNumber n = getPdfObject().getAsNumber(PdfName.LLO);
         return n == null ? 0 : n.getFloatValue();
     }
@@ -59,7 +58,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.LLO, new PdfNumber(leaderLineOffset));
     }
 
-    public boolean getContentsAsCaption() throws PdfException {
+    public boolean getContentsAsCaption() {
         PdfBoolean b = getPdfObject().getAsBoolean(PdfName.Cap);
         return b == null ? false : b.getValue();
     }
@@ -68,7 +67,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.Cap, new PdfBoolean(contentsAsCaption));
     }
 
-    public PdfName getCaptionPosition() throws PdfException {
+    public PdfName getCaptionPosition() {
         return getPdfObject().getAsName(PdfName.CP);
     }
 
@@ -76,7 +75,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.CP, captionPosition);
     }
 
-    public PdfDictionary getMeasure() throws PdfException {
+    public PdfDictionary getMeasure() {
         return getPdfObject().getAsDictionary(PdfName.Measure);
     }
 
@@ -84,7 +83,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.Measure, measure);
     }
 
-    public PdfArray getCaptionOffset() throws PdfException {
+    public PdfArray getCaptionOffset() {
         return getPdfObject().getAsArray(PdfName.CO);
     }
 

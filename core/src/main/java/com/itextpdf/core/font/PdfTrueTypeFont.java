@@ -1,19 +1,16 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.TrueTypeFont;
-import com.itextpdf.basics.font.*;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,22 +31,22 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
      */
     private byte[] shortTag = new byte[256];
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf, boolean embedded) throws PdfException {
+    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf, boolean embedded) {
         super(new PdfDictionary(), pdfDocument);
         setFontProgram(ttf);
         this.embedded = embedded;
         if (embedded && !ttf.allowEmbedding()) {
-            throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
+            throw new PdfRuntimeException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
         }
     }
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont trueTypeFont) throws PdfException {
+    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont trueTypeFont) {
         this(pdfDocument, trueTypeFont, false);
     }
 
 
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws PdfException, IOException {
+    public PdfTrueTypeFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
         super(new PdfDictionary(), pdfDocument);
         this.fontDictionary = fontDictionary;
         isCopy = true;
@@ -57,7 +54,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         init();
     }
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, PdfIndirectReference indirectReference) throws PdfException, IOException {
+    public PdfTrueTypeFont(PdfDocument pdfDocument, PdfIndirectReference indirectReference) throws IOException {
         this(pdfDocument, (PdfDictionary) indirectReference.getRefersTo());
     }
 
@@ -109,7 +106,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     }
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
         if (isCopy) {
             flushCopyFontData();
         } else {
@@ -150,9 +147,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
      * otherwise the font is read and output in a PdfStream object.
      *
      * @return the PdfStream containing the font or {@code null}.
-     * @throws PdfException if there is an error reading the font.
+     * @if there is an error reading the font.
      */
-    protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) throws PdfException {
+    protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
         if (fontStreamBytes == null) {
             return null;
         }
@@ -163,7 +160,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         return fontStream;
     }
 
-    private void flushFontData() throws PdfException {
+    private void flushFontData() {
         getPdfObject().put(PdfName.BaseFont, new PdfName(getFontProgram().getFontName()));
         int firstChar;
         int lastChar;
@@ -194,7 +191,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();
                     fontStream = getFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
                     fontStream.put(PdfName.Subtype, new PdfName("Type1C"));
-                } catch (PdfException e) {
+                } catch (PdfRuntimeException e) {
                     Logger logger = LoggerFactory.getLogger(PdfTrueTypeFont.class);
                     logger.error(e.getMessage());
                     fontStream = null;
@@ -234,7 +231,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                         fontStreamBytes = getFontProgram().getFontStreamBytes();
                     }
                     fontStream = getFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
-                } catch (PdfException e) {
+                } catch (PdfRuntimeException e) {
                     Logger logger = LoggerFactory.getLogger(PdfTrueTypeFont.class);
                     logger.error(e.getMessage());
                     fontStream = null;
@@ -297,7 +294,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         fontDescriptor.flush();
     }
 
-    private void flushCopyFontData() throws PdfException {
+    private void flushCopyFontData() {
         super.flush();
     }
 
@@ -309,7 +306,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
      * @param subsetPrefix the subset prefix.
      * @return the PdfDictionary containing the font descriptor or {@code null}.
      */
-    protected static PdfDictionary getFontDescriptor(PdfDocument document, TrueTypeFont ttf, PdfStream fontStream, String subsetPrefix) throws PdfException {
+    protected static PdfDictionary getFontDescriptor(PdfDocument document, TrueTypeFont ttf, PdfStream fontStream, String subsetPrefix) {
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(document);
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
@@ -340,12 +337,12 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
 
     @Override
-    protected TrueTypeFont initializeTypeFontForCopy(String encodingName) throws PdfException, IOException {
+    protected TrueTypeFont initializeTypeFontForCopy(String encodingName) throws IOException {
         return new TrueTypeFont(encodingName);
     }
 
     @Override
-    protected TrueTypeFont initializeTypeFont(String fontName, String encodingName) throws IOException, PdfException {
+    protected TrueTypeFont initializeTypeFont(String fontName, String encodingName) throws IOException {
         return new TrueTypeFont(fontName, encodingName, null);
     }
 }

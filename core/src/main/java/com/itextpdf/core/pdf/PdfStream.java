@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +22,9 @@ public class PdfStream extends PdfDictionary {
      * @param doc              {@see PdfDocument}.
      * @param bytes            initial content of {@see PdfOutputStream}.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
-     * @throws PdfException on error.
+     * @throws PdfRuntimeException on error.
      */
-    public PdfStream(PdfDocument doc, byte[] bytes, int compressionLevel) throws PdfException {
+    public PdfStream(PdfDocument doc, byte[] bytes, int compressionLevel) {
         super();
         makeIndirect(doc);
         this.compressionLevel = compressionLevel;
@@ -37,7 +37,7 @@ public class PdfStream extends PdfDictionary {
         this.outputStream.document = doc;
     }
 
-    public PdfStream(PdfDocument doc, byte[] bytes) throws PdfException {
+    public PdfStream(PdfDocument doc, byte[] bytes) {
         this(doc, bytes, doc != null
                 ? doc.getWriter().getCompressionLevel()
                 : PdfWriter.DEFAULT_COMPRESSION);
@@ -58,12 +58,12 @@ public class PdfStream extends PdfDictionary {
      *
      * @param inputStream      the data to write to this stream
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
-     * @throws PdfException on error.
+     * @throws PdfRuntimeException on error.
      */
-    public PdfStream(PdfDocument doc, InputStream inputStream, int compressionLevel) throws PdfException {
+    public PdfStream(PdfDocument doc, InputStream inputStream, int compressionLevel) {
         super();
         if (doc == null) {
-            throw new PdfException(PdfException.CannotCreatePdfStreamByInputStreamWithoutPdfDocument);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotCreatePdfStreamByInputStreamWithoutPdfDocument);
         }
         makeIndirect(doc);
         if (inputStream == null) {
@@ -87,9 +87,9 @@ public class PdfStream extends PdfDictionary {
      * </pre>
      *
      * @param inputStream the data to write to this stream
-     * @throws PdfException on error.
+     * @throws PdfRuntimeException on error.
      */
-    public PdfStream(PdfDocument doc, InputStream inputStream) throws PdfException {
+    public PdfStream(PdfDocument doc, InputStream inputStream) {
         this(doc, inputStream, doc != null
                 ? doc.getWriter().getCompressionLevel()
                 : PdfWriter.DEFAULT_COMPRESSION);
@@ -100,18 +100,18 @@ public class PdfStream extends PdfDictionary {
      *
      * @param doc              {@see PdfDocument}.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
-     * @throws PdfException on error.
+     * @throws PdfRuntimeException on error.
      */
-    public PdfStream(PdfDocument doc, int compressionLevel) throws PdfException {
+    public PdfStream(PdfDocument doc, int compressionLevel) {
         this(doc, (byte[]) null, compressionLevel);
     }
 
-    public PdfStream(PdfDocument doc) throws PdfException {
+    public PdfStream(PdfDocument doc) {
         this(doc, (byte[]) null);
     }
 
     //NOTE This constructor only for PdfReader.
-    PdfStream(long offset, PdfDictionary keys) throws PdfException {
+    PdfStream(long offset, PdfDictionary keys) {
         super();
         this.offset = offset;
         putAll(keys);
@@ -152,7 +152,7 @@ public class PdfStream extends PdfDictionary {
         return Stream;
     }
 
-    public int getLength() throws PdfException {
+    public int getLength() {
         return length;
     }
 
@@ -160,9 +160,9 @@ public class PdfStream extends PdfDictionary {
      * Gets decoded stream bytes.
      *
      * @return byte[]
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public byte[] getBytes() throws PdfException {
+    public byte[] getBytes() {
         return getBytes(true);
     }
 
@@ -172,9 +172,9 @@ public class PdfStream extends PdfDictionary {
      * @param decoded true if to get decoded stream bytes, otherwise false.
      * @return byte content of the {@code PdfStream}. Byte content will be {@code null},
      *          if the {@code PdfStream} was created by {@code InputStream}.
-     * @throws PdfException on error.
+     * @on error.
      */
-    public byte[] getBytes(boolean decoded) throws PdfException {
+    public byte[] getBytes(boolean decoded) {
         if (inputStream != null) {
             LoggerFactory.getLogger(PdfStream.class).warn("PdfStream was created by InputStream." +
                     "getBytes() always returns null in this case");
@@ -188,13 +188,13 @@ public class PdfStream extends PdfDictionary {
                 outputStream.getOutputStream().flush();
                 bytes = ((ByteArrayOutputStream) outputStream.getOutputStream()).toByteArray();
             } catch (IOException ioe) {
-                throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
+                throw new PdfRuntimeException(PdfRuntimeException.CannotGetPdfStreamBytes, ioe, this);
             }
         } else if (getReader() != null) {
             try {
                 bytes = getIndirectReference().getDocument().getReader().readStreamBytes(this, decoded);
             } catch (IOException ioe) {
-                throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
+                throw new PdfRuntimeException(PdfRuntimeException.CannotGetPdfStreamBytes, ioe, this);
             }
         }
         return bytes;
@@ -211,14 +211,14 @@ public class PdfStream extends PdfDictionary {
 
     /**
      * Update length manually in case its correction. {@see PdfReader.checkPdfStreamLength()} method.
-     * @throws PdfException on error.
+     * @on error.
      */
-    protected void updateLength(int length) throws PdfException {
+    protected void updateLength(int length) {
         this.length = length;
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+    protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
         PdfStream stream = (PdfStream) from;
         assert inputStream == null : "Try to copy the PdfStream that has been just created.";
@@ -226,7 +226,7 @@ public class PdfStream extends PdfDictionary {
         try {
             outputStream.write(bytes);
         } catch (IOException ioe) {
-            throw new PdfException(PdfException.CannotCopyObjectContent, ioe, stream);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotCopyObjectContent, ioe, stream);
         }
     }
 
@@ -238,14 +238,14 @@ public class PdfStream extends PdfDictionary {
     /**
      * Release content of PdfStream.
      */
-    protected void releaseContent() throws PdfException {
+    protected void releaseContent() {
         try {
             if (outputStream != null) {
                 outputStream.close();
                 outputStream = null;
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.image.Image;
@@ -36,7 +36,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void createSimpleCanvas() throws IOException, PdfException {
+    public void createSimpleCanvas() throws IOException {
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -67,7 +67,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void createSimpleCanvasWithDrawing() throws IOException, PdfException {
+    public void createSimpleCanvasWithDrawing() throws IOException {
 
         final String fileName = "simpleCanvasWithDrawing.pdf";
 
@@ -145,7 +145,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void createSimpleCanvasWithText() throws IOException, PdfException {
+    public void createSimpleCanvasWithText() throws IOException {
 
         final String fileName = "simpleCanvasWithText.pdf";
 
@@ -231,7 +231,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void createSimpleCanvasWithPageFlush() throws IOException, PdfException {
+    public void createSimpleCanvasWithPageFlush() throws IOException {
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -263,7 +263,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void createSimpleCanvasWithFullCompression() throws IOException, PdfException {
+    public void createSimpleCanvasWithFullCompression() throws IOException {
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -295,7 +295,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void createSimpleCanvasWithPageFlushAndFullCompression() throws IOException, PdfException {
+    public void createSimpleCanvasWithPageFlushAndFullCompression() throws IOException {
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -328,7 +328,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void create1000PagesDocument() throws IOException, PdfException {
+    public void create1000PagesDocument() throws IOException {
         int pageCount = 1000;
         String filename = destinationFolder + pageCount + "PagesDocument.pdf";
 
@@ -374,7 +374,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void create100PagesDocument() throws IOException, PdfException {
+    public void create100PagesDocument() throws IOException {
         int pageCount = 100;
         String filename = destinationFolder + pageCount + "PagesDocument.pdf";
 
@@ -420,7 +420,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void create10PagesDocument() throws IOException, PdfException {
+    public void create10PagesDocument() throws IOException {
         int pageCount = 10;
         String filename = destinationFolder + pageCount + "PagesDocument.pdf";
 
@@ -466,7 +466,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void create1000PagesDocumentWithText() throws IOException, PdfException {
+    public void create1000PagesDocumentWithText() throws IOException {
         int pageCount = 1000;
         final String filename = destinationFolder + "1000PagesDocumentWithText.pdf";
 
@@ -511,7 +511,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void create1000PagesDocumentWithFullCompression() throws IOException, PdfException {
+    public void create1000PagesDocumentWithFullCompression() throws IOException {
         int pageCount = 1000;
         String filename = destinationFolder + "1000PagesDocumentWithFullCompression.pdf";
 
@@ -558,7 +558,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void create100PagesDocumentWithFullCompression() throws IOException, PdfException {
+    public void create100PagesDocumentWithFullCompression() throws IOException {
         int pageCount = 100;
         String filename = destinationFolder + pageCount + "PagesDocumentWithFullCompression.pdf";
 
@@ -605,7 +605,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void create197PagesDocumentWithFullCompression() throws IOException, PdfException {
+    public void create197PagesDocumentWithFullCompression() throws IOException {
         int pageCount = 197;
         String filename = destinationFolder + pageCount + "PagesDocumentWithFullCompression.pdf";
 
@@ -652,7 +652,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void create10PagesDocumentWithFullCompression() throws IOException, PdfException {
+    public void create10PagesDocumentWithFullCompression() throws IOException {
         int pageCount = 10;
         String filename = destinationFolder + pageCount + "PagesDocumentWithFullCompression.pdf";
 
@@ -699,7 +699,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest1() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void copyPagesTest1() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages1_1.pdf";
         String file2 = destinationFolder + "copyPages1_2.pdf";
 
@@ -742,7 +742,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest2() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void copyPagesTest2() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages2_1.pdf";
         String file2 = destinationFolder + "copyPages2_2.pdf";
 
@@ -797,7 +797,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest3() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void copyPagesTest3() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages3_1.pdf";
         String file2 = destinationFolder + "copyPages3_2.pdf";
 
@@ -851,7 +851,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest4() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void copyPagesTest4() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages4_1.pdf";
         FileOutputStream fos1 = new FileOutputStream(file1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -903,7 +903,7 @@ public class PdfCanvasTest {
 
 
     @Test
-    public void copyPagesTest5() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void copyPagesTest5() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
 
         int documentCount = 3;
 
@@ -960,7 +960,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest6() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void copyPagesTest6() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages6_1.pdf";
         String file2 = destinationFolder + "copyPages6_2.pdf";
         String file3 = destinationFolder + "copyPages6_3.pdf";
@@ -1047,12 +1047,12 @@ public class PdfCanvasTest {
         canvas.endMarkedContent();
         try {
             canvas.endMarkedContent();
-        } catch (PdfException e) {
+        } catch (PdfRuntimeException e) {
             message = e.getMessage();
         }
         canvas.release();
         document.close();
-        Assert.assertEquals(PdfException.UnbalancedBeginEndMarkedContentOperators, message);
+        Assert.assertEquals(PdfRuntimeException.UnbalancedBeginEndMarkedContentOperators, message);
     }
 
     @Test
@@ -1333,7 +1333,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void wmfImageTest01() throws IOException, PdfException, InterruptedException {
+    public void wmfImageTest01() throws IOException, PdfRuntimeException, InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest01.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -1350,7 +1350,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void wmfImageTest02() throws IOException, PdfException, InterruptedException {
+    public void wmfImageTest02() throws IOException, PdfRuntimeException, InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -1368,7 +1368,7 @@ public class PdfCanvasTest {
 
 
     @Test
-    public void wmfImageTest03() throws IOException, PdfException, InterruptedException {
+    public void wmfImageTest03() throws IOException, PdfRuntimeException, InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -1385,7 +1385,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void wmfImageTest04() throws IOException, PdfException, InterruptedException {
+    public void wmfImageTest04() throws IOException, PdfRuntimeException, InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest04.pdf");
         PdfWriter writer = new PdfWriter(fos);

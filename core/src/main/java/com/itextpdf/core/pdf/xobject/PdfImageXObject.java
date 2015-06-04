@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.xobject;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.RawImage;
 import com.itextpdf.core.image.*;
@@ -13,28 +12,28 @@ public class PdfImageXObject extends PdfXObject {
     private boolean mask;
     private boolean softMask;
 
-    public PdfImageXObject(PdfDocument document, Image image) throws PdfException {
+    public PdfImageXObject(PdfDocument document, Image image) {
         this(document, image, null);
     }
 
-    public PdfImageXObject(PdfDocument document, Image image, PdfImageXObject imageMask) throws PdfException {
+    public PdfImageXObject(PdfDocument document, Image image, PdfImageXObject imageMask) {
         this(createPdfStream(document, image, imageMask), document);
         mask = image.isMask();
         softMask = image.isSoftMask();
     }
 
-    public PdfImageXObject(PdfStream pdfObject, PdfDocument document) throws PdfException {
+    public PdfImageXObject(PdfStream pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    public float getWidth() throws PdfException {
+    public float getWidth() {
         if (!isFlushed())
             return getPdfObject().getAsNumber(PdfName.Width).getFloatValue();
         else
             return width;
     }
 
-    public float getHeight() throws PdfException {
+    public float getHeight() {
         if (!isFlushed())
             return getPdfObject().getAsNumber(PdfName.Height).getFloatValue();
         else
@@ -42,14 +41,14 @@ public class PdfImageXObject extends PdfXObject {
     }
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
         width = getPdfObject().getAsNumber(PdfName.Width).getFloatValue();
         height = getPdfObject().getAsNumber(PdfName.Height).getFloatValue();
         super.flush();
     }
 
     @Override
-    public PdfImageXObject copy(PdfDocument document) throws PdfException {
+    public PdfImageXObject copy(PdfDocument document) {
         PdfImageXObject image = new PdfImageXObject((PdfStream) getPdfObject().copy(document), document);
         image.width = width;
         image.height = height;
@@ -58,7 +57,7 @@ public class PdfImageXObject extends PdfXObject {
         return image;
     }
 
-    protected static PdfStream createPdfStream(PdfDocument document, Image image, PdfImageXObject imageMask) throws PdfException {
+    protected static PdfStream createPdfStream(PdfDocument document, Image image, PdfImageXObject imageMask) {
 
         PdfStream stream = new PdfStream(document);
         stream.put(PdfName.Type, PdfName.XObject);

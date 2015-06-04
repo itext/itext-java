@@ -1,6 +1,5 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
@@ -163,31 +162,22 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     public void drawBackground(PdfDocument document, PdfCanvas canvas) {
-        try {
-            Property.Background background = getProperty(Property.BACKGROUND);
-            if (background != null) {
-                Rectangle backgroundArea = applyMargins(occupiedArea.getBBox().clone(), false);
-                canvas.saveState().setFillColor(background.getColor()).
-                        rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
-                                backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                                backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
-                        fill().restoreState();
-            }
-        } catch (PdfException exc) {
-            throw new RuntimeException(exc);
+        Property.Background background = getProperty(Property.BACKGROUND);
+        if (background != null) {
+            Rectangle backgroundArea = applyMargins(occupiedArea.getBBox().clone(), false);
+            canvas.saveState().setFillColor(background.getColor()).
+                    rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
+                            backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
+                            backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
+                    fill().restoreState();
         }
     }
 
     public void drawBorder(PdfDocument document, PdfCanvas canvas) {
         // TODO implement complete functionality with all settings. Take into account separate border sides configuration.
-        try {
-            Property.BorderConfig borderConfig = getProperty(Property.BORDER);
-            if (borderConfig != null) {
-                canvas.rectangle(occupiedArea.getBBox()).stroke();
-            }
-        }
-        catch (PdfException exc) {
-            throw new RuntimeException(exc);
+        Property.BorderConfig borderConfig = getProperty(Property.BORDER);
+        if (borderConfig != null) {
+            canvas.rectangle(occupiedArea.getBBox()).stroke();
         }
     }
 

@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
@@ -42,24 +41,24 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfPage page;
 
-    public PdfAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
+    public PdfAnnotation(PdfDocument document, Rectangle rect) {
         this(new PdfDictionary(), document);
         put(PdfName.Rect, new PdfArray(rect));
         put(PdfName.Subtype, getSubtype());
     }
 
-    public PdfAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    abstract public PdfName getSubtype() throws PdfException;
+    abstract public PdfName getSubtype();
 
     /**
      * Sets the layer this annotation belongs to.
      *
      * @param layer the layer this annotation belongs to
      */
-    public void setLayer(final PdfOCG layer) throws PdfException {
+    public void setLayer(final PdfOCG layer) {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 
@@ -67,12 +66,12 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.A, action);
     }
 
-    public <T extends PdfAnnotation> T setAdditionalAction(PdfName key, PdfAction action) throws PdfException {
+    public <T extends PdfAnnotation> T setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
         return (T) this;
     }
 
-    public PdfString getContents() throws PdfException {
+    public PdfString getContents() {
         return getPdfObject().getAsString(PdfName.Contents);
     }
 
@@ -84,7 +83,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return setContents(new PdfString(contents));
     }
 
-    public PdfDictionary getPageObject() throws PdfException {
+    public PdfDictionary getPageObject() {
         return getPdfObject().getAsDictionary(PdfName.P);
     }
 
@@ -97,7 +96,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.P, page);
     }
 
-    public PdfString getName() throws PdfException {
+    public PdfString getName() {
         return getPdfObject().getAsString(PdfName.NM);
     }
 
@@ -105,7 +104,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.NM, name);
     }
 
-    public PdfString getDate() throws PdfException {
+    public PdfString getDate() {
         return getPdfObject().getAsString(PdfName.M);
     }
 
@@ -113,7 +112,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.M, date);
     }
 
-    public int getFlags() throws PdfException {
+    public int getFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.F);
         if (f != null)
             return f.getIntValue();
@@ -125,28 +124,28 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.F, new PdfNumber(flags));
     }
 
-    public <T extends PdfAnnotation> T setFlag(int flag) throws PdfException {
+    public <T extends PdfAnnotation> T setFlag(int flag) {
         int flags = getFlags();
         flags = flags | flag;
         return setFlags(flags);
     }
 
-    public <T extends PdfAnnotation> T resetFlag(int flag) throws PdfException {
+    public <T extends PdfAnnotation> T resetFlag(int flag) {
         int flags = getFlags();
         flags = flags & (~flag & 0xff);
         return setFlags(flags);
     }
 
-    public boolean hasFlag(int flag) throws PdfException {
+    public boolean hasFlag(int flag) {
         int flags = getFlags();
         return (flags & flag) != 0;
     }
 
-    public PdfDictionary getAppearanceDictionary() throws PdfException {
+    public PdfDictionary getAppearanceDictionary() {
         return getPdfObject().getAsDictionary(PdfName.AP);
     }
 
-    public PdfDictionary getAppearanceObject(PdfName appearanceType) throws PdfException {
+    public PdfDictionary getAppearanceObject(PdfName appearanceType) {
         PdfDictionary ap = getAppearanceDictionary();
         if (ap != null) {
             return ap.getAsDictionary(appearanceType);
@@ -154,19 +153,19 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
-    public PdfDictionary getNormalAppearanceObject() throws PdfException {
+    public PdfDictionary getNormalAppearanceObject() {
         return getAppearanceObject(PdfName.N);
     }
 
-    public PdfDictionary getRolloverAppearanceObject() throws PdfException {
+    public PdfDictionary getRolloverAppearanceObject() {
         return getAppearanceObject(PdfName.R);
     }
 
-    public PdfDictionary getDownAppearanceObject() throws PdfException {
+    public PdfDictionary getDownAppearanceObject() {
         return getAppearanceObject(PdfName.D);
     }
 
-    public <T extends PdfAnnotation> T setAppearance(PdfName appearanceType, PdfDictionary appearance) throws PdfException {
+    public <T extends PdfAnnotation> T setAppearance(PdfName appearanceType, PdfDictionary appearance) {
         PdfDictionary ap = getAppearanceDictionary();
         if (ap == null) {
             ap = new PdfDictionary();
@@ -176,35 +175,35 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
-    public <T extends PdfAnnotation> T setNormalAppearance(PdfDictionary appearance) throws PdfException {
+    public <T extends PdfAnnotation> T setNormalAppearance(PdfDictionary appearance) {
         return setAppearance(PdfName.N, appearance);
     }
 
-    public <T extends PdfAnnotation> T setRolloverAppearance(PdfDictionary appearance) throws PdfException {
+    public <T extends PdfAnnotation> T setRolloverAppearance(PdfDictionary appearance) {
         return setAppearance(PdfName.R, appearance);
     }
 
-    public <T extends PdfAnnotation> T setDownAppearance(PdfDictionary appearance) throws PdfException {
+    public <T extends PdfAnnotation> T setDownAppearance(PdfDictionary appearance) {
         return setAppearance(PdfName.D, appearance);
     }
 
-    public <T extends PdfAnnotation> T setAppearance(PdfName appearanceType, PdfAnnotationAppearance appearance) throws PdfException {
+    public <T extends PdfAnnotation> T setAppearance(PdfName appearanceType, PdfAnnotationAppearance appearance) {
         return setAppearance(appearanceType, appearance.getPdfObject());
     }
 
-    public <T extends PdfAnnotation> T setNormalAppearance(PdfAnnotationAppearance appearance) throws PdfException {
+    public <T extends PdfAnnotation> T setNormalAppearance(PdfAnnotationAppearance appearance) {
         return setAppearance(PdfName.N, appearance);
     }
 
-    public <T extends PdfAnnotation> T setRolloverAppearance(PdfAnnotationAppearance appearance) throws PdfException {
+    public <T extends PdfAnnotation> T setRolloverAppearance(PdfAnnotationAppearance appearance) {
         return setAppearance(PdfName.R, appearance);
     }
 
-    public <T extends PdfAnnotation> T setDownAppearance(PdfAnnotationAppearance appearance) throws PdfException {
+    public <T extends PdfAnnotation> T setDownAppearance(PdfAnnotationAppearance appearance) {
         return setAppearance(PdfName.D, appearance);
     }
 
-    public PdfName getAppearanceState() throws PdfException {
+    public PdfName getAppearanceState() {
         return getPdfObject().getAsName(PdfName.AS);
     }
 
@@ -212,7 +211,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.AS, as);
     }
 
-    public PdfArray getBorder() throws PdfException {
+    public PdfArray getBorder() {
         return getPdfObject().getAsArray(PdfName.Border);
     }
 
@@ -220,7 +219,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.Border, border);
     }
 
-    public PdfArray getColorObject() throws PdfException {
+    public PdfArray getColorObject() {
         return getPdfObject().getAsArray(PdfName.C);
     }
 
@@ -232,7 +231,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return setColor(new PdfArray(color));
     }
 
-    public int getStructParentIndex() throws PdfException {
+    public int getStructParentIndex() {
         PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParent);
         if (n == null)
             return -1;
@@ -244,11 +243,11 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.StructParent, new PdfNumber(structParentIndex));
     }
 
-    public PdfArray getQuadPoints() throws PdfException {
+    public PdfArray getQuadPoints() {
         return getPdfObject().getAsArray(PdfName.QuadPoints);
     }
 
-    public boolean getOpen() throws PdfException {
+    public boolean getOpen() {
         PdfBoolean open = getPdfObject().getAsBoolean(PdfName.Open);
         return open == null ? false : open.getValue();
     }
@@ -265,7 +264,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.BS, borderStyle);
     }
 
-    public PdfDictionary getBorderStyle() throws PdfException {
+    public PdfDictionary getBorderStyle() {
         return getPdfObject().getAsDictionary(PdfName.BS);
     }
 
@@ -280,7 +279,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.StructParent, new PdfNumber(getDocument().getNextStructParentIndex()));
     }
 
-    static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document) throws PdfException {
+    static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document) {
         return makeAnnotation(pdfObject, document, null);
     }
 
@@ -288,7 +287,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.T, title);
     }
 
-    public PdfString getTitle() throws PdfException {
+    public PdfString getTitle() {
         return getPdfObject().getAsString(PdfName.T);
     }
 
@@ -296,15 +295,15 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.MK, characteristics);
     }
 
-    public PdfDictionary getAppearanceCharacteristics() throws PdfException {
+    public PdfDictionary getAppearanceCharacteristics() {
         return getPdfObject().getAsDictionary(PdfName.MK);
     }
 
-    public PdfDictionary getAction() throws PdfException {
+    public PdfDictionary getAction() {
         return getPdfObject().getAsDictionary(PdfName.A);
     }
 
-    public PdfDictionary getAdditionalAction() throws PdfException {
+    public PdfDictionary getAdditionalAction() {
         return getPdfObject().getAsDictionary(PdfName.AA);
     }
 
@@ -312,12 +311,12 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.Rect, array);
     }
 
-    public PdfArray getRectangle() throws PdfException {
+    public PdfArray getRectangle() {
         return getPdfObject().getAsArray(PdfName.Rect);
     }
 
 
-    static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document, PdfAnnotation parent) throws PdfException {
+    static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfDocument document, PdfAnnotation parent) {
         T annotation = null;
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();

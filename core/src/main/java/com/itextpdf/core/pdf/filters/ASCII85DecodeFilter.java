@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
@@ -14,12 +14,12 @@ import java.io.ByteArrayOutputStream;
 public class ASCII85DecodeFilter implements FilterHandler {
 
     @Override
-    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) throws PdfException {
+    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         b = ASCII85Decode(b);
         return b;
     }
 
-    public static byte[] ASCII85Decode(final byte in[]) throws PdfException {
+    public static byte[] ASCII85Decode(final byte in[]) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int state = 0;
         int chn[] = new int[5];
@@ -37,7 +37,7 @@ public class ASCII85DecodeFilter implements FilterHandler {
                 continue;
             }
             if (ch < '!' || ch > 'u')
-                throw new PdfException(PdfException.IllegalCharacterInAscii85decode);
+                throw new PdfRuntimeException(PdfRuntimeException.IllegalCharacterInAscii85decode);
             chn[state] = ch - '!';
             ++state;
             if (state == 5) {

@@ -1,14 +1,11 @@
 package com.itextpdf.utils;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * This class can be used to count the number of bytes needed when copying
@@ -28,7 +25,7 @@ public class PdfResourceCounter {
      *
      * @param obj the object we want to examine
      */
-    public PdfResourceCounter(PdfObject obj) throws PdfException {
+    public PdfResourceCounter(PdfObject obj) {
         resources = new HashMap<Integer, PdfObject>();
         process(obj);
     }
@@ -39,7 +36,7 @@ public class PdfResourceCounter {
      *
      * @param obj the object to process
      */
-    protected final void process(PdfObject obj) throws PdfException {
+    protected final void process(PdfObject obj) {
         PdfIndirectReference ref = obj.getIndirectReference();
 
         if (ref == null || resources.put(ref.getObjNumber(), obj) == null) {
@@ -53,7 +50,7 @@ public class PdfResourceCounter {
      *
      * @param obj the object to examine
      */
-    protected final void loopOver(PdfObject obj) throws PdfException {
+    protected final void loopOver(PdfObject obj) {
         switch (obj.getType()) {
             case PdfObject.Array:
                 PdfArray array = (PdfArray) obj;
@@ -98,7 +95,7 @@ public class PdfResourceCounter {
      * @return The number of bytes needed for an object.
      * @throws java.io.IOException
      */
-    public long getLength(Map<Integer, PdfObject> res) throws PdfException {
+    public long getLength(Map<Integer, PdfObject> res) {
         long length = 0;
 
         for (int ref : resources.keySet()) {

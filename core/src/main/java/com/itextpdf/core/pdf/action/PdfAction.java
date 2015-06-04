@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.action;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.filespec.PdfFileSpec;
@@ -13,132 +12,132 @@ import java.util.List;
 
 public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfAction(PdfDocument document) throws PdfException {
+    public PdfAction(PdfDocument document) {
         this(new PdfDictionary(), document);
         put(PdfName.Type, PdfName.Action);
     }
 
-    public PdfAction(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfAction(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
     }
 
-    static public PdfAction createGoTo(PdfDocument pdfDocument, PdfDestination destination) throws PdfException {
+    static public PdfAction createGoTo(PdfDocument pdfDocument, PdfDestination destination) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.GoTo).put(PdfName.D, destination);
     }
 
-    static public PdfAction createGoTo(PdfDocument pdfDocument, String destination) throws PdfException {
+    static public PdfAction createGoTo(PdfDocument pdfDocument, String destination) {
         return createGoTo(pdfDocument, new PdfStringDestination(destination));
     }
 
-    static public PdfAction createGoToR(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow) throws PdfException {
+    static public PdfAction createGoToR(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.GoToR).put(PdfName.F, fileSpec).
                 put(PdfName.D, destination).put(PdfName.NewWindow, new PdfBoolean(newWindow));
     }
 
-    static public PdfAction createGoToR(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfDestination destination) throws PdfException {
+    static public PdfAction createGoToR(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfDestination destination) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.GoToR).put(PdfName.F, fileSpec).
                 put(PdfName.D, destination);
     }
 
-    static public PdfAction createGoToR(PdfDocument pdfDocument, String filename, int pageNum) throws PdfException {
+    static public PdfAction createGoToR(PdfDocument pdfDocument, String filename, int pageNum) {
         return createGoToR(pdfDocument, filename, pageNum, false);
     }
 
-    static public PdfAction createGoToR(PdfDocument pdfDocument, String filename, int pageNum, boolean newWindow) throws PdfException {
+    static public PdfAction createGoToR(PdfDocument pdfDocument, String filename, int pageNum, boolean newWindow) {
         return createGoToR(pdfDocument, new PdfStringFS(filename), new PdfExplicitDestination().createFitH(pageNum, 10000), newWindow);
     }
 
-    static public PdfAction createGoToR(PdfDocument pdfDocument, String filename, String destination, boolean newWindow) throws PdfException {
+    static public PdfAction createGoToR(PdfDocument pdfDocument, String filename, String destination, boolean newWindow) {
         return createGoToR(pdfDocument, new PdfStringFS(filename), new PdfStringDestination(destination), newWindow);
     }
 
-    static public PdfAction createGoToR(PdfDocument pdfDocument, String filename, String destination) throws PdfException {
+    static public PdfAction createGoToR(PdfDocument pdfDocument, String filename, String destination) {
         return createGoToR(pdfDocument, filename, destination, false);
     }
 
-    static public PdfAction createGoToE(PdfDocument pdfDocument, PdfDestination destination, boolean newWindow, PdfTargetDictionary targetDictionary) throws PdfException {
+    static public PdfAction createGoToE(PdfDocument pdfDocument, PdfDestination destination, boolean newWindow, PdfTargetDictionary targetDictionary) {
         return createGoToE(pdfDocument, null, destination, newWindow, targetDictionary);
     }
 
-    static public PdfAction createGoToE(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow, PdfTargetDictionary targetDictionary) throws PdfException {
+    static public PdfAction createGoToE(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow, PdfTargetDictionary targetDictionary) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.GoToE).put(PdfName.F, fileSpec).put(PdfName.D, destination).
                 put(PdfName.NewWindow, new PdfBoolean(newWindow)).put(PdfName.T, targetDictionary);
     }
 
-    static public PdfAction createLaunch(PdfDocument pdfDocument, PdfFileSpec fileSpec, boolean newWindow) throws PdfException {
+    static public PdfAction createLaunch(PdfDocument pdfDocument, PdfFileSpec fileSpec, boolean newWindow) {
         return createLaunch(pdfDocument, fileSpec, null, newWindow);
     }
 
-    static public PdfAction createLaunch(PdfDocument pdfDocument, PdfFileSpec fileSpec) throws PdfException {
+    static public PdfAction createLaunch(PdfDocument pdfDocument, PdfFileSpec fileSpec) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec);
     }
 
-    static public PdfAction createLaunch(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfWin win, boolean newWindow) throws PdfException {
+    static public PdfAction createLaunch(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfWin win, boolean newWindow) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec).put(PdfName.Win, win).
                 put(PdfName.NewWindow, new PdfBoolean(newWindow));
     }
 
-    static public PdfAction createThread(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfObject destinationThread, PdfObject bead) throws PdfException {
+    static public PdfAction createThread(PdfDocument pdfDocument, PdfFileSpec fileSpec, PdfObject destinationThread, PdfObject bead) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec).
                 put(PdfName.D, destinationThread).put(PdfName.B, bead);
     }
 
-    static public PdfAction createThread(PdfDocument pdfDocument, PdfFileSpec fileSpec) throws PdfException {
+    static public PdfAction createThread(PdfDocument pdfDocument, PdfFileSpec fileSpec) {
         return createThread(pdfDocument, fileSpec, null, null);
     }
 
-    static public PdfAction createURI(PdfDocument pdfDocument, String uri) throws PdfException {
+    static public PdfAction createURI(PdfDocument pdfDocument, String uri) {
         return createURI(pdfDocument, uri, false);
     }
 
-    static public PdfAction createURI(PdfDocument pdfDocument, String uri, boolean isMap) throws PdfException {
+    static public PdfAction createURI(PdfDocument pdfDocument, String uri, boolean isMap) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.URI).put(PdfName.URI, new PdfString(uri)).put(PdfName.IsMap, new PdfBoolean(isMap));
     }
 
-    static public PdfAction createSound(PdfDocument pdfDocument, PdfStream sound) throws PdfException {
+    static public PdfAction createSound(PdfDocument pdfDocument, PdfStream sound) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Sound).put(PdfName.Sound, sound);
     }
 
-    static public PdfAction createSound(PdfDocument pdfDocument, PdfStream sound, float volume, boolean synchronous, boolean repeat, boolean mix) throws PdfException {
+    static public PdfAction createSound(PdfDocument pdfDocument, PdfStream sound, float volume, boolean synchronous, boolean repeat, boolean mix) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Sound).put(PdfName.Sound, sound).
                 put(PdfName.Volume, new PdfNumber(volume)).put(PdfName.Synchronous, new PdfBoolean(synchronous)).
                 put(PdfName.Repeat, new PdfBoolean(repeat)).put(PdfName.Mix, new PdfBoolean(mix));
     }
 
-    static public PdfAction createMovie(PdfDocument pdfDocument, PdfAnnotation annotation, String title, PdfName operation) throws PdfException {
+    static public PdfAction createMovie(PdfDocument pdfDocument, PdfAnnotation annotation, String title, PdfName operation) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Movie).put(PdfName.Annotation, annotation).
                 put(PdfName.T, new PdfString(title)).put(PdfName.Operation, operation);
     }
 
-    static public PdfAction createHide(PdfDocument pdfDocument, PdfAnnotation annotation, boolean hidden) throws PdfException {
+    static public PdfAction createHide(PdfDocument pdfDocument, PdfAnnotation annotation, boolean hidden) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Hide).put(PdfName.T, annotation).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
-    static public PdfAction createHide(PdfDocument pdfDocument, PdfAnnotation[] annotations, boolean hidden) throws PdfException {
+    static public PdfAction createHide(PdfDocument pdfDocument, PdfAnnotation[] annotations, boolean hidden) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Hide).put(PdfName.T, getArrayFromWrappersList(annotations)).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
-    static public PdfAction createHide(PdfDocument pdfDocument, String text, boolean hidden) throws PdfException {
+    static public PdfAction createHide(PdfDocument pdfDocument, String text, boolean hidden) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Hide).put(PdfName.T, new PdfString(text)).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
-    static public PdfAction createHide(PdfDocument pdfDocument, String[] text, boolean hidden) throws PdfException {
+    static public PdfAction createHide(PdfDocument pdfDocument, String[] text, boolean hidden) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Hide).put(PdfName.T, getArrayFromStringList(text)).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
-    static public PdfAction createNamed(PdfDocument pdfDocument, PdfName namedAction) throws PdfException {
+    static public PdfAction createNamed(PdfDocument pdfDocument, PdfName namedAction) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Named).put(PdfName.N, namedAction);
     }
 
-    static public PdfAction createSetOcgState(PdfDocument pdfDocument, List<PdfActionOcgState> states) throws PdfException {
+    static public PdfAction createSetOcgState(PdfDocument pdfDocument, List<PdfActionOcgState> states) {
         return createSetOcgState(pdfDocument, states, false);
     }
 
-    static public PdfAction createSetOcgState(PdfDocument pdfDocument, List<PdfActionOcgState> states, boolean preserveRb) throws PdfException {
+    static public PdfAction createSetOcgState(PdfDocument pdfDocument, List<PdfActionOcgState> states, boolean preserveRb) {
         PdfArray stateArr = new PdfArray();
         for (PdfActionOcgState state : states)
             stateArr.addAll(state.getObjectList());
@@ -146,18 +145,18 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
 
-    public static PdfAction createRendition(PdfDocument pdfDocument, String file, PdfFileSpec fs, String mimeType, PdfAnnotation screenAnnotation) throws PdfException {
+    public static PdfAction createRendition(PdfDocument pdfDocument, String file, PdfFileSpec fs, String mimeType, PdfAnnotation screenAnnotation) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.Rendition).
                 put(PdfName.OP, new PdfNumber(0)).put(PdfName.AN, screenAnnotation).
                 put(PdfName.R, new PdfRendition(pdfDocument, file, fs, mimeType));
     }
 
 
-    static public PdfAction createJavaScript(PdfDocument pdfDocument, String javaScript) throws PdfException {
+    static public PdfAction createJavaScript(PdfDocument pdfDocument, String javaScript) {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.JavaScript).put(PdfName.JS, new PdfString(javaScript));
     }
 
-    static public void setAdditionalAction(PdfObjectWrapper<PdfDictionary> wrapper, PdfName key, PdfAction action) throws PdfException {
+    static public void setAdditionalAction(PdfObjectWrapper<PdfDictionary> wrapper, PdfName key, PdfAction action) {
         PdfDictionary dic;
         PdfObject obj = wrapper.getPdfObject().get(PdfName.AA);
         if (obj != null && obj.isDictionary())
@@ -174,7 +173,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param na
      */
-    public void next(PdfAction na) throws PdfException {
+    public void next(PdfAction na) {
         PdfObject nextAction = getPdfObject().get(PdfName.Next);
         if (nextAction == null)
             put(PdfName.Next, na);

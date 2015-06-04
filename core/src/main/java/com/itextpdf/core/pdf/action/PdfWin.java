@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.action;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
 /**
@@ -12,7 +11,7 @@ public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
-    public PdfWin(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfWin(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
     }
 

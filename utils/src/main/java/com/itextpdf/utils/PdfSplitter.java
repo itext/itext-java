@@ -1,10 +1,9 @@
 package com.itextpdf.utils;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.*;
 
-import java.io.FileOutputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +28,7 @@ public class PdfSplitter {
      * @return The documents which the source document was split into.
      *         Be warned that these documents are not closed.
      */
-    public List<PdfDocument> splitBySize(long size) throws PdfException {
+    public List<PdfDocument> splitBySize(long size) {
         List<PageRange> splitRanges = new ArrayList<PageRange>();
         int currentPage = 1;
         int numOfPages = pdfDocument.getNumOfPages();
@@ -50,9 +49,9 @@ public class PdfSplitter {
      *                      If the first element is not 1, then 1 is implied (i.e. the first split document will start from page 1 in any case).
      * @param documentReady the event listener which is called when another document is ready.
      *                      You can close this document in this listener, for instance.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public void splitByPageNumbers(List<Integer> pageNumbers, IDocumentReadyListener documentReady) throws PdfException {
+    public void splitByPageNumbers(List<Integer> pageNumbers, IDocumentReadyListener documentReady) {
         int currentPageNumber = 1;
 
         for (int ind = 0; ind <= pageNumbers.size(); ind++) {
@@ -75,9 +74,9 @@ public class PdfSplitter {
      * @param pageNumbers the numbers of pages from which another document is to be started.
      *                    If the first element is not 1, then 1 is implied (i.e. the first split document will start from page 1 in any case).
      * @return the list of resultant documents. By warned that they are not closed.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public List<PdfDocument> splitByPageNumbers(List<Integer> pageNumbers) throws PdfException {
+    public List<PdfDocument> splitByPageNumbers(List<Integer> pageNumbers) {
         final List<PdfDocument> splitDocuments = new ArrayList<PdfDocument>();
 
         splitByPageNumbers(pageNumbers, new IDocumentReadyListener() {
@@ -96,9 +95,9 @@ public class PdfSplitter {
      * @param pageCount     the biggest possible number of pages in a split document.
      * @param documentReady the event listener which is called when another document is ready.
      *                      You can close this document in this listener, for instance.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public void splitByPageCount(int pageCount, IDocumentReadyListener documentReady) throws PdfException {
+    public void splitByPageCount(int pageCount, IDocumentReadyListener documentReady) {
         for (int startPage = 1; startPage <= pdfDocument.getNumOfPages(); startPage += pageCount) {
             int endPage = Math.min(startPage + pageCount - 1, pdfDocument.getNumOfPages());
 
@@ -114,9 +113,9 @@ public class PdfSplitter {
      *
      * @param pageCount the biggest possible number of pages in a split document.
      * @return the list of resultant documents. By warned that they are not closed.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public List<PdfDocument> splitByPageCount(int pageCount) throws PdfException {
+    public List<PdfDocument> splitByPageCount(int pageCount) {
         final List<PdfDocument> splitDocuments = new ArrayList<PdfDocument>();
 
         splitByPageCount(pageCount, new IDocumentReadyListener() {
@@ -135,9 +134,9 @@ public class PdfSplitter {
      * @param pageRanges the list of page ranges for each of the resultant document.
      * @return the list of the resultant documents for each of the specified page range.
      * Be warned that these documents are not closed.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public List<PdfDocument> extractPageRanges(List<PageRange> pageRanges) throws PdfException {
+    public List<PdfDocument> extractPageRanges(List<PageRange> pageRanges) {
         List<PdfDocument> splitDocuments = new ArrayList<PdfDocument>();
 
         for (PageRange currentPageRange : pageRanges) {
@@ -155,9 +154,9 @@ public class PdfSplitter {
      * @param pageRange the page range to be extracted from the document.
      * @return the resultant document containing the pages specified by the provided page range.
      * Be warned that this document is not closed.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfDocument extractPageRange(PageRange pageRange) throws PdfException {
+    public PdfDocument extractPageRange(PageRange pageRange) {
         return extractPageRanges(Arrays.asList(pageRange)).get(0);
     }
 
@@ -176,7 +175,7 @@ public class PdfSplitter {
         return new PdfWriter(new ByteArrayOutputStream());
     }
 
-    private PdfDocument createPdfDocument(PageRange currentPageRange) throws PdfException {
+    private PdfDocument createPdfDocument(PageRange currentPageRange) {
         PdfDocument newDocument = new PdfDocument(getNextPdfWriter(currentPageRange));
         if (pdfDocument.isTagged())
             newDocument.setTagged();
@@ -262,9 +261,9 @@ public class PdfSplitter {
      * and places the entire hierarchy in a separate document ( outlines and pages ) .
      *
      * @param outlineTitles list of outline titles .
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public List<PdfDocument> splitByOutlines(List<String> outlineTitles) throws PdfException {
+    public List<PdfDocument> splitByOutlines(List<String> outlineTitles) {
 
         if (outlineTitles == null || outlineTitles.isEmpty()) {
             return Collections.EMPTY_LIST;
@@ -281,7 +280,7 @@ public class PdfSplitter {
         return documentList;
     }
 
-    private PdfDocument splitByOutline(String outlineTitle) throws PdfException {
+    private PdfDocument splitByOutline(String outlineTitle) {
 
         int startPage = -1;
         int endPage = -1;
@@ -320,7 +319,7 @@ public class PdfSplitter {
         return toDocument;
     }
 
-    private PdfPage getPageByOutline(int fromPage, PdfOutline outline) throws PdfException {
+    private PdfPage getPageByOutline(int fromPage, PdfOutline outline) {
         int size = pdfDocument.getNumOfPages();
         for (int i = fromPage; i <= size; i++) {
             PdfPage pdfPage = pdfDocument.getPage(i);
@@ -340,9 +339,9 @@ public class PdfSplitter {
      * the next element in the entire hierarchy
      *
      * @param outline *
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private PdfOutline getAbsoluteTreeNextOutline(PdfOutline outline) throws PdfException {
+    private PdfOutline getAbsoluteTreeNextOutline(PdfOutline outline) {
 
         PdfObject nextPdfObject = outline.getContent().get(PdfName.Next);
         PdfOutline nextPdfOutline = null;
@@ -361,7 +360,7 @@ public class PdfSplitter {
         return nextPdfOutline;
     }
 
-    private PageRange getNextRange(int startPage, int endPage, long size) throws PdfException {
+    private PageRange getNextRange(int startPage, int endPage, long size) {
         PdfResourceCounter counter = new PdfResourceCounter(pdfDocument.getTrailer());
         Map<Integer, PdfObject> resources = counter.getResources();
         long lengthWithoutXref = counter.getLength(null); // initialize with trailer length

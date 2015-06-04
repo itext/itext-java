@@ -1,12 +1,11 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.CidFont;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.font.PdfType3Font;
 import com.itextpdf.canvas.font.Type3Glyph;
 import com.itextpdf.core.font.PdfTrueTypeFont;
@@ -43,7 +42,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithKozmin() throws IOException, PdfException {
+    public void createDocumentWithKozmin() throws IOException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithKozmin.pdf";
 
@@ -78,7 +77,7 @@ public class PdfFontTest {
     }
 
     @Test @Ignore
-    public void createDocumentWithTrueTypeAsType0() throws IOException, PdfException {
+    public void createDocumentWithTrueTypeAsType0() throws IOException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0.pdf";
 
@@ -114,7 +113,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithType3Font() throws IOException, PdfException {
+    public void createDocumentWithType3Font() throws IOException {
         String filename = destinationFolder + "DocumentWithType3Font.pdf";
         String testString = "A A A A E E E ~ é";
 
@@ -187,7 +186,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithHelvetica() throws IOException, PdfException {
+    public void createDocumentWithHelvetica() throws IOException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithHelvetica.pdf";
 
@@ -221,7 +220,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithHelveticaOblique() throws IOException, PdfException {
+    public void createDocumentWithHelveticaOblique() throws IOException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithHelveticaOblique.pdf";
 
@@ -255,7 +254,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithHelveticaBoldOblique() throws IOException, PdfException {
+    public void createDocumentWithHelveticaBoldOblique() throws IOException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithHelveticaBoldOblique.pdf";
 
@@ -289,7 +288,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithCourierBold() throws IOException, PdfException {
+    public void createDocumentWithCourierBold() throws IOException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithCourierBold.pdf";
 
@@ -323,7 +322,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithType1FontAfm() throws IOException, PdfException {
+    public void createDocumentWithType1FontAfm() throws IOException {
         String filename = destinationFolder + "DocumentWithCMR10Afm.pdf";
 
         final String author = "Alexander Chingarev";
@@ -358,7 +357,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithType1FontPfm() throws IOException, PdfException {
+    public void createDocumentWithType1FontPfm() throws IOException {
         String filename = destinationFolder + "DocumentWithCMR10Pfm.pdf";
 
         final String author = "Alexander Chingarev";
@@ -393,7 +392,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithType1Font5Pfm() throws IOException, PdfException, DocumentException {
+    public void createDocumentWithType1Font5Pfm() throws IOException, PdfRuntimeException, DocumentException {
         String filename = destinationFolder + "DocumentWithCMR10_5Pfm.pdf";
 
         final String author = "Alexander Chingarev";
@@ -425,7 +424,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithType1Font5Afm() throws IOException, PdfException, DocumentException {
+    public void createDocumentWithType1Font5Afm() throws IOException, PdfRuntimeException, DocumentException {
         String filename = destinationFolder + "DocumentWithCMR10_5Afm.pdf";
 
         final String author = "Alexander Chingarev";
@@ -457,7 +456,7 @@ public class PdfFontTest {
     }
 
     @Test @Ignore
-    public void createDocumentWithTrueTypeFont1() throws IOException, PdfException {
+    public void createDocumentWithTrueTypeFont1() throws IOException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
 
         final String author = "Alexander Chingarev";
@@ -492,7 +491,7 @@ public class PdfFontTest {
     }
 
     @Test @Ignore
-    public void createDocumentWithTrueTypeFont2() throws IOException, PdfException {
+    public void createDocumentWithTrueTypeFont2() throws IOException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont2.pdf";
 
         final String author = "Alexander Chingarev";
@@ -527,7 +526,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void testNewType3FontBasedExistingFont() throws IOException, PdfException {
+    public void testNewType3FontBasedExistingFont() throws IOException {
 
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
@@ -567,7 +566,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void testNewType1FontBasedExistingFont() throws IOException, PdfException {
+    public void testNewType1FontBasedExistingFont() throws IOException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
@@ -605,7 +604,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void testNewTrueTypeFont1BasedExistingFont() throws IOException, PdfException, InterruptedException {
+    public void testNewTrueTypeFont1BasedExistingFont() throws IOException, PdfRuntimeException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
@@ -646,7 +645,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void testNewTrueTypeFont2BasedExistingFont() throws IOException, PdfException, InterruptedException {
+    public void testNewTrueTypeFont2BasedExistingFont() throws IOException, PdfRuntimeException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";

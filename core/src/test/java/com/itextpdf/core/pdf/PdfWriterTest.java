@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PRStream;
@@ -28,7 +28,7 @@ public class PdfWriterTest {
     }
 
     @Test
-    public void createEmptyDocument() throws IOException, PdfException {
+    public void createEmptyDocument() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "emptyDocument.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -52,7 +52,7 @@ public class PdfWriterTest {
     }
 
     @Test
-    public void useObjectForMultipleTimes1() throws IOException, PdfException {
+    public void useObjectForMultipleTimes1() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "useObjectForMultipleTimes1.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -69,7 +69,7 @@ public class PdfWriterTest {
     }
 
     @Test
-    public void useObjectForMultipleTimes2() throws IOException, PdfException {
+    public void useObjectForMultipleTimes2() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "useObjectForMultipleTimes2.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -87,7 +87,7 @@ public class PdfWriterTest {
     }
 
     @Test
-    public void useObjectForMultipleTimes3() throws IOException, PdfException {
+    public void useObjectForMultipleTimes3() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "useObjectForMultipleTimes3.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -105,7 +105,7 @@ public class PdfWriterTest {
     }
 
     @Test
-    public void useObjectForMultipleTimes4() throws IOException, PdfException {
+    public void useObjectForMultipleTimes4() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "useObjectForMultipleTimes4.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -142,10 +142,10 @@ public class PdfWriterTest {
      * Copying direct objects. Objects of all types are added into document catalog.
      *
      * @throws IOException
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
     @Test
-    public void copyObject1() throws IOException, PdfException {
+    public void copyObject1() throws IOException {
         FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject1_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
@@ -201,10 +201,10 @@ public class PdfWriterTest {
      * Copying objects, some of those are indirect. Objects of all types are added into document catalog.
      *
      * @throws IOException
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
     @Test
-    public void copyObject2() throws IOException, PdfException {
+    public void copyObject2() throws IOException {
         FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject2_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
         final PdfDocument pdfDoc1 = new PdfDocument(writer1);
@@ -263,10 +263,10 @@ public class PdfWriterTest {
      * Copy objects recursively.
      *
      * @throws IOException
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
     @Test
-    public void copyObject3() throws IOException, PdfException {
+    public void copyObject3() throws IOException {
         {
             FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject3_1.pdf");
             PdfWriter writer1 = new PdfWriter(fos1);
@@ -318,10 +318,10 @@ public class PdfWriterTest {
      * Copies stream.
      *
      * @throws IOException
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
     @Test
-    public void copyObject4() throws IOException, PdfException {
+    public void copyObject4() throws IOException {
         FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject4_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
         final PdfDocument pdfDoc1 = new PdfDocument(writer1);
@@ -360,10 +360,10 @@ public class PdfWriterTest {
      * Copies page.
      *
      * @throws IOException
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
     @Test
-    public void copyObject5() throws IOException, PdfException {
+    public void copyObject5() throws IOException {
         FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject5_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
         final PdfDocument pdfDoc1 = new PdfDocument(writer1);
@@ -395,7 +395,7 @@ public class PdfWriterTest {
     }
 
     @Test(expected = IOException.class)
-    public void closeStream1() throws IOException, PdfException {
+    public void closeStream1() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "closeStream1.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -405,7 +405,7 @@ public class PdfWriterTest {
     }
 
     @Test
-    public void closeStream2() throws IOException, PdfException {
+    public void closeStream2() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "closeStream2.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCloseStream(false);
@@ -416,7 +416,7 @@ public class PdfWriterTest {
     }
 
     @Test
-    public void directInIndirectChain() throws IOException, PdfException {
+    public void directInIndirectChain() throws IOException {
         String filename = destinationFolder + "directInIndirectChain.pdf";
 
         PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
@@ -448,7 +448,7 @@ public class PdfWriterTest {
     }
 
     @Test
-    public void createPdfStreamByInputStream() throws IOException, PdfException {
+    public void createPdfStreamByInputStream() throws IOException {
         String filename = destinationFolder + "createPdfStreamByInputStream.pdf";
 
         FileOutputStream fos = new FileOutputStream(filename);

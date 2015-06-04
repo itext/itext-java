@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.basics.font.PdfEncodings;
@@ -95,7 +94,7 @@ public class PdfString extends PdfPrimitiveObject {
      * Returns the Unicode {@code String} value of this
      * {@code PdfString}-object.
      */
-    public String toUnicodeString() throws PdfException {
+    public String toUnicodeString() {
         if (encoding != null && encoding.length() != 0) {
             return getValue();
         }
@@ -158,7 +157,7 @@ public class PdfString extends PdfPrimitiveObject {
     /**
      * Decrypt content of an encrypted {@code PdfString}.
      */
-    protected PdfString decrypt(PdfEncryption decrypt) throws PdfException {
+    protected PdfString decrypt(PdfEncryption decrypt) {
         if (decrypt != null) {
             assert content != null : "No byte content to decrypt value";
             byte[] decodedContent = decodeContent();
@@ -180,7 +179,7 @@ public class PdfString extends PdfPrimitiveObject {
      * @param encrypt @see PdfEncryption
      * @return true if value was encrypted, otherwise false.
      */
-    protected boolean encrypt(PdfEncryption encrypt) throws PdfException {
+    protected boolean encrypt(PdfEncryption encrypt) {
         if (encrypt != null && !encrypt.isEmbeddedFilesOnly()) {
             byte[] b = encrypt.encryptByteArray(getValueBytes());
             content = encodeBytes(b);
@@ -309,7 +308,7 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+    protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
         PdfString string = (PdfString) from;
         value = string.value;

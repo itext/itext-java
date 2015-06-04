@@ -1,14 +1,12 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
-
 class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     private int from;
     private PdfNumber count;
     private final PdfArray kids;
     private final PdfPages parent;
 
-    public PdfPages(int from, PdfDocument pdfDocument, PdfPages parent) throws PdfException {
+    public PdfPages(int from, PdfDocument pdfDocument, PdfPages parent) {
         super(new PdfDictionary());
         if (pdfDocument.getWriter() != null) {
             getPdfObject().makeIndirect(pdfDocument);
@@ -22,11 +20,11 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Count, this.count);
     }
 
-    public PdfPages(int from, PdfDocument pdfDocument) throws PdfException {
+    public PdfPages(int from, PdfDocument pdfDocument) {
         this(from, pdfDocument, null);
     }
 
-    public PdfPages(int from, int maxCount, PdfDictionary pdfObject, PdfPages parent) throws PdfException {
+    public PdfPages(int from, int maxCount, PdfDictionary pdfObject, PdfPages parent) {
         super(pdfObject);
         this.from = from;
         this.count = pdfObject.getAsNumber(PdfName.Count);
@@ -41,13 +39,13 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         pdfObject.put(PdfName.Type, PdfName.Pages);
     }
 
-    public void addPage(PdfDictionary page) throws PdfException {
+    public void addPage(PdfDictionary page) {
         kids.add(page);
         incrementCount();
         page.put(PdfName.Parent, getPdfObject());
     }
 
-    public boolean addPage(int index, PdfPage pdfPage) throws PdfException {
+    public boolean addPage(int index, PdfPage pdfPage) {
         if (index < from || index > from + getCount())
             return false;
         kids.add(index - from, pdfPage.getPdfObject());
@@ -57,7 +55,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
-    public boolean removePage(int pageNum) throws PdfException {
+    public boolean removePage(int pageNum) {
         if (pageNum < from || pageNum >= from + getCount())
             return false;
         decrementCount();
@@ -97,7 +95,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         from += correction;
     }
 
-    public PdfArray getKids() throws PdfException {
+    public PdfArray getKids() {
         return getPdfObject().getAsArray(PdfName.Kids);
     }
 

@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfPattern;
@@ -39,69 +39,69 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private ResourceNumber patternNumber = new ResourceNumber();
     private ResourceNumber shadingNumber = new ResourceNumber();
 
-    public PdfResources(PdfDictionary pdfObject) throws PdfException {
+    public PdfResources(PdfDictionary pdfObject) {
         super(pdfObject);
         buildResources(pdfObject);
     }
 
-    public PdfResources() throws PdfException {
+    public PdfResources() {
         this(new PdfDictionary());
     }
 
-    public PdfName addFont(PdfFont font) throws PdfException {
+    public PdfName addFont(PdfFont font) {
         font.getDocument().getDocumentFonts().add(font);
         return addResource(font, PdfName.Font, F, fontNumber);
     }
 
-    public PdfName addImage(PdfImageXObject image) throws PdfException {
+    public PdfName addImage(PdfImageXObject image) {
         return addResource(image, PdfName.XObject, Im, imageNumber);
     }
 
-    public PdfName addImage(PdfObject image) throws PdfException {
+    public PdfName addImage(PdfObject image) {
         return addResource(image, PdfName.XObject, Im, imageNumber);
     }
 
-    public PdfName addForm(PdfFormXObject form) throws PdfException {
+    public PdfName addForm(PdfFormXObject form) {
         return addResource(form, PdfName.XObject, Fm, formNumber);
     }
 
-    public PdfName addForm(PdfObject form) throws PdfException {
+    public PdfName addForm(PdfObject form) {
         return addResource(form, PdfName.XObject, Fm, formNumber);
     }
 
-    public PdfName addExtGState(PdfExtGState extGState) throws PdfException {
+    public PdfName addExtGState(PdfExtGState extGState) {
         return addResource(extGState, PdfName.ExtGState, Gs, egsNumber);
     }
 
-    public PdfName addExtGState(PdfObject extGState) throws PdfException {
+    public PdfName addExtGState(PdfObject extGState) {
         return addResource(extGState, PdfName.ExtGState, Gs, egsNumber);
     }
 
-    public PdfName addProperties(PdfObject properties) throws PdfException {
+    public PdfName addProperties(PdfObject properties) {
         return addResource(properties, PdfName.Properties, Pr, propNumber);
     }
 
-    public PdfName addColorSpace(PdfColorSpace cs) throws PdfException {
+    public PdfName addColorSpace(PdfColorSpace cs) {
         return addResource(cs, PdfName.ColorSpace, Cs, csNumber);
     }
 
-    public PdfName addColorSpace(PdfObject colorSpace) throws PdfException {
+    public PdfName addColorSpace(PdfObject colorSpace) {
         return addResource(colorSpace, PdfName.ColorSpace, Cs, csNumber);
     }
 
-    public PdfName addPattern(PdfPattern pattern) throws PdfException {
+    public PdfName addPattern(PdfPattern pattern) {
         return addResource(pattern, PdfName.Pattern, P, patternNumber);
     }
 
-    public PdfName addPattern(PdfObject pattern) throws PdfException {
+    public PdfName addPattern(PdfObject pattern) {
         return addResource(pattern, PdfName.Pattern, P, patternNumber);
     }
 
-    public PdfName addShading(PdfShading shading) throws PdfException {
+    public PdfName addShading(PdfShading shading) {
         return addResource(shading, PdfName.Shading, Sh, shadingNumber);
     }
 
-    public PdfName addShading(PdfObject shading) throws PdfException {
+    public PdfName addShading(PdfObject shading) {
         return addResource(shading, PdfName.Shading, Sh, shadingNumber);
     }
 
@@ -110,21 +110,21 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param defaultCsKey
      * @param defaultCsValue
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public void setDefaultColorSpace(PdfName defaultCsKey, PdfColorSpace defaultCsValue) throws PdfException {
+    public void setDefaultColorSpace(PdfName defaultCsKey, PdfColorSpace defaultCsValue) {
         addResource(defaultCsValue.getPdfObject(), PdfName.ColorSpace, defaultCsKey);
     }
 
-    public void setDefaultGray(PdfColorSpace defaultCs) throws PdfException {
+    public void setDefaultGray(PdfColorSpace defaultCs) {
         setDefaultColorSpace(PdfName.DefaultGray, defaultCs);
     }
 
-    public void setDefaultRgb(PdfColorSpace defaultCs) throws PdfException {
+    public void setDefaultRgb(PdfColorSpace defaultCs) {
         setDefaultColorSpace(PdfName.DefaultRGB, defaultCs);
     }
 
-    public void setDefaultCmyk(PdfColorSpace defaultCs) throws PdfException {
+    public void setDefaultCmyk(PdfColorSpace defaultCs) {
         setDefaultColorSpace(PdfName.DefaultCMYK, defaultCs);
     }
 
@@ -147,7 +147,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return names;
     }
 
-    public PdfArray getProcSet() throws PdfException {
+    public PdfArray getProcSet() {
         return getPdfObject().getAsArray(PdfName.ProcSet);
     }
 
@@ -164,11 +164,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return nameToResource.get(pdfName);
     }
 
-    protected PdfName addResource(PdfObjectWrapper resource, PdfName resType, String resPrefix, ResourceNumber resNumber) throws PdfException {
+    protected PdfName addResource(PdfObjectWrapper resource, PdfName resType, String resPrefix, ResourceNumber resNumber) {
         return addResource(resource.getPdfObject(), resType, resPrefix, resNumber);
     }
 
-    protected void addResource(PdfObject resource, PdfName resType, PdfName resName) throws PdfException {
+    protected void addResource(PdfObject resource, PdfName resType, PdfName resName) {
         if (nameToResource.containsKey(resType) && nameToResource.get(resType).containsKey(resName))
             return;
         resourceToName.put(resource, resName);
@@ -184,7 +184,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         resDictionary.put(resName, resource);
     }
 
-    protected PdfName addResource(PdfObject resource, PdfName resType, String resPrefix, ResourceNumber resNumber) throws PdfException {
+    protected PdfName addResource(PdfObject resource, PdfName resType, String resPrefix, ResourceNumber resNumber) {
         PdfName resName = getResourceName(resource);
         if (resName == null) {
             resName = new PdfName(resPrefix + resNumber.increment());
@@ -193,7 +193,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return resName;
     }
 
-    protected void buildResources(PdfDictionary dictionary) throws PdfException {
+    protected void buildResources(PdfDictionary dictionary) {
         for (PdfName resourceType : dictionary.keySet()) {
             if (nameToResource.get(resourceType) == null) {
                 nameToResource.put(resourceType, new HashMap<PdfName, PdfObject>());

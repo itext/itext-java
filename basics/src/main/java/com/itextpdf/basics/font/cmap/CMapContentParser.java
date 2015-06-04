@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font.cmap;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.basics.io.PdfTokeniser;
@@ -33,7 +32,7 @@ public class CMapContentParser {
      * @param ls an {@code ArrayList} to use. It will be cleared before using.
      * @throws IOException on error
      */
-    public void parse(ArrayList<CMapObject> ls) throws IOException, PdfException {
+    public void parse(ArrayList<CMapObject> ls) throws IOException {
         ls.clear();
         CMapObject ob;
         while ((ob = readObject()) != null) {
@@ -49,7 +48,7 @@ public class CMapContentParser {
      * @return the dictionary
      * @throws IOException on error
      */
-    public CMapObject readDictionary() throws PdfException, IOException {
+    public CMapObject readDictionary() throws IOException {
         Map<String, CMapObject> dic = new HashMap<>();
         while (true) {
             if (!nextValidToken())
@@ -64,10 +63,10 @@ public class CMapContentParser {
             CMapObject obj = readObject();
             if (obj.isToken()) {
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(PdfException.UnexpectedGtGt);
+                    tokeniser.throwError(PdfRuntimeException.UnexpectedGtGt);
                 }
                 if (obj.toString().equals("]")) {
-                    tokeniser.throwError(PdfException.UnexpectedCloseBracket);
+                    tokeniser.throwError(PdfRuntimeException.UnexpectedCloseBracket);
                 }
             }
             dic.put(name, obj);
@@ -80,7 +79,7 @@ public class CMapContentParser {
      * @return an array
      * @throws IOException on error
      */
-    public CMapObject readArray() throws IOException, PdfException {
+    public CMapObject readArray() throws IOException {
         ArrayList<CMapObject> array = new ArrayList<CMapObject>();
         while (true) {
             CMapObject obj = readObject();
@@ -89,7 +88,7 @@ public class CMapContentParser {
                     break;
                 }
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(PdfException.UnexpectedGtGt);
+                    tokeniser.throwError(PdfRuntimeException.UnexpectedGtGt);
                 }
             }
             array.add(obj);
@@ -102,7 +101,7 @@ public class CMapContentParser {
      * @return the pdf object
      * @throws IOException on error
      */
-    protected CMapObject readObject() throws IOException, PdfException {
+    protected CMapObject readObject() throws IOException {
         if (!nextValidToken())
             return null;
         TokenType type = tokeniser.getTokenType();
@@ -145,7 +144,7 @@ public class CMapContentParser {
      * @return {@code true} if a token was read, {@code false} if the end of content was reached.
      * @throws IOException on error.
      */
-    public boolean nextValidToken() throws PdfException, IOException {
+    public boolean nextValidToken() throws IOException {
         while (tokeniser.nextToken()) {
             if (tokeniser.getTokenType() == TokenType.Comment)
                 continue;

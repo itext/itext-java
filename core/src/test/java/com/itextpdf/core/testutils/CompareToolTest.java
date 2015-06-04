@@ -1,8 +1,7 @@
 package com.itextpdf.core.testutils;
 
-import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.testutils.CompareTool;
-import junit.framework.Assert;
+import com.itextpdf.basics.PdfRuntimeException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -18,7 +17,7 @@ public class CompareToolTest {
     }
 
     @Test
-    public void test() throws InterruptedException, IOException, PdfException {
+    public void test() throws InterruptedException, IOException, PdfRuntimeException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
@@ -30,7 +29,7 @@ public class CompareToolTest {
     }
 
     @Test
-    public void test2() throws IOException, InterruptedException, PdfException {
+    public void test2() throws IOException, InterruptedException, PdfRuntimeException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
@@ -42,7 +41,7 @@ public class CompareToolTest {
     }
 
     @Test
-    public void test3() throws InterruptedException, IOException, PdfException {
+    public void test3() throws InterruptedException, IOException, PdfRuntimeException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);

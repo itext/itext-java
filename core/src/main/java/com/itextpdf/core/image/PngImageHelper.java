@@ -1,6 +1,5 @@
 package com.itextpdf.core.image;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.color.IccProfile;
@@ -120,7 +119,7 @@ public class PngImageHelper {
     private static final PdfName intents[] = {PdfName.Perceptual,
             PdfName.RelativeColorimetric, PdfName.Saturation, PdfName.AbsoluteColorimetric};
 
-    public static void processImage(Image image, PdfStream pdfStream) throws PdfException {
+    public static void processImage(Image image, PdfStream pdfStream) {
         if (image.getOriginalType() != Image.PNG)
             throw new IllegalArgumentException("PNG image expected");
         PngParameters png = new PngParameters();
@@ -144,7 +143,7 @@ public class PngImageHelper {
             }
             processPng(is, png);
         } catch (IOException e) {
-            throw new PdfException(PdfException.PngImageException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.PngImageException, e);
         } finally {
             if (is != null) {
                 try {
@@ -159,11 +158,11 @@ public class PngImageHelper {
         }
     }
 
-    private static void updatePdfStream(PdfStream stream, PngParameters png) throws PdfException {
+    private static void updatePdfStream(PdfStream stream, PngParameters png) {
         RawImageHelper.updatePdfStream(png.image, png.additional, stream);
     }
 
-    private static void processPng(InputStream is, PngParameters png) throws IOException, PdfException {
+    private static void processPng(InputStream is, PngParameters png) throws IOException {
         readPng(is, png);
         try {
             int pal0 = 0;
@@ -251,7 +250,7 @@ public class PngImageHelper {
             png.image.setDpi(png.dpiX, png.dpiY);
             png.image.setXYRatio(png.XYRatio);
         } catch (Exception e) {
-            throw new PdfRuntimeException(PdfException.PngImageException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.PngImageException, e);
         }
     }
 
@@ -326,7 +325,7 @@ public class PngImageHelper {
         }
     }
 
-    private static void readPng(InputStream is, PngParameters png) throws IOException, PdfException {
+    private static void readPng(InputStream is, PngParameters png) throws IOException {
         for (int i = 0; i < PNGID.length; i++) {
             if (PNGID[i] != is.read()) {
                 throw new IOException("file.is.not.a.valid.png");
@@ -593,7 +592,7 @@ public class PngImageHelper {
                     break;
                 default:
                     // Error -- uknown filter type
-                    throw new PdfRuntimeException(PdfException.PngFilterUnknown);
+                    throw new PdfRuntimeException(PdfRuntimeException.PngFilterUnknown);
             }
 
             processPixels(curr, xOffset, xStep, dstY, passWidth, png);

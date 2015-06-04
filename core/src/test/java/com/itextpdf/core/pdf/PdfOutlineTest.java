@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.navigation.PdfStringDestination;
@@ -26,7 +26,7 @@ public class PdfOutlineTest {
     }
 
     @Test
-    public void outlinesTest() throws IOException, PdfException {
+    public void outlinesTest() throws IOException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
 
         PdfDocument pdfDoc = new PdfDocument(reader);
@@ -39,7 +39,7 @@ public class PdfOutlineTest {
     }
 
     @Test
-    public void outlinesWithPagesTest() throws IOException, PdfException {
+    public void outlinesWithPagesTest() throws IOException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
 
         PdfDocument pdfDoc = new PdfDocument(reader);
@@ -52,7 +52,7 @@ public class PdfOutlineTest {
     }
 
     @Before
-    public void setupAddOutlinesToDocumentTest() throws PdfException, IOException {
+    public void setupAddOutlinesToDocumentTest() throws IOException {
         String filename = sourceFolder + "iphone_user_guide.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -76,7 +76,7 @@ public class PdfOutlineTest {
         pdfDoc.close();
     }
     @Test
-    public void addOutlinesToDocumentTest() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void addOutlinesToDocumentTest() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String filename = destinationFolder+"addOutlinesResult.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -88,7 +88,7 @@ public class PdfOutlineTest {
     }
 
     @Before
-    public void setupRemovePageWithOutlinesTest() throws IOException, PdfException {
+    public void setupRemovePageWithOutlinesTest() throws IOException {
         String filename = sourceFolder + "iphone_user_guide.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -103,7 +103,7 @@ public class PdfOutlineTest {
     }
 
     @Test
-    public void removePageWithOutlinesTest() throws IOException, PdfException {
+    public void removePageWithOutlinesTest() throws IOException {
         String filename = destinationFolder + "removePagesWithOutlinesResult.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -115,7 +115,7 @@ public class PdfOutlineTest {
     }
 
     @Before
-    public void setupUpdateOutlineTitle() throws IOException, PdfException {
+    public void setupUpdateOutlineTitle() throws IOException {
         String filename = sourceFolder + "iphone_user_guide.pdf";
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         FileOutputStream fos = new FileOutputStream(destinationFolder+"updateOutlineTitleResult.pdf");
@@ -129,7 +129,7 @@ public class PdfOutlineTest {
     }
 
     @Test
-    public void updateOutlineTitle() throws IOException, PdfException {
+    public void updateOutlineTitle() throws IOException {
         String filename = destinationFolder + "updateOutlineTitleResult.pdf";
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument pdfDoc = new PdfDocument(reader);
@@ -141,7 +141,7 @@ public class PdfOutlineTest {
     }
 
     @Before
-    public void setupAddOutlineInNotOutlineMode() throws IOException, PdfException {
+    public void setupAddOutlineInNotOutlineMode() throws IOException {
         String filename = sourceFolder + "iphone_user_guide.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -164,7 +164,7 @@ public class PdfOutlineTest {
     }
 
     @Test
-    public void addOutlineInNotOutlineMode() throws IOException, PdfException {
+    public void addOutlineInNotOutlineMode() throws IOException {
         String filename = destinationFolder + "addOutlinesWithoutOutlineModeResult.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -177,7 +177,7 @@ public class PdfOutlineTest {
     }
 
     @Before
-    public void setupCreateDocWithOutlines() throws PdfException, IOException, DocumentException, InterruptedException {
+    public void setupCreateDocWithOutlines() throws IOException, DocumentException, InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder+"documentWithOutlines.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -199,7 +199,7 @@ public class PdfOutlineTest {
     }
 
     @Test
-    public void createDocWithOutlines() throws PdfException, IOException, DocumentException, InterruptedException {
+    public void createDocWithOutlines() throws IOException, DocumentException, InterruptedException {
 
         String filename = destinationFolder + "documentWithOutlines.pdf";
 
@@ -214,7 +214,7 @@ public class PdfOutlineTest {
 
 
     @Test
-    public void copyPagesWithOutlines() throws IOException, PdfException {
+    public void copyPagesWithOutlines() throws IOException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder+"copyPagesWithOutlines01.pdf"));
 
@@ -238,7 +238,7 @@ public class PdfOutlineTest {
     }
 
     @Test@Ignore
-    public void addOutlinesWithNamedDestinations01() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void addOutlinesWithNamedDestinations01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
         String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
 
@@ -291,7 +291,7 @@ public class PdfOutlineTest {
     }
 
     @Test
-    public void addOutlinesWithNamedDestinations02() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void addOutlinesWithNamedDestinations02() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String filename = destinationFolder + "outlinesWithNamedDestinations02.pdf";
 
         FileOutputStream fos = new FileOutputStream(filename);

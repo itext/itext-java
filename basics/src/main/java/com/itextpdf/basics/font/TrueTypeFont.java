@@ -1,7 +1,6 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.Utilities;
 
@@ -81,7 +80,7 @@ public class TrueTypeFont extends FontProgram {
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
 
-    public TrueTypeFont(String name, String baseEncoding, byte[] ttf) throws IOException, PdfException {
+    public TrueTypeFont(String name, String baseEncoding, byte[] ttf) throws IOException {
         fontParser = new OpenTypeParser(name, ttf);
         //postscriptFontName =
         setFontName(fontParser.getFontName());
@@ -120,7 +119,7 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
-    public TrueTypeFont(String encoding) throws PdfException, IOException {
+    public TrueTypeFont(String encoding) throws IOException {
         this.encoding = new FontEncoding(encoding, true);
     }
 
@@ -334,7 +333,7 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
-    public byte[] getFontStreamBytes() throws PdfException {
+    public byte[] getFontStreamBytes() {
         if (fontStreamBytes != null)
             return fontStreamBytes;
         try {
@@ -346,7 +345,7 @@ public class TrueTypeFont extends FontProgram {
             fontStreamLengths = new int[] {fontStreamBytes.length};
         } catch (IOException e) {
             fontStreamBytes = null;
-            throw new PdfException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         }
         return fontStreamBytes;
     }
@@ -477,11 +476,11 @@ public class TrueTypeFont extends FontProgram {
         return fontParser.directoryOffset;
     }
 
-    public byte[] getSubset(Set<Integer> glyphs, boolean subset) throws PdfException {
+    public byte[] getSubset(Set<Integer> glyphs, boolean subset) {
         try {
             return fontParser.getSubset(glyphs, subset);
         } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         }
     }
 

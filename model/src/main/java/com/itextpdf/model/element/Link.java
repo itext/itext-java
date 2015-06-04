@@ -1,6 +1,5 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
@@ -17,11 +16,11 @@ public class Link extends Text {
         this.linkAnnotation = linkAnnotation;
     }
 
-    public Link(String text, PdfAction action) throws PdfException {
+    public Link(String text, PdfAction action) {
         this(text, new PdfLinkAnnotation(action.getDocument(), new Rectangle(0, 0, 0, 0)).setAction(action));
     }
 
-    public Link(String text, PdfDestination destination) throws PdfException {
+    public Link(String text, PdfDestination destination) {
         this(text, new PdfLinkAnnotation(destination.getDocument(), new Rectangle(0, 0, 0, 0)).setDestination(destination));
     }
 

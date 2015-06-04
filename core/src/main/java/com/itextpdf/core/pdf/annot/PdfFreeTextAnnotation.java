@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
@@ -13,21 +12,21 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     public static final int Centered = 1;
     public static final int RightJustified = 2;
 
-    public PdfFreeTextAnnotation(PdfDocument document, Rectangle rect, String appearanceString) throws PdfException {
+    public PdfFreeTextAnnotation(PdfDocument document, Rectangle rect, String appearanceString) {
         super(document, rect);
         setDrawnAfter(new PdfString(appearanceString));
     }
 
-    public PdfFreeTextAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfFreeTextAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
     @Override
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.FreeText;
     }
 
-    public PdfString getDefaultStyleString() throws PdfException {
+    public PdfString getDefaultStyleString() {
         return getPdfObject().getAsString(PdfName.DS);
     }
 
@@ -35,7 +34,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.DS, defaultStyleString);
     }
 
-    public PdfArray getCalloutLine() throws PdfException {
+    public PdfArray getCalloutLine() {
         return getPdfObject().getAsArray(PdfName.CL);
     }
 
@@ -47,7 +46,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.CL, calloutLine);
     }
 
-    public PdfName getLineEndingStyle() throws PdfException {
+    public PdfName getLineEndingStyle() {
         return getPdfObject().getAsName(PdfName.LE);
     }
 

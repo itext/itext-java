@@ -83,7 +83,7 @@ public class Utilities {
      * @param outputStream the {@code OutputStream} an escaped {@code byte} array write to.
      * @param bytes the {@code byte}> array to escape.
      */
-    public static void writeEscapedString(OutputStream outputStream, final byte[] bytes) throws PdfException {
+    public static void writeEscapedString(OutputStream outputStream, final byte[] bytes) {
         ByteBuffer buf = createBufferedEscapedString(bytes);
         outputStream.writeBytes(buf.getInternalBuffer(), 0, buf.size());
     }

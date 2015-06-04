@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.layer;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
@@ -14,9 +14,9 @@ public class PdfVisibilityExpression extends PdfObjectWrapper<PdfArray> {
     /**
      * Constructs a new PdfVisibilityExpression instance by its raw PdfArray.
      * @param visibilityExpressionArray the array representing the visibility expression
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfVisibilityExpression(PdfArray visibilityExpressionArray) throws PdfException {
+    public PdfVisibilityExpression(PdfArray visibilityExpressionArray) {
         super(visibilityExpressionArray);
         PdfName operator = visibilityExpressionArray.getAsName(0);
         if (visibilityExpressionArray.size() < 1 || !PdfName.Or.equals(operator)

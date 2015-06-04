@@ -1,7 +1,7 @@
 package com.itextpdf.core.font;
 
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.*;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
@@ -25,7 +25,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     private byte[] shortTag = new byte[256];
 
 
-    public PdfType1Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws PdfException, IOException {
+    public PdfType1Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
         super(new PdfDictionary(), pdfDocument);
         this.fontDictionary = fontDictionary;
         isCopy = true;
@@ -33,17 +33,17 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         init();
     }
 
-    public PdfType1Font(PdfDocument pdfDocument, PdfIndirectReference indirectReference) throws PdfException, IOException {
+    public PdfType1Font(PdfDocument pdfDocument, PdfIndirectReference indirectReference) throws IOException {
         this(pdfDocument, (PdfDictionary) indirectReference.getRefersTo());
     }
 
-    public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, boolean embedded) throws PdfException {
+    public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, boolean embedded) {
         super(new PdfDictionary(), pdfDocument);
         setFontProgram(type1Font);
         this.embedded = embedded;
     }
 
-    public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font) throws PdfException {
+    public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font) {
         this(pdfDocument, type1Font, false);
     }
 
@@ -104,7 +104,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     }
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
         if (isCopy) {
             flushCopyFontData();
         } else {
@@ -117,9 +117,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
      * otherwise the font is read and output in a PdfStream object.
      *
      * @return the PdfStream containing the font or {@code null}.
-     * @throws PdfException if there is an error reading the font.
+     * @if there is an error reading the font.
      */
-    protected PdfStream getFullFontStream() throws PdfException {
+    protected PdfStream getFullFontStream() {
         byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();
         if (fontStreamBytes == null) {
             return null;
@@ -132,11 +132,11 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         return fontStream;
     }
 
-    private void flushCopyFontData() throws PdfException {
+    private void flushCopyFontData() {
         super.flush();
     }
 
-    private void flushFontData() throws PdfException {
+    private void flushFontData() {
         getPdfObject().put(PdfName.Subtype, PdfName.Type1);
         getPdfObject().put(PdfName.BaseFont, new PdfName(getFontProgram().getFontName()));
         int firstChar;
@@ -222,7 +222,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
      */
 
 
-    private PdfDictionary getFontDescriptor(PdfStream fontStream) throws PdfException {
+    private PdfDictionary getFontDescriptor(PdfStream fontStream) {
         if (getFontProgram().isBuiltInFont())
             return null;
         PdfDictionary fontDescriptor = new PdfDictionary();
@@ -246,12 +246,12 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     }
 
     @Override
-    protected Type1Font initializeTypeFontForCopy(String encodingName) throws PdfException, IOException {
+    protected Type1Font initializeTypeFontForCopy(String encodingName) throws IOException {
         return new Type1Font(encodingName);
     }
 
     @Override
-    protected Type1Font initializeTypeFont(String fontName, String encodingName) throws IOException, PdfException {
+    protected Type1Font initializeTypeFont(String fontName, String encodingName) throws IOException {
         return new Type1Font(fontName, encodingName);
     }
 

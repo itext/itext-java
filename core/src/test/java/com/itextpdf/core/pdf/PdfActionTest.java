@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.action.PdfAction;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class PdfActionTest {
 
     }
 
-    private PdfDocument createDocument(PdfWriter writer, boolean flushPages) throws PdfException {
+    private PdfDocument createDocument(PdfWriter writer, boolean flushPages) {
         PdfDocument document = new PdfDocument(writer);
         PdfPage p1 = document.addNewPage();
         PdfStream str1 = p1.getFirstContentStream();

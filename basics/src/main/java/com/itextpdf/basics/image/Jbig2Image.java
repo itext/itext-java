@@ -1,6 +1,5 @@
 package com.itextpdf.basics.image;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.codec.Jbig2SegmentReader;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
@@ -48,7 +47,7 @@ public class Jbig2Image extends Image {
             sr.read();
             return sr.numberOfPages();
         } catch (Exception e) {
-            throw new PdfRuntimeException(PdfException.Jbig2ImageException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.Jbig2ImageException, e);
         }
     }
 }

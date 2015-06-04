@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.xobject;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
@@ -8,14 +7,14 @@ public class PdfFormXObject extends PdfXObject {
 
     private PdfResources resources = null;
 
-    public PdfFormXObject(PdfDocument document, Rectangle bBox) throws PdfException {
+    public PdfFormXObject(PdfDocument document, Rectangle bBox) {
         super(new PdfStream(document), document);
         getPdfObject().put(PdfName.Type, PdfName.XObject);
         getPdfObject().put(PdfName.Subtype, PdfName.Form);
         getPdfObject().put(PdfName.BBox, new PdfArray(bBox));
     }
 
-    public PdfFormXObject(PdfStream pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfFormXObject(PdfStream pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
     }
 
@@ -24,7 +23,7 @@ public class PdfFormXObject extends PdfXObject {
      *
      * @param page
      */
-    public PdfFormXObject(PdfPage page) throws PdfException {
+    public PdfFormXObject(PdfPage page) {
         this(page.getDocument(), page.getCropBox());
         getPdfObject().getOutputStream().writeBytes(page.getContentBytes());
         resources = new PdfResources((PdfDictionary)page.getResources().getPdfObject().copy());
@@ -32,7 +31,7 @@ public class PdfFormXObject extends PdfXObject {
 
     }
 
-    public PdfResources getResources() throws PdfException {
+    public PdfResources getResources() {
         if (this.resources == null) {
             PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
             if (resources == null) {
@@ -45,12 +44,12 @@ public class PdfFormXObject extends PdfXObject {
     }
 
     @Override
-    public PdfFormXObject copy(PdfDocument document) throws PdfException {
+    public PdfFormXObject copy(PdfDocument document) {
         return new PdfFormXObject((PdfStream)getPdfObject().copy(document), document);
     }
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
         resources = null;
         super.flush();
     }
@@ -60,7 +59,7 @@ public class PdfFormXObject extends PdfXObject {
         return put(PdfName.PCM, model);
     }
 
-    public PdfName getProcessColorModel() throws PdfException {
+    public PdfName getProcessColorModel() {
         return getPdfObject().getAsName(PdfName.PCM);
     }
 
@@ -68,7 +67,7 @@ public class PdfFormXObject extends PdfXObject {
         return put(PdfName.SeparationColorNames, colorNames);
     }
 
-    public PdfArray getSeparationColorNames() throws PdfException {
+    public PdfArray getSeparationColorNames() {
         return getPdfObject().getAsArray(PdfName.SeparationColorNames);
     }
 
@@ -76,7 +75,7 @@ public class PdfFormXObject extends PdfXObject {
         return put(PdfName.TrapRegions, regions);
     }
 
-    public PdfArray getTrapRegions() throws PdfException {
+    public PdfArray getTrapRegions() {
         return getPdfObject().getAsArray(PdfName.TrapRegions);
     }
 
@@ -84,7 +83,7 @@ public class PdfFormXObject extends PdfXObject {
         return put(PdfName.TrapStyles, trapStyles);
     }
 
-    public PdfString getTrapStyles() throws PdfException {
+    public PdfString getTrapStyles() {
         return getPdfObject().getAsString(PdfName.TrapStyles);
     }
 
@@ -93,7 +92,7 @@ public class PdfFormXObject extends PdfXObject {
         return put(PdfName.MarkStyle, markStyle);
     }
 
-    public PdfString getMarkStyle() throws PdfException {
+    public PdfString getMarkStyle() {
         return getPdfObject().getAsString(PdfName.MarkStyle);
     }
 }

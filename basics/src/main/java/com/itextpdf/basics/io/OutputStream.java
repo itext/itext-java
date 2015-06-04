@@ -1,6 +1,6 @@
 package com.itextpdf.basics.io;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -301,31 +301,31 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
             outputStream.close();
     }
 
-    public T writeLong(long value) throws PdfException {
+    public T writeLong(long value) {
         try {
             getIsoBytes(value, numBuffer.reset());
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
             return (T) this;
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWriteIntNumber, e);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotWriteIntNumber, e);
         }
     }
 
-    public T writeInteger(int value) throws PdfException {
+    public T writeInteger(int value) {
         try {
             getIsoBytes(value, numBuffer.reset());
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
             return (T) this;
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWriteIntNumber, e);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotWriteIntNumber, e);
         }
     }
 
-    public T writeFloat(float value) throws PdfException {
+    public T writeFloat(float value) {
         return writeDouble(value);
     }
 
-    public T writeFloats(float[] value) throws PdfException {
+    public T writeFloats(float[] value) {
         for (int i = 0; i < value.length; i++) {
             writeFloat(value[i]);
             if (i < value.length - 1)
@@ -334,52 +334,52 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
         return (T) this;
     }
 
-    public T writeDouble(double value) throws PdfException {
+    public T writeDouble(double value) {
         try {
             getIsoBytes(value, numBuffer.reset());
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
             return (T) this;
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWriteFloatNumber, e);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotWriteFloatNumber, e);
         }
     }
 
-    public T writeByte(byte value) throws PdfException {
+    public T writeByte(byte value) {
         try {
             write(value);
             return (T) this;
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWriteByte, e);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotWriteByte, e);
         }
     }
 
-    public T writeSpace() throws PdfException {
+    public T writeSpace() {
         return writeByte((byte) ' ');
     }
 
-    public T writeNewLine() throws PdfException {
+    public T writeNewLine() {
         return writeByte((byte) '\n');
     }
 
-    public T writeString(String value) throws PdfException {
+    public T writeString(String value) {
         return writeBytes(getIsoBytes(value));
     }
 
-    public T writeBytes(byte[] b) throws PdfException {
+    public T writeBytes(byte[] b) {
         try {
             write(b);
             return (T) this;
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWriteBytes, e);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotWriteBytes, e);
         }
     }
 
-    public T writeBytes(byte[] b, int off, int len) throws PdfException {
+    public T writeBytes(byte[] b, int off, int len) {
         try {
             write(b, off, len);
             return (T) this;
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWriteBytes, e);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotWriteBytes, e);
         }
     }
 
@@ -399,11 +399,11 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
         this.closeStream = closeStream;
     }
 
-    public void assignBytes(byte[] bytes, int count) throws PdfException {
+    public void assignBytes(byte[] bytes, int count) {
         if (outputStream instanceof ByteArrayOutputStream) {
             ((ByteArrayOutputStream) outputStream).assignBytes(bytes, count);
             currentPos = count;
         } else
-            throw new PdfException(PdfException.BytesCanBeAssignedToByteArrayOutputStreamOnly);
+            throw new PdfRuntimeException(PdfRuntimeException.BytesCanBeAssignedToByteArrayOutputStreamOnly);
     }
 }

@@ -1,9 +1,7 @@
 package com.itextpdf.core.pdf.filespec;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfObjectWrapper;
 
 public class PdfDictionaryFS extends PdfFileSpec<PdfDictionary> {
 
@@ -11,7 +9,7 @@ public class PdfDictionaryFS extends PdfFileSpec<PdfDictionary> {
         super(pdfObject);
     }
 
-    public PdfDictionaryFS(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfDictionaryFS(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
     }
 }

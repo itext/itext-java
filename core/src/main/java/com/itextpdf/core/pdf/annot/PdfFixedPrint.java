@@ -1,15 +1,14 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
 public class PdfFixedPrint extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfFixedPrint(PdfDocument pdfDocument) throws PdfException {
+    public PdfFixedPrint(PdfDocument pdfDocument) {
         this(new PdfDictionary(), pdfDocument);
     }
 
-    public PdfFixedPrint(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfFixedPrint(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
         pdfObject.put(PdfName.Type, PdfName.FixedPrint);
     }
@@ -30,15 +29,15 @@ public class PdfFixedPrint extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.V, new PdfNumber(vertical));
     }
 
-    public PdfArray getMatrix() throws PdfException {
+    public PdfArray getMatrix() {
         return getPdfObject().getAsArray(PdfName.Matrix);
     }
 
-    public PdfNumber getHorizontalTranslation() throws PdfException {
+    public PdfNumber getHorizontalTranslation() {
         return getPdfObject().getAsNumber(PdfName.H);
     }
 
-    public PdfNumber getVerticalTranslation() throws PdfException {
+    public PdfNumber getVerticalTranslation() {
         return getPdfObject().getAsNumber(PdfName.V);
     }
 }

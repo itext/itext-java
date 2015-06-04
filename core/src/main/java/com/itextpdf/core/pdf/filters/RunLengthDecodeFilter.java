@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
@@ -13,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 public class RunLengthDecodeFilter implements FilterHandler {
 
     @Override
-    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) throws PdfException {
+    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte dupCount = -1;
         for(int i = 0; i < b.length; i++){

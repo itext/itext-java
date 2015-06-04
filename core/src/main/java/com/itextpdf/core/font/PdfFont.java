@@ -1,11 +1,9 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -17,9 +15,6 @@ import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Map;
 
 /**
@@ -38,17 +33,17 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected boolean subset = true;
     protected ArrayList<int[]> subsetRanges;
 
-    public PdfFont(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfFont(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
-    protected PdfFont(PdfDocument pdfDocument) throws PdfException {
+    protected PdfFont(PdfDocument pdfDocument) {
         this(new PdfDictionary(), pdfDocument);
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
-    public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws PdfException, IOException {
+    public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws IOException {
         return new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, ""));
     }
 
@@ -128,25 +123,25 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     @Override
-    public PdfFont copy(PdfDocument document) throws PdfException {
+    public PdfFont copy(PdfDocument document) {
         return new PdfFont((PdfDictionary) getPdfObject().copy(document), document);
     }
 
-    protected void checkFontDictionary(PdfName fontType) throws PdfException {
+    protected void checkFontDictionary(PdfName fontType) {
         if (this.fontDictionary == null || this.fontDictionary.get(PdfName.Subtype) == null
                 || !this.fontDictionary.get(PdfName.Subtype).equals(fontType)) {
-            throw new PdfRuntimeException(PdfException.DictionaryNotContainFontData).setMessageParams(fontType.getValue());
+            throw new PdfRuntimeException(PdfRuntimeException.DictionaryNotContainFontData).setMessageParams(fontType.getValue());
         }
     }
 
-    protected void checkTrueTypeFontDictionary() throws PdfException {
+    protected void checkTrueTypeFontDictionary() {
         if (this.fontDictionary == null || this.fontDictionary.get(PdfName.Subtype) == null
                 || !(this.fontDictionary.get(PdfName.Subtype).equals(PdfName.TrueType) || this.fontDictionary.get(PdfName.Subtype).equals(PdfName.Type1))) {
-            throw new PdfRuntimeException(PdfException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
+            throw new PdfRuntimeException(PdfRuntimeException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
         }
     }
 
-    protected PdfStream copyFontFileStream(PdfStream fileStream) throws PdfException {
+    protected PdfStream copyFontFileStream(PdfStream fileStream) {
         PdfStream newFileStream = new PdfStream(getDocument(), fileStream.getBytes());
         for (Map.Entry<PdfName, PdfObject> entry : fileStream.entrySet()) {
             newFileStream.put(entry.getKey(), entry.getValue());
@@ -154,7 +149,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return newFileStream;
     }
 
-    protected boolean isSymbolic() throws PdfException {
+    protected boolean isSymbolic() {
         PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         if (fontDescriptor == null)
             return false;
@@ -164,7 +159,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return (flags.getIntValue() & 0x04) != 0;
     }
 
-    protected int[] getFillWidths(PdfArray widths, PdfNumber firstObj, PdfNumber lastObj) throws PdfException {
+    protected int[] getFillWidths(PdfArray widths, PdfNumber firstObj, PdfNumber lastObj) {
         int wd[] = new int[256];
         if (firstObj != null && lastObj != null && widths != null) {
             int first = firstObj.getIntValue();
@@ -194,9 +189,9 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
      * otherwise the font is read and output in a PdfStream object.
      * @return the PdfStream containing the font or {@code null}.
-     * @throws PdfException if there is an error reading the font.
+     * @if there is an error reading the font.
      */
-    protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) throws PdfException {
+    protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
         if (fontStreamBytes == null) {
             return null;
         }

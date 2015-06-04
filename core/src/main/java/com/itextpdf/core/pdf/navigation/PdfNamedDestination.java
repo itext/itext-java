@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.navigation;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
 import java.util.HashMap;
@@ -15,12 +14,12 @@ public class PdfNamedDestination extends PdfDestination<PdfName> {
         super(pdfObject);
     }
 
-    public PdfNamedDestination(PdfName pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfNamedDestination(PdfName pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
     }
 
     @Override
-    public PdfObject getDestinationPage(final HashMap<Object, PdfObject> names) throws PdfException {
+    public PdfObject getDestinationPage(final HashMap<Object, PdfObject> names) {
         PdfArray array = (PdfArray) names.get(getPdfObject());
 
         return array != null ? array.get(0, false) : null;

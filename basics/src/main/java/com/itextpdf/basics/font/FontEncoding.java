@@ -1,7 +1,6 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfException;
 
 public class FontEncoding {
 
@@ -33,7 +32,7 @@ public class FontEncoding {
     private boolean hasSpecialEncoding = false;
     private boolean fastWinansi = false;
 
-    public FontEncoding(String baseEncoding, boolean fontSpecific) throws PdfException {
+    public FontEncoding(String baseEncoding, boolean fontSpecific) {
         this.baseEncoding = normalizeEncoding(baseEncoding);
         this.fontSpecific = fontSpecific;
         this.fastWinansi = baseEncoding.equals(PdfEncodings.CP1252);

@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
 abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrapper<T> {
@@ -9,13 +8,13 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
         super(pdfObject);
     }
 
-    public PdfColorSpace(T pdfObject, PdfDocument document) throws PdfException {
+    public PdfColorSpace(T pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    abstract public int getNumOfComponents() throws PdfException;
+    abstract public int getNumOfComponents();
 
-    static public PdfColorSpace makeColorSpace(PdfObject pdfObject, PdfDocument document) throws PdfException {
+    static public PdfColorSpace makeColorSpace(PdfObject pdfObject, PdfDocument document) {
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (PdfName.DeviceGray.equals(pdfObject))

@@ -1,20 +1,19 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
 public class PdfRedactAnnotation extends PdfMarkupAnnotation {
-    public PdfRedactAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
+    public PdfRedactAnnotation(PdfDocument document, Rectangle rect) {
         super(document, rect);
     }
 
-    public PdfRedactAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfRedactAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
     @Override
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.Redact;
     }
 
@@ -22,7 +21,7 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.OverlayText, text);
     }
 
-    public PdfString getOverlayText() throws PdfException {
+    public PdfString getOverlayText() {
         return getPdfObject().getAsString(PdfName.OverlayText);
     }
 
@@ -30,7 +29,7 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.RO, dictionary);
     }
 
-    public PdfDictionary getRedactRolloverAppearance() throws PdfException {
+    public PdfDictionary getRedactRolloverAppearance() {
         return getPdfObject().getAsDictionary(PdfName.RO);
     }
 
@@ -38,7 +37,7 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.Repeat, repeat);
     }
 
-    public PdfBoolean getRepeat() throws PdfException {
+    public PdfBoolean getRepeat() {
         return getPdfObject().getAsBoolean(PdfName.Repeat);
     }
 }

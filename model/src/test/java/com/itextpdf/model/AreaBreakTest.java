@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -27,7 +27,7 @@ public class AreaBreakTest {
     }
 
     @Test
-    public void pageBreakTest1() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void pageBreakTest1() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String outFileName = destinationFolder + "pageBreak1.pdf";
         String cmpFileName = sourceFolder + "cmp_pageBreak1.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -41,7 +41,7 @@ public class AreaBreakTest {
     }
 
     @Test
-    public void pageBreakTest2() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void pageBreakTest2() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String outFileName = destinationFolder + "pageBreak2.pdf";
         String cmpFileName = sourceFolder + "cmp_pageBreak2.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

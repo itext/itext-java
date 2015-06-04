@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.xmp.XMPException;
@@ -22,7 +22,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping1() throws IOException, PdfException {
+    public void stamping1() throws IOException {
         String filename1 =  destinationFolder + "stamping1_1.pdf";
         String filename2 =  destinationFolder + "stamping1_2.pdf";
 
@@ -72,7 +72,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping2() throws IOException, PdfException {
+    public void stamping2() throws IOException {
         String filename1 =  destinationFolder + "stamping2_1.pdf";
         String filename2 =  destinationFolder + "stamping2_2.pdf";
 
@@ -114,7 +114,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping3() throws IOException, PdfException {
+    public void stamping3() throws IOException {
         String filename1 =  destinationFolder + "stamping3_1.pdf";
         String filename2 =  destinationFolder + "stamping3_2.pdf";
 
@@ -158,7 +158,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping4() throws IOException, PdfException {
+    public void stamping4() throws IOException {
         String filename1 =  destinationFolder + "stamping4_1.pdf";
         String filename2 =  destinationFolder + "stamping4_2.pdf";
 
@@ -204,7 +204,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping5() throws IOException, PdfException {
+    public void stamping5() throws IOException {
         String filename1 =  destinationFolder + "stamping5_1.pdf";
         String filename2 =  destinationFolder + "stamping5_2.pdf";
 
@@ -251,7 +251,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping6() throws IOException, PdfException {
+    public void stamping6() throws IOException {
         String filename1 =  destinationFolder + "stamping6_1.pdf";
         String filename2 =  destinationFolder + "stamping6_2.pdf";
 
@@ -294,7 +294,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping7() throws IOException, PdfException {
+    public void stamping7() throws IOException {
         String filename1 =  destinationFolder + "stamping7_1.pdf";
         String filename2 =  destinationFolder + "stamping7_2.pdf";
 
@@ -337,7 +337,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping8() throws IOException, PdfException {
+    public void stamping8() throws IOException {
         String filename1 =  destinationFolder + "stamping8_1.pdf";
         String filename2 =  destinationFolder + "stamping8_2.pdf";
         int pageCount = 10;
@@ -380,7 +380,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping9() throws IOException, PdfException {
+    public void stamping9() throws IOException {
         String filename1 =  destinationFolder + "stamping9_1.pdf";
         String filename2 =  destinationFolder + "stamping9_2.pdf";
         int pageCount = 10;
@@ -423,7 +423,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping10() throws IOException, PdfException {
+    public void stamping10() throws IOException {
         String filename1 =  destinationFolder + "stamping10_1.pdf";
         String filename2 =  destinationFolder + "stamping10_2.pdf";
         int pageCount = 10;
@@ -466,7 +466,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping11() throws IOException, PdfException {
+    public void stamping11() throws IOException {
         String filename1 =  destinationFolder + "stamping11_1.pdf";
         String filename2 =  destinationFolder + "stamping11_2.pdf";
         int pageCount = 10;
@@ -509,7 +509,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping12() throws IOException, PdfException {
+    public void stamping12() throws IOException {
         String filename1 =  destinationFolder + "stamping12_1.pdf";
         String filename2 =  destinationFolder + "stamping12_2.pdf";
         int pageCount = 1010;
@@ -558,7 +558,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stamping13() throws IOException, PdfException {
+    public void stamping13() throws IOException {
         String filename1 =  destinationFolder + "stamping13_1.pdf";
         String filename2 =  destinationFolder + "stamping13_2.pdf";
         int pageCount = 1010;
@@ -611,7 +611,7 @@ public class PdfDocumentTest {
     }
 
     @Test @Ignore
-    public void stamping14() throws IOException, PdfException {
+    public void stamping14() throws IOException {
         String filename1 =  sourceFolder + "20000PagesDocument.pdf";
         String filename2 =  destinationFolder + "stamping14.pdf";
 
@@ -647,7 +647,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingXmp1() throws IOException, PdfException, XMPException {
+    public void stampingXmp1() throws IOException, PdfRuntimeException, XMPException {
         String filename1 =  destinationFolder + "stampingXmp1_1.pdf";
         String filename2 =  destinationFolder + "stampingXmp1_2.pdf";
         int pageCount = 10;
@@ -693,7 +693,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingXmp2() throws IOException, PdfException, XMPException {
+    public void stampingXmp2() throws IOException, PdfRuntimeException, XMPException {
         String filename1 =  destinationFolder + "stampingXmp2_1.pdf";
         String filename2 =  destinationFolder + "stampingXmp2_2.pdf";
         int pageCount = 10;
@@ -740,7 +740,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingAppend1() throws IOException, PdfException {
+    public void stampingAppend1() throws IOException {
         String filename1 =  destinationFolder + "stampingAppend1_1.pdf";
         String filename2 =  destinationFolder + "stampingAppend1_2.pdf";
 
@@ -791,7 +791,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingAppend2() throws IOException, PdfException {
+    public void stampingAppend2() throws IOException {
         String filename1 =  destinationFolder + "stampingAppend2_1.pdf";
         String filename2 =  destinationFolder + "stampingAppend2_2.pdf";
 
@@ -834,7 +834,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingAppend3() throws IOException, PdfException {
+    public void stampingAppend3() throws IOException {
         String filename1 =  destinationFolder + "stampingAppend3_1.pdf";
         String filename2 =  destinationFolder + "stampingAppend3_2.pdf";
 
@@ -878,7 +878,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingAppend4() throws IOException, PdfException {
+    public void stampingAppend4() throws IOException {
         String filename1 =  destinationFolder + "stampingAppend4_1.pdf";
         String filename2 =  destinationFolder + "stampingAppend4_2.pdf";
 
@@ -925,7 +925,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingAppend5() throws IOException, PdfException {
+    public void stampingAppend5() throws IOException {
         String filename1 =  destinationFolder + "stampingAppend5_1.pdf";
         String filename2 =  destinationFolder + "stampingAppend5_2.pdf";
 
@@ -972,7 +972,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingAppend8() throws IOException, PdfException {
+    public void stampingAppend8() throws IOException {
         String filename1 =  destinationFolder + "stampingAppend8_1.pdf";
         String filename2 =  destinationFolder + "stampingAppend8_2.pdf";
         int pageCount = 10;
@@ -1015,7 +1015,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingAppend9() throws IOException, PdfException {
+    public void stampingAppend9() throws IOException {
         String filename1 =  destinationFolder + "stampingAppend9_1.pdf";
         String filename2 =  destinationFolder + "stampingAppend9_2.pdf";
         int pageCount = 10;
@@ -1058,7 +1058,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingAppend10() throws IOException, PdfException {
+    public void stampingAppend10() throws IOException {
         String filename1 =  destinationFolder + "stampingAppend10_1.pdf";
         String filename2 =  destinationFolder + "stampingAppend10_2.pdf";
         int pageCount = 10;
@@ -1101,7 +1101,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingAppend11() throws IOException, PdfException {
+    public void stampingAppend11() throws IOException {
         String filename1 =  destinationFolder + "stampingAppend11_1.pdf";
         String filename2 =  destinationFolder + "stampingAppend11_2.pdf";
         int pageCount = 10;
@@ -1144,7 +1144,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void copying1() throws IOException, PdfException {
+    public void copying1() throws IOException {
         FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copying1_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
@@ -1180,7 +1180,7 @@ public class PdfDocumentTest {
 
 
     @Test
-    public void copying2() throws IOException, PdfException {
+    public void copying2() throws IOException {
         FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copying2_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
@@ -1217,7 +1217,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void addOutlinesWithNamedDestinations01() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void addOutlinesWithNamedDestinations01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
         String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
 
@@ -1266,7 +1266,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingTestWithTaggedStructure() throws PdfException, IOException {
+    public void stampingTestWithTaggedStructure() throws IOException {
         String filename = sourceFolder + "iphone_user_guide.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -1277,7 +1277,7 @@ public class PdfDocumentTest {
         pdfDoc.close();
     }
 
-    static void verifyPdfPagesCount(PdfObject root) throws PdfException {
+    static void verifyPdfPagesCount(PdfObject root) {
         if (root.getType() == PdfObject.IndirectReference)
             root = ((PdfIndirectReference)root).getRefersTo();
         PdfDictionary pages = (PdfDictionary)root;

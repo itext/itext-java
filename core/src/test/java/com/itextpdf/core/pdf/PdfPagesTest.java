@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class PdfPagesTest {
     }
 
     @Test
-    public void simplePagesTest() throws IOException, PdfException {
+    public void simplePagesTest() throws IOException {
         String filename = "simplePagesTest.pdf";
         int pageCount = 111;
 
@@ -41,7 +41,7 @@ public class PdfPagesTest {
     }
 
     @Test
-    public void reversePagesTest() throws IOException, PdfException {
+    public void reversePagesTest() throws IOException {
         String filename = "reversePagesTest.pdf";
         int pageCount = 111;
 
@@ -61,7 +61,7 @@ public class PdfPagesTest {
     }
 
     @Test
-    public void randomObjectPagesTest() throws IOException, PdfException {
+    public void randomObjectPagesTest() throws IOException {
         String filename = "randomObjectPagesTest.pdf";
         int pageCount = 10000;
         int indexes[] = new int[pageCount];
@@ -104,7 +104,7 @@ public class PdfPagesTest {
     }
 
     @Test
-    public void randomNumberPagesTest() throws IOException, PdfException {
+    public void randomNumberPagesTest() throws IOException {
         String filename = "randomNumberPagesTest.pdf";
         int pageCount = 3000;
         int indexes[] = new int[pageCount];
@@ -147,7 +147,7 @@ public class PdfPagesTest {
     }
 
     @Test
-    public void insertFlushedPageTest() throws IOException, PdfException {
+    public void insertFlushedPageTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfPage page = pdfDoc.addNewPage();
@@ -157,8 +157,8 @@ public class PdfPagesTest {
             pdfDoc.removePage(page);
             pdfDoc.addPage(1, page);
             pdfDoc.close();
-        } catch (PdfException e) {
-            if (PdfException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
+        } catch (PdfRuntimeException e) {
+            if (PdfRuntimeException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
                 error = true;
         }
 
@@ -166,7 +166,7 @@ public class PdfPagesTest {
     }
 
     @Test
-    public void addFlushedPageTest() throws IOException, PdfException {
+    public void addFlushedPageTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfPage page = pdfDoc.addNewPage();
@@ -176,8 +176,8 @@ public class PdfPagesTest {
             pdfDoc.removePage(page);
             pdfDoc.addPage(page);
             pdfDoc.close();
-        } catch (PdfException e) {
-            if (PdfException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
+        } catch (PdfRuntimeException e) {
+            if (PdfRuntimeException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
                 error = true;
         }
 
@@ -185,7 +185,7 @@ public class PdfPagesTest {
     }
 
     @Test
-    public void removeFlushedPage() throws IOException, PdfException {
+    public void removeFlushedPage() throws IOException {
         String filename = "removeFlushedPage.pdf";
         int pageCount = 10;
 

@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.layer;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.pdf.*;
 
@@ -30,9 +30,9 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * Creates a new layer by existing dictionary and document.
      * @param layerDictionary the layer dictionary
      * @param document the PdfDocument which the layer belongs to
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfLayer(PdfDictionary layerDictionary,PdfDocument document) throws PdfException {
+    public PdfLayer(PdfDictionary layerDictionary,PdfDocument document) {
         super(layerDictionary, document);
     }
 
@@ -40,15 +40,15 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * Creates a new layer by its name and document.
      * @param name the layer name
      * @param document the PdfDocument which the layer belongs to
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfLayer(String name, PdfDocument document) throws PdfException {
+    public PdfLayer(String name, PdfDocument document) {
         this(document);
         setName(name);
         document.getCatalog().getOCProperties(true).registerLayer(this);
     }
 
-    private PdfLayer(PdfDocument document) throws PdfException {
+    private PdfLayer(PdfDocument document) {
         super(new PdfDictionary(), document);
         getPdfObject().put(PdfName.Type, PdfName.OCG);
     }
@@ -60,7 +60,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param document the <CODE>PdfDocument</CODE>
      * @return the title layer
      */
-    public static PdfLayer createTitle(String title, PdfDocument document) throws PdfException {
+    public static PdfLayer createTitle(String title, PdfDocument document) {
         PdfLayer layer = createTitleSilent(title, document);
         document.getCatalog().getOCProperties(true).registerLayer(layer);
         return layer;
@@ -75,7 +75,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param document the <CODE>PdfDocument</CODE>
      * @param group the radio group
      */
-    public static void addOCGRadioGroup(PdfDocument document, final List<PdfLayer> group) throws PdfException {
+    public static void addOCGRadioGroup(PdfDocument document, final List<PdfLayer> group) {
         document.getCatalog().getOCProperties(true).addOCGRadioGroup(group);
     }
 
@@ -173,9 +173,9 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * The default value is PdfName.View, so it will be the only element of the
      * resultant colletion if no intents are currently specified.
      * @return the collection of intents.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public Collection<PdfName> getIntents() throws PdfException {
+    public Collection<PdfName> getIntents() {
         final PdfObject intent = getPdfObject().get(PdfName.Intent);
         if (intent instanceof PdfName)
             return Arrays.asList((PdfName) intent);
@@ -209,7 +209,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * applications, and <B>Technical</B>, for technical designs such as building plans or
      * schematics
      */
-    public void setCreatorInfo(String creator, String subtype) throws PdfException {
+    public void setCreatorInfo(String creator, String subtype) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.Creator, new PdfString(creator, PdfEncodings.UnicodeBig));
@@ -226,7 +226,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param preferred used by viewer applications when there is a partial match but no exact
      * match between the system language and the language strings in all usage dictionaries
      */
-    public void setLanguage(String lang, boolean preferred) throws PdfException {
+    public void setLanguage(String lang, boolean preferred) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.Lang, new PdfString(lang, PdfEncodings.UnicodeBig));
@@ -243,7 +243,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * PDF or a raster image format).
      * @param export the export state
      */
-    public void setExport(boolean export) throws PdfException {
+    public void setExport(boolean export) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.ExportState, export ? PdfName.ON : PdfName.OFF);
@@ -260,7 +260,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * should be ON. A negative value will set the largest possible magnification supported by the
      * viewer application
      */
-    public void setZoom(float min, float max) throws PdfException {
+    public void setZoom(float min, float max) {
         if (min <= 0 && max < 0)
             return;
         PdfDictionary usage = getUsage();
@@ -281,7 +281,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param printState indicates that the group should be
      * set to that state when the document is printed from a viewer application
      */
-    public void setPrint(String subtype, boolean printState) throws PdfException {
+    public void setPrint(String subtype, boolean printState) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.Subtype, new PdfName(subtype));
@@ -295,7 +295,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * document is opened in a viewer application.
      * @param view the view state
      */
-    public void setView(boolean view) throws PdfException {
+    public void setView(boolean view) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.ViewState, view ? PdfName.ON : PdfName.OFF);
@@ -310,7 +310,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param names one or more text strings representing
      * the name(s) of the individual, position or organization
      */
-    public void setUser(String type, String... names) throws PdfException {
+    public void setUser(String type, String... names) {
         if (type == null || !type.equals("Ind") && !type.equals("Ttl") && !type.equals("Org"))
             throw new IllegalArgumentException("Illegal type argument");
         if (names == null || names.length == 0)
@@ -337,7 +337,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * "FG" (Foreground), "BG" (Background), or "L" (Logo).
      * @since 5.0.2
      */
-    public void setPageElement(String pe) throws PdfException {
+    public void setPageElement(String pe) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.Subtype, new PdfName(pe));
@@ -349,9 +349,9 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * Gets the indirect reference to the current layer object,
      * making it indirect first if necessary.
      * @return the indirect reference to the object representing the layer
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfIndirectReference getIndirectReference() throws PdfException {
+    public PdfIndirectReference getIndirectReference() {
         getPdfObject().makeIndirect(getDocument());
         return getPdfObject().getIndirectReference();
     }
@@ -378,9 +378,9 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param title the title of the layer
      * @param document the document this title layer belongs to
      * @return the created layer
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    protected static PdfLayer createTitleSilent(String title, PdfDocument document) throws PdfException {
+    protected static PdfLayer createTitleSilent(String title, PdfDocument document) {
         if (title == null)
             throw new IllegalArgumentException("Invalid title argument");
         PdfLayer layer = new PdfLayer(document);
@@ -391,9 +391,9 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     /**
      * Gets the /Usage dictionary, creating a new one if necessary.
      * @return the /Usage dictionary
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    protected PdfDictionary getUsage() throws PdfException {
+    protected PdfDictionary getUsage() {
         PdfDictionary usage = getPdfObject().getAsDictionary(PdfName.Usage);
         if (usage == null) {
             usage = new PdfDictionary();

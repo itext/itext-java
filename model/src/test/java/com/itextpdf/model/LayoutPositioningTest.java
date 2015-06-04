@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.DeviceGray;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -29,7 +29,7 @@ public class LayoutPositioningTest {
     }
 
     @Test
-    public void relativePositioningTest01() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void relativePositioningTest01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String outFileName = destinationFolder + "relativePositioningTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_relativePositioningTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -52,7 +52,7 @@ public class LayoutPositioningTest {
     }
 
     @Test
-    public void relativePositioningTest02() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void relativePositioningTest02() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String outFileName = destinationFolder + "relativePositioningTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_relativePositioningTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -76,7 +76,7 @@ public class LayoutPositioningTest {
     }
 
     @Test
-    public void fixedPositioningTest01() throws IOException, PdfException, InterruptedException {
+    public void fixedPositioningTest01() throws IOException, PdfRuntimeException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositioningTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositioningTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

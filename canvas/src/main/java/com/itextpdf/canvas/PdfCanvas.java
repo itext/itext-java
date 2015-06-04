@@ -1,6 +1,6 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
@@ -125,11 +125,11 @@ public class PdfCanvas {
      *
      * @param page page to create canvas from.
      */
-    public PdfCanvas(PdfPage page) throws PdfException {
+    public PdfCanvas(PdfPage page) {
         this(getPageStream(page), page.getResources());
     }
 
-    public PdfCanvas(PdfFormXObject xObj) throws PdfException {
+    public PdfCanvas(PdfFormXObject xObj) {
         this(xObj.getPdfObject(), xObj.getResources());
     }
 
@@ -139,7 +139,7 @@ public class PdfCanvas {
      * @param doc     @see PdfDocument.
      * @param pageNum page number.
      */
-    public PdfCanvas(PdfDocument doc, int pageNum) throws PdfException {
+    public PdfCanvas(PdfDocument doc, int pageNum) {
         this(doc.getPage(pageNum));
     }
 
@@ -178,7 +178,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas saveState() throws PdfException {
+    public PdfCanvas saveState() {
         gsStack.push(currentGs);
         currentGs = new PdfGraphicsState(currentGs);
         contentStream.getOutputStream().writeBytes(q);
@@ -190,13 +190,13 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas restoreState() throws PdfException {
+    public PdfCanvas restoreState() {
         currentGs = gsStack.pop();
         contentStream.getOutputStream().writeBytes(Q);
         return this;
     }
 
-    public PdfCanvas concatMatrix(float a, float b, float c, float d, float e, float f) throws PdfException {
+    public PdfCanvas concatMatrix(float a, float b, float c, float d, float e, float f) {
         contentStream.getOutputStream().writeFloat(a).writeSpace().
                 writeFloat(b).writeSpace().
                 writeFloat(c).writeSpace().
@@ -220,7 +220,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas beginText() throws PdfException {
+    public PdfCanvas beginText() {
         contentStream.getOutputStream().writeBytes(BT);
         return this;
     }
@@ -230,7 +230,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas endText() throws PdfException {
+    public PdfCanvas endText() {
         contentStream.getOutputStream().writeBytes(ET);
         return this;
     }
@@ -242,9 +242,9 @@ public class PdfCanvas {
      * @param size Font size.
      * @return current canvas.
      */
-    public PdfCanvas setFontAndSize(PdfFont font, float size) throws PdfException {
+    public PdfCanvas setFontAndSize(PdfFont font, float size) {
         if (size < 0.0001f && size > -0.0001f)
-            throw new PdfException(PdfException.FontSizeTooSmall, size);
+            throw new PdfRuntimeException(PdfRuntimeException.FontSizeTooSmall, size);
         currentGs.setFontSize(size);
         PdfName fontName = resources.addFont(font);
         currentGs.setFont(font);
@@ -263,7 +263,7 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas moveText(float x, float y) throws PdfException {
+    public PdfCanvas moveText(float x, float y) {
         contentStream.getOutputStream()
                 .writeFloat(x)
                 .writeSpace()
@@ -281,7 +281,7 @@ public class PdfCanvas {
      * @param leading the new leading.
      * @return current canvas.
      */
-    public PdfCanvas setLeading(final float leading) throws PdfException {
+    public PdfCanvas setLeading(final float leading) {
         currentGs.setLeading(leading);
         contentStream.getOutputStream()
                 .writeFloat(leading)
@@ -300,7 +300,7 @@ public class PdfCanvas {
      * @param y y-coordinate of the new current point
      * @return current canvas.
      */
-    public PdfCanvas moveTextWithLeading(final float x, final float y) throws PdfException {
+    public PdfCanvas moveTextWithLeading(final float x, final float y) {
         currentGs.setLeading(-y);
         contentStream.getOutputStream()
                 .writeFloat(x)
@@ -315,7 +315,7 @@ public class PdfCanvas {
      * Moves to the start of the next line.
      * @return current canvas.
      */
-    public PdfCanvas newlineText() throws PdfException {
+    public PdfCanvas newlineText() {
         contentStream.getOutputStream()
                 .writeBytes(TStar);
         return this;
@@ -327,7 +327,7 @@ public class PdfCanvas {
      * @param text the text to write
      * @return current canvas.
      */
-    public PdfCanvas newlineShowText(final String text) throws PdfException {
+    public PdfCanvas newlineShowText(final String text) {
         showText2(text);
         contentStream.getOutputStream()
                 .writeByte((byte) '\'')
@@ -343,7 +343,7 @@ public class PdfCanvas {
      * @param text the text to write
      * @return current canvas.
      */
-    public PdfCanvas newlineShowText(final float wordSpacing, final float charSpacing, final String text) throws PdfException {
+    public PdfCanvas newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
         contentStream.getOutputStream()
                 .writeFloat(wordSpacing)
                 .writeSpace()
@@ -365,7 +365,7 @@ public class PdfCanvas {
      * @param textRenderingMode text rendering mode @see PdfCanvasConstants.
      * @return current canvas.
      */
-    public PdfCanvas setTextRenderingMode(int textRenderingMode) throws PdfException {
+    public PdfCanvas setTextRenderingMode(int textRenderingMode) {
         currentGs.setTextRenderingMode(textRenderingMode);
         contentStream.getOutputStream()
                 .writeInteger(textRenderingMode).writeSpace()
@@ -381,7 +381,7 @@ public class PdfCanvas {
      * @param textRise a parameter
      * @return current canvas.
      */
-    public PdfCanvas setTextRise(final float textRise) throws PdfException {
+    public PdfCanvas setTextRise(final float textRise) {
         currentGs.setTextRise(textRise);
         contentStream.getOutputStream()
                 .writeFloat(textRise).writeSpace()
@@ -395,7 +395,7 @@ public class PdfCanvas {
      * @param wordSpacing a parameter
      * @return current canvas.
      */
-    public PdfCanvas setWordSpacing(final float wordSpacing) throws PdfException {
+    public PdfCanvas setWordSpacing(final float wordSpacing) {
         currentGs.setWordSpacing(wordSpacing);
         contentStream.getOutputStream()
                 .writeFloat(wordSpacing).writeSpace()
@@ -409,7 +409,7 @@ public class PdfCanvas {
      * @param charSpacing a parameter
      * @return current canvas.
      */
-    public PdfCanvas setCharacterSpacing(final float charSpacing) throws PdfException {
+    public PdfCanvas setCharacterSpacing(final float charSpacing) {
         currentGs.setCharSpacing(charSpacing);
         contentStream.getOutputStream()
                 .writeFloat(charSpacing).writeSpace()
@@ -423,7 +423,7 @@ public class PdfCanvas {
      * @param scale a parameter.
      * @return current canvas.
      */
-    public PdfCanvas setHorizontalScaling(float scale) throws PdfException {
+    public PdfCanvas setHorizontalScaling(float scale) {
         currentGs.setHorizontalScaling(scale);
         contentStream.getOutputStream()
                 .writeFloat(scale)
@@ -443,7 +443,7 @@ public class PdfCanvas {
      * @param y operand 3,2 in the matrix.
      * @return current canvas.
      */
-    public PdfCanvas setTextMatrix(float a, float b, float c, float d, float x, float y) throws PdfException {
+    public PdfCanvas setTextMatrix(float a, float b, float c, float d, float x, float y) {
         contentStream.getOutputStream()
                 .writeFloat(a)
                 .writeSpace()
@@ -467,7 +467,7 @@ public class PdfCanvas {
      * @param y operand 3,2 in the matrix.
      * @return current canvas.
      */
-    public PdfCanvas setTextMatrix(float x, float y) throws PdfException {
+    public PdfCanvas setTextMatrix(float x, float y) {
         return setTextMatrix(1, 0, 0, 1, x, y);
     }
 
@@ -477,7 +477,7 @@ public class PdfCanvas {
      * @param text text to show.
      * @return current canvas.
      */
-    public PdfCanvas showText(String text) throws PdfException {
+    public PdfCanvas showText(String text) {
         showText2(text);
         contentStream.getOutputStream().writeBytes(Tj);
         return this;
@@ -490,7 +490,7 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas moveTo(final float x, final float y) throws PdfException {
+    public PdfCanvas moveTo(final float x, final float y) {
         contentStream.getOutputStream()
                 .writeFloat(x)
                 .writeSpace()
@@ -507,7 +507,7 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas lineTo(final float x, final float y) throws PdfException {
+    public PdfCanvas lineTo(final float x, final float y) {
         contentStream.getOutputStream()
                 .writeFloat(x)
                 .writeSpace()
@@ -527,7 +527,7 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveTo(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) throws PdfException {
+    public PdfCanvas curveTo(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
         contentStream.getOutputStream()
                 .writeFloat(x1)
                 .writeSpace()
@@ -554,7 +554,7 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveTo(final float x2, final float y2, final float x3, final float y3) throws PdfException {
+    public PdfCanvas curveTo(final float x2, final float y2, final float x3, final float y3) {
         contentStream.getOutputStream()
                 .writeFloat(x2)
                 .writeSpace()
@@ -576,7 +576,7 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveFromTo(final float x1, final float y1, final float x3, final float y3) throws PdfException {
+    public PdfCanvas curveFromTo(final float x1, final float y1, final float x3, final float y3) {
         contentStream.getOutputStream()
                 .writeFloat(x1)
                 .writeSpace()
@@ -604,7 +604,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas arc(final float x1, final float y1, final float x2, final float y2,
-                         final float startAng, final float extent) throws PdfException {
+                         final float startAng, final float extent) {
         ArrayList<float[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty())
             return this;
@@ -626,7 +626,7 @@ public class PdfCanvas {
      * @param x2 a corner of the enclosing rectangle
      * @param y2 a corner of the enclosing rectangle
      */
-    public PdfCanvas ellipse(final float x1, final float y1, final float x2, final float y2) throws PdfException {
+    public PdfCanvas ellipse(final float x1, final float y1, final float x2, final float y2) {
         return arc(x1, y1, x2, y2, 0f, 360f);
     }
 
@@ -722,7 +722,7 @@ public class PdfCanvas {
      * @param height height.
      * @return current canvas.
      */
-    public PdfCanvas rectangle(float x, float y, float width, float height) throws PdfException {
+    public PdfCanvas rectangle(float x, float y, float width, float height) {
         contentStream.getOutputStream().writeFloat(x).
                 writeSpace().
                 writeFloat(y).
@@ -740,7 +740,7 @@ public class PdfCanvas {
      * @param rectangle a rectangle to be drawn
      * @return current canvas.
      */
-    public PdfCanvas rectangle(Rectangle rectangle) throws PdfException {
+    public PdfCanvas rectangle(Rectangle rectangle) {
         return rectangle(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
     }
 
@@ -754,7 +754,7 @@ public class PdfCanvas {
      * @param radius radius of the arc corner.
      * @return current canvas.
      */
-    public PdfCanvas roundRectangle(float x, float y, float width, float height, float radius) throws PdfException {
+    public PdfCanvas roundRectangle(float x, float y, float width, float height, float radius) {
         if (width < 0) {
             x += width;
             width = -width;
@@ -786,7 +786,7 @@ public class PdfCanvas {
      * @param r radius of circle.
      * @return current canvas.
      */
-    public PdfCanvas circle(final float x, final float y, final float r) throws PdfException {
+    public PdfCanvas circle(final float x, final float y, final float r) {
         float b = 0.5523f;
         moveTo(x + r, y);
         curveTo(x + r, y + r * b, x + r * b, y + r, x, y + r);
@@ -796,7 +796,7 @@ public class PdfCanvas {
         return this;
     }
 
-    public PdfCanvas paintShading(PdfShading shading) throws PdfException {
+    public PdfCanvas paintShading(PdfShading shading) {
         PdfName shadingName = resources.addShading(shading);
         contentStream.getOutputStream().write(shadingName).writeSpace().writeBytes(sh);
         return this;
@@ -808,7 +808,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas closePath() throws PdfException {
+    public PdfCanvas closePath() {
         contentStream.getOutputStream().writeBytes(h);
         return this;
     }
@@ -818,7 +818,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas closePathEoFillStroke() throws PdfException {
+    public PdfCanvas closePathEoFillStroke() {
         contentStream.getOutputStream().writeBytes(bStar);
         return this;
     }
@@ -828,7 +828,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas closePathFillStroke() throws PdfException {
+    public PdfCanvas closePathFillStroke() {
         contentStream.getOutputStream().writeBytes(b);
         return this;
     }
@@ -838,7 +838,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas newPath() throws PdfException {
+    public PdfCanvas newPath() {
         contentStream.getOutputStream().writeBytes(n);
         return this;
     }
@@ -848,12 +848,12 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas stroke() throws PdfException {
+    public PdfCanvas stroke() {
         contentStream.getOutputStream().writeBytes(S);
         return this;
     }
 
-    public PdfCanvas clip() throws PdfException {
+    public PdfCanvas clip() {
         contentStream.getOutputStream().writeBytes(W);
         return this;
     }
@@ -864,7 +864,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas eoClip() throws PdfException {
+    public PdfCanvas eoClip() {
         contentStream.getOutputStream().writeBytes(WStar);
         return this;
     }
@@ -874,7 +874,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas closePathStroke() throws PdfException {
+    public PdfCanvas closePathStroke() {
         contentStream.getOutputStream().writeBytes(s);
         return this;
     }
@@ -884,7 +884,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas fill() throws PdfException {
+    public PdfCanvas fill() {
         contentStream.getOutputStream().writeBytes(f);
         return this;
     }
@@ -894,7 +894,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas fillStroke() throws PdfException {
+    public PdfCanvas fillStroke() {
         contentStream.getOutputStream().writeBytes(B);
         return this;
     }
@@ -904,7 +904,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas eoFill() throws PdfException {
+    public PdfCanvas eoFill() {
         contentStream.getOutputStream().writeBytes(fStar);
         return this;
     }
@@ -914,7 +914,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas eoFillStroke() throws PdfException {
+    public PdfCanvas eoFillStroke() {
         contentStream.getOutputStream().writeBytes(BStar);
         return this;
     }
@@ -925,7 +925,7 @@ public class PdfCanvas {
      * @param lineWidth line width.
      * @return current canvas.
      */
-    public PdfCanvas setLineWidth(float lineWidth) throws PdfException {
+    public PdfCanvas setLineWidth(float lineWidth) {
         if (floatsAreEqual(currentGs.getLineWidth(), lineWidth))
             return this;
         currentGs.setLineWidth(lineWidth);
@@ -935,7 +935,7 @@ public class PdfCanvas {
         return this;
     }
 
-    public PdfCanvas setLineCapStyle(int lineCapStyle) throws PdfException {
+    public PdfCanvas setLineCapStyle(int lineCapStyle) {
         if (integersAreEqual(currentGs.getLineCapStyle(), lineCapStyle))
             return this;
         currentGs.setLineCapStyle(lineCapStyle);
@@ -945,7 +945,7 @@ public class PdfCanvas {
         return this;
     }
 
-    public PdfCanvas setLineJoinStyle(int lineJoinStyle) throws PdfException {
+    public PdfCanvas setLineJoinStyle(int lineJoinStyle) {
         if (integersAreEqual(currentGs.getLineJoinStyle(), lineJoinStyle))
             return this;
         currentGs.setLineJoinStyle(lineJoinStyle);
@@ -955,7 +955,7 @@ public class PdfCanvas {
         return this;
     }
 
-    public PdfCanvas setMiterLimit(float miterLimit) throws PdfException {
+    public PdfCanvas setMiterLimit(float miterLimit) {
         if (floatsAreEqual(currentGs.getMiterLimit(), miterLimit))
             return this;
         currentGs.setMiterLimit(miterLimit);
@@ -975,7 +975,7 @@ public class PdfCanvas {
      *
      * @param phase the value of the phase
      */
-    public PdfCanvas setLineDash(final float phase) throws PdfException {
+    public PdfCanvas setLineDash(final float phase) {
         contentStream.getOutputStream().writeByte((byte) '[').writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
@@ -993,7 +993,7 @@ public class PdfCanvas {
      * @param phase   the value of the phase
      * @param unitsOn the number of units that must be 'on' (equals the number of units that must be 'off').
      */
-    public void setLineDash(final float unitsOn, final float phase) throws PdfException {
+    public void setLineDash(final float unitsOn, final float phase) {
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
@@ -1011,7 +1011,7 @@ public class PdfCanvas {
      * @param unitsOn  the number of units that must be 'on'
      * @param unitsOff the number of units that must be 'off'
      */
-    public void setLineDash(final float unitsOn, final float unitsOff, final float phase) throws PdfException {
+    public void setLineDash(final float unitsOn, final float unitsOff, final float phase) {
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeSpace()
                 .writeFloat(unitsOff).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1029,7 +1029,7 @@ public class PdfCanvas {
      * @param array length of the alternating dashes and gaps
      * @param phase the value of the phase
      */
-    public final void setLineDash(final float[] array, final float phase) throws PdfException {
+    public final void setLineDash(final float[] array, final float phase) {
         PdfOutputStream out = contentStream.getOutputStream();
         out.writeByte((byte) '[');
         for (int i = 0; i < array.length; i++) {
@@ -1040,7 +1040,7 @@ public class PdfCanvas {
         out.writeByte((byte) ']').writeSpace().writeFloat(phase).writeSpace().writeBytes(d);
     }
 
-    public PdfCanvas setRenderingIntent(PdfName renderingIntent) throws PdfException {
+    public PdfCanvas setRenderingIntent(PdfName renderingIntent) {
         if (renderingIntent.equals(currentGs.getRenderingIntent()))
             return this;
         currentGs.setRenderingIntent(renderingIntent);
@@ -1059,7 +1059,7 @@ public class PdfCanvas {
      * @param flatnessTolerance a value
      * @return current canvas.
      */
-    public PdfCanvas setFlatnessTolerance(float flatnessTolerance) throws PdfException {
+    public PdfCanvas setFlatnessTolerance(float flatnessTolerance) {
         if (floatsAreEqual(currentGs.getFlatnessTolerance(), flatnessTolerance))
             return this;
         currentGs.setFlatnessTolerance(flatnessTolerance);
@@ -1075,7 +1075,7 @@ public class PdfCanvas {
      * @param color fill color.
      * @return current canvas.
      */
-    public PdfCanvas setFillColor(Color color) throws PdfException {
+    public PdfCanvas setFillColor(Color color) {
         return setColor(color, true);
     }
 
@@ -1085,11 +1085,11 @@ public class PdfCanvas {
      * @param color stroke color.
      * @return current canvas.
      */
-    public PdfCanvas setStrokeColor(Color color) throws PdfException {
+    public PdfCanvas setStrokeColor(Color color) {
         return setColor(color, false);
     }
 
-    public PdfCanvas setColor(Color color, boolean fill) throws PdfException {
+    public PdfCanvas setColor(Color color, boolean fill) {
         if (color instanceof PatternColor) {
             return setColor(color.getColorSpace(), color.getColorValue(), ((PatternColor) color).getPattern(), fill);
         } else {
@@ -1097,11 +1097,11 @@ public class PdfCanvas {
         }
     }
 
-    public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, boolean fill) throws PdfException {
+    public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, boolean fill) {
         return setColor(colorSpace, colorValue, null, fill);
     }
 
-    public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern, boolean fill) throws PdfException {
+    public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern, boolean fill) {
         boolean setColorValueOnly = false;
         Color c = fill ? currentGs.getFillColor() : currentGs.getStrokeColor();
         Color newColor = createColor(colorSpace, colorValue, pattern);
@@ -1141,11 +1141,11 @@ public class PdfCanvas {
         return this;
     }
 
-    public PdfCanvas setFillColorGray(float g) throws PdfException {
+    public PdfCanvas setFillColorGray(float g) {
         return setColor(gray, new float[]{g}, true);
     }
 
-    public PdfCanvas setStrokeColorGray(float g) throws PdfException {
+    public PdfCanvas setStrokeColorGray(float g) {
         return setColor(gray, new float[]{g}, false);
     }
 
@@ -1154,7 +1154,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas resetFillColorGray() throws PdfException {
+    public PdfCanvas resetFillColorGray() {
         return setFillColorGray(0);
     }
 
@@ -1163,23 +1163,23 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas resetStrokeColorGray() throws PdfException {
+    public PdfCanvas resetStrokeColorGray() {
         return setStrokeColorGray(0);
     }
 
-    public PdfCanvas setFillColorRgb(float r, float g, float b) throws PdfException {
+    public PdfCanvas setFillColorRgb(float r, float g, float b) {
         return setColor(rgb, new float[]{r, g, b}, true);
     }
 
-    public PdfCanvas setStrokeColorRgb(float r, float g, float b) throws PdfException {
+    public PdfCanvas setStrokeColorRgb(float r, float g, float b) {
         return setColor(rgb, new float[]{r, g, b}, false);
     }
 
-    public PdfCanvas setFillColorShading(PdfPattern.Shading shading) throws PdfException {
+    public PdfCanvas setFillColorShading(PdfPattern.Shading shading) {
         return setColor(pattern, null, shading, true);
     }
 
-    public PdfCanvas setStrokeColorShading(PdfPattern.Shading shading) throws PdfException {
+    public PdfCanvas setStrokeColorShading(PdfPattern.Shading shading) {
         return setColor(pattern, null, shading, false);
     }
 
@@ -1188,7 +1188,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas resetFillColorRgb() throws PdfException {
+    public PdfCanvas resetFillColorRgb() {
         return resetFillColorGray();
     }
 
@@ -1197,16 +1197,16 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas resetStrokeColorRgb() throws PdfException {
+    public PdfCanvas resetStrokeColorRgb() {
         return resetStrokeColorGray();
     }
 
 
-    public PdfCanvas setFillColorCmyk(float c, float m, float y, float k) throws PdfException {
+    public PdfCanvas setFillColorCmyk(float c, float m, float y, float k) {
         return setColor(cmyk, new float[]{c, m, y, k}, true);
     }
 
-    public PdfCanvas setStrokeColorCmyk(float c, float m, float y, float k) throws PdfException {
+    public PdfCanvas setStrokeColorCmyk(float c, float m, float y, float k) {
         return setColor(cmyk, new float[]{c, m, y, k}, false);
     }
 
@@ -1215,7 +1215,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas resetFillColorCmyk() throws PdfException {
+    public PdfCanvas resetFillColorCmyk() {
         return setFillColorCmyk(0, 0, 0, 1);
     }
 
@@ -1224,7 +1224,7 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas resetStrokeColorCmyk() throws PdfException {
+    public PdfCanvas resetStrokeColorCmyk() {
         return setStrokeColorCmyk(0, 0, 0, 1);
     }
 
@@ -1238,7 +1238,7 @@ public class PdfCanvas {
      * @param layer @see PdfLayer.
      * @return current canvas.
      */
-    public PdfCanvas beginLayer(final PdfOCG layer) throws PdfException {
+    public PdfCanvas beginLayer(final PdfOCG layer) {
         if (layer instanceof PdfLayer && ((PdfLayer)layer).getTitle() != null)
             throw new IllegalArgumentException("Illegal layer argument.");
         if (layerDepth == null)
@@ -1267,13 +1267,13 @@ public class PdfCanvas {
      *
      * @return current canvas.
      */
-    public PdfCanvas endLayer() throws PdfException {
+    public PdfCanvas endLayer() {
         int n = 1;
         if (layerDepth != null && !layerDepth.isEmpty()) {
             n = layerDepth.get(layerDepth.size() - 1);
             layerDepth.remove(layerDepth.size() - 1);
         } else {
-            throw new PdfException(PdfException.UnbalancedLayerOperators);
+            throw new PdfRuntimeException(PdfRuntimeException.UnbalancedLayerOperators);
         }
         while (n-- > 0)
             contentStream.getOutputStream().writeBytes(EMC).writeNewLine();
@@ -1292,9 +1292,9 @@ public class PdfCanvas {
      * @param f        an element of the transformation matrix
      * @param asInline true if to add image as in-line.
      * @return created Image XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException on error
+     * @on error
      */
-    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) throws PdfException {
+    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
@@ -1317,9 +1317,9 @@ public class PdfCanvas {
      * @param rect
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfXObject addImage(Image image, Rectangle rect, boolean asInline) throws PdfException {
+    public PdfXObject addImage(Image image, Rectangle rect, boolean asInline) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY(), asInline);
     }
 
@@ -1331,9 +1331,9 @@ public class PdfCanvas {
      * @param y
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfXObject addImage(Image image, float x, float y, boolean asInline) throws PdfException {
+    public PdfXObject addImage(Image image, float x, float y, boolean asInline) {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
@@ -1358,9 +1358,9 @@ public class PdfCanvas {
      * @param width
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException on error.
+     * @on error.
      */
-    public PdfXObject addImage(Image image, float x, float y, float width, boolean asInline) throws PdfException {
+    public PdfXObject addImage(Image image, float x, float y, float width, boolean asInline) {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
@@ -1388,9 +1388,9 @@ public class PdfCanvas {
      * @param asInline true if to add image as in-line.
      * @param dummy
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfXObject addImage(Image image, float x, float y, float height, boolean asInline, boolean dummy) throws PdfException {
+    public PdfXObject addImage(Image image, float x, float y, float height, boolean asInline, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y, asInline);
     }
 
@@ -1405,9 +1405,9 @@ public class PdfCanvas {
      * @param e     an element of the transformation matrix
      * @param f     an element of the transformation matrix
      * @return canvas a reference to this object.
-     * @throws PdfException on error.
+     * @on error.
      */
-    public PdfCanvas addXObject(PdfXObject xObject, float a, float b, float c, float d, float e, float f) throws PdfException {
+    public PdfCanvas addXObject(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
         if (xObject instanceof PdfFormXObject) {
             return  addForm((PdfFormXObject)xObject, a, b, c, d, e, f);
         } else if (xObject instanceof PdfImageXObject) {
@@ -1424,9 +1424,9 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return
-     * @throws PdfException on error.
+     * @on error.
      */
-    public PdfCanvas addXObject(PdfXObject xObject, float x, float y) throws PdfException {
+    public PdfCanvas addXObject(PdfXObject xObject, float x, float y) {
         if (xObject instanceof PdfFormXObject) {
             return  addForm((PdfFormXObject)xObject, x, y);
         } else if (xObject instanceof PdfImageXObject) {
@@ -1442,9 +1442,9 @@ public class PdfCanvas {
      * @param xObject
      * @param rect
      * @return
-     * @throws PdfException on error.
+     * @on error.
      */
-    public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) throws PdfException {
+    public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
         if (xObject instanceof PdfFormXObject) {
             return  addForm((PdfFormXObject)xObject, rect);
         } else if (xObject instanceof PdfImageXObject) {
@@ -1462,9 +1462,9 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return
-     * @throws PdfException on error.
+     * @on error.
      */
-    public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float width) throws PdfException {
+    public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float width) {
         if (xObject instanceof PdfFormXObject) {
             return  addForm((PdfFormXObject)xObject, x, y, width);
         } else if (xObject instanceof PdfImageXObject) {
@@ -1483,9 +1483,9 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return
-     * @throws PdfException on error.
+     * @on error.
      */
-    public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float height, boolean dummy) throws PdfException {
+    public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float height, boolean dummy) {
         if (xObject instanceof PdfFormXObject) {
             return  addForm((PdfFormXObject)xObject, x, y, height, dummy);
         } else if (xObject instanceof PdfImageXObject) {
@@ -1495,7 +1495,7 @@ public class PdfCanvas {
         }
     }
 
-    public PdfCanvas setExtGState(PdfExtGState extGState) throws PdfException {
+    public PdfCanvas setExtGState(PdfExtGState extGState) {
         if (!extGState.isFlushed())
             currentGs.updateFromExtGState(extGState);
         PdfName name = resources.addExtGState(extGState);
@@ -1503,17 +1503,17 @@ public class PdfCanvas {
         return this;
     }
 
-    public PdfExtGState setExtGState(PdfDictionary extGState) throws PdfException {
+    public PdfExtGState setExtGState(PdfDictionary extGState) {
         PdfExtGState egs = new PdfExtGState(extGState, document);
         setExtGState(egs);
         return egs;
     }
 
-    public PdfCanvas beginMarkedContent(PdfName tag) throws PdfException {
+    public PdfCanvas beginMarkedContent(PdfName tag) {
         return beginMarkedContent(tag, null);
     }
 
-    public PdfCanvas beginMarkedContent(PdfName tag, PdfDictionary properties) throws PdfException {
+    public PdfCanvas beginMarkedContent(PdfName tag, PdfDictionary properties) {
         mcDepth++;
         PdfOutputStream out = contentStream.getOutputStream().write(tag).writeSpace();
         if (properties == null) {
@@ -1525,14 +1525,14 @@ public class PdfCanvas {
         return this;
     }
 
-    public PdfCanvas endMarkedContent() throws PdfException {
+    public PdfCanvas endMarkedContent() {
         if (--mcDepth < 0)
-            throw new PdfException(PdfException.UnbalancedBeginEndMarkedContentOperators);
+            throw new PdfRuntimeException(PdfRuntimeException.UnbalancedBeginEndMarkedContentOperators);
         contentStream.getOutputStream().writeBytes(EMC);
         return this;
     }
 
-    public PdfCanvas openTag(final IPdfTag tag) throws PdfException {
+    public PdfCanvas openTag(final IPdfTag tag) {
         if (tag.getRole() == null)
             return this;
 //        if ((tag.getStructParentIndex() == null) && !(tag instanceof PdfArtifact))
@@ -1542,7 +1542,7 @@ public class PdfCanvas {
         }}));
     }
 
-//    public PdfCanvas openTag(final PdfStructElem structElem) throws PdfException {
+//    public PdfCanvas openTag(final PdfStructElem structElem) {
 //        List<IPdfStructElem> kids = structElem.getKids();
 //        boolean pdfTagFound = false;
 //        if (kids != null) {
@@ -1558,7 +1558,7 @@ public class PdfCanvas {
 //        return this;
 //    }
 
-    public PdfCanvas closeTag() throws PdfException {
+    public PdfCanvas closeTag() {
         return endMarkedContent();
     }
 
@@ -1568,7 +1568,7 @@ public class PdfCanvas {
      * @param s the {@code String}
      * @return current canvas.
      */
-    public PdfCanvas setLiteral(final String s) throws PdfException {
+    public PdfCanvas setLiteral(final String s) {
         contentStream.getOutputStream().writeString(s);
         return this;
     }
@@ -1579,7 +1579,7 @@ public class PdfCanvas {
      * @param c the {@code char}
      * @return current canvas.
      */
-    public PdfCanvas setLiteral(final char c) throws PdfException {
+    public PdfCanvas setLiteral(final char c) {
         contentStream.getOutputStream().writeInteger((int) c);
         return this;
     }
@@ -1590,7 +1590,7 @@ public class PdfCanvas {
      * @param n the {@code float}
      * @return current canvas.
      */
-    public PdfCanvas setLiteral(final float n) throws PdfException {
+    public PdfCanvas setLiteral(final float n) {
         contentStream.getOutputStream().writeFloat(n);
         return this;
     }
@@ -1605,9 +1605,9 @@ public class PdfCanvas {
      * @param d     an element of the transformation matrix
      * @param e     an element of the transformation matrix
      * @param f     an element of the transformation matrix
-     * @throws PdfException on error
+     * @on error
      */
-    protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) throws PdfException {
+    protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfOutputStream os = contentStream.getOutputStream();
@@ -1635,9 +1635,9 @@ public class PdfCanvas {
      * @param e     an element of the transformation matrix
      * @param f     an element of the transformation matrix
      * @return canvas a reference to this object.
-     * @throws PdfException on error
+     * @on error
      */
-    private PdfCanvas addForm(PdfFormXObject form, float a, float b, float c, float d, float e, float f) throws PdfException {
+    private PdfCanvas addForm(PdfFormXObject form, float a, float b, float c, float d, float e, float f) {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addForm(form);
@@ -1653,9 +1653,9 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private PdfCanvas addForm(PdfFormXObject form, float x, float y) throws PdfException {
+    private PdfCanvas addForm(PdfFormXObject form, float x, float y) {
         return addForm(form, 1, 0, 0, 1, x, y);
     }
 
@@ -1665,9 +1665,9 @@ public class PdfCanvas {
      * @param form
      * @param rect
      * @return
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private PdfCanvas addForm(PdfFormXObject form, Rectangle rect) throws PdfException {
+    private PdfCanvas addForm(PdfFormXObject form, Rectangle rect) {
         return addForm(form, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
     }
 
@@ -1679,12 +1679,12 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private PdfCanvas addForm(PdfFormXObject form, float x, float y, float width) throws PdfException {
+    private PdfCanvas addForm(PdfFormXObject form, float x, float y, float width) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
-            throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfFormXobjectHasInvalidBbox);
         Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
         Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
         return addForm(form, width, 0, 0, width / formWidth * formHeight, x, y);
@@ -1699,12 +1699,12 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return
-     * @throws PdfException on error.
+     * @on error.
      */
-    private PdfCanvas addForm(PdfFormXObject form, float x, float y, float height, boolean dummy) throws PdfException {
+    private PdfCanvas addForm(PdfFormXObject form, float x, float y, float height, boolean dummy) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
-            throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfFormXobjectHasInvalidBbox);
         Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
         Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
         return addForm(form, height / formHeight * formWidth, 0, 0, height, x, y);
@@ -1721,9 +1721,9 @@ public class PdfCanvas {
      * @param e     an element of the transformation matrix
      * @param f     an element of the transformation matrix
      * @return canvas a reference to this object.
-     * @throws PdfException on error
+     * @on error
      */
-    private PdfCanvas addImage(PdfImageXObject image, float a, float b, float c, float d, float e, float f) throws PdfException {
+    private PdfCanvas addImage(PdfImageXObject image, float a, float b, float c, float d, float e, float f) {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addImage(image);
@@ -1732,7 +1732,7 @@ public class PdfCanvas {
         return this;
     }
 
-    private PdfCanvas addImage(PdfXObject xObject, float a, float b, float c, float d, float e, float f) throws PdfException {
+    private PdfCanvas addImage(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addImage(xObject.getPdfObject());
@@ -1748,9 +1748,9 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private PdfCanvas addImage(PdfImageXObject image, float x, float y) throws PdfException {
+    private PdfCanvas addImage(PdfImageXObject image, float x, float y) {
         return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y);
     }
 
@@ -1760,9 +1760,9 @@ public class PdfCanvas {
      * @param image
      * @param rect
      * @return
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private PdfCanvas addImage(PdfImageXObject image, Rectangle rect) throws PdfException {
+    private PdfCanvas addImage(PdfImageXObject image, Rectangle rect) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
     }
 
@@ -1774,9 +1774,9 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private PdfCanvas addImage(PdfImageXObject image, float x, float y, float width) throws PdfException {
+    private PdfCanvas addImage(PdfImageXObject image, float x, float y, float width) {
         return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
     }
 
@@ -1789,9 +1789,9 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return
-     * @throws PdfException on error.
+     * @on error.
      */
-    private PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) throws PdfException {
+    private PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
     }
 
@@ -1815,7 +1815,7 @@ public class PdfCanvas {
             return Integer.compare(i1, i2) == 0;
     }
 
-    private static PdfStream getPageStream(PdfPage page) throws PdfException {
+    private static PdfStream getPageStream(PdfPage page) {
         PdfStream stream = page.getContentStream(page.getContentStreamCount() - 1);
         return stream.getOutputStream() == null ? page.newContentStreamAfter() : stream;
     }
@@ -1826,19 +1826,19 @@ public class PdfCanvas {
      *
      * @param text the text to write.
      */
-    private void showText2(final String text) throws PdfException {
+    private void showText2(final String text) {
         if (currentGs.getFont() == null)
-            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
+            throw new PdfRuntimeException(PdfRuntimeException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = currentGs.getFont().convertToBytes(text);
         Utilities.writeEscapedString(contentStream.getOutputStream(), b);
     }
 
-    private void addToPropertiesAndBeginLayer(final PdfOCG layer) throws PdfException {
+    private void addToPropertiesAndBeginLayer(final PdfOCG layer) {
         PdfName name = resources.addProperties(layer.getPdfObject());
         contentStream.getOutputStream().write(PdfName.OC).writeSpace().write(name).writeSpace().writeBytes(BDC).writeNewLine();
     }
 
-    private Color createColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern) throws PdfException {
+    private Color createColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern) {
         if (colorSpace instanceof PdfSpecialCs.UncoloredTilingPattern) {
             return new PatternColor((PdfPattern.Tiling) pattern, ((PdfSpecialCs.UncoloredTilingPattern) colorSpace).getUnderlyingColorSpace(), colorValue);
         } else if (colorSpace instanceof PdfSpecialCs.Pattern) {

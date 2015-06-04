@@ -1,16 +1,15 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
 abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapper<T> {
 
-    public PdfPattern(T pdfObject, PdfDocument document) throws PdfException {
+    public PdfPattern(T pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    public static PdfPattern getPatternInstance(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public static PdfPattern getPatternInstance(PdfDictionary pdfObject, PdfDocument document) {
         PdfNumber type = pdfObject.getAsNumber(PdfName.PatternType);
         if (new PdfNumber(1).equals(type) && pdfObject instanceof PdfStream)
             return new Tiling((PdfStream)pdfObject, document);
@@ -19,7 +18,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
         throw new IllegalArgumentException("pdfObject");
     }
 
-    public PdfArray getMatrix() throws PdfException {
+    public PdfArray getMatrix() {
         return getPdfObject().getAsArray(PdfName.Matrix);
     }
 
@@ -43,39 +42,39 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
             public static final int ConstantSpacingAndFasterTiling = 3;
         }
 
-        public Tiling(PdfStream pdfObject, PdfDocument pdfDocument) throws PdfException {
+        public Tiling(PdfStream pdfObject, PdfDocument pdfDocument) {
             super(pdfObject, pdfDocument);
         }
 
-        public Tiling(PdfDocument pdfDocument, float width, float height) throws PdfException {
+        public Tiling(PdfDocument pdfDocument, float width, float height) {
             this(pdfDocument, width, height, true);
         }
 
-        public Tiling(PdfDocument pdfDocument, float width, float height, boolean colored) throws PdfException {
+        public Tiling(PdfDocument pdfDocument, float width, float height, boolean colored) {
             this(pdfDocument, new Rectangle(width, height), colored);
         }
 
-        public Tiling(PdfDocument pdfDocument, Rectangle bbox) throws PdfException {
+        public Tiling(PdfDocument pdfDocument, Rectangle bbox) {
             this(pdfDocument, bbox, true);
         }
 
-        public Tiling(PdfDocument pdfDocument, Rectangle bbox, boolean colored) throws PdfException {
+        public Tiling(PdfDocument pdfDocument, Rectangle bbox, boolean colored) {
             this(pdfDocument, bbox, bbox.getWidth(), bbox.getHeight(), colored);
         }
 
-        public Tiling(PdfDocument pdfDocument, float width, float height, float xStep, float yStep) throws PdfException {
+        public Tiling(PdfDocument pdfDocument, float width, float height, float xStep, float yStep) {
             this(pdfDocument, width, height, xStep, yStep, true);
         }
 
-        public Tiling(PdfDocument pdfDocument, float width, float height, float xStep, float yStep, boolean colored) throws PdfException {
+        public Tiling(PdfDocument pdfDocument, float width, float height, float xStep, float yStep, boolean colored) {
             this(pdfDocument, new Rectangle(width, height), xStep, yStep, colored);
         }
 
-        public Tiling(PdfDocument pdfDocument, Rectangle bbox, float xStep, float yStep) throws PdfException {
+        public Tiling(PdfDocument pdfDocument, Rectangle bbox, float xStep, float yStep) {
             this(pdfDocument, bbox, xStep, yStep, true);
         }
 
-        public Tiling(PdfDocument pdfDocument, Rectangle bbox, float xStep, float yStep, boolean colored) throws PdfException {
+        public Tiling(PdfDocument pdfDocument, Rectangle bbox, float xStep, float yStep, boolean colored) {
             super(new PdfStream(pdfDocument), pdfDocument);
             getPdfObject().put(PdfName.Type, PdfName.Pattern);
             getPdfObject().put(PdfName.PatternType, new PdfNumber(1));
@@ -88,7 +87,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
             getPdfObject().put(PdfName.Resources, resources.getPdfObject());
         }
 
-        public boolean isColored() throws PdfException {
+        public boolean isColored() {
             return getPdfObject().getAsNumber(PdfName.PaintType).getIntValue() == PaintType.Colored;
         }
 
@@ -97,7 +96,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public int getTilingType() throws PdfException {
+        public int getTilingType() {
             return getPdfObject().getAsNumber(PdfName.TilingType).getIntValue();
         }
 
@@ -109,7 +108,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public Rectangle getBBox() throws PdfException {
+        public Rectangle getBBox() {
             return getPdfObject().getAsArray(PdfName.BBox).toRectangle();
         }
 
@@ -118,7 +117,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public float getXStep() throws PdfException {
+        public float getXStep() {
             return getPdfObject().getAsNumber(PdfName.XStep).getFloatValue();
         }
 
@@ -127,7 +126,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public float getYStep() throws PdfException {
+        public float getYStep() {
             return getPdfObject().getAsNumber(PdfName.YStep).getFloatValue();
         }
 
@@ -136,7 +135,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
             setModified();
         }
 
-        public PdfResources getResources() throws PdfException {
+        public PdfResources getResources() {
             if (this.resources == null) {
                 PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
                 if (resources == null) {
@@ -149,7 +148,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
         }
 
         @Override
-        public void flush() throws PdfException {
+        public void flush() {
             resources = null;
             super.flush();
         }
@@ -157,18 +156,18 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
 
     public static class Shading extends PdfPattern<PdfDictionary> {
 
-        public Shading(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+        public Shading(PdfDictionary pdfObject, PdfDocument pdfDocument) {
             super(pdfObject, pdfDocument);
         }
 
-        public Shading(com.itextpdf.core.pdf.colorspace.PdfShading shading, PdfDocument pdfDocument) throws PdfException {
+        public Shading(com.itextpdf.core.pdf.colorspace.PdfShading shading, PdfDocument pdfDocument) {
             super(new PdfDictionary(), pdfDocument);
             getPdfObject().put(PdfName.Type, PdfName.Pattern);
             getPdfObject().put(PdfName.PatternType, new PdfNumber(2));
             getPdfObject().put(PdfName.Shading, shading.getPdfObject());
         }
 
-        public PdfDictionary getShading() throws PdfException {
+        public PdfDictionary getShading() {
             return (PdfDictionary) getPdfObject().get(PdfName.Shading);
         }
 

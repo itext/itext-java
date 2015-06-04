@@ -1,6 +1,6 @@
 package com.itextpdf.canvas.color;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
@@ -18,9 +18,9 @@ public class IccBased extends Color {
      *
      * @param document
      * @param iccStream ICC profile stream. User is responsible for closing the stream.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public IccBased(PdfDocument document, InputStream iccStream) throws PdfException {
+    public IccBased(PdfDocument document, InputStream iccStream) {
         this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream)), null);
         colorValue = new float[getNumOfComponents()];
         for (int i = 0; i < getNumOfComponents(); i++)
@@ -33,19 +33,19 @@ public class IccBased extends Color {
      * @param document
      * @param iccStream ICC profile stream. User is responsible for closing the stream.
      * @param value     color value.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public IccBased(PdfDocument document, InputStream iccStream, float[] value) throws PdfException {
+    public IccBased(PdfDocument document, InputStream iccStream, float[] value) {
         this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream)), value);
     }
 
-    public IccBased(PdfDocument document, InputStream iccStream, float[] range, float[] value) throws PdfException {
+    public IccBased(PdfDocument document, InputStream iccStream, float[] range, float[] value) {
         this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream, range)), value);
         if (getNumOfComponents() * 2 != range.length)
-            throw new PdfException(PdfException.InvalidRangeArray, this);
+            throw new PdfRuntimeException(PdfRuntimeException.InvalidRangeArray, this);
     }
 
-    static private PdfStream getStream(PdfDocument document, InputStream iccStream) throws PdfException {
+    static private PdfStream getStream(PdfDocument document, InputStream iccStream) {
         IccProfile iccProfile = IccProfile.getInstance(iccStream);
         PdfStream stream = new PdfStream(document, iccProfile.getData());
         stream.put(PdfName.N, new PdfNumber(iccProfile.getNumComponents()));
@@ -65,7 +65,7 @@ public class IccBased extends Color {
         return stream;
     }
 
-    static private PdfStream getStream(PdfDocument document, InputStream iccStream, float[] range) throws PdfException {
+    static private PdfStream getStream(PdfDocument document, InputStream iccStream, float[] range) {
         PdfStream stream = getStream(document, iccStream);
         stream.put(PdfName.Range, new PdfArray(range));
         return stream;

@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.core.crypto.AESCipherCBCnoPad;
@@ -111,16 +111,16 @@ public class PdfEncryption {
 
     private int cryptoMode;
 
-    public PdfEncryption() throws PdfException {
+    public PdfEncryption() {
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
         }
         publicKeyHandler = new PdfPublicKeySecurityHandler();
     }
 
-    public PdfEncryption(PdfEncryption enc) throws PdfException {
+    public PdfEncryption(PdfEncryption enc) {
         this();
         if (enc.key != null)
             key = enc.key.clone();
@@ -138,7 +138,7 @@ public class PdfEncryption {
         publicKeyHandler = enc.publicKeyHandler;
     }
 
-    public void setCryptoMode(int mode, int kl) throws PdfException {
+    public void setCryptoMode(int mode, int kl) {
         cryptoMode = mode;
         encryptMetadata = (mode & PdfWriter.DO_NOT_ENCRYPT_METADATA) != PdfWriter.DO_NOT_ENCRYPT_METADATA;
         embeddedFilesOnly = (mode & PdfWriter.EMBEDDED_FILES_ONLY) == PdfWriter.EMBEDDED_FILES_ONLY;
@@ -168,7 +168,7 @@ public class PdfEncryption {
                 revision = Aes256;
                 break;
             default:
-                throw new PdfException(PdfException.NoValidEncryptionMode);
+                throw new PdfRuntimeException(PdfRuntimeException.NoValidEncryptionMode);
         }
     }
 
@@ -300,7 +300,7 @@ public class PdfEncryption {
 
     // gets keylength and revision and uses revision to choose the initial values
     // for permissions
-    public void setupAllKeys(byte userPassword[], byte ownerPassword[], int permissions) throws PdfException {
+    public void setupAllKeys(byte userPassword[], byte ownerPassword[], int permissions) {
         if (ownerPassword == null || ownerPassword.length == 0)
             ownerPassword = md5.digest(createDocumentId());
         permissions |= (revision == StandardEncryption128 || revision == Aes128 || revision == Aes256) ? 0xfffff0c0
@@ -361,7 +361,7 @@ public class PdfEncryption {
                 ac = new AESCipherCBCnoPad(true, key);
                 perms = ac.processBlock(permsp, 0, permsp.length);
             } catch (Exception ex) {
-                throw new PdfException(PdfException.PdfEncryption, ex);
+                throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, ex);
             }
         } else {
             // PDF reference 3.5.2 Standard Security Handler, Algorithm 3.3-1
@@ -380,7 +380,7 @@ public class PdfEncryption {
     private static final int SALT_LENGHT = 8;
     private static final int OU_LENGHT = 48;
 
-    public boolean readKey(PdfDictionary enc, byte[] password) throws PdfException {
+    public boolean readKey(PdfDictionary enc, byte[] password) {
         try {
             if (password == null)
                 password = new byte[0];
@@ -407,7 +407,7 @@ public class PdfEncryption {
                 md.update(uValue, VALIDATION_SALT_OFFSET, SALT_LENGHT);
                 hash = md.digest();
                 if (!compareArray(hash, uValue, 32))
-                    throw new BadPasswordException(PdfException.BadUserPassword);
+                    throw new BadPasswordException(PdfRuntimeException.BadUserPassword);
                 md.update(password, 0, Math.min(password.length, 127));
                 md.update(uValue, KEY_SALT_OFFSET, SALT_LENGHT);
                 hash = md.digest();
@@ -417,7 +417,7 @@ public class PdfEncryption {
             AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, key);
             byte[] decPerms = ac.processBlock(perms, 0, perms.length);
             if (decPerms[9] != (byte) 'a' || decPerms[10] != (byte) 'd' || decPerms[11] != (byte) 'b')
-                throw new BadPasswordException(PdfException.BadUserPassword);
+                throw new BadPasswordException(PdfRuntimeException.BadUserPassword);
             permissions = (decPerms[0] & 0xff) | ((decPerms[1] & 0xff) << 8)
                     | ((decPerms[2] & 0xff) << 16) | ((decPerms[2] & 0xff) << 24);
             encryptMetadata = decPerms[8] == (byte) 'T';
@@ -425,7 +425,7 @@ public class PdfEncryption {
         } catch (BadPasswordException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new PdfException(PdfException.PdfEncryption, ex);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, ex);
         }
     }
 
@@ -438,12 +438,12 @@ public class PdfEncryption {
         return true;
     }
 
-    public static byte[] createDocumentId() throws PdfException {
+    public static byte[] createDocumentId() {
         MessageDigest md5;
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
         }
         long time = System.currentTimeMillis();
         long mem = Runtime.getRuntime().freeMemory();
@@ -513,7 +513,7 @@ public class PdfEncryption {
             keySize = 16;
     }
 
-    public static PdfObject createInfoId(byte id[], boolean modified) throws PdfException {
+    public static PdfObject createInfoId(byte id[], boolean modified) {
         ByteBuffer buf = new ByteBuffer(90);
         buf.append('[').append('<');
         if (id.length != 16)
@@ -529,7 +529,7 @@ public class PdfEncryption {
         return new PdfLiteral(buf.toByteArray());
     }
 
-    public PdfDictionary getEncryptionDictionary() throws PdfException {
+    public PdfDictionary getEncryptionDictionary() {
         PdfDictionary dic = new PdfDictionary();
 
         if (publicKeyHandler.getRecipientsSize() > 0) {
@@ -539,7 +539,7 @@ public class PdfEncryption {
             try {
                 recipients = publicKeyHandler.getEncodedRecipients();
             } catch (Exception e) {
-                throw new PdfException(PdfException.PdfEncryption, e);
+                throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
             }
 
             if (revision == StandardEncryption40) {
@@ -603,7 +603,7 @@ public class PdfEncryption {
                     md.update(new byte[]{(byte) 255, (byte) 255, (byte) 255,
                             (byte) 255});
             } catch (Exception e) {
-                throw new PdfException(PdfException.PdfEncryption, e);
+                throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
             }
 
             byte[] mdResult = md.digest();
@@ -680,11 +680,11 @@ public class PdfEncryption {
         return dic;
     }
 
-    public PdfObject getFileID(boolean modified) throws PdfException {
+    public PdfObject getFileID(boolean modified) {
         return createInfoId(documentID, modified);
     }
 
-    public OutputStreamEncryption getEncryptionStream(java.io.OutputStream os) throws PdfException {
+    public OutputStreamEncryption getEncryptionStream(java.io.OutputStream os) {
         return new OutputStreamEncryption(os, key, 0, keySize, revision);
     }
 
@@ -695,13 +695,13 @@ public class PdfEncryption {
             return n;
     }
 
-    public byte[] encryptByteArray(byte[] b) throws PdfException {
+    public byte[] encryptByteArray(byte[] b) {
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
         OutputStreamEncryption ose = getEncryptionStream(ba);
         try {
             ose.write(b);
         } catch (IOException e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
         }
         ose.finish();
         return ba.toByteArray();
@@ -711,7 +711,7 @@ public class PdfEncryption {
         return new StandardDecryption(key, 0, keySize, revision);
     }
 
-    public byte[] decryptByteArray(byte[] b) throws PdfException {
+    public byte[] decryptByteArray(byte[] b) {
         try {
             ByteArrayOutputStream ba = new ByteArrayOutputStream();
             StandardDecryption dec = getDecryptor();
@@ -723,11 +723,11 @@ public class PdfEncryption {
                 ba.write(b2);
             return ba.toByteArray();
         } catch (IOException e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
         }
     }
 
-    public void addRecipient(Certificate cert, int permission) throws PdfException {
+    public void addRecipient(Certificate cert, int permission) {
         documentID = createDocumentId();
         publicKeyHandler.addRecipient(new PdfPublicKeyRecipient(cert,
                 permission));

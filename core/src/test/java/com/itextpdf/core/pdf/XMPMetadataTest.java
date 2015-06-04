@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.xmp.XMPException;
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.text.pdf.PdfReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -25,7 +25,7 @@ public class XMPMetadataTest {
     }
 
     @Test
-    public void createEmptyDocumentWithXmp() throws IOException, PdfException, XMPException {
+    public void createEmptyDocumentWithXmp() throws IOException, PdfRuntimeException, XMPException {
         String filename = "emptyDocumentWithXmp.pdf";
         FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -48,7 +48,7 @@ public class XMPMetadataTest {
     }
 
     @Test
-    public void createEmptyDocumentWithAbcXmp() throws IOException, PdfException, XMPException {
+    public void createEmptyDocumentWithAbcXmp() throws IOException, PdfRuntimeException, XMPException {
         ByteArrayOutputStream fos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);

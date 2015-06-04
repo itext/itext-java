@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
@@ -10,20 +10,20 @@ import java.util.List;
 
 public class PdfTrapNetworkAnnotation extends PdfAnnotation {
 
-    public PdfTrapNetworkAnnotation(PdfDocument document, Rectangle rect, PdfFormXObject appearanceStream) throws PdfException {
+    public PdfTrapNetworkAnnotation(PdfDocument document, Rectangle rect, PdfFormXObject appearanceStream) {
         super(document, rect);
         if (appearanceStream.getProcessColorModel() == null) {
-            throw new PdfException("Process color model must be set in appearance stream for Trap Network annotation!");
+            throw new PdfRuntimeException("Process color model must be set in appearance stream for Trap Network annotation!");
         }
         setNormalAppearance(appearanceStream.getPdfObject());
         setFlags(PdfAnnotation.Print | PdfAnnotation.ReadOnly);
     }
 
-    public PdfTrapNetworkAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfTrapNetworkAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.TrapNet;
     }
 
@@ -31,7 +31,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
         return put(PdfName.LastModified, lastModified);
     }
 
-    public PdfString getLastModified() throws PdfException {
+    public PdfString getLastModified() {
         return getPdfObject().getAsString(PdfName.LastModified);
     }
 
@@ -39,7 +39,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
         return put(PdfName.Version, version);
     }
 
-    public PdfArray getVersion() throws PdfException {
+    public PdfArray getVersion() {
         return getPdfObject().getAsArray(PdfName.Version);
     }
 
@@ -47,7 +47,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
         return put(PdfName.AnnotStates, annotStates);
     }
 
-    public PdfArray getAnnotStates() throws PdfException {
+    public PdfArray getAnnotStates() {
         return getPdfObject().getAsArray(PdfName.AnnotStates);
     }
 
@@ -62,7 +62,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
         return setFauxedFonts(arr);
     }
 
-    public PdfArray getFauxedFonts() throws PdfException {
+    public PdfArray getFauxedFonts() {
         return getPdfObject().getAsArray(PdfName.FontFauxing);
     }
 }

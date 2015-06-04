@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.PdfTokeniser;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
@@ -82,7 +82,7 @@ public class PdfTokeniserTest {
 
 
     @Test
-    public void encodingTest() throws IOException, PdfException, DocumentException {
+    public void encodingTest() throws IOException, PdfRuntimeException, DocumentException {
 
         RandomAccessSourceFactory factory;
         PdfTokeniser tok;
@@ -224,7 +224,7 @@ public class PdfTokeniserTest {
     }
 
     @Test
-    public void tokenValueEqualsToTest() throws PdfException, IOException {
+    public void tokenValueEqualsToTest() throws IOException {
         String data = "SomeString";
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         PdfTokeniser tok = new PdfTokeniser(new RandomAccessFileOrArray(factory.createSource(data.getBytes())));

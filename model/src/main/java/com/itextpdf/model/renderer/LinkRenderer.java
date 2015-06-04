@@ -1,6 +1,5 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -32,11 +31,7 @@ public class LinkRenderer extends TextRenderer{
             applyAbsolutePositioningTranslation(true);
         }
 
-        try{
-            PdfPage page = linkAnnotation.getDocument().getPage(occupiedArea.getPageNumber());
-            page.addAnnotation(linkAnnotation);
-        } catch (PdfException e){
-            throw new RuntimeException(e);
-        }
+        PdfPage page = linkAnnotation.getDocument().getPage(occupiedArea.getPageNumber());
+        page.addAnnotation(linkAnnotation);
     }
 }

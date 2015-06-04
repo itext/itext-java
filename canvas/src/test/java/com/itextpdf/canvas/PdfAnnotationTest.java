@@ -1,6 +1,6 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.canvas.color.Color;
@@ -165,7 +165,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void caretTest() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void caretTest() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String filename =  destinationFolder + "caretAnnotation.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -252,7 +252,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void fileAttachmentTest() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void fileAttachmentTest() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String filename = destinationFolder + "fileAttachmentAnnotation.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -279,7 +279,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void rubberStampTest() throws DocumentException, IOException, PdfException, InterruptedException{
+    public void rubberStampTest() throws DocumentException, IOException, PdfRuntimeException, InterruptedException{
         String filename =  destinationFolder + "rubberStampAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -341,7 +341,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void rubberStampWrongStampTest() throws DocumentException, IOException, PdfException, InterruptedException{
+    public void rubberStampWrongStampTest() throws DocumentException, IOException, PdfRuntimeException, InterruptedException{
         String filename =  destinationFolder + "rubberStampAnnotation02.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -366,7 +366,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void inkTest() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void inkTest() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String filename = destinationFolder + "inkAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -402,7 +402,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void textMarkupTest01() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void textMarkupTest01() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String filename =  destinationFolder + "textMarkupAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -440,7 +440,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void textMarkupTest02() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void textMarkupTest02() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String filename =  destinationFolder + "textMarkupAnnotation02.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -478,7 +478,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void textMarkupTest03() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void textMarkupTest03() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String filename =  destinationFolder + "textMarkupAnnotation03.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -516,7 +516,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void textMarkupTest04() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void textMarkupTest04() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String filename =  destinationFolder + "textMarkupAnnotation04.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -554,7 +554,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void printerMarkText() throws PdfException, IOException, InterruptedException, DocumentException {
+    public void printerMarkText() throws IOException, InterruptedException, DocumentException {
         String filename =  destinationFolder + "printerMarkAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -596,7 +596,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void trapNetworkText() throws PdfException, IOException, InterruptedException, DocumentException {
+    public void trapNetworkText() throws IOException, InterruptedException, DocumentException {
         String filename = destinationFolder + "trapNetworkAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -641,7 +641,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void soundTestAif() throws DocumentException, IOException, PdfException, InterruptedException, UnsupportedAudioFileException {
+    public void soundTestAif() throws DocumentException, IOException, PdfRuntimeException, InterruptedException, UnsupportedAudioFileException {
         String filename = destinationFolder + "soundAnnotation02.pdf";
         String audioFile = sourceFolder + "sample.aif";
 
@@ -684,7 +684,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void soundTestAiff() throws DocumentException, IOException, PdfException, InterruptedException {
+    public void soundTestAiff() throws DocumentException, IOException, PdfRuntimeException, InterruptedException {
         String filename = destinationFolder + "soundAnnotation03.pdf";
         String audioFile = sourceFolder + "sample.aiff";
 
@@ -727,7 +727,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void soundTestSnd() throws DocumentException, IOException, PdfException, InterruptedException, UnsupportedAudioFileException {
+    public void soundTestSnd() throws DocumentException, IOException, PdfRuntimeException, InterruptedException, UnsupportedAudioFileException {
         String filename = destinationFolder + "soundAnnotation04.pdf";
         String audioFile = sourceFolder + "sample.snd";
 
@@ -754,7 +754,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void soundTestWav() throws DocumentException, IOException, PdfException, InterruptedException, UnsupportedAudioFileException {
+    public void soundTestWav() throws DocumentException, IOException, PdfRuntimeException, InterruptedException, UnsupportedAudioFileException {
         String filename = destinationFolder + "soundAnnotation01.pdf";
         String audioFile = sourceFolder + "sample.wav";
 
@@ -780,7 +780,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void soundTestWav01() throws DocumentException, IOException, PdfException, InterruptedException, UnsupportedAudioFileException {
+    public void soundTestWav01() throws DocumentException, IOException, PdfRuntimeException, InterruptedException, UnsupportedAudioFileException {
         String filename = destinationFolder + "soundAnnotation05.pdf";
         String audioFile = sourceFolder + "sample.wav";
 
@@ -824,7 +824,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void screenTestExternalWavFile() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void screenTestExternalWavFile() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String filename = destinationFolder + "screenAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -864,7 +864,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void screenTestEmbeddedWavFile01() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void screenTestEmbeddedWavFile01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String filename = destinationFolder + "screenAnnotation02.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -904,7 +904,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void screenTestEmbeddedWavFile02() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void screenTestEmbeddedWavFile02() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String filename = destinationFolder + "screenAnnotation03.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -944,7 +944,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void screenTestEmbeddedWavFile03() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void screenTestEmbeddedWavFile03() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         String filename = destinationFolder + "screenAnnotation04.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -993,7 +993,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void waterMarkTest() throws PdfException, IOException, DocumentException, InterruptedException {
+    public void waterMarkTest() throws IOException, DocumentException, InterruptedException {
         String filename = destinationFolder + "waterMarkAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);
@@ -1039,7 +1039,7 @@ public class PdfAnnotationTest {
     }
 
     @Test
-    public void redactionTest() throws PdfException, IOException, DocumentException, InterruptedException {
+    public void redactionTest() throws IOException, DocumentException, InterruptedException {
         String filename = destinationFolder + "redactionAnnotation01.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename);

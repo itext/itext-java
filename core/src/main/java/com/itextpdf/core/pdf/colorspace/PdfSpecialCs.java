@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.function.PdfFunction;
 
@@ -9,25 +9,25 @@ import java.util.List;
 
 abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
-    public PdfSpecialCs(PdfArray pdfObject, PdfDocument document) throws PdfException {
+    public PdfSpecialCs(PdfArray pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
     static public class Indexed extends PdfSpecialCs {
-        public Indexed(PdfArray pdfObject, PdfDocument document) throws PdfException {
+        public Indexed(PdfArray pdfObject, PdfDocument document) {
             super(pdfObject, document);
         }
 
-        public Indexed(PdfDocument document, PdfObject base, int hival, PdfString lookup) throws PdfException {
+        public Indexed(PdfDocument document, PdfObject base, int hival, PdfString lookup) {
             this(getIndexedCsArray(base, hival, lookup), document);
         }
 
         @Override
-        public int getNumOfComponents() throws PdfException {
+        public int getNumOfComponents() {
             return 1;
         }
 
-        public PdfColorSpace getBaseCs() throws PdfException {
+        public PdfColorSpace getBaseCs() {
             return makeColorSpace(getPdfObject().get(1), getDocument());
         }
 
@@ -43,31 +43,31 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class Separation extends PdfSpecialCs {
-        public Separation(PdfArray pdfObject, PdfDocument document) throws PdfException {
+        public Separation(PdfArray pdfObject, PdfDocument document) {
             super(pdfObject, document);
         }
 
-        public Separation(PdfDocument document, PdfName name, PdfObject alternateSpace, PdfObject tintTransform) throws PdfException {
+        public Separation(PdfDocument document, PdfName name, PdfObject alternateSpace, PdfObject tintTransform) {
             this(getSeparationCsArray(name, alternateSpace, tintTransform), document);
         }
 
-        public Separation(PdfDocument document, String name, PdfColorSpace alternateSpace, PdfFunction tintTransform) throws PdfException {
+        public Separation(PdfDocument document, String name, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(document, new PdfName(name), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
             if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
-                throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
+                throw new PdfRuntimeException(PdfRuntimeException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
 
         @Override
-        public int getNumOfComponents() throws PdfException {
+        public int getNumOfComponents() {
             return 1;
         }
 
-        public PdfColorSpace getBaseCs() throws PdfException {
+        public PdfColorSpace getBaseCs() {
             return makeColorSpace(((PdfArray) getPdfObject()).get(2), getDocument());
         }
 
-        public PdfName getName() throws PdfException {
+        public PdfName getName() {
             return ((PdfArray) getPdfObject()).getAsName(1);
         }
 
@@ -86,32 +86,32 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
         protected int numOfComponents = 0;
 
-        public DeviceN(PdfArray pdfObject, PdfDocument document) throws PdfException {
+        public DeviceN(PdfArray pdfObject, PdfDocument document) {
             super(pdfObject, document);
             numOfComponents = pdfObject.getAsArray(1).size();
         }
 
-        public DeviceN(PdfDocument document, PdfArray names, PdfObject alternateSpace, PdfObject tintTransform) throws PdfException {
+        public DeviceN(PdfDocument document, PdfArray names, PdfObject alternateSpace, PdfObject tintTransform) {
             this(getDeviceNCsArray(names, alternateSpace, tintTransform), document);
         }
 
-        public DeviceN(PdfDocument document, List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform) throws PdfException {
+        public DeviceN(PdfDocument document, List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(document, new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
             if (tintTransform.getInputSize() != getNumOfComponents() || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
-                throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
+                throw new PdfRuntimeException(PdfRuntimeException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
 
         @Override
-        public int getNumOfComponents() throws PdfException {
+        public int getNumOfComponents() {
             return numOfComponents;
         }
 
-        public PdfColorSpace getBaseCs() throws PdfException {
+        public PdfColorSpace getBaseCs() {
             return makeColorSpace(getPdfObject().get(2), getDocument());
         }
 
-        public PdfArray getNames() throws PdfException {
+        public PdfArray getNames() {
             return getPdfObject().getAsArray(1);
         }
 
@@ -127,18 +127,18 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class NChannel extends DeviceN {
-        public NChannel(PdfArray pdfObject, PdfDocument document) throws PdfException {
+        public NChannel(PdfArray pdfObject, PdfDocument document) {
             super(pdfObject, document);
         }
 
-        public NChannel(PdfDocument document, PdfArray names, PdfObject alternateSpace, PdfObject tintTransform, PdfDictionary attributes) throws PdfException {
+        public NChannel(PdfDocument document, PdfArray names, PdfObject alternateSpace, PdfObject tintTransform, PdfDictionary attributes) {
             this(getNChannelCsArray(names, alternateSpace, tintTransform, attributes), document);
         }
 
-        public NChannel(PdfDocument document, List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform, PdfDictionary attributes) throws PdfException {
+        public NChannel(PdfDocument document, List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform, PdfDictionary attributes) {
             this(document, new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject(), attributes);
             if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
-                throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
+                throw new PdfRuntimeException(PdfRuntimeException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
 
@@ -155,36 +155,36 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
             super(PdfName.Pattern);
         }
 
-        public Pattern(PdfDocument pdfDocument) throws PdfException {
+        public Pattern(PdfDocument pdfDocument) {
             super(PdfName.Pattern, pdfDocument);
         }
 
-        protected Pattern(PdfObject pdfObj, PdfDocument pdfDoc) throws PdfException {
+        protected Pattern(PdfObject pdfObj, PdfDocument pdfDoc) {
             super(pdfObj, pdfDoc);
         }
 
         @Override
-        public int getNumOfComponents() throws PdfException {
+        public int getNumOfComponents() {
             return 0;
         }
     }
 
     static public class UncoloredTilingPattern extends Pattern {
 
-        public UncoloredTilingPattern(PdfArray pdfObject, PdfDocument pdfDocument) throws PdfException {
+        public UncoloredTilingPattern(PdfArray pdfObject, PdfDocument pdfDocument) {
             super(pdfObject, pdfDocument);
         }
 
-        public UncoloredTilingPattern(PdfDocument pdfDocument, PdfColorSpace underlyingColorSpace) throws PdfException {
+        public UncoloredTilingPattern(PdfDocument pdfDocument, PdfColorSpace underlyingColorSpace) {
             super(new PdfArray(Arrays.asList(PdfName.Pattern, underlyingColorSpace.getPdfObject())), pdfDocument);
         }
 
         @Override
-        public int getNumOfComponents() throws PdfException {
+        public int getNumOfComponents() {
             return PdfColorSpace.makeColorSpace(((PdfArray) getPdfObject()).get(1), getDocument()).getNumOfComponents();
         }
 
-        public PdfColorSpace getUnderlyingColorSpace() throws PdfException {
+        public PdfColorSpace getUnderlyingColorSpace() {
             return PdfColorSpace.makeColorSpace(((PdfArray) getPdfObject()).get(1), getDocument());
         }
     }

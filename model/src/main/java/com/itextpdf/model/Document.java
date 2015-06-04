@@ -1,6 +1,5 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.font.PdfType1Font;
@@ -10,7 +9,6 @@ import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.element.IElement;
 import com.itextpdf.model.element.Image;
-import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.DocumentRenderer;
 
 import java.io.IOException;
@@ -44,7 +42,7 @@ public class Document implements IPropertyContainer<Document> {
     /**
      * Closes the document and associated PdfDocument.
      */
-    public void close() throws PdfException {
+    public void close() {
         if (documentRenderer != null && !immediateFlush)
             documentRenderer.flush();
         pdfDocument.close();
@@ -56,7 +54,7 @@ public class Document implements IPropertyContainer<Document> {
      * @param element
      * @return
      */
-    public Document add(BlockElement element) throws PdfException {
+    public Document add(BlockElement element) {
         childElements.add(element);
         ensureDocumentRendererNotNull().addChild(element.createRendererSubTree());
         return this;
@@ -128,7 +126,7 @@ public class Document implements IPropertyContainer<Document> {
                 default:
                     return null;
             }
-        } catch (PdfException | IOException exc) {
+        } catch (IOException exc) {
             throw new RuntimeException(exc);
         }
     }

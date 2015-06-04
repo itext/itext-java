@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -32,7 +32,7 @@ public class DefaultLayoutTest {
 
     @Test
     @Ignore("We should really think if it is worth supporting this smelly case. In case of pre-layout this probably won't work")
-    public void multipleAdditionsOfSameModelElementTest() throws FileNotFoundException, PdfException {
+    public void multipleAdditionsOfSameModelElementTest() throws FileNotFoundException, PdfRuntimeException {
         String outFileName = destinationFolder + "multipleAdditionsOfSameModelElementTest1.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
 
@@ -45,7 +45,7 @@ public class DefaultLayoutTest {
     }
 
     @Test
-    public void rendererTest01() throws IOException, PdfException, DocumentException, InterruptedException {
+    public void rendererTest01() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
         String outFileName = destinationFolder + "rendererTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_rendererTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

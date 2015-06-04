@@ -1,6 +1,5 @@
 package com.itextpdf.canvas.image;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.DeviceRgb;
@@ -90,7 +89,7 @@ public class MetaState {
         MetaObjects.add(object);
     }
 
-    public void selectMetaObject(int index, PdfCanvas cb) throws PdfException {
+    public void selectMetaObject(int index, PdfCanvas cb) {
         MetaObject obj = MetaObjects.get(index);
         if (obj == null)
             return;
@@ -148,13 +147,13 @@ public class MetaState {
         MetaObjects.set(index, null);
     }
 
-    public void saveState(PdfCanvas cb) throws PdfException {
+    public void saveState(PdfCanvas cb) {
         cb.saveState();
         MetaState state = new MetaState(this);
         savedStates.push(state);
     }
 
-    public void restoreState(int index, PdfCanvas cb) throws PdfException {
+    public void restoreState(int index, PdfCanvas cb) {
         int pops;
         if (index < 0)
             pops = Math.min(-index, savedStates.size());
@@ -170,7 +169,7 @@ public class MetaState {
         setMetaState(state);
     }
 
-    public void cleanup(PdfCanvas cb) throws PdfException {
+    public void cleanup(PdfCanvas cb) {
         int k = savedStates.size();
         while (k-- > 0)
             cb.restoreState();
@@ -304,14 +303,14 @@ public class MetaState {
         this.polyFillMode = polyFillMode;
     }
 
-    public void setLineJoinRectangle(PdfCanvas cb) throws PdfException {
+    public void setLineJoinRectangle(PdfCanvas cb) {
         if (lineJoin != 0) {
             lineJoin = 0;
             cb.setLineJoinStyle(0);
         }
     }
 
-    public void setLineJoinPolygon(PdfCanvas cb) throws PdfException {
+    public void setLineJoinPolygon(PdfCanvas cb) {
         if (lineJoin == 0) {
             lineJoin = 1;
             cb.setLineJoinStyle(1);

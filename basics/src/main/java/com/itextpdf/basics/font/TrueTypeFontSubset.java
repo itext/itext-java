@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
@@ -8,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -84,10 +82,10 @@ class TrueTypeFontSubset {
     /**
      * Does the actual work of subsetting the font.
      * @throws IOException on error
-     * @throws PdfException on error
+     * @on error
      * @return the subset font
      */
-    byte[] process() throws IOException, PdfException {
+    byte[] process() throws IOException {
         try {
             createTableDirectory();
             readLoca();
@@ -190,12 +188,12 @@ class TrueTypeFontSubset {
         }
     }
 
-    protected void createTableDirectory() throws IOException, PdfException{
+    protected void createTableDirectory() throws IOException {
         tableDirectory = new HashMap<String, int[]>();
         rf.seek(directoryOffset);
         int id = rf.readInt();
         if (id != 0x00010000) {
-            throw new PdfException("1.is.not.a.true.type.file").setMessageParams(fileName);
+            throw new PdfRuntimeException("1.is.not.a.true.type.file").setMessageParams(fileName);
         }
         int num_tables = rf.readUnsignedShort();
         rf.skipBytes(6);
@@ -209,16 +207,16 @@ class TrueTypeFontSubset {
         }
     }
 
-    protected void readLoca() throws IOException, PdfException {
+    protected void readLoca() throws IOException {
         int[] tableLocation = tableDirectory.get("head");
         if (tableLocation == null) {
-            throw new PdfException("table.1.does.not.exist.in.2", "head").setMessageParams(fileName);
+            throw new PdfRuntimeException("table.1.does.not.exist.in.2", "head").setMessageParams(fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET] + HEAD_LOCA_FORMAT_OFFSET);
         locaShortTable = rf.readUnsignedShort() == 0;
         tableLocation = tableDirectory.get("loca");
         if (tableLocation == null) {
-            throw new PdfException("table.1.does.not.exist.in.2", "loca").setMessageParams(fileName);
+            throw new PdfRuntimeException("table.1.does.not.exist.in.2", "loca").setMessageParams(fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET]);
         if (locaShortTable) {
@@ -286,10 +284,10 @@ class TrueTypeFontSubset {
         }
     }
 
-    protected void flatGlyphs() throws IOException, PdfException {
+    protected void flatGlyphs() throws IOException {
         int[] tableLocation = tableDirectory.get("glyf");
         if (tableLocation == null)
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
+            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
         Integer glyph0 = 0;
         if (!glyphsUsed.contains(glyph0)) {
             glyphsUsed.add(glyph0);

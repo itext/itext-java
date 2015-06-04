@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.layer;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.pdf.*;
 
@@ -18,9 +18,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * Creates a new PdfOCProperties instance by the dictionary it represents.
      * @param ocPropertiesDict the dictionary of optional content properties
      * @param pdfDocument the document the optional content belongs to
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfOCProperties(PdfDictionary ocPropertiesDict, PdfDocument pdfDocument) throws PdfException {
+    public PdfOCProperties(PdfDictionary ocPropertiesDict, PdfDocument pdfDocument) {
         super(ocPropertiesDict, pdfDocument);
         readLayersFromDictionary();
     }
@@ -33,7 +33,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * ON, all others must be turned OFF.
      * @param group the radio group
      */
-    public void addOCGRadioGroup(final List<PdfLayer> group) throws PdfException {
+    public void addOCGRadioGroup(final List<PdfLayer> group) {
         PdfArray ar = new PdfArray();
         for (PdfLayer layer : group) {
             if (layer.getTitle() == null)
@@ -63,7 +63,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * will not take any affect.
      * @return the resultant dictionary
      */
-    public PdfObject fillDictionary() throws PdfException {
+    public PdfObject fillDictionary() {
         PdfArray gr = new PdfArray();
         for (PdfLayer layer : layers) {
             if (layer.getTitle() == null)
@@ -127,7 +127,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
     }
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
         fillDictionary();
         super.flush();
     }
@@ -175,9 +175,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Populates the /AS entry in the /D dictionary.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private void addASEvent(final PdfName event, final PdfName category) throws PdfException {
+    private void addASEvent(final PdfName event, final PdfName category) {
         PdfArray arr = new PdfArray();
         for (Object element : layers) {
             PdfLayer layer = (PdfLayer)element;
@@ -206,9 +206,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Reads the layers from the document to be able to modify them in the future.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private void readLayersFromDictionary() throws PdfException {
+    private void readLayersFromDictionary() {
         PdfArray ocgs = getPdfObject().getAsArray(PdfName.OCGs);
         if (ocgs == null || ocgs.isEmpty())
             return;
@@ -251,9 +251,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Reads the /Order in the /D entry and initialized the parent-child hierarchy.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    private void readOrderFromDictionary(PdfLayer parent, PdfArray orderArray, Map<PdfIndirectReference, PdfLayer> layerMap) throws PdfException {
+    private void readOrderFromDictionary(PdfLayer parent, PdfArray orderArray, Map<PdfIndirectReference, PdfLayer> layerMap) {
         for (int i = 0; i < orderArray.size(); i++) {
             PdfObject item = orderArray.get(i);
             if (item.getType() == PdfObject.Dictionary) {

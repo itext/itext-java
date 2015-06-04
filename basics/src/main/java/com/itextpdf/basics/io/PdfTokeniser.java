@@ -1,6 +1,6 @@
 package com.itextpdf.basics.io;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -164,36 +164,36 @@ public class PdfTokeniser {
             file.pushBack((byte) ch);
     }
 
-    public int getHeaderOffset() throws PdfException, IOException {
+    public int getHeaderOffset() throws IOException {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx < 0) {
             idx = str.indexOf("%FDF-");
             if (idx < 0)
-                throw new PdfException(PdfException.PdfHeaderNotFound, this);
+                throw new PdfRuntimeException(PdfRuntimeException.PdfHeaderNotFound, this);
         }
 
         return idx;
     }
 
-    public char checkPdfHeader() throws IOException, PdfException {
+    public char checkPdfHeader() throws IOException {
         file.seek(0);
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx != 0)
-            throw new PdfException(PdfException.PdfHeaderNotFound, this);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfHeaderNotFound, this);
         return str.charAt(7);
     }
 
-    public void checkFdfHeader() throws IOException, PdfException {
+    public void checkFdfHeader() throws IOException {
         file.seek(0);
         String str = readString(1024);
         int idx = str.indexOf("%FDF-");
         if (idx != 0)
-            throw new PdfException(PdfException.FdfStartxrefNotFound, this);
+            throw new PdfRuntimeException(PdfRuntimeException.FdfStartxrefNotFound, this);
     }
 
-    public long getStartxref() throws IOException, PdfException {
+    public long getStartxref() throws IOException {
         int arrLength = 1024;
         long fileLength = file.length();
         long pos = fileLength - arrLength;
@@ -205,10 +205,10 @@ public class PdfTokeniser {
             if (idx >= 0) return pos + idx;
             pos = pos - arrLength + 9;                  // 9 = "startxref".length()
         }
-        throw new PdfException(PdfException.PdfStartxrefNotFound, this);
+        throw new PdfRuntimeException(PdfRuntimeException.PdfStartxrefNotFound, this);
     }
 
-    public void nextValidToken() throws IOException, PdfException {
+    public void nextValidToken() throws IOException {
         int level = 0;
         byte[] n1 = null;
         byte[] n2 = null;
@@ -268,7 +268,7 @@ public class PdfTokeniser {
         // case can occur inside an Object Stream.
     }
 
-    public boolean nextToken() throws PdfException, IOException {
+    public boolean nextToken() throws IOException {
         int ch;
         outBuf.reset();
         do {
@@ -301,7 +301,7 @@ public class PdfTokeniser {
             case '>': {
                 ch = file.read();
                 if (ch != '>')
-                    throwError(PdfException.GtNotExpected);
+                    throwError(PdfRuntimeException.GtNotExpected);
                 type = TokenType.EndDic;
                 break;
             }
@@ -336,7 +336,7 @@ public class PdfTokeniser {
                     v1 = file.read();
                 }
                 if (v1 < 0 || v2 < 0)
-                    throwError(PdfException.ErrorReadingString);
+                    throwError(PdfRuntimeException.ErrorReadingString);
                 break;
             }
             case '%': {
@@ -369,7 +369,7 @@ public class PdfTokeniser {
                     outBuf.append(ch);
                 }
                 if (ch == -1)
-                    throwError(PdfException.ErrorReadingString);
+                    throwError(PdfRuntimeException.ErrorReadingString);
                 break;
             }
             default: {
@@ -472,17 +472,17 @@ public class PdfTokeniser {
     }
 
     /**
-     * Helper method to handle content errors. Add file position to {@code PdfException}.
+     * Helper method to handle content errors. Add file position to {@code PdfRuntimeException}.
      * @param error message.
      * @param messageParams error params.
-     * @throws PdfException wrap error message into {@code PdfException} and add position in file.
+     * @wrap error message into {@code PdfRuntimeException} and add position in file.
      */
-    public void throwError(String error, Object... messageParams) throws PdfException {
+    public void throwError(String error, Object... messageParams) {
         try {
-            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
+            throw new PdfRuntimeException(PdfRuntimeException.ErrorAtFilePointer1, new PdfRuntimeException(error).setMessageParams(messageParams))
                     .setMessageParams(file.getPosition());
         } catch (IOException e) {
-            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
+            throw new PdfRuntimeException(PdfRuntimeException.ErrorAtFilePointer1, new PdfRuntimeException(error).setMessageParams(messageParams))
                     .setMessageParams(error, "no position");
         }
     }

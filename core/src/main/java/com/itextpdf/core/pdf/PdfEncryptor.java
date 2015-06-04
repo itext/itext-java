@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.Recipient;
 import org.bouncycastle.cms.RecipientInformation;
@@ -40,9 +40,9 @@ public final class PdfEncryptor {
      * @param newInfo        an optional {@code String} map to add or change
      *                       the info dictionary. Entries with {@code null}
      *                       values delete the key in the original info dictionary
-     * @throws PdfException on error
+     * @throws PdfRuntimeException on error
      */
-    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType, HashMap<String, String> newInfo) throws PdfException {
+    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType, HashMap<String, String> newInfo) {
         PdfWriter writer = new PdfWriter(os);
         writer.setEncryption(userPassword, ownerPassword, permissions, encryptionType);
         PdfDocument document = new PdfDocument(reader, writer);
@@ -66,9 +66,9 @@ public final class PdfEncryptor {
      * @param permissions    the user permissions
      * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40,
      *                       STANDARD_ENCRYPTION_128 or ENCRYPTION_AES_128.
-     * @throws PdfException on error
+     * @throws PdfRuntimeException on error
      */
-    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) throws PdfException {
+    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) throws PdfRuntimeException {
         encrypt(reader, os, userPassword, ownerPassword, permissions, encryptionType, null);
     }
 
@@ -90,9 +90,9 @@ public final class PdfEncryptor {
      * @param newInfo        an optional {@code String} map to add or change
      *                       the info dictionary. Entries with {@code null}
      *                       values delete the key in the original info dictionary
-     * @throws PdfException on error
+     * @on error
      */
-    public static void encrypt(PdfReader reader, OutputStream os, final Certificate[] certs, final int[] permissions, final int encryptionType, HashMap<String, String> newInfo) throws PdfException {
+    public static void encrypt(PdfReader reader, OutputStream os, final Certificate[] certs, final int[] permissions, final int encryptionType, HashMap<String, String> newInfo) {
         PdfWriter writer = new PdfWriter(os);
         writer.setEncryption(certs, permissions, encryptionType);
         PdfDocument document = new PdfDocument(reader, writer);
@@ -115,9 +115,9 @@ public final class PdfEncryptor {
      * @param permissions    the user permissions for each of the certificates
      * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40,
      *                       STANDARD_ENCRYPTION_128 or ENCRYPTION_AES_128.
-     * @throws PdfException on error
+     * @on error
      */
-    public static void encrypt(PdfReader reader, OutputStream os, final Certificate[] certs, final int[] permissions, final int encryptionType) throws PdfException {
+    public static void encrypt(PdfReader reader, OutputStream os, final Certificate[] certs, final int[] permissions, final int encryptionType) {
         encrypt(reader, os, certs, permissions, encryptionType, null);
     }
 

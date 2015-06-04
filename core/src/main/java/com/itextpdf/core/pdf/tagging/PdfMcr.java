@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
 import java.util.List;
@@ -17,7 +16,7 @@ abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper imple
         this.parent = parent;
     }
 
-//    public PdfMcr(PdfPage page, PdfStructElem parent) throws PdfException {
+//    public PdfMcr(PdfPage page, PdfStructElem parent) {
 //        super(new PdfDictionary());
 //        getPdfObject().put(PdfName.Type, PdfName.MCR);
 //        getPdfObject().put(PdfName.Pg, page.getPdfObject());
@@ -25,33 +24,33 @@ abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper imple
 //        this.parent = parent;
 //    }
 //
-//    public PdfMcr(PdfDictionary pdfObject, PdfStructElem parent) throws PdfException {
+//    public PdfMcr(PdfDictionary pdfObject, PdfStructElem parent) {
 //        super(pdfObject);
 //        this.parent = parent;
 //    }
 
     @Override
-    abstract public Integer getMcid() throws PdfException;// {
+    abstract public Integer getMcid();// {
 //        return getPdfObject().getAsNumber(PdfName.MCID).getIntValue();
 //    }
 
     @Override
-    public PdfName getRole() throws PdfException {
+    public PdfName getRole() {
         return parent.getRole();
     }
 
     @Override
-    public IPdfStructElem getParent() throws PdfException {
+    public IPdfStructElem getParent() {
         return parent;
     }
 
     @Override
-    public List<IPdfStructElem> getKids() throws PdfException {
+    public List<IPdfStructElem> getKids() {
         return null;
     }
 
 //    @Override
-//    public Integer getStructParentIndex() throws PdfException {
+//    public Integer getStructParentIndex() {
 //        Integer structParentIndex = 0;
 //        PdfDictionary page = getPageObject();
 //        if (page != null) {
@@ -62,6 +61,6 @@ abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper imple
 //        return structParentIndex;
 //    }
 
-    protected abstract PdfDictionary getPageObject() throws PdfException;
+    protected abstract PdfDictionary getPageObject();
 
 }

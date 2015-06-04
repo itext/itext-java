@@ -1,25 +1,24 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
 public class PdfTextAnnotation extends PdfMarkupAnnotation {
 
-    public PdfTextAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
+    public PdfTextAnnotation(PdfDocument document, Rectangle rect) {
         super(document, rect);
     }
 
-    public PdfTextAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfTextAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
     @Override
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.Text;
     }
 
-    public PdfString getState() throws PdfException {
+    public PdfString getState() {
         return getPdfObject().getAsString(PdfName.State);
     }
 
@@ -27,7 +26,7 @@ public class PdfTextAnnotation extends PdfMarkupAnnotation {
         return put(PdfName.State, state);
     }
 
-    public PdfString getStateModel() throws PdfException {
+    public PdfString getStateModel() {
         return getPdfObject().getAsString(PdfName.StateModel);
     }
 

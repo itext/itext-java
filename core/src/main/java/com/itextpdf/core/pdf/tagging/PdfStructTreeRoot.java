@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.*;
 import org.slf4j.LoggerFactory;
 
@@ -16,31 +16,31 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         add(PdfName.Pg);
     }};
 
-    public PdfStructTreeRoot(PdfDocument document) throws PdfException {
+    public PdfStructTreeRoot(PdfDocument document) {
         this(new PdfDictionary(), document);
         getPdfObject().put(PdfName.Type, PdfName.StructTreeRoot);
     }
 
-    public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    public PdfStructElem addKid(PdfStructElem structElem) throws PdfException {
+    public PdfStructElem addKid(PdfStructElem structElem) {
         return addKid(-1, structElem);
     }
 
-    public PdfStructElem addKid(int index, PdfStructElem structElem) throws PdfException {
+    public PdfStructElem addKid(int index, PdfStructElem structElem) {
         addKidObject(index, structElem.getPdfObject());
         return structElem;
     }
 
     @Override
-    public IPdfStructElem getParent() throws PdfException {
+    public IPdfStructElem getParent() {
         return null;
     }
 
     @Override
-    public List<IPdfStructElem> getKids() throws PdfException {
+    public List<IPdfStructElem> getKids() {
         PdfObject k = getPdfObject().get(PdfName.K);
         List<IPdfStructElem> kids = new ArrayList<IPdfStructElem>();
         switch (k.getType()) {
@@ -72,7 +72,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return kids;
     }
 
-    public PdfArray getKidsObject() throws PdfException {
+    public PdfArray getKidsObject() {
         PdfArray k = getPdfObject().getAsArray(PdfName.K);
         if (k == null) {
             k = new PdfArray();
@@ -81,7 +81,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return k;
     }
 
-    public PdfDictionary getRoleMap() throws PdfException {
+    public PdfDictionary getRoleMap() {
         PdfDictionary roleMap = getPdfObject().getAsDictionary(PdfName.RoleMap);
         if (roleMap == null) {
             roleMap = new PdfDictionary();
@@ -90,7 +90,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return roleMap;
     }
 
-    public PdfDictionary getParentTreeObject() throws PdfException {
+    public PdfDictionary getParentTreeObject() {
         PdfDictionary parentTree = getPdfObject().getAsDictionary(PdfName.ParentTree);
         if (parentTree == null) {
             parentTree = new PdfDictionary();
@@ -101,7 +101,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return parentTree;
     }
 
-    public int getStructParentIndex() throws PdfException {
+    public int getStructParentIndex() {
         PdfArray nums = null;
         PdfArray kids = getParentTreeObject().getAsArray(PdfName.Kids);
         if (kids != null) {
@@ -132,12 +132,12 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     @Override
-    public PdfName getRole() throws PdfException {
+    public PdfName getRole() {
         return null;
     }
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
         PdfArray nums = new PdfArray();
         for (int i = 0; i < getDocument().getNumOfPages(); i++) {
             PdfPage page = getDocument().getPage(i + 1);
@@ -173,9 +173,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      *
      * @param toDocument document to cpt structure to.
      * @param page2page  association between original page and copied page.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public void copyToDocument(PdfDocument toDocument, LinkedHashMap<PdfPage, PdfPage> page2page) throws PdfException {
+    public void copyToDocument(PdfDocument toDocument, LinkedHashMap<PdfPage, PdfPage> page2page) {
         if (!toDocument.isTagged())
             return;
         Set<PdfDictionary> tops = new LinkedHashSet<PdfDictionary>();
@@ -200,9 +200,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param toDocument       document to cpt structure to.
      * @param insertBeforePage indicates where the structure to be inserted.
      * @param page2page        association between original page and copied page.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public void copyToDocument(PdfDocument toDocument, int insertBeforePage, LinkedHashMap<PdfPage, PdfPage> page2page) throws PdfException {
+    public void copyToDocument(PdfDocument toDocument, int insertBeforePage, LinkedHashMap<PdfPage, PdfPage> page2page) {
         if (!toDocument.isTagged())
             return;
 
@@ -233,7 +233,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     }
 
-    public void registerObjRef(PdfObjRef objRef) throws PdfException {
+    public void registerObjRef(PdfObjRef objRef) {
         if (objRef == null)
             return;
         PdfDictionary o = ((PdfDictionary) objRef.getPdfObject()).getAsDictionary(PdfName.Obj);
@@ -244,7 +244,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
-    private PdfDictionary getObjectsToCopy(IPdfTag tag, Set<PdfDictionary> objectsToCopy) throws PdfException {
+    private PdfDictionary getObjectsToCopy(IPdfTag tag, Set<PdfDictionary> objectsToCopy) {
         if (tag instanceof PdfMcrDictionary)
             objectsToCopy.add((PdfDictionary) ((PdfMcrDictionary) tag).getPdfObject());
         PdfDictionary elem = ((PdfStructElem) tag.getParent()).getPdfObject();
@@ -261,7 +261,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return elem;
     }
 
-    private PdfDictionary copyObject(PdfDictionary source, Set<PdfDictionary> objectsToCopy, PdfDocument toDocument, Map<PdfDictionary, PdfDictionary> page2page) throws PdfException {
+    private PdfDictionary copyObject(PdfDictionary source, Set<PdfDictionary> objectsToCopy, PdfDocument toDocument, Map<PdfDictionary, PdfDictionary> page2page) {
         PdfDictionary copied = source.copy(toDocument, ignoreKeysForCopy, true);
         PdfDictionary pg = source.getAsDictionary(PdfName.Pg);
         if (pg != null)
@@ -314,11 +314,11 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return copied;
     }
 
-    private void addKidObject(PdfDictionary structElem) throws PdfException {
+    private void addKidObject(PdfDictionary structElem) {
         addKidObject(-1, structElem);
     }
 
-    private void addKidObject(int index, PdfDictionary structElem) throws PdfException {
+    private void addKidObject(int index, PdfDictionary structElem) {
         if (index == -1)
             getKidsObject().add(structElem);
         else

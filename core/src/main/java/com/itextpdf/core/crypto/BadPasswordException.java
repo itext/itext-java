@@ -1,8 +1,8 @@
 package com.itextpdf.core.crypto;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
-public class BadPasswordException extends PdfException {
+public class BadPasswordException extends PdfRuntimeException {
 
     public BadPasswordException(String message, Throwable cause) {
         super(message, cause);

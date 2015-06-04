@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ class PdfPagesTree {
      *
      * @param pdfCatalog {@see PdfCatalog}
      */
-    public PdfPagesTree(PdfCatalog pdfCatalog) throws PdfException {
+    public PdfPagesTree(PdfCatalog pdfCatalog) {
         this.document = pdfCatalog.getDocument();
         this.pageRefs = new ArrayList<PdfDictionary>();
         this.parents = new ArrayList<PdfPages>();
@@ -31,7 +31,7 @@ class PdfPagesTree {
         if (pdfCatalog.getPdfObject().containsKey(PdfName.Pages)) {
             PdfDictionary pages = pdfCatalog.getPdfObject().getAsDictionary(PdfName.Pages);
             if (pages == null)
-                throw new PdfException(PdfException.InvalidPageStructurePagesPagesMustBePdfDictionary);
+                throw new PdfRuntimeException(PdfRuntimeException.InvalidPageStructurePagesPagesMustBePdfDictionary);
             this.root = new PdfPages(0, Integer.MAX_VALUE, pages, null);
             parents.add(this.root);
             for (int i = 0; i < this.root.getCount(); i++) {
@@ -52,7 +52,7 @@ class PdfPagesTree {
      * @param  pageNum one-based index of the element to return
      * @return the {@see PdfPage} at the specified position in this list
      */
-    public PdfPage getPage(int pageNum) throws PdfException {
+    public PdfPage getPage(int pageNum) {
         --pageNum;
         PdfPage pdfPage = pages.get(pageNum);
         if (pdfPage == null) {
@@ -84,7 +84,7 @@ class PdfPagesTree {
      *
      * @param pdfPage {@see PdfPage}
      */
-    public void addPage(PdfPage pdfPage) throws PdfException {
+    public void addPage(PdfPage pdfPage) {
         PdfPages pdfPages;
         if (root != null) { // in this case we save tree structure
             if (pageRefs.size() == 0) {
@@ -112,7 +112,7 @@ class PdfPagesTree {
      * @param index one-base index of the page
      * @param pdfPage {@see PdfPage}
      */
-    public void addPage(int index, PdfPage pdfPage) throws PdfException {
+    public void addPage(int index, PdfPage pdfPage) {
         --index;
         if (index > pageRefs.size())
             throw new IndexOutOfBoundsException("index");
@@ -137,7 +137,7 @@ class PdfPagesTree {
      * @param pageNum the one-based index of the PdfPage to be removed
      * @return the page that was removed from the list
      */
-    public PdfPage removePage(int pageNum) throws PdfException {
+    public PdfPage removePage(int pageNum) {
         PdfPage pdfPage = getPage(pageNum);
         if (internalRemovePage(--pageNum)) {
             if (!pdfPage.getPdfObject().isFlushed()) {
@@ -159,7 +159,7 @@ class PdfPagesTree {
      * @param pdfPage page to be removed from this list, if present
      * @return <tt>true</tt> if this list contained the specified page
      */
-    public boolean removePage(PdfPage pdfPage) throws PdfException {
+    public boolean removePage(PdfPage pdfPage) {
         int pageNum = getPageNum(pdfPage) - 1;
         if (pageNum < 0)
             return false;
@@ -175,13 +175,13 @@ class PdfPagesTree {
      * Generate PdfPages tree.
      *
      * @return root {@see PdfPages}
-     * @throws PdfException in case empty document
+     * @throws PdfRuntimeException in case empty document
      */
-    protected  PdfObject generateTree() throws PdfException {
+    protected  PdfObject generateTree() {
         if (pageRefs.isEmpty())
-            throw new PdfException(PdfException.DocumentHasNoPages);
+            throw new PdfRuntimeException(PdfRuntimeException.DocumentHasNoPages);
         if (generated)
-            throw new PdfException(PdfException.PdfPagesTreeCouldBeGeneratedOnlyOnce);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfPagesTreeCouldBeGeneratedOnlyOnce);
         pageRefs = null;
         pages = null;
 
@@ -222,7 +222,7 @@ class PdfPagesTree {
         return root;
     }
 
-    private void loadPage(int pageNum) throws PdfException {
+    private void loadPage(int pageNum) {
         PdfDictionary targetPage = pageRefs.get(pageNum);
         if (targetPage != null)
             return;
@@ -231,7 +231,7 @@ class PdfPagesTree {
         PdfPages parent = parents.get(parentIndex);
         PdfArray kids = parent.getKids();
         if (kids == null) {
-            throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);
+            throw new PdfRuntimeException(PdfRuntimeException.InvalidPageStructure1).setMessageParams(pageNum+1);
         }
         int kidsCount = parent.getCount();
         // we should handle separated pages, it means every PdfArray kids must contain either PdfPage or PdfPages,
@@ -241,14 +241,14 @@ class PdfPagesTree {
         for (int i = 0; i < kids.size(); i++) {
             PdfDictionary page = kids.getAsDictionary(i);
             if (page == null) {                                             // null values not allowed in pages tree.
-                throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);
+                throw new PdfRuntimeException(PdfRuntimeException.InvalidPageStructure1).setMessageParams(pageNum+1);
             }
             PdfObject pageKids = page.get(PdfName.Kids);
             if (pageKids != null) {
                 if (pageKids.getType() == PdfObject.Array) {
                     findPdfPages = true;
                 } else {                                                    // kids must be of type array
-                    throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);
+                    throw new PdfRuntimeException(PdfRuntimeException.InvalidPageStructure1).setMessageParams(pageNum+1);
                 }
             }
         }
@@ -297,7 +297,7 @@ class PdfPagesTree {
     }
 
     // zero-based index
-    private boolean internalRemovePage(int pageNum) throws PdfException {
+    private boolean internalRemovePage(int pageNum) {
         int parentIndex = findPageParent(pageNum);
         PdfPages pdfPages = parents.get(parentIndex);
         if (pdfPages.removePage(pageNum)) {
@@ -321,7 +321,7 @@ class PdfPagesTree {
     }
 
     // zero-based index
-    private int findPageParent(int pageNum) throws PdfException {
+    private int findPageParent(int pageNum) {
         int low = 0;
         int high = parents.size() - 1;
         while (low != high) {

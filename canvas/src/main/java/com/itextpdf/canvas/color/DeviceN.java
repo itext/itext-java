@@ -1,6 +1,5 @@
 package com.itextpdf.canvas.color;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
@@ -14,7 +13,7 @@ public class DeviceN extends Color {
         super(cs, value);
     }
 
-    public DeviceN(PdfDocument document, ArrayList<String> names, PdfColorSpace alternateCs, PdfFunction tintTransform, float[] value) throws PdfException {
+    public DeviceN(PdfDocument document, ArrayList<String> names, PdfColorSpace alternateCs, PdfFunction tintTransform, float[] value) {
         this(new PdfSpecialCs.DeviceN(document, names, alternateCs, tintTransform), value);
     }
 

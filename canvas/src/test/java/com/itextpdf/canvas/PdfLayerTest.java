@@ -1,6 +1,6 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.font.PdfType1Font;
@@ -31,7 +31,7 @@ public class PdfLayerTest {
     }
 
     @Test
-    public void testInStamperMode1() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void testInStamperMode1() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "input_layered.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "output_copy_layered.pdf")));
         pdfDoc.close();
@@ -39,7 +39,7 @@ public class PdfLayerTest {
     }
 
     @Test
-    public void testInStamperMode2() throws IOException, PdfException, InterruptedException, DocumentException {
+    public void testInStamperMode2() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "input_layered.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "output_layered.pdf")));
 

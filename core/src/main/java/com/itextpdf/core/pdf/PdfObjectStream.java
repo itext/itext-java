@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ class PdfObjectStream extends PdfStream {
      */
     protected PdfOutputStream indexStream = new PdfOutputStream(new ByteArrayOutputStream());
 
-    public PdfObjectStream(PdfDocument doc) throws PdfException {
+    public PdfObjectStream(PdfDocument doc) {
         super(doc);
         put(PdfName.Type, PdfName.ObjStm);
         put(PdfName.N, size);
@@ -35,7 +35,7 @@ class PdfObjectStream extends PdfStream {
      * NOTE Only for internal use in PdfWriter!
      * @param prev previous PdfObjectStream.
      */
-    PdfObjectStream(PdfObjectStream prev) throws PdfException {
+    PdfObjectStream(PdfObjectStream prev) {
         this(prev.getDocument());
         ByteArrayOutputStream prevOutputStream = (ByteArrayOutputStream) prev.getOutputStream().getOutputStream();
         prevOutputStream.reset();
@@ -49,11 +49,11 @@ class PdfObjectStream extends PdfStream {
      * Adds object to the object stream.
      *
      * @param object object to add.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public void addObject(PdfObject object) throws PdfException {
+    public void addObject(PdfObject object) {
         if (size.getIntValue() == maxObjStreamSize) {
-            throw new PdfException(PdfException.PdfObjectStreamReachMaxSize);
+            throw new PdfRuntimeException(PdfRuntimeException.PdfObjectStreamReachMaxSize);
         }
         PdfOutputStream outputStream = getOutputStream();
         indexStream.writeInteger(object.getIndirectReference().getObjNumber()).
@@ -82,17 +82,17 @@ class PdfObjectStream extends PdfStream {
     }
 
     @Override
-    protected void releaseContent() throws PdfException {
+    protected void releaseContent() {
         releaseContent(false);
     }
 
-    private void releaseContent(boolean close) throws PdfException {
+    private void releaseContent(boolean close) {
         if (close) {
             super.releaseContent();
             try {
                 indexStream.close();
             } catch (IOException e) {
-                throw new PdfException(PdfException.IoException, e);
+                throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
             }
             indexStream = null;
         }

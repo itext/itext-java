@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
 import java.io.IOException;
 
@@ -36,9 +36,9 @@ abstract public class PdfObject {
     /**
      * Flushes the object to the document.
      *
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    final public void flush() throws PdfException {
+    final public void flush() {
         flush(true);
     }
 
@@ -46,9 +46,9 @@ abstract public class PdfObject {
      * Flushes the object to the document.
      *
      * @param canBeInObjStm indicates whether object can be placed into object stream.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    final public void flush(boolean canBeInObjStm) throws PdfException {
+    final public void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null) {
             //TODO log meaningless call of flush: object is direct or released
             return;
@@ -60,7 +60,7 @@ abstract public class PdfObject {
                         && getType() != IndirectReference && getIndirectReference().getGenNumber() == 0);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotFlushObject, e, this);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotFlushObject, e, this);
         }
     }
 
@@ -70,7 +70,7 @@ abstract public class PdfObject {
      * @param document document to copy object to.
      * @return copied object.
      */
-    public <T extends PdfObject> T copy(PdfDocument document) throws PdfException {
+    public <T extends PdfObject> T copy(PdfDocument document) {
         return copy(document, true);
     }
 
@@ -79,7 +79,7 @@ abstract public class PdfObject {
      *
      * @return copied object.
      */
-    public <T extends PdfObject> T copy() throws PdfException {
+    public <T extends PdfObject> T copy() {
         return copy(getDocument());
     }
 
@@ -100,10 +100,10 @@ abstract public class PdfObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) throws PdfException {
+    public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) {
         if (document == null || indirectReference != null) return (T) this;
         if (document.getWriter() == null) {
-            throw new PdfException(PdfException.ThereIsNoAssociatePdfWriterForMakingIndirects);
+            throw new PdfRuntimeException(PdfRuntimeException.ThereIsNoAssociatePdfWriterForMakingIndirects);
         }
         if (reference == null) {
             indirectReference = document.createNextIndirectReference(this);
@@ -119,7 +119,7 @@ abstract public class PdfObject {
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T extends PdfObject> T makeIndirect(PdfDocument document) throws PdfException {
+    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
         return makeIndirect(document, null);
     }
 
@@ -162,9 +162,9 @@ abstract public class PdfObject {
      *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public <T extends PdfObject> T copy(PdfDocument document, boolean allowDuplicating) throws PdfException {
+    public <T extends PdfObject> T copy(PdfDocument document, boolean allowDuplicating) {
         PdfWriter writer = null;
         if (document == null)
             document = getDocument();
@@ -336,9 +336,9 @@ abstract public class PdfObject {
      * @param from     object to copy content from.
      * @param document document to copy object to.
      */
-    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+    protected void copyContent(PdfObject from, PdfDocument document) {
         if (isFlushed())
-            throw new PdfException(PdfException.CannotCopyFlushedObject, this);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotCopyFlushedObject, this);
     }
 
 

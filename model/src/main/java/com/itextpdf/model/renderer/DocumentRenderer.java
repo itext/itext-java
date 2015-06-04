@@ -1,6 +1,5 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfPage;
@@ -102,22 +101,14 @@ public class DocumentRenderer extends AbstractRenderer {
 
     public LayoutArea getNextArea() {
         currentPageNumber++;
-        try {
-            ensureDocumentHasNPages(currentPageNumber);
-            PdfPage newPage = document.getPdfDocument().getPage(currentPageNumber);
-            return (currentArea = new LayoutArea(currentPageNumber, document.getPdfDocument().getDefaultPageSize().getEffectiveArea()));
-        } catch (PdfException exc) {
-            throw new RuntimeException();
-        }
+        ensureDocumentHasNPages(currentPageNumber);
+        PdfPage newPage = document.getPdfDocument().getPage(currentPageNumber);
+        return (currentArea = new LayoutArea(currentPageNumber, document.getPdfDocument().getDefaultPageSize().getEffectiveArea()));
     }
 
     public LayoutArea getNextPageArea(PageSize pageSize) {
-        try {
-            PdfPage newPage = document.getPdfDocument().addNewPage(pageSize);
-            return (currentArea = new LayoutArea(document.getPdfDocument().getNumOfPages(), pageSize.getEffectiveArea()));
-        } catch (PdfException exc) {
-            throw new RuntimeException();
-        }
+        PdfPage newPage = document.getPdfDocument().addNewPage(pageSize);
+        return (currentArea = new LayoutArea(document.getPdfDocument().getNumOfPages(), pageSize.getEffectiveArea()));
     }
 
     @Override
@@ -127,21 +118,15 @@ public class DocumentRenderer extends AbstractRenderer {
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         if (!resultRenderer.isFlushed()) {
-            try {
-                ensureDocumentHasNPages(resultRenderer.getOccupiedArea().getPageNumber());
-                PdfPage correspondingPage = document.getPdfDocument().getPage(resultRenderer.getOccupiedArea().getPageNumber());
-                resultRenderer.draw(document.getPdfDocument(), new PdfCanvas(correspondingPage));
-            } catch (PdfException exc) {
-                throw new RuntimeException(exc);
-            }
+            ensureDocumentHasNPages(resultRenderer.getOccupiedArea().getPageNumber());
+            PdfPage correspondingPage = document.getPdfDocument().getPage(resultRenderer.getOccupiedArea().getPageNumber());
+            resultRenderer.draw(document.getPdfDocument(), new PdfCanvas(correspondingPage));
         }
     }
 
     private void ensureDocumentHasNPages(int n) {
         while (document.getPdfDocument().getNumOfPages() < n) {
-            try {
-                PdfPage newPage = document.getPdfDocument().addNewPage();
-            } catch (PdfException exc) {}
+            PdfPage newPage = document.getPdfDocument().addNewPage();
         }
     }
 

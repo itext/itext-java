@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
@@ -9,15 +8,15 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
     protected PdfAnnotation inReplyTo = null;
     protected PdfPopupAnnotation popup = null;
 
-    public PdfMarkupAnnotation(PdfDocument document, Rectangle rect) throws PdfException {
+    public PdfMarkupAnnotation(PdfDocument document, Rectangle rect) {
         super(document, rect);
     }
 
-    public PdfMarkupAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfMarkupAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    public PdfString getText() throws PdfException {
+    public PdfString getText() {
         return getPdfObject().getAsString(PdfName.T);
     }
 
@@ -25,7 +24,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.T, text);
     }
 
-    public PdfNumber getOpacity() throws PdfException {
+    public PdfNumber getOpacity() {
         return getPdfObject().getAsNumber(PdfName.CA);
     }
 
@@ -33,7 +32,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.CA, ca);
     }
 
-    public PdfObject getRichText() throws PdfException {
+    public PdfObject getRichText() {
         return getPdfObject().getAsDictionary(PdfName.RC);
     }
 
@@ -41,7 +40,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.RC, richText);
     }
 
-    public PdfString getCreationDate() throws PdfException {
+    public PdfString getCreationDate() {
         return getPdfObject().getAsString(PdfName.CreationDate);
     }
 
@@ -49,7 +48,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.CreationDate, creationDate);
     }
 
-    public PdfDictionary getInReplyToObject() throws PdfException {
+    public PdfDictionary getInReplyToObject() {
         return getPdfObject().getAsDictionary(PdfName.IRT);
     }
 
@@ -67,7 +66,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.Popup, popup);
     }
 
-    public PdfDictionary getPopupObject() throws PdfException {
+    public PdfDictionary getPopupObject() {
         return getPdfObject().getAsDictionary(PdfName.Popup);
     }
 
@@ -75,7 +74,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return popup;
     }
 
-    public PdfString getSubject() throws PdfException {
+    public PdfString getSubject() {
         return getPdfObject().getAsString(PdfName.Subj);
     }
 
@@ -83,7 +82,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.Subj, subject);
     }
 
-    public PdfName getReplyType() throws PdfException {
+    public PdfName getReplyType() {
         return getPdfObject().getAsName(PdfName.RT);
     }
 
@@ -91,7 +90,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.RT, replyType);
     }
 
-    public PdfName getIntent() throws PdfException {
+    public PdfName getIntent() {
         return getPdfObject().getAsName(PdfName.IT);
     }
 
@@ -99,7 +98,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.IT, intent);
     }
 
-    public PdfDictionary getExternalData() throws PdfException {
+    public PdfDictionary getExternalData() {
         return getPdfObject().getAsDictionary(PdfName.ExData);
     }
 
@@ -111,11 +110,11 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.RD, rect);
     }
 
-    public PdfArray getRectangleDifferences() throws PdfException {
+    public PdfArray getRectangleDifferences() {
         return getPdfObject().getAsArray(PdfName.RD);
     }
 
-    public PdfDictionary getBorderEffect() throws PdfException {
+    public PdfDictionary getBorderEffect() {
         return getPdfObject().getAsDictionary(PdfName.BE);
     }
 
@@ -123,7 +122,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.BE, borderEffect);
     }
 
-    public PdfArray getInteriorColor() throws PdfException {
+    public PdfArray getInteriorColor() {
         return getPdfObject().getAsArray(PdfName.IC);
     }
 
@@ -136,7 +135,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
 
-    public PdfName getIconName() throws PdfException {
+    public PdfName getIconName() {
         return getPdfObject().getAsName(PdfName.Name);
     }
 
@@ -148,11 +147,11 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.DA, appearanceString);
     }
 
-    public PdfString getDrawnAfter() throws PdfException {
+    public PdfString getDrawnAfter() {
         return getPdfObject().getAsString(PdfName.DA);
     }
 
-    public int getJustification() throws PdfException {
+    public int getJustification() {
         PdfNumber q = getPdfObject().getAsNumber(PdfName.Q);
         return q == null ? 0 : q.getIntValue();
     }

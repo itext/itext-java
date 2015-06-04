@@ -1,6 +1,6 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
@@ -8,7 +8,6 @@ import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
 
 class Type1Parser {
 
@@ -24,16 +23,16 @@ class Type1Parser {
      * @param afm the AFM file if the input is made with a <CODE>byte</CODE> array
      * @param pfb the PFB file if the input is made with a <CODE>byte</CODE> array
      * @param name the name of one of the 14 built-in fonts or the location of an AFM file. The file must end in '.afm'
-     * @throws PdfException the AFM file is invalid
+     * @the AFM file is invalid
      * @throws IOException the AFM file could not be read
      */
-    public Type1Parser(String name, byte[] afm, byte[] pfb) throws PdfException, IOException {
+    public Type1Parser(String name, byte[] afm, byte[] pfb) throws IOException {
         this.afm = afm;
         this.pfb = pfb;
         this.name = name;
     }
 
-    public RandomAccessFileOrArray getMetricsFile() throws PdfException, IOException {
+    public RandomAccessFileOrArray getMetricsFile() throws IOException {
         RandomAccessFileOrArray rf;
         InputStream is = null;
         isBuiltInFont = false;
@@ -46,7 +45,7 @@ class Type1Parser {
                     resourceAnchor = new FontsResourceAnchor();
                 is = Utilities.getResourceStream(FontConstants.RESOURCE_PATH + "afm/" + name + ".afm", resourceAnchor.getClass().getClassLoader());
                 if (is == null) {
-                    throw new PdfException("1.not.found.as.resource").setMessageParams(name);
+                    throw new PdfRuntimeException("1.not.found.as.resource").setMessageParams(name);
                 }
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 int read;
@@ -82,11 +81,11 @@ class Type1Parser {
             return rf;
         }
         else {
-            throw new PdfException("1.is.not.an.afm.or.pfm.font.file").setMessageParams(name);
+            throw new PdfRuntimeException("1.is.not.an.afm.or.pfm.font.file").setMessageParams(name);
         }
     }
 
-    public RandomAccessFileOrArray getPostscriptBinary() throws PdfException, IOException {
+    public RandomAccessFileOrArray getPostscriptBinary() throws IOException {
         String filePfb = getPfbName();
         RandomAccessSourceFactory sourceFactory = new RandomAccessSourceFactory();
         RandomAccessFileOrArray raf;

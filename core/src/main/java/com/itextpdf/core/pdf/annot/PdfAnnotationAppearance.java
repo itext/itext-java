@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
@@ -12,7 +11,7 @@ public class PdfAnnotationAppearance extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
-    public PdfAnnotationAppearance(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfAnnotationAppearance(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
     }
 
@@ -20,7 +19,7 @@ public class PdfAnnotationAppearance extends PdfObjectWrapper<PdfDictionary> {
         this(new PdfDictionary());
     }
 
-    public PdfAnnotationAppearance(PdfDocument pdfDocument) throws PdfException {
+    public PdfAnnotationAppearance(PdfDocument pdfDocument) {
         this(new PdfDictionary(), pdfDocument);
     }
 
@@ -32,7 +31,7 @@ public class PdfAnnotationAppearance extends PdfObjectWrapper<PdfDictionary> {
         return put(stateName, state);
     }
 
-    public PdfStream getStateObject(PdfName stateName) throws PdfException {
+    public PdfStream getStateObject(PdfName stateName) {
         return getPdfObject().getAsStream(stateName);
     }
 

@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
@@ -26,7 +26,7 @@ public class ListTest {
     }
 
     @Test
-    public void nestedListTest01() throws IOException, PdfException, InterruptedException {
+    public void nestedListTest01() throws IOException, PdfRuntimeException, InterruptedException {
         String outFileName = destinationFolder + "nestedListTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_nestedListTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -52,7 +52,7 @@ public class ListTest {
     }
 
     @Test
-    public void listNumberingTest01() throws IOException, PdfException, InterruptedException {
+    public void listNumberingTest01() throws IOException, PdfRuntimeException, InterruptedException {
         String outFileName = destinationFolder + "listNumberingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listNumberingTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -85,7 +85,7 @@ public class ListTest {
 
     @Test
     @Ignore
-    public void divInListItemTest01() throws IOException, PdfException, InterruptedException {
+    public void divInListItemTest01() throws IOException, PdfRuntimeException, InterruptedException {
         String outFileName = destinationFolder + "divInListItemTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divInListItemTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -101,7 +101,7 @@ public class ListTest {
     }
 
     @Test
-    public void listOverflowTest01() throws IOException, PdfException, InterruptedException {
+    public void listOverflowTest01() throws IOException, PdfRuntimeException, InterruptedException {
         String outFileName = destinationFolder + "listOverflowTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listOverflowTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

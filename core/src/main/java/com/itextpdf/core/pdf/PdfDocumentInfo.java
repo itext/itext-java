@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 
 import java.util.HashMap;
@@ -8,18 +7,18 @@ import java.util.Map;
 
 public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject == null ? new PdfDictionary() : pdfObject);
         if (pdfDocument.getWriter() != null) {
             this.getPdfObject().makeIndirect(pdfDocument);
         }
     }
 
-    public PdfDocumentInfo(PdfDictionary pdfObject) throws PdfException {
+    public PdfDocumentInfo(PdfDictionary pdfObject) {
         this(pdfObject, null);
     }
 
-    public PdfDocumentInfo(PdfDocument pdfDocument) throws PdfException {
+    public PdfDocumentInfo(PdfDocument pdfDocument) {
         this(new PdfDictionary(), pdfDocument);
     }
 
@@ -48,23 +47,23 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
-    public String getTitle() throws PdfException {
+    public String getTitle() {
         return getStringValue(PdfName.Title);
     }
 
-    public String getAuthor() throws PdfException {
+    public String getAuthor() {
         return getStringValue(PdfName.Author);
     }
 
-    public String getSubject() throws PdfException {
+    public String getSubject() {
         return getStringValue(PdfName.Subject);
     }
 
-    public String getKeywords() throws PdfException {
+    public String getKeywords() {
         return getStringValue(PdfName.Keywords);
     }
 
-    public String getCreator() throws PdfException {
+    public String getCreator() {
         return getStringValue(PdfName.Creator);
     }
 
@@ -94,11 +93,11 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
     }
 
     @Override
-    public void flush() throws PdfException {
+    public void flush() {
         getPdfObject().flush(false);
     }
 
-    private String getStringValue(PdfName name) throws PdfException {
+    private String getStringValue(PdfName name) {
         PdfString pdfString = getPdfObject().getAsString(name);
         return pdfString != null ? pdfString.getValue() : null;
     }

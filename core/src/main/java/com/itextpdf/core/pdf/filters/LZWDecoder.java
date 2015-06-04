@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,10 +34,10 @@ public class LZWDecoder {
      * @param data The compressed data.
      * @param uncompData Array to return the uncompressed data in.
      */
-    public void decode(byte data[], OutputStream uncompData) throws PdfException {
+    public void decode(byte data[], OutputStream uncompData) {
 
         if(data[0] == (byte)0x00 && data[1] == (byte)0x01) {
-            throw new PdfException(PdfException.LzwFlavourNotSupported);
+            throw new PdfRuntimeException(PdfRuntimeException.LzwFlavourNotSupported);
         }
 
         initializeStringTable();
@@ -111,12 +111,12 @@ public class LZWDecoder {
     /**
      * Write out the string just uncompressed.
      */
-    public void writeString(byte string[]) throws PdfException {
+    public void writeString(byte string[]) {
         try {
             uncompData.write(string);
         }
         catch (IOException e) {
-            throw new PdfException(PdfException.LzwDecoderException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.LzwDecoderException, e);
         }
     }
 

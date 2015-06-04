@@ -1,6 +1,6 @@
 package com.itextpdf.canvas.color;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 
@@ -17,22 +17,18 @@ public class Color {
     protected PdfColorSpace colorSpace;
     protected float[] colorValue;
 
-    public Color(PdfObject pdfObject, float[] colorValue) throws PdfException {
+    public Color(PdfObject pdfObject, float[] colorValue) {
         this(PdfColorSpace.makeColorSpace(pdfObject, null), colorValue);
     }
 
-    public Color(PdfObject pdfObject) throws PdfException {
+    public Color(PdfObject pdfObject) {
         this(pdfObject, null);
     }
 
     public Color(PdfColorSpace colorSpace, float[] colorValue) {
         this.colorSpace = colorSpace;
         if (colorValue == null)
-            try {
-                this.colorValue = new float[colorSpace.getNumOfComponents()];
-            } catch (PdfException e) {
-                e.printStackTrace();
-            }
+            this.colorValue = new float[colorSpace.getNumOfComponents()];
         else
             this.colorValue = colorValue;
     }
@@ -49,10 +45,10 @@ public class Color {
         return colorValue;
     }
 
-    public void setColorValue(float[] value) throws PdfException {
+    public void setColorValue(float[] value) {
         colorValue = value;
         if (colorValue.length != value.length)
-            throw new PdfException(PdfException.IncorrectNumberOfComponents, this);
+            throw new PdfRuntimeException(PdfRuntimeException.IncorrectNumberOfComponents, this);
     }
 
     @Override

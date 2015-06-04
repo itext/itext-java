@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +17,9 @@ public class PdfOutline {
     /**
      * This constructor creates root outline in the document.
      * @param doc
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfOutline(PdfDocument doc) throws PdfException {
+    public PdfOutline(PdfDocument doc) {
         content = new PdfDictionary();
         content.put(PdfName.Type, PdfName.Outlines);
         this.pdfDoc = doc;
@@ -33,7 +33,7 @@ public class PdfOutline {
         this.pdfDoc = pdfDocument;
     }
 
-    public PdfOutline(String title, PdfDictionary content, PdfOutline parent) throws PdfException {
+    public PdfOutline(String title, PdfDictionary content, PdfOutline parent) {
         this.title = title;
         this.content = content;
         this.parent = parent;
@@ -76,9 +76,9 @@ public class PdfOutline {
      * and put it in the end of the existing <CODE>PdfOutline</CODE> children list
      * @param title an outline title
      * @return a created outline
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfOutline addOutline(String title) throws PdfException {
+    public PdfOutline addOutline(String title) {
         return addOutline(title, -1);
     }
 
@@ -89,9 +89,9 @@ public class PdfOutline {
      * @param position a position in the current outline child List where a new outline should be added.
      *                 If the position equals -1, then the outline will be put in the end of children list.
      * @return created outline
-     * @throws PdfException
+     * @throws PdfRuntimeException
      */
-    public PdfOutline addOutline(String title, int position) throws PdfException {
+    public PdfOutline addOutline(String title, int position) {
         if (position == -1)
             position = children.size();
         PdfDictionary dictionary = new PdfDictionary();
@@ -142,9 +142,9 @@ public class PdfOutline {
 
     /**
      * remove this outline from the document.
-      * @throws PdfException
+      * @throws PdfRuntimeException
      */
-    void removeOutline() throws PdfException {
+    void removeOutline() {
         PdfOutline parent = this.parent;
         List<PdfOutline> children = parent.children;
         children.remove(this);
@@ -170,7 +170,7 @@ public class PdfOutline {
         }
     }
 
-    public PdfOutline addOutline(PdfOutline outline) throws PdfException {
+    public PdfOutline addOutline(PdfOutline outline) {
         PdfOutline newOutline = addOutline(outline.getTitle());
         newOutline.addDestination(outline.getDestination());
 

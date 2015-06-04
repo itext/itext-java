@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.core.crypto.OutputStreamEncryption;
@@ -122,7 +122,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         super(outputStream);
     }
 
-    public PdfOutputStream write(PdfObject pdfObject) throws PdfException {
+    public PdfOutputStream write(PdfObject pdfObject) {
         switch (pdfObject.getType()) {
             case PdfObject.Array:
                 write((PdfArray) pdfObject);
@@ -169,11 +169,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
      * @param permissions    the user permissions
      * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
      *                       Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     * @throws com.itextpdf.basics.PdfException if the document is already open
+     * @throws PdfRuntimeException if the document is already open
      */
-    public void setEncryption(final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) throws PdfException {
+    public void setEncryption(final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) {
         if (document != null)
-            throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
+            throw new PdfRuntimeException(PdfRuntimeException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
         crypto = new PdfEncryption();
         crypto.setCryptoMode(encryptionType, 0);
         crypto.setupAllKeys(userPassword, ownerPassword, permissions);
@@ -191,11 +191,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
      * @param certs          the public certificates to be used for the encryption
      * @param permissions    the user permissions for each of the certificates
      * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
-     * @throws com.itextpdf.basics.PdfException if the document is already open
+     * @throws PdfRuntimeException if the document is already open
      */
-    public void setEncryption(final Certificate[] certs, final int[] permissions, final int encryptionType) throws PdfException {
+    public void setEncryption(final Certificate[] certs, final int[] permissions, final int encryptionType) {
         if (document != null)
-            throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
+            throw new PdfRuntimeException(PdfRuntimeException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
         crypto = new PdfEncryption();
         if (certs != null) {
             for (int i = 0; i < certs.length; i++) {
@@ -210,7 +210,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         return crypto;
     }
 
-    protected void write(PdfArray pdfArray) throws PdfException {
+    protected void write(PdfArray pdfArray) {
         writeByte((byte) '[');
         for (int i = 0; i < pdfArray.size(); i++) {
             PdfObject value = pdfArray.get(i, false);
@@ -226,7 +226,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         writeByte((byte) ']');
     }
 
-    protected void write(PdfDictionary pdfDictionary) throws PdfException {
+    protected void write(PdfDictionary pdfDictionary) {
         writeBytes(openDict);
         for (Map.Entry<PdfName, PdfObject> entry : pdfDictionary.entrySet()) {
             write(entry.getKey());
@@ -242,7 +242,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         writeBytes(closeDict);
     }
 
-    protected void write(PdfIndirectReference indirectReference) throws PdfException {
+    protected void write(PdfIndirectReference indirectReference) {
         if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).
                     writeBytes(endIndirectWithZeroGenNr);
@@ -254,11 +254,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
     }
 
-    protected void write(PdfPrimitiveObject pdfPrimitive) throws PdfException {
+    protected void write(PdfPrimitiveObject pdfPrimitive) {
         writeBytes(pdfPrimitive.getInternalContent());
     }
 
-    protected void write(PdfString pdfString) throws PdfException {
+    protected void write(PdfString pdfString) {
         pdfString.encrypt(crypto);
         if (pdfString.isHexWriting()) {
             writeByte((byte) '<');
@@ -272,12 +272,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     }
 
 
-    protected void write(PdfName name) throws PdfException {
+    protected void write(PdfName name) {
         writeByte((byte) '/');
         writeBytes(name.getInternalContent());
     }
 
-    protected void write(PdfNumber pdfNumber) throws PdfException {
+    protected void write(PdfNumber pdfNumber) {
         if (pdfNumber.hasContent()) {
             writeBytes(pdfNumber.getInternalContent());
         } else if (pdfNumber.getValueType() == PdfNumber.Int) {
@@ -287,7 +287,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
     }
 
-    protected void write(PdfStream pdfStream) throws PdfException {
+    protected void write(PdfStream pdfStream) {
         try {
             if (pdfStream.getInputStream() != null) {
                 java.io.OutputStream fout = this;
@@ -379,7 +379,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                         byteArrayStream = encodedStream;
                     }
                 } catch (IOException ioe) {
-                    throw new PdfException(PdfException.IoException, ioe);
+                    throw new PdfRuntimeException(PdfRuntimeException.IoException, ioe);
                 }
                 pdfStream.put(PdfName.Length, new PdfNumber(byteArrayStream.size()));
                 pdfStream.updateLength(byteArrayStream.size());
@@ -389,11 +389,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 writeBytes(PdfOutputStream.endstream);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWritePdfStream, e, pdfStream);
+            throw new PdfRuntimeException(PdfRuntimeException.CannotWritePdfStream, e, pdfStream);
         }
     }
 
-    protected boolean checkEncryption(PdfStream pdfStream) throws PdfException {
+    protected boolean checkEncryption(PdfStream pdfStream) {
         if (crypto == null || crypto.isEmbeddedFilesOnly()) {
             return false;
         } else {
@@ -412,7 +412,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
     }
 
-    protected boolean checkCompression(PdfStream pdfStream) throws PdfException {
+    protected boolean checkCompression(PdfStream pdfStream) {
         if (pdfStream.getCompressionLevel() == NO_COMPRESSION) {
             return false;
         }
@@ -426,13 +426,13 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 if (((PdfArray) filter).contains(PdfName.FlateDecode))
                     return false;
             } else {
-                throw new PdfException(PdfException.StreamCouldNotBeCompressedFilterIsNotANameOrArray);
+                throw new PdfRuntimeException(PdfRuntimeException.StreamCouldNotBeCompressedFilterIsNotANameOrArray);
             }
         }
         return true;
     }
 
-    protected void updateCompressionFilter(PdfStream pdfStream) throws PdfException {
+    protected void updateCompressionFilter(PdfStream pdfStream) {
         PdfObject filter = pdfStream.get(PdfName.Filter);
         if (filter == null) {
             pdfStream.put(PdfName.Filter, PdfName.FlateDecode);

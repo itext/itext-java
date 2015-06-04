@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
@@ -27,7 +27,7 @@ public class LinkTest {
     }
 
     @Test
-    public void linkTest01() throws IOException, PdfException, InterruptedException {
+    public void linkTest01() throws IOException, PdfRuntimeException, InterruptedException {
 
         String outFileName = destinationFolder+"linkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest01.pdf";
@@ -48,7 +48,7 @@ public class LinkTest {
     }
 
     @Test
-    public void linkTest02() throws IOException, PdfException, InterruptedException {
+    public void linkTest02() throws IOException, PdfRuntimeException, InterruptedException {
 
         String outFileName = destinationFolder+"linkTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest02.pdf";

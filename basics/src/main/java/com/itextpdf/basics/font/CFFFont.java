@@ -1,13 +1,12 @@
 package com.itextpdf.basics.font;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 public class CFFFont {
 
@@ -126,7 +125,7 @@ public class CFFFont {
             return (char)(i & 0xff);
         }
         catch (Exception e) {
-            throw new PdfRuntimeException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         }
     }
 
@@ -134,7 +133,7 @@ public class CFFFont {
         try {
             return buf.readChar();
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         }
     }
 
@@ -151,7 +150,7 @@ public class CFFFont {
         try {
             buf.seek(offset);
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         }
     }
 
@@ -159,7 +158,7 @@ public class CFFFont {
         try {
             return buf.readShort();
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         }
     }
 
@@ -167,7 +166,7 @@ public class CFFFont {
         try {
             return buf.readInt();
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         }
     }
 
@@ -175,7 +174,7 @@ public class CFFFont {
         try {
             return (int)buf.getPosition();
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfException.IoException, e);
+            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
         }
     }
     int nextIndexOffset;
@@ -355,7 +354,7 @@ public class CFFFont {
                 for (int i=myOffset; i<myOffset+length; i++)
                     buffer[i] = buf.readByte();
             } catch (IOException e) {
-                throw new PdfRuntimeException(PdfException.IoException, e);
+                throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
             }
             //System.err.println("finished range emit");
         }

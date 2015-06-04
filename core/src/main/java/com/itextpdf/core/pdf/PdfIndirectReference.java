@@ -1,7 +1,5 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
-
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
     // Indicates if the refersTo object has been flushed.
@@ -92,7 +90,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return genNr;
     }
 
-    public PdfObject getRefersTo() throws PdfException {
+    public PdfObject getRefersTo() {
         return getRefersTo(true);
     }
 
@@ -100,7 +98,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // This method return direct object and try to resolve indirects chain.
     // But if chain of references has length of more than 32,
     // this method return 31st reference in chain.
-    public PdfObject getRefersTo(boolean recursively) throws PdfException {
+    public PdfObject getRefersTo(boolean recursively) {
         if (!recursively) {
             if (refersTo == null && !checkState(Flushed) && getReader() != null) {
                 refersTo = getReader().readObject(this);
@@ -270,7 +268,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) throws PdfException {
+    protected void copyContent(PdfObject from, PdfDocument document) {
 
     }
 }

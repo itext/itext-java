@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 
@@ -11,7 +10,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
         super(pdfObject);
     }
 
-    public PdfDeviceCs(PdfName pdfObject, PdfDocument pdfDocument) throws PdfException {
+    public PdfDeviceCs(PdfName pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
     }
 
@@ -21,12 +20,12 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
             super(PdfName.DeviceGray);
         }
 
-        public Gray(PdfDocument pdfDocument) throws PdfException {
+        public Gray(PdfDocument pdfDocument) {
             super(PdfName.DeviceGray, pdfDocument);
         }
 
         @Override
-        public int getNumOfComponents() throws PdfException {
+        public int getNumOfComponents() {
             return 1;
         }
     }
@@ -37,12 +36,12 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
             super(PdfName.DeviceRGB);
         }
 
-        public Rgb(PdfDocument pdfDocument) throws PdfException {
+        public Rgb(PdfDocument pdfDocument) {
             super(PdfName.DeviceRGB, pdfDocument);
         }
 
         @Override
-        public int getNumOfComponents() throws PdfException {
+        public int getNumOfComponents() {
             return 3;
         }
     }
@@ -53,12 +52,12 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
             super(PdfName.DeviceCMYK);
         }
 
-        public Cmyk(PdfDocument pdfDocument) throws PdfException {
+        public Cmyk(PdfDocument pdfDocument) {
             super(PdfName.DeviceCMYK, pdfDocument);
         }
 
         @Override
-        public int getNumOfComponents() throws PdfException {
+        public int getNumOfComponents() {
             return 4;
         }
     }

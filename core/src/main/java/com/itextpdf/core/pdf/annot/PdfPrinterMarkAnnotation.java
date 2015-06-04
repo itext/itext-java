@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -9,17 +8,17 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 public class PdfPrinterMarkAnnotation extends PdfAnnotation {
 
-    public PdfPrinterMarkAnnotation(PdfDocument document, Rectangle rect, PdfFormXObject appearanceStream) throws PdfException {
+    public PdfPrinterMarkAnnotation(PdfDocument document, Rectangle rect, PdfFormXObject appearanceStream) {
         super(document, rect);
         setNormalAppearance(appearanceStream.getPdfObject());
         setFlags(PdfAnnotation.Print | PdfAnnotation.ReadOnly);
     }
 
-    public PdfPrinterMarkAnnotation(PdfDictionary pdfObject, PdfDocument document) throws PdfException {
+    public PdfPrinterMarkAnnotation(PdfDictionary pdfObject, PdfDocument document) {
         super(pdfObject, document);
     }
 
-    public PdfName getSubtype() throws PdfException {
+    public PdfName getSubtype() {
         return PdfName.PrinterMark;
     }
 
@@ -27,7 +26,7 @@ public class PdfPrinterMarkAnnotation extends PdfAnnotation {
         return put(PdfName.MN, arbitraryTypeName);
     }
 
-    public PdfName getArbitraryTypeName() throws PdfException {
+    public PdfName getArbitraryTypeName() {
         return getPdfObject().getAsName(PdfName.MN);
     }
 }
