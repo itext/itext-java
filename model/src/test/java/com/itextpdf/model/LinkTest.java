@@ -27,7 +27,7 @@ public class LinkTest {
     }
 
     @Test
-    public void linkTest01() throws IOException, PdfRuntimeException, InterruptedException {
+    public void linkTest01() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder+"linkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest01.pdf";
@@ -48,7 +48,7 @@ public class LinkTest {
     }
 
     @Test
-    public void linkTest02() throws IOException, PdfRuntimeException, InterruptedException {
+    public void linkTest02() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder+"linkTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest02.pdf";

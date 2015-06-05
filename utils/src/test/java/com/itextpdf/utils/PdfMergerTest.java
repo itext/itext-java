@@ -24,7 +24,7 @@ public class PdfMergerTest {
     }
 
     @Test
-    public void mergeDocumentTest01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void mergeDocumentTest01() throws IOException, InterruptedException, DocumentException {
         String filename = sourceFolder + "courierTest.pdf";
         String filename1 = sourceFolder + "helveticaTest.pdf";
         String filename2 = sourceFolder + "timesRomanTest.pdf";
@@ -60,7 +60,7 @@ public class PdfMergerTest {
     }
 
     @Test
-     public void mergeDocumentTest02() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+     public void mergeDocumentTest02() throws IOException, InterruptedException, DocumentException {
         String filename = sourceFolder + "doc1.pdf";
         String filename1 = sourceFolder + "doc2.pdf";
         String filename2 = sourceFolder + "doc3.pdf";
@@ -95,7 +95,7 @@ public class PdfMergerTest {
     }
 
     @Test
-    public void mergeDocumentTest03() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void mergeDocumentTest03() throws IOException, InterruptedException, DocumentException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";
         String resultFile = destinationFolder+"mergedResult03.pdf";
@@ -126,7 +126,7 @@ public class PdfMergerTest {
     }
 
     @Test
-    public void mergeDocumentTest04() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void mergeDocumentTest04() throws IOException, InterruptedException, DocumentException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";
         String resultFile = destinationFolder+"mergedResult04.pdf";

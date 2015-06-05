@@ -647,7 +647,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingXmp1() throws IOException, PdfRuntimeException, XMPException {
+    public void stampingXmp1() throws IOException, XMPException {
         String filename1 =  destinationFolder + "stampingXmp1_1.pdf";
         String filename2 =  destinationFolder + "stampingXmp1_2.pdf";
         int pageCount = 10;
@@ -693,7 +693,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void stampingXmp2() throws IOException, PdfRuntimeException, XMPException {
+    public void stampingXmp2() throws IOException, XMPException {
         String filename1 =  destinationFolder + "stampingXmp2_1.pdf";
         String filename2 =  destinationFolder + "stampingXmp2_2.pdf";
         int pageCount = 10;
@@ -1217,7 +1217,7 @@ public class PdfDocumentTest {
     }
 
     @Test
-    public void addOutlinesWithNamedDestinations01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException, DocumentException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
         String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
 

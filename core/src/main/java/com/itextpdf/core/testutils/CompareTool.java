@@ -76,11 +76,11 @@ public class CompareTool {
     }
 
 
-    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws InterruptedException, PdfRuntimeException, IOException {
+    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws InterruptedException, IOException {
         return compareVisually(outPdf, cmpPdf, outPath, differenceImagePrefix, null);
     }
 
-    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, PdfRuntimeException, IOException {
+    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
         return compareVisually(outPath, differenceImagePrefix, ignoredAreas);
     }
@@ -276,11 +276,11 @@ public class CompareTool {
         else cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
     }
 
-    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, PdfRuntimeException, IOException {
+    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         return compareVisually(outPath, differenceImagePrefix, ignoredAreas, null);
     }
 
-    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages) throws IOException, PdfRuntimeException, InterruptedException {
+    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages) throws IOException, InterruptedException {
         if (gsExec == null)
             return undefinedGsPath;
         if (!(new File(gsExec).exists())) {

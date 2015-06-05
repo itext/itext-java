@@ -82,7 +82,7 @@ public class PdfTokeniserTest {
 
 
     @Test
-    public void encodingTest() throws IOException, PdfRuntimeException, DocumentException {
+    public void encodingTest() throws IOException, DocumentException {
 
         RandomAccessSourceFactory factory;
         PdfTokeniser tok;

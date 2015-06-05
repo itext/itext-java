@@ -26,7 +26,7 @@ public class ImageTest {
     }
 
     @Test
-    public void imageTest01() throws IOException, PdfRuntimeException, InterruptedException {
+    public void imageTest01() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest01.pdf";
@@ -64,7 +64,7 @@ public class ImageTest {
     }
 
     @Test
-    public void imageTest02() throws IOException, PdfRuntimeException, InterruptedException {
+    public void imageTest02() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest02.pdf";
@@ -102,7 +102,7 @@ public class ImageTest {
     }
 
     @Test
-    public void imageTest03() throws IOException, PdfRuntimeException, InterruptedException {
+    public void imageTest03() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest03.pdf";
@@ -141,7 +141,7 @@ public class ImageTest {
     }
 
     @Test
-    public void imageTest04() throws IOException, PdfRuntimeException, InterruptedException {
+    public void imageTest04() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest04.pdf";
@@ -180,7 +180,7 @@ public class ImageTest {
     }
 
     @Test
-    public void imageTest05() throws IOException, PdfRuntimeException, InterruptedException {
+    public void imageTest05() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest05.pdf";
@@ -219,7 +219,7 @@ public class ImageTest {
     }
 
     @Test
-    public void imageTest06() throws IOException, PdfRuntimeException, InterruptedException {
+    public void imageTest06() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest06.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest06.pdf";

@@ -29,7 +29,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentTest01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void splitDocumentTest01() throws IOException, InterruptedException, DocumentException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
 
@@ -58,7 +58,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentTest02() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void splitDocumentTest02() throws IOException, InterruptedException, DocumentException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
 
@@ -95,7 +95,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentTest03() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void splitDocumentTest03() throws IOException, InterruptedException, DocumentException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
 
@@ -126,7 +126,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentByOutlineTest() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void splitDocumentByOutlineTest() throws IOException, InterruptedException, DocumentException {
 
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
@@ -142,7 +142,7 @@ public class PdfSplitterTest {
     }
 
     @Test
-    public void splitDocumentBySize() throws IOException, PdfRuntimeException, InterruptedException {
+    public void splitDocumentBySize() throws IOException, InterruptedException {
         String inputFileName = sourceFolder + "splitBySize.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
         PdfSplitter splitter = new PdfSplitter(inputPdfDoc) {

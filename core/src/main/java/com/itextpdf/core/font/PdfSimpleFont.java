@@ -35,8 +35,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     protected abstract T initializeTypeFontForCopy(String encodingName) throws IOException;
 
-    protected abstract T initializeTypeFont(String fontName, String encodingName) throws IOException, PdfRuntimeException;
-
+    protected abstract T initializeTypeFont(String fontName, String encodingName) throws IOException;
 
     protected void init() throws IOException {
 

@@ -392,7 +392,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithType1Font5Pfm() throws IOException, PdfRuntimeException, DocumentException {
+    public void createDocumentWithType1Font5Pfm() throws IOException, DocumentException {
         String filename = destinationFolder + "DocumentWithCMR10_5Pfm.pdf";
 
         final String author = "Alexander Chingarev";
@@ -424,7 +424,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithType1Font5Afm() throws IOException, PdfRuntimeException, DocumentException {
+    public void createDocumentWithType1Font5Afm() throws IOException, DocumentException {
         String filename = destinationFolder + "DocumentWithCMR10_5Afm.pdf";
 
         final String author = "Alexander Chingarev";
@@ -604,7 +604,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void testNewTrueTypeFont1BasedExistingFont() throws IOException, PdfRuntimeException, InterruptedException {
+    public void testNewTrueTypeFont1BasedExistingFont() throws IOException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
@@ -645,7 +645,7 @@ public class PdfFontTest {
     }
 
     @Test
-    public void testNewTrueTypeFont2BasedExistingFont() throws IOException, PdfRuntimeException, InterruptedException {
+    public void testNewTrueTypeFont2BasedExistingFont() throws IOException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";

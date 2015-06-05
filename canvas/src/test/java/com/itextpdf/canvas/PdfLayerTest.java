@@ -31,7 +31,7 @@ public class PdfLayerTest {
     }
 
     @Test
-    public void testInStamperMode1() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void testInStamperMode1() throws IOException, InterruptedException, DocumentException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "input_layered.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "output_copy_layered.pdf")));
         pdfDoc.close();
@@ -39,7 +39,7 @@ public class PdfLayerTest {
     }
 
     @Test
-    public void testInStamperMode2() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void testInStamperMode2() throws IOException, InterruptedException, DocumentException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "input_layered.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "output_layered.pdf")));
 

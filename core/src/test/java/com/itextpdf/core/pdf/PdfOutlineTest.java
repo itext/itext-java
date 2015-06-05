@@ -76,7 +76,7 @@ public class PdfOutlineTest {
         pdfDoc.close();
     }
     @Test
-    public void addOutlinesToDocumentTest() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void addOutlinesToDocumentTest() throws IOException, InterruptedException, DocumentException {
         String filename = destinationFolder+"addOutlinesResult.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -238,7 +238,7 @@ public class PdfOutlineTest {
     }
 
     @Test@Ignore
-    public void addOutlinesWithNamedDestinations01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException, DocumentException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
         String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
 
@@ -291,7 +291,7 @@ public class PdfOutlineTest {
     }
 
     @Test
-    public void addOutlinesWithNamedDestinations02() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void addOutlinesWithNamedDestinations02() throws IOException, InterruptedException, DocumentException {
         String filename = destinationFolder + "outlinesWithNamedDestinations02.pdf";
 
         FileOutputStream fos = new FileOutputStream(filename);

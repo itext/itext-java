@@ -32,7 +32,7 @@ public class DefaultLayoutTest {
 
     @Test
     @Ignore("We should really think if it is worth supporting this smelly case. In case of pre-layout this probably won't work")
-    public void multipleAdditionsOfSameModelElementTest() throws FileNotFoundException, PdfRuntimeException {
+    public void multipleAdditionsOfSameModelElementTest() throws FileNotFoundException {
         String outFileName = destinationFolder + "multipleAdditionsOfSameModelElementTest1.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
 
@@ -45,7 +45,7 @@ public class DefaultLayoutTest {
     }
 
     @Test
-    public void rendererTest01() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
+    public void rendererTest01() throws IOException, DocumentException, InterruptedException {
         String outFileName = destinationFolder + "rendererTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_rendererTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

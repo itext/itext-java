@@ -119,17 +119,17 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Metadata, xmp);
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta, final SerializeOptions serializeOptions) throws XMPException, IOException, PdfRuntimeException {
+    public void setXmpMetadata(final XMPMeta xmpMeta, final SerializeOptions serializeOptions) throws XMPException, IOException {
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta) throws XMPException, IOException, PdfRuntimeException {
+    public void setXmpMetadata(final XMPMeta xmpMeta) throws XMPException, IOException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
-    public PdfStream getXmpMetadata() throws XMPException, PdfRuntimeException {
+    public PdfStream getXmpMetadata() throws XMPException {
         return getPdfObject().getAsStream(PdfName.Metadata);
     }
 

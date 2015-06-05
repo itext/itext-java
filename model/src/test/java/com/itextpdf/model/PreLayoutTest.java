@@ -38,7 +38,7 @@ public class PreLayoutTest {
     }
 
     @Test
-    public void preLayoutTest01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void preLayoutTest01() throws IOException, InterruptedException, DocumentException {
         String outFileName = destinationFolder + "preLayoutTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_preLayoutTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -83,7 +83,7 @@ public class PreLayoutTest {
     }
 
     @Test
-    public void preLayoutTest02() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void preLayoutTest02() throws IOException, InterruptedException, DocumentException {
         String outFileName = destinationFolder + "preLayoutTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_preLayoutTest02.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

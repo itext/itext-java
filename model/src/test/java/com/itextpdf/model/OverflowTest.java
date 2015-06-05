@@ -30,7 +30,7 @@ public class OverflowTest {
     }
 
     @Test
-    public void textOverflowTest01() throws IOException, PdfRuntimeException, InterruptedException, DocumentException {
+    public void textOverflowTest01() throws IOException, InterruptedException, DocumentException {
         String outFileName = destinationFolder + "textOverflowTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -51,7 +51,7 @@ public class OverflowTest {
     }
 
     @Test
-    public void textOverflowTest02() throws IOException, PdfRuntimeException, InterruptedException {
+    public void textOverflowTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -70,7 +70,7 @@ public class OverflowTest {
     }
 
     @Test
-    public void textOverflowTest03() throws IOException, PdfRuntimeException, InterruptedException {
+    public void textOverflowTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest03.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -89,7 +89,7 @@ public class OverflowTest {
     }
 
     @Test
-    public void textOverflowTest04() throws IOException, PdfRuntimeException, InterruptedException {
+    public void textOverflowTest04() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest04.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

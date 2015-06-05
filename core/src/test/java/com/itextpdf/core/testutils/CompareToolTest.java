@@ -17,7 +17,7 @@ public class CompareToolTest {
     }
 
     @Test
-    public void test() throws InterruptedException, IOException, PdfRuntimeException {
+    public void test() throws InterruptedException, IOException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
@@ -29,7 +29,7 @@ public class CompareToolTest {
     }
 
     @Test
-    public void test2() throws IOException, InterruptedException, PdfRuntimeException {
+    public void test2() throws IOException, InterruptedException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
@@ -41,7 +41,7 @@ public class CompareToolTest {
     }
 
     @Test
-    public void test3() throws InterruptedException, IOException, PdfRuntimeException {
+    public void test3() throws InterruptedException, IOException {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);

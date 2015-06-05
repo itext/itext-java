@@ -68,7 +68,7 @@ public final class PdfEncryptor {
      *                       STANDARD_ENCRYPTION_128 or ENCRYPTION_AES_128.
      * @throws PdfRuntimeException on error
      */
-    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) throws PdfRuntimeException {
+    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) {
         encrypt(reader, os, userPassword, ownerPassword, permissions, encryptionType, null);
     }
 

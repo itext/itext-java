@@ -168,7 +168,7 @@ public class PdfDocument implements IEventDispatcher {
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
-    public void setXmpMetadata() throws XMPException, PdfRuntimeException {
+    public void setXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = XMPMetaFactory.create();
         xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
         xmpMeta.setObjectName("");
@@ -215,7 +215,7 @@ public class PdfDocument implements IEventDispatcher {
         setXmpMetadata(xmpMeta);
     }
 
-    public PdfStream getXmpMetadata() throws XMPException, PdfRuntimeException {
+    public PdfStream getXmpMetadata() throws XMPException {
         return getCatalog().getPdfObject().getAsStream(PdfName.Metadata);
     }
 

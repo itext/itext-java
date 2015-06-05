@@ -699,7 +699,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest1() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
+    public void copyPagesTest1() throws IOException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages1_1.pdf";
         String file2 = destinationFolder + "copyPages1_2.pdf";
 
@@ -742,7 +742,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest2() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
+    public void copyPagesTest2() throws IOException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages2_1.pdf";
         String file2 = destinationFolder + "copyPages2_2.pdf";
 
@@ -797,7 +797,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest3() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
+    public void copyPagesTest3() throws IOException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages3_1.pdf";
         String file2 = destinationFolder + "copyPages3_2.pdf";
 
@@ -851,7 +851,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest4() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
+    public void copyPagesTest4() throws IOException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages4_1.pdf";
         FileOutputStream fos1 = new FileOutputStream(file1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -903,7 +903,7 @@ public class PdfCanvasTest {
 
 
     @Test
-    public void copyPagesTest5() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
+    public void copyPagesTest5() throws IOException, DocumentException, InterruptedException {
 
         int documentCount = 3;
 
@@ -960,7 +960,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void copyPagesTest6() throws IOException, PdfRuntimeException, DocumentException, InterruptedException {
+    public void copyPagesTest6() throws IOException, DocumentException, InterruptedException {
         String file1 = destinationFolder + "copyPages6_1.pdf";
         String file2 = destinationFolder + "copyPages6_2.pdf";
         String file3 = destinationFolder + "copyPages6_3.pdf";
@@ -1333,7 +1333,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void wmfImageTest01() throws IOException, PdfRuntimeException, InterruptedException {
+    public void wmfImageTest01() throws IOException, InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest01.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -1350,7 +1350,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void wmfImageTest02() throws IOException, PdfRuntimeException, InterruptedException {
+    public void wmfImageTest02() throws IOException, InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -1368,7 +1368,7 @@ public class PdfCanvasTest {
 
 
     @Test
-    public void wmfImageTest03() throws IOException, PdfRuntimeException, InterruptedException {
+    public void wmfImageTest03() throws IOException, InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -1385,7 +1385,7 @@ public class PdfCanvasTest {
     }
 
     @Test
-    public void wmfImageTest04() throws IOException, PdfRuntimeException, InterruptedException {
+    public void wmfImageTest04() throws IOException, InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest04.pdf");
         PdfWriter writer = new PdfWriter(fos);
