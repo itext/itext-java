@@ -6,5 +6,4 @@ public class Div extends BlockElement<Div> {
         childElements.add(element);
         return this;
     }
-
 }

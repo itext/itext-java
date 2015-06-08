@@ -8,6 +8,8 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,11 +46,21 @@ public class DocumentRenderer extends AbstractRenderer {
             List<IRenderer> resultRenderers = new ArrayList<>();
             LayoutResult result = null;
 
+            LayoutArea storedArea = null;
             while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     resultRenderers.add(result.getSplitRenderer());
                     getNextArea();
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
+                    if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)){
+                        Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
+                        logger.warn("Element doesn't fit current area. KeepTogether property will be ignored.");
+                        result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
+                        renderer = result.getOverflowRenderer();
+                        currentArea = storedArea == null ? currentArea : storedArea;
+                        continue;
+                    }
+                    storedArea = currentArea;
                     if (result.getNewPageSize() != null)
                         getNextPageArea(result.getNewPageSize());
                     else {
@@ -59,6 +71,7 @@ public class DocumentRenderer extends AbstractRenderer {
                 renderer = result.getOverflowRenderer();
             }
             currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
+            currentArea.setEmptyArea(false);
             if (renderer != null)
                 resultRenderers.add(renderer);
 

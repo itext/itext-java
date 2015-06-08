@@ -61,6 +61,7 @@ public class ParagraphRenderer extends AbstractRenderer {
         boolean firstLineInBox = true;
 
         LineRenderer currentRenderer = (LineRenderer) childRenderers.get(0);
+        LineRenderer initialRenderer = (LineRenderer) childRenderers.get(0);
         childRenderers.clear();
 
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
@@ -99,6 +100,14 @@ public class ParagraphRenderer extends AbstractRenderer {
                     split[1].childRenderers.add(currentRenderer);
                     applyPaddings(occupiedArea.getBBox(), true);
                     applyMargins(occupiedArea.getBBox(), true);
+                    boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
+                    if (keepTogether){
+                        split[0] = null;
+                        childRenderers.clear();
+                        childRenderers.add(initialRenderer);
+                        split[1] = this;
+                        anythingPlaced = false;
+                     }
                     return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
                 }
             } else {

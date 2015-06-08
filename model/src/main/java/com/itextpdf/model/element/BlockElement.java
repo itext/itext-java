@@ -91,4 +91,21 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         return (T) setPaddingTop(paddingTop).setPaddingRight(paddingRight).setPaddingBottom(paddingBottom).setPaddingLeft(paddingLeft);
     }
 
+    @Override
+    public <T> T getDefaultProperty(int propertyKey) {
+        switch (propertyKey) {
+            case Property.KEEP_TOGETHER:
+                return (T) Boolean.valueOf(false);
+            default:
+                return super.getDefaultProperty(propertyKey);
+        }
+    }
+
+    public boolean isKeepTogether() {
+        return getProperty(Property.KEEP_TOGETHER);
+    }
+
+    public T setKeepTogether(boolean keepTogether) {
+        return setProperty(Property.KEEP_TOGETHER, keepTogether);
+    }
 }

@@ -95,6 +95,12 @@ public class BlockRenderer extends AbstractRenderer {
                         overflowRendererChildren.add(result.getOverflowRenderer());
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                         overflowRenderer.childRenderers = overflowRendererChildren;
+                        if (getProperty(Property.KEEP_TOGETHER)){
+                            splitRenderer = null;
+                            overflowRenderer.childRenderers.clear();
+                            overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
+                            anythingPlaced = false;
+                        }
 
                         applyPaddings(occupiedArea.getBBox(), false);
                         applyMargins(occupiedArea.getBBox(), true);

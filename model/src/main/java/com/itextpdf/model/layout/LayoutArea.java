@@ -6,6 +6,7 @@ public class LayoutArea implements Cloneable {
 
     protected int pageNumber;
     protected Rectangle bBox;
+    protected boolean emptyArea = true;
 
     public LayoutArea(int pageNumber, Rectangle bBox) {
         this.pageNumber = pageNumber;
@@ -22,6 +23,14 @@ public class LayoutArea implements Cloneable {
 
     public void setBBox(Rectangle bbox) {
         this.bBox = bbox;
+    }
+
+    public boolean isEmptyArea() {
+        return emptyArea;
+    }
+
+    public void setEmptyArea(boolean emptyArea) {
+        this.emptyArea = emptyArea;
     }
 
     @Override
