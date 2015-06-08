@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfPattern;
@@ -110,7 +110,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param defaultCsKey
      * @param defaultCsValue
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public void setDefaultColorSpace(PdfName defaultCsKey, PdfColorSpace defaultCsValue) {
         addResource(defaultCsValue.getPdfObject(), PdfName.ColorSpace, defaultCsKey);

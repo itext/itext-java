@@ -1,6 +1,6 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.image.Image;
@@ -1047,12 +1047,12 @@ public class PdfCanvasTest {
         canvas.endMarkedContent();
         try {
             canvas.endMarkedContent();
-        } catch (PdfRuntimeException e) {
+        } catch (PdfException e) {
             message = e.getMessage();
         }
         canvas.release();
         document.close();
-        Assert.assertEquals(PdfRuntimeException.UnbalancedBeginEndMarkedContentOperators, message);
+        Assert.assertEquals(PdfException.UnbalancedBeginEndMarkedContentOperators, message);
     }
 
     @Test

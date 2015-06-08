@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PRStream;
@@ -142,7 +142,7 @@ public class PdfWriterTest {
      * Copying direct objects. Objects of all types are added into document catalog.
      *
      * @throws IOException
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     @Test
     public void copyObject1() throws IOException {
@@ -201,7 +201,7 @@ public class PdfWriterTest {
      * Copying objects, some of those are indirect. Objects of all types are added into document catalog.
      *
      * @throws IOException
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     @Test
     public void copyObject2() throws IOException {
@@ -263,7 +263,7 @@ public class PdfWriterTest {
      * Copy objects recursively.
      *
      * @throws IOException
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     @Test
     public void copyObject3() throws IOException {
@@ -318,7 +318,7 @@ public class PdfWriterTest {
      * Copies stream.
      *
      * @throws IOException
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     @Test
     public void copyObject4() throws IOException {
@@ -360,7 +360,7 @@ public class PdfWriterTest {
      * Copies page.
      *
      * @throws IOException
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     @Test
     public void copyObject5() throws IOException {

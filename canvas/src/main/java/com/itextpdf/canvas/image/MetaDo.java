@@ -1,6 +1,6 @@
 package com.itextpdf.canvas.image;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
@@ -107,7 +107,7 @@ public class MetaDo {
 
     public void readAll() throws IOException {
         if (in.readInt() != 0x9AC6CDD7) {
-            throw new PdfRuntimeException(PdfRuntimeException.NotAPlaceableWindowsMetafile);
+            throw new PdfException(PdfException.NotAPlaceableWindowsMetafile);
         }
         in.readWord();
         left = in.readShort();
@@ -647,7 +647,7 @@ public class MetaDo {
     //TODO
     public static byte[] wrapBMP(Image image) throws IOException {
         if (image.getOriginalType() != Image.BMP)
-            throw new PdfRuntimeException(PdfRuntimeException.OnlyBmpCanBeWrappedInWmf);
+            throw new PdfException(PdfException.OnlyBmpCanBeWrappedInWmf);
         InputStream imgIn;
         byte data[] = null;
         if (image.getData() == null) {

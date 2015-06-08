@@ -1,6 +1,5 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.DeviceGray;
 import com.itextpdf.core.pdf.PdfDocument;

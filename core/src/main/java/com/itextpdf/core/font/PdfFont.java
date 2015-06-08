@@ -1,6 +1,6 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
@@ -130,14 +130,14 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected void checkFontDictionary(PdfName fontType) {
         if (this.fontDictionary == null || this.fontDictionary.get(PdfName.Subtype) == null
                 || !this.fontDictionary.get(PdfName.Subtype).equals(fontType)) {
-            throw new PdfRuntimeException(PdfRuntimeException.DictionaryNotContainFontData).setMessageParams(fontType.getValue());
+            throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(fontType.getValue());
         }
     }
 
     protected void checkTrueTypeFontDictionary() {
         if (this.fontDictionary == null || this.fontDictionary.get(PdfName.Subtype) == null
                 || !(this.fontDictionary.get(PdfName.Subtype).equals(PdfName.TrueType) || this.fontDictionary.get(PdfName.Subtype).equals(PdfName.Type1))) {
-            throw new PdfRuntimeException(PdfRuntimeException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
+            throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
         }
     }
 

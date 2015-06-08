@@ -1,6 +1,6 @@
 package com.itextpdf.core.image;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.codec.Jbig2SegmentReader;
 import com.itextpdf.basics.image.Jbig2Image;
 import com.itextpdf.basics.image.Image;
@@ -65,7 +65,7 @@ public class Jbig2ImageHelper {
                 baos.flush();
                 baos.close();
             } catch (IOException e) {
-                throw new PdfRuntimeException(PdfRuntimeException.Jbig2ImageException, e);
+                throw new PdfException(PdfException.Jbig2ImageException, e);
             } finally {
                 if (is != null) {
                     try {
@@ -105,7 +105,7 @@ public class Jbig2ImageHelper {
             pdfStream.put(PdfName.BitsPerComponent, new PdfNumber(1));
             pdfStream.getOutputStream().write(p.getData(true));
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.Jbig2ImageException, e);
+            throw new PdfException(PdfException.Jbig2ImageException, e);
         }
     }
 }

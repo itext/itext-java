@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
@@ -138,7 +138,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param toDocument a document to copy page to.
      * @return copied page.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     @Override
     public PdfPage copy(PdfDocument toDocument) {
@@ -185,7 +185,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Get decoded bytes for the whole page content.
      *
      * @return byte array.
-     * @throws PdfRuntimeException in case any @see IOException.
+     * @throws PdfException in case any @see IOException.
      */
     public byte[] getContentBytes() {
         try {
@@ -196,7 +196,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
             return baos.toByteArray();
         } catch (IOException ioe) {
-            throw new PdfRuntimeException(PdfRuntimeException.CannotGetContentBytes, ioe, this);
+            throw new PdfException(PdfException.CannotGetContentBytes, ioe, this);
         }
     }
 
@@ -205,7 +205,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param index index of stream inside Content.
      * @return byte array.
-     * @throws PdfRuntimeException in case any @see IOException.
+     * @throws PdfException in case any @see IOException.
      */
     public byte[] getStreamBytes(int index) {
         return getContentStream(index).getBytes();
@@ -215,7 +215,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Calculates and returns next available MCID reference.
      *
      * @return calculated MCID reference.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public int getNextMcid() {
         if (mcid == null) {
@@ -236,7 +236,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Please use this method very carefully as it rereads all structure tree and is slow.
      *
      * @return
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public List<IPdfTag> getPageTags() {
         if (getDocument().getStructTreeRoot() == null)
@@ -291,7 +291,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * This method gets outlines of a current page
      * @param updateOutlines
      * @return return all outlines of a current page
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public List<PdfOutline> getOutlines(boolean updateOutlines) {
         getDocument().getOutlines(updateOutlines);
@@ -371,7 +371,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
         } else {
-            throw new PdfRuntimeException(PdfRuntimeException.PdfPageShallHaveContent);
+            throw new PdfException(PdfException.PdfPageShallHaveContent);
         }
         PdfStream contentStream = new PdfStream(getPdfObject().getDocument());
         if (before) {

@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
@@ -37,7 +37,7 @@ public class ASCII85DecodeFilter implements FilterHandler {
                 continue;
             }
             if (ch < '!' || ch > 'u')
-                throw new PdfRuntimeException(PdfRuntimeException.IllegalCharacterInAscii85decode);
+                throw new PdfException(PdfException.IllegalCharacterInAscii85decode);
             chn[state] = ch - '!';
             ++state;
             if (state == 5) {

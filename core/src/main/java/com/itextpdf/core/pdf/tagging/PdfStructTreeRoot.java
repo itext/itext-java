@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 import org.slf4j.LoggerFactory;
 
@@ -173,7 +173,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      *
      * @param toDocument document to cpt structure to.
      * @param page2page  association between original page and copied page.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public void copyToDocument(PdfDocument toDocument, LinkedHashMap<PdfPage, PdfPage> page2page) {
         if (!toDocument.isTagged())
@@ -200,7 +200,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param toDocument       document to cpt structure to.
      * @param insertBeforePage indicates where the structure to be inserted.
      * @param page2page        association between original page and copied page.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public void copyToDocument(PdfDocument toDocument, int insertBeforePage, LinkedHashMap<PdfPage, PdfPage> page2page) {
         if (!toDocument.isTagged())

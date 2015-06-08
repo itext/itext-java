@@ -1,6 +1,6 @@
 package com.itextpdf.core.crypto;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ public class OutputStreamEncryption extends java.io.OutputStream {
             try {
                 write(iv);
             } catch (IOException e) {
-                throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
+                throw new PdfException(PdfException.PdfEncryption, e);
             }
         } else {
             arcfour = new ARCFOUREncryption();
@@ -159,7 +159,7 @@ public class OutputStreamEncryption extends java.io.OutputStream {
                 try {
                     out.write(b, 0, b.length);
                 } catch (IOException e) {
-                    throw new PdfRuntimeException(PdfRuntimeException.PdfEncryption, e);
+                    throw new PdfException(PdfException.PdfEncryption, e);
                 }
             }
         }

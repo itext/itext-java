@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ abstract public class PdfObject {
     /**
      * Flushes the object to the document.
      *
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     final public void flush() {
         flush(true);
@@ -46,7 +46,7 @@ abstract public class PdfObject {
      * Flushes the object to the document.
      *
      * @param canBeInObjStm indicates whether object can be placed into object stream.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     final public void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null) {
@@ -60,7 +60,7 @@ abstract public class PdfObject {
                         && getType() != IndirectReference && getIndirectReference().getGenNumber() == 0);
             }
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.CannotFlushObject, e, this);
+            throw new PdfException(PdfException.CannotFlushObject, e, this);
         }
     }
 
@@ -103,7 +103,7 @@ abstract public class PdfObject {
     public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) {
         if (document == null || indirectReference != null) return (T) this;
         if (document.getWriter() == null) {
-            throw new PdfRuntimeException(PdfRuntimeException.ThereIsNoAssociatePdfWriterForMakingIndirects);
+            throw new PdfException(PdfException.ThereIsNoAssociatePdfWriterForMakingIndirects);
         }
         if (reference == null) {
             indirectReference = document.createNextIndirectReference(this);
@@ -162,7 +162,7 @@ abstract public class PdfObject {
      *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public <T extends PdfObject> T copy(PdfDocument document, boolean allowDuplicating) {
         PdfWriter writer = null;
@@ -338,7 +338,7 @@ abstract public class PdfObject {
      */
     protected void copyContent(PdfObject from, PdfDocument document) {
         if (isFlushed())
-            throw new PdfRuntimeException(PdfRuntimeException.CannotCopyFlushedObject, this);
+            throw new PdfException(PdfException.CannotCopyFlushedObject, this);
     }
 
 

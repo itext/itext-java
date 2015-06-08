@@ -1,6 +1,6 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
@@ -45,7 +45,7 @@ class Type1Parser {
                     resourceAnchor = new FontsResourceAnchor();
                 is = Utilities.getResourceStream(FontConstants.RESOURCE_PATH + "afm/" + name + ".afm", resourceAnchor.getClass().getClassLoader());
                 if (is == null) {
-                    throw new PdfRuntimeException("1.not.found.as.resource").setMessageParams(name);
+                    throw new PdfException("1.not.found.as.resource").setMessageParams(name);
                 }
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 int read;
@@ -81,7 +81,7 @@ class Type1Parser {
             return rf;
         }
         else {
-            throw new PdfRuntimeException("1.is.not.an.afm.or.pfm.font.file").setMessageParams(name);
+            throw new PdfException("1.is.not.an.afm.or.pfm.font.file").setMessageParams(name);
         }
     }
 

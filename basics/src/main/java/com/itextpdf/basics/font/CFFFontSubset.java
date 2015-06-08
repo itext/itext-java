@@ -1,6 +1,6 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
@@ -335,7 +335,7 @@ public class CFFFontSubset extends CFFFont {
             byte[] Ret = BuildNewFile(j);
             return Ret;
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
+            throw new PdfException(PdfException.IoException, e);
         } finally {
             try {
                 buf.close();

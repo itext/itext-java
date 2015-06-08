@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,7 +37,7 @@ public class LZWDecoder {
     public void decode(byte data[], OutputStream uncompData) {
 
         if(data[0] == (byte)0x00 && data[1] == (byte)0x01) {
-            throw new PdfRuntimeException(PdfRuntimeException.LzwFlavourNotSupported);
+            throw new PdfException(PdfException.LzwFlavourNotSupported);
         }
 
         initializeStringTable();
@@ -116,7 +116,7 @@ public class LZWDecoder {
             uncompData.write(string);
         }
         catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.LzwDecoderException, e);
+            throw new PdfException(PdfException.LzwDecoderException, e);
         }
     }
 

@@ -1,7 +1,7 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 
@@ -277,16 +277,16 @@ class OpenTypeParser {
         if (ttcIndex.length() > 0) {
             int dirIdx = Integer.parseInt(ttcIndex);
             if (dirIdx < 0) {
-                throw new PdfRuntimeException("the.font.index.for.1.must.be.positive").setMessageParams(fileName);
+                throw new PdfException("the.font.index.for.1.must.be.positive").setMessageParams(fileName);
             }
             String mainTag = readStandardString(4);
             if (!mainTag.equals("ttcf")) {
-                throw new PdfRuntimeException("1.is.not.a.valid.ttc.file").setMessageParams(fileName);
+                throw new PdfException("1.is.not.a.valid.ttc.file").setMessageParams(fileName);
             }
             raf.skipBytes(4);
             int dirCount = raf.readInt();
             if (dirIdx >= dirCount) {
-                throw new PdfRuntimeException("the.font.index.for.1.must.be.between.0.and.2.it.was.3")
+                throw new PdfException("the.font.index.for.1.must.be.between.0.and.2.it.was.3")
                         .setMessageParams(fileName, String.valueOf(dirCount - 1), String.valueOf(dirIdx));
             }
             raf.skipBytes(dirIdx * 4);
@@ -295,7 +295,7 @@ class OpenTypeParser {
         raf.seek(directoryOffset);
         int ttId = raf.readInt();
         if (ttId != 0x00010000 && ttId != 0x4F54544F) {
-            throw new PdfRuntimeException("1.is.not.a.valid.ttf.or.otf.file").setMessageParams(fileName);
+            throw new PdfException("1.is.not.a.valid.ttf.or.otf.file").setMessageParams(fileName);
         }
         int num_tables = raf.readUnsignedShort();
         raf.skipBytes(6);
@@ -351,14 +351,14 @@ class OpenTypeParser {
 
     /**
      * Read font header, table 'head'.
-     * @throws PdfRuntimeException the font is invalid.
+     * @throws PdfException the font is invalid.
      * @throws IOException the font file could not be read.
      */
     protected FontHeader readHeadTable() throws IOException {
         int table_location[];
         table_location = tables.get("head");
         if (table_location == null) {
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("head", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("head", fileName + style);
         }
         raf.seek(table_location[0] + 16);
         FontHeader head = new FontHeader();
@@ -375,14 +375,14 @@ class OpenTypeParser {
 
     /**
      * Read horizontal header, table 'hhea'.
-     * @throws PdfRuntimeException the font is invalid.
+     * @throws PdfException the font is invalid.
      * @throws IOException the font file could not be read.
      */
     protected HorizontalHeader readHheaTable() throws IOException {
         int table_location[];
         table_location = tables.get("hhea");
         if (table_location == null) {
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("hhea", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("hhea", fileName + style);
         }
         raf.seek(table_location[0] + 4);
         HorizontalHeader hhea = new HorizontalHeader();
@@ -403,14 +403,14 @@ class OpenTypeParser {
     /**
      * Reads the windows metrics table. The metrics are extracted from the table 'OS/2'.
      * @param unitsPerEm {@code head.unitsPerEm} property, {@see FontHeader}.
-     * @throws PdfRuntimeException the font is invalid.
+     * @throws PdfException the font is invalid.
      * @throws IOException the font file could not be read.
      */
     protected WindowsMetrics readOs2Table(int unitsPerEm) throws IOException {
         int table_location[];
         table_location = tables.get("OS/2");
         if (table_location == null) {
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("OS/2", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("OS/2", fileName + style);
         }
         WindowsMetrics os_2 = new WindowsMetrics();
         raf.seek(table_location[0]);
@@ -464,14 +464,14 @@ class OpenTypeParser {
      * The glyphs are normalized to 1000 units.
      * @param numberOfHMetrics {@code hhea.numberOfHMetrics} property, {@see HorizontalHeader}.
      * @param unitsPerEm {@code head.unitsPerEm} property, {@see FontHeader}.
-     * @throws PdfRuntimeException the font is invalid.
+     * @throws PdfException the font is invalid.
      * @throws IOException the font file could not be read.
      */
     protected int[] readGlyphWidths(int numberOfHMetrics, int unitsPerEm) throws IOException {
         int table_location[];
         table_location = tables.get("hmtx");
         if (table_location == null) {
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("hmtx", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("hmtx", fileName + style);
         }
         raf.seek(table_location[0]);
         glyphWidthsByIndex = new int[numberOfHMetrics];
@@ -521,14 +521,14 @@ class OpenTypeParser {
     /**
      * Read the glyf bboxes from 'glyf' table.
      * @param unitsPerEm {@code head.unitsPerEm} property, {@see FontHeader}.
-     * @throws PdfRuntimeException the font is invalid.
+     * @throws PdfException the font is invalid.
      * @throws IOException the font file could not be read.
      */
     protected int[][] readBbox(int unitsPerEm) throws IOException {
         int tableLocation[];
         tableLocation = tables.get("head");
         if (tableLocation == null) {
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("head", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("head", fileName + style);
         }
         raf.seek(tableLocation[0] + FontConstants.HEAD_LOCA_FORMAT_OFFSET);
         boolean locaShortTable = raf.readUnsignedShort() == 0;
@@ -553,7 +553,7 @@ class OpenTypeParser {
         }
         tableLocation = tables.get("glyf");
         if (tableLocation == null) {
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName + style);
         }
         int tableGlyphOffset = tableLocation[0];
         int[][] bboxes = new int[locaTable.length - 1][];
@@ -601,14 +601,14 @@ class OpenTypeParser {
 
     /** Reads the several maps from the table 'cmap'. The maps of interest are 1.0 for symbolic
      *  fonts and 3.1 for all others. A symbolic font is defined as having the map 3.0.
-     * @throws PdfRuntimeException the font is invalid
+     * @throws PdfException the font is invalid
      * @throws IOException the font file could not be read
      */
     protected Cmaps readCMaps() throws IOException {
         int table_location[];
         table_location = tables.get("cmap");
         if (table_location == null)
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("cmap", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("cmap", fileName + style);
         raf.seek(table_location[0]);
         raf.skipBytes(2);
         int num_tables = raf.readUnsignedShort();
@@ -684,7 +684,7 @@ class OpenTypeParser {
 
     /**
      * Gets the Postscript font name.
-     * @throws PdfRuntimeException the font is invalid
+     * @throws PdfException the font is invalid
      * @throws IOException the font file could not be read
      * @return the Postscript font name
      */
@@ -692,7 +692,7 @@ class OpenTypeParser {
         int table_location[];
         table_location = tables.get("name");
         if (table_location == null) {
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("name", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("name", fileName + style);
         }
         raf.seek(table_location[0] + 2);
         int numRecords = raf.readUnsignedShort();
@@ -721,14 +721,14 @@ class OpenTypeParser {
 
     /** Extracts the names of the font in all the languages available.
      * @param id the name id to retrieve
-     * @throws PdfRuntimeException on error
+     * @throws PdfException on error
      * @throws IOException on error
      */
     private String[][] getNames(int id) throws IOException {
         int table_location[];
         table_location = tables.get("name");
         if (table_location == null)
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("name", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("name", fileName + style);
         raf.seek(table_location[0] + 2);
         int numRecords = raf.readUnsignedShort();
         int startOfStorage = raf.readUnsignedShort();
@@ -762,14 +762,14 @@ class OpenTypeParser {
     }
 
     /** Extracts all the names of the names-Table
-     * @throws PdfRuntimeException on error
+     * @throws PdfException on error
      * @throws IOException on error
      */
     private String[][] getAllNames() throws IOException {
         int table_location[];
         table_location = tables.get("name");
         if (table_location == null)
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("name", fileName + style);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("name", fileName + style);
         raf.seek(table_location[0] + 2);
         int numRecords = raf.readUnsignedShort();
         int startOfStorage = raf.readUnsignedShort();

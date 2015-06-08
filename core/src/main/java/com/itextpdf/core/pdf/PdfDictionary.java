@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 
 import java.util.*;
@@ -162,7 +162,7 @@ public class PdfDictionary extends PdfObject {
      * @param excludeKeys list of objects to exclude when copying dictionary.
      * @param allowDuplicating {@link PdfObject}
      * @return copied dictionary.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfDictionary copy(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) {
         Map<PdfName, PdfObject> excluded = new TreeMap<PdfName, PdfObject>();
@@ -179,7 +179,7 @@ public class PdfDictionary extends PdfObject {
     /**
      *
      * @param asDirect true is to extract direct object always.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfObject get(PdfName key, boolean asDirect) {
         if (!asDirect)

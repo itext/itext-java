@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @return object stream.
      * @throws IOException
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected PdfObjectStream getObjectStream() throws IOException {
         if (!fullCompression)
@@ -93,7 +93,7 @@ public class PdfWriter extends PdfOutputStream {
      * @param pdfObject     object to flush.
      * @param canBeInObjStm indicates whether object can be placed into object stream.
      * @throws IOException
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
@@ -197,7 +197,7 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @param object object to write.
      * @throws IOException
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected void writeToBody(PdfObject object) throws IOException {
         if (crypto != null) {
@@ -213,7 +213,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Writes PDF header.
      *
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected void writeHeader() {
         writeByte((byte) '%').
@@ -224,7 +224,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Flushes all objects which have not been flushed yet.
      *
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected void flushWaitingObjects() {
         PdfXrefTable xref = document.getXref();
@@ -252,7 +252,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Flushes all modified objects which have not been flushed yet. Used in case incremental updates.
      *
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected void flushModifiedWaitingObjects() {
         PdfXrefTable xref = document.getXref();

@@ -1,6 +1,6 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
@@ -36,7 +36,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         setFontProgram(ttf);
         this.embedded = embedded;
         if (embedded && !ttf.allowEmbedding()) {
-            throw new PdfRuntimeException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
+            throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
         }
     }
 
@@ -191,7 +191,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();
                     fontStream = getFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
                     fontStream.put(PdfName.Subtype, new PdfName("Type1C"));
-                } catch (PdfRuntimeException e) {
+                } catch (PdfException e) {
                     Logger logger = LoggerFactory.getLogger(PdfTrueTypeFont.class);
                     logger.error(e.getMessage());
                     fontStream = null;
@@ -231,7 +231,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                         fontStreamBytes = getFontProgram().getFontStreamBytes();
                     }
                     fontStream = getFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
-                } catch (PdfRuntimeException e) {
+                } catch (PdfException e) {
                     Logger logger = LoggerFactory.getLogger(PdfTrueTypeFont.class);
                     logger.error(e.getMessage());
                     fontStream = null;

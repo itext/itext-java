@@ -1,6 +1,5 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;

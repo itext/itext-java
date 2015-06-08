@@ -1,6 +1,6 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
@@ -423,10 +423,10 @@ public class Type1Font extends FontProgram {
             int bytePtr = 0;
             for (int k = 0; k < 3; ++k) {
                 if (raf.read() != 0x80) {
-                    throw new PdfRuntimeException("start.marker.missing.in.1").setMessageParams(fontParser.getPfbName());
+                    throw new PdfException("start.marker.missing.in.1").setMessageParams(fontParser.getPfbName());
                 }
                 if (raf.read() != PFB_TYPES[k])
-                    throw new PdfRuntimeException("incorrect.segment.type.in.1").setMessageParams(fontParser.getPfbName());
+                    throw new PdfException("incorrect.segment.type.in.1").setMessageParams(fontParser.getPfbName());
                 int size = raf.read();
                 size += raf.read() << 8;
                 size += raf.read() << 16;
@@ -435,7 +435,7 @@ public class Type1Font extends FontProgram {
                 while (size != 0) {
                     int got = raf.read(fontStreamBytes, bytePtr, size);
                     if (got < 0) {
-                        throw new PdfRuntimeException("premature.end.in.1").setMessageParams(fontParser.getPfbName());
+                        throw new PdfException("premature.end.in.1").setMessageParams(fontParser.getPfbName());
                     }
                     bytePtr += got;
                     size -= got;
@@ -443,7 +443,7 @@ public class Type1Font extends FontProgram {
             }
             return fontStreamBytes;
         } catch (Exception e) {
-            throw new PdfRuntimeException("type1.font.file.exception", e);
+            throw new PdfException("type1.font.file.exception", e);
         } finally {
             if (raf != null) {
                 try {
@@ -529,7 +529,7 @@ public class Type1Font extends FontProgram {
             }
         }
         if (!startKernPairs) {
-            throw new PdfRuntimeException("missing.startcharmetrics.in.1").setMessageParams(fontParser.getName());
+            throw new PdfException("missing.startcharmetrics.in.1").setMessageParams(fontParser.getName());
         }
         while ((line = raf.readLine()) != null) {
             StringTokenizer tok = new StringTokenizer(line);
@@ -573,7 +573,7 @@ public class Type1Font extends FontProgram {
             charMetrics.put(N, metrics);
         }
         if (startKernPairs) {
-            throw new PdfRuntimeException("missing.endcharmetrics.in.1").setMessageParams(fontParser.getName());
+            throw new PdfException("missing.endcharmetrics.in.1").setMessageParams(fontParser.getName());
         }
         if (!charMetrics.containsKey("nonbreakingspace")) {
             Object[] space = charMetrics.get("space");
@@ -623,11 +623,11 @@ public class Type1Font extends FontProgram {
                 }
             }
         } else if (!endOfMetrics) {
-            throw new PdfRuntimeException("missing.endfontmetrics.in.1").setMessageParams(fontParser.getName());
+            throw new PdfException("missing.endfontmetrics.in.1").setMessageParams(fontParser.getName());
         }
 
         if (startKernPairs) {
-            throw new PdfRuntimeException("missing.endkernpairs.in.1").setMessageParams(fontParser.getName());
+            throw new PdfException("missing.endkernpairs.in.1").setMessageParams(fontParser.getName());
         }
         raf.close();
 

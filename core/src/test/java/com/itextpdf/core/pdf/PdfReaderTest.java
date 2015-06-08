@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.basics.io.OutputStream;
 import org.junit.Assert;
@@ -572,7 +572,7 @@ public class PdfReaderTest {
         boolean exception = false;
         try {
             document.getPage(1);
-        } catch (PdfRuntimeException e) {
+        } catch (PdfException e) {
             exception = true;
         }
         Assert.assertTrue(exception);
@@ -593,7 +593,7 @@ public class PdfReaderTest {
         boolean exception = false;
         try {
             document.getPage(1);
-        } catch (PdfRuntimeException e) {
+        } catch (PdfException e) {
             exception = true;
         }
         Assert.assertTrue(exception);
@@ -801,7 +801,7 @@ public class PdfReaderTest {
         boolean exception = false;
         try {
             new PdfDocument(reader);
-        } catch (PdfRuntimeException ex) {
+        } catch (PdfException ex) {
             exception = true;
         }
 
@@ -817,7 +817,7 @@ public class PdfReaderTest {
         boolean exception = false;
         try {
             new PdfDocument(reader);
-        } catch (PdfRuntimeException ex) {
+        } catch (PdfException ex) {
             exception = true;
         }
 
@@ -1009,7 +1009,7 @@ public class PdfReaderTest {
         //There is a generation number mismatch in xref table and object for 3093
         try{
             document.getPdfObject(3093);
-        } catch (PdfRuntimeException ex){
+        } catch (PdfException ex){
             exception = true;
         }
         Assert.assertTrue(exception);
@@ -1020,7 +1020,7 @@ public class PdfReaderTest {
                 PdfPage page = document.getPage(i);
                 page.getContentStream(0).getBytes();
             }
-        } catch (PdfRuntimeException ex) {
+        } catch (PdfException ex) {
             exception = true;
         }
         Assert.assertFalse(exception);
@@ -1036,7 +1036,7 @@ public class PdfReaderTest {
         boolean exception = false;
         try {
             new PdfDocument(reader);
-        } catch (PdfRuntimeException ex) {
+        } catch (PdfException ex) {
             exception = true;
         }
 

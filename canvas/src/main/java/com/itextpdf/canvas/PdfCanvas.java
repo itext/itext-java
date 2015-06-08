@@ -1,6 +1,6 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
@@ -244,7 +244,7 @@ public class PdfCanvas {
      */
     public PdfCanvas setFontAndSize(PdfFont font, float size) {
         if (size < 0.0001f && size > -0.0001f)
-            throw new PdfRuntimeException(PdfRuntimeException.FontSizeTooSmall, size);
+            throw new PdfException(PdfException.FontSizeTooSmall, size);
         currentGs.setFontSize(size);
         PdfName fontName = resources.addFont(font);
         currentGs.setFont(font);
@@ -1273,7 +1273,7 @@ public class PdfCanvas {
             n = layerDepth.get(layerDepth.size() - 1);
             layerDepth.remove(layerDepth.size() - 1);
         } else {
-            throw new PdfRuntimeException(PdfRuntimeException.UnbalancedLayerOperators);
+            throw new PdfException(PdfException.UnbalancedLayerOperators);
         }
         while (n-- > 0)
             contentStream.getOutputStream().writeBytes(EMC).writeNewLine();
@@ -1317,7 +1317,7 @@ public class PdfCanvas {
      * @param rect
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfXObject addImage(Image image, Rectangle rect, boolean asInline) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY(), asInline);
@@ -1331,7 +1331,7 @@ public class PdfCanvas {
      * @param y
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfXObject addImage(Image image, float x, float y, boolean asInline) {
         if (image.getOriginalType() == Image.WMF) {
@@ -1388,7 +1388,7 @@ public class PdfCanvas {
      * @param asInline true if to add image as in-line.
      * @param dummy
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfXObject addImage(Image image, float x, float y, float height, boolean asInline, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y, asInline);
@@ -1527,7 +1527,7 @@ public class PdfCanvas {
 
     public PdfCanvas endMarkedContent() {
         if (--mcDepth < 0)
-            throw new PdfRuntimeException(PdfRuntimeException.UnbalancedBeginEndMarkedContentOperators);
+            throw new PdfException(PdfException.UnbalancedBeginEndMarkedContentOperators);
         contentStream.getOutputStream().writeBytes(EMC);
         return this;
     }
@@ -1653,7 +1653,7 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     private PdfCanvas addForm(PdfFormXObject form, float x, float y) {
         return addForm(form, 1, 0, 0, 1, x, y);
@@ -1665,7 +1665,7 @@ public class PdfCanvas {
      * @param form
      * @param rect
      * @return
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     private PdfCanvas addForm(PdfFormXObject form, Rectangle rect) {
         return addForm(form, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
@@ -1679,12 +1679,12 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     private PdfCanvas addForm(PdfFormXObject form, float x, float y, float width) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
-            throw new PdfRuntimeException(PdfRuntimeException.PdfFormXobjectHasInvalidBbox);
+            throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
         Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
         Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
         return addForm(form, width, 0, 0, width / formWidth * formHeight, x, y);
@@ -1704,7 +1704,7 @@ public class PdfCanvas {
     private PdfCanvas addForm(PdfFormXObject form, float x, float y, float height, boolean dummy) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
-            throw new PdfRuntimeException(PdfRuntimeException.PdfFormXobjectHasInvalidBbox);
+            throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
         Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
         Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
         return addForm(form, height / formHeight * formWidth, 0, 0, height, x, y);
@@ -1748,7 +1748,7 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y) {
         return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y);
@@ -1760,7 +1760,7 @@ public class PdfCanvas {
      * @param image
      * @param rect
      * @return
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     private PdfCanvas addImage(PdfImageXObject image, Rectangle rect) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
@@ -1774,7 +1774,7 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y, float width) {
         return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
@@ -1828,7 +1828,7 @@ public class PdfCanvas {
      */
     private void showText2(final String text) {
         if (currentGs.getFont() == null)
-            throw new PdfRuntimeException(PdfRuntimeException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
+            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = currentGs.getFont().convertToBytes(text);
         Utilities.writeEscapedString(contentStream.getOutputStream(), b);
     }

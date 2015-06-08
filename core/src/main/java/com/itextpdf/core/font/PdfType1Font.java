@@ -1,7 +1,6 @@
 package com.itextpdf.core.font;
 
 
-import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.font.*;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;

@@ -1,6 +1,6 @@
 package com.itextpdf.core.image;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.image.BmpImage;
 import com.itextpdf.basics.image.Image;
@@ -95,7 +95,7 @@ public final class BmpImageHelper {
                 image.setDpi((int) (bmp.xPelsPerMeter * 0.0254d + 0.5d), (int) (bmp.yPelsPerMeter * 0.0254d + 0.5d));
             }
         } catch (IOException e){
-            throw new PdfRuntimeException(PdfRuntimeException.BmpImageException, e);
+            throw new PdfException(PdfException.BmpImageException, e);
         } finally {
             if (is != null) {
                 try {
@@ -124,7 +124,7 @@ public final class BmpImageHelper {
             // Start File Header
             if (!(readUnsignedByte(bmp.inputStream) == 'B' &&
                     readUnsignedByte(bmp.inputStream) == 'M')) {
-                throw new PdfRuntimeException(PdfRuntimeException.InvalidMagicValueForBmpFile);
+                throw new PdfException(PdfException.InvalidMagicValueForBmpFile);
             }
 
             // Read file size
@@ -335,7 +335,7 @@ public final class BmpImageHelper {
                         break;
 
                     default:
-                        throw new PdfRuntimeException(PdfRuntimeException.InvalidBmpFileCompression);
+                        throw new PdfException(PdfException.InvalidBmpFileCompression);
                 }
             } else if (size == 108) {
                 // Windows 4.x BMP
@@ -569,7 +569,7 @@ public final class BmpImageHelper {
                         readRLE4(bmp);
                         return true;
                     default:
-                        throw new PdfRuntimeException(PdfRuntimeException.InvalidBmpFileCompression);
+                        throw new PdfException(PdfException.InvalidBmpFileCompression);
                 }
             case VERSION_3_8_BIT:
                 switch ((int) bmp.compression) {
@@ -580,7 +580,7 @@ public final class BmpImageHelper {
                         readRLE8(bmp);
                         return true;
                     default:
-                        throw new PdfRuntimeException(PdfRuntimeException.InvalidBmpFileCompression);
+                        throw new PdfException(PdfException.InvalidBmpFileCompression);
                 }
             case VERSION_3_24_BIT:
                 // 24-bit images are not compressed
@@ -606,7 +606,7 @@ public final class BmpImageHelper {
                         readRLE4(bmp);
                         return true;
                     default:
-                        throw new PdfRuntimeException(PdfRuntimeException.InvalidBmpFileCompression);
+                        throw new PdfException(PdfException.InvalidBmpFileCompression);
                 }
             case VERSION_4_8_BIT:
                 switch ((int) bmp.compression) {
@@ -617,7 +617,7 @@ public final class BmpImageHelper {
                         readRLE8(bmp);
                         return true;
                     default:
-                        throw new PdfRuntimeException(PdfRuntimeException.InvalidBmpFileCompression);
+                        throw new PdfException(PdfException.InvalidBmpFileCompression);
                 }
             case VERSION_4_16_BIT:
                 read1632Bit(false, bmp);
@@ -657,7 +657,7 @@ public final class BmpImageHelper {
         while (bytesRead < sizeOfPalette) {
             int r = bmp.inputStream.read(bmp.palette, bytesRead, sizeOfPalette - bytesRead);
             if (r < 0) {
-                throw new PdfRuntimeException(PdfRuntimeException.IncompletePalette);
+                throw new PdfException(PdfException.IncompletePalette);
             }
             bytesRead += r;
         }

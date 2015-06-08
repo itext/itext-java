@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public class PdfNameTree {
      *
      * @param catalog  Document catalog
      * @param treeType the type of tree. Dests Tree, AP Tree etc.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfNameTree(PdfCatalog catalog, PdfName treeType) {
         parents = new ArrayList<>();
@@ -41,7 +41,7 @@ public class PdfNameTree {
      *
      * @param key   PdfString or PdfName key
      * @param value PdfArray as value
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public void addNewName(PdfObject key, PdfObject value) {
         PdfNode node;
@@ -71,7 +71,7 @@ public class PdfNameTree {
      * This method generates NameTree
      *
      * @return root
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfObject generateTree() {
         if (root == null) {

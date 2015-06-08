@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ class PdfPagesTree {
         if (pdfCatalog.getPdfObject().containsKey(PdfName.Pages)) {
             PdfDictionary pages = pdfCatalog.getPdfObject().getAsDictionary(PdfName.Pages);
             if (pages == null)
-                throw new PdfRuntimeException(PdfRuntimeException.InvalidPageStructurePagesPagesMustBePdfDictionary);
+                throw new PdfException(PdfException.InvalidPageStructurePagesPagesMustBePdfDictionary);
             this.root = new PdfPages(0, Integer.MAX_VALUE, pages, null);
             parents.add(this.root);
             for (int i = 0; i < this.root.getCount(); i++) {
@@ -175,13 +175,13 @@ class PdfPagesTree {
      * Generate PdfPages tree.
      *
      * @return root {@see PdfPages}
-     * @throws PdfRuntimeException in case empty document
+     * @throws PdfException in case empty document
      */
     protected  PdfObject generateTree() {
         if (pageRefs.isEmpty())
-            throw new PdfRuntimeException(PdfRuntimeException.DocumentHasNoPages);
+            throw new PdfException(PdfException.DocumentHasNoPages);
         if (generated)
-            throw new PdfRuntimeException(PdfRuntimeException.PdfPagesTreeCouldBeGeneratedOnlyOnce);
+            throw new PdfException(PdfException.PdfPagesTreeCouldBeGeneratedOnlyOnce);
         pageRefs = null;
         pages = null;
 
@@ -231,7 +231,7 @@ class PdfPagesTree {
         PdfPages parent = parents.get(parentIndex);
         PdfArray kids = parent.getKids();
         if (kids == null) {
-            throw new PdfRuntimeException(PdfRuntimeException.InvalidPageStructure1).setMessageParams(pageNum+1);
+            throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);
         }
         int kidsCount = parent.getCount();
         // we should handle separated pages, it means every PdfArray kids must contain either PdfPage or PdfPages,
@@ -241,14 +241,14 @@ class PdfPagesTree {
         for (int i = 0; i < kids.size(); i++) {
             PdfDictionary page = kids.getAsDictionary(i);
             if (page == null) {                                             // null values not allowed in pages tree.
-                throw new PdfRuntimeException(PdfRuntimeException.InvalidPageStructure1).setMessageParams(pageNum+1);
+                throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);
             }
             PdfObject pageKids = page.get(PdfName.Kids);
             if (pageKids != null) {
                 if (pageKids.getType() == PdfObject.Array) {
                     findPdfPages = true;
                 } else {                                                    // kids must be of type array
-                    throw new PdfRuntimeException(PdfRuntimeException.InvalidPageStructure1).setMessageParams(pageNum+1);
+                    throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);
                 }
             }
         }

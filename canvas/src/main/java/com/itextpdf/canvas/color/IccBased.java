@@ -1,6 +1,6 @@
 package com.itextpdf.canvas.color;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
@@ -18,7 +18,7 @@ public class IccBased extends Color {
      *
      * @param document
      * @param iccStream ICC profile stream. User is responsible for closing the stream.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public IccBased(PdfDocument document, InputStream iccStream) {
         this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream)), null);
@@ -33,7 +33,7 @@ public class IccBased extends Color {
      * @param document
      * @param iccStream ICC profile stream. User is responsible for closing the stream.
      * @param value     color value.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public IccBased(PdfDocument document, InputStream iccStream, float[] value) {
         this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream)), value);
@@ -42,7 +42,7 @@ public class IccBased extends Color {
     public IccBased(PdfDocument document, InputStream iccStream, float[] range, float[] value) {
         this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream, range)), value);
         if (getNumOfComponents() * 2 != range.length)
-            throw new PdfRuntimeException(PdfRuntimeException.InvalidRangeArray, this);
+            throw new PdfException(PdfException.InvalidRangeArray, this);
     }
 
     static private PdfStream getStream(PdfDocument document, InputStream iccStream) {

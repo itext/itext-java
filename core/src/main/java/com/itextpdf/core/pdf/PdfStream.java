@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class PdfStream extends PdfDictionary {
      * @param doc              {@see PdfDocument}.
      * @param bytes            initial content of {@see PdfOutputStream}.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
-     * @throws PdfRuntimeException on error.
+     * @throws PdfException on error.
      */
     public PdfStream(PdfDocument doc, byte[] bytes, int compressionLevel) {
         super();
@@ -58,12 +58,12 @@ public class PdfStream extends PdfDictionary {
      *
      * @param inputStream      the data to write to this stream
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
-     * @throws PdfRuntimeException on error.
+     * @throws PdfException on error.
      */
     public PdfStream(PdfDocument doc, InputStream inputStream, int compressionLevel) {
         super();
         if (doc == null) {
-            throw new PdfRuntimeException(PdfRuntimeException.CannotCreatePdfStreamByInputStreamWithoutPdfDocument);
+            throw new PdfException(PdfException.CannotCreatePdfStreamByInputStreamWithoutPdfDocument);
         }
         makeIndirect(doc);
         if (inputStream == null) {
@@ -87,7 +87,7 @@ public class PdfStream extends PdfDictionary {
      * </pre>
      *
      * @param inputStream the data to write to this stream
-     * @throws PdfRuntimeException on error.
+     * @throws PdfException on error.
      */
     public PdfStream(PdfDocument doc, InputStream inputStream) {
         this(doc, inputStream, doc != null
@@ -100,7 +100,7 @@ public class PdfStream extends PdfDictionary {
      *
      * @param doc              {@see PdfDocument}.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
-     * @throws PdfRuntimeException on error.
+     * @throws PdfException on error.
      */
     public PdfStream(PdfDocument doc, int compressionLevel) {
         this(doc, (byte[]) null, compressionLevel);
@@ -160,7 +160,7 @@ public class PdfStream extends PdfDictionary {
      * Gets decoded stream bytes.
      *
      * @return byte[]
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public byte[] getBytes() {
         return getBytes(true);
@@ -188,13 +188,13 @@ public class PdfStream extends PdfDictionary {
                 outputStream.getOutputStream().flush();
                 bytes = ((ByteArrayOutputStream) outputStream.getOutputStream()).toByteArray();
             } catch (IOException ioe) {
-                throw new PdfRuntimeException(PdfRuntimeException.CannotGetPdfStreamBytes, ioe, this);
+                throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
             }
         } else if (getReader() != null) {
             try {
                 bytes = getIndirectReference().getDocument().getReader().readStreamBytes(this, decoded);
             } catch (IOException ioe) {
-                throw new PdfRuntimeException(PdfRuntimeException.CannotGetPdfStreamBytes, ioe, this);
+                throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
             }
         }
         return bytes;
@@ -226,7 +226,7 @@ public class PdfStream extends PdfDictionary {
         try {
             outputStream.write(bytes);
         } catch (IOException ioe) {
-            throw new PdfRuntimeException(PdfRuntimeException.CannotCopyObjectContent, ioe, stream);
+            throw new PdfException(PdfException.CannotCopyObjectContent, ioe, stream);
         }
     }
 
@@ -245,7 +245,7 @@ public class PdfStream extends PdfDictionary {
                 outputStream = null;
             }
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
+            throw new PdfException(PdfException.IoException, e);
         }
     }
 

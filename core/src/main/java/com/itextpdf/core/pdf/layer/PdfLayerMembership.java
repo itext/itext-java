@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.layer;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
 
     /**
      * Creates a new, empty membership layer.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfLayerMembership(PdfDocument doc) {
         super(new PdfDictionary(), doc);
@@ -27,7 +27,7 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
 
     /**
      * Creates a new PdfLayerMembership instance by its PdfDictionary.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfLayerMembership(PdfDictionary membershipDictionary, PdfDocument doc) {
         super(membershipDictionary, doc);
@@ -37,7 +37,7 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
 
     /**
      * Gets the collection of the layers this layer membership operates with.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public Collection<PdfLayer> getLayers() {
         final PdfObject layers = getPdfObject().get(PdfName.OCGs);
@@ -56,7 +56,7 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     /**
      * Adds a new layer to the current layer membership.
      * @param layer the layer to be added
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public void addLayer(PdfLayer layer) {
         PdfArray layers = getPdfObject().getAsArray(PdfName.OCGs);
@@ -89,7 +89,7 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     /**
      * Gets the visibility policy for content belonging to this
      * optional content membership dictionary.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfName getVisibilityPolicy() {
         PdfName visibilityPolicy = getPdfObject().getAsName(PdfName.P);
@@ -114,7 +114,7 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     /**
      * Gets the visibility expression for content belonging to this
      * optional content membership dictionary.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfVisibilityExpression getVisibilityExpression() {
         PdfArray ve = getPdfObject().getAsArray(PdfName.VE);

@@ -1,7 +1,7 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.cmap.*;
 
@@ -163,7 +163,7 @@ public class FontCache {
         try {
             CMapParser.parseCid(name, cmap, new CMapLocationResource());
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
+            throw new PdfException(PdfException.IoException, e);
         }
         return cmap;
     }

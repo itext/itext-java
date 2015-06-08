@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
@@ -13,7 +13,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
     public PdfTrapNetworkAnnotation(PdfDocument document, Rectangle rect, PdfFormXObject appearanceStream) {
         super(document, rect);
         if (appearanceStream.getProcessColorModel() == null) {
-            throw new PdfRuntimeException("Process color model must be set in appearance stream for Trap Network annotation!");
+            throw new PdfException("Process color model must be set in appearance stream for Trap Network annotation!");
         }
         setNormalAppearance(appearanceStream.getPdfObject());
         setFlags(PdfAnnotation.Print | PdfAnnotation.ReadOnly);

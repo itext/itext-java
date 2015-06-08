@@ -1,7 +1,7 @@
 package com.itextpdf.core.image;
 
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.image.Image;
@@ -99,7 +99,7 @@ public class JpegImageHelper {
             }
             processParameters(is, errorID, image);
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.JpegImageException, e);
+            throw new PdfException(PdfException.JpegImageException, e);
         } finally {
             if (is != null) {
                 try {
@@ -143,7 +143,7 @@ public class JpegImageHelper {
                 is = image.getUrl().openStream();
                 Utilities.transferBytes(is, pdfStream.getOutputStream());
             } catch (IOException e) {
-                throw new PdfRuntimeException(PdfRuntimeException.JpegImageException, e);
+                throw new PdfException(PdfException.JpegImageException, e);
             } finally {
                 if (is != null) {
                     try {
@@ -157,20 +157,20 @@ public class JpegImageHelper {
     /**
      * This method checks if the image is a valid JPEG and processes some parameters.
      *
-     * @throws PdfRuntimeException
+     * @throws PdfException
      * @throws IOException
      */
     private static void processParameters(InputStream is, String errorID, Image image) throws IOException {
         byte[][] icc = null;
         if (is.read() != 0xFF || is.read() != 0xD8) {
-            throw new PdfRuntimeException(PdfRuntimeException._1IsNotAValidJpegFile).setMessageParams(errorID);
+            throw new PdfException(PdfException._1IsNotAValidJpegFile).setMessageParams(errorID);
         }
         boolean firstPass = true;
         int len;
         while (true) {
             int v = is.read();
             if (v < 0)
-                throw new PdfRuntimeException(PdfRuntimeException.PrematureEofWhileReadingJpg);
+                throw new PdfException(PdfException.PrematureEofWhileReadingJpg);
             if (v == 0xFF) {
                 int marker = is.read();
                 if (firstPass && marker == M_APP0) {
@@ -183,7 +183,7 @@ public class JpegImageHelper {
                     byte bcomp[] = new byte[JFIF_ID.length];
                     int r = is.read(bcomp);
                     if (r != bcomp.length)
-                        throw new PdfRuntimeException(PdfRuntimeException._1CorruptedJfifMarker).setMessageParams(errorID);
+                        throw new PdfException(PdfException._1CorruptedJfifMarker).setMessageParams(errorID);
                     boolean found = true;
                     for (int k = 0; k < bcomp.length; ++k) {
                         if (bcomp[k] != JFIF_ID[k]) {
@@ -327,7 +327,7 @@ public class JpegImageHelper {
                 if (markertype == VALID_MARKER) {
                     Utilities.skip(is, 2);
                     if (is.read() != 0x08) {
-                        throw new PdfRuntimeException(PdfRuntimeException._1MustHave8BitsPerComponent).setMessageParams(errorID);
+                        throw new PdfException(PdfException._1MustHave8BitsPerComponent).setMessageParams(errorID);
                     }
                     image.setHeight(getShort(is));
                     image.setWidth(getShort(is));
@@ -335,7 +335,7 @@ public class JpegImageHelper {
                     image.setBpc(8);
                     break;
                 } else if (markertype == UNSUPPORTED_MARKER) {
-                    throw new PdfRuntimeException(PdfRuntimeException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
+                    throw new PdfException(PdfException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
                 } else if (markertype != NOPARAM_MARKER) {
                     Utilities.skip(is, getShort(is) - 2);
                 }

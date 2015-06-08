@@ -1,6 +1,5 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.core.geom.PageSize;

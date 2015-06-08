@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.layer;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.pdf.*;
 
@@ -30,7 +30,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * Creates a new layer by existing dictionary and document.
      * @param layerDictionary the layer dictionary
      * @param document the PdfDocument which the layer belongs to
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfLayer(PdfDictionary layerDictionary,PdfDocument document) {
         super(layerDictionary, document);
@@ -40,7 +40,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * Creates a new layer by its name and document.
      * @param name the layer name
      * @param document the PdfDocument which the layer belongs to
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfLayer(String name, PdfDocument document) {
         this(document);
@@ -173,7 +173,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * The default value is PdfName.View, so it will be the only element of the
      * resultant colletion if no intents are currently specified.
      * @return the collection of intents.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public Collection<PdfName> getIntents() {
         final PdfObject intent = getPdfObject().get(PdfName.Intent);
@@ -349,7 +349,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * Gets the indirect reference to the current layer object,
      * making it indirect first if necessary.
      * @return the indirect reference to the object representing the layer
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfIndirectReference getIndirectReference() {
         getPdfObject().makeIndirect(getDocument());
@@ -378,7 +378,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param title the title of the layer
      * @param document the document this title layer belongs to
      * @return the created layer
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected static PdfLayer createTitleSilent(String title, PdfDocument document) {
         if (title == null)
@@ -391,7 +391,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     /**
      * Gets the /Usage dictionary, creating a new one if necessary.
      * @return the /Usage dictionary
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected PdfDictionary getUsage() {
         PdfDictionary usage = getPdfObject().getAsDictionary(PdfName.Usage);

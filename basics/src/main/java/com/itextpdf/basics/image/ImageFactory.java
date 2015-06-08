@@ -1,6 +1,6 @@
 package com.itextpdf.basics.image;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.codec.TIFFFaxDecoder;
@@ -52,9 +52,9 @@ public final class ImageFactory {
                                     final int typeCCITT, final int parameters, final byte[] data,
                                     final int[] transparency) {
         if (transparency != null && transparency.length != 2)
-            throw new PdfRuntimeException(PdfRuntimeException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new PdfException(PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (typeCCITT != RawImage.CCITTG4 && typeCCITT != RawImage.CCITTG3_1D && typeCCITT != RawImage.CCITTG3_2D)
-            throw new PdfRuntimeException(PdfRuntimeException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
+            throw new PdfException(PdfException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
         RawImage image = new RawImage(data, Image.RAW);
@@ -69,7 +69,7 @@ public final class ImageFactory {
     public static Image getImage(final int width, final int height, final int components,
                                     final int bpc, final byte[] data, final int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
-            throw new PdfRuntimeException(PdfRuntimeException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new PdfException(PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (components == 1 && bpc == 1) {
             byte g4[] = CCITTG4Encoder.compress(data, width, height);
             return ImageFactory.getImage(width, height, false, RawImage.CCITTG4, RawImage.CCITT_BLACKIS1, g4, transparency);
@@ -78,9 +78,9 @@ public final class ImageFactory {
         image.height = height;
         image.width = width;
         if (components != 1 && components != 3 && components != 4)
-            throw new PdfRuntimeException(PdfRuntimeException.ComponentsMustBe1_3Or4);
+            throw new PdfException(PdfException.ComponentsMustBe1_3Or4);
         if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8)
-            throw new PdfRuntimeException(PdfRuntimeException.BitsPerComponentMustBe1_2_4or8);
+            throw new PdfException(PdfException.BitsPerComponentMustBe1_2_4or8);
         image.colorSpace = components;
         image.bpc = bpc;
         image.data = data;
@@ -247,7 +247,7 @@ public final class ImageFactory {
         } else if (imageTypeIs(imageType, jbig2)) {
             return new Jbig2Image(source, 1);
         }
-        throw new PdfRuntimeException(PdfRuntimeException.ImageFormatCannotBeRecognized);
+        throw new PdfException(PdfException.ImageFormatCannotBeRecognized);
     }
 
     private static Image getImageInstance(byte[] bytes, boolean recoverImage) {
@@ -269,7 +269,7 @@ public final class ImageFactory {
         } else if (imageTypeIs(imageType, jbig2)) {
             return new Jbig2Image(bytes, 1);
         }
-        throw new PdfRuntimeException(PdfRuntimeException.ImageFormatCannotBeRecognized);
+        throw new PdfException(PdfException.ImageFormatCannotBeRecognized);
     }
 
     private static boolean imageTypeIs(byte[] imageType, byte[] compareWith) {
@@ -292,7 +292,7 @@ public final class ImageFactory {
             is.read(bytes);
             return bytes;
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
+            throw new PdfException(PdfException.IoException, e);
         } finally {
             if (is != null) {
                 try {

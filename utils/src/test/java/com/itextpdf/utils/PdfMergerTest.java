@@ -1,6 +1,5 @@
 package com.itextpdf.utils;
 
-import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;

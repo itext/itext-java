@@ -1,7 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.*;
 import com.itextpdf.core.geom.Rectangle;
@@ -54,10 +54,10 @@ public class PdfType0Font extends PdfFont {
     public PdfType0Font(PdfDocument document, TrueTypeFont ttf, String cmap) {
         super(document);
         if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
-            throw new PdfRuntimeException("only.identity.cmaps.supports.with.truetype");
+            throw new PdfException("only.identity.cmaps.supports.with.truetype");
         }
         if (!ttf.allowEmbedding()) {
-            throw new PdfRuntimeException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
+            throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
         }
         this.font = ttf;
         this.embedded = true;
@@ -84,7 +84,7 @@ public class PdfType0Font extends PdfFont {
     public PdfType0Font(PdfDocument document, CidFont font, String cmap) {
         super(document);
         if (!CidFontProperties.isCidFont(font.getFontName(), cmap)) {
-            throw new PdfRuntimeException("font.1.with.2.encoding.is.not.a.cjk.font").setMessageParams(font.getFontName(), cmap);
+            throw new PdfException("font.1.with.2.encoding.is.not.a.cjk.font").setMessageParams(font.getFontName(), cmap);
         }
         this.font = font;
         vertical = cmap.endsWith("V");
@@ -167,10 +167,10 @@ public class PdfType0Font extends PdfFont {
             try {
                 return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
             } catch (UnsupportedEncodingException e) {
-                throw new PdfRuntimeException("TrueTypeFont", e);
+                throw new PdfException("TrueTypeFont", e);
             }
         } else {
-            throw new PdfRuntimeException("font.has.no.suitable.cmap");
+            throw new PdfException("font.has.no.suitable.cmap");
         }
 
     }

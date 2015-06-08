@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
@@ -163,7 +163,7 @@ class FlateDecodeFilter implements FilterHandler{
                     break;
                 default:
                     // Error -- unknown filter type
-                    throw new PdfRuntimeException(PdfRuntimeException.PngFilterUnknown);
+                    throw new PdfException(PdfException.PngFilterUnknown);
             }
             try {
                 fout.write(curr);

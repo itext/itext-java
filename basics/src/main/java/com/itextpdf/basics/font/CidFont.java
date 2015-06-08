@@ -1,7 +1,7 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -21,7 +21,7 @@ public class CidFont extends FontProgram {
         initializeCidFontNameAndStyle(fontName);
         HashMap<String, Object> fontDesc = CidFontProperties.getAllFonts().get(getFontName());
         if (fontDesc == null) {
-            throw new PdfRuntimeException("no.such.predefined.font.1").setMessageParams(fontName);
+            throw new PdfException("no.such.predefined.font.1").setMessageParams(fontName);
         }
         initializeCidFontProperties(fontDesc);
     }

@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
                 add(new PdfDictionary());
             }}), document);
             if (whitePoint == null || whitePoint.length != 3)
-                throw new PdfRuntimeException(PdfRuntimeException.WhitePointIsIncorrectlySpecified, this);
+                throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
             PdfDictionary d = ((PdfArray) getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
@@ -53,7 +53,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
                 add(new PdfDictionary());
             }}), document);
             if (whitePoint == null || whitePoint.length != 3)
-                throw new PdfRuntimeException(PdfRuntimeException.WhitePointIsIncorrectlySpecified, this);
+                throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
             PdfDictionary d = ((PdfArray) getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
@@ -86,7 +86,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
                 add(new PdfDictionary());
             }}), document);
             if (whitePoint == null || whitePoint.length != 3)
-                throw new PdfRuntimeException(PdfRuntimeException.WhitePointIsIncorrectlySpecified, this);
+                throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
             PdfDictionary d = ((PdfArray) getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }

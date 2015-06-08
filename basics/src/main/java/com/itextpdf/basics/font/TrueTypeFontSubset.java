@@ -1,6 +1,6 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
@@ -193,7 +193,7 @@ class TrueTypeFontSubset {
         rf.seek(directoryOffset);
         int id = rf.readInt();
         if (id != 0x00010000) {
-            throw new PdfRuntimeException("1.is.not.a.true.type.file").setMessageParams(fileName);
+            throw new PdfException("1.is.not.a.true.type.file").setMessageParams(fileName);
         }
         int num_tables = rf.readUnsignedShort();
         rf.skipBytes(6);
@@ -210,13 +210,13 @@ class TrueTypeFontSubset {
     protected void readLoca() throws IOException {
         int[] tableLocation = tableDirectory.get("head");
         if (tableLocation == null) {
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2", "head").setMessageParams(fileName);
+            throw new PdfException("table.1.does.not.exist.in.2", "head").setMessageParams(fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET] + HEAD_LOCA_FORMAT_OFFSET);
         locaShortTable = rf.readUnsignedShort() == 0;
         tableLocation = tableDirectory.get("loca");
         if (tableLocation == null) {
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2", "loca").setMessageParams(fileName);
+            throw new PdfException("table.1.does.not.exist.in.2", "loca").setMessageParams(fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET]);
         if (locaShortTable) {
@@ -287,7 +287,7 @@ class TrueTypeFontSubset {
     protected void flatGlyphs() throws IOException {
         int[] tableLocation = tableDirectory.get("glyf");
         if (tableLocation == null)
-            throw new PdfRuntimeException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
+            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
         Integer glyph0 = 0;
         if (!glyphsUsed.contains(glyph0)) {
             glyphsUsed.add(glyph0);
@@ -350,7 +350,7 @@ class TrueTypeFontSubset {
         try {
             return new String(buf, PdfEncodings.WINANSI);
         } catch (Exception e) {
-            throw new PdfRuntimeException("TrueType font", e);
+            throw new PdfException("TrueType font", e);
         }
     }
 

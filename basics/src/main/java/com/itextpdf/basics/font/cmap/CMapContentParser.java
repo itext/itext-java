@@ -1,6 +1,6 @@
 package com.itextpdf.basics.font.cmap;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.basics.io.PdfTokeniser;
 import com.itextpdf.basics.io.PdfTokeniser.TokenType;
@@ -52,21 +52,21 @@ public class CMapContentParser {
         Map<String, CMapObject> dic = new HashMap<>();
         while (true) {
             if (!nextValidToken())
-                throw new PdfRuntimeException("unexpected.end.of.file");
+                throw new PdfException("unexpected.end.of.file");
             if (tokeniser.getTokenType() == TokenType.EndDic)
                 break;
             if (tokeniser.getTokenType() == TokenType.Other && "def".equals(tokeniser.getStringValue()))
                 continue;
             if (tokeniser.getTokenType() != TokenType.Name)
-                throw new PdfRuntimeException("dictionary.key.1.is.not.a.name").setMessageParams(tokeniser.getStringValue());
+                throw new PdfException("dictionary.key.1.is.not.a.name").setMessageParams(tokeniser.getStringValue());
             String name = tokeniser.getStringValue();
             CMapObject obj = readObject();
             if (obj.isToken()) {
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(PdfRuntimeException.UnexpectedGtGt);
+                    tokeniser.throwError(PdfException.UnexpectedGtGt);
                 }
                 if (obj.toString().equals("]")) {
-                    tokeniser.throwError(PdfRuntimeException.UnexpectedCloseBracket);
+                    tokeniser.throwError(PdfException.UnexpectedCloseBracket);
                 }
             }
             dic.put(name, obj);
@@ -88,7 +88,7 @@ public class CMapContentParser {
                     break;
                 }
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(PdfRuntimeException.UnexpectedGtGt);
+                    tokeniser.throwError(PdfException.UnexpectedGtGt);
                 }
             }
             array.add(obj);

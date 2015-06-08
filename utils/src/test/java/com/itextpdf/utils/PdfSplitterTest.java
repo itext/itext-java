@@ -1,6 +1,6 @@
 package com.itextpdf.utils;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -82,7 +82,7 @@ public class PdfSplitterTest {
                     }
 
                     pdfDocument.close();
-                } catch (PdfRuntimeException e) {
+                } catch (PdfException e) {
                     e.printStackTrace();
                 }
             }

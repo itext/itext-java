@@ -1,6 +1,5 @@
 package com.itextpdf.core.testutils;
 
-import com.itextpdf.basics.PdfRuntimeException;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PdfRuntimeException extends RuntimeException {
+public class PdfException extends RuntimeException {
 
     public static final String _1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor = "1.bit.samples.are.not.supported.for.horizontal.differencing.predictor";
 
@@ -197,20 +197,20 @@ public class PdfRuntimeException extends RuntimeException {
     protected String composedMessage;
     private List<Object> messageParams;
 
-    public PdfRuntimeException(String message) {
+    public PdfException(String message) {
         super(message);
     }
 
-    public PdfRuntimeException(String message, Object object) {
+    public PdfException(String message, Object object) {
         this(message);
         this.object = object;
     }
 
-    public PdfRuntimeException(String message, Throwable cause) {
+    public PdfException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public PdfRuntimeException(String message, Throwable cause, Object object) {
+    public PdfException(String message, Throwable cause, Object object) {
         this(message, cause);
         this.object = object;
     }
@@ -228,7 +228,7 @@ public class PdfRuntimeException extends RuntimeException {
         return super.getMessage();
     }
 
-    public PdfRuntimeException setMessageParams(Object... messageParams) {
+    public PdfException setMessageParams(Object... messageParams) {
         this.messageParams = new ArrayList<Object>();
         Collections.addAll(this.messageParams, messageParams);
         return this;

@@ -1,6 +1,6 @@
 package com.itextpdf.basics.image;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.color.IccProfile;
 
 import java.net.URL;
@@ -175,9 +175,9 @@ public abstract class Image {
 
     public void setImageMask(Image imageMask) {
         if (this.mask)
-            throw new PdfRuntimeException(PdfRuntimeException.ImageMaskCannotContainAnotherImageMask);
+            throw new PdfException(PdfException.ImageMaskCannotContainAnotherImageMask);
         if (!imageMask.mask)
-            throw new PdfRuntimeException(PdfRuntimeException.ImageMaskIsNotAMaskDidYouDoMakeMask);
+            throw new PdfException(PdfException.ImageMaskIsNotAMaskDidYouDoMakeMask);
         this.imageMask = imageMask;
     }
 
@@ -187,7 +187,7 @@ public abstract class Image {
 
     public void makeMask() {
         if (!canBeMask())
-            throw new PdfRuntimeException(PdfRuntimeException.ImageCanNotBeAnImageMask);
+            throw new PdfException(PdfException.ImageCanNotBeAnImageMask);
         mask = true;
     }
 

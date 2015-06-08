@@ -1,7 +1,7 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 
 import java.io.IOException;
@@ -181,7 +181,7 @@ public class TrueTypeFont extends FontProgram {
             try {
                 return s.getBytes("UnicodeBigUnmarked");
             } catch (UnsupportedEncodingException e) {
-                throw new PdfRuntimeException("TrueTypeFont", e);
+                throw new PdfException("TrueTypeFont", e);
             }
         } else {
             return encoding.convertToBytes(text);
@@ -345,7 +345,7 @@ public class TrueTypeFont extends FontProgram {
             fontStreamLengths = new int[] {fontStreamBytes.length};
         } catch (IOException e) {
             fontStreamBytes = null;
-            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
+            throw new PdfException(PdfException.IoException, e);
         }
         return fontStreamBytes;
     }
@@ -480,7 +480,7 @@ public class TrueTypeFont extends FontProgram {
         try {
             return fontParser.getSubset(glyphs, subset);
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
+            throw new PdfException(PdfException.IoException, e);
         }
     }
 

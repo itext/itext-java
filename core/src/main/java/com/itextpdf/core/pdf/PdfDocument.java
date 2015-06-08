@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.core.Version;
 import com.itextpdf.core.events.EventDispatcher;
@@ -283,7 +283,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param index position to addPage page to
      * @return inserted page
-     * @throws PdfRuntimeException in case {@code page} is flushed
+     * @throws PdfException in case {@code page} is flushed
      */
     public PdfPage addNewPage(int index) {
         return addNewPage(index, getDefaultPageSize());
@@ -295,7 +295,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param index    position to addPage page to
      * @param pageSize page size of the new page
      * @return inserted page
-     * @throws PdfRuntimeException in case {@code page} is flushed
+     * @throws PdfException in case {@code page} is flushed
      */
     public PdfPage addNewPage(int index, PageSize pageSize) {
         PdfPage page = new PdfPage(this, pageSize);
@@ -310,7 +310,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param page page to add.
      * @return added page.
-     * @throws PdfRuntimeException in case {@code page} is flushed
+     * @throws PdfException in case {@code page} is flushed
      */
     public PdfPage addPage(PdfPage page) {
         catalog.addPage(page);
@@ -324,7 +324,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param index position to addPage page to
      * @param page  page to addPage
      * @return inserted page
-     * @throws PdfRuntimeException in case {@code page} is flushed
+     * @throws PdfException in case {@code page} is flushed
      */
     public PdfPage addPage(int index, PdfPage page) {
         catalog.addPage(index, page);
@@ -512,7 +512,7 @@ public class PdfDocument implements IEventDispatcher {
             removeAllHandlers();
             if (writer != null) {
                 if (catalog.isFlushed())
-                    throw new PdfRuntimeException(PdfRuntimeException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
+                    throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
                 if (xmpMetadata != null) {
                     PdfStream xmp = new PdfStream(this);
                     xmp.getOutputStream().write(xmpMetadata);
@@ -639,7 +639,7 @@ public class PdfDocument implements IEventDispatcher {
                 reader.close();
             }
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.CannotCloseDocument, e, this);
+            throw new PdfException(PdfException.CannotCloseDocument, e, this);
         }
     }
 
@@ -676,7 +676,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @return list of copied pages
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
         TreeSet<Integer> pages = new TreeSet<Integer>();
@@ -695,7 +695,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param pageTo
      * @param toDocument
      * @return list of copied pages
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument) {
         return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumOfPages() + 1);
@@ -711,7 +711,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @return list of copied pages
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) {
         List<PdfPage> copiedPages = new ArrayList<PdfPage>();
@@ -757,7 +757,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument  a document to copy pages to.
      * @return list of copied pages
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument) {
         return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1);
@@ -787,7 +787,7 @@ public class PdfDocument implements IEventDispatcher {
      * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
      * @param key Name of the destination.
      * @param value An object destination refers to.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public void addNewName(PdfObject key, PdfObject value) {
         catalog.addNewDestinationName(key, value);
@@ -805,7 +805,7 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Initializes document.
      *
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected void open() {
         try {
@@ -825,7 +825,7 @@ public class PdfDocument implements IEventDispatcher {
                     structParentIndex = getStructTreeRoot().getStructParentIndex() + 1;
                 }
                 if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
-                    throw new PdfRuntimeException(PdfRuntimeException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
+                    throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }
             if (writer != null) {
                 writer.document = this;
@@ -855,7 +855,7 @@ public class PdfDocument implements IEventDispatcher {
                 writer.writeHeader();
             }
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.CannotOpenDocument, e, this);
+            throw new PdfException(PdfException.CannotOpenDocument, e, this);
         }
     }
 
@@ -882,7 +882,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param outlines outlines to be copied
      * @param toDocument document where outlines should be copied
      * @param page2Outlines Map of pages to be copied and outlines associated with them. This map is used for creating destinations in target document.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, HashMap<PdfPage, List<PdfOutline>> page2Outlines) {
 
@@ -928,7 +928,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param toDocument - target Document
      * @param newParent - new parent outline
      * @param oldParent - old parent outline
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfDocument toDocument, PdfOutline newParent, PdfOutline oldParent) {
 

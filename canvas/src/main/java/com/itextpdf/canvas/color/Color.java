@@ -1,6 +1,6 @@
 package com.itextpdf.canvas.color;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 
@@ -48,7 +48,7 @@ public class Color {
     public void setColorValue(float[] value) {
         colorValue = value;
         if (colorValue.length != value.length)
-            throw new PdfRuntimeException(PdfRuntimeException.IncorrectNumberOfComponents, this);
+            throw new PdfException(PdfException.IncorrectNumberOfComponents, this);
     }
 
     @Override

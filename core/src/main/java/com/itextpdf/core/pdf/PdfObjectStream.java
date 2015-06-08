@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 
 import java.io.IOException;
@@ -49,11 +49,11 @@ class PdfObjectStream extends PdfStream {
      * Adds object to the object stream.
      *
      * @param object object to add.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public void addObject(PdfObject object) {
         if (size.getIntValue() == maxObjStreamSize) {
-            throw new PdfRuntimeException(PdfRuntimeException.PdfObjectStreamReachMaxSize);
+            throw new PdfException(PdfException.PdfObjectStreamReachMaxSize);
         }
         PdfOutputStream outputStream = getOutputStream();
         indexStream.writeInteger(object.getIndirectReference().getObjNumber()).
@@ -92,7 +92,7 @@ class PdfObjectStream extends PdfStream {
             try {
                 indexStream.close();
             } catch (IOException e) {
-                throw new PdfRuntimeException(PdfRuntimeException.IoException, e);
+                throw new PdfException(PdfException.IoException, e);
             }
             indexStream = null;
         }

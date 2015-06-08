@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.OutputStream;
 
 import java.io.IOException;
@@ -105,7 +105,7 @@ class PdfXrefTable {
      * Writes cross reference table and trailer to PDF.
      *
      * @throws java.io.IOException
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException {
         PdfWriter writer = document.getWriter();

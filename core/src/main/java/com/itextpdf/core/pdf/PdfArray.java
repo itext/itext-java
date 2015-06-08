@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 
 import java.util.*;
@@ -192,7 +192,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     /**
      *
      * @param asDirect true is to extract direct object always.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfObject get(int index, boolean asDirect) {
         if (!asDirect)
@@ -283,7 +283,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
             float y2 = getAsNumber(3).getFloatValue();
             return new Rectangle(x1, y1, x2 - x1, y2 - y1);
         } catch (Exception e) {
-            throw new PdfRuntimeException(PdfRuntimeException.CannotConvertPdfArrayToRectanle, e, this);
+            throw new PdfException(PdfException.CannotConvertPdfArrayToRectanle, e, this);
         }
     }
 

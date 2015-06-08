@@ -2,7 +2,7 @@ package com.itextpdf.canvas.font;
 
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
@@ -244,7 +244,7 @@ public class PdfType3Font extends PdfFont {
             firstChar++;
 
         if (firstChar == usedSlot.length) {
-            throw new PdfRuntimeException("no.glyphs.defined.for.type3.font");
+            throw new PdfException("no.glyphs.defined.for.type3.font");
         }
 
         lastChar = usedSlot.length - 1;

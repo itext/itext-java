@@ -1,6 +1,5 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.PdfRuntimeException;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.navigation.PdfDestination;

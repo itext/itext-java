@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -157,8 +157,8 @@ public class PdfPagesTest {
             pdfDoc.removePage(page);
             pdfDoc.addPage(1, page);
             pdfDoc.close();
-        } catch (PdfRuntimeException e) {
-            if (PdfRuntimeException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
+        } catch (PdfException e) {
+            if (PdfException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
                 error = true;
         }
 
@@ -176,8 +176,8 @@ public class PdfPagesTest {
             pdfDoc.removePage(page);
             pdfDoc.addPage(page);
             pdfDoc.close();
-        } catch (PdfRuntimeException e) {
-            if (PdfRuntimeException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
+        } catch (PdfException e) {
+            if (PdfException.FlushedPageCannotBeAddedOrInserted.equals(e.getMessage()))
                 error = true;
         }
 

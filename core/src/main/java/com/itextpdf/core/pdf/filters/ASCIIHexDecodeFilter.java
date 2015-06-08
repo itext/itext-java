@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
@@ -32,7 +32,7 @@ public class ASCIIHexDecodeFilter implements FilterHandler {
                 continue;
             int n = ByteBuffer.getHex(ch);
             if (n == -1)
-                throw new PdfRuntimeException(PdfRuntimeException.IllegalCharacterInAsciihexdecode);
+                throw new PdfException(PdfException.IllegalCharacterInAsciihexdecode);
             if (first)
                 n1 = n;
             else

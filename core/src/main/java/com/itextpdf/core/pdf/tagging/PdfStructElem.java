@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 
@@ -95,7 +95,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public PdfStructElem(PdfDocument document, PdfName role, PdfAnnotation annot) {
         this(document, role);
         if (annot.getPage() == null)
-            throw new PdfRuntimeException(PdfRuntimeException.AnnotShallHaveReferenceToPage);
+            throw new PdfException(PdfException.AnnotShallHaveReferenceToPage);
         getPdfObject().put(PdfName.Pg, annot.getPage().getPdfObject());
     }
 
@@ -118,7 +118,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      *                        Pass {@code true} if you want to create empty dictionary in such case.
      *                        The attributes dictionary wil be stored inside element.
      * @return attributes dictionary.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfDictionary getAttributes(boolean createNewIfNull) {
         PdfDictionary attributes = getPdfObject().getAsDictionary(PdfName.A);
@@ -176,7 +176,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     public PdfStructElem addKid(int index, PdfStructElem kid) {
         if (type == InlineLevel || type == Illustration) {
-            throw new PdfRuntimeException(PdfRuntimeException.InlineLevelOrIllustrationElementCannotContainKids, getPdfObject());
+            throw new PdfException(PdfException.InlineLevelOrIllustrationElementCannotContainKids, getPdfObject());
         }
         addKidObject(index, kid.getPdfObject());
         return kid;
@@ -188,7 +188,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     public PdfMcr addKid(int index, PdfMcr kid) {
         if (this != kid.getParent())
-            throw new PdfRuntimeException(PdfRuntimeException.IncorrectMcrParent);
+            throw new PdfException(PdfException.IncorrectMcrParent);
         addKidObject(index, kid.getPdfObject());
         return kid;
     }
@@ -315,7 +315,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     private void addKidObject(int index, PdfObject kid) {
         if (!getPdfObject().containsKey(PdfName.P)) {
-            throw new PdfRuntimeException(PdfRuntimeException.StructureElementShallContainParentObject, getPdfObject());
+            throw new PdfException(PdfException.StructureElementShallContainParentObject, getPdfObject());
         }
         PdfObject k = getK();
         if (k == null)

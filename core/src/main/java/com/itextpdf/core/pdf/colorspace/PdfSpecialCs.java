@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.function.PdfFunction;
 
@@ -54,7 +54,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         public Separation(PdfDocument document, String name, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(document, new PdfName(name), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
             if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
-                throw new PdfRuntimeException(PdfRuntimeException.FunctionIsNotCompatibleWitColorSpace, this);
+                throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
 
@@ -98,7 +98,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         public DeviceN(PdfDocument document, List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(document, new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
             if (tintTransform.getInputSize() != getNumOfComponents() || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
-                throw new PdfRuntimeException(PdfRuntimeException.FunctionIsNotCompatibleWitColorSpace, this);
+                throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
 
@@ -138,7 +138,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         public NChannel(PdfDocument document, List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform, PdfDictionary attributes) {
             this(document, new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject(), attributes);
             if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
-                throw new PdfRuntimeException(PdfRuntimeException.FunctionIsNotCompatibleWitColorSpace, this);
+                throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
 

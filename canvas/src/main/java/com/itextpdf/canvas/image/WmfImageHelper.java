@@ -1,6 +1,6 @@
 package com.itextpdf.canvas.image;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.WmfImage;
 import com.itextpdf.canvas.PdfCanvas;
@@ -33,7 +33,7 @@ public class WmfImageHelper {
 
     /**
      * This method checks if the image is a valid WMF and processes some parameters.
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     private void processParameters() {
         InputStream is = null;
@@ -49,7 +49,7 @@ public class WmfImageHelper {
             }
             InputMeta in = new InputMeta(is);
             if (in.readInt() != 0x9AC6CDD7)	{
-                throw new PdfRuntimeException("1.is.not.a.valid.placeable.windows.metafile", errorID);
+                throw new PdfException("1.is.not.a.valid.placeable.windows.metafile", errorID);
             }
             in.readWord();
             int left = in.readShort();
@@ -61,7 +61,7 @@ public class WmfImageHelper {
             wmf.setHeight((float) (bottom - top) / inch * 72f);
             wmf.setWidth((float) (right - left) / inch * 72f);
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.WmfImageException);
+            throw new PdfException(PdfException.WmfImageException);
         } finally {
             if (is != null) {
                 try {
@@ -86,7 +86,7 @@ public class WmfImageHelper {
             MetaDo meta = new MetaDo(is, canvas, document);
             meta.readAll();
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.WmfImageException, e);
+            throw new PdfException(PdfException.WmfImageException, e);
         } finally {
             if (is != null) {
                 try {

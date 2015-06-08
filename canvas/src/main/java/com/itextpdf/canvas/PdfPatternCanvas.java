@@ -1,6 +1,6 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfResources;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
@@ -28,7 +28,7 @@ public class PdfPatternCanvas extends PdfCanvas {
 
     private void checkNoColor() {
         if (!tilingPattern.isColored()) {
-            throw new PdfRuntimeException(PdfRuntimeException.ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters);
+            throw new PdfException(PdfException.ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters);
         }
     }
 

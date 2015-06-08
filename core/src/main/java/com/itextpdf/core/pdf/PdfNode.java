@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 
 public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
 
@@ -14,7 +14,7 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
      * Creates a Node in the current document
      *
      * @param pdfDocument
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfNode(PdfDocument pdfDocument) {
         super(new PdfDictionary());
@@ -29,7 +29,7 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
      * Creates root node in the current document
      *
      * @param pdfDictionary
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public PdfNode(PdfDictionary pdfDictionary) {
         super(pdfDictionary);
@@ -43,7 +43,7 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param key
      * @param value
-     * @throws PdfRuntimeException
+     * @throws PdfException
      */
     public void addName(PdfObject key, PdfObject value) {
         if (names.size() == 0)

@@ -45,7 +45,7 @@
 */
 package com.itextpdf.basics.codec;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.EOFException;
@@ -140,13 +140,13 @@ public class TIFFDirectory implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new PdfRuntimeException(PdfRuntimeException.BadEndiannessTagNot0x4949Or0x4d4d);
+            throw new PdfException(PdfException.BadEndiannessTagNot0x4949Or0x4d4d);
         }
         isBigEndian = endian == 0x4d4d;
 
         int magic = readUnsignedShort(stream);
         if (magic != 42) {
-            throw new PdfRuntimeException(PdfRuntimeException.BadMagicNumberShouldBe42);
+            throw new PdfException(PdfException.BadMagicNumberShouldBe42);
         }
 
         // Get the initial ifd offset as an unsigned int (using a long)
@@ -154,7 +154,7 @@ public class TIFFDirectory implements Serializable {
 
         for (int i = 0; i < directory; i++) {
             if (ifd_offset == 0L) {
-                throw new PdfRuntimeException(PdfRuntimeException.DirectoryNumberTooLarge);
+                throw new PdfException(PdfException.DirectoryNumberTooLarge);
             }
 
             stream.seek(ifd_offset);
@@ -189,7 +189,7 @@ public class TIFFDirectory implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new PdfRuntimeException(PdfRuntimeException.BadEndiannessTagNot0x4949Or0x4d4d);
+            throw new PdfException(PdfException.BadEndiannessTagNot0x4949Or0x4d4d);
         }
         isBigEndian = endian == 0x4d4d;
 
@@ -631,12 +631,12 @@ public class TIFFDirectory implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new PdfRuntimeException(PdfRuntimeException.BadEndiannessTagNot0x4949Or0x4d4d);
+            throw new PdfException(PdfException.BadEndiannessTagNot0x4949Or0x4d4d);
         }
         boolean isBigEndian = endian == 0x4d4d;
         int magic = readUnsignedShort(stream, isBigEndian);
         if (magic != 42) {
-            throw new PdfRuntimeException(PdfRuntimeException.BadMagicNumberShouldBe42);
+            throw new PdfException(PdfException.BadMagicNumberShouldBe42);
         }
 
         stream.seek(4L);

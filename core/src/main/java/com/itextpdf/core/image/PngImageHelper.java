@@ -1,6 +1,6 @@
 package com.itextpdf.core.image;
 
-import com.itextpdf.basics.PdfRuntimeException;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.font.PdfEncodings;
@@ -143,7 +143,7 @@ public class PngImageHelper {
             }
             processPng(is, png);
         } catch (IOException e) {
-            throw new PdfRuntimeException(PdfRuntimeException.PngImageException, e);
+            throw new PdfException(PdfException.PngImageException, e);
         } finally {
             if (is != null) {
                 try {
@@ -250,7 +250,7 @@ public class PngImageHelper {
             png.image.setDpi(png.dpiX, png.dpiY);
             png.image.setXYRatio(png.XYRatio);
         } catch (Exception e) {
-            throw new PdfRuntimeException(PdfRuntimeException.PngImageException, e);
+            throw new PdfException(PdfException.PngImageException, e);
         }
     }
 
@@ -592,7 +592,7 @@ public class PngImageHelper {
                     break;
                 default:
                     // Error -- uknown filter type
-                    throw new PdfRuntimeException(PdfRuntimeException.PngFilterUnknown);
+                    throw new PdfException(PdfException.PngFilterUnknown);
             }
 
             processPixels(curr, xOffset, xStep, dstY, passWidth, png);
