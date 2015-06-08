@@ -55,6 +55,7 @@ public class Property {
     }
 
     public static boolean isPropertyInherited(int propertyKey, IPropertyContainer parent, IPropertyContainer descendant) {
+        //TODO try to use ArrayList for several groups of properties and use only contains method.
         if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE ||
                 propertyKey == FIRST_LINE_INDENT || propertyKey == KEEP_TOGETHER)
             return true;
