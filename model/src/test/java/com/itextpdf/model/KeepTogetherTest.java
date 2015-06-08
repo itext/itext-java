@@ -11,6 +11,7 @@ import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.renderer.DocumentRenderer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -44,6 +45,37 @@ public class KeepTogetherTest {
         }
 
         String str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanasdadasdadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+        Paragraph p1 = new Paragraph(str);
+        p1.setKeepTogether(true);
+        doc.add(p1);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore
+    public void keepTogetherParagraphTest02() throws IOException, InterruptedException {
+
+        String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest02.pdf";
+        String outFile  = destinationFolder + "keepTogetherParagraphTest02.pdf";
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
+
+
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        for (int i = 0; i < 28; i++){
+            doc.add(new Paragraph("String number" + i));
+        }
+
+        String str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanasdadasdadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        for (int i= 0 ; i < 5; i++) {
+            str += str;
+        }
 
         Paragraph p1 = new Paragraph(str);
         p1.setKeepTogether(true);
@@ -108,6 +140,7 @@ public class KeepTogetherTest {
     }
 
     @Test
+    @Ignore
     public void keepTogetherDivTest02() throws IOException, InterruptedException {
 
         String cmpFileName = sourceFolder + "cmp_keepTogetherDivTest02.pdf";
@@ -124,19 +157,9 @@ public class KeepTogetherTest {
 
             @Override
             public LayoutArea getNextArea() {
-                if (nextAreaNumber == 0) {
+                if (nextAreaNumber % 2 == 0) {
                     currentPageNumber = super.getNextArea().getPageNumber();
                     nextAreaNumber++;
-                    return (currentArea = new LayoutArea(currentPageNumber, new Rectangle(100, 100, 100, 500)));
-                } else if (nextAreaNumber == 1){
-                    nextAreaNumber++;
-                    return (currentArea = new LayoutArea(currentPageNumber, new Rectangle(400, 100, 100, 500)));
-                } else if (nextAreaNumber == 2){
-                    nextAreaNumber++;
-                    return (currentArea = new LayoutArea(currentPageNumber, new Rectangle(400, 100, 100, 500)));
-                } else if (nextAreaNumber % 2 == 1){
-                    nextAreaNumber++;
-                    currentPageNumber = super.getNextArea().getPageNumber();
                     return (currentArea = new LayoutArea(currentPageNumber, new Rectangle(100, 100, 100, 500)));
                 } else {
                     nextAreaNumber++;
