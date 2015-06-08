@@ -1400,4 +1400,92 @@ public class PdfCanvasTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest04.pdf", sourceFolder + "cmp_wmfImageTest04.pdf", destinationFolder, "diff_"));
     }
+
+    @Test
+    public void gifImageTest01() throws IOException, InterruptedException {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest01.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        Image img = ImageFactory.getImage(sourceFolder + "2-frames.gif");
+        canvas.addImage(img, 100, 100, 200, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest01.pdf", sourceFolder + "cmp_gifImageTest01.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void gifImageTest02() throws IOException, InterruptedException {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest02.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        InputStream is = new FileInputStream(sourceFolder+"2-frames.gif");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int reads = is.read();
+        while (reads != -1) {
+            baos.write(reads);
+            reads = is.read();
+        }
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        Image img = ImageFactory.getGifImage(baos.toByteArray(), 1);
+        canvas.addImage(img, 100, 100, 200, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest02.pdf", sourceFolder + "cmp_gifImageTest02.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void gifImageTest03() throws IOException, InterruptedException {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest03.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        InputStream is = new FileInputStream(sourceFolder+"2-frames.gif");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int reads = is.read();
+        while (reads != -1) {
+            baos.write(reads);
+            reads = is.read();
+        }
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        Image img = ImageFactory.getGifImage(baos.toByteArray(), 2);
+        canvas.addImage(img, 100, 100, 200, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest03.pdf", sourceFolder + "cmp_gifImageTest03.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test(expected = PdfException.class)
+    public void gifImageTest04() throws IOException, InterruptedException {
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest03.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        InputStream is = new FileInputStream(sourceFolder+"2-frames.gif");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int reads = is.read();
+        while (reads != -1) {
+            baos.write(reads);
+            reads = is.read();
+        }
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        Image img = ImageFactory.getGifImage(baos.toByteArray(), 3);
+        canvas.addImage(img, 100, 100, 200, false);
+    }
 }

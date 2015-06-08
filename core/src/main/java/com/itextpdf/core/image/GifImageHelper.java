@@ -118,7 +118,7 @@ public final class GifImageHelper {
         readHeader(gif);
         readContents(gif);
         if (!gif.frameRead)
-            throw new PdfException(PdfException.CannotFind1Frame).setMessageParams(gif.image.getFrame());
+            throw new PdfException(PdfException.CannotFind1Frame).setMessageParams(gif.image.getFrame() + 1);
     }
 
     /**
@@ -210,10 +210,10 @@ public final class GifImageHelper {
             int code = gif.in.read();
             switch (code) {
                 case 0x2C:    // image separator
-                    currentFrame++;
-                    boolean skipCurrentFrame = currentFrame == gif.image.getFrame();
+                    boolean skipCurrentFrame = currentFrame != gif.image.getFrame();
                     if (gif.frameRead = readFrame(skipCurrentFrame, gif))
                         done = true;
+                    currentFrame++;
                     break;
                 case 0x21:    // extension
                     code = gif.in.read();

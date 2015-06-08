@@ -10,12 +10,12 @@ public class GifImage extends RawImage {
 
     protected GifImage(URL url, int frame) {
         super(url, GIF);
-        this.frame = frame;
+        this.frame = frame - 1;
     }
 
     protected GifImage(byte[] bytes, int frame) {
         super(bytes, GIF);
-        this.frame = frame;
+        this.frame = frame - 1;
     }
 
     public int getFrame() {

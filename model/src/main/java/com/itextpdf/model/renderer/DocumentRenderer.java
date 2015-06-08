@@ -47,17 +47,28 @@ public class DocumentRenderer extends AbstractRenderer {
             LayoutResult result = null;
 
             LayoutArea storedArea = null;
+            LayoutArea nextStoredArea = null;
             while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     resultRenderers.add(result.getSplitRenderer());
-                    getNextArea();
+                    if (nextStoredArea != null){
+                        currentArea = nextStoredArea;
+                        currentPageNumber = nextStoredArea.getPageNumber();
+                        nextStoredArea = null;
+                    } else {
+                        getNextArea();
+                    }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
                     if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)){
                         Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
                         logger.warn("Element doesn't fit current area. KeepTogether property will be ignored.");
                         result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                         renderer = result.getOverflowRenderer();
-                        currentArea = storedArea == null ? currentArea : storedArea;
+                        if (storedArea != null){
+                            nextStoredArea = currentArea;
+                            currentArea = storedArea;
+                            currentPageNumber = storedArea.getPageNumber();
+                        }
                         continue;
                     }
                     storedArea = currentArea;

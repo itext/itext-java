@@ -56,7 +56,6 @@ public class KeepTogetherTest {
     }
 
     @Test
-    @Ignore
     public void keepTogetherParagraphTest02() throws IOException, InterruptedException {
 
         String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest02.pdf";
@@ -140,7 +139,6 @@ public class KeepTogetherTest {
     }
 
     @Test
-    @Ignore
     public void keepTogetherDivTest02() throws IOException, InterruptedException {
 
         String cmpFileName = sourceFolder + "cmp_keepTogetherDivTest02.pdf";
@@ -169,7 +167,7 @@ public class KeepTogetherTest {
         });
         Div div = new Div();
         doc.add(new Paragraph("first string"));
-        for (int i = 0; i < 50; i++){
+        for (int i = 0; i < 130; i++){
             div.add(new Paragraph("String number " + i));
         }
         div.setKeepTogether(true);
