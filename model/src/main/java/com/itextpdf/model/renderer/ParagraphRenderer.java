@@ -114,6 +114,7 @@ public class ParagraphRenderer extends AbstractRenderer {
                 lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
                 if (leading != null) {
                     float deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
+                    // for the first and last line in a paragraph, leading is smaller
                     if (firstLineInBox)
                         deltaY = -(leadingValue - lastLineHeight) / 2;
                     processedRenderer.move(0, deltaY);
