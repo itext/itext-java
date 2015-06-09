@@ -5,17 +5,19 @@ import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
 import com.itextpdf.core.pdf.PdfStream;
-import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+
 
 /**
  * Nothing here...
@@ -46,6 +48,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws IOException {
         return new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, ""));
     }
+
 
     /**
      * Converts the text into bytes to be placed in the document.

@@ -43,8 +43,8 @@ public class PdfFontTest {
     @Test
     public void createDocumentWithKozmin() throws IOException {
         int pageCount = 1;
-        String filename = destinationFolder + "DocumentWithKozmin.pdf";
 
+        String filename = destinationFolder + "DocumentWithKozmin.pdf";
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Type3 test";
@@ -75,11 +75,11 @@ public class PdfFontTest {
         pdfDoc.close();
     }
 
-    @Test @Ignore
-    public void createDocumentWithTrueTypeAsType0() throws IOException {
+    @Test
+    @Ignore
+    public void createDocumentWithTrueTypeAsType0() throws IOException, PdfException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0.pdf";
-
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Type3 test";
@@ -92,15 +92,15 @@ public class PdfFontTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "abserif4_5.ttf"));
-        TrueTypeFont abSerif = new TrueTypeFont("Aboriginal Serif", "Identity-H", ttf);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "FreeSans.ttf"));
+        TrueTypeFont freeSans = new TrueTypeFont("FreeSans", "Identity-H", ttf);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             canvas.saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfType0Font(pdfDoc, abSerif, "Identity-H"), 72)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, freeSans, "Identity-H"), 72)
                     .showText("Hello World")
                     .endText()
                     .restoreState();
@@ -126,7 +126,7 @@ public class PdfFontTest {
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfType3Font type3 = new PdfType3Font(pdfDoc,false);
+        PdfType3Font type3 = new PdfType3Font(pdfDoc, false);
         Type3Glyph a = type3.createGlyph('A', 600, 0, 0, 600, 700);
         a.setLineWidth(100);
         a.moveTo(5, 5);
@@ -156,7 +156,7 @@ public class PdfFontTest {
         Type3Glyph symbol233 = type3.createGlyph('é', 600, 0, 0, 600, 700);
         symbol233.setLineWidth(100);
         symbol233.moveTo(540, 5);
-        symbol233.lineTo(5,340);
+        symbol233.lineTo(5, 340);
         symbol233.stroke();
 
         pdfDoc.getInfo().setAuthor(author).
@@ -371,7 +371,7 @@ public class PdfFontTest {
                 setCreator(creator).
                 setTitle(title);
         byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.pfb"));
-        byte[] afm = Utilities.inputStreamToArray(new FileInputStream(sourceFolder +"cmr10.pfm"));
+        byte[] afm = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.pfm"));
         Type1Font type1Font = new Type1Font("CMR10.pfm", "", afm, pfb);
         PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, type1Font, true);
         PdfPage page = pdfDoc.addNewPage();
@@ -454,8 +454,9 @@ public class PdfFontTest {
         document.close();
     }
 
-    @Test @Ignore
-    public void createDocumentWithTrueTypeFont1() throws IOException {
+    @Test
+    @Ignore
+    public void createDocumentWithTrueTypeFont1() throws IOException, PdfException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
 
         final String author = "Alexander Chingarev";
@@ -489,8 +490,9 @@ public class PdfFontTest {
         pdfDoc.close();
     }
 
-    @Test @Ignore
-    public void createDocumentWithTrueTypeFont2() throws IOException {
+    @Test
+    @Ignore
+    public void createDocumentWithTrueTypeFont2() throws IOException, PdfException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont2.pdf";
 
         final String author = "Alexander Chingarev";
@@ -530,9 +532,9 @@ public class PdfFontTest {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
-        String inputFileName =  sourceFolder+"type3Font.pdf";
-        String outputFileName =  destinationFolder +"new_type3Font.pdf";
-        PdfReader reader =  new PdfReader(inputFileName);
+        String inputFileName = sourceFolder + "type3Font.pdf";
+        String outputFileName = destinationFolder + "new_type3Font.pdf";
+        PdfReader reader = new PdfReader(inputFileName);
         PdfWriter pdfWriter = new PdfWriter(new FileOutputStream(outputFileName));
         pdfWriter.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument inputPdfDoc = new PdfDocument(reader);
@@ -542,26 +544,26 @@ public class PdfFontTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType3Font pdfType3Font = new PdfType3Font(outputPdfDoc,(PdfDictionary)inputPdfDoc.getPdfObject(4));
+        PdfType3Font pdfType3Font = new PdfType3Font(outputPdfDoc, (PdfDictionary) inputPdfDoc.getPdfObject(4));
 
-        Type3Glyph newGlyph = pdfType3Font.createGlyph('ö',600, 0, 0, 600, 700);
+        Type3Glyph newGlyph = pdfType3Font.createGlyph('ö', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
         newGlyph.moveTo(540, 5);
-        newGlyph.lineTo(5,840);
+        newGlyph.lineTo(5, 840);
         newGlyph.stroke();
 
         PdfPage page = outputPdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
-                .setFontAndSize(pdfType3Font,12)
+                .setFontAndSize(pdfType3Font, 12)
                 .moveText(50, 800)
                 .showText("AAAAAA EEEE ~ é ö")
                 .endText();
         page.flush();
         outputPdfDoc.close();
 
-        Assert.assertEquals(6,pdfType3Font.getCharGlyphs().size());
+        Assert.assertEquals(6, pdfType3Font.getCharGlyphs().size());
     }
 
     @Test
@@ -569,10 +571,10 @@ public class PdfFontTest {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
-        String inputFileName1 =  sourceFolder + "DocumentWithCMR10Afm.pdf";
+        String inputFileName1 = sourceFolder + "DocumentWithCMR10Afm.pdf";
 
 
-        PdfReader reader1 =  new PdfReader(inputFileName1);
+        PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         String filename = destinationFolder + "DocumentWithCMR10Afm_new.pdf";
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
@@ -584,7 +586,7 @@ public class PdfFontTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc,pdfDictionary);
+        PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -607,10 +609,10 @@ public class PdfFontTest {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
-        String inputFileName1 =  sourceFolder + "DocumentWithTrueTypeFont1.pdf";
+        String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont1.pdf";
 
 
-        PdfReader reader1 =  new PdfReader(inputFileName1);
+        PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
 
 
@@ -625,7 +627,7 @@ public class PdfFontTest {
                 setCreator(creator).
                 setTitle(title);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc,pdfDictionary);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -648,10 +650,10 @@ public class PdfFontTest {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
-        String inputFileName1 = sourceFolder +  "DocumentWithTrueTypeFont2.pdf";
+        String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont2.pdf";
 
 
-        PdfReader reader1 =  new PdfReader(inputFileName1);
+        PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
 
@@ -666,7 +668,7 @@ public class PdfFontTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc,pdfDictionary);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -682,7 +684,90 @@ public class PdfFontTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder +  "cmp_DocumentWithTrueTypeFont2_new.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_DocumentWithTrueTypeFont2_new.pdf", destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void testNewType0FontBasedExistingFont() throws IOException, PdfException, InterruptedException {
+        final String author = "Dmitry Trusevich";
+        final String creator = "iText 6";
+        final String title = "Type0 font iText 6 Document";
+        String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
+
+
+        PdfReader reader1 = new PdfReader(inputFileName1);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+        PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(6);
+        String filename = destinationFolder + "DocumentWithKozmin_new.pdf";
+
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDoc, pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder +  "cmp_DocumentWithKozmin_new.pdf", destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void createDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException, PdfException, InterruptedException {
+        final String author = "Dmitry Trusevich";
+        final String creator = "iText 6";
+        final String title = "Type0 font iText 6 Document";
+        String inputFileName1 = sourceFolder + "DocumentWithWithTrueTypeAsType0.pdf";
+
+        PdfReader reader1 = new PdfReader(inputFileName1);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+        PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(6);
+        String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0_new.pdf";
+
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDoc, pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello World")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder +  "cmp_DocumentWithWithTrueTypeAsType0_new.pdf", destinationFolder, "diff_"));
 
     }
 

@@ -9,10 +9,6 @@ import java.util.StringTokenizer;
 public class CidFont extends FontProgram {
 
 
-    private String style;
-    private String registry;
-    private String panose;
-
 
     private IntHashtable hMetrics;
     private IntHashtable vMetrics;
@@ -34,19 +30,6 @@ public class CidFont extends FontProgram {
 
 
 
-    @Override
-    public String getStyle() {
-        return style;
-    }
-
-    public String getRegistry() {
-        return registry;
-    }
-
-    @Override
-    public String getPanose() {
-        return panose;
-    }
 
 
     public IntHashtable getHMetrics() {
@@ -55,6 +38,14 @@ public class CidFont extends FontProgram {
 
     public IntHashtable getVMetrics() {
         return vMetrics;
+    }
+
+    public void sethMetrics(IntHashtable hMetrics) {
+        this.hMetrics = hMetrics;
+    }
+
+    public void setvMetrics(IntHashtable vMetrics) {
+        this.vMetrics = vMetrics;
     }
 
     @Override
@@ -81,18 +72,18 @@ public class CidFont extends FontProgram {
         String nameBase = getBaseName(fontName);
         if (nameBase.length() < fontName.length()) {
             setFontName(fontName);
-            style = fontName.substring(nameBase.length());
+            setStyle(fontName.substring(nameBase.length()));
         } else {
             setFontName(fontName);
-            style = "";
+            setStyle("");
         }
     }
 
     private void initializeCidFontProperties(HashMap<String, Object> fontDesc) {
-        registry = (String) fontDesc.get("Registry");
+        setRegistry((String) fontDesc.get("Registry"));
         hMetrics = (IntHashtable) fontDesc.get("W");
         vMetrics = (IntHashtable) fontDesc.get("W2");
-        panose = (String) fontDesc.get("Panose");
+        setPanose((String) fontDesc.get("Panose"));
         setItalicAngle(Integer.parseInt((String) fontDesc.get("ItalicAngle")));
         setCapHeight(Integer.parseInt((String) fontDesc.get("CapHeight")));
         setAscender(Integer.parseInt((String) fontDesc.get("Ascent")));

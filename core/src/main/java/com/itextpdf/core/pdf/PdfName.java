@@ -279,6 +279,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Lbl = createDirectName("Lbl");
     public static final PdfName LBody = createDirectName("LBody");
     public static final PdfName LC = createDirectName("LC");
+    public static final PdfName Leading = createDirectName("Leading");
     public static final PdfName LE = createDirectName("LE");
     public static final PdfName Length = createDirectName("Length");
     public static final PdfName LI = createDirectName("LI");
@@ -311,6 +312,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Metadata = createDirectName("Metadata");
     public static final PdfName min = createDirectName("min");
     public static final PdfName Mix = createDirectName("Mix");
+    public static final PdfName MissingWidth = createDirectName("MissingWidth");
     public static final PdfName MK = createDirectName("MK");
     public static final PdfName ML = createDirectName("ML");
     public static final PdfName MN = createDirectName("ML");

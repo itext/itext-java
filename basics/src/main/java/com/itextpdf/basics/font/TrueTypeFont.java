@@ -64,8 +64,8 @@ public class TrueTypeFont extends FontProgram {
     protected boolean isVertical;
 
 
-
-    /** The map containing the kerning information. It represents the content of
+    /**
+     * The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
      * are the glyph number for the first character and the lower 16 bits are the
      * glyph number for the second character. The value is the amount of kerning in
@@ -119,9 +119,17 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
-    public TrueTypeFont(String encoding) throws IOException {
-        this.encoding = new FontEncoding(encoding, true);
+    public TrueTypeFont(String encoding) {
+        this.baseEncoding = encoding;
+        if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
+            isUnicode = true;
+            isVertical = this.baseEncoding.endsWith("V");
+
+        } else {
+            this.encoding = new FontEncoding(encoding, true);
+        }
     }
+
 
     public boolean allowEmbedding() {
         return os_2.fsType == 2;
@@ -142,6 +150,7 @@ public class TrueTypeFont extends FontProgram {
     /**
      * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
      * to the font's encoding.
+     *
      * @param text the <CODE>String</CODE> to be converted
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
@@ -159,7 +168,7 @@ public class TrueTypeFont extends FontProgram {
                     if (metrics == null) {
                         continue;
                     }
-                    glyph[i++] = (char)metrics[0];
+                    glyph[i++] = (char) metrics[0];
                 }
             } else {
                 for (int k = 0; k < len; ++k) {
@@ -174,7 +183,7 @@ public class TrueTypeFont extends FontProgram {
                     if (metrics == null) {
                         continue;
                     }
-                    glyph[i++] = (char)metrics[0];
+                    glyph[i++] = (char) metrics[0];
                 }
             }
             String s = new String(glyph, 0, i);
@@ -342,7 +351,7 @@ public class TrueTypeFont extends FontProgram {
             } else {
                 fontStreamBytes = fontParser.getFullFont();
             }
-            fontStreamLengths = new int[] {fontStreamBytes.length};
+            fontStreamLengths = new int[]{fontStreamBytes.length};
         } catch (IOException e) {
             fontStreamBytes = null;
             throw new PdfException(PdfException.IoException, e);
@@ -429,8 +438,8 @@ public class TrueTypeFont extends FontProgram {
     }
 
 
-
-    /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
+    /**
+     * Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
      * and <CODE>ITALICANGLE</CODE>.
      *
@@ -449,7 +458,7 @@ public class TrueTypeFont extends FontProgram {
         return cmaps.fontSpecific;
     }
 
-    public int getMacStyle(){
+    public int getMacStyle() {
         return head.macStyle;
     }
 

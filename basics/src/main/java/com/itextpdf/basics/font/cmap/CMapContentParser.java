@@ -1,6 +1,7 @@
 package com.itextpdf.basics.font.cmap;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.basics.io.PdfTokeniser;
 import com.itextpdf.basics.io.PdfTokeniser.TokenType;
@@ -11,6 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CMapContentParser {
+
+    /**
+     * Commands have this type.
+     */
+    public static final int COMMAND_TYPE = 200;
 
     /**
      * Holds value of property tokeniser.
@@ -101,7 +107,7 @@ public class CMapContentParser {
      * @return the pdf object
      * @throws IOException on error
      */
-    protected CMapObject readObject() throws IOException {
+    public CMapObject readObject() throws IOException, PdfException {
         if (!nextValidToken())
             return null;
         TokenType type = tokeniser.getTokenType();
@@ -170,6 +176,26 @@ public class CMapContentParser {
             // empty on purpose
         }
         return buf.toString();
+    }
+
+    private static String toHex4(int n) {
+        String s = "0000" + Integer.toHexString(n);
+        return s.substring(s.length() - 4);
+    }
+
+    /**
+     * Gets an hex string in the format "&lt;HHHH&gt;".
+     *
+     * @param n the number
+     * @return the hex string
+     */
+    public static String toHex(int n) {
+        if (n < 0x10000)
+            return "<" + toHex4(n) + ">";
+        n -= 0x10000;
+        int high = n / 0x400 + 0xd800;
+        int low = n % 0x400 + 0xdc00;
+        return "[<" + toHex4(high) + toHex4(low) + ">]";
     }
 
     protected static String decodeHexString(byte[] content) {
@@ -260,5 +286,13 @@ public class CMapContentParser {
             buffer.append((char)ch);
         }
         return buffer.toString();
+    }
+
+    public static String decodeCMapObject(CMapObject cMapObject) throws PdfException {
+        if (cMapObject.isHexString()) {
+            return PdfEncodings.convertToString(((String) cMapObject.getValue()).getBytes(), PdfEncodings.UnicodeBigUnmarked);
+        } else {
+            return (String) cMapObject.getValue();
+        }
     }
 }

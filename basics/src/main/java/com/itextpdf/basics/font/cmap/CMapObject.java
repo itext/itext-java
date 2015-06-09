@@ -24,6 +24,10 @@ public class CMapObject {
         return value;
     }
 
+    public int getType() {
+        return type;
+    }
+
     public void setValue(Object value) {
         this.value = value;
     }

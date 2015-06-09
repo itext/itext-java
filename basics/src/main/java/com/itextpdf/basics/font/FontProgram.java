@@ -4,6 +4,7 @@ import java.util.StringTokenizer;
 
 public abstract class FontProgram {
 
+    public static int DEFAULT_WIDTH = 1000;
     /**
      * Font encoding.
      */
@@ -64,6 +65,12 @@ public abstract class FontProgram {
 
     private int flags;
 
+    private String panose;
+
+    private String style;
+
+    private String registry;
+
     /**
      * Contains the smallest box enclosing the character contours.
      */
@@ -87,12 +94,28 @@ public abstract class FontProgram {
         return fontName;
     }
 
+    public void setPanose(String panose) {
+        this.panose = panose;
+    }
+
+    public String getRegistry() {
+        return registry;
+    }
+
+    public void setRegistry(String registry) {
+        this.registry = registry;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
     public String getStyle() {
-        return "";
+        return style;
     }
 
     public String getPanose() {
-        return "";
+        return panose;
     }
 
     public void setWidths(int[] widths) {
@@ -213,6 +236,7 @@ public abstract class FontProgram {
 
     /**
      * Gets the width of a <CODE>String</CODE> in points.     *
+     *
      * @param text     the <CODE>String</CODE> to get the width of
      * @param fontSize the font size
      * @return the width in points
@@ -223,6 +247,7 @@ public abstract class FontProgram {
 
     /**
      * Gets the width of a <CODE>char</CODE> in points.     *
+     *
      * @param char1    the <CODE>char</CODE> to get the width of
      * @param fontSize the font size
      * @return the width in points

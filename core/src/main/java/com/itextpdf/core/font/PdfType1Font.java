@@ -131,6 +131,17 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         return fontStream;
     }
 
+   
+    @Override
+    protected Type1Font initializeTypeFontForCopy(String encodingName) throws IOException {
+        return new Type1Font(encodingName);
+    }
+
+    @Override
+    protected Type1Font initializeTypeFont(String fontName, String encodingName) throws IOException{
+        return new Type1Font(fontName, encodingName);
+    }
+
     private void flushCopyFontData() {
         super.flush();
     }
@@ -244,14 +255,6 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         return fontDescriptor;
     }
 
-    @Override
-    protected Type1Font initializeTypeFontForCopy(String encodingName) throws IOException {
-        return new Type1Font(encodingName);
-    }
 
-    @Override
-    protected Type1Font initializeTypeFont(String fontName, String encodingName) throws IOException {
-        return new Type1Font(fontName, encodingName);
-    }
 
 }

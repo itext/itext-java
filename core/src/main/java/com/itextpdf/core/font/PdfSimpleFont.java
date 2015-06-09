@@ -1,14 +1,25 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.font.*;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.AdobeGlyphList;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 
 import java.io.IOException;
 
 
-public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
+abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
-    private T fontProgram;
+    protected T fontProgram;
 
     public PdfSimpleFont(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
@@ -17,12 +28,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     protected PdfSimpleFont(PdfDocument pdfDocument) {
         super(pdfDocument);
     }
-
-    /**
-     * Creates a unique subset prefix to be added to the font name when the font is embedded and subset.
-     *
-     * @return the subset prefix
-     */
 
     public T getFontProgram() {
         return fontProgram;
@@ -103,109 +108,131 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
         PdfDictionary fromDescriptorDictionary = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         if (fromDescriptorDictionary != null) {
-            PdfDictionary toDescriptorDictionary = new PdfDictionary();
-            toDescriptorDictionary.makeIndirect(getDocument());
-            toDescriptorDictionary.put(PdfName.Type, PdfName.FontDescriptor);
-            toDescriptorDictionary.put(PdfName.FontName, fromDescriptorDictionary.getAsName(PdfName.FontName));
-
-            PdfName subtype = fromDescriptorDictionary.getAsName(PdfName.Subtype);
-            if (subtype != null) {
-                toDescriptorDictionary.put(PdfName.Subtype, subtype);
-            }
-
-            PdfNumber ascent = fromDescriptorDictionary.getAsNumber(PdfName.Ascent);
-            if (ascent != null) {
-                toDescriptorDictionary.put(PdfName.Ascent, ascent);
-                fontProgram.setAscender(ascent.getIntValue());
-            }
-
-            PdfNumber descent = fromDescriptorDictionary.getAsNumber(PdfName.Descent);
-            if (descent != null) {
-                toDescriptorDictionary.put(PdfName.Descent, ascent);
-                fontProgram.setDescender(descent.getIntValue());
-            }
-
-            PdfNumber capHeight = fromDescriptorDictionary.getAsNumber(PdfName.CapHeight);
-            if (capHeight != null) {
-                toDescriptorDictionary.put(PdfName.CapHeight, capHeight);
-                fontProgram.setCapHeight(capHeight.getIntValue());
-            }
-
-            PdfNumber italicAngle = fromDescriptorDictionary.getAsNumber(PdfName.ItalicAngle);
-            if (italicAngle != null) {
-                toDescriptorDictionary.put(PdfName.ItalicAngle, italicAngle);
-                fontProgram.setItalicAngle(italicAngle.getIntValue());
-            }
-
-            PdfNumber stemV = fromDescriptorDictionary.getAsNumber(PdfName.StemV);
-            if (stemV != null) {
-                toDescriptorDictionary.put(PdfName.StemV, stemV);
-                fontProgram.setStemV(stemV.getIntValue());
-            }
-
-            PdfNumber fontWeight = fromDescriptorDictionary.getAsNumber(PdfName.FontWeight);
-            if (fontWeight != null) {
-                toDescriptorDictionary.put(PdfName.FontWeight, fontWeight);
-            }
-
-
-            PdfNumber flags = fromDescriptorDictionary.getAsNumber(PdfName.Flags);
-            if (flags != null) {
-                toDescriptorDictionary.put(PdfName.Flags, flags);
-            }
-
-            PdfStream fileStream = fromDescriptorDictionary.getAsStream(PdfName.FontFile);
-            if (fileStream != null) {
-                PdfStream newFileStream = copyFontFileStream(fileStream);
-                toDescriptorDictionary.put(PdfName.FontFile, newFileStream);
-                newFileStream.flush();
-            }
-
-            PdfStream fileStream2 = fromDescriptorDictionary.getAsStream(PdfName.FontFile2);
-            if (fileStream2 != null) {
-                PdfStream newFileStream = copyFontFileStream(fileStream2);
-                toDescriptorDictionary.put(PdfName.FontFile2, newFileStream);
-                newFileStream.flush();
-            }
-
-            PdfStream fileStream3 = fromDescriptorDictionary.getAsStream(PdfName.FontFile3);
-            if (fileStream3 != null) {
-                PdfStream newFileStream = copyFontFileStream(fileStream3);
-                toDescriptorDictionary.put(PdfName.FontFile3, newFileStream);
-                newFileStream.flush();
-            }
-
-            PdfArray bbox = fromDescriptorDictionary.getAsArray(PdfName.FontBBox);
-            toDescriptorDictionary.put(PdfName.FontBBox, bbox);
-
-            if (bbox != null) {
-                int llx = bbox.getAsNumber(0).getIntValue();
-                int lly = bbox.getAsNumber(1).getIntValue();
-                int urx = bbox.getAsNumber(2).getIntValue();
-                int ury = bbox.getAsNumber(3).getIntValue();
-                if (llx > urx) {
-                    int t = llx;
-                    llx = urx;
-                    urx = t;
-                }
-                if (lly > ury) {
-                    int t = lly;
-                    lly = ury;
-                    ury = t;
-                }
-
-                fontProgram.setLlx(llx);
-                fontProgram.setLly(lly);
-                fontProgram.setUrx(urx);
-                fontProgram.setUry(ury);
-
-
-            }
-
+            PdfDictionary toDescriptorDictionary = getNewFontDescriptor(fromDescriptorDictionary);
             getPdfObject().put(PdfName.FontDescriptor, toDescriptorDictionary);
             toDescriptorDictionary.flush();
         }
 
+    }
+
+    protected  PdfDictionary getNewFontDescriptor(PdfDictionary fromDescriptorDictionary) throws PdfException {
+        PdfDictionary toDescriptorDictionary = new PdfDictionary();
+        toDescriptorDictionary.makeIndirect(getDocument());
+        toDescriptorDictionary.put(PdfName.Type, PdfName.FontDescriptor);
+        toDescriptorDictionary.put(PdfName.FontName, fromDescriptorDictionary.getAsName(PdfName.FontName));
+
+        PdfName subtype = fromDescriptorDictionary.getAsName(PdfName.Subtype);
+        if (subtype != null) {
+            toDescriptorDictionary.put(PdfName.Subtype, subtype);
+        }
+
+        PdfNumber ascent = fromDescriptorDictionary.getAsNumber(PdfName.Ascent);
+        if (ascent != null) {
+            toDescriptorDictionary.put(PdfName.Ascent, ascent);
+            fontProgram.setAscender(ascent.getIntValue());
+        }
+
+        PdfNumber descent = fromDescriptorDictionary.getAsNumber(PdfName.Descent);
+        if (descent != null) {
+            toDescriptorDictionary.put(PdfName.Descent, ascent);
+            fontProgram.setDescender(descent.getIntValue());
+        }
+
+        PdfNumber capHeight = fromDescriptorDictionary.getAsNumber(PdfName.CapHeight);
+        if (capHeight != null) {
+            toDescriptorDictionary.put(PdfName.CapHeight, capHeight);
+            fontProgram.setCapHeight(capHeight.getIntValue());
+        }
+
+        PdfNumber italicAngle = fromDescriptorDictionary.getAsNumber(PdfName.ItalicAngle);
+        if (italicAngle != null) {
+            toDescriptorDictionary.put(PdfName.ItalicAngle, italicAngle);
+            fontProgram.setItalicAngle(italicAngle.getIntValue());
+        }
+
+        PdfNumber stemV = fromDescriptorDictionary.getAsNumber(PdfName.StemV);
+        if (stemV != null) {
+            toDescriptorDictionary.put(PdfName.StemV, stemV);
+            fontProgram.setStemV(stemV.getIntValue());
+        }
+
+        PdfNumber fontWeight = fromDescriptorDictionary.getAsNumber(PdfName.FontWeight);
+        if (fontWeight != null) {
+            toDescriptorDictionary.put(PdfName.FontWeight, fontWeight);
+        }
+
+
+        PdfNumber flags = fromDescriptorDictionary.getAsNumber(PdfName.Flags);
+        if (flags != null) {
+            toDescriptorDictionary.put(PdfName.Flags, flags);
+        }
+
+        PdfStream fileStream = fromDescriptorDictionary.getAsStream(PdfName.FontFile);
+        if (fileStream != null) {
+            PdfStream newFileStream = copyFontFileStream(fileStream);
+            toDescriptorDictionary.put(PdfName.FontFile, newFileStream);
+            newFileStream.flush();
+        }
+
+        PdfStream fileStream2 = fromDescriptorDictionary.getAsStream(PdfName.FontFile2);
+        if (fileStream2 != null) {
+            PdfStream newFileStream = copyFontFileStream(fileStream2);
+            toDescriptorDictionary.put(PdfName.FontFile2, newFileStream);
+            newFileStream.flush();
+        }
+
+        PdfStream fileStream3 = fromDescriptorDictionary.getAsStream(PdfName.FontFile3);
+        if (fileStream3 != null) {
+            PdfStream newFileStream = copyFontFileStream(fileStream3);
+            toDescriptorDictionary.put(PdfName.FontFile3, newFileStream);
+            newFileStream.flush();
+        }
+
+        PdfStream leading = fromDescriptorDictionary.getAsStream(PdfName.Leading);
+        if (leading != null) {
+            toDescriptorDictionary.put(PdfName.Leading, leading);
+        }
+
+        PdfStream missingWidth = fromDescriptorDictionary.getAsStream(PdfName.MissingWidth);
+        if (missingWidth != null) {
+            toDescriptorDictionary.put(PdfName.MissingWidth, missingWidth);
+        }
+
+        PdfDictionary fromStyleDictionary = fromDescriptorDictionary.getAsDictionary(PdfName.Style);
+        if (fromStyleDictionary != null) {
+            PdfDictionary toStyleDictionary = new PdfDictionary();
+            PdfString panose = fromStyleDictionary.getAsString(PdfName.Panose);
+            toStyleDictionary.put(PdfName.Panose, panose);
+            toDescriptorDictionary.put(PdfName.Style, toStyleDictionary);
+            fontProgram.setPanose(panose.toString());
+        }
+
+
+        PdfArray bbox = fromDescriptorDictionary.getAsArray(PdfName.FontBBox);
+        toDescriptorDictionary.put(PdfName.FontBBox, bbox);
+
+        if (bbox != null) {
+            int llx = bbox.getAsNumber(0).getIntValue();
+            int lly = bbox.getAsNumber(1).getIntValue();
+            int urx = bbox.getAsNumber(2).getIntValue();
+            int ury = bbox.getAsNumber(3).getIntValue();
+            if (llx > urx) {
+                int t = llx;
+                llx = urx;
+                urx = t;
+            }
+            if (lly > ury) {
+                int t = lly;
+                lly = ury;
+                ury = t;
+            }
+            fontProgram.setLlx(llx);
+            fontProgram.setLly(lly);
+            fontProgram.setUrx(urx);
+            fontProgram.setUry(ury);
+        }
+
+        return toDescriptorDictionary;
     }
 
     private String getEncodingName(PdfName encoding) {

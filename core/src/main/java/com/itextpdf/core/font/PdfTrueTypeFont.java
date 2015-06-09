@@ -337,7 +337,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
 
     @Override
-    protected TrueTypeFont initializeTypeFontForCopy(String encodingName) throws IOException {
+    protected TrueTypeFont initializeTypeFontForCopy(String encodingName) {
         return new TrueTypeFont(encodingName);
     }
 
