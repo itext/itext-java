@@ -67,6 +67,11 @@ public class PageSize extends Rectangle {
         return this;
     }
 
+    public PageSize setMargins(float leftMargin, float rightMargin, float topMargin, float bottomMargin) {
+        return setLeftMargin(leftMargin).setRightMargin(rightMargin).
+                setTopMargin(topMargin).setBottomMargin(bottomMargin);
+    }
+
     public Rectangle getEffectiveArea() {
         return new Rectangle(leftMargin, bottomMargin, width - leftMargin - rightMargin, height - bottomMargin - topMargin);
     }
@@ -76,5 +81,10 @@ public class PageSize extends Rectangle {
      */
     public PageSize rotate() {
         return new PageSize(height, width, bottomMargin, topMargin, leftMargin, rightMargin);
+    }
+
+    @Override
+    public PageSize clone() {
+        return new PageSize(width, height, leftMargin, rightMargin, topMargin, bottomMargin);
     }
 }

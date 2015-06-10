@@ -91,6 +91,10 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         return (T) setPaddingTop(paddingTop).setPaddingRight(paddingRight).setPaddingBottom(paddingBottom).setPaddingLeft(paddingLeft);
     }
 
+    public T setAlignment(Property.Alignment alignment) {
+        return setProperty(Property.ALIGNMENT, alignment);
+    }
+
     @Override
     public <T> T getDefaultProperty(int propertyKey) {
         switch (propertyKey) {
@@ -101,7 +105,7 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         }
     }
 
-    public boolean isKeepTogether() {
+    public Boolean isKeepTogether() {
         return getProperty(Property.KEEP_TOGETHER);
     }
 

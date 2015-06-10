@@ -50,6 +50,7 @@ public class Property {
     public static final int BORDER_RIGHT = 43;
     public static final int PAGE_NUMBER = 44;
     public static final int KEEP_TOGETHER = 45;
+    public static final int WORD_SPACING = 46;
 
     private Property() {
     }
@@ -57,7 +58,9 @@ public class Property {
     public static boolean isPropertyInherited(int propertyKey, IPropertyContainer parent, IPropertyContainer descendant) {
         //TODO try to use ArrayList for several groups of properties and use only contains method.
         if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE ||
-                propertyKey == FIRST_LINE_INDENT || propertyKey == KEEP_TOGETHER)
+                propertyKey == FIRST_LINE_INDENT || propertyKey == KEEP_TOGETHER ||
+                propertyKey == WORD_SPACING || propertyKey == CHARACTER_SPACING ||
+                propertyKey == ALIGNMENT)
             return true;
         return false;
     }

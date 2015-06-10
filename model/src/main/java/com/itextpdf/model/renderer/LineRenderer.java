@@ -17,7 +17,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     @Override
-    public LayoutResult layout(LayoutContext layoutContext) {
+    public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveDown(-layoutBox.getHeight()).setHeight(0));
 
@@ -51,7 +51,6 @@ public class LineRenderer extends AbstractRenderer {
                 childAscent = childRenderer.getOccupiedArea().getBBox().getHeight();
             }
 
-
             maxAscent = Math.max(maxAscent, childAscent);
             maxDescent = Math.min(maxDescent, childDescent);
             float maxHeight = maxAscent - maxDescent;
@@ -74,7 +73,7 @@ public class LineRenderer extends AbstractRenderer {
                 }
 
                 split[0].adjustChildrenYLine();
-                return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
+                return new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
             } else {
                 anythingPlaced = true;
                 childPos++;
@@ -83,9 +82,9 @@ public class LineRenderer extends AbstractRenderer {
 
         if (anythingPlaced) {
             adjustChildrenYLine();
-            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+            return new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
         } else {
-            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+            return new LineLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
         }
     }
 
@@ -110,6 +109,59 @@ public class LineRenderer extends AbstractRenderer {
             default:
                 throw new IllegalStateException();
         }
+    }
+
+    protected void justify(float width) {
+        float ratio = .5f;
+        float freeWidth = occupiedArea.getBBox().getX() + width -
+                getLastChildRenderer().getOccupiedArea().getBBox().getX() - getLastChildRenderer().getOccupiedArea().getBBox().getWidth();
+        int numberOfSpaces = getNumberOfSpaces();
+        int lineLength = length();
+        float baseFactor = freeWidth / (ratio * numberOfSpaces + lineLength - 1);
+        float wordSpacing = ratio * baseFactor;
+        float characterSpacing = baseFactor;
+
+        float lastRightPos = occupiedArea.getBBox().getX();
+        for (IRenderer child : childRenderers) {
+            float childX = child.getOccupiedArea().getBBox().getX();
+            float childY = child.getOccupiedArea().getBBox().getY();
+            child.move(lastRightPos - childX, 0);
+            childX = lastRightPos;
+            if (child instanceof TextRenderer) {
+                float childHSCale = child.getProperty(Property.HORIZONTAL_SCALING);
+                child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
+                child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
+                child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() +
+                        characterSpacing * ((TextRenderer) child).length() + wordSpacing * ((TextRenderer) child).getNumberOfSpaces());
+            }
+            lastRightPos = childX + child.getOccupiedArea().getBBox().getWidth();
+        }
+
+        getOccupiedArea().getBBox().setWidth(width);
+    }
+
+    protected int getNumberOfSpaces() {
+        int spaces = 0;
+        for (IRenderer child : childRenderers) {
+            if (child instanceof TextRenderer) {
+                spaces += ((TextRenderer) child).getNumberOfSpaces();
+            }
+        }
+        return spaces;
+    }
+
+    /**
+     * Gets the total lengths of characters in this line. Other elements (images, tables) are not taken
+     * into account.
+     */
+    protected int length() {
+        int length = 0;
+        for (IRenderer child : childRenderers) {
+            if (child instanceof TextRenderer) {
+                length += ((TextRenderer) child).length();
+            }
+        }
+        return length;
     }
 
     @Override
@@ -151,5 +203,9 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         return this;
+    }
+
+    private IRenderer getLastChildRenderer() {
+        return childRenderers.get(childRenderers.size() - 1);
     }
 }

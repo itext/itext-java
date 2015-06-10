@@ -8,11 +8,11 @@ import java.util.Arrays;
 
 public class Color {
 
-    static public final Color Red = DeviceRgb.Red;
-    static public final Color Green = DeviceRgb.Green;
-    static public final Color Blue = DeviceRgb.Blue;
-    static public final Color White = DeviceRgb.White;
-    static public final Color Black = DeviceRgb.Black;
+    static public final Color Red = new DeviceRgb(0xFF, 0, 0);
+    static public final Color Green = new DeviceRgb(0, 0xFF, 0);
+    static public final Color Blue = new DeviceRgb(0, 0, 0xFF);
+    static public final Color White = new DeviceRgb(0xFF, 0xFF, 0xFF);
+    static public final Color Black = new DeviceRgb(0, 0, 0);
 
     protected PdfColorSpace colorSpace;
     protected float[] colorValue;

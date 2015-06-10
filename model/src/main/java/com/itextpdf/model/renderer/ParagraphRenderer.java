@@ -6,6 +6,7 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
+import com.itextpdf.model.layout.LineLayoutResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,13 +74,18 @@ public class ParagraphRenderer extends AbstractRenderer {
         while (currentRenderer != null) {
             float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), layoutBox.getWidth() - lineIndent, layoutBox.getHeight());
-            LayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
+            LineLayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {
                 processedRenderer = currentRenderer;
             } else if (result.getStatus() == LayoutResult.PARTIAL) {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
+            }
+
+            Property.Alignment alignment = getProperty(Property.ALIGNMENT);
+            if (alignment == Property.Alignment.JUSTIFIED && result.getStatus() == LayoutResult.PARTIAL && !result.isSplitForcedByNewline()) {
+                processedRenderer.justify(layoutBox.getWidth() - lineIndent);
             }
 
             leadingValue = processedRenderer != null && leading != null ? processedRenderer.getLeadingValue(leading) : 0;
@@ -101,13 +107,13 @@ public class ParagraphRenderer extends AbstractRenderer {
                     applyPaddings(occupiedArea.getBBox(), true);
                     applyMargins(occupiedArea.getBBox(), true);
                     boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
-                    if (keepTogether){
+                    if (keepTogether) {
                         split[0] = null;
                         childRenderers.clear();
                         childRenderers.add(initialRenderer);
                         split[1] = this;
                         anythingPlaced = false;
-                     }
+                    }
                     return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
                 }
             } else {
