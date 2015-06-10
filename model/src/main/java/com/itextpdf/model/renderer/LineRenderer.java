@@ -72,7 +72,7 @@ public class LineRenderer extends AbstractRenderer {
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                 }
 
-                split[0].adjustChildrenYLine();
+                split[0].adjustChildrenYLine().trimLast();
                 return new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
             } else {
                 anythingPlaced = true;
@@ -81,7 +81,7 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (anythingPlaced) {
-            adjustChildrenYLine();
+            adjustChildrenYLine().trimLast();
             return new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
         } else {
             return new LineLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
@@ -124,7 +124,6 @@ public class LineRenderer extends AbstractRenderer {
         float lastRightPos = occupiedArea.getBBox().getX();
         for (IRenderer child : childRenderers) {
             float childX = child.getOccupiedArea().getBBox().getX();
-            float childY = child.getOccupiedArea().getBBox().getY();
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
             if (child instanceof TextRenderer) {
@@ -201,6 +200,15 @@ public class LineRenderer extends AbstractRenderer {
             } else {
                 renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY());
             }
+        }
+        return this;
+    }
+
+    protected LineRenderer trimLast() {
+        IRenderer lastRenderer = childRenderers.size() > 0 ? childRenderers.get(childRenderers.size() - 1) : null;
+        if (lastRenderer instanceof TextRenderer) {
+            float trimmedSpace = ((TextRenderer) lastRenderer).trimLast();
+            occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - trimmedSpace);
         }
         return this;
     }

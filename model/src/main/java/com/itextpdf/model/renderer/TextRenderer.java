@@ -259,6 +259,38 @@ public class TextRenderer extends AbstractRenderer {
         text = text.replaceAll("^\\s+", "");
     }
 
+    /**
+     * Returns the amount of space in points which the text was trimmed by.
+     */
+    public float trimLast() {
+        float trimmedSpace = 0;
+
+        if (line == null)
+            return trimmedSpace;
+
+        float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
+        Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
+        Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
+        PdfFont font = getPropertyAsFont(Property.FONT);
+        Float hScale = getProperty(Property.HORIZONTAL_SCALING);
+
+        int firstNonSpaceCharIndex = line.length() - 1;
+        while (firstNonSpaceCharIndex >= 0) {
+            if (!Character.isWhitespace(line.charAt(firstNonSpaceCharIndex))) {
+                break;
+            }
+
+            float currentCharWidth = getCharWidth(line.charAt(firstNonSpaceCharIndex), font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+            trimmedSpace += currentCharWidth;
+            occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
+
+            firstNonSpaceCharIndex--;
+        }
+        line = line.substring(0, firstNonSpaceCharIndex + 1);
+
+        return trimmedSpace;
+    }
+
     public float getAscent() {
         return yLineOffset;
     }
