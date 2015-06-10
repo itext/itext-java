@@ -1,6 +1,5 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontProgram;
@@ -42,15 +41,12 @@ abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     protected abstract T initializeTypeFont(String fontName, String encodingName) throws IOException;
 
     protected void init() throws IOException {
-
         PdfName baseFont = fontDictionary.getAsName(PdfName.BaseFont);
         getPdfObject().put(PdfName.Subtype, fontDictionary.getAsName(PdfName.Subtype));
         getPdfObject().put(PdfName.BaseFont, baseFont);
         PdfObject encodingObj = fontDictionary.get(PdfName.Encoding);
         initFontProgram(encodingObj);
-
         fontProgram.setFontName(baseFont.getValue());
-
         if (encodingObj == null) {
 
             if (FontConstants.builtinFonts14.contains(baseFont.getValue())) {
@@ -73,11 +69,9 @@ abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
             if (baseEncoding == null) {
                 fillEncoding(null);
-
             } else {
                 fillEncoding(baseEncoding);
                 enc.put(PdfName.BaseEncoding, baseEncoding);
-
             }
 
             getPdfObject().put(PdfName.Encoding, enc);
@@ -105,17 +99,15 @@ abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             fontProgram = initializeTypeFont(fontProgram.getFontName(), fontProgram.getEncoding().getBaseEncoding());
         }
 
-
         PdfDictionary fromDescriptorDictionary = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         if (fromDescriptorDictionary != null) {
             PdfDictionary toDescriptorDictionary = getNewFontDescriptor(fromDescriptorDictionary);
             getPdfObject().put(PdfName.FontDescriptor, toDescriptorDictionary);
             toDescriptorDictionary.flush();
         }
-
     }
 
-    protected  PdfDictionary getNewFontDescriptor(PdfDictionary fromDescriptorDictionary) throws PdfException {
+    protected  PdfDictionary getNewFontDescriptor(PdfDictionary fromDescriptorDictionary) {
         PdfDictionary toDescriptorDictionary = new PdfDictionary();
         toDescriptorDictionary.makeIndirect(getDocument());
         toDescriptorDictionary.put(PdfName.Type, PdfName.FontDescriptor);

@@ -8,8 +8,6 @@ import java.util.StringTokenizer;
 
 public class CidFont extends FontProgram {
 
-
-
     private IntHashtable hMetrics;
     private IntHashtable vMetrics;
 
@@ -23,14 +21,10 @@ public class CidFont extends FontProgram {
     }
 
     //TODO describe supported font properties, so that user could create his own custom cid font.
-    public CidFont(String fontName, HashMap<String, Object> fontDesc) {
+    public CidFont(String fontName, HashMap<String, Object> fontDescription) {
         initializeCidFontNameAndStyle(fontName);
-        initializeCidFontProperties(fontDesc);
+        initializeCidFontProperties(fontDescription);
     }
-
-
-
-
 
     public IntHashtable getHMetrics() {
         return hMetrics;
@@ -40,11 +34,11 @@ public class CidFont extends FontProgram {
         return vMetrics;
     }
 
-    public void sethMetrics(IntHashtable hMetrics) {
+    public void setHMetrics(IntHashtable hMetrics) {
         this.hMetrics = hMetrics;
     }
 
-    public void setvMetrics(IntHashtable vMetrics) {
+    public void setVMetrics(IntHashtable vMetrics) {
         this.vMetrics = vMetrics;
     }
 
@@ -71,18 +65,18 @@ public class CidFont extends FontProgram {
     private void initializeCidFontNameAndStyle(String fontName) {
         String nameBase = getBaseName(fontName);
         if (nameBase.length() < fontName.length()) {
-            setFontName(fontName);
-            setStyle(fontName.substring(nameBase.length()));
+            this.fontName = fontName;
+            this.style = fontName.substring(nameBase.length());
         } else {
-            setFontName(fontName);
-            setStyle("");
+            this.fontName = fontName;
+            this.style = "";
         }
     }
 
     private void initializeCidFontProperties(HashMap<String, Object> fontDesc) {
         setRegistry((String) fontDesc.get("Registry"));
-        hMetrics = (IntHashtable) fontDesc.get("W");
-        vMetrics = (IntHashtable) fontDesc.get("W2");
+        setHMetrics((IntHashtable) fontDesc.get("W"));
+        setVMetrics((IntHashtable) fontDesc.get("W2"));
         setPanose((String) fontDesc.get("Panose"));
         setItalicAngle(Integer.parseInt((String) fontDesc.get("ItalicAngle")));
         setCapHeight(Integer.parseInt((String) fontDesc.get("CapHeight")));

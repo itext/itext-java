@@ -14,8 +14,6 @@ public class TrueTypeFont extends FontProgram {
 
     private OpenTypeParser fontParser;
 
-    //protected String postscriptFontName;
-
     protected String[][] fullFontName;
     protected String[][] familyFontName;
     protected String[][] allNameEntries;
@@ -63,7 +61,6 @@ public class TrueTypeFont extends FontProgram {
     //TODO doublicated with PdfType0Font.isVertical.
     protected boolean isVertical;
 
-
     /**
      * The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
@@ -73,7 +70,6 @@ public class TrueTypeFont extends FontProgram {
      */
     protected IntHashtable kerning = new IntHashtable();
 
-
     // TODO Duplicated with FontEncoding.baseEncoding.
     protected String baseEncoding;
 
@@ -82,8 +78,7 @@ public class TrueTypeFont extends FontProgram {
 
     public TrueTypeFont(String name, String baseEncoding, byte[] ttf) throws IOException {
         fontParser = new OpenTypeParser(name, ttf);
-        //postscriptFontName =
-        setFontName(fontParser.getFontName());
+        this.fontName = fontParser.getFontName();
         fullFontName = fontParser.getFullName();
         familyFontName = fontParser.getFamilyName();
         allNameEntries = fontParser.getAllNameEntries();
@@ -132,7 +127,7 @@ public class TrueTypeFont extends FontProgram {
 
 
     public boolean allowEmbedding() {
-        return os_2.fsType == 2;
+        return os_2.fsType != 2;
     }
 
 
@@ -156,14 +151,13 @@ public class TrueTypeFont extends FontProgram {
      */
     public byte[] convertToBytes(String text) {
         if (isUnicode) {
-            int len = text.length();
-            int metrics[] = null;
-            char glyph[] = new char[len];
+            char[] glyph;
+            int[] metrics;
             int i = 0;
             if (cmaps.fontSpecific) {
                 byte[] b = PdfEncodings.convertToBytes(text, "symboltt");
-                len = b.length;
-                for (int k = 0; k < len; ++k) {
+                glyph = new char[b.length];
+                for (int k = 0; k < b.length; ++k) {
                     metrics = getMetrics(b[k] & 0xff);
                     if (metrics == null) {
                         continue;
@@ -171,7 +165,8 @@ public class TrueTypeFont extends FontProgram {
                     glyph[i++] = (char) metrics[0];
                 }
             } else {
-                for (int k = 0; k < len; ++k) {
+                glyph = new char[text.length()];
+                for (int k = 0; k < text.length(); ++k) {
                     int val;
                     if (Utilities.isSurrogatePair(text, k)) {
                         val = Utilities.convertToUtf32(text, k);

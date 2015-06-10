@@ -107,7 +107,7 @@ public class CMapContentParser {
      * @return the pdf object
      * @throws IOException on error
      */
-    public CMapObject readObject() throws IOException, PdfException {
+    public CMapObject readObject() throws IOException {
         if (!nextValidToken())
             return null;
         TokenType type = tokeniser.getTokenType();
@@ -288,7 +288,7 @@ public class CMapContentParser {
         return buffer.toString();
     }
 
-    public static String decodeCMapObject(CMapObject cMapObject) throws PdfException {
+    public static String decodeCMapObject(CMapObject cMapObject) {
         if (cMapObject.isHexString()) {
             return PdfEncodings.convertToString(((String) cMapObject.getValue()).getBytes(), PdfEncodings.UnicodeBigUnmarked);
         } else {

@@ -470,7 +470,7 @@ public class Type1Font extends FontProgram {
             String ident = tok.nextToken();
             switch (ident) {
                 case "FontName":
-                    setFontName(tok.nextToken("\u00ff").substring(1));
+                    fontName = tok.nextToken("\u00ff").substring(1);
                     break;
                 case "FullName":
                     fullName = tok.nextToken("\u00ff").substring(1);
@@ -559,11 +559,11 @@ public class Type1Font extends FontProgram {
                 } else if (ident.equals("N")) {
                     N = tokc.nextToken();
                 } else if (ident.equals("B")) {
-                    B = new int[]{
+                    B = new int[] {
                             Integer.parseInt(tokc.nextToken()),
                             Integer.parseInt(tokc.nextToken()),
                             Integer.parseInt(tokc.nextToken()),
-                            Integer.parseInt(tokc.nextToken())};
+                            Integer.parseInt(tokc.nextToken()) };
                 }
             }
             Object[] metrics = new Object[]{C, WX, N, B};

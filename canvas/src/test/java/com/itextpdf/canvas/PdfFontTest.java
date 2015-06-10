@@ -76,7 +76,6 @@ public class PdfFontTest {
     }
 
     @Test
-    @Ignore
     public void createDocumentWithTrueTypeAsType0() throws IOException, PdfException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0.pdf";
@@ -92,15 +91,15 @@ public class PdfFontTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "FreeSans.ttf"));
-        TrueTypeFont freeSans = new TrueTypeFont("FreeSans", "Identity-H", ttf);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "abserif4_5.ttf"));
+        TrueTypeFont abSerif = new TrueTypeFont("Aboriginal Serif", "Identity-H", ttf);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             canvas.saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfType0Font(pdfDoc, freeSans, "Identity-H"), 72)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, abSerif, "Identity-H"), 72)
                     .showText("Hello World")
                     .endText()
                     .restoreState();
@@ -455,7 +454,6 @@ public class PdfFontTest {
     }
 
     @Test
-    @Ignore
     public void createDocumentWithTrueTypeFont1() throws IOException, PdfException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
 
@@ -491,7 +489,6 @@ public class PdfFontTest {
     }
 
     @Test
-    @Ignore
     public void createDocumentWithTrueTypeFont2() throws IOException, PdfException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont2.pdf";
 

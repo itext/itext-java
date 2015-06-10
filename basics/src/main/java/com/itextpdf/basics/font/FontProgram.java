@@ -10,7 +10,7 @@ public abstract class FontProgram {
      */
     protected FontEncoding encoding;
 
-    private String fontName;
+    protected String fontName;
     /**
      * The llx of the FontBox.
      */
@@ -33,43 +33,19 @@ public abstract class FontProgram {
      */
     private float italicAngle = 0.0f;
 
-    /**
-     * A variable.
-     */
     private int capHeight = 700;
-    /**
-     * A variable.
-     */
     private int xHeight = 480;
-    /**
-     * A variable.
-     */
     private int ascender = 800;
-    /**
-     * A variable.
-     */
     private int descender = -200;
-    /**
-     * A variable.
-     */
     private int stdHW;
-    /**
-     * A variable.
-     */
     private int stdVW = 80;
-
-    /**
-     * A variable.
-     */
     private int stemV = 80;
 
     private int flags;
 
-    private String panose;
-
-    private String style;
-
-    private String registry;
+    protected String panose;
+    protected String style;
+    protected String registry;
 
     /**
      * Contains the smallest box enclosing the character contours.
@@ -86,16 +62,12 @@ public abstract class FontProgram {
      */
     protected String encodingScheme = "FontSpecific";
 
-    public void setFontName(String fontName) {
-        this.fontName = fontName;
-    }
-
     public String getFontName() {
         return fontName;
     }
 
-    public void setPanose(String panose) {
-        this.panose = panose;
+    public void setFontName(String fontName) {
+        this.fontName = fontName;
     }
 
     public String getRegistry() {
@@ -106,16 +78,16 @@ public abstract class FontProgram {
         this.registry = registry;
     }
 
-    public void setStyle(String style) {
-        this.style = style;
-    }
-
     public String getStyle() {
         return style;
     }
 
     public String getPanose() {
         return panose;
+    }
+
+    public void setPanose(String panose) {
+        this.panose = panose;
     }
 
     public void setWidths(int[] widths) {
