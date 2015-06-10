@@ -146,11 +146,11 @@ public abstract class FontProgram {
         this.capHeight = capHeight;
     }
 
-    public int getxHeight() {
+    public int getXHeight() {
         return xHeight;
     }
 
-    public void setxHeight(int xHeight) {
+    public void setXHeight(int xHeight) {
         this.xHeight = xHeight;
     }
 
@@ -198,7 +198,7 @@ public abstract class FontProgram {
         return flags;
     }
 
-    public void setFlags(int flags) {
+    protected void setFlags(int flags) {
         this.flags = flags;
     }
 

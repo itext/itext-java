@@ -509,7 +509,7 @@ public class Type1Font extends FontProgram {
                     setCapHeight((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "XHeight":
-                    setxHeight((int) Float.parseFloat(tok.nextToken()));
+                    setXHeight((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "Ascender":
                     setAscender((int) Float.parseFloat(tok.nextToken()));
