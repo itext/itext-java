@@ -73,7 +73,10 @@ public class LineRenderer extends AbstractRenderer {
                 }
 
                 split[0].adjustChildrenYLine().trimLast();
-                return new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
+                LineLayoutResult result = new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
+                if (childResult.getStatus() == LayoutResult.PARTIAL && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline())
+                    result.setSplitForcedByNewline(true);
+                return result;
             } else {
                 anythingPlaced = true;
                 childPos++;

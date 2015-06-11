@@ -33,7 +33,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public LayoutResult layout(LayoutContext layoutContext) {
+    public TextLayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = applyMargins(area.getBBox().clone(), false);
 
@@ -123,7 +123,7 @@ public class TextRenderer extends AbstractRenderer {
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
                     applyMargins(occupiedArea.getBBox(), true);
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
+                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
                 } else {
                     boolean wordSplit = false;
                     if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced) {
@@ -149,7 +149,10 @@ public class TextRenderer extends AbstractRenderer {
 
                     TextRenderer[] split = split(currentTextPos);
                     applyMargins(occupiedArea.getBBox(), true);
-                    return new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
+                    TextLayoutResult result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
+                    if (split[1].text.length() > 0 && split[1].text.charAt(0) == '\n')
+                        result.setSplitForcedByNewline(true);
+                    return result;
                 }
             }
         }
@@ -157,7 +160,7 @@ public class TextRenderer extends AbstractRenderer {
         if (currentLine.length() != 0) {
             if (currentLineHeight > layoutBox.getHeight()) {
                 applyMargins(occupiedArea.getBBox(), true);
-                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
             }
 
             line = currentLine.toString();
@@ -171,7 +174,7 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         applyMargins(occupiedArea.getBBox(), true);
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        return new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
     @Override
