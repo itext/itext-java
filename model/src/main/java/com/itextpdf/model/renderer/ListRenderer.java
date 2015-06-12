@@ -32,10 +32,10 @@ public class ListRenderer extends BlockRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         List<IRenderer> symbolRenderers = new ArrayList<>();
-        int paragraphCount = 0;
+        int listItemCount = 0;
         for (int i = 0; i < childRenderers.size(); i++) {
             if (childRenderers.get(i).getModelElement() instanceof ListItem) {
-                IRenderer currentSymbolRenderer = makeListSymbolRenderer(++paragraphCount);
+                IRenderer currentSymbolRenderer = makeListSymbolRenderer(++listItemCount);
                 symbolRenderers.add(currentSymbolRenderer);
                 currentSymbolRenderer.layout(layoutContext);
             }
@@ -45,16 +45,12 @@ public class ListRenderer extends BlockRenderer {
             maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
         }
         Float symbolIndent = (Float)modelElement.getProperty(Property.LIST_SYMBOL_INDENT);
-        paragraphCount = 0;
+        listItemCount = 0;
         for (IRenderer childRenderer : childRenderers) {
-            childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, 0f) + maxSymbolWidth);
+            childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
             if (childRenderer.getModelElement() instanceof ListItem) {
-                IRenderer symbolRenderer = symbolRenderers.get(paragraphCount++);
-                childRenderer.setProperty(Property.FIRST_LINE_INDENT, -symbolRenderer.getOccupiedArea().getBBox().getWidth());
-                if (symbolIndent != null) {
-                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
-                }
-                ((ListItemRenderer)childRenderer).addSymbolRenderer(symbolRenderer);
+                IRenderer symbolRenderer = symbolRenderers.get(listItemCount++);
+                ((ListItemRenderer)childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
             }
         }
 

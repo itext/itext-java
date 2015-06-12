@@ -6,7 +6,6 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.model.element.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -83,7 +82,6 @@ public class ListTest {
     }
 
     @Test
-    @Ignore
     public void divInListItemTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divInListItemTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divInListItemTest01.pdf";

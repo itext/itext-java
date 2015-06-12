@@ -202,6 +202,18 @@ public abstract class AbstractRenderer implements IRenderer {
         return Collections.singletonList(context.getArea());
     }
 
+    /**
+     * Gets the first yLine of the nested children recursively. E.g. for a list, this will be the yLine of the
+     * first item (if the first item is indeed a paragraph).
+     * NOTE: this method will no go further than the first child.
+     */
+    protected float getFirstYLineRecursively() {
+        if (childRenderers.size() == 0) {
+            throw new RuntimeException("Cannot get yLine of empty paragraph");
+        }
+        return ((AbstractRenderer)childRenderers.get(0)).getFirstYLineRecursively();
+    }
+
     protected <T extends AbstractRenderer> T createSplitRenderer() {
         return null;
     }

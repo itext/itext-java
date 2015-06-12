@@ -11,7 +11,6 @@ import com.itextpdf.model.element.*;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -108,7 +107,7 @@ public class AlignmentTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @Test @Ignore
+    @Test
     public void blockAlignmentTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "blockAlignmentTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_blockAlignmentTest01.pdf";

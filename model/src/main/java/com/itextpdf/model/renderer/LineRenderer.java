@@ -114,6 +114,11 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
+    @Override
+    protected float getFirstYLineRecursively() {
+        return getYLine();
+    }
+
     protected void justify(float width) {
         float ratio = .5f;
         float freeWidth = occupiedArea.getBBox().getX() + width -

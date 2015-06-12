@@ -320,6 +320,11 @@ public class TextRenderer extends AbstractRenderer {
         this.text = text;
     }
 
+    @Override
+    protected float getFirstYLineRecursively() {
+        return getYLine();
+    }
+
     protected int getNumberOfSpaces() {
         if (line == null)
             return 0;
