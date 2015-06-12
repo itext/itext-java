@@ -23,7 +23,8 @@ public class BlockRenderer extends AbstractRenderer {
         if (isPositioned()) {
             float x = getPropertyAsFloat(Property.X);
             Rectangle parentBBox = layoutContext.getArea().getBBox();
-            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(parentBBox.getX() + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
+            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
+            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(relativeX + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
         }
         else {
             areas = initElementAreas(layoutContext);
@@ -125,7 +126,8 @@ public class BlockRenderer extends AbstractRenderer {
         }
         if (isPositioned()) {
             float y = getPropertyAsFloat(Property.Y);
-            move(0, layoutBox.getY() + y - occupiedArea.getBBox().getY());
+            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
+            move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
         applyMargins(occupiedArea.getBBox(), true);
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);

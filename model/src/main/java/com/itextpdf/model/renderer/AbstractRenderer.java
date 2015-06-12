@@ -239,4 +239,9 @@ public abstract class AbstractRenderer implements IRenderer {
         Object positioning = getProperty(Property.POSITION);
         return Integer.valueOf(LayoutPosition.ABSOLUTE).equals(positioning) || Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
     }
+
+    protected boolean isFixedLayout() {
+        Object positioning = getProperty(Property.POSITION);
+        return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
+    }
 }

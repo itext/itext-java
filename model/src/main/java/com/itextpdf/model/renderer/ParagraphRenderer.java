@@ -42,7 +42,8 @@ public class ParagraphRenderer extends AbstractRenderer {
         if (isPositioned()) {
             float x = getPropertyAsFloat(Property.X);
             Rectangle parentBBox = layoutContext.getArea().getBBox();
-            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(parentBBox.getX() + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
+            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
+            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(relativeX + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
         }
         else {
             areas = initElementAreas(layoutContext);
@@ -73,7 +74,8 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         while (currentRenderer != null) {
             float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
-            Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), layoutBox.getWidth() - lineIndent, layoutBox.getHeight());
+            float availableWidth = layoutBox.getWidth() - lineIndent;
+            Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), availableWidth, layoutBox.getHeight());
             LineLayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
 
             LineRenderer processedRenderer = null;
@@ -87,6 +89,16 @@ public class ParagraphRenderer extends AbstractRenderer {
             if (result.getStatus() == LayoutResult.PARTIAL && horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
                     horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED_ALL) {
                 processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+            } else if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT && processedRenderer != null) {
+                float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                switch (horizontalAlignment) {
+                    case RIGHT:
+                        processedRenderer.move(deltaX, 0);
+                        break;
+                    case CENTER:
+                        processedRenderer.move(deltaX / 2, 0);
+                        break;
+                }
             }
 
             leadingValue = processedRenderer != null && leading != null ? processedRenderer.getLeadingValue(leading) : 0;
@@ -144,10 +156,12 @@ public class ParagraphRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
             occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
+            //applyVerticalAlignment();
         }
         if (isPositioned()) {
             float y = getPropertyAsFloat(Property.Y);
-            move(0, layoutBox.getY() + y - occupiedArea.getBBox().getY());
+            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
+            move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
         applyMargins(occupiedArea.getBBox(), true);
 
@@ -180,4 +194,23 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
     }
+
+//    protected void applyVerticalAlignment() {
+//        Property.VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
+//        if (verticalAlignment != null && verticalAlignment != Property.VerticalAlignment.TOP && childRenderers.size() > 0) {
+//            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - occupiedArea.getBBox().getY();
+//            switch (verticalAlignment) {
+//                case BOTTOM:
+//                    for (IRenderer child : childRenderers) {
+//                        child.move(0, -deltaY);
+//                    }
+//                    break;
+//                case MIDDLE:
+//                    for (IRenderer child : childRenderers) {
+//                        child.move(0, -deltaY / 2);
+//                    }
+//                    break;
+//            }
+//        }
+//    }
 }
