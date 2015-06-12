@@ -38,17 +38,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        FileInputStream is = new FileInputStream(sourceFolder+"Desert.jpg");
-
-        nRead = is.read();
-        while (nRead != -1){
-            buffer.write(nRead);
-            nRead = is.read();
-        }
-
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(buffer.toByteArray()));
+        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -76,17 +66,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        FileInputStream is = new FileInputStream(sourceFolder+"Desert.jpg");
-
-        nRead = is.read();
-        while (nRead != -1){
-            buffer.write(nRead);
-            nRead = is.read();
-        }
-
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(buffer.toByteArray()));
+        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -114,17 +94,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        FileInputStream is = new FileInputStream(sourceFolder+"Desert.jpg");
-
-        nRead = is.read();
-        while (nRead != -1){
-            buffer.write(nRead);
-            nRead = is.read();
-        }
-
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(buffer.toByteArray()));
+        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -153,17 +123,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        FileInputStream is = new FileInputStream(sourceFolder+"Desert.jpg");
-
-        nRead = is.read();
-        while (nRead != -1){
-            buffer.write(nRead);
-            nRead = is.read();
-        }
-
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(buffer.toByteArray()));
+        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -192,17 +152,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        FileInputStream is = new FileInputStream(sourceFolder+"Desert.jpg");
-
-        nRead = is.read();
-        while (nRead != -1){
-            buffer.write(nRead);
-            nRead = is.read();
-        }
-
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(buffer.toByteArray()));
+        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -231,17 +181,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        FileInputStream is = new FileInputStream(sourceFolder+"Desert.jpg");
-
-        nRead = is.read();
-        while (nRead != -1){
-            buffer.write(nRead);
-            nRead = is.read();
-        }
-
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(buffer.toByteArray()));
+        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
