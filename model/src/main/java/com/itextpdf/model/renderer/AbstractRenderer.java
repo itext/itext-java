@@ -244,4 +244,19 @@ public abstract class AbstractRenderer implements IRenderer {
         Object positioning = getProperty(Property.POSITION);
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
     }
+
+    protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
+        Property.HorizontalAlignment horizontalAlignment = childRenderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
+        if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT) {
+            float deltaX = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
+            switch (horizontalAlignment) {
+                case RIGHT:
+                    childRenderer.move(deltaX, 0);
+                    break;
+                case CENTER:
+                    childRenderer.move(deltaX / 2, 0);
+                    break;
+            }
+        }
+    }
 }

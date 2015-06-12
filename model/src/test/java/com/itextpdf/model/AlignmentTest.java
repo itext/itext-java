@@ -1,14 +1,17 @@
 package com.itextpdf.model;
 
+import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
-import com.itextpdf.model.element.Paragraph;
-import com.itextpdf.model.element.Text;
+import com.itextpdf.model.element.*;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -101,6 +104,78 @@ public class AlignmentTest {
         document.add(paragraph);
 
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test @Ignore
+    public void blockAlignmentTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "blockAlignmentTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_blockAlignmentTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        List list = new List(Property.ListNumberingType.GREEK_LOWER);
+        for (int i = 0; i < 10; i++) {
+            list.add("Item # " + (i + 1));
+        }
+        list.setWidth(250);
+        list.setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
+        list.setBackgroundColor(Color.Green);
+
+        document.add(list);
+        list.setHorizontalAlignment(Property.HorizontalAlignment.RIGHT).setBackgroundColor(Color.Red);
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void blockAlignmentTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "blockAlignmentTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_blockAlignmentTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        Div div = new Div();
+        PdfImageXObject xObject = new PdfImageXObject(pdfDocument, ImageFactory.getJpegImage(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
+        Image image1 = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.RIGHT);
+        Image image2 = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
+        Image image3 = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.LEFT);
+
+        div.add(image1).add(image2).add(image3);
+
+        document.add(div);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageAlignmentTest01() throws IOException, InterruptedException {
+
+        String outFileName = destinationFolder + "imageAlignmentTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageAlignmentTest01.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+
+        PdfWriter writer = new PdfWriter(file);
+
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        Document doc = new Document(pdfDoc);
+
+        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
+        Image image = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.RIGHT);
+
+        doc.add(image);
+
+        doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

@@ -6,4 +6,9 @@ public class Div extends BlockElement<Div> {
         childElements.add(element);
         return this;
     }
+
+    public Div add(Image element) {
+        childElements.add(element);
+        return this;
+    }
 }

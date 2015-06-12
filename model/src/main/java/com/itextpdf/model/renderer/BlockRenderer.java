@@ -49,6 +49,10 @@ public class BlockRenderer extends AbstractRenderer {
                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
                 layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
+                if (childRenderer.getProperty(Property.WIDTH) != null) {
+                    alignChildHorizontally(childRenderer, layoutBox.getWidth());
+                }
+
                 // have more areas
                 if (currentAreaPos + 1 < areas.size()) {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
@@ -113,8 +117,12 @@ public class BlockRenderer extends AbstractRenderer {
             anythingPlaced = true;
 
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-            if (result.getStatus() == LayoutResult.FULL)
+            if (result.getStatus() == LayoutResult.FULL) {
                 layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
+                if (childRenderer.getProperty(Property.WIDTH) != null) {
+                    alignChildHorizontally(childRenderer, layoutBox.getWidth());
+                }
+            }
 
         }
 
