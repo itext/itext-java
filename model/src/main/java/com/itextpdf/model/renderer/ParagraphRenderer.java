@@ -6,6 +6,7 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
+import com.itextpdf.model.layout.LineLayoutResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +42,8 @@ public class ParagraphRenderer extends AbstractRenderer {
         if (isPositioned()) {
             float x = getPropertyAsFloat(Property.X);
             Rectangle parentBBox = layoutContext.getArea().getBBox();
-            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(parentBBox.getX() + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
+            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
+            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(relativeX + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
         }
         else {
             areas = initElementAreas(layoutContext);
@@ -72,14 +74,31 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         while (currentRenderer != null) {
             float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
-            Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), layoutBox.getWidth() - lineIndent, layoutBox.getHeight());
-            LayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
+            float availableWidth = layoutBox.getWidth() - lineIndent;
+            Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), availableWidth, layoutBox.getHeight());
+            LineLayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {
                 processedRenderer = currentRenderer;
             } else if (result.getStatus() == LayoutResult.PARTIAL) {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
+            }
+
+            Property.HorizontalAlignment horizontalAlignment = getProperty(Property.HORIZONTAL_ALIGNMENT);
+            if (result.getStatus() == LayoutResult.PARTIAL && horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
+                    horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED_ALL) {
+                processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+            } else if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT && processedRenderer != null) {
+                float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                switch (horizontalAlignment) {
+                    case RIGHT:
+                        processedRenderer.move(deltaX, 0);
+                        break;
+                    case CENTER:
+                        processedRenderer.move(deltaX / 2, 0);
+                        break;
+                }
             }
 
             leadingValue = processedRenderer != null && leading != null ? processedRenderer.getLeadingValue(leading) : 0;
@@ -101,13 +120,13 @@ public class ParagraphRenderer extends AbstractRenderer {
                     applyPaddings(occupiedArea.getBBox(), true);
                     applyMargins(occupiedArea.getBBox(), true);
                     boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
-                    if (keepTogether){
+                    if (keepTogether) {
                         split[0] = null;
                         childRenderers.clear();
                         childRenderers.add(initialRenderer);
                         split[1] = this;
                         anythingPlaced = false;
-                     }
+                    }
                     return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
                 }
             } else {
@@ -137,10 +156,12 @@ public class ParagraphRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
             occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
+            //applyVerticalAlignment();
         }
         if (isPositioned()) {
             float y = getPropertyAsFloat(Property.Y);
-            move(0, layoutBox.getY() + y - occupiedArea.getBBox().getY());
+            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
+            move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
         applyMargins(occupiedArea.getBBox(), true);
 
@@ -173,4 +194,23 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
     }
+
+//    protected void applyVerticalAlignment() {
+//        Property.VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
+//        if (verticalAlignment != null && verticalAlignment != Property.VerticalAlignment.TOP && childRenderers.size() > 0) {
+//            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - occupiedArea.getBBox().getY();
+//            switch (verticalAlignment) {
+//                case BOTTOM:
+//                    for (IRenderer child : childRenderers) {
+//                        child.move(0, -deltaY);
+//                    }
+//                    break;
+//                case MIDDLE:
+//                    for (IRenderer child : childRenderers) {
+//                        child.move(0, -deltaY / 2);
+//                    }
+//                    break;
+//            }
+//        }
+//    }
 }

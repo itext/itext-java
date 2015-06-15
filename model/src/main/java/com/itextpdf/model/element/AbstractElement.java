@@ -114,6 +114,14 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         return setProperty(Property.FONT_SIZE, fontSize);
     }
 
+    public Type setCharacterSpacing(float charSpacing) {
+        return setProperty(Property.CHARACTER_SPACING, charSpacing);
+    }
+
+    public Type setWordSpacing(float wordSpacing) {
+        return setProperty(Property.WORD_SPACING, wordSpacing);
+    }
+
     public Type setBackgroundColor(Color backgroundColor) {
         return setBackgroundColor(backgroundColor, 0, 0, 0, 0);
     }
@@ -140,10 +148,6 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
 
     public Type setBorderLeft(Property.BorderConfig borderConfig) {
         return setProperty(Property.BORDER_LEFT, borderConfig);
-    }
-
-    public Type setAlignment(Property.Alignment alignment) {
-        return setProperty(Property.ALIGNMENT, alignment);
     }
 
     @Override

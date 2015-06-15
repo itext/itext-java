@@ -33,7 +33,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public LayoutResult layout(LayoutContext layoutContext) {
+    public TextLayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = applyMargins(area.getBBox().clone(), false);
 
@@ -44,7 +44,8 @@ public class TextRenderer extends AbstractRenderer {
         int currentTextPos = 0;
         float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
         float textRise = getPropertyAsFloat(Property.TEXT_RISE);
-        Float characterSpacing = getProperty(Property.CHARACTER_SPACING);
+        Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
+        Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
         PdfFont font = getPropertyAsFont(Property.FONT);
         Float hScale = getProperty(Property.HORIZONTAL_SCALING);
         float ascender = 800;
@@ -81,7 +82,7 @@ public class TextRenderer extends AbstractRenderer {
                 int charCode = getCharCode(ind);
                 if (noPrint(charCode))
                     continue;
-                float glyphWidth = getCharWidth(charCode, font, fontSize, hScale, characterSpacing) / TEXT_SPACE_COEFF;
+                float glyphWidth = getCharWidth(charCode, font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
                 if ((nonBreakablePartFullWidth + glyphWidth) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                 }
@@ -122,7 +123,7 @@ public class TextRenderer extends AbstractRenderer {
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
                     applyMargins(occupiedArea.getBBox(), true);
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
+                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
                 } else {
                     boolean wordSplit = false;
                     if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced) {
@@ -148,7 +149,10 @@ public class TextRenderer extends AbstractRenderer {
 
                     TextRenderer[] split = split(currentTextPos);
                     applyMargins(occupiedArea.getBBox(), true);
-                    return new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
+                    TextLayoutResult result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
+                    if (split[1].text.length() > 0 && split[1].text.charAt(0) == '\n')
+                        result.setSplitForcedByNewline(true);
+                    return result;
                 }
             }
         }
@@ -156,7 +160,7 @@ public class TextRenderer extends AbstractRenderer {
         if (currentLine.length() != 0) {
             if (currentLineHeight > layoutBox.getHeight()) {
                 applyMargins(occupiedArea.getBBox(), true);
-                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
             }
 
             line = currentLine.toString();
@@ -170,7 +174,7 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         applyMargins(occupiedArea.getBBox(), true);
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        return new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
     @Override
@@ -190,6 +194,8 @@ public class TextRenderer extends AbstractRenderer {
             Color textColor = getPropertyAsColor(Property.FONT_COLOR);
             int textRenderingMode = (int) getProperty(Property.TEXT_RENDERING_MODE) & 3;
             Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
+            Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
+            Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
 
             canvas.saveState().beginText().setFontAndSize(font, fontSize).moveText(leftBBoxX, getYLine());
             if (textRenderingMode != Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL) {
@@ -210,6 +216,10 @@ public class TextRenderer extends AbstractRenderer {
                 canvas.setFillColor(textColor);
             if (textRise != null && textRise != 0)
                 canvas.setTextRise(textRise);
+            if (characterSpacing != null && characterSpacing != 0)
+                canvas.setCharacterSpacing(characterSpacing);
+            if (wordSpacing != null && wordSpacing != 0)
+                canvas.setWordSpacing(wordSpacing);
             canvas.showText(line);
             canvas.endText().restoreState();
         }
@@ -238,8 +248,50 @@ public class TextRenderer extends AbstractRenderer {
         }
     }
 
+    @Override
+    public <T> T getDefaultProperty(int propertyKey) {
+        switch (propertyKey) {
+            case Property.HORIZONTAL_SCALING:
+                return (T) Float.valueOf(1);
+            default:
+                return super.getDefaultProperty(propertyKey);
+        }
+    }
+
     public void trimFirst() {
         text = text.replaceAll("^\\s+", "");
+    }
+
+    /**
+     * Returns the amount of space in points which the text was trimmed by.
+     */
+    public float trimLast() {
+        float trimmedSpace = 0;
+
+        if (line == null)
+            return trimmedSpace;
+
+        float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
+        Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
+        Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
+        PdfFont font = getPropertyAsFont(Property.FONT);
+        Float hScale = getProperty(Property.HORIZONTAL_SCALING);
+
+        int firstNonSpaceCharIndex = line.length() - 1;
+        while (firstNonSpaceCharIndex >= 0) {
+            if (!Character.isWhitespace(line.charAt(firstNonSpaceCharIndex))) {
+                break;
+            }
+
+            float currentCharWidth = getCharWidth(line.charAt(firstNonSpaceCharIndex), font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+            trimmedSpace += currentCharWidth;
+            occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
+
+            firstNonSpaceCharIndex--;
+        }
+        line = line.substring(0, firstNonSpaceCharIndex + 1);
+
+        return trimmedSpace;
     }
 
     public float getAscent() {
@@ -266,6 +318,26 @@ public class TextRenderer extends AbstractRenderer {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    protected float getFirstYLineRecursively() {
+        return getYLine();
+    }
+
+    protected int getNumberOfSpaces() {
+        if (line == null)
+            return 0;
+        int spaces = 0;
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == ' ')
+                spaces++;
+        }
+        return spaces;
+    }
+
+    protected int length() {
+        return line == null ? 0 : line.length();
     }
 
     @Override
@@ -304,12 +376,16 @@ public class TextRenderer extends AbstractRenderer {
         return text.charAt(pos);
     }
 
-    private float getCharWidth(int c, PdfFont font, float fontSize, Float hScale, Float characterSpacing) {
+    private float getCharWidth(int c, PdfFont font, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
         if (hScale == null)
             hScale = 1f;
+        float resultWidth = font.getWidth(c) * fontSize;
         if (characterSpacing != null) {
-            return font.getWidth(c) * fontSize + characterSpacing * hScale;
+            resultWidth += characterSpacing * hScale * TEXT_SPACE_COEFF;
         }
-        return font.getWidth(c) * fontSize;
+        if (wordSpacing != null && c == ' ') {
+            resultWidth += wordSpacing * hScale * TEXT_SPACE_COEFF;
+        }
+        return resultWidth;
     }
 }

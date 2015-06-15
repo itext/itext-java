@@ -23,6 +23,17 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
         return new TextRenderer(this, text);
     }
 
+    @Override
+    public <T> T getDefaultProperty(int propertyKey) {
+        switch (propertyKey) {
+            case Property.HORIZONTAL_SCALING:
+            case Property.VERTICAL_SCALING:
+                return (T) new Float(1);
+            default:
+                return super.getDefaultProperty(propertyKey);
+        }
+    }
+
     public String getText() {
         return text;
     }

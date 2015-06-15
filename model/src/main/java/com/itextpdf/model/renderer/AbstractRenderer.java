@@ -202,6 +202,18 @@ public abstract class AbstractRenderer implements IRenderer {
         return Collections.singletonList(context.getArea());
     }
 
+    /**
+     * Gets the first yLine of the nested children recursively. E.g. for a list, this will be the yLine of the
+     * first item (if the first item is indeed a paragraph).
+     * NOTE: this method will no go further than the first child.
+     */
+    protected float getFirstYLineRecursively() {
+        if (childRenderers.size() == 0) {
+            throw new RuntimeException("Cannot get yLine of empty paragraph");
+        }
+        return ((AbstractRenderer)childRenderers.get(0)).getFirstYLineRecursively();
+    }
+
     protected <T extends AbstractRenderer> T createSplitRenderer() {
         return null;
     }
@@ -238,5 +250,25 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean isPositioned() {
         Object positioning = getProperty(Property.POSITION);
         return Integer.valueOf(LayoutPosition.ABSOLUTE).equals(positioning) || Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
+    }
+
+    protected boolean isFixedLayout() {
+        Object positioning = getProperty(Property.POSITION);
+        return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
+    }
+
+    protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
+        Property.HorizontalAlignment horizontalAlignment = childRenderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
+        if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT) {
+            float deltaX = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
+            switch (horizontalAlignment) {
+                case RIGHT:
+                    childRenderer.move(deltaX, 0);
+                    break;
+                case CENTER:
+                    childRenderer.move(deltaX / 2, 0);
+                    break;
+            }
+        }
     }
 }

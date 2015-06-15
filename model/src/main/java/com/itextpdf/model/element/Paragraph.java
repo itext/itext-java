@@ -26,11 +26,6 @@ public class Paragraph extends BlockElement<Paragraph> {
         return (T) this;
     }
 
-    public <T extends Paragraph> T add(BlockElement element) {
-        childElements.add(element);
-        return (T)this;
-    }
-
     @Override
     public IRenderer makeRenderer() {
         if (nextRenderer != null) {

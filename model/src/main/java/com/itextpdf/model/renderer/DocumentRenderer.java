@@ -86,6 +86,10 @@ public class DocumentRenderer extends AbstractRenderer {
             if (renderer != null)
                 resultRenderers.add(renderer);
 
+            for (IRenderer resultRenderer : resultRenderers) {
+                alignChildHorizontally(resultRenderer, currentArea.getBBox().getWidth());
+            }
+
             // TODO flush by page, not by elements?
             if (immediateFlush) {
                 for (IRenderer resultRenderer : resultRenderers) {

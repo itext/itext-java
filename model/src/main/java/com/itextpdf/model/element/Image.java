@@ -57,4 +57,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     public Image scale(float horizontalScaling, float verticalScaling){
         return setProperty(Property.HORIZONTAL_SCALING, horizontalScaling).setProperty(Property.VERTICAL_SCALING, verticalScaling);
     }
+
+    public Image setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
+        return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
+    }
 }

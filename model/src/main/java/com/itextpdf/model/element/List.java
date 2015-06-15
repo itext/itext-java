@@ -6,7 +6,7 @@ import com.itextpdf.model.renderer.ListRenderer;
 
 public class List extends BlockElement<List> {
 
-    public static final String DEFAULT_LIST_SYMBOL = "-";
+    public static final String DEFAULT_LIST_SYMBOL = "- ";
 
     protected String preSymbolText = "";
     protected String postSymbolText = ". ";

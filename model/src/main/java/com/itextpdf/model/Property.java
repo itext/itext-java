@@ -16,7 +16,7 @@ public class Property {
     public static final int RIGHT = 9;
     public static final int FONT = 10;
     public static final int BASE_DIRECTION = 11;
-    public static final int ALIGNMENT = 12;
+    public static final int HORIZONTAL_ALIGNMENT = 12;
     public static final int TEXT_RISE = 13;
     public static final int FONT_SIZE = 14;
     public static final int FONT_COLOR = 15;
@@ -50,6 +50,7 @@ public class Property {
     public static final int BORDER_RIGHT = 43;
     public static final int PAGE_NUMBER = 44;
     public static final int KEEP_TOGETHER = 45;
+    public static final int WORD_SPACING = 46;
 
     private Property() {
     }
@@ -57,7 +58,9 @@ public class Property {
     public static boolean isPropertyInherited(int propertyKey, IPropertyContainer parent, IPropertyContainer descendant) {
         //TODO try to use ArrayList for several groups of properties and use only contains method.
         if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE ||
-                propertyKey == FIRST_LINE_INDENT || propertyKey == KEEP_TOGETHER)
+                propertyKey == FIRST_LINE_INDENT || propertyKey == KEEP_TOGETHER ||
+                propertyKey == WORD_SPACING || propertyKey == CHARACTER_SPACING ||
+                propertyKey == HORIZONTAL_ALIGNMENT)
             return true;
         return false;
     }
@@ -68,12 +71,18 @@ public class Property {
         RTL
     }
 
-    // TODO split into vertical and horizontal?
-    public enum Alignment {
+    public enum HorizontalAlignment {
         LEFT,
         CENTER,
         RIGHT,
-        JUSTIFIED
+        JUSTIFIED,
+        JUSTIFIED_ALL,
+    }
+
+    public enum VerticalAlignment {
+        TOP,
+        MIDDLE,
+        BOTTOM
     }
 
     public static final class TextRenderingMode {
