@@ -71,13 +71,13 @@ public class BlockRenderer extends AbstractRenderer {
                        layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
                         if (currentAreaPos + 1 == areas.size()) {
-                            BlockRenderer splitRenderer = createSplitRenderer();
+                            BlockRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
                             splitRenderer.occupiedArea = occupiedArea.clone();
 
-                            BlockRenderer overflowRenderer = createOverflowRenderer();
-                            List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
+                            BlockRenderer overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                            List<IRenderer> overflowRendererChildren = new ArrayList<>();
                             overflowRendererChildren.add(result.getOverflowRenderer());
                             overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                             overflowRenderer.childRenderers = overflowRendererChildren;
@@ -92,24 +92,26 @@ public class BlockRenderer extends AbstractRenderer {
                             break;
                         }
                     } else if (result.getStatus() == LayoutResult.NOTHING) {
-                        BlockRenderer splitRenderer = createSplitRenderer();
+                        boolean keepTogether = Boolean.valueOf(true).equals(getProperty(Property.KEEP_TOGETHER));
+                        int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
+
+                        BlockRenderer splitRenderer = createSplitRenderer(layoutResult);
                         splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
-                        BlockRenderer overflowRenderer = createOverflowRenderer();
-                        List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
+                        BlockRenderer overflowRenderer = createOverflowRenderer(layoutResult);
+                        List<IRenderer> overflowRendererChildren = new ArrayList<>();
                         overflowRendererChildren.add(result.getOverflowRenderer());
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                         overflowRenderer.childRenderers = overflowRendererChildren;
-                        if (getProperty(Property.KEEP_TOGETHER)){
+                        if (getProperty(Property.KEEP_TOGETHER)) {
                             splitRenderer = null;
                             overflowRenderer.childRenderers.clear();
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
-                            anythingPlaced = false;
                         }
 
                         applyPaddings(occupiedArea.getBBox(), false);
                         applyMargins(occupiedArea.getBBox(), true);
-                        return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, splitRenderer, overflowRenderer);
+                        return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
                     }
                 }
             }
@@ -141,8 +143,7 @@ public class BlockRenderer extends AbstractRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
-    @Override
-    protected BlockRenderer createSplitRenderer() {
+    protected BlockRenderer createSplitRenderer(int layoutResult) {
         BlockRenderer splitRenderer = new BlockRenderer((BlockElement) modelElement);
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
@@ -150,8 +151,7 @@ public class BlockRenderer extends AbstractRenderer {
         return splitRenderer;
     }
 
-    @Override
-    protected BlockRenderer createOverflowRenderer() {
+    protected BlockRenderer createOverflowRenderer(int layoutResult) {
         BlockRenderer overflowRenderer = new BlockRenderer((BlockElement) modelElement);
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;

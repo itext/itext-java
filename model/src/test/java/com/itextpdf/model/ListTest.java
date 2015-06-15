@@ -122,4 +122,30 @@ public class ListTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void listOverflowTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listOverflowTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_listOverflowTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph("Test String");
+        List list = new List(Property.ListNumberingType.DECIMAL).
+                add("first string");
+        ListItem item = new ListItem("second string").add(new Paragraph("third string"));
+        list.add(item).
+            add("fourth item");
+
+        for (int i = 0; i < 28; i++){
+            document.add(p);
+        }
+
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }

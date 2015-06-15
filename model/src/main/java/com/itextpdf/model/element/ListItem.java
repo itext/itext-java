@@ -24,10 +24,4 @@ public class ListItem extends Div {
         return new ListItemRenderer(this);
     }
 
-
-    //    public ListItem add(BlockElement element) {
-//        childElements.add(element);
-//        return this;
-//    }
-
 }
