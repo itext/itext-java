@@ -768,4 +768,45 @@ public class PdfFontTest {
 
     }
 
+    @Test
+    public void createDocumentWithType1WithToUnicodeBasedExistingFont() throws IOException, PdfException, InterruptedException {
+        final String author = "Dmitry Trusevich";
+        final String creator = "iText 6";
+        final String title = "Type1 font iText 6 Document";
+        String inputFileName1 = sourceFolder + "fontWithToUnicode.pdf";
+
+        PdfReader reader1 = new PdfReader(inputFileName1);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+        PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
+        String filename = destinationFolder + "fontWithToUnicode_new.pdf";
+
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 756)
+                .setFontAndSize(pdfType1Font, 10)
+                .showText("MyriadPro-Bold font.")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder +  "cmp_fontWithToUnicode_new.pdf", destinationFolder, "diff_"));
+
+    }
+
 }

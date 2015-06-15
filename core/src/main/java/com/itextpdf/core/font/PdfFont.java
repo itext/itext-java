@@ -144,14 +144,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    protected PdfStream copyFontFileStream(PdfStream fileStream) {
-        PdfStream newFileStream = new PdfStream(getDocument(), fileStream.getBytes());
-        for (Map.Entry<PdfName, PdfObject> entry : fileStream.entrySet()) {
-            newFileStream.put(entry.getKey(), entry.getValue());
-        }
-        return newFileStream;
-    }
-
     protected boolean isSymbolic() {
         PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         if (fontDescriptor == null)

@@ -212,6 +212,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName FontMatrix = createDirectName("FontMatrix");
     public static final PdfName FontName = createDirectName("FontName");
     public static final PdfName FontWeight = createDirectName("FontWeight");
+    public static final PdfName FontStretch = createDirectName("FontStretch");
     public static final PdfName ForComment = createDirectName("ForComment");
     public static final PdfName Form = createDirectName("Form");
     public static final PdfName ForPublicRelease = createDirectName("ForPublicRelease");
@@ -524,6 +525,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName WT = createDirectName("WT");
     public static final PdfName XML = createDirectName("XML");
     public static final PdfName XObject = createDirectName("XObject");
+    public static final PdfName XHeight = createDirectName("XHeight");
     public static final PdfName XRef = createDirectName("XRef");
     public static final PdfName XRefStm = createDirectName("XRefStm");
     public static final PdfName XStep = createDirectName("XStep");

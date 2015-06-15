@@ -4,6 +4,10 @@ import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.cmap.CMapLocation;
+import com.itextpdf.basics.font.cmap.CMapLocationFromBytes;
+import com.itextpdf.basics.font.cmap.CMapParser;
+import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -14,6 +18,7 @@ import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
@@ -24,12 +29,12 @@ abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         super(pdfObject, pdfDocument);
     }
 
-    protected PdfSimpleFont(PdfDocument pdfDocument) {
-        super(pdfDocument);
-    }
-
     public T getFontProgram() {
         return fontProgram;
+    }
+
+    protected PdfSimpleFont(PdfDocument pdfDocument) {
+        super(pdfDocument);
     }
 
     protected void setFontProgram(T fontProgram) {
@@ -53,8 +58,16 @@ abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 fillEncoding(baseFont);
             } else {
                 fillEncoding(null);
+                CMapToUnicode toUnicode = processToUnicode();
+                if (toUnicode != null) {
+                    Map<Integer, Integer> rm = toUnicode.createReverseMapping();
+                    for (Map.Entry<Integer, Integer> kv : rm.entrySet()) {
+                        fontProgram.getEncoding().getSpecialMap().put(kv.getKey().intValue(), kv.getValue().intValue());
+                        fontProgram.getEncoding().setUnicodeDifferences(kv.getValue().intValue(), (char)kv.getKey().intValue());
+                    }
+                }
             }
-            //todo: add cmap
+
         } else if (encodingObj.isDictionary()) {
 
             PdfDictionary encDic = (PdfDictionary) encodingObj;
@@ -98,6 +111,16 @@ abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         if (FontConstants.builtinFonts14.contains(fontProgram.getFontName())) {
             fontProgram = initializeTypeFont(fontProgram.getFontName(), fontProgram.getEncoding().getBaseEncoding());
         }
+
+        PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
+        if (toUnicode != null) {
+            if (toUnicode instanceof PdfStream) {
+                PdfStream newStream = ((PdfStream) toUnicode).copy(getDocument());
+                getPdfObject().put(PdfName.ToUnicode, newStream);
+                newStream.flush();
+            }
+        }
+
 
         PdfDictionary fromDescriptorDictionary = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         if (fromDescriptorDictionary != null) {
@@ -161,34 +184,52 @@ abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
         PdfStream fileStream = fromDescriptorDictionary.getAsStream(PdfName.FontFile);
         if (fileStream != null) {
-            PdfStream newFileStream = copyFontFileStream(fileStream);
+            PdfStream newFileStream = fileStream.copy(getDocument());
             toDescriptorDictionary.put(PdfName.FontFile, newFileStream);
             newFileStream.flush();
         }
 
         PdfStream fileStream2 = fromDescriptorDictionary.getAsStream(PdfName.FontFile2);
         if (fileStream2 != null) {
-            PdfStream newFileStream = copyFontFileStream(fileStream2);
+            PdfStream newFileStream = fileStream2.copy(getDocument());
             toDescriptorDictionary.put(PdfName.FontFile2, newFileStream);
             newFileStream.flush();
         }
 
         PdfStream fileStream3 = fromDescriptorDictionary.getAsStream(PdfName.FontFile3);
         if (fileStream3 != null) {
-            PdfStream newFileStream = copyFontFileStream(fileStream3);
+            PdfStream newFileStream = fileStream3.copy(getDocument());
             toDescriptorDictionary.put(PdfName.FontFile3, newFileStream);
             newFileStream.flush();
         }
 
-        PdfStream leading = fromDescriptorDictionary.getAsStream(PdfName.Leading);
+        PdfNumber leading = fromDescriptorDictionary.getAsNumber(PdfName.Leading);
         if (leading != null) {
             toDescriptorDictionary.put(PdfName.Leading, leading);
         }
 
-        PdfStream missingWidth = fromDescriptorDictionary.getAsStream(PdfName.MissingWidth);
+        PdfNumber missingWidth = fromDescriptorDictionary.getAsNumber(PdfName.MissingWidth);
         if (missingWidth != null) {
             toDescriptorDictionary.put(PdfName.MissingWidth, missingWidth);
         }
+
+        PdfNumber xHeight = fromDescriptorDictionary.getAsNumber(PdfName.XHeight);
+        if (xHeight != null) {
+            toDescriptorDictionary.put(PdfName.XHeight, xHeight);
+            fontProgram.setXHeight(xHeight.getIntValue());
+        }
+
+        PdfName fontStretch = fromDescriptorDictionary.getAsName(PdfName.FontStretch);
+        if (fontStretch != null) {
+            toDescriptorDictionary.put(PdfName.FontStretch, fontStretch);
+        }
+
+        PdfString fontFamily = fromDescriptorDictionary.getAsString(PdfName.FontFamily);
+        if (fontFamily != null) {
+            toDescriptorDictionary.put(PdfName.FontFamily, fontFamily);
+        }
+
+
 
         PdfDictionary fromStyleDictionary = fromDescriptorDictionary.getAsDictionary(PdfName.Style);
         if (fromStyleDictionary != null) {
@@ -298,12 +339,39 @@ abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                         fontProgram.getEncoding().getSpecialMap().put(c[0], currentNumber);
                         fontProgram.getEncoding().setDifferences(currentNumber, ((PdfName) obj).getValue());
                         fontProgram.getEncoding().setUnicodeDifferences(currentNumber, (char) c[0]);
+                    } else {
+                        CMapToUnicode toUnicode = processToUnicode();
+                        if (toUnicode == null) {
+                            toUnicode = new CMapToUnicode();
+                        }
+
+                        final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
+                        if ((unicode != null) && (unicode.length() == 1)) {
+                            fontProgram.getEncoding().getSpecialMap().put(unicode.charAt(0), currentNumber);
+                            fontProgram.getEncoding().setDifferences(currentNumber, String.valueOf(unicode.charAt(0)));
+                            fontProgram.getEncoding().setUnicodeDifferences(unicode.charAt(0), (char) currentNumber);
+                        }
                     }
-                    //todo: add cmap to unicode
                     ++currentNumber;
                 }
             }
         }
+    }
+
+    private CMapToUnicode processToUnicode() {
+        CMapToUnicode cMapToUnicode = null;
+        PdfObject toUni = this.fontDictionary.get(PdfName.ToUnicode);
+        if (toUni instanceof PdfStream) {
+            try {
+                byte[] uniBytes = ((PdfStream) toUni).getBytes();
+                CMapLocation lb = new CMapLocationFromBytes(uniBytes);
+                cMapToUnicode = new CMapToUnicode();
+                CMapParser.parseCid("", cMapToUnicode, lb);
+            } catch (Exception e) {
+                cMapToUnicode = null;
+            }
+        }
+        return cMapToUnicode;
     }
 
 

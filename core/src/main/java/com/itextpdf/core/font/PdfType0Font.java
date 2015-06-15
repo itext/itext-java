@@ -688,7 +688,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 }
                 IntHashtable widths = readWidths(w);
                 if (toUnicode instanceof PdfStream) {
-                    PdfStream newStream = copyFontFileStream((PdfStream) toUnicode);
+                    PdfStream newStream = ((PdfStream) toUnicode).copy(getDocument());
                     getPdfObject().put(PdfName.ToUnicode, newStream);
                     newStream.flush();
                     fillMetrics(((PdfStream) toUnicode).getBytes(), widths, dwVal);
