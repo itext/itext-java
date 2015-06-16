@@ -123,6 +123,8 @@ public class Document implements IPropertyContainer<Document> {
                     return (T) Integer.valueOf(Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL);
                 case Property.TEXT_RISE:
                     return (T) new Float(0);
+                case Property.SPACING_RATIO:
+                    return (T) new Float(0.75f);
                 default:
                     return null;
             }

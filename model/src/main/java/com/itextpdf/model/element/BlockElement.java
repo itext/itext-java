@@ -95,6 +95,20 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
     }
 
+    /**
+     * Sets a ratio which determines in which proportion will word spacing and character spacing
+     * be applied when horizontal alignment is justified.
+     * @param ratio the ratio coefficient. It must be between 0 and 1, inclusive.
+     *              It means that <b>ratio</b> part of the free space will
+     *              be compensated by word spacing, and <b>1-ratio</b> part of the free space will
+     *              be compensated by character spacing.
+     *              If <b>ratio</b> is 1, additional character spacing will not be applied.
+     *              If <b>ratio</b> is 0, additional word spacing will not be applied.
+     */
+    public T setSpacingRatio(float ratio) {
+        return setProperty(Property.SPACING_RATIO, ratio);
+    }
+
     @Override
     public <T> T getDefaultProperty(int propertyKey) {
         switch (propertyKey) {
