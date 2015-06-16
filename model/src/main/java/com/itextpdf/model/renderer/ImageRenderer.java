@@ -81,13 +81,15 @@ public class ImageRenderer extends AbstractRenderer {
             applyAbsolutePositioningTranslation(false);
         }
 
-        if (fixedXPosition != null || fixedYPosition != null) {
-            canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3],
-                    fixedXPosition, fixedYPosition);
-        } else {
-            canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3],
-                    occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY() + pivotY);
+        if (fixedYPosition == null){
+            fixedYPosition = occupiedArea.getBBox().getY() + pivotY;
         }
+        if (fixedXPosition == null){
+            fixedXPosition = occupiedArea.getBBox().getX();
+        }
+
+        canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3],
+                fixedXPosition, fixedYPosition);
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);
