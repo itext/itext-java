@@ -22,13 +22,12 @@ public class ImageRenderer extends AbstractRenderer {
 
     float[] matrix = new float[6];
 
-    public ImageRenderer(Image image){
+    public ImageRenderer(Image image) {
         super(image);
     }
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox();
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
@@ -47,14 +46,13 @@ public class ImageRenderer extends AbstractRenderer {
             scale(horizontalScaling, verticalScaling, t);
         t.getMatrix(matrix);
 
-        if (angle != null){
+        if (angle != null) {
             rotateImage(angle, t);
-        } else{
+        } else {
             occupiedArea.getBBox().moveDown(height);
             occupiedArea.getBBox().setHeight(height);
             occupiedArea.getBBox().setWidth(width);
         }
-
 
         Float mx = getProperty(Property.X_DISTANCE);
         Float my = getProperty(Property.Y_DISTANCE);
@@ -62,10 +60,11 @@ public class ImageRenderer extends AbstractRenderer {
         fixedXPosition = getPropertyAsFloat(Property.X);
         fixedYPosition = getPropertyAsFloat(Property.Y);
 
-        if (my != null && my != null)
+        if (mx != null && my != null) {
             translateImage(mx, my, t);
+        }
 
-        if (fixedXPosition != null && fixedYPosition != null){
+        if (fixedXPosition != null && fixedYPosition != null) {
             occupiedArea.getBBox().setWidth(0);
             occupiedArea.getBBox().setHeight(0);
         }
@@ -74,7 +73,7 @@ public class ImageRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void draw(PdfDocument document, PdfCanvas canvas){
+    public void draw(PdfDocument document, PdfCanvas canvas) {
         super.draw(document, canvas);
 
         int position = getPropertyAsInteger(Property.POSITION);
@@ -82,10 +81,12 @@ public class ImageRenderer extends AbstractRenderer {
             applyAbsolutePositioningTranslation(false);
         }
 
-        if (fixedXPosition != null || fixedYPosition != null){
-            canvas.addXObject(((Image)(getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3], fixedXPosition, fixedYPosition);
+        if (fixedXPosition != null || fixedYPosition != null) {
+            canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3],
+                    fixedXPosition, fixedYPosition);
         } else {
-            canvas.addXObject(((Image)(getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3], occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY() + pivotY);
+            canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3],
+                    occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY() + pivotY);
         }
 
         if (position == LayoutPosition.RELATIVE) {
@@ -93,22 +94,14 @@ public class ImageRenderer extends AbstractRenderer {
         }
     }
 
-    private float[] setTransformationMatrix(float x, float y, float width, float height){
-        float[] matrix = new float[6];
-
-        matrix[0] = width;
-        matrix[1] = 0;
-        matrix[2] = 0;
-        matrix[3] = height;
-        matrix[4] = x;
-        matrix[5] = y;
-
-        return matrix;
+    private float[] setTransformationMatrix(float x, float y, float width, float height) {
+        return new float[] {
+            width, 0, 0, height, x, y
+        };
     }
 
-    private void rotateImage(float angle, AffineTransform t){
-
-        if (angle != 0){
+    private void rotateImage(float angle, AffineTransform t) {
+        if (angle != 0) {
             t.rotate(angle);
 
             Point2D p00 = t.transform(new Point2D.Float(0, 0), new Point2D.Float());
@@ -124,11 +117,11 @@ public class ImageRenderer extends AbstractRenderer {
             double maxX = minX;
             double maxY = minY;
 
-            for (double x : xValues){
+            for (double x : xValues) {
                 minX = Math.min(minX, x);
                 maxX = Math.max(maxX, x);
             }
-            for (double y : yValues){
+            for (double y : yValues) {
                 minY = Math.min(minY, y);
                 maxY = Math.max(maxY, y);
             }
@@ -147,17 +140,16 @@ public class ImageRenderer extends AbstractRenderer {
         t.getMatrix(matrix);
     }
 
-    private void translateImage(float xDistance, float yDistance, AffineTransform t){
-
-        float mx = xDistance/width;
-        float my = yDistance/height;
+    private void translateImage(float xDistance, float yDistance, AffineTransform t) {
+        float mx = xDistance / width;
+        float my = yDistance / height;
         t.translate(mx, my);
         t.getMatrix(matrix);
         fixedXPosition = t.getTranslateX();
         fixedYPosition = t.getTranslateY();
     }
 
-    private void scale(float horizontalScaling, float verticalScaling, AffineTransform t){
+    private void scale(float horizontalScaling, float verticalScaling, AffineTransform t) {
         t.scale(horizontalScaling, verticalScaling);
 
         width = t.getScaleX();
