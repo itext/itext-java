@@ -484,5 +484,4 @@ public class PdfWriterTest {
         Assert.assertArrayEquals("Stream by InputStream", streamContent.getBytes(), pdfStream.getBytes());
         document.close();
     }
-
 }

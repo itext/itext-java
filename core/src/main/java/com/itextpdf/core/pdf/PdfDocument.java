@@ -9,6 +9,8 @@ import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.core.pdf.formfield.PdfAcroForm;
+import com.itextpdf.core.pdf.formfield.PdfFormField;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.core.xmp.*;
@@ -540,12 +542,12 @@ public class PdfDocument implements IEventDispatcher {
                         catalog.getPdfObject().flush(false);
                     }
 
-                    if (catalog.destinationTree != null){
+                    if (catalog.destinationTree != null) {
                         PdfObject destinationRoot = catalog.destinationTree.generateTree();
 
                         if (catalog.getPdfObject().isModified() || destinationRoot.isModified()) {
                             PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
-                            if (names == null){
+                            if (names == null) {
                                 names = new PdfDictionary();
                                 names.makeIndirect(this);
                                 names.put(PdfName.Dests, destinationRoot);
@@ -557,11 +559,16 @@ public class PdfDocument implements IEventDispatcher {
                     if (info.getPdfObject().isModified()) {
                         info.flush();
                     }
-                    for (PdfFont font: documentFonts) {
+                    for (PdfFont font : documentFonts) {
                         if (font.getPdfObject().getIndirectReference().checkState(PdfIndirectReference.Modified)) {
                             font.flush();
                         }
                     }
+
+                    if (catalog.getAcroForm() != null && catalog.getAcroForm().getFields().size() != 0) {
+                        catalog.put(PdfName.AcroForm, catalog.getAcroForm());
+                    }
+
                     writer.flushModifiedWaitingObjects();
                     if (writer.crypto != null) {
                         assert reader.getCryptoRef() != null : "Conflict with source encryption";
@@ -577,11 +584,11 @@ public class PdfDocument implements IEventDispatcher {
                     }
                     catalog.getPdfObject().put(PdfName.Pages, catalog.pageTree.generateTree());
 
-                    if (catalog.destinationTree != null){
+                    if (catalog.destinationTree != null) {
                         PdfObject destinationRoot = catalog.destinationTree.generateTree();
-                        if (destinationRoot != null){
+                        if (destinationRoot != null) {
                             PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
-                            if (names == null){
+                            if (names == null) {
                                 names = new PdfDictionary();
                                 names.makeIndirect(this);
                                 names.put(PdfName.Dests, destinationRoot);
@@ -590,9 +597,13 @@ public class PdfDocument implements IEventDispatcher {
                         }
                     }
 
+                    if (catalog.getAcroForm() != null && catalog.getAcroForm().getFields().size() != 0) {
+                        catalog.put(PdfName.AcroForm, catalog.getAcroForm());
+                    }
+
                     catalog.getPdfObject().flush(false);
                     info.flush();
-                    for (PdfFont font: documentFonts) {
+                    for (PdfFont font : documentFonts) {
                         font.flush();
                     }
                     writer.flushWaitingObjects();
@@ -729,7 +740,7 @@ public class PdfDocument implements IEventDispatcher {
                 toDocument.addPage(newPage);
             }
             insertBeforePage++;
-            if (catalog.isOutlineMode()){
+            if (catalog.isOutlineMode()) {
                 List<PdfOutline> pageOutlines = page.getOutlines(false);
                 if (pageOutlines != null)
                     outlinesToCopy.addAll(pageOutlines);
@@ -742,7 +753,7 @@ public class PdfDocument implements IEventDispatcher {
             else
                 getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
         }
-        if(catalog.isOutlineMode()){
+        if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2Outlines);
         }
 
@@ -785,7 +796,8 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
-     * @param key Name of the destination.
+     *
+     * @param key   Name of the destination.
      * @param value An object destination refers to.
      * @throws PdfException
      */
@@ -800,6 +812,27 @@ public class PdfDocument implements IEventDispatcher {
      */
     public PdfDictionary getTrailer() {
         return trailer;
+    }
+
+    public PdfAcroForm getAcroForm() {
+        return catalog.getAcroForm();
+    }
+
+    /**
+     * This method adds a FormField to the document. If the field has widget annotation, two dictionaries will be merged into one
+     * @param field
+     */
+    public void addField(PdfFormField field) {
+        if (field.getWidget() != null) {
+            field.getWidget().getPdfObject().mergeDifferent(field.getPdfObject());
+            field = PdfFormField.makeFormField(field.getWidget().getPdfObject(), this);
+        }
+
+        getAcroForm().getFields().add(field.getPdfObject());
+    }
+
+    public PdfAcroForm createAcroForm() {
+        return catalog.createAcroForm();
     }
 
     /**
@@ -871,6 +904,7 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * TODO
+     *
      * @return List of {@see PdfFonts}.
      */
     protected Set<PdfFont> getDocumentFonts() {
@@ -879,8 +913,9 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * This method copies all given outlines
-     * @param outlines outlines to be copied
-     * @param toDocument document where outlines should be copied
+     *
+     * @param outlines      outlines to be copied
+     * @param toDocument    document where outlines should be copied
      * @param page2Outlines Map of pages to be copied and outlines associated with them. This map is used for creating destinations in target document.
      * @throws PdfException
      */
@@ -889,18 +924,18 @@ public class PdfDocument implements IEventDispatcher {
         HashSet<PdfOutline> outlinesToCopy = new HashSet<PdfOutline>();
         outlinesToCopy.addAll(outlines);
 
-        for (PdfOutline outline : outlines){
+        for (PdfOutline outline : outlines) {
             getAllOutlinesToCopy(outline, outlinesToCopy);
         }
-        for (PdfOutline outline : outlinesToCopy){
-            for(Map.Entry<PdfPage, List<PdfOutline>> entry : page2Outlines.entrySet())
-                if (entry.getValue() != null && entry.getValue().contains(outline)){
+        for (PdfOutline outline : outlinesToCopy) {
+            for (Map.Entry<PdfPage, List<PdfOutline>> entry : page2Outlines.entrySet())
+                if (entry.getValue() != null && entry.getValue().contains(outline)) {
                     outline.addDestination(PdfExplicitDestination.createFit(entry.getKey()));
                 }
         }
 
         PdfOutline rootOutline = toDocument.getOutlines(false);
-        if (rootOutline == null){
+        if (rootOutline == null) {
             rootOutline = new PdfOutline(toDocument);
             rootOutline.setTitle("Outlines");
         }
@@ -910,10 +945,11 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * This method gets all outlines to be copied including parent outlines
-     * @param outline current outline
+     *
+     * @param outline        current outline
      * @param outlinesToCopy a Set of outlines to be copied
      */
-    private void getAllOutlinesToCopy(PdfOutline outline, Set<PdfOutline> outlinesToCopy){
+    private void getAllOutlinesToCopy(PdfOutline outline, Set<PdfOutline> outlinesToCopy) {
         PdfOutline parent = outline.getParent();
         //note there's no need to continue recursion if the current outline parent is root (first condition) or
         // if it is already in the Set of outlines to be copied (second condition)
@@ -924,16 +960,17 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * This method copies create new outlines in the Document to copy.
+     *
      * @param outlinesToCopy - Set of outlines to be copied
-     * @param toDocument - target Document
-     * @param newParent - new parent outline
-     * @param oldParent - old parent outline
+     * @param toDocument     - target Document
+     * @param newParent      - new parent outline
+     * @param oldParent      - old parent outline
      * @throws PdfException
      */
     private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfDocument toDocument, PdfOutline newParent, PdfOutline oldParent) {
 
-        for(PdfOutline outline : oldParent.getAllChildren()){
-            if (outlinesToCopy.contains(outline)){
+        for (PdfOutline outline : oldParent.getAllChildren()) {
+            if (outlinesToCopy.contains(outline)) {
                 PdfOutline child = newParent.addOutline(outline.getTitle());
                 child.addDestination(outline.getDestination());
                 cloneOutlines(outlinesToCopy, toDocument, child, outline);
