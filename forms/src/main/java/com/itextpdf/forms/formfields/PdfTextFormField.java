@@ -1,9 +1,16 @@
-package com.itextpdf.core.pdf.formfield;
+package com.itextpdf.forms.formfields;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 
 public class PdfTextFormField extends PdfFormField {
+
+    public PdfTextFormField(PdfDocument pdfDocument, PdfWidgetAnnotation widget) {
+        super(pdfDocument, widget);
+    }
 
     protected PdfTextFormField(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -11,10 +18,6 @@ public class PdfTextFormField extends PdfFormField {
 
     protected PdfTextFormField(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
-    }
-
-    public PdfTextFormField(PdfDocument pdfDocument, PdfWidgetAnnotation widget) {
-        super(pdfDocument, widget);
     }
 
     @Override

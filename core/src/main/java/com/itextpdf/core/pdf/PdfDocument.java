@@ -9,8 +9,6 @@ import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.PageSize;
-import com.itextpdf.core.pdf.formfield.PdfAcroForm;
-import com.itextpdf.core.pdf.formfield.PdfFormField;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.core.xmp.*;
@@ -565,9 +563,9 @@ public class PdfDocument implements IEventDispatcher {
                         }
                     }
 
-                    if (catalog.getAcroForm() != null && catalog.getAcroForm().getFields().size() != 0) {
-                        catalog.put(PdfName.AcroForm, catalog.getAcroForm());
-                    }
+//                    if (catalog.getAcroForm() != null && catalog.getAcroForm().getFields().size() != 0) {
+//                        catalog.put(PdfName.AcroForm, catalog.getAcroForm());
+//                    }
 
                     writer.flushModifiedWaitingObjects();
                     if (writer.crypto != null) {
@@ -597,9 +595,9 @@ public class PdfDocument implements IEventDispatcher {
                         }
                     }
 
-                    if (catalog.getAcroForm() != null && catalog.getAcroForm().getFields().size() != 0) {
-                        catalog.put(PdfName.AcroForm, catalog.getAcroForm());
-                    }
+//                    if (catalog.getAcroForm() != null && catalog.getAcroForm().getFields().size() != 0) {
+//                        catalog.put(PdfName.AcroForm, catalog.getAcroForm());
+//                    }
 
                     catalog.getPdfObject().flush(false);
                     info.flush();
@@ -812,27 +810,6 @@ public class PdfDocument implements IEventDispatcher {
      */
     public PdfDictionary getTrailer() {
         return trailer;
-    }
-
-    public PdfAcroForm getAcroForm() {
-        return catalog.getAcroForm();
-    }
-
-    /**
-     * This method adds a FormField to the document. If the field has widget annotation, two dictionaries will be merged into one
-     * @param field
-     */
-    public void addField(PdfFormField field) {
-        if (field.getWidget() != null) {
-            field.getWidget().getPdfObject().mergeDifferent(field.getPdfObject());
-            field = PdfFormField.makeFormField(field.getWidget().getPdfObject(), this);
-        }
-
-        getAcroForm().getFields().add(field.getPdfObject());
-    }
-
-    public PdfAcroForm createAcroForm() {
-        return catalog.createAcroForm();
     }
 
     /**

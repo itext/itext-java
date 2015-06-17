@@ -1,7 +1,8 @@
-package com.itextpdf.core.pdf.formfield;
+package com.itextpdf.forms;
 
 
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.forms.formfields.PdfFormField;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     static public final int SIGNATURE_EXIST = 1;
     static public final int APPEND_ONLY = 2;
-
 
     public PdfAcroForm(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -25,6 +25,37 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public PdfAcroForm(PdfDocument document, PdfArray fields){
         this(new PdfDictionary(), document);
         put(PdfName.Fields, fields);
+    }
+
+    /**
+     * Retrieves AcroForm from the document. If there is no AcroForm int the document Catalog and createIfNotExist flag is true then AcroForm dictionary will be created
+     * @param document
+     * @param createIfNotExist
+     * @return
+     */
+    public static PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist){
+        PdfDictionary acroFormDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+        PdfAcroForm acroForm = null;
+        if (acroFormDictionary == null){
+            if (createIfNotExist){
+                acroForm = new PdfAcroForm(document, new PdfArray());
+                document.getCatalog().put(PdfName.AcroForm, acroForm);
+            }
+        }
+        else {
+            acroForm = new PdfAcroForm(acroFormDictionary);
+        }
+
+        return acroForm;
+    }
+
+    public void addField(PdfFormField field) {
+        if (field.getWidget() != null) {
+            field.getWidget().getPdfObject().mergeDifferent(field.getPdfObject());
+            field = PdfFormField.makeFormField(field.getWidget().getPdfObject(), getDocument());
+        }
+
+        getFields().add(field.getPdfObject());
     }
 
     public ArrayList<PdfFormField> getFormFields(){

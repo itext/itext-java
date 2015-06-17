@@ -2,7 +2,6 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.action.PdfAction;
-import com.itextpdf.core.pdf.formfield.PdfAcroForm;
 import com.itextpdf.core.pdf.layer.PdfOCProperties;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 
@@ -23,7 +22,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private boolean outlineMode;
     private HashMap<Object, PdfObject> names = new HashMap<Object, PdfObject>();
     private boolean isNamedDestinationsGot = false;
-    private PdfAcroForm acroForm;
 
     protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject);
@@ -33,10 +31,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().makeIndirect(pdfDocument);
         getPdfObject().put(PdfName.Type, PdfName.Catalog);
         pageTree = new PdfPagesTree(this);
-        PdfDictionary acroFormDictionary  = getPdfObject().getAsDictionary(PdfName.AcroForm);
-        if (acroFormDictionary != null) {
-            acroForm = new PdfAcroForm(acroFormDictionary);
-        }
     }
 
     protected PdfCatalog(PdfDocument pdfDocument) {
@@ -178,18 +172,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         names.putAll(getNamedDestinatnionsFromStrings());
         isNamedDestinationsGot = true;
         return names;
-    }
-
-    public PdfAcroForm getAcroForm() {
-        return acroForm;
-    }
-
-    public PdfAcroForm createAcroForm() {
-        if (acroForm != null) {
-            return acroForm;
-        }
-        acroForm = new PdfAcroForm(getDocument(), new PdfArray());
-        return acroForm;
     }
 
     /**

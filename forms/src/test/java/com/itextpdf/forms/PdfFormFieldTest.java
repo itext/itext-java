@@ -1,25 +1,23 @@
-package com.itextpdf.core.pdf;
+package com.itextpdf.forms;
 
 import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.core.pdf.formfield.PdfAcroForm;
-import com.itextpdf.core.pdf.formfield.PdfFormField;
-import com.itextpdf.core.pdf.formfield.PdfTextFormField;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.forms.formfields.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class PdfFormFieldTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfFormFieldTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfFormFieldTest/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTest/";
 
     @BeforeClass
     static public void beforeClass() {
@@ -31,7 +29,7 @@ public class PdfFormFieldTest {
         PdfReader reader = new PdfReader(sourceFolder + "formFieldFile.pdf");
         PdfDocument pdfDoc = new PdfDocument(reader);
 
-        PdfAcroForm form = pdfDoc.getAcroForm();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
 
         ArrayList<PdfFormField> fields = form.getFormFields();
         PdfFormField field = fields.get(1);
@@ -47,7 +45,7 @@ public class PdfFormFieldTest {
         PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfAcroForm form = pdfDoc.createAcroForm();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         form.put(PdfName.NeedAppearances, new PdfBoolean(true));
 
         PdfPage page = pdfDoc.addNewPage();
@@ -58,7 +56,7 @@ public class PdfFormFieldTest {
 
         field.setFieldName("TestField");
         field.setValue(new PdfString("some value"));
-        pdfDoc.addField(field);
+        form.addField(field);
 
         pdfDoc.close();
 
@@ -76,7 +74,7 @@ public class PdfFormFieldTest {
         PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-        PdfAcroForm form = pdfDoc.getAcroForm();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         form.put(PdfName.NeedAppearances, new PdfBoolean(true));
 
         PdfPage page = pdfDoc.getFirstPage();
@@ -87,7 +85,7 @@ public class PdfFormFieldTest {
 
         field.setFieldName("TestField");
         field.setValue(new PdfString("some value"));
-        pdfDoc.addField(field);
+        form.addField(field);
 
         pdfDoc.close();
 

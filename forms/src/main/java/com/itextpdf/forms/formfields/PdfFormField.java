@@ -1,4 +1,4 @@
-package com.itextpdf.core.pdf.formfield;
+package com.itextpdf.forms.formfields;
 
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
@@ -10,18 +10,18 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfWidgetAnnotation widget;
 
+    public PdfFormField(PdfDocument pdfDocument, PdfWidgetAnnotation widget) {
+        this(new PdfDictionary(), pdfDocument);
+        this.widget = widget;
+        put(PdfName.FT, getFormType());
+    }
+
     protected PdfFormField(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
     protected PdfFormField(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
-    }
-
-    public PdfFormField(PdfDocument pdfDocument, PdfWidgetAnnotation widget) {
-        this(new PdfDictionary(), pdfDocument);
-        this.widget = widget;
-        put(PdfName.FT, getFormType());
     }
 
     public static <T extends PdfFormField> T makeFormField(PdfObject pdfObject, PdfDocument document){
