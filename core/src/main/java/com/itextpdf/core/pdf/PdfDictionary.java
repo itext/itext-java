@@ -193,6 +193,17 @@ public class PdfDictionary extends PdfObject {
         }
     }
 
+    /**
+     * This method merges different fields from two dictionaries into the current one
+     * @param other a dictionary whose fields should be merged into the current dictionary.
+     */
+    public void mergeDifferent(PdfDictionary other){
+        for (PdfName key : other.keySet()){
+            if(!containsKey(key))
+                put(key, other.get(key));
+        }
+    }
+
     @Override
     protected PdfDictionary newInstance() {
         return new PdfDictionary();

@@ -120,14 +120,14 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected void justify(float width) {
-        float ratio = .5f;
+        float ratio = getPropertyAsFloat(Property.SPACING_RATIO);
         float freeWidth = occupiedArea.getBBox().getX() + width -
                 getLastChildRenderer().getOccupiedArea().getBBox().getX() - getLastChildRenderer().getOccupiedArea().getBBox().getWidth();
         int numberOfSpaces = getNumberOfSpaces();
         int lineLength = length();
-        float baseFactor = freeWidth / (ratio * numberOfSpaces + lineLength - 1);
+        float baseFactor = freeWidth / (ratio * numberOfSpaces + (1 - ratio) * (lineLength - 1));
         float wordSpacing = ratio * baseFactor;
-        float characterSpacing = baseFactor;
+        float characterSpacing = (1 - ratio) * baseFactor;
 
         float lastRightPos = occupiedArea.getBBox().getX();
         for (IRenderer child : childRenderers) {

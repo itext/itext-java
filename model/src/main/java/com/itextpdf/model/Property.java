@@ -51,6 +51,7 @@ public class Property {
     public static final int PAGE_NUMBER = 44;
     public static final int KEEP_TOGETHER = 45;
     public static final int WORD_SPACING = 46;
+    public static final int SPACING_RATIO = 47;
 
     private Property() {
     }
@@ -60,7 +61,7 @@ public class Property {
         if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE ||
                 propertyKey == FIRST_LINE_INDENT || propertyKey == KEEP_TOGETHER ||
                 propertyKey == WORD_SPACING || propertyKey == CHARACTER_SPACING ||
-                propertyKey == HORIZONTAL_ALIGNMENT)
+                propertyKey == HORIZONTAL_ALIGNMENT || propertyKey == SPACING_RATIO)
             return true;
         return false;
     }

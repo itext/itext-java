@@ -328,7 +328,7 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             else if (PdfName.Popup.equals(subtype))
                 annotation = (T) new PdfPopupAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Widget.equals(subtype))
-                throw new UnsupportedOperationException();
+                annotation = (T) new PdfWidgetAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName.Screen.equals(subtype))
                 annotation = (T) new PdfScreenAnnotation((PdfDictionary) pdfObject, document);
             else if (PdfName._3D.equals(subtype))
