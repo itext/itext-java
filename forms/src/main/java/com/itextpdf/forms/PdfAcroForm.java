@@ -22,27 +22,27 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject, pdfDocument);
     }
 
-    public PdfAcroForm(PdfDocument document, PdfArray fields){
+    public PdfAcroForm(PdfDocument document, PdfArray fields) {
         this(new PdfDictionary(), document);
         put(PdfName.Fields, fields);
     }
 
     /**
      * Retrieves AcroForm from the document. If there is no AcroForm int the document Catalog and createIfNotExist flag is true then AcroForm dictionary will be created
+     *
      * @param document
      * @param createIfNotExist
      * @return
      */
-    public static PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist){
+    public static PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist) {
         PdfDictionary acroFormDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
         PdfAcroForm acroForm = null;
-        if (acroFormDictionary == null){
-            if (createIfNotExist){
+        if (acroFormDictionary == null) {
+            if (createIfNotExist) {
                 acroForm = new PdfAcroForm(document, new PdfArray());
                 document.getCatalog().put(PdfName.AcroForm, acroForm);
             }
-        }
-        else {
+        } else {
             acroForm = new PdfAcroForm(acroFormDictionary);
         }
 
@@ -58,12 +58,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         getFields().add(field.getPdfObject());
     }
 
-    public ArrayList<PdfFormField> getFormFields(){
+    public ArrayList<PdfFormField> getFormFields() {
         ArrayList<PdfFormField> fields = new ArrayList<>();
 
-        PdfArray array = getPdfObject().getAsArray(PdfName.Fields);
+        PdfArray array = getFields();
 
-        for(PdfObject field : array){
+        for (PdfObject field : array) {
             PdfFormField formField = PdfFormField.makeFormField(field, getDocument());
             fields.add(formField);
         }
@@ -71,26 +71,26 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return fields;
     }
 
-    public PdfAcroForm setNeedAppearances(boolean needAppearances){
+    public PdfAcroForm setNeedAppearances(boolean needAppearances) {
         return put(PdfName.NeedAppearances, new PdfBoolean(needAppearances));
     }
 
-    public PdfBoolean getNeedAppearances(){
+    public PdfBoolean getNeedAppearances() {
         return getPdfObject().getAsBoolean(PdfName.NeedAppearances);
     }
 
-    public PdfAcroForm setSignatureFlags(int sigFlags){
+    public PdfAcroForm setSignatureFlags(int sigFlags) {
         return put(PdfName.SigFlags, new PdfNumber(sigFlags));
     }
 
-    public PdfAcroForm setSignatureFlag(int sigFlag){
+    public PdfAcroForm setSignatureFlag(int sigFlag) {
         int flags = getSignatureFlags();
         flags = flags | sigFlag;
 
         return setSignatureFlags(flags);
     }
 
-    public int getSignatureFlags(){
+    public int getSignatureFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.SigFlags);
         if (f != null)
             return f.getIntValue();
@@ -98,51 +98,62 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             return 0;
     }
 
-    public PdfAcroForm setCalculationOrder(PdfArray calculationOrder){
+    public PdfAcroForm setCalculationOrder(PdfArray calculationOrder) {
         return put(PdfName.CO, calculationOrder);
     }
 
-    public PdfArray getCalculationOrder(){
+    public PdfArray getCalculationOrder() {
         return getPdfObject().getAsArray(PdfName.CO);
     }
 
-    public PdfAcroForm setDefaultResources(PdfDictionary defaultResources){
+    public PdfAcroForm setDefaultResources(PdfDictionary defaultResources) {
         return put(PdfName.DR, defaultResources);
     }
 
-    public PdfDictionary getDefaultResources(){
+    public PdfDictionary getDefaultResources() {
         return getPdfObject().getAsDictionary(PdfName.DR);
     }
 
-    public PdfAcroForm setDefaultAppearance(String appearance){
+    public PdfAcroForm setDefaultAppearance(String appearance) {
         return put(PdfName.DA, new PdfString(appearance));
     }
 
-    public PdfString getDefaultAppearance(){
+    public PdfString getDefaultAppearance() {
         return getPdfObject().getAsString(PdfName.DA);
     }
 
-    public PdfAcroForm setDefaultQuadding(int quadding){
+    public PdfAcroForm setDefaultQuadding(int quadding) {
         return put(PdfName.Q, new PdfNumber(quadding));
     }
 
-    public PdfNumber getDefaultQuadding(){
+    public PdfNumber getDefaultQuadding() {
         return getPdfObject().getAsNumber(PdfName.Q);
     }
 
-    public PdfAcroForm setXFAResource(PdfStream xfaResource){
+    public PdfAcroForm setXFAResource(PdfStream xfaResource) {
         return put(PdfName.XFA, xfaResource);
     }
 
-    public PdfAcroForm setXFAResource(PdfArray xfaResource){
+    public PdfAcroForm setXFAResource(PdfArray xfaResource) {
         return put(PdfName.XFA, xfaResource);
     }
 
-    public PdfObject getXFAResource(){
+    public PdfObject getXFAResource() {
         return getPdfObject().get(PdfName.XFA);
     }
 
-    public PdfArray getFields(){
+    public PdfFormField getField(String fieldName) {
+        ArrayList<PdfFormField> fields = getFormFields();
+        for (PdfFormField field : fields) {
+            if (field.getFieldName().toUnicodeString().equals(fieldName)) {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    protected PdfArray getFields() {
         return getPdfObject().getAsArray(PdfName.Fields);
     }
 }

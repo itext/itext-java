@@ -95,4 +95,49 @@ public class PdfFormFieldTest {
             Assert.fail(errorMessage);
         }
     }
+
+    @Test
+    public void choiceFieldTest01() throws IOException, InterruptedException {
+
+        String filename = destinationFolder + "choiceFieldTest01.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        form.put(PdfName.NeedAppearances, new PdfBoolean(true));
+
+        PdfPage page = pdfDoc.addNewPage();
+        Rectangle rect = new Rectangle(210, 490, 150, 20);
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(pdfDoc, rect);
+        page.addAnnotation(annot);
+        PdfChoiceFormField choice = new PdfChoiceFormField(pdfDoc, annot);
+
+        PdfArray array = new PdfArray();
+        array.add(new PdfString("First Item"));
+        array.add(new PdfString("Second Item"));
+        array.add(new PdfString("Third Item"));
+        array.add(new PdfString("Fourth Item"));
+        choice.setFieldName("TestField");
+        choice.setOptions(array);
+        choice.setFieldFlag(PdfChoiceFormField.COMBO);
+        choice.setValue(array.get(2));
+        form.addField(choice);
+
+        Rectangle rect1 = new Rectangle(210, 250, 150, 16);
+        PdfWidgetAnnotation annot1 = new PdfWidgetAnnotation(pdfDoc, rect1);
+        page.addAnnotation(annot1);
+        PdfChoiceFormField choice1 = new PdfChoiceFormField(pdfDoc, annot1);
+        choice1.setOptions(array);
+        choice1.setFieldName("TestField1");
+        choice1.setFieldFlag(PdfChoiceFormField.MULTI_SELECT);
+        form.addField(choice1);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldTest01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
 }

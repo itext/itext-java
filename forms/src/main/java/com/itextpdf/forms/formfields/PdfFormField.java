@@ -53,7 +53,7 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract <T extends PdfFormField> T setValue(PdfObject value);
 
-    public PdfFormField setParent(PdfFormField parent){
+    public <T extends PdfFormField> T setParent(PdfFormField parent){
         return put(PdfName.Parent, parent);
     }
 
@@ -65,7 +65,7 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsArray(PdfName.Kids);
     }
 
-    public PdfFormField addKid (PdfFormField kid){
+    public <T extends PdfFormField> T addKid (PdfFormField kid){
         kid.setParent(this);
         PdfArray kids = getKids();
         if (kids == null){
@@ -75,7 +75,7 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.Kids, kids);
     }
 
-    public PdfFormField addKid (PdfWidgetAnnotation kid){
+    public <T extends PdfFormField> T addKid (PdfWidgetAnnotation kid){
         kid.setParent(getPdfObject());
         PdfArray kids = getKids();
         if (kids == null){
@@ -85,7 +85,7 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.Kids, kids);
     }
 
-    public PdfFormField setFieldName(String name){
+    public <T extends PdfFormField> T setFieldName(String name){
         return put(PdfName.T, new PdfString(name));
     }
 
@@ -93,7 +93,7 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsString(PdfName.T);
     }
 
-    public PdfFormField setAlternativeName(String name){
+    public <T extends PdfFormField> T setAlternativeName(String name){
         return put(PdfName.TU, new PdfString(name));
     }
 
@@ -101,7 +101,7 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsString(PdfName.TU);
     }
 
-    public PdfFormField setMappingName(String name){
+    public <T extends PdfFormField> T setMappingName(String name){
         return put(PdfName.TM, new PdfString(name));
     }
 
@@ -109,11 +109,11 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsString(PdfName.TM);
     }
 
-    public PdfFormField setFieldFlags(int flags){
+    public <T extends PdfFormField> T setFieldFlags(int flags){
         return put(PdfName.Ff, new PdfNumber(flags));
     }
 
-    public PdfFormField setFieldFlag(int flag){
+    public <T extends PdfFormField> T setFieldFlag(int flag){
         int flags = getFieldFlags();
         flags = flags | flag;
 
@@ -132,7 +132,7 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().get(PdfName.V);
     }
 
-    public PdfFormField setDefaultValue(PdfObject value){
+    public <T extends PdfFormField> T setDefaultValue(PdfObject value){
         return put(PdfName.DV, value);
     }
 
@@ -140,7 +140,7 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().get(PdfName.DV);
     }
 
-    public PdfFormField setAdditionalAction(PdfAction action){
+    public <T extends PdfFormField> T setAdditionalAction(PdfAction action){
         return put(PdfName.AA, action);
     }
 
@@ -150,5 +150,13 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfWidgetAnnotation getWidget(){
         return widget;
+    }
+
+    public <T extends PdfFormField> T setOptions(PdfArray options){
+        return put(PdfName.Opt, options);
+    }
+
+    public PdfArray getOptions() {
+        return getPdfObject().getAsArray(PdfName.Opt);
     }
 }
