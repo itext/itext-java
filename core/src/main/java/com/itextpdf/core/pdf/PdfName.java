@@ -312,6 +312,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Mask = createDirectName("Mask");
     public static final PdfName Matrix = createDirectName("Matrix");
     public static final PdfName max = createDirectName("max");
+    public static final PdfName MaxLen = createDirectName("MaxLen");
     public static final PdfName MCD = createDirectName("MCD");
     public static final PdfName MCID = createDirectName("MCID");
     public static final PdfName MCR = createDirectName("MCR");

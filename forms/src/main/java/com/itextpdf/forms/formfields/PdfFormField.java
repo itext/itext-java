@@ -24,6 +24,16 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject, pdfDocument);
     }
 
+    /**
+     * Makes a field flag by bit position. Bit positions are numbered 1 to 32.
+     * But position 1 corresponds to flag 1, position 3 corresponds to flag 4 etc.
+     * @param bitPosition bit position of a flag in range 1 to 32 from the pdf specification.
+     * @return corresponding field flag.
+     */
+    public static int makeFieldFlag(int bitPosition) {
+        return (1 << (bitPosition - 1));
+    }
+
     public static <T extends PdfFormField> T makeFormField(PdfObject pdfObject, PdfDocument document){
         T field = null;
         if(pdfObject.isIndirectReference())
@@ -109,15 +119,28 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsString(PdfName.TM);
     }
 
-    public <T extends PdfFormField> T setFieldFlags(int flags){
-        return put(PdfName.Ff, new PdfNumber(flags));
+    public boolean getFieldFlag(int flag) {
+        return (getFieldFlags() & flag) != 0;
     }
 
     public <T extends PdfFormField> T setFieldFlag(int flag){
+        return setFieldFlag(flag, true);
+    }
+
+    public <T extends PdfFormField> T setFieldFlag(int flag, boolean value) {
         int flags = getFieldFlags();
-        flags = flags | flag;
+
+        if (value) {
+            flags |= flag;
+        } else {
+            flags &= ~flag;
+        }
 
         return setFieldFlags(flags);
+    }
+
+    public <T extends PdfFormField> T setFieldFlags(int flags){
+        return put(PdfName.Ff, new PdfNumber(flags));
     }
 
     public int getFieldFlags(){
