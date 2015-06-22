@@ -1,18 +1,21 @@
 package com.itextpdf.forms.formfields;
 
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
-import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 
 
-public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
+public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
-    protected PdfWidgetAnnotation widget;
+    public PdfFormField(PdfDocument pdfDocument) {
+        this(new PdfDictionary(), pdfDocument);
+        put(PdfName.FT, getFormType());
+    }
 
     public PdfFormField(PdfDocument pdfDocument, PdfWidgetAnnotation widget) {
         this(new PdfDictionary(), pdfDocument);
-        this.widget = widget;
+        addKid(widget);
         put(PdfName.FT, getFormType());
     }
 
@@ -34,6 +37,88 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (1 << (bitPosition - 1));
     }
 
+    public static PdfFormField createEmptyField(PdfDocument doc, String name){
+        PdfFormField field = new PdfFormField(doc);
+        field.setFieldName(name);
+        return field;
+    }
+
+    public static PdfButtonFormField createButton(PdfDocument doc, Rectangle rect, int flags){
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
+        PdfButtonFormField field = new PdfButtonFormField(doc, annot);
+        field.setFieldFlags(flags);
+        return field;
+    }
+
+    public static PdfButtonFormField createButton(PdfDocument doc, int flags){
+        PdfButtonFormField field = new PdfButtonFormField(doc);
+        field.setFieldFlags(flags);
+        return field;
+    }
+
+    public static PdfTextFormField createText(PdfDocument doc){
+        return new PdfTextFormField(doc);
+    }
+
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect){
+        PdfTextFormField field;
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
+        field = new PdfTextFormField(doc, annot);
+
+        return field;
+    }
+
+    public static PdfChoiceFormField createChoice(PdfDocument doc, int flags){
+        PdfChoiceFormField field = new PdfChoiceFormField(doc);
+        field.setFieldFlags(flags);
+        return field;
+    }
+
+    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, int flags){
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
+        PdfChoiceFormField field = new PdfChoiceFormField(doc, annot);
+        field.put(PdfName.Opt, options);
+        field.setFieldFlags(flags);
+        return field;
+    }
+
+    public static PdfSignatureFormField createSignature(PdfDocument doc){
+        return new PdfSignatureFormField(doc);
+    }
+
+    public static PdfSignatureFormField createSignature(PdfDocument doc, Rectangle rect){
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
+        return new PdfSignatureFormField(doc, annot);
+    }
+
+    public static PdfButtonFormField createRadioButton(PdfDocument doc, Rectangle rect){
+        return createButton(doc, rect, PdfButtonFormField.FF_RADIO);
+    }
+
+    public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect){
+        return createButton(doc, rect, PdfButtonFormField.FF_PUSH_BUTTON);
+    }
+
+    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect){
+        return createButton(doc, rect, 0);
+    }
+
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[][]){
+        return createChoice(doc, rect, processOptions(options),PdfChoiceFormField.FF_COMBO);
+    }
+
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[]){
+        return createChoice(doc, rect, processOptions(options),PdfChoiceFormField.FF_COMBO);
+    }
+
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[][]){
+        return createChoice(doc, rect, processOptions(options), 0);
+    }
+
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[]){
+        return createChoice(doc, rect, processOptions(options), 0);
+    }
+
     public static <T extends PdfFormField> T makeFormField(PdfObject pdfObject, PdfDocument document){
         T field = null;
         if(pdfObject.isIndirectReference())
@@ -50,18 +135,19 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             else if(PdfName.Sig.equals(formType))
                 field = (T) new PdfSignatureFormField(dictionary, document);
             else
-                throw new UnsupportedOperationException();
-            if (dictionary.get(PdfName.Subtype) != null && dictionary.get(PdfName.Subtype).equals(PdfName.Widget)){
-                field.widget = PdfAnnotation.makeAnnotation(dictionary, document);
-            }
+                field = (T) new PdfFormField(dictionary, document);
         }
 
         return field;
     }
 
-    public abstract PdfName getFormType();
+    public PdfName getFormType(){
+        return null;
+    };
 
-    public abstract <T extends PdfFormField> T setValue(PdfObject value);
+    public <T extends PdfFormField> T setValue(PdfObject value){
+        return put(PdfName.V, value);
+    };
 
     public <T extends PdfFormField> T setParent(PdfFormField parent){
         return put(PdfName.Parent, parent);
@@ -163,16 +249,13 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().get(PdfName.DV);
     }
 
-    public <T extends PdfFormField> T setAdditionalAction(PdfAction action){
-        return put(PdfName.AA, action);
+    public <T extends PdfFormField> T setAdditionalAction(PdfName key, PdfAction action) {
+        PdfAction.setAdditionalAction(this, key, action);
+        return (T) this;
     }
 
     public PdfDictionary getAdditionalAction(){
         return getPdfObject().getAsDictionary(PdfName.AA);
-    }
-
-    public PdfWidgetAnnotation getWidget(){
-        return widget;
     }
 
     public <T extends PdfFormField> T setOptions(PdfArray options){
@@ -181,5 +264,24 @@ public abstract class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfArray getOptions() {
         return getPdfObject().getAsArray(PdfName.Opt);
+    }
+
+    protected static PdfArray processOptions(String options[][]){
+        PdfArray array = new PdfArray();
+        for (String option[] : options){
+            String subOption[] = option;
+            PdfArray subArray = new PdfArray(new PdfString(subOption[0]));
+            subArray.add(new PdfString(subOption[1]));
+            array.add(subArray);
+        }
+        return array;
+    }
+
+    protected static PdfArray processOptions(String options[]){
+        PdfArray array = new PdfArray();
+        for (String option : options){
+            array.add(new PdfString(option));
+        }
+        return array;
     }
 }

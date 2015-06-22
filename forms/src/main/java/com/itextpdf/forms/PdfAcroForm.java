@@ -2,9 +2,11 @@ package com.itextpdf.forms;
 
 
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.forms.formfields.PdfFormField;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
@@ -49,26 +51,35 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return acroForm;
     }
 
+    /**
+     * This method adds the field to the last page in the document. If there's no pages, creates a new one.
+     * @param field
+     */
     public void addField(PdfFormField field) {
-        if (field.getWidget() != null) {
-            field.getWidget().getPdfObject().mergeDifferent(field.getPdfObject());
-            field = PdfFormField.makeFormField(field.getWidget().getPdfObject(), getDocument());
+        PdfPage page;
+        if (getDocument().getNumOfPages() == 0){
+            getDocument().addNewPage();
+        }
+        page = getDocument().getLastPage();
+        addField(field, page);
+    }
+
+    /**
+     * This method adds the field to the page.
+     * @param field
+     * @param page
+     */
+    public void addField(PdfFormField field, PdfPage page){
+        PdfArray kids = field.getKids();
+        if (kids != null){
+            processKids(kids, field.getPdfObject(), page);
         }
 
         getFields().add(field.getPdfObject());
     }
 
-    public ArrayList<PdfFormField> getFormFields() {
-        ArrayList<PdfFormField> fields = new ArrayList<>();
-
-        PdfArray array = getFields();
-
-        for (PdfObject field : array) {
-            PdfFormField formField = PdfFormField.makeFormField(field, getDocument());
-            fields.add(formField);
-        }
-
-        return fields;
+    public List<PdfFormField> getFormFields() {
+        return iterateFields(getFields());
     }
 
     public PdfAcroForm setNeedAppearances(boolean needAppearances) {
@@ -143,7 +154,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfFormField getField(String fieldName) {
-        ArrayList<PdfFormField> fields = getFormFields();
+        List<PdfFormField> fields = getFormFields();
         for (PdfFormField field : fields) {
             if (field.getFieldName().toUnicodeString().equals(fieldName)) {
                 return field;
@@ -155,5 +166,50 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfArray getFields() {
         return getPdfObject().getAsArray(PdfName.Fields);
+    }
+
+    private ArrayList<PdfFormField> iterateFields(PdfArray array) {
+        ArrayList<PdfFormField> fields = new ArrayList<>();
+
+        for (PdfObject field : array) {
+            PdfFormField formField = PdfFormField.makeFormField(field, getDocument());
+            fields.add(formField);
+            if (formField.getKids() != null) {
+                fields.addAll(iterateFields(formField.getKids()));
+            }
+        }
+
+        return fields;
+    }
+
+    private PdfDictionary processKids(PdfArray kids, PdfDictionary parent, PdfPage page){
+        if (kids.size() == 1){
+            PdfDictionary dict = (PdfDictionary) kids.get(0);
+            PdfName type = dict.getAsName(PdfName.Subtype);
+            if (type != null && type.equals(PdfName.Widget)){
+                parent.mergeDifferent(dict);
+                parent.remove(PdfName.Kids);
+                parent.remove(PdfName.Parent);
+                page.addAnnotation(PdfAnnotation.makeAnnotation(parent, getDocument()));
+            } else {
+                PdfArray otherKids = (dict).getAsArray(PdfName.Kids);
+                if (otherKids != null) {
+                    dict = processKids(otherKids, dict, page);
+                }
+                type = dict.getAsName(PdfName.Subtype);
+                if (type != null && type.equals(PdfName.Widget)){
+                    page.addAnnotation(PdfAnnotation.makeAnnotation(dict, getDocument()));
+                }
+            }
+        } else {
+            for (PdfObject kid : kids){
+                PdfArray otherKids = ((PdfDictionary)kid).getAsArray(PdfName.Kids);
+                if (otherKids != null) {
+                    processKids(otherKids, (PdfDictionary) kid, page);
+                }
+            }
+        }
+
+        return parent;
     }
 }

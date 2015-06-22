@@ -2,7 +2,6 @@ package com.itextpdf.forms;
 
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.forms.formfields.*;
 import org.junit.Assert;
@@ -31,10 +30,10 @@ public class PdfFormFieldTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
 
-        ArrayList<PdfFormField> fields = form.getFormFields();
-        PdfFormField field = fields.get(1);
+        ArrayList<PdfFormField> fields = (ArrayList<PdfFormField>) form.getFormFields();
+        PdfFormField field = fields.get(3);
 
-        Assert.assertTrue(fields.size() == 4);
+        Assert.assertTrue(fields.size() == 6);
         Assert.assertTrue(field.getFieldName().toUnicodeString().equals("Text1"));
         Assert.assertTrue(field.getValue().toString().equals("TestField"));
     }
@@ -46,13 +45,10 @@ public class PdfFormFieldTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.put(PdfName.NeedAppearances, new PdfBoolean(true));
+        form.setNeedAppearances(true);
 
-        PdfPage page = pdfDoc.addNewPage();
         Rectangle rect = new Rectangle(210, 490, 150, 22);
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(pdfDoc, rect);
-        page.addAnnotation(annot);
-        PdfTextFormField field = new PdfTextFormField(pdfDoc, annot);
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect);
 
         field.setFieldName("TestField");
         field.setValue(new PdfString("some value"));
@@ -75,17 +71,16 @@ public class PdfFormFieldTest {
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.put(PdfName.NeedAppearances, new PdfBoolean(true));
+        form.setNeedAppearances(true);
 
         PdfPage page = pdfDoc.getFirstPage();
         Rectangle rect = new Rectangle(210, 490, 150, 22);
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(pdfDoc, rect);
-        page.addAnnotation(annot);
-        PdfTextFormField field = new PdfTextFormField(pdfDoc, annot);
+
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect);
 
         field.setFieldName("TestField");
         field.setValue(new PdfString("some value"));
-        form.addField(field);
+        form.addField(field, page);
 
         pdfDoc.close();
 
@@ -104,38 +99,74 @@ public class PdfFormFieldTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.put(PdfName.NeedAppearances, new PdfBoolean(true));
+        form.setNeedAppearances(true);
 
-        PdfPage page = pdfDoc.addNewPage();
         Rectangle rect = new Rectangle(210, 490, 150, 20);
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(pdfDoc, rect);
-        page.addAnnotation(annot);
-        PdfChoiceFormField choice = new PdfChoiceFormField(pdfDoc, annot);
 
-        PdfArray array = new PdfArray();
-        array.add(new PdfString("First Item"));
-        array.add(new PdfString("Second Item"));
-        array.add(new PdfString("Third Item"));
-        array.add(new PdfString("Fourth Item"));
+        String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
+        PdfChoiceFormField choice = PdfFormField.createComboBox(pdfDoc, rect, options);
+
         choice.setFieldName("TestField");
-        choice.setOptions(array);
-        choice.setFieldFlag(PdfChoiceFormField.COMBO);
-        choice.setValue(array.get(2));
+
         form.addField(choice);
 
         Rectangle rect1 = new Rectangle(210, 250, 150, 16);
-        PdfWidgetAnnotation annot1 = new PdfWidgetAnnotation(pdfDoc, rect1);
-        page.addAnnotation(annot1);
-        PdfChoiceFormField choice1 = new PdfChoiceFormField(pdfDoc, annot1);
-        choice1.setOptions(array);
+
+        PdfChoiceFormField choice1 = PdfFormField.createList(pdfDoc, rect1, options);
         choice1.setFieldName("TestField1");
-        choice1.setFieldFlag(PdfChoiceFormField.MULTI_SELECT);
+        choice1.setMultiSelect(true);
         form.addField(choice1);
 
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_choiceFieldTest01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void buttonFieldTest01() throws IOException, InterruptedException {
+
+        String filename = destinationFolder + "buttonFieldTest01.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
+
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        form.setNeedAppearances(true);
+
+        Rectangle rect = new Rectangle(36, 650, 20, 20);
+        Rectangle rect1 = new Rectangle(36, 620, 20, 20);
+
+        PdfButtonFormField radiofield = new PdfButtonFormField(pdfDoc);
+
+        PdfButtonFormField field = PdfFormField.createRadioButton(pdfDoc, rect);
+        PdfButtonFormField field1 = PdfFormField.createRadioButton(pdfDoc, rect1);
+
+        field.setFieldName("Btn1");
+        field1.setFieldName("Btn2");
+
+        radiofield.addKid(field);
+        radiofield.addKid(field1);
+        radiofield.setFieldFlag(PdfButtonFormField.FF_RADIO);
+        radiofield.setFieldName("radio");
+
+        form.addField(radiofield);
+
+        PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 590, 20, 20));
+        pushButton.setFieldName("push");
+        PdfButtonFormField checkBox = PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20));
+        checkBox.setFieldName("check");
+
+        form.addField(pushButton);
+        form.addField(checkBox);
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_buttonFieldTest01.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

@@ -8,6 +8,10 @@ import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 
 public class PdfSignatureFormField extends PdfFormField {
 
+    public PdfSignatureFormField(PdfDocument pdfDocument) {
+        super(pdfDocument);
+    }
+
     public PdfSignatureFormField(PdfDocument pdfDocument, PdfWidgetAnnotation widget) {
         super(pdfDocument, widget);
     }

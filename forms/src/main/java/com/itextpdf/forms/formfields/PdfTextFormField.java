@@ -13,6 +13,10 @@ public class PdfTextFormField extends PdfFormField {
     public static final int FF_COMB = makeFieldFlag(25);
     public static final int FF_RICH_TEXT = makeFieldFlag(26);
 
+    public PdfTextFormField(PdfDocument pdfDocument) {
+        super(pdfDocument);
+    }
+
     public PdfTextFormField(PdfDocument pdfDocument, PdfWidgetAnnotation widget) {
         super(pdfDocument, widget);
     }
@@ -162,7 +166,6 @@ public class PdfTextFormField extends PdfFormField {
      * Sets the maximum length of the field’s text, in characters.
      */
     public PdfTextFormField setMaxLen(int maxLen) {
-        getPdfObject().put(PdfName.MaxLen, new PdfNumber(maxLen));
-        return this;
+        return put(PdfName.MaxLen, new PdfNumber(maxLen));
     }
 }
