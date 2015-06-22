@@ -19,6 +19,8 @@ public class TextRenderer extends AbstractRenderer {
     protected String line;
     protected float yLineOffset;
 
+    protected float tabAnchorCharacterPosition = -1;
+
     public TextRenderer(Text textElement) {
         this (textElement, textElement.getText());
     }
@@ -59,6 +61,8 @@ public class TextRenderer extends AbstractRenderer {
         int initialLineTextPos = currentTextPos;
         float currentLineWidth = 0;
 
+        Character tabAnchorCharacter = getProperty(Property.TAB_ANCHOR);
+
         while (currentTextPos < text.length()) {
             int currentCharCode = getCharCode(currentTextPos);
             if (noPrint(currentCharCode)) {
@@ -82,6 +86,12 @@ public class TextRenderer extends AbstractRenderer {
                 int charCode = getCharCode(ind);
                 if (noPrint(charCode))
                     continue;
+
+                if (tabAnchorCharacter != null && tabAnchorCharacter == text.charAt(ind)) {
+                    tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
+                    tabAnchorCharacter = null;
+                }
+
                 float glyphWidth = getCharWidth(charCode, font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
                 if ((nonBreakablePartFullWidth + glyphWidth) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
@@ -318,6 +328,10 @@ public class TextRenderer extends AbstractRenderer {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public float getTabAnchorCharacterPosition(){
+        return tabAnchorCharacterPosition;
     }
 
     @Override

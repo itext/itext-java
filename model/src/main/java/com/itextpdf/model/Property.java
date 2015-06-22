@@ -52,13 +52,17 @@ public class Property {
     public static final int KEEP_TOGETHER = 45;
     public static final int WORD_SPACING = 46;
     public static final int SPACING_RATIO = 47;
-
+    public static final int TAB_STOPS = 48;
+    public static final int TAB_DEFAULT = 49;
+    public static final int TAB_LEADER = 50;
+    public static final int TAB_ANCHOR = 51;
     private Property() {
     }
 
     public static boolean isPropertyInherited(int propertyKey, IPropertyContainer parent, IPropertyContainer descendant) {
         //TODO try to use ArrayList for several groups of properties and use only contains method.
-        if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE || propertyKey == TEXT_RENDERING_MODE ||
+        if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE ||
+                propertyKey == FONT_COLOR || propertyKey == TEXT_RENDERING_MODE ||
                 propertyKey == FIRST_LINE_INDENT || propertyKey == KEEP_TOGETHER ||
                 propertyKey == WORD_SPACING || propertyKey == CHARACTER_SPACING ||
                 propertyKey == HORIZONTAL_ALIGNMENT || propertyKey == SPACING_RATIO)
@@ -200,6 +204,13 @@ public class Property {
         ENGLISH_UPPER,
         GREEK_LOWER,
         GREEK_UPPER
+    }
+
+    public enum TabAlignment {
+        LEFT,
+        RIGHT,
+        CENTER,
+        ANCHOR
     }
 
 }

@@ -73,6 +73,9 @@ public class ParagraphRenderer extends AbstractRenderer {
         float lastLineHeight = 0;
 
         while (currentRenderer != null) {
+            currentRenderer.setProperty(Property.TAB_DEFAULT, getPropertyAsFloat(Property.TAB_DEFAULT));
+            currentRenderer.setProperty(Property.TAB_STOPS, getProperty(Property.TAB_STOPS));
+
             float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
             float availableWidth = layoutBox.getWidth() - lineIndent;
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), availableWidth, layoutBox.getHeight());

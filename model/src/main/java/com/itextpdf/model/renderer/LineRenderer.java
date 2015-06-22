@@ -2,9 +2,12 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.element.TabStop;
 import com.itextpdf.model.layout.*;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.NavigableMap;
 
 public class LineRenderer extends AbstractRenderer {
 
@@ -27,20 +30,38 @@ public class LineRenderer extends AbstractRenderer {
         int childPos = 0;
 
         boolean anythingPlaced = false;
+        TabStop nextTabStop = null;
 
         while (childPos < childRenderers.size()) {
             IRenderer childRenderer = childRenderers.get(childPos);
-            LayoutRect childSize = getElementSize(childRenderer);
             LayoutResult childResult;
+            Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
+
+            if (childRenderer instanceof TabRenderer) {
+                if (nextTabStop != null) {
+                    IRenderer tabRenderer = childRenderers.get(childPos - 1);
+                    tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+                    curWidth += tabRenderer.getOccupiedArea().getBBox().getWidth();
+                }
+                nextTabStop = calculateTab(childRenderer, curWidth, layoutBox.getWidth());
+                if (childPos == childRenderers.size() - 1)
+                    nextTabStop = null;
+                if (nextTabStop != null) {
+                    ++childPos;
+                    continue;
+                }
+            }
 
             if (!anythingPlaced && childRenderer instanceof TextRenderer) {
                 ((TextRenderer) childRenderer).trimFirst();
             }
 
-            Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
-            childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
-            curWidth += childResult.getOccupiedArea().getBBox().getWidth();
+            if (nextTabStop != null && nextTabStop.getTabAlignment() == Property.TabAlignment.ANCHOR
+                                               && childRenderer instanceof TextRenderer) {
+                childRenderer.setProperty(Property.TAB_ANCHOR, nextTabStop.getTabAnchor());
+            }
 
+            childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
 
             float childAscent = 0;
             float childDescent = 0;
@@ -54,6 +75,21 @@ public class LineRenderer extends AbstractRenderer {
             maxAscent = Math.max(maxAscent, childAscent);
             maxDescent = Math.min(maxDescent, childDescent);
             float maxHeight = maxAscent - maxDescent;
+
+            if (nextTabStop != null) {
+                IRenderer tabRenderer = childRenderers.get(childPos - 1);
+                float tabWidth = calculateTab(layoutBox, curWidth, nextTabStop, childRenderer, childResult, tabRenderer);
+
+                tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+                childResult.getOccupiedArea().getBBox().moveRight(tabWidth);
+                if (childResult.getSplitRenderer() != null)
+                    childResult.getSplitRenderer().getOccupiedArea().getBBox().moveRight(tabWidth);
+                nextTabStop = null;
+
+                curWidth += tabWidth;
+            }
+
+            curWidth += childResult.getOccupiedArea().getBBox().getWidth();
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
             if (childResult.getStatus() != LayoutResult.FULL) {
@@ -223,5 +259,89 @@ public class LineRenderer extends AbstractRenderer {
 
     private IRenderer getLastChildRenderer() {
         return childRenderers.get(childRenderers.size() - 1);
+    }
+
+    private TabStop getNextTabStop(float curWidth) {
+        NavigableMap<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
+
+        Map.Entry<Float, TabStop> nextTabStopEntry = null;
+        TabStop nextTabStop = null;
+
+        if (tabStops != null)
+            nextTabStopEntry = tabStops.higherEntry(curWidth);
+        if (nextTabStopEntry != null) {
+            nextTabStop = nextTabStopEntry.getValue();
+        }
+
+        return nextTabStop;
+    }
+
+
+    /**
+     * Calculates and sets encountered tab size.
+     * Returns null, if processing is finished and layout can be performed for the tab renderer;
+     * otherwise, in case when the tab should be processed after the next element in the line, this method returns corresponding tab stop.
+     */
+    private TabStop calculateTab(IRenderer childRenderer, float curWidth, float lineWidth) {
+        TabStop nextTabStop = getNextTabStop(curWidth);
+
+        if (nextTabStop == null) {
+            processDefaultTab(childRenderer, curWidth, lineWidth);
+            return null;
+        }
+
+        childRenderer.setProperty(Property.TAB_LEADER, nextTabStop.getTabLeader());
+        childRenderer.setProperty(Property.WIDTH, nextTabStop.getTabPosition() - curWidth);
+        childRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
+        if (nextTabStop.getTabAlignment() == Property.TabAlignment.LEFT) {
+            return null;
+        }
+
+        return nextTabStop;
+    }
+
+    /**
+     * Calculates and sets tab size with the account of the element that is next in the line after the tab.
+     * Returns resulting width of the tab.
+     */
+    private float calculateTab(Rectangle layoutBox, float curWidth, TabStop tabStop, IRenderer nextElementRenderer, LayoutResult nextElementResult, IRenderer tabRenderer) {
+
+        float childWidth = 0;
+        if (nextElementRenderer != null)
+            childWidth = nextElementRenderer.getOccupiedArea().getBBox().getWidth();
+        float tabWidth = 0;
+        switch (tabStop.getTabAlignment()) {
+            case RIGHT:
+                tabWidth = tabStop.getTabPosition() - curWidth - childWidth;
+                break;
+            case CENTER:
+                tabWidth = tabStop.getTabPosition() - curWidth - childWidth/2;
+                break;
+            case ANCHOR:
+                float anchorPosition = -1;
+                if (nextElementRenderer instanceof TextRenderer)
+                    anchorPosition = ((TextRenderer)nextElementRenderer).getTabAnchorCharacterPosition();
+                if (anchorPosition == -1)
+                    anchorPosition = childWidth;
+                tabWidth = tabStop.getTabPosition() - curWidth - anchorPosition;
+                break;
+        }
+        if (tabWidth < 0)
+            tabWidth = 0;
+        if (curWidth + tabWidth + childWidth > layoutBox.getWidth())
+            tabWidth -= (curWidth + childWidth + tabWidth) - layoutBox.getWidth();
+
+        tabRenderer.setProperty(Property.WIDTH, tabWidth);
+        tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
+        return tabWidth;
+    }
+
+    private void processDefaultTab(IRenderer tabRenderer, float curWidth, float lineWidth) {
+        Float tabDefault = getPropertyAsFloat(Property.TAB_DEFAULT);
+        Float tabWidth = tabDefault - curWidth % tabDefault;
+        if (curWidth + tabWidth > lineWidth)
+            tabWidth = lineWidth - curWidth;
+        tabRenderer.setProperty(Property.WIDTH, tabWidth);
+        tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
     }
 }
