@@ -514,23 +514,12 @@ public class CompareTool {
                 equalPages.add(i);
         }
 
-        PdfObject outStructTree = outDocument.getCatalog().getPdfObject().get(PdfName.StructTreeRoot);
-        PdfObject cmpStructTree = cmpDocument.getCatalog().getPdfObject().get(PdfName.StructTreeRoot);
-        PdfIndirectReference cmpStructTreeRef = cmpStructTree == null ? null : cmpStructTree.getIndirectReference();
-        PdfIndirectReference outStructTreeRef = outStructTree == null ? null : outStructTree.getIndirectReference();
-        compareObjects(outStructTree, cmpStructTree, new ObjectPath(cmpStructTreeRef, outStructTreeRef), compareResult);
 
-        PdfObject outOcProperties = outDocument.getCatalog().getPdfObject().get(PdfName.OCProperties);
-        PdfObject cmpOcProperties = cmpDocument.getCatalog().getPdfObject().get(PdfName.OCProperties);
-        PdfIndirectReference cmpOcPropertiesRef = cmpOcProperties == null ? null : cmpOcProperties.getIndirectReference();
-        PdfIndirectReference outOcPropertiesRef = outOcProperties == null ? null : outOcProperties.getIndirectReference();
-        compareObjects(outOcProperties, cmpOcProperties, new ObjectPath(cmpOcPropertiesRef, outOcPropertiesRef), compareResult);
+        compareCatalogEntry(outDocument, cmpDocument, compareResult, PdfName.StructTreeRoot);
+        compareCatalogEntry(outDocument, cmpDocument, compareResult, PdfName.OCProperties);
+        compareCatalogEntry(outDocument, cmpDocument, compareResult, PdfName.Names);
+        compareCatalogEntry(outDocument, cmpDocument, compareResult, PdfName.AcroForm);
 
-        PdfObject outNames = outDocument.getCatalog().getPdfObject().get(PdfName.Names);
-        PdfObject cmpNames = cmpDocument.getCatalog().getPdfObject().get(PdfName.Names);
-        PdfIndirectReference cmpNamesRef = cmpNames == null ? null : cmpNames.getIndirectReference();
-        PdfIndirectReference outNamesRef = outNames == null ? null : outNames.getIndirectReference();
-        compareObjects(outNames, cmpNames, new ObjectPath(cmpNamesRef, outNamesRef), compareResult);
 
         outDocument.close();
         cmpDocument.close();
@@ -556,6 +545,14 @@ public class CompareTool {
                 return "Compare by content fails. No visual differences";
             return message;
         }
+    }
+
+    private void compareCatalogEntry(PdfDocument outDocument, PdfDocument cmpDocument, CompareResult compareResult, PdfName entryName) throws IOException {
+        PdfObject outEntry = outDocument.getCatalog().getPdfObject().get(entryName);
+        PdfObject cmpEntry = cmpDocument.getCatalog().getPdfObject().get(entryName);
+        PdfIndirectReference cmpStructTreeRef = cmpEntry == null ? null : cmpEntry.getIndirectReference();
+        PdfIndirectReference outStructTreeRef = outEntry == null ? null : outEntry.getIndirectReference();
+        compareObjects(outEntry, cmpEntry, new ObjectPath(cmpStructTreeRef, outStructTreeRef), compareResult);
     }
 
     private void loadPagesFromReader(PdfDocument doc, List<PdfDictionary> pages, List<PdfIndirectReference> pagesRef) {
