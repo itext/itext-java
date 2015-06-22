@@ -93,7 +93,6 @@ public class PdfFormFieldTest {
 
     @Test
     public void choiceFieldTest01() throws IOException, InterruptedException {
-
         String filename = destinationFolder + "choiceFieldTest01.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -150,7 +149,7 @@ public class PdfFormFieldTest {
 
         radiofield.addKid(field);
         radiofield.addKid(field1);
-        radiofield.setFieldFlag(PdfButtonFormField.FF_RADIO);
+        radiofield.setRadio(true);
         radiofield.setFieldName("radio");
 
         form.addField(radiofield);

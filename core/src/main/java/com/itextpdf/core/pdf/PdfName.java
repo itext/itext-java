@@ -80,6 +80,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName BitsPerCoordinate = createDirectName("BitsPerCoordinate");
     public static final PdfName BitsPerFlag = createDirectName("BitsPerFlag");
     public static final PdfName BitsPerSample = createDirectName("BitsPerSample");
+    public static final PdfName Bl = createDirectName("Bl");
     public static final PdfName BlackIs1 = createDirectName("BlackIs1");
     public static final PdfName BlackPoint = createDirectName("BlackPoint");
     public static final PdfName BlockQuote = createDirectName("BlockQuote");
@@ -208,6 +209,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName FL = createDirectName("FL");
     public static final PdfName Flags = createDirectName("Flags");
     public static final PdfName FlateDecode = createDirectName("FlateDecode");
+    public static final PdfName Fo = createDirectName("Fo");
     public static final PdfName Font = createDirectName("Font");
     public static final PdfName FontBBox = createDirectName("FontBBox");
     public static final PdfName FontDescriptor = createDirectName("FontDescriptor");
@@ -432,6 +434,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName RT = createDirectName("RT");
     public static final PdfName Ruby = createDirectName("Ruby");
     public static final PdfName RunLengthDecode = createDirectName("RunLengthDecode");
+    public static final PdfName RV = createDirectName("RV");
     public static final PdfName Stream = createDirectName("Stream");
     public static final PdfName S = createDirectName("S");
     public static final PdfName SA = createDirectName("SA");

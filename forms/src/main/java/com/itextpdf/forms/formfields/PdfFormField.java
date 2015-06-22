@@ -266,6 +266,76 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsArray(PdfName.Opt);
     }
 
+    /**
+     * Gets default appearance string containing a sequence of valid page-content graphics or text state operators that
+     * define such properties as the field’s text size and color.
+     */
+    public PdfString getDefaultAppearance() {
+        return getPdfObject().getAsString(PdfName.DA);
+    }
+
+    /**
+     * Sets default appearance string containing a sequence of valid page-content graphics or text state operators that
+     * define such properties as the field’s text size and color.
+     */
+    public <T extends PdfFormField> T setDefaultAppearance(PdfString defaultAppearance) {
+        getPdfObject().put(PdfName.DA, defaultAppearance);
+        return (T) this;
+    }
+
+    /**
+     * Gets a code specifying the form of quadding (justification) to be used in displaying the text:
+     * 0 Left-justified
+     * 1 Centered
+     * 2 Right-justified
+     */
+    public Integer getJustification() {
+        return getPdfObject().getAsInt(PdfName.Q);
+    }
+
+    /**
+     * Sets a code specifying the form of quadding (justification) to be used in displaying the text:
+     * 0 Left-justified
+     * 1 Centered
+     * 2 Right-justified
+     */
+    public <T extends PdfFormField> T setJustification(int justification) {
+        getPdfObject().put(PdfName.Q, new PdfNumber(justification));
+        return (T) this;
+    }
+
+    /**
+     * Gets a default style string, as described in "Rich Text Strings" section of Pdf spec.
+     */
+    public PdfString getDefaultStyle() {
+        return getPdfObject().getAsString(PdfName.DS);
+    }
+
+    /**
+     * Sets a default style string, as described in "Rich Text Strings" section of Pdf spec.
+     */
+    public <T extends PdfFormField> T setDefaultStyle(PdfString defaultStyleString) {
+        getPdfObject().put(PdfName.DS, defaultStyleString);
+        return (T) this;
+    }
+
+    /**
+     * Gets a rich text string, as described in "Rich Text Strings" section of Pdf spec.
+     * May be either {@link PdfStream} or {@link PdfString}.
+     */
+    public PdfObject getRichText() {
+        return getPdfObject().get(PdfName.RV);
+    }
+
+    /**
+     * Sets a rich text string, as described in "Rich Text Strings" section of Pdf spec.
+     * May be either {@link PdfStream} or {@link PdfString}.
+     */
+    public <T extends PdfFormField> T setRichText(PdfObject richText) {
+        getPdfObject().put(PdfName.RV, richText);
+        return (T) this;
+    }
+
     protected static PdfArray processOptions(String options[][]){
         PdfArray array = new PdfArray();
         for (String option[] : options){
