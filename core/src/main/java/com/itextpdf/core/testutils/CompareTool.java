@@ -483,12 +483,22 @@ public class CompareTool {
 
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         System.out.print("[itext] INFO  Comparing by content..........");
-        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf));
+        PdfDocument outDocument;
+        try {
+            outDocument = new PdfDocument(new PdfReader(outPdf));
+        } catch (IOException e) {
+            throw new IOException("File \"" + outPdf + "\" not found", e);
+        }
         List<PdfDictionary> outPages = new ArrayList<PdfDictionary>();
         outPagesRef = new ArrayList<PdfIndirectReference>();
         loadPagesFromReader(outDocument, outPages, outPagesRef);
 
-        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf));
+        PdfDocument cmpDocument;
+        try {
+            cmpDocument = new PdfDocument(new PdfReader(cmpPdf));
+        } catch (IOException e) {
+            throw new IOException("File \"" + cmpPdf + "\" not found", e);
+        }
         List<PdfDictionary> cmpPages = new ArrayList<PdfDictionary>();
         cmpPagesRef = new ArrayList<PdfIndirectReference>();
         loadPagesFromReader(cmpDocument, cmpPages, cmpPagesRef);
