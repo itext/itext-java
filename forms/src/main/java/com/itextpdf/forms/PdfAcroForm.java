@@ -133,11 +133,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsString(PdfName.DA);
     }
 
-    public PdfAcroForm setDefaultQuadding(int quadding) {
-        return put(PdfName.Q, new PdfNumber(quadding));
+    public PdfAcroForm setDefaultJustification(int justification) {
+        return put(PdfName.Q, new PdfNumber(justification));
     }
 
-    public PdfNumber getDefaultQuadding() {
+    public PdfNumber getDefaultJustification() {
         return getPdfObject().getAsNumber(PdfName.Q);
     }
 
