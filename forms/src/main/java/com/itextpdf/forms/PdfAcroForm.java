@@ -156,7 +156,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public PdfFormField getField(String fieldName) {
         List<PdfFormField> fields = getFormFields();
         for (PdfFormField field : fields) {
-            if (field.getFieldName().toUnicodeString().equals(fieldName)) {
+            if (field.getFieldName() != null && field.getFieldName().toUnicodeString().equals(fieldName)) {
                 return field;
             }
         }
