@@ -41,30 +41,30 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (1 << (bitPosition - 1));
     }
 
-    public static PdfFormField createEmptyField(PdfDocument doc, String name){
+    public static PdfFormField createEmptyField(PdfDocument doc, String name) {
         PdfFormField field = new PdfFormField(doc);
         field.setFieldName(name);
         return field;
     }
 
-    public static PdfButtonFormField createButton(PdfDocument doc, Rectangle rect, int flags){
+    public static PdfButtonFormField createButton(PdfDocument doc, Rectangle rect, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         PdfButtonFormField field = new PdfButtonFormField(doc, annot);
         field.setFieldFlags(flags);
         return field;
     }
 
-    public static PdfButtonFormField createButton(PdfDocument doc, int flags){
+    public static PdfButtonFormField createButton(PdfDocument doc, int flags) {
         PdfButtonFormField field = new PdfButtonFormField(doc);
         field.setFieldFlags(flags);
         return field;
     }
 
-    public static PdfTextFormField createText(PdfDocument doc){
+    public static PdfTextFormField createText(PdfDocument doc) {
         return new PdfTextFormField(doc);
     }
 
-    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect){
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect) {
         PdfTextFormField field;
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         field = new PdfTextFormField(doc, annot);
@@ -72,13 +72,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return field;
     }
 
-    public static PdfChoiceFormField createChoice(PdfDocument doc, int flags){
+    public static PdfChoiceFormField createChoice(PdfDocument doc, int flags) {
         PdfChoiceFormField field = new PdfChoiceFormField(doc);
         field.setFieldFlags(flags);
         return field;
     }
 
-    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, int flags){
+    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         PdfChoiceFormField field = new PdfChoiceFormField(doc, annot);
         field.put(PdfName.Opt, options);
@@ -86,57 +86,57 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return field;
     }
 
-    public static PdfSignatureFormField createSignature(PdfDocument doc){
+    public static PdfSignatureFormField createSignature(PdfDocument doc) {
         return new PdfSignatureFormField(doc);
     }
 
-    public static PdfSignatureFormField createSignature(PdfDocument doc, Rectangle rect){
+    public static PdfSignatureFormField createSignature(PdfDocument doc, Rectangle rect) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         return new PdfSignatureFormField(doc, annot);
     }
 
-    public static PdfButtonFormField createRadioButton(PdfDocument doc, Rectangle rect){
+    public static PdfButtonFormField createRadioButton(PdfDocument doc, Rectangle rect) {
         return createButton(doc, rect, PdfButtonFormField.FF_RADIO);
     }
 
-    public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect){
+    public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect) {
         return createButton(doc, rect, PdfButtonFormField.FF_PUSH_BUTTON);
     }
 
-    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect){
+    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect) {
         return createButton(doc, rect, 0);
     }
 
-    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[][]){
-        return createChoice(doc, rect, processOptions(options),PdfChoiceFormField.FF_COMBO);
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[][]) {
+        return createChoice(doc, rect, processOptions(options), PdfChoiceFormField.FF_COMBO);
     }
 
-    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[]){
-        return createChoice(doc, rect, processOptions(options),PdfChoiceFormField.FF_COMBO);
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[]) {
+        return createChoice(doc, rect, processOptions(options), PdfChoiceFormField.FF_COMBO);
     }
 
-    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[][]){
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[][]) {
         return createChoice(doc, rect, processOptions(options), 0);
     }
 
-    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[]){
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[]) {
         return createChoice(doc, rect, processOptions(options), 0);
     }
 
-    public static <T extends PdfFormField> T makeFormField(PdfObject pdfObject, PdfDocument document){
+    public static <T extends PdfFormField> T makeFormField(PdfObject pdfObject, PdfDocument document) {
         T field = null;
-        if(pdfObject.isIndirectReference())
-            pdfObject = ((PdfIndirectReference)pdfObject).getRefersTo();
-        if(pdfObject.isDictionary()){
+        if (pdfObject.isIndirectReference())
+            pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
+        if (pdfObject.isDictionary()) {
             PdfDictionary dictionary = (PdfDictionary) pdfObject;
             PdfName formType = dictionary.getAsName(PdfName.FT);
-            if(PdfName.Tx.equals(formType))
+            if (PdfName.Tx.equals(formType))
                 field = (T) new PdfTextFormField(dictionary, document);
-            else if(PdfName.Btn.equals(formType))
+            else if (PdfName.Btn.equals(formType))
                 field = (T) new PdfButtonFormField(dictionary, document);
-            else if(PdfName.Ch.equals(formType))
+            else if (PdfName.Ch.equals(formType))
                 field = (T) new PdfChoiceFormField(dictionary, document);
-            else if(PdfName.Sig.equals(formType))
+            else if (PdfName.Sig.equals(formType))
                 field = (T) new PdfSignatureFormField(dictionary, document);
             else
                 field = (T) new PdfFormField(dictionary, document);
@@ -145,67 +145,71 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return field;
     }
 
-    public PdfName getFormType(){
+    public PdfName getFormType() {
         return null;
-    };
+    }
 
-    public <T extends PdfFormField> T setValue(PdfObject value){
+    ;
+
+    public <T extends PdfFormField> T setValue(PdfObject value) {
         return put(PdfName.V, value);
-    };
+    }
 
-    public <T extends PdfFormField> T setParent(PdfFormField parent){
+    ;
+
+    public <T extends PdfFormField> T setParent(PdfFormField parent) {
         return put(PdfName.Parent, parent);
     }
 
-    public PdfDictionary getParent(){
+    public PdfDictionary getParent() {
         return getPdfObject().getAsDictionary(PdfName.Parent);
     }
 
-    public PdfArray getKids(){
+    public PdfArray getKids() {
         return getPdfObject().getAsArray(PdfName.Kids);
     }
 
-    public <T extends PdfFormField> T addKid (PdfFormField kid){
+    public <T extends PdfFormField> T addKid(PdfFormField kid) {
         kid.setParent(this);
         PdfArray kids = getKids();
-        if (kids == null){
+        if (kids == null) {
             kids = new PdfArray();
         }
         kids.add(kid.getPdfObject());
         return put(PdfName.Kids, kids);
     }
 
-    public <T extends PdfFormField> T addKid (PdfWidgetAnnotation kid){
+    public <T extends PdfFormField> T addKid(PdfWidgetAnnotation kid) {
         kid.setParent(getPdfObject());
         PdfArray kids = getKids();
-        if (kids == null){
+        if (kids == null) {
             kids = new PdfArray();
         }
         kids.add(kid.getPdfObject());
         return put(PdfName.Kids, kids);
     }
 
-    public <T extends PdfFormField> T setFieldName(String name){
+    public <T extends PdfFormField> T setFieldName(String name) {
         return put(PdfName.T, new PdfString(name));
     }
 
-    public PdfString getFieldName(){
+    public PdfString getFieldName() {
         return getPdfObject().getAsString(PdfName.T);
     }
 
-    public <T extends PdfFormField> T setAlternativeName(String name){
+    public <T extends PdfFormField> T setAlternativeName(String name) {
         return put(PdfName.TU, new PdfString(name));
     }
 
-    public PdfString getAlternativeName(){
+    public PdfString getAlternativeName() {
         return getPdfObject().getAsString(PdfName.TU);
     }
 
-    public <T extends PdfFormField> T setMappingName(String name){
+    public <T extends PdfFormField> T setMappingName(String name) {
         return put(PdfName.TM, new PdfString(name));
     }
 
-    public PdfString getMappingName(){
+    public PdfString getMappingName() {
         return getPdfObject().getAsString(PdfName.TM);
     }
 
@@ -213,7 +217,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (getFieldFlags() & flag) != 0;
     }
 
-    public <T extends PdfFormField> T setFieldFlag(int flag){
+    public <T extends PdfFormField> T setFieldFlag(int flag) {
         return setFieldFlag(flag, true);
     }
 
@@ -229,11 +233,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return setFieldFlags(flags);
     }
 
-    public <T extends PdfFormField> T setFieldFlags(int flags){
+    public <T extends PdfFormField> T setFieldFlags(int flags) {
         return put(PdfName.Ff, new PdfNumber(flags));
     }
 
-    public int getFieldFlags(){
+    public int getFieldFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.Ff);
         if (f != null)
             return f.getIntValue();
@@ -241,15 +245,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             return 0;
     }
 
-    public PdfObject getValue(){
+    public PdfObject getValue() {
         return getPdfObject().get(PdfName.V);
     }
 
-    public <T extends PdfFormField> T setDefaultValue(PdfObject value){
+    public <T extends PdfFormField> T setDefaultValue(PdfObject value) {
         return put(PdfName.DV, value);
     }
 
-    public PdfObject getDefaultValue(){
+    public PdfObject getDefaultValue() {
         return getPdfObject().get(PdfName.DV);
     }
 
@@ -258,11 +262,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
-    public PdfDictionary getAdditionalAction(){
+    public PdfDictionary getAdditionalAction() {
         return getPdfObject().getAsDictionary(PdfName.AA);
     }
 
-    public <T extends PdfFormField> T setOptions(PdfArray options){
+    public <T extends PdfFormField> T setOptions(PdfArray options) {
         return put(PdfName.Opt, options);
     }
 
@@ -291,7 +295,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return widgets;
     }
 
-    protected static PdfArray processOptions(String options[][]) {
     /**
      * Gets default appearance string containing a sequence of valid page-content graphics or text state operators that
      * define such properties as the field’s text size and color.
@@ -362,9 +365,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
-    protected static PdfArray processOptions(String options[][]){
+    protected static PdfArray processOptions(String options[][]) {
         PdfArray array = new PdfArray();
-        for (String option[] : options){
+        for (String option[] : options) {
             String subOption[] = option;
             PdfArray subArray = new PdfArray(new PdfString(subOption[0]));
             subArray.add(new PdfString(subOption[1]));
@@ -373,9 +376,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return array;
     }
 
-    protected static PdfArray processOptions(String options[]){
+    protected static PdfArray processOptions(String options[]) {
         PdfArray array = new PdfArray();
-        for (String option : options){
+        for (String option : options) {
             array.add(new PdfString(option));
         }
         return array;
