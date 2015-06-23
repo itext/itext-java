@@ -1,9 +1,15 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.model.Property;
+import com.itextpdf.model.renderer.BlockRenderer;
+import com.itextpdf.model.renderer.IRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Cell extends BlockElement<Cell> {
 
-    private int rowIdx;
-    private int colIdx;
+    private int row;
+    private int col;
     private int rowspan;
     private int colspan;
 
@@ -14,6 +20,29 @@ public class Cell extends BlockElement<Cell> {
 
     public Cell () {
         this (1, 1);
+    }
+
+    @Override
+    public IRenderer makeRenderer() {
+        if (nextRenderer != null) {
+            if (nextRenderer instanceof BlockRenderer && nextRenderer.getModelElement() instanceof Cell) {
+                IRenderer renderer = nextRenderer;
+                nextRenderer = null;
+                return renderer;
+            } else {
+                Logger logger = LoggerFactory.getLogger(Table.class);
+                logger.error("Invalid renderer for Table: must be inherited from TableRenderer");
+            }
+        }
+        return new BlockRenderer(this);
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
     }
 
     public int getRowspan() {
@@ -29,10 +58,12 @@ public class Cell extends BlockElement<Cell> {
         return this;
     }
 
-    protected Cell updateCellIndexes(int rowIdx, int colIdx, int numberOfColumns) {
-        this.rowIdx = rowIdx;
-        this.colIdx = colIdx;
-        colspan = Math.min(colspan, numberOfColumns - colIdx);
+    protected Cell updateCellIndexes(int row, int col, int numberOfColumns) {
+        this.row = row;
+        this.col = col;
+        colspan = Math.min(colspan, numberOfColumns - this.col);
+        setProperty(Property.ROWSPAN, rowspan);
+        setProperty(Property.COLSPAN, colspan);
         return this;
     }
 }

@@ -1,16 +1,21 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.model.renderer.IRenderer;
+import com.itextpdf.model.renderer.TableRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 
 public class Table extends BlockElement<Table> {
 
     private ArrayList<Cell[]> rows;
 
-    private float totalWidth;
+    private float totalWidth = 0;
     private float height;
     private float[] columnWidths;
     private int currentColumn = 0;
-    private int currentRow = 0;
+    private int currentRow = -1;
     private int headerRows;
     private int footerRows;
     private boolean skipFirstHeader;
@@ -33,6 +38,7 @@ public class Table extends BlockElement<Table> {
             this.columnWidths[i] = columnWidths[i];
             totalWidth += columnWidths[i];
         }
+        initializeRows();
     }
 
     /**
@@ -44,9 +50,9 @@ public class Table extends BlockElement<Table> {
         if (numColumns <= 0) {
             throw new IllegalArgumentException("the.number.of.columns.in.pdfptable.constructor.must.be.greater.than.zero");
         }
-        columnWidths = new float[numColumns];
+        this.columnWidths = new float[numColumns];
         for (int k = 0; k < numColumns; ++k) {
-            columnWidths[k] = 1;
+            this.columnWidths[k] = 1;
         }
     }
 
@@ -61,6 +67,19 @@ public class Table extends BlockElement<Table> {
             calculateWidths();
         }
         return this;
+    }
+
+    /**
+     * Gets the full width of the table.
+     *
+     * @return the full width of the table
+     */
+    public float getTotalWidth() {
+        return totalWidth;
+    }
+
+    public float getColumnWidth(int column) {
+        return columnWidths[column];
     }
 
     /**
@@ -186,6 +205,7 @@ public class Table extends BlockElement<Table> {
 
     /**
      * Starts new row. This mean that next cell will be added at the beginning of next line.
+     *
      * @return the Table object.
      */
     public Table startNewRow() {
@@ -205,7 +225,7 @@ public class Table extends BlockElement<Table> {
             if (currentColumn >= columnWidths.length) {
                 startNewRow();
             }
-            if (rows.get(currentRow)[currentColumn] == null) {
+            if (rows.get(currentRow)[currentColumn] != null) {
                 currentColumn++;
             } else {
                 break;
@@ -222,7 +242,7 @@ public class Table extends BlockElement<Table> {
         for (int i = currentRow; i < currentRow + cell.getRowspan(); i++) {
             Cell[] row = rows.get(i);
             for (int j = currentColumn; j < currentColumn + cell.getColspan(); j++) {
-                if (row[j] != null) {
+                if (row[j] == null) {
                     row[j] = cell;
                 }
             }
@@ -231,6 +251,40 @@ public class Table extends BlockElement<Table> {
         return this;
     }
 
+    public Cell getCell(int row, int column) {
+        if (row < rows.size()) {
+            Cell cell = rows.get(row)[column];
+            // make sure that it is top left corner of cell, even in case colspan or rowspan
+            if (cell != null && cell.getRow() == row && cell.getCol() == column) {
+                return cell;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public TableRenderer createRendererSubTree() {
+        TableRenderer rendererRoot = makeRenderer();
+        for (IElement child : childElements) {
+            rendererRoot.addChild(child.createRendererSubTree());
+        }
+        return rendererRoot;
+    }
+
+    @Override
+    public TableRenderer makeRenderer() {
+        if (nextRenderer != null) {
+            if (nextRenderer instanceof TableRenderer) {
+                IRenderer renderer = nextRenderer;
+                nextRenderer = null;
+                return (TableRenderer)renderer;
+            } else {
+                Logger logger = LoggerFactory.getLogger(Table.class);
+                logger.error("Invalid renderer for Table: must be inherited from TableRenderer");
+            }
+        }
+        return new TableRenderer(this);
+    }
 
     protected void calculateWidths() {
         if (totalWidth <= 0) {
@@ -244,5 +298,10 @@ public class Table extends BlockElement<Table> {
         for (int k = 0; k < numCols; ++k) {
             columnWidths[k] = totalWidth * columnWidths[k] / total;
         }
+    }
+
+    private void initializeRows() {
+        rows = new ArrayList<>();
+        startNewRow();
     }
 }
