@@ -11,15 +11,13 @@ import com.itextpdf.core.font.PdfTrueTypeFont;
 import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.PdfReader;
-import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfEncodings;
+import com.itextpdf.text.pdf.PdfException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -41,10 +39,11 @@ public class PdfFontTest {
     }
 
     @Test
-    public void createDocumentWithKozmin() throws IOException {
+    public void createDocumentWithKozmin() throws IOException, InterruptedException {
         int pageCount = 1;
 
         String filename = destinationFolder + "DocumentWithKozmin.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin.pdf";
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Type3 test";
@@ -73,12 +72,15 @@ public class PdfFontTest {
             page.flush();
         }
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithTrueTypeAsType0() throws IOException, PdfException {
+    public void createDocumentWithTrueTypeAsType0() throws IOException, PdfException, InterruptedException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithWithTrueTypeAsType0.pdf";
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Type3 test";
@@ -108,11 +110,14 @@ public class PdfFontTest {
             page.flush();
         }
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithType3Font() throws IOException {
+    public void createDocumentWithType3Font() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithType3Font.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithType3Font.pdf";
         String testString = "A A A A E E E ~ é";
 
         //writing type3 font characters
@@ -181,13 +186,15 @@ public class PdfFontTest {
         PdfPage page = document.getPage(PageCount);
         String content = PdfEncodings.convertToString(page.getContentStream(0).getBytes(), "PDF");
         Assert.assertTrue(content.contains("(" + testString + ")"));
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithHelvetica() throws IOException {
+    public void createDocumentWithHelvetica() throws IOException, InterruptedException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithHelvetica.pdf";
-
+        String cmpFilename = sourceFolder + "cmp_DocumentWithHelvetica.pdf";
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Type3 test";
@@ -215,13 +222,15 @@ public class PdfFontTest {
             page.flush();
         }
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithHelveticaOblique() throws IOException {
+    public void createDocumentWithHelveticaOblique() throws IOException, InterruptedException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithHelveticaOblique.pdf";
-
+        String cmpFilename = sourceFolder + "cmp_DocumentWithHelveticaOblique.pdf";
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
@@ -249,12 +258,15 @@ public class PdfFontTest {
             page.flush();
         }
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithHelveticaBoldOblique() throws IOException {
+    public void createDocumentWithHelveticaBoldOblique() throws IOException, InterruptedException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithHelveticaBoldOblique.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithHelveticaBoldOblique.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -283,13 +295,15 @@ public class PdfFontTest {
             page.flush();
         }
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithCourierBold() throws IOException {
+    public void createDocumentWithCourierBold() throws IOException, InterruptedException {
         int pageCount = 1;
         String filename = destinationFolder + "DocumentWithCourierBold.pdf";
-
+        String cmpFilename = sourceFolder + "cmp_DocumentWithCourierBold.pdf";
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
@@ -317,11 +331,14 @@ public class PdfFontTest {
             page.flush();
         }
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithType1FontAfm() throws IOException {
+    public void createDocumentWithType1FontAfm() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10Afm.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -352,11 +369,14 @@ public class PdfFontTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithType1FontPfm() throws IOException {
+    public void createDocumentWithType1FontPfm() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10Pfm.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Pfm.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -387,11 +407,14 @@ public class PdfFontTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithType1Font5Pfm() throws IOException, DocumentException {
+    public void createDocumentWithType1Font5Pfm() throws IOException, DocumentException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10_5Pfm.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10_5Pfm.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -419,11 +442,14 @@ public class PdfFontTest {
         cb.rectangle(100, 500, 100, 100);
         cb.fill();
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithType1Font5Afm() throws IOException, DocumentException {
+    public void createDocumentWithType1Font5Afm() throws IOException, DocumentException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10_5Afm.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10_5Afm.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -451,11 +477,14 @@ public class PdfFontTest {
         cb.rectangle(100, 500, 100, 100);
         cb.fill();
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithTrueTypeFont1() throws IOException, PdfException {
+    public void createDocumentWithTrueTypeFont1() throws IOException, PdfException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -486,11 +515,14 @@ public class PdfFontTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void createDocumentWithTrueTypeFont2() throws IOException, PdfException {
+    public void createDocumentWithTrueTypeFont2() throws IOException, PdfException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont2.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2.pdf";
 
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
@@ -521,16 +553,19 @@ public class PdfFontTest {
         canvas.release();
         page.flush();
         pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
-    public void testNewType3FontBasedExistingFont() throws IOException {
+    public void testNewType3FontBasedExistingFont() throws IOException, InterruptedException {
 
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
         String inputFileName = sourceFolder + "type3Font.pdf";
         String outputFileName = destinationFolder + "new_type3Font.pdf";
+        String cmpOutputFileName = sourceFolder + "cmp_new_type3Font.pdf";
         PdfReader reader = new PdfReader(inputFileName);
         PdfWriter pdfWriter = new PdfWriter(new FileOutputStream(outputFileName));
         pdfWriter.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
@@ -561,20 +596,23 @@ public class PdfFontTest {
         outputPdfDoc.close();
 
         Assert.assertEquals(6, pdfType3Font.getCharGlyphs().size());
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
 
     @Test
-    public void testNewType1FontBasedExistingFont() throws IOException {
+    public void testNewType1FontBasedExistingFont() throws IOException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithCMR10Afm.pdf";
-
+        String filename = destinationFolder + "DocumentWithCMR10Afm_new.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm_new.pdf";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
-        String filename = destinationFolder + "DocumentWithCMR10Afm_new.pdf";
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
+
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
@@ -591,7 +629,7 @@ public class PdfFontTest {
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(pdfType1Font, 72)
-                .showText("Hello world")
+                .showText("New Hello world")
                 .endText()
                 .restoreState();
         canvas.rectangle(100, 500, 100, 100).fill();
@@ -599,6 +637,7 @@ public class PdfFontTest {
         page.flush();
         pdfDoc.close();
 
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -607,14 +646,11 @@ public class PdfFontTest {
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont1.pdf";
-
+        String filename = destinationFolder + "DocumentWithTrueTypeFont1_new.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1_new.pdf";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
-
-
-        String filename = destinationFolder + "DocumentWithTrueTypeFont1_new.pdf";
-
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -632,30 +668,29 @@ public class PdfFontTest {
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(pdfTrueTypeFont, 72)
-                .showText("Hello world")
+                .showText("New Hello world")
                 .endText()
                 .restoreState();
         canvas.rectangle(100, 500, 100, 100).fill();
         canvas.release();
         page.flush();
         pdfDoc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_DocumentWithTrueTypeFont1_new.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test
+    @Test @Ignore
     public void testNewTrueTypeFont2BasedExistingFont() throws IOException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont2.pdf";
+        String filename = destinationFolder + "DocumentWithTrueTypeFont2_new.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2_new.pdf";
 
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-
-        String filename = destinationFolder + "DocumentWithTrueTypeFont2_new.pdf";
-
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -673,7 +708,7 @@ public class PdfFontTest {
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(pdfTrueTypeFont, 72)
-                .showText("Hello world")
+                .showText("New Hello world")
                 .endText()
                 .restoreState();
         canvas.rectangle(100, 500, 100, 100).fill();
@@ -681,8 +716,7 @@ public class PdfFontTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_DocumentWithTrueTypeFont2_new.pdf", destinationFolder, "diff_"));
-
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -691,13 +725,12 @@ public class PdfFontTest {
         final String creator = "iText 6";
         final String title = "Type0 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
-
+        String filename = destinationFolder + "DocumentWithKozmin_new.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_new.pdf";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(6);
-        String filename = destinationFolder + "DocumentWithKozmin_new.pdf";
-
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -715,7 +748,7 @@ public class PdfFontTest {
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(pdfTrueTypeFont, 72)
-                .showText("Hello world")
+                .showText("New Hello world")
                 .endText()
                 .restoreState();
         canvas.rectangle(100, 500, 100, 100).fill();
@@ -723,8 +756,7 @@ public class PdfFontTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder +  "cmp_DocumentWithKozmin_new.pdf", destinationFolder, "diff_"));
-
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -733,12 +765,12 @@ public class PdfFontTest {
         final String creator = "iText 6";
         final String title = "Type0 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithWithTrueTypeAsType0.pdf";
+        String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0_new.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithWithTrueTypeAsType0_new.pdf";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(6);
-        String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0_new.pdf";
-
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -756,7 +788,7 @@ public class PdfFontTest {
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(pdfTrueTypeFont, 72)
-                .showText("Hello World")
+                .showText("New Hello World")
                 .endText()
                 .restoreState();
         canvas.rectangle(100, 500, 100, 100).fill();
@@ -764,8 +796,7 @@ public class PdfFontTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder +  "cmp_DocumentWithWithTrueTypeAsType0_new.pdf", destinationFolder, "diff_"));
-
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -774,12 +805,12 @@ public class PdfFontTest {
         final String creator = "iText 6";
         final String title = "Type1 font iText 6 Document";
         String inputFileName1 = sourceFolder + "fontWithToUnicode.pdf";
+        String filename = destinationFolder + "fontWithToUnicode_new.pdf";
+        String cmpFilename = sourceFolder + "cmp_fontWithToUnicode_new.pdf";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-        String filename = destinationFolder + "fontWithToUnicode_new.pdf";
-
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -797,7 +828,7 @@ public class PdfFontTest {
                 .beginText()
                 .moveText(36, 756)
                 .setFontAndSize(pdfType1Font, 10)
-                .showText("MyriadPro-Bold font.")
+                .showText("New MyriadPro-Bold font.")
                 .endText()
                 .restoreState();
         canvas.rectangle(100, 500, 100, 100).fill();
@@ -805,8 +836,6 @@ public class PdfFontTest {
         page.flush();
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder +  "cmp_fontWithToUnicode_new.pdf", destinationFolder, "diff_"));
-
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
-
 }
