@@ -2,6 +2,8 @@ package com.itextpdf.model;
 
 import com.itextpdf.canvas.color.Color;
 
+import java.util.Arrays;
+
 public class Property {
 
     // TODO test which makes sure there is no overlapping in numbers, or a handy mechanism to generate them.
@@ -56,18 +58,22 @@ public class Property {
     public static final int TAB_DEFAULT = 49;
     public static final int TAB_LEADER = 50;
     public static final int TAB_ANCHOR = 51;
+    public static final int COLUMN_WIDTHS = 52;
+    public static final int ROWSPAN = 53;
+    public static final int COLSPAN = 54;
+
+    private static int[] inheritedProperties = { FONT, HORIZONTAL_ALIGNMENT, TEXT_RISE, FONT_SIZE, FONT_COLOR,
+            CHARACTER_SPACING, TEXT_RENDERING_MODE, FIRST_LINE_INDENT, KEEP_TOGETHER, WORD_SPACING, SPACING_RATIO };
+
+    static {
+        Arrays.sort(inheritedProperties);
+    }
+
     private Property() {
     }
 
     public static boolean isPropertyInherited(int propertyKey, IPropertyContainer parent, IPropertyContainer descendant) {
-        //TODO try to use ArrayList for several groups of properties and use only contains method.
-        if (propertyKey == FONT || propertyKey == FONT_SIZE || propertyKey == TEXT_RISE ||
-                propertyKey == FONT_COLOR || propertyKey == TEXT_RENDERING_MODE ||
-                propertyKey == FIRST_LINE_INDENT || propertyKey == KEEP_TOGETHER ||
-                propertyKey == WORD_SPACING || propertyKey == CHARACTER_SPACING ||
-                propertyKey == HORIZONTAL_ALIGNMENT || propertyKey == SPACING_RATIO)
-            return true;
-        return false;
+        return Arrays.binarySearch(inheritedProperties, propertyKey) >= 0;
     }
 
 
