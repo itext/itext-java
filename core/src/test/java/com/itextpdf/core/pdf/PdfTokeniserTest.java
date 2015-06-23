@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.io.PdfTokeniser;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.text.*;
 
 
@@ -11,12 +12,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class PdfTokeniserTest {
-
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfTokeniserTest/";
     @Before
     public void setUp() throws Exception {
+
     }
 
     @After
@@ -104,6 +108,56 @@ public class PdfTokeniserTest {
 
         pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), false);
         Assert.assertEquals("FEFF041F04400438043204350442", pdfString.toUnicodeString());
+
+        String specialCharacter = "\r\n\t\\n\\r\\t\\f";
+        pdfString = new PdfString(specialCharacter.getBytes(),false);
+        Assert.assertEquals("\n\t\n\r\t\f", pdfString.toUnicodeString());
+
+        String symbol = "\u0001\u0004\u0006\u000E\u001F";
+        pdfString = new PdfString(symbol.getBytes(),false);
+        Assert.assertEquals(symbol, pdfString.toUnicodeString());
+
+
+        String testString1 ="These\\\n two\\\r strings\\\n are the same";
+        pdfString = new PdfString(testString1.getBytes(),false);
+        Assert.assertEquals("These two strings are the same", pdfString.getValue());
+
+        String testString2 ="This string contains \\245two octal characters\\307";
+        pdfString = new PdfString(testString2.getBytes(),false);
+        Assert.assertEquals("This string contains ¥two octal charactersÇ", pdfString.getValue());
+
+
+        String testString3 ="\\0053";
+        pdfString = new PdfString(testString3.getBytes(),false);
+        Assert.assertEquals("\u00053", pdfString.getValue());
+
+        String testString4 ="\\053";
+        pdfString = new PdfString(testString4.getBytes(),false);
+        Assert.assertEquals("+", pdfString.getValue());
+
+        byte[] b = new byte[]{(byte)46,(byte)56,(byte)40};
+        pdfString = new PdfString(b,false);
+        Assert.assertEquals(new String(b),pdfString.getValue());
+    }
+
+    @Test
+    public void readPdfStringTest() throws IOException {
+        final String author = "This string9078 contains ¥two octal charactersÇ";
+        final String creator = "iText\r 6\n";
+        final String title = "ßãëð";
+        final String subject = "+";
+        String filename = sourceFolder + "writePdfString.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument d = new PdfDocument(reader);
+        // text in pdf: int array ( 223,227, 235,240)
+        Assert.assertEquals(d.getDocumentInfo().getTitle(), title);
+        // text in pdf: This string\9078 contains \245two octal characters\307
+        Assert.assertEquals(d.getDocumentInfo().getAuthor(), author);
+        // text in pdf: iText\r 6\n
+        Assert.assertEquals(d.getDocumentInfo().getCreator(), creator);
+        // text in pdf: \053
+        Assert.assertEquals(d.getDocumentInfo().getSubject(), subject);
 
     }
 
