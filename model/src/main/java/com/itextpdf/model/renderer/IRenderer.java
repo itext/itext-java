@@ -12,14 +12,22 @@ import java.util.List;
 public interface IRenderer extends IPropertyContainer<IRenderer> {
 
     void addChild(IRenderer renderer);
-    LayoutResult layout(LayoutContext layoutContext);
-    void draw(PdfDocument document, PdfCanvas canvas);
-    LayoutArea getOccupiedArea();
-    <T> T getProperty(int key, T defaultValue);
-    IRenderer setParent(IRenderer parent);
-    IPropertyContainer getModelElement();
-    List<IRenderer> getChildRenderers();
-    boolean isFlushed();
-    void move(float dx, float dy);
 
+    LayoutResult layout(LayoutContext layoutContext);
+
+    void draw(PdfDocument document, PdfCanvas canvas);
+
+    LayoutArea getOccupiedArea();
+
+    <T> T getProperty(int key, T defaultValue);
+
+    IRenderer setParent(IRenderer parent);
+
+    IPropertyContainer getModelElement();
+
+    List<IRenderer> getChildRenderers();
+
+    boolean isFlushed();
+
+    void move(float dx, float dy);
 }

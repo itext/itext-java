@@ -130,11 +130,8 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     public Integer getPropertyAsInteger(int key) {
-        Object value = getProperty(key);
-        if (value instanceof Integer) {
-            return (Integer) value;
-        }
-        return null;
+        Number value = getProperty(key);
+        return value != null ? value.intValue() : null;
     }
 
     public LayoutArea getOccupiedArea() {

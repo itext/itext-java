@@ -81,6 +81,7 @@ public class DocumentRenderer extends AbstractRenderer {
 
                 renderer = result.getOverflowRenderer();
             }
+            assert result != null;
             currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
             currentArea.setEmptyArea(false);
             if (renderer != null)
