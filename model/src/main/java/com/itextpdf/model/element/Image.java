@@ -61,4 +61,18 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     public Image setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
         return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
     }
+
+    public Image setAutoScaling(boolean autoScale){
+        return setProperty(Property.AUTO_SCALE, autoScale);
+    }
+
+    @Override
+    public <T> T getDefaultProperty(int propertyKey) {
+        switch (propertyKey) {
+            case Property.AUTO_SCALE:
+                return (T) Boolean.valueOf(false);
+            default:
+                return super.getDefaultProperty(propertyKey);
+        }
+    }
 }

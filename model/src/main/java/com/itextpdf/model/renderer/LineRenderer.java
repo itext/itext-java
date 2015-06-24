@@ -104,6 +104,10 @@ public class LineRenderer extends AbstractRenderer {
                         anythingPlaced = true;
                     }
 
+                    if (childResult.getStatus() == LayoutResult.IMAGE_PARTIAL){
+                        ((ImageRenderer)childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
+                    }
+
                     split[1].childRenderers.add(childResult.getOverflowRenderer());
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                 }
@@ -241,6 +245,8 @@ public class LineRenderer extends AbstractRenderer {
         for (IRenderer renderer : childRenderers) {
             if (renderer instanceof TextRenderer) {
                 ((TextRenderer) renderer).moveYLineTo(actualYLine);
+            } else if (renderer instanceof ImageRenderer){
+                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY()- maxDescent);
             } else {
                 renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY());
             }
@@ -255,6 +261,15 @@ public class LineRenderer extends AbstractRenderer {
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - trimmedSpace);
         }
         return this;
+    }
+
+    protected boolean containsImage(){
+        for (IRenderer renderer : childRenderers){
+            if (renderer instanceof ImageRenderer){
+                return true;
+            }
+        }
+        return false;
     }
 
     private IRenderer getLastChildRenderer() {

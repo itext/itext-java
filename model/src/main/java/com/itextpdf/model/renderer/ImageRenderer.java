@@ -32,7 +32,7 @@ public class ImageRenderer extends AbstractRenderer {
         Rectangle layoutBox = area.getBBox();
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
-        width = getPropertyAsFloat(Property.WIDTH);
+        width = width == null ? getPropertyAsFloat(Property.WIDTH) : width;
         Float angle = getPropertyAsFloat(Property.ANGLE);
 
         width = width == null ? ((Image) (getModelElement())).getXObject().getWidth() : width;
@@ -46,6 +46,19 @@ public class ImageRenderer extends AbstractRenderer {
             scale(horizontalScaling, verticalScaling, t);
         t.getMatrix(matrix);
 
+        Float mx = getProperty(Property.X_DISTANCE);
+        Float my = getProperty(Property.Y_DISTANCE);
+
+        fixedXPosition = getPropertyAsFloat(Property.X);
+        fixedYPosition = getPropertyAsFloat(Property.Y);
+
+        if (width > layoutBox.getWidth()){
+            return new LayoutResult(LayoutResult.IMAGE_PARTIAL, occupiedArea, null, this);
+        }
+        if (height > layoutBox.getHeight()){
+            return new LayoutResult(LayoutResult.IMAGE_PARTIAL, occupiedArea, null, this);
+        }
+
         if (angle != null) {
             rotateImage(angle, t);
         } else {
@@ -53,12 +66,6 @@ public class ImageRenderer extends AbstractRenderer {
             occupiedArea.getBBox().setHeight(height);
             occupiedArea.getBBox().setWidth(width);
         }
-
-        Float mx = getProperty(Property.X_DISTANCE);
-        Float my = getProperty(Property.Y_DISTANCE);
-
-        fixedXPosition = getPropertyAsFloat(Property.X);
-        fixedYPosition = getPropertyAsFloat(Property.Y);
 
         if (mx != null && my != null) {
             translateImage(mx, my, t);
@@ -94,6 +101,15 @@ public class ImageRenderer extends AbstractRenderer {
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);
         }
+    }
+
+    protected ImageRenderer autoScale(LayoutArea area){
+        if (width > area.getBBox().getWidth()){
+            height = area.getBBox().getWidth() / width * ((Image) (getModelElement())).getXObject().getHeight();
+            width = area.getBBox().getWidth();
+        }
+
+        return this;
     }
 
     private float[] setTransformationMatrix(float x, float y, float width, float height) {

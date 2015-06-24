@@ -14,6 +14,8 @@ import java.util.List;
 
 public class ParagraphRenderer extends AbstractRenderer {
 
+    protected float previousDescent = 0;
+
     public ParagraphRenderer(IPropertyContainer modelElement) {
         super(modelElement);
     }
@@ -105,6 +107,9 @@ public class ParagraphRenderer extends AbstractRenderer {
             }
 
             leadingValue = processedRenderer != null && leading != null ? processedRenderer.getLeadingValue(leading) : 0;
+            if (processedRenderer != null && processedRenderer.containsImage()){
+                leadingValue -= previousDescent;
+            }
             boolean doesNotFit = result.getStatus() == LayoutResult.NOTHING ||
                     processedRenderer != null && leading != null && processedRenderer.getOccupiedArea().getBBox().getHeight() + processedRenderer.getLeadingValue(leading) - processedRenderer.getMaxAscent() > layoutBox.getHeight();
 
@@ -150,6 +155,7 @@ public class ParagraphRenderer extends AbstractRenderer {
                 firstLineInBox = false;
 
                 currentRenderer = (LineRenderer) result.getOverflowRenderer();
+                previousDescent = processedRenderer.getMaxDescent();
             }
         }
 
