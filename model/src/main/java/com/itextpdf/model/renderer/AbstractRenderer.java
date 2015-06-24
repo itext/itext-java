@@ -174,7 +174,11 @@ public abstract class AbstractRenderer implements IRenderer {
         // TODO implement complete functionality with all settings. Take into account separate border sides configuration.
         Property.BorderConfig borderConfig = getProperty(Property.BORDER);
         if (borderConfig != null) {
+            canvas.saveState();
+            canvas.setStrokeColor(borderConfig.getColor());
+            canvas.setLineWidth(borderConfig.getWidth());
             canvas.rectangle(occupiedArea.getBBox()).stroke();
+            canvas.restoreState();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.BlockRenderer;
 import com.itextpdf.model.renderer.IRenderer;
@@ -34,7 +35,9 @@ public class Cell extends BlockElement<Cell> {
                 logger.error("Invalid renderer for Table: must be inherited from TableRenderer");
             }
         }
-        return new BlockRenderer(this);
+        Property.BorderConfig borders = new Property.BorderConfig(new DeviceRgb(160, 160, 160),
+                0.5f, Property.BorderConfig.BorderStyle.SOLID);
+        return new BlockRenderer(this).setProperty(Property.BORDER, borders);
     }
 
     public int getRow() {
