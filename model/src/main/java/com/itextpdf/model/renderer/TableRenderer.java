@@ -69,7 +69,7 @@ public class TableRenderer extends AbstractRenderer {
                 cell.layout(cellContext);
                 rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight());
             }
-            rowOffset += rowHeight;
+            rowOffset -= rowHeight;
         }
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), tableModel.getTotalWidth(), rowOffset));
