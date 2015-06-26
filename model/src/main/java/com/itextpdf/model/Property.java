@@ -59,9 +59,10 @@ public class Property {
     public static final int TAB_LEADER = 50;
     public static final int TAB_ANCHOR = 51;
     public static final int COLUMN_WIDTHS = 52;
-    public static final int ROWSPAN = 53;
-    public static final int COLSPAN = 54;
-    public static final int AUTO_SCALE = 55;
+    public static final int ROW = 53;
+    public static final int ROWSPAN = 54;
+    public static final int COLSPAN = 55;
+    public static final int AUTO_SCALE = 56;
 
     private static int[] inheritedProperties = { FONT, HORIZONTAL_ALIGNMENT, TEXT_RISE, FONT_SIZE, FONT_COLOR,
             CHARACTER_SPACING, TEXT_RENDERING_MODE, FIRST_LINE_INDENT, KEEP_TOGETHER, WORD_SPACING, SPACING_RATIO };

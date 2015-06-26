@@ -30,7 +30,7 @@ public class TableRenderer extends AbstractRenderer {
             childRenderers.add(renderer);
             renderer.setParent(this);
             Cell cell = (Cell)renderer.getModelElement();
-            rows.get(cell.getRow())[cell.getCol()] = (BlockRenderer)renderer;
+            rows.get(cell.getRow() + cell.getRowspan() - 1)[cell.getCol()] = (BlockRenderer)renderer;
         } else {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
             logger.error("Only BlockRenderer with Cell model element could be added");
@@ -47,30 +47,48 @@ public class TableRenderer extends AbstractRenderer {
             // Also recalculate column widths, and also don't save it to the model element.
         }
         float rowOffset = 0;
+        ArrayList<Float> heights = new ArrayList<>();
         for (int row = 0; row < rows.size(); row++) {
             BlockRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
             for (int col = 0; col < currentRow.length; col++) {
                 BlockRenderer cell = currentRow[col];
                 if (cell == null) continue;
-                float cellOffset = 0;
-                for (int i = 0; i < col; i++) {
-                    cellOffset += tableModel.getColumnWidth(i);
-                }
-                float cellWidth = 0;
                 int colspan = cell.getPropertyAsInteger(Property.COLSPAN);
+                int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
+                float cellWidth = 0, colOffset = 0;
                 for (int i = col; i < col + colspan; i++) {
                     cellWidth += tableModel.getColumnWidth(i);
                 }
-                Rectangle cellLayoutBox = new Rectangle(layoutBox.getX() + cellOffset, layoutBox.getY() + rowOffset,
+                for (int i = 0; i < col; i++) {
+                    colOffset += tableModel.getColumnWidth(i);
+                }
+                float currRowOffset = rowOffset;
+                for (int i = row - 1; i > row - rowspan; i--) {
+                    currRowOffset += heights.get(i);
+                }
+                Rectangle cellLayoutBox = new Rectangle(layoutBox.getX() + colOffset, layoutBox.getY() + currRowOffset,
                         cellWidth, layoutBox.getHeight());
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(),cellLayoutBox);
-                LayoutContext cellContext = new LayoutContext(cellArea);
-                cell.layout(cellContext);
-                rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight());
+                cell.layout(new LayoutContext(cellArea));
+                rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - currRowOffset + rowOffset);
             }
             rowOffset -= rowHeight;
+            heights.add(rowHeight);
+
+            for (BlockRenderer cell : currentRow) {
+                if (cell == null) continue;
+                float height = 0;
+                int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
+                for (int i = row; i > row - rowspan; i--) {
+                    height += heights.get(i);
+                }
+                float shift = height - cell.getOccupiedArea().getBBox().getHeight();
+                cell.getOccupiedArea().getBBox().moveDown(shift);
+                cell.getOccupiedArea().getBBox().setHeight(height);
+            }
         }
+
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), tableModel.getTotalWidth(), rowOffset));
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);

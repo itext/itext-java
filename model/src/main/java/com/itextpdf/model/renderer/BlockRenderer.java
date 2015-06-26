@@ -162,6 +162,4 @@ public class BlockRenderer extends AbstractRenderer {
         if (occupiedArea.getBBox() == null)
             occupiedArea.setBBox(area.getBBox().clone().moveDown(-area.getBBox().getHeight()).setHeight(0));
     }
-
-
 }

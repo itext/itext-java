@@ -65,8 +65,19 @@ public class Cell extends BlockElement<Cell> {
         this.row = row;
         this.col = col;
         colspan = Math.min(colspan, numberOfColumns - this.col);
+        setProperty(Property.ROW, row);
         setProperty(Property.ROWSPAN, rowspan);
         setProperty(Property.COLSPAN, colspan);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Cell{" +
+                "row=" + row +
+                ", col=" + col +
+                ", rowspan=" + rowspan +
+                ", colspan=" + colspan +
+                '}';
     }
 }

@@ -231,10 +231,11 @@ public class Table extends BlockElement<Table> {
                 break;
             }
         }
+
         childElements.add(cell);
         cell.updateCellIndexes(currentRow, currentColumn, columnWidths.length);
         // extend bottom grid of slots to fix rowspan
-        for (int i = 0; i < currentRow + cell.getRowspan() - rows.size(); i++) {
+        while (currentRow + cell.getRowspan() > rows.size()) {
             rows.add(new Cell[columnWidths.length]);
         }
         // set cell to all region include colspan and rowspan, except not-null cells.
