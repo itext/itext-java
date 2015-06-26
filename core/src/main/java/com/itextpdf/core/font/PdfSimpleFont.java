@@ -21,21 +21,23 @@ import java.io.IOException;
 import java.util.Map;
 
 
-abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
+public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     protected T fontProgram;
 
-    public PdfSimpleFont(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+    public PdfSimpleFont(PdfDocument document,PdfDictionary pdfDictionary) {
+        super(document, pdfDictionary);
     }
+
+    public PdfSimpleFont(PdfDocument document,PdfDictionary pdfDictionary,boolean isCopy) {
+        super(document, pdfDictionary,isCopy);
+    }
+
 
     public T getFontProgram() {
         return fontProgram;
     }
 
-    protected PdfSimpleFont(PdfDocument pdfDocument) {
-        super(pdfDocument);
-    }
 
     protected void setFontProgram(T fontProgram) {
         this.fontProgram = fontProgram;

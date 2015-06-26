@@ -1,40 +1,41 @@
 package com.itextpdf.canvas.font;
 
-
-import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.AdobeGlyphList;
-import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.basics.font.Type3Font;
+import com.itextpdf.core.font.PdfSimpleFont;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
-public class PdfType3Font extends PdfFont {
+public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     private boolean[] usedSlot = new boolean[256];
 
-    private IntHashtable widths = new IntHashtable();
 
     private HashMap<Integer, Type3Glyph> charGlyphs = new HashMap<Integer, Type3Glyph>();
 
-    private float wx;
 
-    private float llx = Float.NaN;
-
-    private float lly;
-
-    private float urx;
-
-    private float ury;
 
     private boolean isColor = false;
 
     /**
      * array of six numbers specifying the font matrix, mapping glyph space to text space
      */
-    private double[] fontMatrix = {0.001, 0, 0, 0.001, 0, 0};
+
+
     PdfArray differences = new PdfArray();
 
     /**
@@ -43,8 +44,9 @@ public class PdfType3Font extends PdfFont {
      * @param pdfDocument pdfDocument and only images as masks can be used
      */
     public PdfType3Font(PdfDocument pdfDocument, boolean isColor) {
-        super(pdfDocument);
+        super(pdfDocument,new PdfDictionary());
         this.isColor = isColor;
+        fontProgram = new Type3Font();
     }
 
     /**
@@ -53,10 +55,9 @@ public class PdfType3Font extends PdfFont {
      * @param pdfDocument pdfDocument and only images as masks can be used
      */
     public PdfType3Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) {
-        super(pdfDocument);
-        this.fontDictionary = fontDictionary;
-        this.isCopy = true;
-        checkFontDictionary(PdfName.Type3);
+        super(pdfDocument,fontDictionary,true);
+        fontProgram = new Type3Font();
+        checkFontDictionary(fontDictionary,PdfName.Type3);
         init();
     }
 
@@ -66,68 +67,6 @@ public class PdfType3Font extends PdfFont {
 
     public HashMap<Integer, Type3Glyph> getCharGlyphs() {
         return charGlyphs;
-    }
-
-    public float getLlx() {
-        return llx;
-    }
-
-    public void setLlx(float llx) {
-        this.llx = llx;
-    }
-
-    public float getLly() {
-        return lly;
-    }
-
-    public void setLly(float lly) {
-        this.lly = lly;
-    }
-
-    public float getUrx() {
-        return urx;
-    }
-
-    public void setUrx(float urx) {
-        this.urx = urx;
-    }
-
-    public float getUry() {
-        return ury;
-    }
-
-    public void setUry(float ury) {
-        this.ury = ury;
-    }
-
-    public float getWx() {
-        return wx;
-    }
-
-    public void setWx(float wx) {
-        this.wx = wx;
-    }
-
-
-    /**
-     * Defines a List glyphs, must set this.wx, this.llx, this.lly, this.urx, this.ury parameters
-     *
-     * @param charArray the array of characters to match this glyph.
-     * @return glyphs array
-     */
-    public List<Type3Glyph> createGlyphs(char charArray[]) {
-        if (charArray == null || charArray.length == 0) {
-            return Collections.emptyList();
-        }
-        List<Type3Glyph> listGlyph = new ArrayList<Type3Glyph>();
-        for (char c : charArray) {
-            listGlyph.add(createGlyph(c, this.wx, this.llx, this.lly, this.urx, this.ury));
-        }
-        return listGlyph;
-    }
-
-    public Type3Glyph createGlyph(char c) {
-        return createGlyph(c, this.wx, this.llx, this.lly, this.urx, this.ury);
     }
 
     /**
@@ -144,7 +83,7 @@ public class PdfType3Font extends PdfFont {
      * @param ury the Y upper right corner of the glyph bounding box. If the <CODE>colorize</CODE> option is
      * @return a content where the glyph can be defined
      */
-    public Type3Glyph createGlyph(char c, float wx, float llx, float lly, float urx, float ury) {
+    public Type3Glyph createGlyph(char c, int wx, int llx, int lly, int urx, int ury) {
         usedSlot[c] = true;
         Integer ck = Integer.valueOf(c);
         Type3Glyph glyph = charGlyphs.get(ck);
@@ -152,20 +91,23 @@ public class PdfType3Font extends PdfFont {
         if (glyph != null) {
             return glyph;
         }
-        widths.put(c, (int) wx);
+
         if (!isColor) {
-            if (Float.isNaN(this.llx)) {
-                this.llx = llx;
-                this.lly = lly;
-                this.urx = urx;
-                this.ury = ury;
+            if (fontProgram.getWidthsTable().size()==0) {
+                fontProgram.setLlx(llx);
+                fontProgram.setLly(lly);
+                fontProgram.setUrx(urx);
+                fontProgram.setUry(ury);
             } else {
-                this.llx = Math.min(this.llx, llx);
-                this.lly = Math.min(this.lly, lly);
-                this.urx = Math.max(this.urx, urx);
-                this.ury = Math.max(this.ury, ury);
+                fontProgram.setLlx(Math.min(fontProgram.getLlx(), llx));
+                fontProgram.setLly(Math.min(fontProgram.getLly(), lly));
+                fontProgram.setUrx(Math.max(fontProgram.getUrx(), urx));
+                fontProgram.setUry(Math.max(fontProgram.getUry(), ury));
             }
         }
+
+        fontProgram.getWidthsTable().put(c, (int) wx);
+
 
         glyph = new Type3Glyph(getDocument());
         glyph.writeMetrics(wx, llx, lly, urx, ury, isColor);
@@ -182,28 +124,18 @@ public class PdfType3Font extends PdfFont {
         return glyph;
     }
 
-    public double[] getFontMatrix() {
-        return fontMatrix;
-    }
 
-    public void setFontMatrix(double[] fontMatrix) {
-        this.fontMatrix = fontMatrix;
-    }
 
 
     @Override
-    public float getWidth(int char1) {
-        return widths.get(char1);
+    public float getWidth(int c) {
+        return getFontProgram().getWidth(c);
     }
 
 
     @Override
     public float getWidth(String text) {
-        char[] c = text.toCharArray();
-        int total = 0;
-        for (int k = 0; k < c.length; ++k)
-            total += getWidth(c[k]);
-        return total;
+        return getFontProgram().getWidth(text);
     }
 
     @Override
@@ -257,7 +189,7 @@ public class PdfType3Font extends PdfFont {
         int w = 0;
         for (int u = firstChar; u <= lastChar; u++, w++) {
             if (usedSlot[u]) {
-                wd[w] = widths.get(u);
+                wd[w] = fontProgram.getWidthsTable().get(u);
             }
         }
 
@@ -273,9 +205,17 @@ public class PdfType3Font extends PdfFont {
     }
 
 
+    @Override
+    protected Type3Font initializeTypeFontForCopy(String encodingName) throws IOException {
+        return new Type3Font();
+    }
 
+    @Override
+    protected Type3Font initializeTypeFont(String fontName, String encodingName) throws IOException {
+        return new Type3Font();
+    }
 
-    private void init() {
+    protected void init() {
         Rectangle fontBBoxRec = fontDictionary.getAsArray(PdfName.FontBBox).toRectangle();
         PdfDictionary charProcsDic = fontDictionary.getAsDictionary(PdfName.CharProcs);
         PdfArray fontMatrixArray = fontDictionary.getAsArray(PdfName.FontMatrix);
@@ -283,19 +223,19 @@ public class PdfType3Font extends PdfFont {
         if (differences == null) {
             differences = new PdfArray();
         }
-        this.llx = fontBBoxRec.getX();
-        this.lly = fontBBoxRec.getY();
-        this.urx = fontBBoxRec.getWidth();
-        this.ury = fontBBoxRec.getHeight();
+        fontProgram.setLlx((int) fontBBoxRec.getX());
+        fontProgram.setLly((int) fontBBoxRec.getY());
+        fontProgram.setUrx((int) fontBBoxRec.getWidth());
+        fontProgram.setUry((int) fontBBoxRec.getHeight());
         int width[] = getWidths();
-
+        double[] fontMatrix = new double[6];
         for (int i = 0; i < fontMatrixArray.size(); i++) {
             fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
         }
 
         for (int i = 0; i < width.length; i++) {
             if (width[i] != 0) {
-                widths.put(i, width[i]);
+                fontProgram.getWidthsTable().put(i, width[i]);
                 usedSlot[i] = true;
             }
         }
@@ -317,10 +257,10 @@ public class PdfType3Font extends PdfFont {
         if (isColor) {
             getPdfObject().put(PdfName.FontBBox, new PdfArray(new Rectangle(0, 0, 0, 0)));
         } else {
-            getPdfObject().put(PdfName.FontBBox, new PdfArray(new Rectangle(this.llx, this.lly, this.urx, this.ury)));
+            getPdfObject().put(PdfName.FontBBox, new PdfArray(new Rectangle(fontProgram.getLlx(), fontProgram.getLly(), fontProgram.getUrx(), fontProgram.getUry())));
         }
 
-        getPdfObject().put(PdfName.FontMatrix, new PdfArray(fontMatrix));
+        getPdfObject().put(PdfName.FontMatrix, new PdfArray(fontProgram.getFontMatrix()));
         getPdfObject().put(PdfName.CharProcs, charProcs);
         PdfDictionary encoding = new PdfDictionary();
         encoding.put(PdfName.Type, PdfName.Encoding);
@@ -329,9 +269,26 @@ public class PdfType3Font extends PdfFont {
         getPdfObject().put(PdfName.FirstChar, new PdfNumber(firstChar));
         getPdfObject().put(PdfName.LastChar, new PdfNumber(lastChar));
         getPdfObject().put(PdfName.Widths, new PdfArray(wd));
-        /*if (pdfPage.getResources()!=null) {
-            getPdfObject().put(PdfName.Resources, pdfPage.getPdfObject());
-        }*/
+
+        if(fontDictionary != null) {
+            PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
+            if (toUnicode != null) {
+                if (toUnicode instanceof PdfStream) {
+                    PdfStream newStream = ((PdfStream) toUnicode).copy(getDocument());
+                    getPdfObject().put(PdfName.ToUnicode, newStream);
+                    newStream.flush();
+                }
+            }
+
+            PdfDictionary fromDescriptorDictionary = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
+            if (fromDescriptorDictionary != null) {
+                PdfDictionary toDescriptorDictionary = getNewFontDescriptor(fromDescriptorDictionary);
+                getPdfObject().put(PdfName.FontDescriptor, toDescriptorDictionary);
+                toDescriptorDictionary.flush();
+            }
+        }
+
+
     }
 
     private int[] getWidths() {

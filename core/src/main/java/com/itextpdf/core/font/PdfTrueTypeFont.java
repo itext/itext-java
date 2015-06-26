@@ -32,7 +32,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     private byte[] shortTag = new byte[256];
 
     public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf, boolean embedded) {
-        super(new PdfDictionary(), pdfDocument);
+        super(pdfDocument,new PdfDictionary());
         setFontProgram(ttf);
         this.embedded = embedded;
         if (embedded && !ttf.allowEmbedding()) {
@@ -47,10 +47,8 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
 
     public PdfTrueTypeFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        super(new PdfDictionary(), pdfDocument);
-        this.fontDictionary = fontDictionary;
-        isCopy = true;
-        checkTrueTypeFontDictionary();
+        super(pdfDocument,fontDictionary,true);
+        checkTrueTypeFontDictionary(fontDictionary);
         init();
     }
 

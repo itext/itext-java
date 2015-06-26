@@ -41,15 +41,13 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
 
     public PdfType0Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        super(new PdfDictionary(), pdfDocument);
-        this.fontDictionary = fontDictionary;
-        isCopy = true;
-        checkFontDictionary(PdfName.Type0);
+        super(pdfDocument,fontDictionary,true);
+        checkFontDictionary(fontDictionary,PdfName.Type0);
         init();
     }
 
     public PdfType0Font(PdfDocument document, TrueTypeFont ttf, String cmap) {
-        super(document);
+        super(document,new PdfDictionary());
         if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
             throw new PdfException("only.identity.cmaps.supports.with.truetype");
         }
@@ -79,7 +77,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     // Or not? Possible it will be convenient construct PdfType0Font based on custom CidFont.
     // There is no typography features in CJK fonts.
     public PdfType0Font(PdfDocument document, CidFont font, String cmap) {
-        super(document);
+        super(document,new PdfDictionary());
         if (!CidFontProperties.isCidFont(font.getFontName(), cmap)) {
             throw new PdfException("font.1.with.2.encoding.is.not.a.cjk.font").setMessageParams(font.getFontName(), cmap);
         }

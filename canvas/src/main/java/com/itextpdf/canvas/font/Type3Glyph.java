@@ -11,6 +11,7 @@ import com.itextpdf.core.pdf.xobject.PdfXObject;
  * The content where Type3 glyphs are written to.
  */
 public class Type3Glyph extends PdfCanvas {
+
     static final private String d0Str = "d0\n";
     static final private String d1Str = "d1\n";
     static final private byte[] d0 = OutputStream.getIsoBytes(d0Str);

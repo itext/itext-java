@@ -7,6 +7,7 @@ import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.canvas.font.PdfType3Font;
 import com.itextpdf.canvas.font.Type3Glyph;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfTrueTypeFont;
 import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.font.PdfType1Font;
@@ -27,6 +28,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class PdfFontTest {
     static final public int PageCount = 1;
@@ -566,11 +570,14 @@ public class PdfFontTest {
         String inputFileName = sourceFolder + "type3Font.pdf";
         String outputFileName = destinationFolder + "new_type3Font.pdf";
         String cmpOutputFileName = sourceFolder + "cmp_new_type3Font.pdf";
+
         PdfReader reader = new PdfReader(inputFileName);
         PdfWriter pdfWriter = new PdfWriter(new FileOutputStream(outputFileName));
         pdfWriter.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument inputPdfDoc = new PdfDocument(reader);
         PdfDocument outputPdfDoc = new PdfDocument(pdfWriter);
+
+
 
         outputPdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
@@ -597,7 +604,7 @@ public class PdfFontTest {
 
         Assert.assertEquals(6, pdfType3Font.getCharGlyphs().size());
 
-        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
+       Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -649,6 +656,8 @@ public class PdfFontTest {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1_new.pdf";
 
+
+
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
 
@@ -686,6 +695,7 @@ public class PdfFontTest {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont2.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeFont2_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2_new.pdf";
+
 
 
         PdfReader reader1 = new PdfReader(inputFileName1);
@@ -838,4 +848,6 @@ public class PdfFontTest {
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
+
+
 }

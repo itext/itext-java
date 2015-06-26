@@ -25,10 +25,8 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
 
     public PdfType1Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        super(new PdfDictionary(), pdfDocument);
-        this.fontDictionary = fontDictionary;
-        isCopy = true;
-        checkFontDictionary(PdfName.Type1);
+        super(pdfDocument,fontDictionary,true);
+        checkFontDictionary(fontDictionary,PdfName.Type1);
         init();
     }
 
@@ -37,7 +35,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     }
 
     public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, boolean embedded) {
-        super(new PdfDictionary(), pdfDocument);
+        super(pdfDocument,new PdfDictionary());
         setFontProgram(type1Font);
         this.embedded = embedded;
     }

@@ -35,18 +35,34 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected boolean subset = true;
     protected ArrayList<int[]> subsetRanges;
 
-    public PdfFont(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+    public PdfFont(PdfDocument pdfDocument, PdfDictionary pdfObject) {
         super(pdfObject, pdfDocument);
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
-    protected PdfFont(PdfDocument pdfDocument) {
-        this(new PdfDictionary(), pdfDocument);
+    protected PdfFont(PdfDocument document, PdfDictionary pdfDictionary, boolean isCopy){
+        super(new PdfDictionary(), document);
         getPdfObject().put(PdfName.Type, PdfName.Font);
+        this.fontDictionary = pdfDictionary;
+        this.isCopy = isCopy;
     }
+
+
 
     public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws IOException {
         return new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, ""));
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
+        if(checkFontDictionary(fontDictionary,PdfName.Type1,false)){
+           return new PdfType1Font(pdfDocument,fontDictionary);
+        }else if(checkFontDictionary(fontDictionary,PdfName.Type0,false)){
+           return new PdfType0Font(pdfDocument,fontDictionary);
+        }else if(checkFontDictionary(fontDictionary, PdfName.TrueType, false)){
+           return new PdfTrueTypeFont(pdfDocument,fontDictionary);
+        }else{
+           throw new PdfException(PdfException.DictionaryNotContainFontData);
+        }
     }
 
 
@@ -127,21 +143,40 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public PdfFont copy(PdfDocument document) {
-        return new PdfFont((PdfDictionary) getPdfObject().copy(document), document);
+        return new PdfFont(document,(PdfDictionary) getPdfObject().copy(document));
     }
 
-    protected void checkFontDictionary(PdfName fontType) {
-        if (this.fontDictionary == null || this.fontDictionary.get(PdfName.Subtype) == null
-                || !this.fontDictionary.get(PdfName.Subtype).equals(fontType)) {
-            throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(fontType.getValue());
+
+
+    protected static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType,boolean isException) {
+        if (fontDic == null || fontDic.get(PdfName.Subtype) == null
+                || !fontDic.get(PdfName.Subtype).equals(fontType)) {
+            if(isException) {
+                throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(fontType.getValue());
+            }
+            return false;
         }
+        return true;
     }
 
-    protected void checkTrueTypeFontDictionary() {
-        if (this.fontDictionary == null || this.fontDictionary.get(PdfName.Subtype) == null
-                || !(this.fontDictionary.get(PdfName.Subtype).equals(PdfName.TrueType) || this.fontDictionary.get(PdfName.Subtype).equals(PdfName.Type1))) {
-            throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
+    protected  boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType) {
+        return checkFontDictionary(fontDic,fontType,true);
+    }
+
+
+    protected  boolean checkTrueTypeFontDictionary(PdfDictionary fontDic) {
+        return  checkTrueTypeFontDictionary(fontDic,true);
+    }
+
+    protected  boolean checkTrueTypeFontDictionary(PdfDictionary fontDic,boolean isException) {
+        if (fontDic == null || fontDic.get(PdfName.Subtype) == null
+                || !(fontDic.get(PdfName.Subtype).equals(PdfName.TrueType) || fontDic.get(PdfName.Subtype).equals(PdfName.Type1))) {
+            if(isException) {
+                throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
+            }
+            return false;
         }
+        return true;
     }
 
     protected boolean isSymbolic() {
@@ -159,13 +194,16 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         if (firstObj != null && lastObj != null && widths != null) {
             int first = firstObj.getIntValue();
             int nSize = first + widths.size();
-            int[] tmp = new int[nSize];
-            System.arraycopy(wd, 0, tmp, 0, first);
-            wd = tmp;
+            if (wd.length < nSize) {
+                int[] tmp = new int[nSize];
+                System.arraycopy(wd, 0, tmp, 0, first);
+                wd = tmp;
+            }
             for (int k = 0; k < widths.size(); ++k) {
                 wd[first + k] = widths.getAsNumber(k).getIntValue();
             }
         }
+
         return wd;
 
     }

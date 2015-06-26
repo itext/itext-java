@@ -108,7 +108,7 @@ public class PdfGraphicsState {
             if (this.font != null && this.font.getPdfObject() == fontDictionary) {
 
             } else {
-                this.font = new PdfFont(fontDictionary, extGState.getDocument());
+                this.font = new PdfFont(extGState.getDocument(),fontDictionary);
             }
             Float fontSize = font.getAsFloat(1);
             if (fontSize != null)
