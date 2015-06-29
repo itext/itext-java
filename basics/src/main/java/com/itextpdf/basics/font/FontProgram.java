@@ -62,6 +62,10 @@ public abstract class FontProgram {
      */
     protected String encodingScheme = "FontSpecific";
 
+    public float getFontDescriptor(int key, float size){
+        return 0;
+    }
+
     public String getFontName() {
         return fontName;
     }
