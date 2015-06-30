@@ -9,10 +9,8 @@ import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.io.IOException;
+import java.util.*;
 
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
@@ -28,7 +26,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     private Map<PdfObject, PdfName> resourceToName = new HashMap<PdfObject, PdfName>();
     private Map<PdfName, Map<PdfName, PdfObject>> nameToResource = new HashMap<PdfName, Map<PdfName, PdfObject>>();
-
+    private List<PdfFont> listFonts = new ArrayList<PdfFont>();
     /** The font value counter for the fonts in the document. */
     private ResourceNumber fontNumber = new ResourceNumber();
     private ResourceNumber imageNumber = new ResourceNumber();
@@ -44,12 +42,15 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         buildResources(pdfObject);
     }
 
+
+
     public PdfResources() {
         this(new PdfDictionary());
     }
 
     public PdfName addFont(PdfFont font) {
         font.getDocument().getDocumentFonts().add(font);
+        listFonts.add(font);
         return addResource(font, PdfName.Font, F, fontNumber);
     }
 
@@ -162,6 +163,22 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public Map<PdfName,PdfObject> getResource(PdfName pdfName){
         return nameToResource.get(pdfName);
+    }
+
+    public List<PdfFont> getFonts(boolean updateFonts) throws IOException {
+        if(!updateFonts){
+            return listFonts;
+        }
+        listFonts.clear();
+        Map<PdfName,PdfObject> map = getResource(PdfName.Font);
+        for(Map.Entry<PdfName,PdfObject> entry : map.entrySet()){
+            if(entry.getValue().isIndirectReference()) {
+                listFonts.add(PdfFont.createFont(getDocument(),(PdfDictionary) ((PdfIndirectReference) entry.getValue()).getRefersTo()));
+            } else if(entry.getValue().isDictionary()) {
+                listFonts.add(PdfFont.createFont(getDocument(), (PdfDictionary) entry.getValue()));
+            }
+        }
+        return listFonts;
     }
 
     protected PdfName addResource(PdfObjectWrapper resource, PdfName resType, String resPrefix, ResourceNumber resNumber) {
