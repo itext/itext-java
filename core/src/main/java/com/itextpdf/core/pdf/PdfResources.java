@@ -177,7 +177,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         }
         Map<PdfName, PdfObject> xMap = getResource(PdfName.XObject);
         if (xMap != null && !xMap.isEmpty()) {
-               callXObjectFont(xMap,new HashSet<PdfDictionary>());
+               callXObjectFont(xMap.entrySet(),new HashSet<PdfDictionary>());
         }
         return fontsMap.values();
     }
@@ -248,8 +248,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void addFontFromXObject(Map<PdfName, PdfObject> xMap, HashSet<PdfDictionary> visitedResources) throws IOException {
-        PdfDictionary xObject = new PdfDictionary(xMap);
+    private void addFontFromXObject(Set<Map.Entry<PdfName, PdfObject>> entrySet, HashSet<PdfDictionary> visitedResources) throws IOException {
+        PdfDictionary xObject = new PdfDictionary(entrySet);
         PdfDictionary resources = xObject.getAsDictionary(PdfName.Resources);
         if (resources == null)
             return;
@@ -261,7 +261,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary xobj = resources.getAsDictionary(PdfName.XObject);
         if (xobj != null) {
             if (visitedResources.add(xobj)) {
-                callXObjectFont(xobj.getMap(),visitedResources);
+                callXObjectFont(xobj.entrySet(),visitedResources);
                 visitedResources.remove(xobj);
             } else {
                 throw new PdfException(PdfException.IllegalResourceTree);
@@ -269,11 +269,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void callXObjectFont(Map<PdfName, PdfObject> xMap, HashSet<PdfDictionary> visitedResources) throws IOException {
-        for(Map.Entry<PdfName, PdfObject> entry : xMap.entrySet()){
+    private void callXObjectFont(Set<Map.Entry<PdfName, PdfObject>> entrySet, HashSet<PdfDictionary> visitedResources) throws IOException {
+        for(Map.Entry<PdfName, PdfObject> entry : entrySet){
             if(entry.getValue().isIndirectReference()){
                 if(((PdfIndirectReference)entry.getValue()).getRefersTo().isStream()){
-                    addFontFromXObject(((PdfStream) ((PdfIndirectReference) entry.getValue()).getRefersTo()).getMap(), visitedResources);
+                    addFontFromXObject(((PdfStream) ((PdfIndirectReference) entry.getValue()).getRefersTo()).entrySet(), visitedResources);
                 }
             }
         }
