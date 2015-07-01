@@ -138,6 +138,10 @@ public class PdfDictionary extends PdfObject {
         return map.entrySet();
     }
 
+    public Map<PdfName, PdfObject> getMap(){
+        return map;
+    }
+
     @Override
     public byte getType() {
         return Dictionary;
