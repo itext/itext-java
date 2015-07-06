@@ -37,7 +37,7 @@ class Type1Parser {
         InputStream is = null;
         isBuiltInFont = false;
         RandomAccessSourceFactory sourceFactory = new RandomAccessSourceFactory();
-        if (FontConstants.builtinFonts14.contains(name)) {
+        if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
             isBuiltInFont = true;
             byte buf[] = new byte[1024];
             try {

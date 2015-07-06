@@ -8,70 +8,69 @@ import com.itextpdf.basics.font.cmap.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ *
+ */
 public class FontCache {
 
     /**
      * The path to the font resources.
      */
-    public static final String RESOURCE_PATH_CMAP = FontConstants.RESOURCE_PATH + "cmap/";
+    public static final String CMAP_RESOURCE_PATH = FontConstants.RESOURCE_PATH + "cmap/";
 
-    private static final HashMap<String, HashMap<String, Object>> allFonts = new HashMap<String, HashMap<String, Object>>();
-    private static final HashMap<String, Set<String>> registryNames = new HashMap<String, Set<String>>();
+    private static final Map<String, Map<String, Object>> allFonts = new HashMap<String, Map<String, Object>>();
+    private static final Map<String, Set<String>> registryNames = new HashMap<String, Set<String>>();
+
+    private static final String CJK_REGISTRY_FILENAME = "cjk_registry.properties";
+    private static final String FONTS_PROP = "fonts";
+    private static final String REGISTRY_PROP = "Registry";
+    private static final String W_PROP = "W";
+    private static final String W2_PROP = "W2";
+
+    private static ConcurrentHashMap<String, FontProgram> fontCache = new ConcurrentHashMap<String, FontProgram>();
 
     static {
         try {
             loadRegistry();
-            for (String font : registryNames.get("fonts")) {
+
+            for (String font : registryNames.get(FONTS_PROP)) {
                 allFonts.put(font, readFontProperties(font));
             }
         } catch (Exception ignored) {
+            // TODO: add logger (?)
         }
     }
 
     /**
-     * Find and constructs a {@code FontProgram}-object.
-     *
-     * @param embedded true if the font is to be embedded in the PDF
-     * @return the Font constructed based on the parameters
-     * @param fontname the name of the font
-     * @param encoding the encoding of the font
-     * @param style the style of this font
-     */
-
-    public static FontProgram getFont(String fontname, String encoding, boolean embedded, int style) {
-        //TODO FontProgram has no embedded property, but this parameter is useful to avoid Font,
-        //TODO which can't be embedded due to license.
-        return null;
-    }
-
-
-    /**
-     * Checks if its one of the predefined CID fonts.
-     *
+     * Checks if the font with the given name and encoding is one
+     * of the predefined CID fonts.
      * @param fontName the font name.
-     * @param enc      the encoding.
+     * @param cmap the encoding.
      * @return {@code true} if it is CJKFont.
      */
-    public static boolean isCidFont(String fontName, String enc) {
-        if (!registryNames.containsKey("fonts")) {
+    protected static boolean isCidFont(String fontName, String cmap) {
+        if (!registryNames.containsKey(FONTS_PROP)) {
             return false;
-        } else if (!registryNames.get("fonts").contains(fontName)) {
+        } else if (!registryNames.get(FONTS_PROP).contains(fontName)) {
             return false;
-        } else if (enc.equals(PdfEncodings.IDENTITY_H) || enc.equals(PdfEncodings.IDENTITY_V)) {
+        } else if (cmap.equals(PdfEncodings.IDENTITY_H) || cmap.equals(PdfEncodings.IDENTITY_V)) {
             return true;
         }
-        String registry = (String) allFonts.get(fontName).get("Registry");
-        Set<String> encodings = registryNames.get(registry);
-        return encodings != null && encodings.contains(enc);
+
+        String registry = (String) allFonts.get(fontName).get(REGISTRY_PROP);
+        Set<String> cmaps = registryNames.get(registry);
+
+        return cmaps != null && cmaps.contains(cmap);
     }
 
     public static String getCompatibleCidFont(String cmap) {
         for (Map.Entry<String, Set<String>> e : registryNames.entrySet()) {
             if (e.getValue().contains(cmap)) {
                 String registry = e.getKey();
-                for (Map.Entry<String, HashMap<String, Object>> e1 : allFonts.entrySet()) {
-                    if (registry.equals(e1.getValue().get("Registry")))
+                for (Map.Entry<String, Map<String, Object>> e1 : allFonts.entrySet()) {
+                    if (registry.equals(e1.getValue().get(REGISTRY_PROP)))
                         return e1.getKey();
                 }
             }
@@ -79,11 +78,11 @@ public class FontCache {
         return null;
     }
 
-    public static HashMap<String, HashMap<String, Object>> getAllFonts() {
+    public static Map<String, Map<String, Object>> getAllFonts() {
         return allFonts;
     }
 
-    public static HashMap<String, Set<String>> getRegistryNames() {
+    public static Map<String, Set<String>> getRegistryNames() {
         return registryNames;
     }
 
@@ -107,55 +106,71 @@ public class FontCache {
         return parseCmap(cmap, cidByte);
     }
 
-    public static FontProgram getFont(String fontName) {
-        return null;
+    public static FontProgram getFont(String fontName, String encoding) {
+        String key = getFontCacheKey(fontName, encoding);
+        return fontCache.get(key);
+    }
+
+    public static void saveFont(FontProgram font) {
+        String key = getFontCacheKey(font.getFontName(), font.getEncoding().getBaseEncoding());
+        fontCache.put(key, font);
     }
 
     private static void loadRegistry() throws IOException {
-        InputStream is = Utilities.getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
-        Properties p = new Properties();
-        p.load(is);
-        is.close();
-        for (Object key : p.keySet()) {
-            String value = p.getProperty((String) key);
-            String[] sp = value.split(" ");
-            Set<String> hs = new HashSet<String>();
-            for (String s : sp) {
-                if (s.length() > 0) {
-                    hs.add(s);
+        InputStream is = Utilities.getResourceStream(CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
+
+        try {
+            Properties p = new Properties();
+            p.load(is);
+
+            for (Map.Entry<Object, Object> entry : p.entrySet()) {
+                String value = (String) entry.getValue();
+                String[] splitValue = value.split(" ");
+                Set<String> set = new HashSet<String>();
+
+                for (String s : splitValue) {
+                    if (!s.isEmpty()) {
+                        set.add(s);
+                    }
                 }
+
+                registryNames.put((String) entry.getKey(), set);
             }
-            registryNames.put((String) key, hs);
+        } finally {
+            if (is != null) {
+                is.close();
+            }
         }
     }
 
-    private static HashMap<String, Object> readFontProperties(String name) throws IOException {
-        name += ".properties";
-        InputStream is = Utilities.getResourceStream(RESOURCE_PATH_CMAP + name);
-        Properties p = new Properties();
-        p.load(is);
-        is.close();
-        IntHashtable W = createMetric(p.getProperty("W"));
-        p.remove("W");
-        IntHashtable W2 = createMetric(p.getProperty("W2"));
-        p.remove("W2");
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        for (Enumeration<Object> e = p.keys(); e.hasMoreElements(); ) {
-            Object obj = e.nextElement();
-            map.put((String) obj, p.getProperty((String) obj));
+    private static Map<String, Object> readFontProperties(String name) throws IOException {
+        InputStream is = Utilities.getResourceStream(CMAP_RESOURCE_PATH + name + ".properties");
+
+        try {
+            Properties p = new Properties();
+            p.load(is);
+
+            Map<String, Object> fontProperties = new HashMap<String, Object>((Map) p);
+            fontProperties.put(W_PROP, createMetric((String) fontProperties.get(W_PROP)));
+            fontProperties.put(W2_PROP, createMetric((String) fontProperties.get(W2_PROP)));
+
+            return fontProperties;
+        } finally {
+            if (is != null) {
+                is.close();
+            }
         }
-        map.put("W", W);
-        map.put("W2", W2);
-        return map;
     }
 
     private static IntHashtable createMetric(String s) {
         IntHashtable h = new IntHashtable();
         StringTokenizer tk = new StringTokenizer(s);
+
         while (tk.hasMoreTokens()) {
             int n1 = Integer.parseInt(tk.nextToken());
             h.put(n1, Integer.parseInt(tk.nextToken()));
         }
+
         return h;
     }
 
@@ -166,5 +181,9 @@ public class FontCache {
             throw new PdfException(PdfException.IoException, e);
         }
         return cmap;
+    }
+
+    private static String getFontCacheKey(String fontName, String encoding) {
+        return fontName + "\n" + encoding;
     }
 }

@@ -62,6 +62,17 @@ public class CidFont extends FontProgram {
         throw new IllegalStateException();
     }
 
+    /**
+     * Checks if the font with the given name and encoding is one
+     * of the predefined CID fonts.
+     * @param fontName the font name.
+     * @param cmap the encoding.
+     * @return {@code true} if it is CJKFont.
+     */
+    public static boolean isCidFont(String fontName, String cmap) {
+        return FontCache.isCidFont(fontName, cmap);
+    }
+
     private void initializeCidFontNameAndStyle(String fontName) {
         String nameBase = getBaseName(fontName);
         if (nameBase.length() < fontName.length()) {

@@ -126,7 +126,7 @@ public class TrueTypeFont extends FontProgram {
     }
 
 
-    public boolean allowEmbedding() {
+    public boolean allowEmbedding() { // TODO: put it to FontProgram
         return os_2.fsType != 2;
     }
 

@@ -56,7 +56,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         fontProgram.setFontName(baseFont.getValue());
         if (encodingObj == null) {
 
-            if (FontConstants.builtinFonts14.contains(baseFont.getValue())) {
+            if (FontConstants.BUILTIN_FONTS_14.contains(baseFont.getValue())) {
                 fillEncoding(baseFont);
             } else {
                 fillEncoding(null);
@@ -110,7 +110,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             fontProgram.setWidths(getFillWidths(widths, firstChar, lastChar));
         }
 
-        if (FontConstants.builtinFonts14.contains(fontProgram.getFontName())) {
+        if (FontConstants.BUILTIN_FONTS_14.contains(fontProgram.getFontName())) {
             fontProgram = initializeTypeFont(fontProgram.getFontName(), fontProgram.getEncoding().getBaseEncoding());
         }
 

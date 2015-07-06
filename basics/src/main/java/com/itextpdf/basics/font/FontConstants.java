@@ -1,26 +1,27 @@
 package com.itextpdf.basics.font;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class FontConstants {
 
-    public static final HashSet<String> builtinFonts14 = new HashSet<String>();
+    public static final Set<String> BUILTIN_FONTS_14 = new HashSet<String>();
 
     static {
-        builtinFonts14.add(FontConstants.COURIER);
-        builtinFonts14.add(FontConstants.COURIER_BOLD);
-        builtinFonts14.add(FontConstants.COURIER_BOLDOBLIQUE);
-        builtinFonts14.add(FontConstants.COURIER_OBLIQUE);
-        builtinFonts14.add(FontConstants.HELVETICA);
-        builtinFonts14.add(FontConstants.HELVETICA_BOLD);
-        builtinFonts14.add(FontConstants.HELVETICA_BOLDOBLIQUE);
-        builtinFonts14.add(FontConstants.HELVETICA_OBLIQUE);
-        builtinFonts14.add(FontConstants.SYMBOL);
-        builtinFonts14.add(FontConstants.TIMES_ROMAN);
-        builtinFonts14.add(FontConstants.TIMES_BOLD);
-        builtinFonts14.add(FontConstants.TIMES_BOLDITALIC);
-        builtinFonts14.add(FontConstants.TIMES_ITALIC);
-        builtinFonts14.add(FontConstants.ZAPFDINGBATS);
+        BUILTIN_FONTS_14.add(FontConstants.COURIER);
+        BUILTIN_FONTS_14.add(FontConstants.COURIER_BOLD);
+        BUILTIN_FONTS_14.add(FontConstants.COURIER_BOLDOBLIQUE);
+        BUILTIN_FONTS_14.add(FontConstants.COURIER_OBLIQUE);
+        BUILTIN_FONTS_14.add(FontConstants.HELVETICA);
+        BUILTIN_FONTS_14.add(FontConstants.HELVETICA_BOLD);
+        BUILTIN_FONTS_14.add(FontConstants.HELVETICA_BOLDOBLIQUE);
+        BUILTIN_FONTS_14.add(FontConstants.HELVETICA_OBLIQUE);
+        BUILTIN_FONTS_14.add(FontConstants.SYMBOL);
+        BUILTIN_FONTS_14.add(FontConstants.TIMES_ROMAN);
+        BUILTIN_FONTS_14.add(FontConstants.TIMES_BOLD);
+        BUILTIN_FONTS_14.add(FontConstants.TIMES_BOLDITALIC);
+        BUILTIN_FONTS_14.add(FontConstants.TIMES_ITALIC);
+        BUILTIN_FONTS_14.add(FontConstants.ZAPFDINGBATS);
     }
 
     /**

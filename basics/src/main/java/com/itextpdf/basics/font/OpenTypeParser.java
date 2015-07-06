@@ -179,7 +179,7 @@ class OpenTypeParser {
 
     public OpenTypeParser(String name, byte[] ttf) throws IOException {
         String nameBase = FontProgram.getBaseName(name);
-        String ttcName = getTTCName(nameBase);
+        String ttcName = getTTCName(nameBase); // TODO: NullPointerException
         if (nameBase.length() < name.length()) {
             style = name.substring(nameBase.length());
         }
