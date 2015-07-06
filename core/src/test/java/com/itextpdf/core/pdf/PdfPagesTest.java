@@ -66,7 +66,7 @@ public class PdfPagesTest {
         int pageCount = 10000;
         int indexes[] = new int[pageCount];
         for (int i = 0; i < indexes.length; i++)
-            indexes[i] = i+1;
+            indexes[i] = i + 1;
 
         Random rnd = new Random();
         for (int i = indexes.length - 1; i > 0; i--) {
@@ -109,7 +109,7 @@ public class PdfPagesTest {
         int pageCount = 3000;
         int indexes[] = new int[pageCount];
         for (int i = 0; i < indexes.length; i++)
-            indexes[i] = i+1;
+            indexes[i] = i + 1;
 
         Random rnd = new Random();
         for (int i = indexes.length - 1; i > 0; i--) {
@@ -132,9 +132,9 @@ public class PdfPagesTest {
             for (int j = i + 1; j <= pageCount; j++) {
                 int j_page = pdfDoc.getPage(j).getPdfObject().getAsNumber(PageNum).getIntValue();
                 int i_page = pdfDoc.getPage(i).getPdfObject().getAsNumber(PageNum).getIntValue();
-                if (j_page < i_page){
+                if (j_page < i_page) {
                     PdfPage page = pdfDoc.removePage(j);
-                    pdfDoc.addPage(i+1, page);
+                    pdfDoc.addPage(i + 1, page);
                     page = pdfDoc.removePage(i);
                     pdfDoc.addPage(j, page);
                 }
@@ -233,20 +233,20 @@ public class PdfPagesTest {
         for (int i = 0; i < parents.size(); i++) {
             if (parents.get(i).getFrom() != from)
                 return i;
-            from = parents.get(i).getFrom()+parents.get(i).getCount();
+            from = parents.get(i).getFrom() + parents.get(i).getCount();
         }
         return -1;
     }
 
     @Test
     public void testInheritedResources() throws IOException {
-        String inputFileName1 = "d:/testPdf/veraPDF-A003-a-pass.pdf";
+        String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
-        PdfPage page =  inputPdfDoc1.getPage(1);
+        PdfPage page = inputPdfDoc1.getPage(1);
         List<PdfFont> list = page.getResources().getFonts(true);
-        Assert.assertEquals(1,list.size());
-        Assert.assertEquals("ASJKFO+Arial-BoldMT",list.get(0).getFontProgram().getFontName());
+        Assert.assertEquals(1, list.size());
+        Assert.assertEquals("ASJKFO+Arial-BoldMT", list.get(0).getFontProgram().getFontName());
     }
 
     @Test(expected = PdfException.class)
@@ -254,7 +254,7 @@ public class PdfPagesTest {
         String inputFileName1 = sourceFolder + "circularReferencesInResources.pdf";
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
-        PdfPage page =  inputPdfDoc1.getPage(1);
+        PdfPage page = inputPdfDoc1.getPage(1);
         List<PdfFont> list = page.getResources().getFonts(true);
     }
 
@@ -265,10 +265,10 @@ public class PdfPagesTest {
         String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
         PdfReader reader1 = new PdfReader(inputFileName1);
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder+"veraPDF-A003-a-pass_new.pdf");
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "veraPDF-A003-a-pass_new.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
-        PdfDocument pdfDoc = new PdfDocument(reader1,writer);
+        PdfDocument pdfDoc = new PdfDocument(reader1, writer);
         pdfDoc.getPage(1).getResources().getFonts(true);
         PdfFont f = PdfFont.createFont(pdfDoc, (PdfDictionary) pdfDoc.getPdfObject(6));
         pdfDoc.getPage(1).getResources().addFont(f);
@@ -276,7 +276,7 @@ public class PdfPagesTest {
         pdfDoc.getPage(1).flush();
         pdfDoc.close();
 
-        Assert.assertEquals(2,fontCount);
+        Assert.assertEquals(2, fontCount);
     }
 
 
