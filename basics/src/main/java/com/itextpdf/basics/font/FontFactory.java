@@ -205,7 +205,7 @@ public class FontFactory {
                 return fontFound;
             }
 
-            fontCache.saveFont(fontBuilt);
+            fontCache.saveFont(fontBuilt, name, encoding);
         }
 
         return fontBuilt;

@@ -111,8 +111,13 @@ public class FontCache {
         return fontCache.get(key);
     }
 
-    public static void saveFont(FontProgram font) {
-        String key = getFontCacheKey(font.getFontName(), font.getEncoding().getBaseEncoding());
+    public static void saveFont(FontProgram font, String fontName, String encoding) {
+        // for most of the fonts we can retrieve encoding from FontProgram, but
+        // for Cid there is no such possibility, since it is used in conjunction
+        // with cmap to produce Type0 font, so I added fontName and encoding parameters
+        // just for convenience.
+        // TODO: probably it's better to declare saveFont(FontProgram) and saveFont(CidFont, encoding or cmap) in the future
+        String key = getFontCacheKey(fontName, encoding);
         fontCache.put(key, font);
     }
 

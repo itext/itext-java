@@ -98,7 +98,7 @@ public class PdfFontTest {
                 setCreator(creator).
                 setTitle(title);
         byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "abserif4_5.ttf"));
-        TrueTypeFont abSerif = new TrueTypeFont("Aboriginal Serif", "Identity-H", ttf);
+        TrueTypeFont abSerif = new TrueTypeFont("Aboriginal Serif", com.itextpdf.basics.font.PdfEncodings.IDENTITY_H, ttf);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);

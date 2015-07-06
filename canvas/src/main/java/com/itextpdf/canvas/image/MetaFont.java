@@ -82,7 +82,7 @@ public class MetaFont extends MetaObject {
     public FontProgram getFont() {
         if (font != null)
             return font;
-        FontProgram ff2 = FontCache.getFont(faceName, "Cp1252", true, 10);
+        FontProgram ff2 = null; // TODO: there were FontCache.getFont method, which always returned null
         font = ff2;
         if (font != null)
             return font;
