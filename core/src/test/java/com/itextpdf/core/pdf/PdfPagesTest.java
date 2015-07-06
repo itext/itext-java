@@ -1,19 +1,19 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.font.PdfFont;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class PdfPagesTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfPagesTest/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfPagesTest/";
     static final PdfName PageNum = new PdfName("PageNum");
     static final com.itextpdf.text.pdf.PdfName PageNum5 = new com.itextpdf.text.pdf.PdfName("PageNum");
 
@@ -237,4 +237,47 @@ public class PdfPagesTest {
         }
         return -1;
     }
+
+    @Test
+    public void testInheritedResources() throws IOException {
+        String inputFileName1 = "d:/testPdf/veraPDF-A003-a-pass.pdf";
+        PdfReader reader1 = new PdfReader(inputFileName1);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+        PdfPage page =  inputPdfDoc1.getPage(1);
+        List<PdfFont> list = page.getResources().getFonts(true);
+        Assert.assertEquals(1,list.size());
+        Assert.assertEquals("ASJKFO+Arial-BoldMT",list.get(0).getFontProgram().getFontName());
+    }
+
+    @Test(expected = PdfException.class)
+    public void testCircularReferencesInResources() throws IOException {
+        String inputFileName1 = sourceFolder + "circularReferencesInResources.pdf";
+        PdfReader reader1 = new PdfReader(inputFileName1);
+        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+        PdfPage page =  inputPdfDoc1.getPage(1);
+        List<PdfFont> list = page.getResources().getFonts(true);
+    }
+
+    @Test
+    public void testInheritedResourcesUpdate() throws IOException {
+
+
+        String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
+        PdfReader reader1 = new PdfReader(inputFileName1);
+
+        FileOutputStream fos = new FileOutputStream(destinationFolder+"veraPDF-A003-a-pass_new.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(reader1,writer);
+        pdfDoc.getPage(1).getResources().getFonts(true);
+        PdfFont f = PdfFont.createFont(pdfDoc, (PdfDictionary) pdfDoc.getPdfObject(6));
+        pdfDoc.getPage(1).getResources().addFont(f);
+        int fontCount = pdfDoc.getPage(1).getResources().getFonts(false).size();
+        pdfDoc.getPage(1).flush();
+        pdfDoc.close();
+
+        Assert.assertEquals(2,fontCount);
+    }
+
+
 }

@@ -99,6 +99,10 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsArray(PdfName.Kids);
     }
 
+    public PdfPages getParent() {
+        return parent;
+    }
+
     public void incrementCount(){
         count.increment();
         setModified();
@@ -120,4 +124,6 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
             return -1;
         return 0;
     }
+
+
 }
