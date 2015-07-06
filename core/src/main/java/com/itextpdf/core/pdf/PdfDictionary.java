@@ -17,6 +17,12 @@ public class PdfDictionary extends PdfObject {
         this.map.putAll(map);
     }
 
+    public PdfDictionary(Set<Map.Entry<PdfName, PdfObject>> entrySet) {
+        for(Map.Entry<PdfName, PdfObject> entry : entrySet) {
+            this.map.put(entry.getKey(), entry.getValue());
+        }
+    }
+
     public PdfDictionary(PdfDictionary dictionary) {
         map.putAll(dictionary.map);
     }
@@ -137,6 +143,8 @@ public class PdfDictionary extends PdfObject {
     public Set<Map.Entry<PdfName, PdfObject>> entrySet() {
         return map.entrySet();
     }
+
+
 
     @Override
     public byte getType() {

@@ -9,10 +9,8 @@ import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.io.IOException;
+import java.util.*;
 
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
@@ -28,8 +26,10 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     private Map<PdfObject, PdfName> resourceToName = new HashMap<PdfObject, PdfName>();
     private Map<PdfName, Map<PdfName, PdfObject>> nameToResource = new HashMap<PdfName, Map<PdfName, PdfObject>>();
-
-    /** The font value counter for the fonts in the document. */
+    private Map<PdfIndirectReference, PdfFont> fontsMap = new HashMap<PdfIndirectReference, PdfFont>();
+    /**
+     * The font value counter for the fonts in the document.
+     */
     private ResourceNumber fontNumber = new ResourceNumber();
     private ResourceNumber imageNumber = new ResourceNumber();
     private ResourceNumber formNumber = new ResourceNumber();
@@ -44,12 +44,14 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         buildResources(pdfObject);
     }
 
+
     public PdfResources() {
         this(new PdfDictionary());
     }
 
     public PdfName addFont(PdfFont font) {
         font.getDocument().getDocumentFonts().add(font);
+        fontsMap.put(font.getPdfObject().getIndirectReference(), font);
         return addResource(font, PdfName.Font, F, fontNumber);
     }
 
@@ -160,9 +162,27 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet();
     }
 
-    public Map<PdfName,PdfObject> getResource(PdfName pdfName){
+    public Map<PdfName, PdfObject> getResource(PdfName pdfName) {
         return nameToResource.get(pdfName);
     }
+
+    public Collection<PdfFont> getFonts(boolean updateFonts) throws IOException {
+        if (!updateFonts) {
+            return fontsMap.values();
+        }
+        fontsMap.clear();
+        Map<PdfName, PdfObject> fMap = getResource(PdfName.Font);
+        if (fMap != null) {
+            addFont(fMap.entrySet());
+        }
+        Map<PdfName, PdfObject> xMap = getResource(PdfName.XObject);
+        if (xMap != null && !xMap.isEmpty()) {
+               callXObjectFont(xMap.entrySet(),new HashSet<PdfDictionary>());
+        }
+        return fontsMap.values();
+    }
+
+
 
     protected PdfName addResource(PdfObjectWrapper resource, PdfName resType, String resPrefix, ResourceNumber resNumber) {
         return addResource(resource.getPdfObject(), resType, resPrefix, resNumber);
@@ -214,6 +234,49 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         egsNumber = getAvailableNumber(names, Gs);
         propNumber = getAvailableNumber(names, Pr);
         csNumber = getAvailableNumber(names, Cs);
+    }
+
+    private void addFont(Set<Map.Entry<PdfName, PdfObject>> entrySet) throws IOException {
+        for (Map.Entry<PdfName, PdfObject> entry : entrySet) {
+            if (entry.getValue().isIndirectReference() && !fontsMap.containsKey(entry.getValue())) {
+                fontsMap.put((PdfIndirectReference) entry.getValue(),
+                        PdfFont.createFont(getDocument(), (PdfDictionary) ((PdfIndirectReference) entry.getValue()).getRefersTo()));
+            } else if (entry.getValue().isDictionary()) {
+                PdfFont font = PdfFont.createFont(getDocument(), (PdfDictionary) entry.getValue());
+                fontsMap.put(font.getPdfObject().getIndirectReference(), font);
+            }
+        }
+    }
+
+    private void addFontFromXObject(Set<Map.Entry<PdfName, PdfObject>> entrySet, HashSet<PdfDictionary> visitedResources) throws IOException {
+        PdfDictionary xObject = new PdfDictionary(entrySet);
+        PdfDictionary resources = xObject.getAsDictionary(PdfName.Resources);
+        if (resources == null)
+            return;
+        PdfDictionary font = resources.getAsDictionary(PdfName.Font);
+
+        if (font != null) {
+            addFont(font.entrySet());
+        }
+        PdfDictionary xobj = resources.getAsDictionary(PdfName.XObject);
+        if (xobj != null) {
+            if (visitedResources.add(xobj)) {
+                callXObjectFont(xobj.entrySet(),visitedResources);
+                visitedResources.remove(xobj);
+            } else {
+                throw new PdfException(PdfException.IllegalResourceTree);
+            }
+        }
+    }
+
+    private void callXObjectFont(Set<Map.Entry<PdfName, PdfObject>> entrySet, HashSet<PdfDictionary> visitedResources) throws IOException {
+        for(Map.Entry<PdfName, PdfObject> entry : entrySet){
+            if(entry.getValue().isIndirectReference()){
+                if(((PdfIndirectReference)entry.getValue()).getRefersTo().isStream()){
+                    addFontFromXObject(((PdfStream) ((PdfIndirectReference) entry.getValue()).getRefersTo()).entrySet(), visitedResources);
+                }
+            }
+        }
     }
 
     private ResourceNumber getAvailableNumber(Set<PdfName> names, final String resPrefix) {

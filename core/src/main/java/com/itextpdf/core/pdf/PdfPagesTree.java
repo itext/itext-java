@@ -222,6 +222,12 @@ class PdfPagesTree {
         return root;
     }
 
+    protected PdfPages findPageParent(PdfPage pdfPage) {
+        int pageNum = getPageNum(pdfPage) - 1;
+        int parentIndex = findPageParent(pageNum);
+        return parents.get(parentIndex);
+    }
+
     private void loadPage(int pageNum) {
         PdfDictionary targetPage = pageRefs.get(pageNum);
         if (targetPage != null)
