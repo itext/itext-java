@@ -83,6 +83,16 @@ public class Rectangle implements Cloneable {
         return this;
     }
 
+    public Rectangle incrementHeight(float extra) {
+        this.height += extra;
+        return this;
+    }
+
+    public Rectangle decrementHeight(float extra) {
+        this.height -= extra;
+        return this;
+    }
+
     public Rectangle moveDown(float move) {
         y -= move;
         return this;
