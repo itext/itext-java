@@ -210,6 +210,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             setPdfObject(new PdfDictionary(getPdfObject()));
             buildResources(getPdfObject());
             isModified = true;
+            readOnly = false;
         }
         if (nameToResource.containsKey(resType) && nameToResource.get(resType).containsKey(resName))
             return;
@@ -342,8 +343,4 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             return ++value;
         }
     }
-
-
-
-
 }

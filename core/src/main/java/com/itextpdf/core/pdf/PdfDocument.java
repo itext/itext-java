@@ -274,7 +274,6 @@ public class PdfDocument implements IEventDispatcher {
     public PdfPage addNewPage(PageSize pageSize) {
         PdfPage page = new PdfPage(this, pageSize);
         catalog.addPage(page);
-        page.parentPages = catalog.pageTree.findPageParent(page);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.InsertPage, page));
         return page;
     }
