@@ -211,7 +211,7 @@ public class Table extends BlockElement<Table> {
     public Table startNewRow() {
         currentColumn = 0;
         currentRow++;
-        if (currentRow >= rows.size() - 1) {
+        if (currentRow >= rows.size()) {
             rows.add(new Cell[columnWidths.length]);
         }
         return this;
