@@ -45,13 +45,8 @@ public class PdfFormFieldTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.setNeedAppearances(true);
-
         Rectangle rect = new Rectangle(210, 490, 150, 22);
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect);
-
-        field.setFieldName("TestField");
-        field.setValue(new PdfString("some value"));
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "some value", "fieldName");
         form.addField(field);
 
         pdfDoc.close();
@@ -71,15 +66,12 @@ public class PdfFormFieldTest {
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.setNeedAppearances(true);
 
         PdfPage page = pdfDoc.getFirstPage();
         Rectangle rect = new Rectangle(210, 490, 150, 22);
 
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect);
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "some value", "TestField");
 
-        field.setFieldName("TestField");
-        field.setValue(new PdfString("some value"));
         form.addField(field, page);
 
         pdfDoc.close();
@@ -98,21 +90,17 @@ public class PdfFormFieldTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.setNeedAppearances(true);
 
         Rectangle rect = new Rectangle(210, 490, 150, 20);
 
         String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
-        PdfChoiceFormField choice = PdfFormField.createComboBox(pdfDoc, rect, options);
-
-        choice.setFieldName("TestField");
+        PdfChoiceFormField choice = PdfFormField.createComboBox(pdfDoc, rect, options, "First Item", "TestField");
 
         form.addField(choice);
 
-        Rectangle rect1 = new Rectangle(210, 250, 150, 16);
+        Rectangle rect1 = new Rectangle(210, 250, 150, 90);
 
-        PdfChoiceFormField choice1 = PdfFormField.createList(pdfDoc, rect1, options);
-        choice1.setFieldName("TestField1");
+        PdfChoiceFormField choice1 = PdfFormField.createList(pdfDoc, rect1, options, "Second Item", "TestField1");
         choice1.setMultiSelect(true);
         form.addField(choice1);
 
@@ -134,30 +122,19 @@ public class PdfFormFieldTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.setNeedAppearances(true);
 
-        Rectangle rect = new Rectangle(36, 650, 20, 20);
-        Rectangle rect1 = new Rectangle(36, 620, 20, 20);
+        Rectangle rect = new Rectangle(36, 700, 20, 20);
+        Rectangle rect1 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField radiofield = new PdfButtonFormField(pdfDoc);
+        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "TestGroup", "1");
 
-        PdfButtonFormField field = PdfFormField.createRadioButton(pdfDoc, rect);
-        PdfButtonFormField field1 = PdfFormField.createRadioButton(pdfDoc, rect1);
+        PdfFormField.createRadioButton(pdfDoc, rect, group, "2");
+        PdfFormField.createRadioButton(pdfDoc, rect1, group, "2");
 
-        field.setFieldName("Btn1");
-        field1.setFieldName("Btn2");
+        form.addField(group);
 
-        radiofield.addKid(field);
-        radiofield.addKid(field1);
-        radiofield.setRadio(true);
-        radiofield.setFieldName("radio");
-
-        form.addField(radiofield);
-
-        PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 590, 20, 20));
-        pushButton.setFieldName("push");
-        PdfButtonFormField checkBox = PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20));
-        checkBox.setFieldName("check");
+        PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 650, 40, 20), "push", "Capcha");
+        PdfButtonFormField checkBox = PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "1", "TestCheck");
 
         form.addField(pushButton);
         form.addField(checkBox);

@@ -8,7 +8,6 @@ import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
-import com.itextpdf.text.pdf.Barcode;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,7 +34,7 @@ public class Barcode128Test {
         PdfCanvas canvas = new PdfCanvas(page);
 
         Barcode1D barcode = new Barcode128(document);
-        barcode.setCodeType(Barcode.CODE128);
+        barcode.setCodeType(Barcode128.CODE128);
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
@@ -57,7 +56,7 @@ public class Barcode128Test {
         PdfCanvas canvas = new PdfCanvas(document.getLastPage());
 
         Barcode1D barcode = new Barcode128(document);
-        barcode.setCodeType(Barcode.CODE128);
+        barcode.setCodeType(Barcode128.CODE128);
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);

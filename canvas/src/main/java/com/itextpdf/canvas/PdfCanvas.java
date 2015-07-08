@@ -236,6 +236,22 @@ public class PdfCanvas {
     }
 
     /**
+     * Begins variable text block
+     * @return current canvas
+     */
+    public PdfCanvas beginVariableText() {
+        return beginMarkedContent(PdfName.Tx);
+    }
+
+    /**
+     * Ends variable text block
+     * @return current canvas
+     */
+    public PdfCanvas endVariableText() {
+        return endMarkedContent();
+    }
+
+    /**
      * Sets font and size (PDF Tf operator).
      *
      * @param font @see PdfFont.

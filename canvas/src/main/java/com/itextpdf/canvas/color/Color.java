@@ -13,6 +13,8 @@ public class Color {
     static public final Color Blue = new DeviceRgb(0, 0, 0xFF);
     static public final Color White = new DeviceRgb(0xFF, 0xFF, 0xFF);
     static public final Color Black = new DeviceRgb(0, 0, 0);
+    static public final Color Silver = new DeviceRgb(0xC0, 0xC0, 0xC0);
+    static public final Color Gray = new DeviceRgb(0xA0, 0xA0, 0xA0);
 
     protected PdfColorSpace colorSpace;
     protected float[] colorValue;
