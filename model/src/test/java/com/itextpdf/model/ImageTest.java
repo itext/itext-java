@@ -10,6 +10,7 @@ import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -81,6 +82,7 @@ public class ImageTest {
     }
 
     @Test
+    @Ignore
     public void imageTest03() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest03.pdf";
@@ -110,6 +112,7 @@ public class ImageTest {
     }
 
     @Test
+    @Ignore
     public void imageTest04() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest04.pdf";
