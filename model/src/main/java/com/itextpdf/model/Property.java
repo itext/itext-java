@@ -63,6 +63,7 @@ public class Property {
     public static final int ROWSPAN = 54;
     public static final int COLSPAN = 55;
     public static final int AUTO_SCALE = 56;
+    public static final int ROTATION_ALIGNMENT = 57;
 
     private static int[] inheritedProperties = { FONT, HORIZONTAL_ALIGNMENT, TEXT_RISE, FONT_SIZE, FONT_COLOR,
             CHARACTER_SPACING, TEXT_RENDERING_MODE, FIRST_LINE_INDENT, KEEP_TOGETHER, WORD_SPACING, SPACING_RATIO };

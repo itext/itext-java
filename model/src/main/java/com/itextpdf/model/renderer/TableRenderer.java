@@ -113,6 +113,13 @@ public class TableRenderer extends AbstractRenderer {
             occupiedArea.getBBox().incrementHeight(rowHeight);
             layoutBox.decrementHeight(rowHeight);
         }
+
+        if (getProperty(Property.ANGLE) != null) {
+            applyRotationLayout();
+            if (isNotFittingHeight(layoutContext.getArea())) {
+                new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+            }
+        }
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 

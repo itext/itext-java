@@ -139,7 +139,14 @@ public class BlockRenderer extends AbstractRenderer {
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
+
         applyMargins(occupiedArea.getBBox(), true);
+        if (getProperty(Property.ANGLE) != null) {
+            applyRotationLayout();
+            if (isNotFittingHeight(layoutContext.getArea())) {
+                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+            }
+        }
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 

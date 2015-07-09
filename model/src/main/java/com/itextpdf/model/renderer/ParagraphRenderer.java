@@ -73,6 +73,7 @@ public class ParagraphRenderer extends AbstractRenderer {
         float leadingValue = 0;
 
         float lastLineHeight = 0;
+        float maxLineWidth = 0;
 
         while (currentRenderer != null) {
             currentRenderer.setProperty(Property.TAB_DEFAULT, getPropertyAsFloat(Property.TAB_DEFAULT));
@@ -156,6 +157,7 @@ public class ParagraphRenderer extends AbstractRenderer {
 
                 currentRenderer = (LineRenderer) result.getOverflowRenderer();
                 previousDescent = processedRenderer.getMaxDescent();
+                maxLineWidth = Math.max(processedRenderer.getOccupiedArea().getBBox().getWidth(), maxLineWidth);
             }
         }
 
@@ -174,8 +176,17 @@ public class ParagraphRenderer extends AbstractRenderer {
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
-        applyMargins(occupiedArea.getBBox(), true);
 
+        applyMargins(occupiedArea.getBBox(), true);
+        if (getProperty(Property.ANGLE) != null) {
+            calculateRotationPointAndRotate(maxLineWidth);
+
+            if (isNotFittingHeight(layoutContext.getArea())) {
+                childRenderers.clear();
+                childRenderers.add(initialRenderer);
+                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+            }
+        }
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
@@ -224,4 +235,19 @@ public class ParagraphRenderer extends AbstractRenderer {
 //            }
 //        }
 //    }
+
+    private void calculateRotationPointAndRotate(float maxLineWidth) {
+        float x = occupiedArea.getBBox().getX();
+        float y = occupiedArea.getBBox().getY();
+        Property.HorizontalAlignment rotationAlignment = getProperty(Property.ROTATION_ALIGNMENT);
+        if (rotationAlignment != null) {
+            if (rotationAlignment == Property.HorizontalAlignment.CENTER) {
+                x += maxLineWidth / 2;
+            }
+            else if (rotationAlignment == Property.HorizontalAlignment.RIGHT) {
+                x += maxLineWidth;
+            }
+        }
+        applyRotationLayout(x, y);
+    }
 }
