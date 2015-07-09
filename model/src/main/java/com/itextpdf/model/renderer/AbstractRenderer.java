@@ -224,6 +224,9 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
+        if (isPositioned())
+            return rect;
+
         return rect.applyMargins(getPropertyAsFloat(Property.MARGIN_TOP), getPropertyAsFloat(Property.MARGIN_RIGHT),
                 getPropertyAsFloat(Property.MARGIN_BOTTOM), getPropertyAsFloat(Property.MARGIN_LEFT), reverse);
     }

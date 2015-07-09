@@ -159,8 +159,10 @@ public class ParagraphRenderer extends AbstractRenderer {
             }
         }
 
-        occupiedArea.getBBox().moveDown((leadingValue - lastLineHeight) / 2);
-        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + (leadingValue - lastLineHeight) / 2);
+        if (!isPositioned()) {
+            occupiedArea.getBBox().moveDown((leadingValue - lastLineHeight) / 2);
+            occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + (leadingValue - lastLineHeight) / 2);
+        }
         Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
         applyPaddings(occupiedArea.getBBox(), true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
