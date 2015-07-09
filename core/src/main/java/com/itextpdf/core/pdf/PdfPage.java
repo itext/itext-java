@@ -22,6 +22,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private PdfResources resources = null;
     private Integer mcid = null;
     private Integer structParents = null;
+    PdfPages parentPages;
 
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject, pdfDocument);
@@ -94,16 +95,31 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfResources getResources() {
+
         if (this.resources == null) {
+            boolean readOnly = false;
             PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
+            if (resources == null) {
+                if (parentPages == null) {
+                    PdfPagesTree pageTree = getDocument().getCatalog().pageTree;
+                    parentPages = pageTree.findPageParent(this);
+                }
+
+                resources = (PdfDictionary) getParentValue(parentPages, PdfName.Resources);
+                if (resources != null) {
+                    readOnly = true;
+                }
+            }
             if (resources == null) {
                 resources = new PdfDictionary();
                 getPdfObject().put(PdfName.Resources, resources);
             }
             this.resources = new PdfResources(resources);
+            this.resources.setReadOnly(readOnly);
         }
         return resources;
     }
+
 
     /**
      * Use this method to set the XMP Metadata for each page.
@@ -166,19 +182,36 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         for (int i = 0; i < contentStreamCount; i++) {
             getContentStream(i).flush(false);
         }
+
+
+        if (resources != null) {
+            if (resources.isReadOnly() && !resources.isModified()) {
+                getPdfObject().remove(PdfName.Resources);
+            }
+        }
+
         resources = null;
         super.flush();
     }
 
     public Rectangle getMediaBox() {
-        return getPdfObject().getAsRectangle(PdfName.MediaBox);
+        PdfArray mediaBox = getPdfObject().getAsArray(PdfName.MediaBox);
+        if (mediaBox == null) {
+            mediaBox = (PdfArray) getParentValue(parentPages, PdfName.MediaBox);
+        }
+        return mediaBox.toRectangle();
     }
 
+
     public Rectangle getCropBox() {
-        Rectangle cropBox = getPdfObject().getAsRectangle(PdfName.CropBox);
-        if (cropBox == null)
-            cropBox = getMediaBox();
-        return cropBox;
+        PdfArray cropBox = getPdfObject().getAsArray(PdfName.CropBox);
+        if (cropBox == null) {
+            cropBox = (PdfArray) getParentValue(parentPages, PdfName.CropBox);
+            if (cropBox == null) {
+                cropBox = getMediaBox().toPdfArray();
+            }
+        }
+        return cropBox.toRectangle();
     }
 
     /**
@@ -289,6 +322,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method gets outlines of a current page
+     *
      * @param updateOutlines
      * @return return all outlines of a current page
      * @throws PdfException
@@ -309,6 +343,19 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.Annots, annots);
         }
         return annots;
+    }
+
+    private PdfObject getParentValue(PdfPages parentPages, PdfName pdfName) {
+        if (parentPages != null) {
+            PdfDictionary parentDictionary = parentPages.getPdfObject();
+            PdfObject value = parentDictionary.get(pdfName);
+            if (value != null) {
+                return value;
+            } else {
+                getParentValue(parentPages.getParent(), pdfName);
+            }
+        }
+        return null;
     }
 
     private void getPageTags(PdfDictionary getFrom, List<IPdfTag> putTo) {
@@ -390,4 +437,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         return maxMcid == null ? 0 : maxMcid + 1;
     }
+
+
 }

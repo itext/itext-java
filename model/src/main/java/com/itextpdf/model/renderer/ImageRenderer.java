@@ -41,16 +41,23 @@ public class ImageRenderer extends AbstractRenderer {
         Float horizontalScaling = getPropertyAsFloat(Property.HORIZONTAL_SCALING);
         Float verticalScaling = getPropertyAsFloat(Property.VERTICAL_SCALING);
 
-        AffineTransform t = new AffineTransform(setTransformationMatrix(occupiedArea.getBBox().getX(), occupiedArea.getBBox().getY(), width, height));
-        if (horizontalScaling != null)
-            scale(horizontalScaling, verticalScaling, t);
-        t.getMatrix(matrix);
+        AffineTransform t = new AffineTransform();
 
         Float mx = getProperty(Property.X_DISTANCE);
         Float my = getProperty(Property.Y_DISTANCE);
 
         fixedXPosition = getPropertyAsFloat(Property.X);
         fixedYPosition = getPropertyAsFloat(Property.Y);
+
+        if (angle != null) {
+            rotateImage(angle, t);
+        } else {
+            t.scale(width, height);
+            t.getMatrix(matrix);
+            if (horizontalScaling != null)
+                scale(horizontalScaling, verticalScaling, t);
+            t.getMatrix(matrix);
+        }
 
         if (width > layoutBox.getWidth()){
             return new LayoutResult(LayoutResult.IMAGE_PARTIAL, occupiedArea, null, this);
@@ -59,13 +66,9 @@ public class ImageRenderer extends AbstractRenderer {
             return new LayoutResult(LayoutResult.IMAGE_PARTIAL, occupiedArea, null, this);
         }
 
-        if (angle != null) {
-            rotateImage(angle, t);
-        } else {
-            occupiedArea.getBBox().moveDown(height);
-            occupiedArea.getBBox().setHeight(height);
-            occupiedArea.getBBox().setWidth(width);
-        }
+        occupiedArea.getBBox().moveDown(height);
+        occupiedArea.getBBox().setHeight(height);
+        occupiedArea.getBBox().setWidth(width);
 
         if (mx != null && my != null) {
             translateImage(mx, my, t);
@@ -95,7 +98,7 @@ public class ImageRenderer extends AbstractRenderer {
             fixedXPosition = occupiedArea.getBBox().getX();
         }
 
-        canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[2], matrix[1], matrix[3],
+        canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[1], matrix[2], matrix[3],
                 fixedXPosition, fixedYPosition);
 
         if (position == LayoutPosition.RELATIVE) {
@@ -112,15 +115,11 @@ public class ImageRenderer extends AbstractRenderer {
         return this;
     }
 
-    private float[] setTransformationMatrix(float x, float y, float width, float height) {
-        return new float[] {
-            width, 0, 0, height, x, y
-        };
-    }
-
     private void rotateImage(float angle, AffineTransform t) {
         if (angle != 0) {
             t.rotate(angle);
+
+            t.scale(width, height);
 
             Point2D p00 = t.transform(new Point2D.Float(0, 0), new Point2D.Float());
             Point2D p01 = t.transform(new Point2D.Float(0, 1), new Point2D.Float());
@@ -148,12 +147,11 @@ public class ImageRenderer extends AbstractRenderer {
 
             pivotY = (float) (p00.getY() - minY);
 
-            occupiedArea.getBBox().moveDown((float) (maxY - minY));
-            occupiedArea.getBBox().setHeight((float) (maxY - minY));
-            occupiedArea.getBBox().setWidth((float) (maxX - minX));
+            height = (float) (maxY - minY);
+            width = (float) (maxX - minX);
 
             if (occupiedArea.getBBox().getX() > minX)
-                occupiedArea.getBBox().moveRight((float) (occupiedArea.getBBox().getX() - minX));
+                occupiedArea.getBBox().moveRight((float) - minX);
         }
         t.getMatrix(matrix);
     }
@@ -163,8 +161,14 @@ public class ImageRenderer extends AbstractRenderer {
         float my = yDistance / height;
         t.translate(mx, my);
         t.getMatrix(matrix);
-        fixedXPosition = t.getTranslateX();
-        fixedYPosition = t.getTranslateY();
+        if (fixedXPosition == null) {
+            fixedXPosition = occupiedArea.getBBox().getX();
+        }
+        if (fixedYPosition == null) {
+            fixedYPosition = occupiedArea.getBBox().getY() + height;
+        }
+        fixedXPosition += t.getTranslateX();
+        fixedYPosition += t.getTranslateY();
     }
 
     private void scale(float horizontalScaling, float verticalScaling, AffineTransform t) {

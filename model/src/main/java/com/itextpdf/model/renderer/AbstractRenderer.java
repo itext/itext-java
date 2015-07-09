@@ -1,5 +1,7 @@
 package com.itextpdf.model.renderer;
 
+import com.itextpdf.basics.geom.AffineTransform;
+import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
@@ -23,6 +25,11 @@ public abstract class AbstractRenderer implements IRenderer {
     protected LayoutArea occupiedArea;
     protected IRenderer parent;
     protected Map<Integer, Object> properties = new HashMap<>();
+
+    protected float rotationPointX;
+    protected float rotationPointY;
+    protected float actualWidth;
+    protected float actualHeight;
 
     public AbstractRenderer() {
     }
@@ -145,17 +152,57 @@ public abstract class AbstractRenderer implements IRenderer {
             applyAbsolutePositioningTranslation(false);
         }
 
+        beginRotationIfApplied(canvas);
+
+        //TODO probably actualWidth/actualHeight stuff, which is used for the borders and background,
+        //should be refactored into some borderbox field, which will contain actual size of the element.
+        //
+        //rotationPoint fields will also be redundant if such borderbox field will appear, because they are
+        //only needed for the text rotation (you can't get precise width of text from the occupiedArea of the paragraph)
+        float rotatedHeight = 0;
+        float rotatedWidth = 0;
+        boolean rotationIsApplied = getProperty(Property.ANGLE) != null;
+        if (rotationIsApplied) {
+            rotatedHeight = occupiedArea.getBBox().getHeight();
+            rotatedWidth = occupiedArea.getBBox().getWidth();
+            occupiedArea.getBBox().setWidth(actualWidth);
+            occupiedArea.getBBox().setHeight(actualHeight);
+        }
+
         drawBackground(document, canvas);
         drawBorder(document, canvas);
+
+        if (rotationIsApplied) {
+            occupiedArea.getBBox().setWidth(rotatedWidth);
+            occupiedArea.getBBox().setHeight(rotatedHeight);
+        }
+
         for (IRenderer child : childRenderers) {
             child.draw(document, canvas);
         }
+
+        endRotationIfApplied(canvas);
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);
         }
 
         flushed = true;
+    }
+
+    private void beginRotationIfApplied(PdfCanvas canvas) {
+        if (getProperty(Property.ANGLE) != null) {
+            move(-rotationPointX, -rotationPointY);
+            float[] ctm = applyRotation();
+            canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
+        }
+    }
+
+    private void endRotationIfApplied(PdfCanvas canvas) {
+        if (getProperty(Property.ANGLE) != null) {
+            canvas.restoreState();
+            move(rotationPointX, rotationPointY);
+        }
     }
 
     public void drawBackground(PdfDocument document, PdfCanvas canvas) {
@@ -224,6 +271,9 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
+        if (isPositioned())
+            return rect;
+
         return rect.applyMargins(getPropertyAsFloat(Property.MARGIN_TOP), getPropertyAsFloat(Property.MARGIN_RIGHT),
                 getPropertyAsFloat(Property.MARGIN_BOTTOM), getPropertyAsFloat(Property.MARGIN_LEFT), reverse);
     }
@@ -246,6 +296,81 @@ public abstract class AbstractRenderer implements IRenderer {
 
         if (dxRight != 0 || dyUp != 0)
             move(dxRight, dyUp);
+    }
+
+    protected void applyRotationLayout() {
+        float dx = 0;
+        float width = occupiedArea.getBBox().getWidth();
+        Property.HorizontalAlignment alignment = getProperty(Property.ROTATION_ALIGNMENT);
+        if (alignment != null) {
+            if (alignment == Property.HorizontalAlignment.CENTER)
+                dx = width / 2;
+            else if (alignment == Property.HorizontalAlignment.RIGHT)
+                dx = width;
+        }
+        applyRotationLayout(occupiedArea.getBBox().getX() + dx, occupiedArea.getBBox().getY());
+    }
+
+
+    protected void applyRotationLayout(float rotationPointX, float rotationPointY) {
+        Float angle = getPropertyAsFloat(Property.ANGLE);
+        float height = actualHeight = occupiedArea.getBBox().getHeight();
+        float width = actualWidth = occupiedArea.getBBox().getWidth();
+
+        double cos = Math.abs(Math.cos(angle));
+        double sin = Math.abs(Math.sin(angle));
+
+        float newWidth = (float) (height*sin + width*cos);
+        float newHeight = (float) (height*cos + width*sin);
+
+        occupiedArea.getBBox().setWidth(newWidth);
+        occupiedArea.getBBox().setHeight(newHeight);
+
+        float heightDiff = height - newHeight;
+        move(0, heightDiff);
+        this.rotationPointX = rotationPointX;
+        this.rotationPointY = rotationPointY + heightDiff;
+    }
+
+    protected float[] applyRotation() {
+        Float angle = getPropertyAsFloat(Property.ANGLE);
+        AffineTransform transform = new AffineTransform();
+        transform.rotate(angle);
+
+        float dx = 0, dy = 0;
+        if (!isPositioned()) {
+            float x = occupiedArea.getBBox().getX();
+            float y = occupiedArea.getBBox().getY();
+            float height = actualHeight;
+            float width = actualWidth;
+
+            Point2D p00 = transform.transform(new Point2D.Float(x, y), new Point2D.Float());
+            Point2D p01 = transform.transform(new Point2D.Float(x + width, y), new Point2D.Float());
+            Point2D p10 = transform.transform(new Point2D.Float(x + width, y + height), new Point2D.Float());
+            Point2D p11 = transform.transform(new Point2D.Float(x, y + height), new Point2D.Float());
+
+            List<Double> xValues = Arrays.asList(p00.getX(), p01.getX(), p10.getX(), p11.getX());
+            List<Double> yValues = Arrays.asList(p00.getY(), p01.getY(), p10.getY(), p11.getY());
+
+            double minX = Collections.min(xValues);
+            double maxY = Collections.max(yValues);
+
+            dy = (float) ((y + height) - maxY);
+            dx = (float) (x - minX);
+        }
+
+        float[] ctm = new float[6];
+        transform.getMatrix(ctm);
+        ctm[4] = rotationPointX + dx;
+        float heightDiff = (occupiedArea.getBBox().getHeight() - actualHeight);
+        ctm[5] = rotationPointY + dy + heightDiff;
+        return ctm;
+    }
+
+    protected boolean isNotFittingHeight(LayoutArea layoutArea) {
+        Rectangle area = applyMargins(layoutArea.getBBox().clone(), false);
+        area = applyPaddings(area, false);
+        return !isPositioned() && occupiedArea.getBBox().getHeight() > area.getHeight();
     }
 
     protected boolean isPositioned() {

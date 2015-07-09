@@ -47,10 +47,7 @@ public class TrueTypeFont extends FontProgram {
      * Contains the smallest box enclosing the character contours.
      */
     private int[][] charBBoxes;
-    /**
-     * Table of characters widths for this encoding.
-     */
-    private int[] widths;
+
 
     private boolean isUnicode;
 

@@ -1,0 +1,404 @@
+package com.itextpdf.model;
+
+import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.model.element.*;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class RotationTest {
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/RotationTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/model/RotationTest/";
+    static final public String cmpPrefix = "cmp_";
+
+    static final private String para1Text = "The first published account of what would evolve into the Mafia in the United States came in the spring of 1869. " +
+            "The New Orleans Times reported that the city's Second District had become overrun by \"well-known and notorious Sicilian murderers, " +
+            "counterfeiters and burglars, who, in the last month, have formed a sort of general co-partnership or stock company for the plunder " +
+            "and disturbance of the city.\" Emigration from southern Italy to the Americas was primarily to Brazil and Argentina, and New Orleans " +
+            "had a heavy volume of port traffic to and from both locales.";
+    static final private String para2Text = "Mafia groups in the United States first became influential in the New York City area, gradually progressing from small neighborhood" +
+            " operations in Italian ghettos to citywide and eventually national organizations. The Black Hand was a name given to an extortion method used " +
+            "in Italian neighborhoods at the turn of the 20th century. It has been sometimes mistaken for the Mafia itself, which it is not. Although the Black" +
+            " Hand was a criminal society, there were many small Black Hand gangs.";
+    static final private String para3Text = "From the 1890s to the 1900s (decade) in New York City, the Sicilian Mafia developed into the Five Points Gang and were very powerful in the" +
+            " Little Italy of the Lower East Side. They were often in conflict with the Jewish Eastmans of the same area.";
+
+    @BeforeClass
+    static public void beforeClass() {
+        new File(destinationFolder).mkdirs();
+    }
+
+    @Test
+    public void fixedTextRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedTextRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph("text to be rotatedg").setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setFixedPosition(350, 600)
+                .setBorder(new Property.BorderConfig(Color.Black, 0.5f, Property.BorderConfig.BorderStyle.SOLID)));
+        document.add(new Paragraph("text to be rotatedg").setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(350, 600)
+                .setBorder(new Property.BorderConfig(Color.Black, 0.5f, Property.BorderConfig.BorderStyle.SOLID)));
+        document.add(new Paragraph("text to be rotatedg").setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.RIGHT).setFixedPosition(350, 600)
+                .setBorder(new Property.BorderConfig(Color.Black, 0.5f, Property.BorderConfig.BorderStyle.SOLID)));
+        document.add(new Paragraph("text to be rotatedg").setFixedPosition(350, 600)
+                .setBorder(new Property.BorderConfig(Color.Black, 0.5f, Property.BorderConfig.BorderStyle.SOLID)));
+
+        String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+                "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text";
+        document.add(new Paragraph(longText).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setFixedPosition(50, 300));
+        document.add(new Paragraph(longText).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(50, 300));
+        document.add(new Paragraph(longText).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.RIGHT).setFixedPosition(50, 300));
+        document.add(new Paragraph(longText).setFixedPosition(50, 300));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void fixedTextRotationTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedTextRotationTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
+                "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text";
+        document.add(new Paragraph(longText).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(50, 50));
+        document.add(new Paragraph(longText).setFixedPosition(50, 50));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void fixedTextRotationTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedTextRotationTest03.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        String simpleText = "text simple text";
+        float x = 50;
+        float y = 380;
+        document.add(new Paragraph(simpleText).setRotateAngle( (Math.PI / 2)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(x, y));
+        document.add(new Paragraph(simpleText).setFixedPosition(x, y));
+
+        PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
+        drawCross(canvas, x, y);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void fixedTextRotationTest04() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedTextRotationTest04.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        String simpleText = "text simple text";
+        float x = 50;
+        float y = 380;
+        document.add(new Paragraph(simpleText).setRotateAngle(-(Math.PI / 4)).setBackgroundColor(Color.Red).setFixedPosition(x, y));
+
+        PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
+        drawCross(canvas, x, y);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void staticTextRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "staticTextRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph();
+        for (int i = 0; i < 7; ++i)
+            p.add(para2Text);
+        document.add(p.setRotateAngle((68 * Math.PI / 180)).setBackgroundColor(Color.Blue));
+        document.add(new Paragraph("text line text line text line text line text line text line text line text line text line text line text line text line text line"));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void staticTextRotationTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "staticTextRotationTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph(para1Text));
+        document.add(new Paragraph(para2Text).setRotateAngle((Math.PI / 12)).setRotateAlignment(Property.HorizontalAlignment.LEFT));
+        document.add(new Paragraph(new Text(para2Text).setBackgroundColor(Color.Green)).
+                setRotateAngle((-Math.PI / 12)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setBackgroundColor(Color.Blue));
+        document.add(new Paragraph(para3Text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void staticTextRotationTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "staticTextRotationTest03.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph(para1Text));
+        document.add(new Paragraph(para2Text).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setBackgroundColor(Color.Red));
+        document.add(new Paragraph(para2Text).setRotateAngle((-Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER));
+        document.add(new Paragraph(para3Text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void staticTextRotationTest04() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "staticTextRotationTest04.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph(para1Text));
+        document.add(new Paragraph("short text string").setRotateAngle((Math.PI / 6)).setBackgroundColor(Color.Red));
+        document.add(new Paragraph(para3Text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore
+    //TODO rotated element should have unlimited height for their children positioning, thus such rotated elements will never return PARTIAL status
+    public void splitTextRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "splitTextRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "splitTextRotationTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph(para1Text));
+        document.add(new Paragraph(para1Text).setRotateAngle( (Math.PI / 4)));
+        document.add(new Paragraph(para1Text));
+        document.add(new Paragraph(para2Text).setRotateAngle((-Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER));
+        document.add(new Paragraph(para3Text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore
+    //TODO infinite loop should be handled at the DocumentRenderer level not only for the KeepTogether case
+    public void rotationInfiniteLoopTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "rotationInfiniteLoopTest.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "rotationInfiniteLoopTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        pdfDocument.setDefaultPageSize(PageSize.A5.rotate());
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph(para1Text).setRotateAngle((Math.PI / 2)));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore
+    //TODO tables rotation should be rechecked after finishing the tables implementation
+    public void tableRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest01.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph(para1Text));
+
+        Table table = new Table(new float[] {50, 50})/*.setRotateAngle( (Math.PI / 3))*/.setBackgroundColor(Color.Red)
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2")));
+        doc.add(table);
+
+        doc.add(new Paragraph(para2Text));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore
+    public void tableRotationTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableRotationTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest02.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(new float[] {50, 50})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1").setRotateAngle((Math.PI / 2))))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotateAngle( (Math.PI / 3))))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotateAngle( (Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2").setRotateAngle( (Math.PI))));
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore
+    //TODO renderers should have ability to return to the initial state, that to support the case when the element does not fit the page and it has to be relayouted
+    public void divRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "divRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "divRotationTest01.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Div div = new Div();
+        div.add(new Paragraph(para1Text)).setRotateAngle(Math.PI / 4);
+        doc.add(div);
+
+        div = new Div();
+        div.add(new Paragraph(para1Text)).setRotateAngle(Math.PI / 2);
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void listRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "listRotationTest01.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph(para1Text));
+
+        List list = new List().setRotateAngle(3*Math.PI / 4).setBackgroundColor(Color.Green);
+        list.add(new ListItem("text of first list item"));
+        list.add("text of second list item");
+        list.add("text of third list item");
+        doc.add(list);
+
+        doc.add(new Paragraph(para2Text));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void listRotationTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listRotationTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "listRotationTest02.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph(para1Text));
+        doc.add(new Paragraph(para1Text));
+        doc.add(new Paragraph(para1Text));
+
+        List list = new List().setRotateAngle(Math.PI / 2).setBackgroundColor(Color.Green);
+        String itemText = "list item text long item txt list item text long item txt list item text long item txt list item text long item txt list item text long item txt ";
+        for (int i = 0; i < 10; ++i) {
+            list.add(itemText);
+        }
+        doc.add(list);
+
+        doc.add(new Paragraph(para2Text));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void alignedTextRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "alignedTextRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "alignedTextRotationTest01.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph(para1Text));
+
+        Paragraph p = new Paragraph();
+        p.add("texttext").setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
+        p.setRotateAngle(Math.PI / 4);
+        doc.add(p);
+
+        doc.add(new Paragraph(para3Text));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private void drawCross(PdfCanvas canvas, float x, float y) {
+        drawLine(canvas, x - 50, y, x + 50, y);
+        drawLine(canvas, x, y - 50, x, y + 50);
+    }
+
+    private void drawLine(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+        canvas.saveState().moveTo(x1, y1).lineTo(x2,y2).setLineWidth(0.5f).setLineDash(3).stroke().restoreState();
+    }
+}

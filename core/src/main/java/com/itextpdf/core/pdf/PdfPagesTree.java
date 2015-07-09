@@ -58,6 +58,9 @@ class PdfPagesTree {
         if (pdfPage == null) {
             loadPage(pageNum);
             pdfPage = new PdfPage(pageRefs.get(pageNum), document);
+            int parentIndex = findPageParent(pageNum);
+            PdfPages parentPages = parents.get(parentIndex);
+            pdfPage.parentPages = parentPages;
             pages.set(pageNum, pdfPage);
         }
         return pdfPage;
@@ -100,8 +103,11 @@ class PdfPagesTree {
                 parents.add(pdfPages);
             }
         }
+
+
         pdfPage.makeIndirect(document);
         pdfPages.addPage(pdfPage.getPdfObject());
+        pdfPage.parentPages = pdfPages;
         pageRefs.add(pdfPage.getPdfObject());
         pages.add(pdfPage);
     }
@@ -123,7 +129,9 @@ class PdfPagesTree {
         loadPage(index);
         pdfPage.makeIndirect(document);
         int parentIndex = findPageParent(index);
-        parents.get(parentIndex).addPage(index, pdfPage);
+        PdfPages parentPages = parents.get(parentIndex);
+        parentPages.addPage(index, pdfPage);
+        pdfPage.parentPages = parentPages;
         correctPdfPagesFromProperty(parentIndex + 1, +1);
         pageRefs.add(index, pdfPage.getPdfObject());
         pages.add(index, pdfPage);

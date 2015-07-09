@@ -38,6 +38,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private ResourceNumber csNumber = new ResourceNumber();
     private ResourceNumber patternNumber = new ResourceNumber();
     private ResourceNumber shadingNumber = new ResourceNumber();
+    private boolean readOnly = false;
+    private boolean isModified = false;
 
     public PdfResources(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -107,6 +109,22 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(shading, PdfName.Shading, Sh, shadingNumber);
     }
 
+    protected boolean isReadOnly() {
+        return readOnly;
+    }
+
+    protected void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    protected boolean isModified() {
+        return isModified;
+    }
+
+    protected void setModified(boolean isModified) {
+        this.isModified = isModified;
+    }
+
     /**
      * Sets the default color space.
      *
@@ -166,9 +184,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return nameToResource.get(pdfName);
     }
 
-    public Collection<PdfFont> getFonts(boolean updateFonts) throws IOException {
+    public List<PdfFont> getFonts(boolean updateFonts) throws IOException {
         if (!updateFonts) {
-            return fontsMap.values();
+            return new ArrayList<PdfFont>(fontsMap.values());
         }
         fontsMap.clear();
         Map<PdfName, PdfObject> fMap = getResource(PdfName.Font);
@@ -177,11 +195,10 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         }
         Map<PdfName, PdfObject> xMap = getResource(PdfName.XObject);
         if (xMap != null && !xMap.isEmpty()) {
-               callXObjectFont(xMap.entrySet(),new HashSet<PdfDictionary>());
+            callXObjectFont(xMap.entrySet(), new HashSet<PdfDictionary>());
         }
-        return fontsMap.values();
+        return new ArrayList<PdfFont>(fontsMap.values());
     }
-
 
 
     protected PdfName addResource(PdfObjectWrapper resource, PdfName resType, String resPrefix, ResourceNumber resNumber) {
@@ -189,6 +206,12 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected void addResource(PdfObject resource, PdfName resType, PdfName resName) {
+        if (readOnly) {
+            setPdfObject(new PdfDictionary(getPdfObject()));
+            buildResources(getPdfObject());
+            isModified = true;
+            readOnly = false;
+        }
         if (nameToResource.containsKey(resType) && nameToResource.get(resType).containsKey(resName))
             return;
         resourceToName.put(resource, resName);
@@ -261,7 +284,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary xobj = resources.getAsDictionary(PdfName.XObject);
         if (xobj != null) {
             if (visitedResources.add(xobj)) {
-                callXObjectFont(xobj.entrySet(),visitedResources);
+                callXObjectFont(xobj.entrySet(), visitedResources);
                 visitedResources.remove(xobj);
             } else {
                 throw new PdfException(PdfException.IllegalResourceTree);
@@ -270,9 +293,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void callXObjectFont(Set<Map.Entry<PdfName, PdfObject>> entrySet, HashSet<PdfDictionary> visitedResources) throws IOException {
-        for(Map.Entry<PdfName, PdfObject> entry : entrySet){
-            if(entry.getValue().isIndirectReference()){
-                if(((PdfIndirectReference)entry.getValue()).getRefersTo().isStream()){
+        for (Map.Entry<PdfName, PdfObject> entry : entrySet) {
+            if (entry.getValue().isIndirectReference()) {
+                if (((PdfIndirectReference) entry.getValue()).getRefersTo().isStream()) {
                     addFontFromXObject(((PdfStream) ((PdfIndirectReference) entry.getValue()).getRefersTo()).entrySet(), visitedResources);
                 }
             }
@@ -320,5 +343,4 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             return ++value;
         }
     }
-
 }

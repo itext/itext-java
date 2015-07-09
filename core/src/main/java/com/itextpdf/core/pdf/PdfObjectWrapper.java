@@ -17,6 +17,10 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return pdfObject;
     }
 
+    protected void setPdfObject(T pdfObject){
+        this.pdfObject = pdfObject;
+    }
+
     public PdfObjectWrapper<T> setModified() {
         if (pdfObject != null) {
             pdfObject.setModified();

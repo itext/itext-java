@@ -1,5 +1,7 @@
 package com.itextpdf.core.geom;
 
+import com.itextpdf.core.pdf.PdfArray;
+
 public class Rectangle implements Cloneable {
 
     protected float x;
@@ -81,6 +83,16 @@ public class Rectangle implements Cloneable {
         return this;
     }
 
+    public Rectangle incrementHeight(float extra) {
+        this.height += extra;
+        return this;
+    }
+
+    public Rectangle decrementHeight(float extra) {
+        this.height -= extra;
+        return this;
+    }
+
     public Rectangle moveDown(float move) {
         y -= move;
         return this;
@@ -120,5 +132,9 @@ public class Rectangle implements Cloneable {
             return false;
         Rectangle that = (Rectangle) obj;
         return x == that.x && y == that.y && width == that.width && height == that.height;
+    }
+
+    public PdfArray toPdfArray(){
+        return new PdfArray(this);
     }
 }

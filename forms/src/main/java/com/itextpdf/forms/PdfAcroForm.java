@@ -1,10 +1,18 @@
 package com.itextpdf.forms;
 
 
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
+import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.forms.formfields.PdfButtonFormField;
 import com.itextpdf.forms.formfields.PdfFormField;
+import com.itextpdf.forms.formfields.PdfTextFormField;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +23,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     static public final int SIGNATURE_EXIST = 1;
     static public final int APPEND_ONLY = 2;
+
+    private static PdfName resourceNames[] = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
+    private PdfDictionary defaultResources;
 
     public PdfAcroForm(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -43,9 +54,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             if (createIfNotExist) {
                 acroForm = new PdfAcroForm(document, new PdfArray());
                 document.getCatalog().put(PdfName.AcroForm, acroForm);
+                acroForm.setDefaultAppearance("/Helv 0 Tf 0 g ");
             }
         } else {
             acroForm = new PdfAcroForm(acroFormDictionary);
+        }
+
+        acroForm.defaultResources = acroForm.getDefaultResources();
+        if (acroForm.defaultResources == null) {
+            acroForm.defaultResources = new PdfDictionary();
         }
 
         return acroForm;
@@ -71,11 +88,21 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     public void addField(PdfFormField field, PdfPage page){
         PdfArray kids = field.getKids();
+
+        PdfDictionary fieldDic = field.getPdfObject();
         if (kids != null){
-            processKids(kids, field.getPdfObject(), page);
+            processKids(kids, fieldDic, page);
         }
 
-        getFields().add(field.getPdfObject());
+        getFields().add(fieldDic);
+
+        List<PdfDictionary> resources = getResources(field.getPdfObject());
+        for (PdfDictionary resDict : resources) {
+            mergeResources(defaultResources, resDict);
+        }
+        if (defaultResources.size() != 0) {
+            put(PdfName.DR, defaultResources);
+        }
     }
 
     public List<PdfFormField> getFormFields() {
@@ -187,18 +214,14 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary dict = (PdfDictionary) kids.get(0);
             PdfName type = dict.getAsName(PdfName.Subtype);
             if (type != null && type.equals(PdfName.Widget)){
-                parent.mergeDifferent(dict);
                 parent.remove(PdfName.Kids);
-                parent.remove(PdfName.Parent);
+                dict.remove(PdfName.Parent);
+                parent.mergeDifferent(dict);
                 page.addAnnotation(PdfAnnotation.makeAnnotation(parent, getDocument()));
             } else {
                 PdfArray otherKids = (dict).getAsArray(PdfName.Kids);
                 if (otherKids != null) {
                     dict = processKids(otherKids, dict, page);
-                }
-                type = dict.getAsName(PdfName.Subtype);
-                if (type != null && type.equals(PdfName.Widget)){
-                    page.addAnnotation(PdfAnnotation.makeAnnotation(dict, getDocument()));
                 }
             }
         } else {
@@ -212,4 +235,55 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         return parent;
     }
+
+    private List<PdfDictionary> getResources(PdfDictionary field) {
+        List<PdfDictionary> resources = new ArrayList<>();
+
+        PdfDictionary ap = field.getAsDictionary(PdfName.AP);
+        if (ap != null) {
+            PdfObject normal = ap.get(PdfName.N);
+            if (normal != null) {
+                if (normal.isDictionary()) {
+                    for (PdfName key : ((PdfDictionary)normal).keySet()) {
+                        PdfStream appearance = ((PdfDictionary)normal).getAsStream(key);
+                        PdfDictionary resDict = appearance.getAsDictionary(PdfName.Resources);
+                        if (resDict != null) {
+                            resources.add(resDict);
+                        }
+                    }
+                } else if (normal.isStream()) {
+                    PdfDictionary resDict = ((PdfStream)normal).getAsDictionary(PdfName.Resources);
+                    if (resDict != null) {
+                        resources.add(resDict);
+                    }
+                }
+
+            }
+        }
+
+        PdfArray kids = field.getAsArray(PdfName.Kids);
+        if (kids != null) {
+            for (PdfObject kid : kids) {
+                resources.addAll(getResources((PdfDictionary) kid));
+            }
+        }
+
+
+        return resources;
+    }
+
+    private void mergeResources(PdfDictionary result, PdfDictionary source) {
+        for (PdfName name : resourceNames) {
+            PdfDictionary dic = source.getAsDictionary(name);
+            PdfDictionary res = result.getAsDictionary(name);
+            if (res == null) {
+                res = new PdfDictionary();
+            }
+            if (dic != null) {
+                res.mergeDifferent(dic);
+                result.put(name, res);
+            }
+        }
+    }
+
 }

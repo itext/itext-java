@@ -372,7 +372,7 @@ public class AffineTransform implements Cloneable, Serializable{
         double x = src.getX();
         double y = src.getY();
 
-        dst.setLocation(x * m00 + y * m10 + m02, x * m01 + y * m11 + m12);
+        dst.setLocation(x * m00 + y * m01 + m02, x * m10 + y * m11 + m12);
         return dst;
     }
 

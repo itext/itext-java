@@ -10,6 +10,7 @@ import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
