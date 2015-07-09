@@ -254,7 +254,7 @@ public class RotationTest {
 
         doc.add(new Paragraph(para1Text));
 
-        Table table = new Table(new float[] {50, 50})/*.setRotateAngle( (Math.PI / 3))*/.setBackgroundColor(Color.Red)
+        Table table = new Table(new float[]{50, 50}).setRotateAngle((Math.PI / 3)).setBackgroundColor(Color.Red)
                 .addCell(new Cell().add(new Paragraph("cell 1, 1")))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2")))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1")))
@@ -269,7 +269,6 @@ public class RotationTest {
     }
 
     @Test
-    @Ignore
     public void tableRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "tableRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest02.pdf";
@@ -279,11 +278,11 @@ public class RotationTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(new float[] {50, 50})
+        Table table = new Table(new float[]{50, 50})
                 .addCell(new Cell().add(new Paragraph("cell 1, 1").setRotateAngle((Math.PI / 2))))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotateAngle( (Math.PI / 3))))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotateAngle( (Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 2").setRotateAngle( (Math.PI))));
+                .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotateAngle((Math.PI / 3))))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotateAngle((Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2").setRotateAngle((Math.PI))));
         doc.add(table);
 
         doc.close();

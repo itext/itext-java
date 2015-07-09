@@ -1,9 +1,12 @@
 package com.itextpdf.model;
 
+import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.model.element.Cell;
+import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Table;
 import org.junit.Assert;
@@ -291,6 +294,49 @@ public class TableTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
+        doc.add(new Paragraph("Table 1"));
+        Table table = new Table(new float[] {100, 100})
+                .addCell(new Cell().add(new Paragraph("1, 1")))
+                .addCell(new Cell().add(new Paragraph("1, 2")))
+                .addCell(new Cell().add(new Paragraph("2, 1")))
+                .addCell(new Cell().add(new Paragraph("2, 2")));
+        doc.add(table);
+
+        doc.add(new Paragraph("Table 2"));
+
+        Table table2 = new Table(new float[] {50, 50})
+                .addCell(new Cell().add(new Paragraph("1, 1")))
+                .addCell(new Cell().add(new Paragraph("1, 2")))
+                .addCell(new Cell().add(new Paragraph("2, 1")))
+                .addCell(new Cell().add(new Paragraph("2, 2")));
+        doc.add(table2);
+
+        doc.add(new Paragraph("Table 3"));
+
+        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getPngImage(new File(sourceFolder + "itext.png").toURI().toURL()));
+        Image image = new Image(xObject, 50);
+
+        Table table3 = new Table(new float[] {100, 100})
+                .addCell(new Cell().add(new Paragraph("1, 1")))
+                .addCell(new Cell().add(image))
+                .addCell(new Cell().add(new Paragraph("2, 1")))
+                .addCell(new Cell().add(new Paragraph("2, 2")));
+        doc.add(table3);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void simpleTableTest14() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableTest14.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableTest14.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
                 "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
@@ -324,9 +370,9 @@ public class TableTest {
 
 
     @Test
-    public void simpleTableTest11() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "tableTest11.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest11.pdf";
+    public void simpleTableTest15() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tableTest15.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableTest15.pdf";
 
         FileOutputStream file = new FileOutputStream(outFileName);
         PdfWriter writer = new PdfWriter(file);

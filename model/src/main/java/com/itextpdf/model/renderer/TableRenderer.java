@@ -79,6 +79,8 @@ public class TableRenderer extends AbstractRenderer {
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(), cellLayoutBox);
                 cell.setProperty(Property.KEEP_TOGETHER, true);
                 LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
+                //width of BlockRenderer depends from child areas, while in cell case it is hardly define.
+                cell.getOccupiedArea().getBBox().setWidth(cellWidth);
                 if (cellResult.getStatus() != LayoutResult.FULL) {
                     split = true;
                 }
