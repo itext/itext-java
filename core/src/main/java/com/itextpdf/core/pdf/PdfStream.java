@@ -200,7 +200,6 @@ public class PdfStream extends PdfDictionary {
         return bytes;
     }
 
-
     @Override
     protected PdfStream newInstance() {
         return new PdfStream();
@@ -253,6 +252,4 @@ public class PdfStream extends PdfDictionary {
     protected InputStream getInputStream(){
         return inputStream;
     }
-
-
 }
