@@ -5,13 +5,37 @@ import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 public abstract class Barcode1D {
 
     public static final int ALIGN_LEFT = 1;
     public static final int ALIGN_RIGHT = 2;
     public static final int ALIGN_CENTER = 3;
+
+    /** A type of barcode */
+    public static final int EAN13 = 1;
+    /** A type of barcode */
+    public static final int EAN8 = 2;
+    /** A type of barcode */
+    public static final int UPCA = 3;
+    /** A type of barcode */
+    public static final int UPCE = 4;
+    /** A type of barcode */
+    public static final int SUPP2 = 5;
+    /** A type of barcode */
+    public static final int SUPP5 = 6;
+    /** A type of barcode */
+    public static final int POSTNET = 7;
+    /** A type of barcode */
+    public static final int PLANET = 8;
+    /** A type of barcode */
+    public static final int CODE128 = 9;
+    /** A type of barcode */
+    public static final int CODE128_UCC = 10;
+    /** A type of barcode */
+    public static final int CODE128_RAW = 11;
+    /** A type of barcode */
+    public static final int CODABAR = 12;
 
     protected PdfDocument document;
 

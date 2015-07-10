@@ -12,11 +12,14 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-public class Barcode128Test {
+public class BarcodeEANTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/Barcode128/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeEAN/";
 
     @BeforeClass
     static public void beforeClass() {
@@ -26,15 +29,15 @@ public class Barcode128Test {
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
 
-        String filename = "barcode128_01.pdf";
+        String filename = "barcodeEAN_01.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        Barcode1D barcode = new Barcode128(document);
-        barcode.setCodeType(Barcode128.CODE128);
+        Barcode1D barcode = new BarcodeEAN(document);
+        barcode.setCodeType(BarcodeEAN.EAN13);
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
@@ -48,16 +51,16 @@ public class Barcode128Test {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
 
-        String filename = "barcode128_02.pdf";
+        String filename = "barcodeEAN_02.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "DocumentWithTrueTypeFont1.pdf"));
         PdfDocument document = new PdfDocument(reader, writer);
 
         PdfCanvas canvas = new PdfCanvas(document.getLastPage());
 
-        Barcode1D barcode = new Barcode128(document);
-        barcode.setCodeType(Barcode128.CODE128);
-        barcode.setCode("9781935182610");
+        Barcode1D barcode = new BarcodeEAN(document);
+        barcode.setCodeType(BarcodeEAN.EAN8);
+        barcode.setCode("97819351");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
         barcode.placeBarcode(canvas, Color.Black, Color.Black);
