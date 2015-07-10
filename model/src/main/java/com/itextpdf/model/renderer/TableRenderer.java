@@ -1,5 +1,6 @@
 package com.itextpdf.model.renderer;
 
+import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Cell;
@@ -52,6 +53,7 @@ public class TableRenderer extends AbstractRenderer {
         occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight());
         occupiedArea.getBBox().setHeight(0);
         occupiedArea.getBBox().setWidth(tableModel.getTotalWidth());
+        LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
 
         for (int row = 0; row < rows.size(); row++) {
             BlockRenderer[] currentRow = rows.get(row);
@@ -80,28 +82,34 @@ public class TableRenderer extends AbstractRenderer {
                 Rectangle cellLayoutBox = new Rectangle(layoutBox.getX() + colOffset, layoutBox.getY(),
                         cellWidth, layoutBox.getHeight() + rowspanOffset);
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(), cellLayoutBox);
-                cell.setProperty(Property.KEEP_TOGETHER, true);
+                //cell.setProperty(Property.KEEP_TOGETHER, true);
                 LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
                 //width of BlockRenderer depends from child areas, while in cell case it is hardly define.
                 cell.getOccupiedArea().getBBox().setWidth(cellWidth);
                 if (cellResult.getStatus() != LayoutResult.FULL) {
                     split = true;
+                    splits[col] = cellResult;
                 }
-                rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
+                if (cellResult.getStatus() != LayoutResult.NOTHING) {
+                    rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
+                }
             }
             heights.add(rowHeight);
 
-            for (BlockRenderer cell : currentRow) {
-                if (cell == null) continue;
+            for (int col = 0; col < currentRow.length; col++) {
+                if (currentRow[col] == null) continue;
                 float height = 0;
-                int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
+                int rowspan = currentRow[col].getPropertyAsInteger(Property.ROWSPAN);
                 for (int i = row; i > row - rowspan; i--) {
                     height += heights.get(i);
                 }
-                float shift = height - cell.getOccupiedArea().getBBox().getHeight();
-                cell.getOccupiedArea().getBBox().moveDown(shift);
-                cell.getOccupiedArea().getBBox().setHeight(height);
+                float shift = height - currentRow[col].getOccupiedArea().getBBox().getHeight();
+                currentRow[col].getOccupiedArea().getBBox().moveDown(shift);
+                currentRow[col].getOccupiedArea().getBBox().setHeight(height);
             }
+
+            occupiedArea.getBBox().moveDown(rowHeight);
+            occupiedArea.getBBox().incrementHeight(rowHeight);
 
             if (split) {
                 TableRenderer splitRenderer = createSplitRenderer();
@@ -109,14 +117,34 @@ public class TableRenderer extends AbstractRenderer {
                 TableRenderer overflowRenderer = createOverflowRenderer();
                 overflowRenderer.rows = rows.subList(row, rows.size());
                 splitRenderer.occupiedArea = occupiedArea;
+                for (int col = 0; col < currentRow.length; col++) {
+                    if (splits[col] != null) {
+                        BlockRenderer cellSplit = currentRow[col];
+                        if (splits[col].getStatus() != LayoutResult.NOTHING) {
+                            cellSplit.getOccupiedArea().getBBox().setHeight(rowHeight);
+                            childRenderers.add(cellSplit);
+                        }
+                        currentRow[col] = (BlockRenderer) splits[col].getOverflowRenderer();
+                        //TODO to handle cell-renderer specific properties makes sense to add CellRenderer.
+                        currentRow[col].setProperty(Property.ROWSPAN, cellSplit.getPropertyAsInteger(Property.ROWSPAN));
+                        currentRow[col].setProperty(Property.COLSPAN, cellSplit.getPropertyAsInteger(Property.COLSPAN));
+                        Property.BorderConfig borders = new Property.BorderConfig(new DeviceRgb(160, 160, 160),
+                                0.5f, Property.BorderConfig.BorderStyle.SOLID);
+                        currentRow[col].setProperty(Property.BORDER, borders);
+                    } else {
+                        Cell splitCell = (Cell)currentRow[col].getModelElement();
+                        Cell overflowCell = splitCell.clone(false);
+                        childRenderers.add(currentRow[col]);
+                        currentRow[col] = overflowCell.makeRenderer();
+                    }
+                }
                 return new LayoutResult(row == 0 ? LayoutResult.NOTHING : LayoutResult.PARTIAL,
                         occupiedArea, splitRenderer, overflowRenderer);
             } else {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
             }
-            occupiedArea.getBBox().moveDown(rowHeight);
-            occupiedArea.getBBox().incrementHeight(rowHeight);
+
             layoutBox.decrementHeight(rowHeight);
         }
 
@@ -145,4 +173,17 @@ public class TableRenderer extends AbstractRenderer {
         overflowRenderer.modelElement = modelElement;
         return overflowRenderer;
     }
+
+//    @Override
+//    public void drawBorder(com.itextpdf.core.pdf.PdfDocument document, com.itextpdf.canvas.PdfCanvas canvas) {
+//        drawRectangle(occupiedArea.getBBox(), canvas, DeviceRgb.Red);
+//    }
+//
+//    private void drawRectangle(Rectangle bbox, com.itextpdf.canvas.PdfCanvas canvas, com.itextpdf.canvas.color.Color color) {
+//        canvas.saveState();
+//        canvas.setStrokeColor(color);
+//        canvas.setLineWidth(3f);
+//        canvas.rectangle(bbox).stroke();
+//        canvas.restoreState();
+//    }
 }
