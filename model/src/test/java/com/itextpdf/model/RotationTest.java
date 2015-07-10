@@ -241,7 +241,6 @@ public class RotationTest {
     }
 
     @Test
-    @Ignore
     //TODO tables rotation should be rechecked after finishing the tables implementation
     public void tableRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "tableRotationTest01.pdf";

@@ -49,7 +49,10 @@ public class TableRenderer extends AbstractRenderer {
         }
         ArrayList<Float> heights = new ArrayList<>();
         occupiedArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
+        occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight());
         occupiedArea.getBBox().setHeight(0);
+        occupiedArea.getBBox().setWidth(tableModel.getTotalWidth());
+
         for (int row = 0; row < rows.size(); row++) {
             BlockRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
@@ -112,6 +115,7 @@ public class TableRenderer extends AbstractRenderer {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
             }
+            occupiedArea.getBBox().moveDown(rowHeight);
             occupiedArea.getBBox().incrementHeight(rowHeight);
             layoutBox.decrementHeight(rowHeight);
         }
