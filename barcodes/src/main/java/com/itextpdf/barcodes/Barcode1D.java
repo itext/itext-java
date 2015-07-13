@@ -4,7 +4,8 @@ import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 public abstract class Barcode1D {
 
@@ -13,29 +14,11 @@ public abstract class Barcode1D {
     public static final int ALIGN_CENTER = 3;
 
     /** A type of barcode */
-    public static final int EAN13 = 1;
+    public static final int POSTNET = 1;
     /** A type of barcode */
-    public static final int EAN8 = 2;
+    public static final int PLANET = 2;
     /** A type of barcode */
-    public static final int UPCA = 3;
-    /** A type of barcode */
-    public static final int UPCE = 4;
-    /** A type of barcode */
-    public static final int SUPP2 = 5;
-    /** A type of barcode */
-    public static final int SUPP5 = 6;
-    /** A type of barcode */
-    public static final int POSTNET = 7;
-    /** A type of barcode */
-    public static final int PLANET = 8;
-    /** A type of barcode */
-    public static final int CODE128 = 9;
-    /** A type of barcode */
-    public static final int CODE128_UCC = 10;
-    /** A type of barcode */
-    public static final int CODE128_RAW = 11;
-    /** A type of barcode */
-    public static final int CODABAR = 12;
+    public static final int CODABAR = 3;
 
     protected PdfDocument document;
 
@@ -445,4 +428,21 @@ public abstract class Barcode1D {
      * @return the image
      */
     public abstract java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background);
+
+    /** Creates a PdfFormXObject with the barcode.
+     * @param barColor the color of the bars. It can be <CODE>null</CODE>
+     * @param textColor the color of the text. It can be <CODE>null</CODE>
+     * @return the XObject
+     * @see #placeBarcode(PdfCanvas canvas, Color barColor, Color textColor)
+     */
+    public PdfFormXObject createFormXObjectWithBarcode(Color barColor, Color textColor) {
+        PdfStream stream = new PdfStream(document);
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+        Rectangle rect = placeBarcode(canvas, barColor, textColor);
+
+        PdfFormXObject xObject = new PdfFormXObject(document, rect);
+        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+
+        return xObject;
+    }
 }

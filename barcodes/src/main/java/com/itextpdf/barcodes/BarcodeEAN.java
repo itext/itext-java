@@ -16,6 +16,18 @@ import java.util.Arrays;
 
 public class BarcodeEAN extends Barcode1D {
 
+    /** A type of barcode */
+    public static final int EAN13 = 1;
+    /** A type of barcode */
+    public static final int EAN8 = 2;
+    /** A type of barcode */
+    public static final int UPCA = 3;
+    /** A type of barcode */
+    public static final int UPCE = 4;
+    /** A type of barcode */
+    public static final int SUPP2 = 5;
+    /** A type of barcode */
+    public static final int SUPP5 = 6;
     /**
      * The bar positions that are guard bars.
      */

@@ -78,6 +78,10 @@ public class DocumentRenderer extends AbstractRenderer {
                         getNextArea();
                     }
                 }
+                else if (result.getStatus() == LayoutResult.IMAGE_PARTIAL) {
+                    getNextArea();
+                    ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
+                }
 
                 renderer = result.getOverflowRenderer();
             }

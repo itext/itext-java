@@ -1,6 +1,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.basics.IntHashtable;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.Type1Font;
@@ -12,6 +13,12 @@ import com.itextpdf.core.pdf.PdfDocument;
 
 public class Barcode128 extends Barcode1D {
 
+    /** A type of barcode */
+    public static final int CODE128 = 1;
+    /** A type of barcode */
+    public static final int CODE128_UCC = 2;
+    /** A type of barcode */
+    public static final int CODE128_RAW = 3;
     /**
      * The bars to generate the code.
      */
@@ -306,7 +313,7 @@ public class Barcode128 extends Barcode1D {
         for (int k = 0; k < tLen; ++k) {
             c = text.charAt(k);
             if (c > 127 && c != FNC1)
-                throw new RuntimeException("There are illegal characters for barcode 128 in 1");
+                throw new PdfException("There are illegal characters for barcode 128 in 1");
         }
         c = text.charAt(0);
         char currentCode = START_B;
@@ -337,7 +344,7 @@ public class Barcode128 extends Barcode1D {
             ++index;
         }
         if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
-            throw new RuntimeException("There are illegal characters for barcode 128 in 1");
+            throw new PdfException("There are illegal characters for barcode 128 in 1");
         while (index < tLen) {
             switch (currentCode) {
                 case START_A: {
@@ -406,7 +413,7 @@ public class Barcode128 extends Barcode1D {
                 break;
             }
             if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
-                throw new RuntimeException("There are illegal characters for barcode 128 in 1");
+                throw new PdfException("There are illegal characters for barcode 128 in 1");
         }
         return out;
     }

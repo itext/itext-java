@@ -5,6 +5,10 @@ import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.core.pdf.xobject.PdfXObject;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.layout.LayoutArea;
@@ -19,6 +23,8 @@ public class ImageRenderer extends AbstractRenderer {
     Float fixedXPosition;
     Float fixedYPosition;
     float pivotY;
+    float imageWidth;
+    float imageHeight;
 
     float[] matrix = new float[6];
 
@@ -35,8 +41,17 @@ public class ImageRenderer extends AbstractRenderer {
         width = width == null ? getPropertyAsFloat(Property.WIDTH) : width;
         Float angle = getPropertyAsFloat(Property.ANGLE);
 
-        width = width == null ? ((Image) (getModelElement())).getXObject().getWidth() : width;
-        height = width / ((Image) (getModelElement())).getXObject().getWidth() * ((Image) (getModelElement())).getXObject().getHeight();
+        PdfXObject xObject = ((Image) (getModelElement())).getXObject();
+        if (xObject instanceof PdfImageXObject) {
+            imageWidth = ((PdfImageXObject)xObject).getWidth();
+            imageHeight = ((PdfImageXObject)xObject).getHeight();
+        } else {
+            imageWidth = xObject.getPdfObject().getAsArray(PdfName.BBox).getAsFloat(2);
+            imageHeight = xObject.getPdfObject().getAsArray(PdfName.BBox).getAsFloat(3);
+        }
+
+        width = width == null ? imageWidth : width;
+        height = width / imageWidth * imageHeight;
 
         Float horizontalScaling = getPropertyAsFloat(Property.HORIZONTAL_SCALING);
         Float verticalScaling = getPropertyAsFloat(Property.VERTICAL_SCALING);
@@ -98,6 +113,12 @@ public class ImageRenderer extends AbstractRenderer {
             fixedXPosition = occupiedArea.getBBox().getX();
         }
 
+        PdfXObject xObject = ((Image) (getModelElement())).getXObject();
+        if (xObject instanceof PdfFormXObject) {
+            matrix[0] /= imageWidth;
+            matrix[3] /= imageHeight;
+        }
+
         canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[1], matrix[2], matrix[3],
                 fixedXPosition, fixedYPosition);
 
@@ -108,7 +129,7 @@ public class ImageRenderer extends AbstractRenderer {
 
     protected ImageRenderer autoScale(LayoutArea area){
         if (width > area.getBBox().getWidth()){
-            height = area.getBBox().getWidth() / width * ((Image) (getModelElement())).getXObject().getHeight();
+            height = area.getBBox().getWidth() / width * imageHeight;
             width = area.getBBox().getWidth();
         }
 

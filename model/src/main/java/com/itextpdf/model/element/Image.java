@@ -1,15 +1,21 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.core.pdf.xobject.PdfXObject;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ImageRenderer;
 
 public class Image extends AbstractElement<Image> implements ILeafElement<Image>, IAccessibleElement<Image> {
 
-    protected PdfImageXObject xObject;
+    protected PdfXObject xObject;
 
     public Image(PdfImageXObject xObject){
+        this.xObject = xObject;
+    }
+
+    public Image(PdfFormXObject xObject){
         this.xObject = xObject;
     }
 
@@ -28,6 +34,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         setProperty(Property.X, x).setProperty(Property.Y, y);
     }
 
+    public Image (PdfFormXObject xObject, float x, float y){
+        this.xObject = xObject;
+        setProperty(Property.X, x).setProperty(Property.Y, y);
+    }
+
     @Override
     public IRenderer makeRenderer() {
         if (nextRenderer != null) {
@@ -38,12 +49,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         return new ImageRenderer(this);
     }
 
-    public PdfImageXObject getXObject() {
+    public PdfXObject getXObject() {
         return xObject;
-    }
-
-    public void setXObject(PdfImageXObject xObject) {
-        this.xObject = xObject;
     }
 
     public Image setRotateAngle(double angle){

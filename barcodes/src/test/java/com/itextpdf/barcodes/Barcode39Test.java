@@ -1,15 +1,12 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.image.Image;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -20,9 +17,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class BarcodeEANTest {
+public class Barcode39Test {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeEAN/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/Barcode39/";
 
     @BeforeClass
     static public void beforeClass() {
@@ -32,15 +29,14 @@ public class BarcodeEANTest {
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
 
-        String filename = "barcodeEAN_01.pdf";
+        String filename = "barcode39_01.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        Barcode1D barcode = new BarcodeEAN(document);
-        barcode.setCodeType(BarcodeEAN.EAN13);
+        Barcode1D barcode = new Barcode39(document);
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
@@ -54,16 +50,15 @@ public class BarcodeEANTest {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
 
-        String filename = "barcodeEAN_02.pdf";
+        String filename = "barcode39_02.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "DocumentWithTrueTypeFont1.pdf"));
         PdfDocument document = new PdfDocument(reader, writer);
 
         PdfCanvas canvas = new PdfCanvas(document.getLastPage());
 
-        Barcode1D barcode = new BarcodeEAN(document);
-        barcode.setCodeType(BarcodeEAN.EAN8);
-        barcode.setCode("97819351");
+        Barcode1D barcode = new Barcode39(document);
+        barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
         barcode.placeBarcode(canvas, Color.Black, Color.Black);
