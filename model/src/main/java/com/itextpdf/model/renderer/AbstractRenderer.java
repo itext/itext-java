@@ -9,6 +9,7 @@ import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.border.Border;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutPosition;
@@ -190,21 +191,6 @@ public abstract class AbstractRenderer implements IRenderer {
         flushed = true;
     }
 
-    private void beginRotationIfApplied(PdfCanvas canvas) {
-        if (getProperty(Property.ANGLE) != null) {
-            move(-rotationPointX, -rotationPointY);
-            float[] ctm = applyRotation();
-            canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
-        }
-    }
-
-    private void endRotationIfApplied(PdfCanvas canvas) {
-        if (getProperty(Property.ANGLE) != null) {
-            canvas.restoreState();
-            move(rotationPointX, rotationPointY);
-        }
-    }
-
     public void drawBackground(PdfDocument document, PdfCanvas canvas) {
         Property.Background background = getProperty(Property.BACKGROUND);
         if (background != null) {
@@ -219,13 +205,49 @@ public abstract class AbstractRenderer implements IRenderer {
 
     public void drawBorder(PdfDocument document, PdfCanvas canvas) {
         // TODO implement complete functionality with all settings. Take into account separate border sides configuration.
-        Property.BorderConfig borderConfig = getProperty(Property.BORDER);
-        if (borderConfig != null) {
-            canvas.saveState();
-            canvas.setStrokeColor(borderConfig.getColor());
-            canvas.setLineWidth(borderConfig.getWidth());
-            canvas.rectangle(occupiedArea.getBBox()).stroke();
-            canvas.restoreState();
+
+        Border[] borders = getBorders();
+        boolean gotBorders = false;
+
+        for (Border border : borders)
+            gotBorders = gotBorders || border != null;
+
+        if (gotBorders) {
+            float topWidth = borders[0] != null ? borders[0].getWidth() : 0;
+            float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
+            float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
+            float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
+
+            applyMargins(occupiedArea.getBBox(), false);
+            applyBorderBox(occupiedArea.getBBox(), false);
+            float x1 = occupiedArea.getBBox().getX();
+            float y1 = occupiedArea.getBBox().getY();
+            float x2 = occupiedArea.getBBox().getX() + occupiedArea.getBBox().getWidth();
+            float y2 = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight();
+            applyBorderBox(occupiedArea.getBBox(), true);
+            applyMargins(occupiedArea.getBBox(), true);
+
+
+            if (borders[0] != null) {
+                canvas.saveState();
+                borders[0].draw(canvas, x1, y2, x2, y2, leftWidth, rightWidth);
+                canvas.restoreState();
+            }
+            if (borders[1] != null) {
+                canvas.saveState();
+                borders[1].draw(canvas, x2, y2, x2, y1, topWidth, bottomWidth);
+                canvas.restoreState();
+            }
+            if (borders[2] != null) {
+                canvas.saveState();
+                borders[2].draw(canvas, x2, y1, x1, y1, rightWidth, leftWidth);
+                canvas.restoreState();
+            }
+            if (borders[3] != null) {
+                canvas.saveState();
+                borders[3].draw(canvas, x1, y1, x1, y2, bottomWidth, topWidth);
+                canvas.restoreState();
+            }
         }
     }
 
@@ -281,6 +303,15 @@ public abstract class AbstractRenderer implements IRenderer {
     protected Rectangle applyPaddings(Rectangle rect, boolean reverse) {
         return rect.applyMargins(getPropertyAsFloat(Property.PADDING_TOP), getPropertyAsFloat(Property.PADDING_RIGHT),
                 getPropertyAsFloat(Property.PADDING_BOTTOM), getPropertyAsFloat(Property.PADDING_LEFT), reverse);
+    }
+
+    protected Rectangle applyBorderBox(Rectangle rect, boolean reverse) {
+        Border[] borders = getBorders();
+        float topWidth = borders[0] != null ? borders[0].getWidth() : 0;
+        float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
+        float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
+        float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
+        return rect.applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
     protected void applyAbsolutePositioningTranslation(boolean reverse) {
@@ -395,6 +426,45 @@ public abstract class AbstractRenderer implements IRenderer {
                     childRenderer.move(deltaX / 2, 0);
                     break;
             }
+        }
+    }
+
+    /**
+     * Gets borders of the element in the specified order: top, right, bottom, left.
+     * @return an array of BorderDrawer objects.
+     * In case when certain border isn't set <code>Property.BORDER</code> is used,
+     * and if <code>Property.BORDER</code> is also not set then <code>null<code/> is returned
+     * on position of this border
+     */
+    protected Border[] getBorders() {
+        Border border = getProperty(Property.BORDER);
+        Border topBorder = getProperty(Property.BORDER_TOP);
+        Border rightBorder = getProperty(Property.BORDER_RIGHT);
+        Border bottomBorder = getProperty(Property.BORDER_BOTTOM);
+        Border leftBorder = getProperty(Property.BORDER_LEFT);
+
+        Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
+
+        for (int i = 0; i < borders.length; ++i) {
+            if (borders[i] == null)
+                borders[i] = border;
+        }
+
+        return borders;
+    }
+
+    private void beginRotationIfApplied(PdfCanvas canvas) {
+        if (getProperty(Property.ANGLE) != null) {
+            move(-rotationPointX, -rotationPointY);
+            float[] ctm = applyRotation();
+            canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
+        }
+    }
+
+    private void endRotationIfApplied(PdfCanvas canvas) {
+        if (getProperty(Property.ANGLE) != null) {
+            canvas.restoreState();
+            move(rotationPointX, rotationPointY);
         }
     }
 }

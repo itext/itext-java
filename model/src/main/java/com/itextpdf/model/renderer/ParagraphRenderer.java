@@ -54,6 +54,7 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         int pageNumber = areas.get(0).getPageNumber();
         Rectangle layoutBox = applyMargins(areas.get(0).getBBox().clone(), false);
+        applyBorderBox(layoutBox, false);
         Float blockWidth = getPropertyAsFloat(Property.WIDTH);
         if (blockWidth != null && blockWidth < layoutBox.getWidth()) {
             layoutBox.setWidth(blockWidth);
@@ -118,16 +119,18 @@ public class ParagraphRenderer extends AbstractRenderer {
                 // TODO avoid infinite loop
                 if (currentAreaPos + 1 < areas.size()) {
                     layoutBox = applyMargins(areas.get(++currentAreaPos).getBBox().clone(), false);
+                    layoutBox = applyBorderBox(layoutBox, false);
                     layoutBox = applyPaddings(layoutBox, false);
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
                     continue;
                 } else {
+                    applyPaddings(occupiedArea.getBBox(), true);
+                    applyBorderBox(occupiedArea.getBBox(), true);
+                    applyMargins(occupiedArea.getBBox(), true);
                     ParagraphRenderer[] split = split();
                     split[0].childRenderers = new ArrayList<>(childRenderers);
                     split[1].childRenderers.add(currentRenderer);
-                    applyPaddings(occupiedArea.getBBox(), true);
-                    applyMargins(occupiedArea.getBBox(), true);
                     boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
                     if (keepTogether) {
                         split[0] = null;
@@ -177,6 +180,7 @@ public class ParagraphRenderer extends AbstractRenderer {
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
+        applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
         if (getProperty(Property.ANGLE) != null) {
             calculateRotationPointAndRotate(maxLineWidth);

@@ -33,6 +33,7 @@ public class BlockRenderer extends AbstractRenderer {
 
         int pageNumber = areas.get(0).getPageNumber();
         Rectangle layoutBox = applyMargins(areas.get(0).getBBox().clone(), false);
+        applyBorderBox(layoutBox, false);
         Float blockWidth = getPropertyAsFloat(Property.WIDTH);
         if (blockWidth != null && blockWidth < layoutBox.getWidth()) {
             layoutBox.setWidth(blockWidth);
@@ -83,6 +84,7 @@ public class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers = overflowRendererChildren;
 
                             applyPaddings(occupiedArea.getBBox(), false);
+                            applyBorderBox(occupiedArea.getBBox(), true);
                             applyMargins(occupiedArea.getBBox(), true);
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
                         } else {
@@ -110,6 +112,7 @@ public class BlockRenderer extends AbstractRenderer {
                         }
 
                         applyPaddings(occupiedArea.getBBox(), false);
+                        applyBorderBox(occupiedArea.getBBox(), true);
                         applyMargins(occupiedArea.getBBox(), true);
                         return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
                     }
@@ -140,6 +143,7 @@ public class BlockRenderer extends AbstractRenderer {
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
+        applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
         if (getProperty(Property.ANGLE) != null) {
             applyRotationLayout();

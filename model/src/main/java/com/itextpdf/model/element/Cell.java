@@ -2,6 +2,7 @@ package com.itextpdf.model.element;
 
 import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.renderer.BlockRenderer;
 import com.itextpdf.model.renderer.IRenderer;
 import org.slf4j.Logger;
@@ -39,8 +40,7 @@ public class Cell extends BlockElement<Cell> {
             }
         }
         if (cellRenderer == null) {
-            Property.BorderConfig borders = new Property.BorderConfig(new DeviceRgb(160, 160, 160),
-                    0.5f, Property.BorderConfig.BorderStyle.SOLID);
+            SolidBorder borders = new SolidBorder(new DeviceRgb(160, 160, 160), 0.5f);
             cellRenderer = new BlockRenderer(this).setProperty(Property.BORDER, borders);
         }
         cellRenderer.setProperty(Property.ROWSPAN, rowspan);

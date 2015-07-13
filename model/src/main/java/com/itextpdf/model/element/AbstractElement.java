@@ -3,6 +3,7 @@ package com.itextpdf.model.element;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.border.Border;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
@@ -130,24 +131,24 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         return setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
     }
 
-    public Type setBorder(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER, borderConfig);
+    public Type setBorder(Border border) {
+        return setProperty(Property.BORDER, border);
     }
 
-    public Type setBorderTop(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER_TOP, borderConfig);
+    public Type setBorderTop(Border border) {
+        return setProperty(Property.BORDER_TOP, border);
     }
 
-    public Type setBorderRight(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER_RIGHT, borderConfig);
+    public Type setBorderRight(Border border) {
+        return setProperty(Property.BORDER_RIGHT, border);
     }
 
-    public Type setBorderBottom(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER_BOTTOM, borderConfig);
+    public Type setBorderBottom(Border border) {
+        return setProperty(Property.BORDER_BOTTOM, border);
     }
 
-    public Type setBorderLeft(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER_LEFT, borderConfig);
+    public Type setBorderLeft(Border border) {
+        return setProperty(Property.BORDER_LEFT, border);
     }
 
     @Override

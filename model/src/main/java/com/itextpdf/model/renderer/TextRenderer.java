@@ -38,6 +38,7 @@ public class TextRenderer extends AbstractRenderer {
     public TextLayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = applyMargins(area.getBBox().clone(), false);
+        applyBorderBox(layoutBox, false);
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
@@ -132,6 +133,7 @@ public class TextRenderer extends AbstractRenderer {
                 if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight()) {
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
+                    applyBorderBox(occupiedArea.getBBox(), true);
                     applyMargins(occupiedArea.getBBox(), true);
                     return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
                 } else {
@@ -158,6 +160,7 @@ public class TextRenderer extends AbstractRenderer {
                     currentLine.setLength(0);
 
                     TextRenderer[] split = split(currentTextPos);
+                    applyBorderBox(occupiedArea.getBBox(), true);
                     applyMargins(occupiedArea.getBBox(), true);
                     TextLayoutResult result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
                     if (split[1].text.length() > 0 && split[1].text.charAt(0) == '\n')
@@ -169,6 +172,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (currentLine.length() != 0) {
             if (currentLineHeight > layoutBox.getHeight()) {
+                applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
                 return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
             }
@@ -183,6 +187,7 @@ public class TextRenderer extends AbstractRenderer {
             layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
         }
 
+        applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
         return new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }

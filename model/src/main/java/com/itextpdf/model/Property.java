@@ -148,42 +148,6 @@ public class Property {
         }
     }
 
-    public static class BorderConfig {
-
-        protected Color color;
-        protected float width;
-        protected BorderStyle borderStyle;
-
-        public BorderConfig(Color color, float width, BorderStyle borderStyle) {
-            this.color = color;
-            this.width = width;
-            this.borderStyle = borderStyle;
-        }
-
-        public Color getColor() {
-            return color;
-        }
-
-        public float getWidth() {
-            return width;
-        }
-
-        public BorderStyle getBorderStyle() {
-            return borderStyle;
-        }
-
-        public enum BorderStyle {
-            DOTTED,
-            DASHED,
-            SOLID,
-            DOUBLE,
-            GROOVE,
-            RIDGE,
-            INSET,
-            OUTSET
-        }
-    }
-
     public static class Leading {
         public static final int FIXED = 1;
         public static final int MULTIPLIED = 2;

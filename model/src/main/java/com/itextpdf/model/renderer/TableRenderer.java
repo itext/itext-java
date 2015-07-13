@@ -3,6 +3,7 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.element.Table;
 import com.itextpdf.model.layout.LayoutArea;
@@ -134,8 +135,7 @@ public class TableRenderer extends AbstractRenderer {
                         //TODO to handle cell-renderer specific properties makes sense to add CellRenderer.
                         currentRow[col].setProperty(Property.ROWSPAN, cellSplit.getPropertyAsInteger(Property.ROWSPAN));
                         currentRow[col].setProperty(Property.COLSPAN, cellSplit.getPropertyAsInteger(Property.COLSPAN));
-                        Property.BorderConfig borders = new Property.BorderConfig(new DeviceRgb(160, 160, 160),
-                                0.5f, Property.BorderConfig.BorderStyle.SOLID);
+                        SolidBorder borders = new SolidBorder(new DeviceRgb(160, 160, 160), 0.5f);
                         currentRow[col].setProperty(Property.BORDER, borders);
                     } else if (hasContent) {
                         Cell splitCell = (Cell)currentRow[col].getModelElement();

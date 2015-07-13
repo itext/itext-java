@@ -6,6 +6,7 @@ import com.itextpdf.canvas.color.DeviceGray;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
@@ -37,7 +38,7 @@ public class PositioningTest {
         Document document = new Document(pdfDocument);
 
         Paragraph p = new Paragraph().
-                setBorder(new Property.BorderConfig(new DeviceGray(0), 5, Property.BorderConfig.BorderStyle.SOLID)).
+                setBorder(new SolidBorder(new DeviceGray(0), 5)).
                 setWidth(300).
                 setPaddings(20, 20, 20, 20).
                 add("Here is a line of text.").
@@ -60,13 +61,13 @@ public class PositioningTest {
         Document document = new Document(pdfDocument);
 
         Paragraph p = new Paragraph().
-                setBorder(new Property.BorderConfig(new DeviceGray(0), 5, Property.BorderConfig.BorderStyle.SOLID)).
-                setWidth(180).
-                setPaddings(20, 20, 20, 20).
-                add("Here is a line of text.").
-                add(new Text("This part is shifted\n up a bit,").setRelativePosition(0, -10, 0, 0).setBackgroundColor(new DeviceGray(0.8f))).
-                add("but the rest of the line is in its original position.").
-                setRelativePosition(50, 0, 0, 0);
+                setBorder(new SolidBorder(new DeviceGray(0), 5)).
+                        setWidth(180).
+                        setPaddings(20, 20, 20, 20).
+                        add("Here is a line of text.").
+                        add(new Text("This part is shifted\n up a bit,").setRelativePosition(0, -10, 0, 0).setBackgroundColor(new DeviceGray(0.8f))).
+                        add("but the rest of the line is in its original position.").
+                        setRelativePosition(50, 0, 0, 0);
 
         document.add(p);
 

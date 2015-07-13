@@ -6,6 +6,7 @@ import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -35,7 +36,10 @@ public class RotationTest {
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        File dir = new File(destinationFolder);
+        dir.mkdirs();
+        for(File file: dir.listFiles())
+            file.delete();
     }
 
     @Test
@@ -46,14 +50,15 @@ public class RotationTest {
 
         Document document = new Document(pdfDocument);
 
+        SolidBorder border = new SolidBorder(Color.Black, 0.5f);
         document.add(new Paragraph("text to be rotatedg").setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setFixedPosition(350, 600)
-                .setBorder(new Property.BorderConfig(Color.Black, 0.5f, Property.BorderConfig.BorderStyle.SOLID)));
+                .setBorder(border));
         document.add(new Paragraph("text to be rotatedg").setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(350, 600)
-                .setBorder(new Property.BorderConfig(Color.Black, 0.5f, Property.BorderConfig.BorderStyle.SOLID)));
+                .setBorder(border));
         document.add(new Paragraph("text to be rotatedg").setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.RIGHT).setFixedPosition(350, 600)
-                .setBorder(new Property.BorderConfig(Color.Black, 0.5f, Property.BorderConfig.BorderStyle.SOLID)));
+                .setBorder(border));
         document.add(new Paragraph("text to be rotatedg").setFixedPosition(350, 600)
-                .setBorder(new Property.BorderConfig(Color.Black, 0.5f, Property.BorderConfig.BorderStyle.SOLID)));
+                .setBorder(border));
 
         String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                 "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text";
