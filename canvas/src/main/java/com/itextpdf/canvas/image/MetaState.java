@@ -1,6 +1,7 @@
 package com.itextpdf.canvas.image;
 
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.DeviceRgb;
 
@@ -306,14 +307,14 @@ public class MetaState {
     public void setLineJoinRectangle(PdfCanvas cb) {
         if (lineJoin != 0) {
             lineJoin = 0;
-            cb.setLineJoinStyle(0);
+            cb.setLineJoinStyle(PdfCanvasConstants.LineJoinStyle.MITER);
         }
     }
 
     public void setLineJoinPolygon(PdfCanvas cb) {
         if (lineJoin == 0) {
             lineJoin = 1;
-            cb.setLineJoinStyle(1);
+            cb.setLineJoinStyle(PdfCanvasConstants.LineJoinStyle.ROUND);
         }
     }
 

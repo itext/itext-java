@@ -5,6 +5,7 @@ import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
@@ -127,8 +128,8 @@ public class MetaDo {
 
         int tsize;
         int function;
-        cb.setLineCapStyle(1);
-        cb.setLineJoinStyle(1);
+        cb.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
+        cb.setLineJoinStyle(PdfCanvasConstants.LineJoinStyle.ROUND);
         for (;;) {
             int lenMarker = in.getLength();
             tsize = in.readInt();

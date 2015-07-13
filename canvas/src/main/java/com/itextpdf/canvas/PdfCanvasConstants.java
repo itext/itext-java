@@ -17,4 +17,16 @@ public class PdfCanvasConstants {
     public static final int TextRenderModeFillStrokeClip = 6;
     /** A possible text rendering value */
     public static final int TextRenderModeClip = 7;
+
+    public static class LineCapStyle {
+        public static final int BUTT = 0;
+        public static final int ROUND = 1;
+        public static final int PROJECTING_SQUARE = 2;
+    }
+
+    public static class LineJoinStyle {
+        public static final int MITER = 0;
+        public static final int ROUND = 1;
+        public static final int BEVEL = 2;
+    }
 }

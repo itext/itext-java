@@ -2,6 +2,7 @@ package com.itextpdf.forms.formfields;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
@@ -508,31 +509,31 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 setStrokeColor(Color.Silver).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 rectangle(x, y, width, height).
                 stroke().
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 setFillColor(Color.White).
                 rectangle(x + 0.5f, y + 0.5f, width - 1, height - 1).
                 fill().
                 setStrokeColor(Color.Silver).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1.5f).
                 lineTo(upperRightX - 1.5f, y + 1.5f).
                 lineTo(upperRightX - 1.5f, upperRightY - 1).
                 stroke().
                 setStrokeColor(Color.Gray).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1).
                 lineTo(x + 1, upperRightY - 1).
                 lineTo(upperRightX - 1, upperRightY - 1).
                 stroke().
                 setStrokeColor(Color.Black).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 2, y + 2).
                 lineTo(x + 2, upperRightY - 2).
                 lineTo(upperRightX - 2, upperRightY - 2).
@@ -565,24 +566,24 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.
                 saveState().
                 setLineWidth(1).
-                setLineCapStyle(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
                 setStrokeColor(Color.Silver).
                 arc(x + 1, y + 1, x + width - 1, y + height - 1, 0, 360).
                 stroke().
                 setLineWidth(1).
-                setLineCapStyle(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
                 setStrokeColor(Color.Gray).
                 arc(x + 0.5f, y + 0.5f, x + width - 0.5f, y + height - 0.5f, 45, 180).
                 stroke().
                 setLineWidth(1).
-                setLineCapStyle(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
                 setStrokeColor(Color.Black).
                 arc(x + 1.5f, y + 1.5f, x + width - 1.5f, y + height - 1.5f, 45, 180).
                 stroke();
         if (on) {
             canvas.
                     setLineWidth(1).
-                    setLineCapStyle(1).
+                    setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
                     setFillColor(Color.Black).
                     arc(x + 4, y + 4, x + width - 4, y + height - 4, 0, 360).
                     fill();
@@ -629,24 +630,24 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 setStrokeColor(Color.Black).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 rectangle(x, y, width, height).
                 stroke().
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 setFillColor(Color.Silver).
                 rectangle(x + 0.5f, y + 0.5f, width - 1, height - 1).
                 fill().
                 setStrokeColor(Color.White).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1).
                 lineTo(x + 1, y + height - 1).
                 lineTo(x + width - 1, y + height - 1).
                 stroke().
                 setStrokeColor(Color.Gray).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1).
                 lineTo(x + width - 1, y + 1).
                 lineTo(x + width - 1, y + height - 1).

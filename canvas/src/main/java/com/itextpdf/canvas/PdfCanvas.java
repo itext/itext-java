@@ -1009,10 +1009,12 @@ public class PdfCanvas {
      * @param phase   the value of the phase
      * @param unitsOn the number of units that must be 'on' (equals the number of units that must be 'off').
      */
-    public void setLineDash(final float unitsOn, final float phase) {
+    public PdfCanvas setLineDash(final float unitsOn, final float phase) {
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
+
+        return this;
     }
 
     /**
@@ -1027,11 +1029,12 @@ public class PdfCanvas {
      * @param unitsOn  the number of units that must be 'on'
      * @param unitsOff the number of units that must be 'off'
      */
-    public void setLineDash(final float unitsOn, final float unitsOff, final float phase) {
+    public PdfCanvas setLineDash(final float unitsOn, final float unitsOff, final float phase) {
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeSpace()
                 .writeFloat(unitsOff).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
+        return this;
     }
 
     /**
@@ -1045,7 +1048,7 @@ public class PdfCanvas {
      * @param array length of the alternating dashes and gaps
      * @param phase the value of the phase
      */
-    public final void setLineDash(final float[] array, final float phase) {
+    public final PdfCanvas setLineDash(final float[] array, final float phase) {
         PdfOutputStream out = contentStream.getOutputStream();
         out.writeByte((byte) '[');
         for (int i = 0; i < array.length; i++) {
@@ -1054,6 +1057,7 @@ public class PdfCanvas {
                 out.writeSpace();
         }
         out.writeByte((byte) ']').writeSpace().writeFloat(phase).writeSpace().writeBytes(d);
+        return this;
     }
 
     public PdfCanvas setRenderingIntent(PdfName renderingIntent) {

@@ -1064,7 +1064,7 @@ public class PdfAnnotationTest {
         canvasN
                 .setColor(Color.Red, true)
                 .setLineWidth(1.5f)
-                .setLineCapStyle(2)
+                .setLineCapStyle(PdfCanvasConstants.LineCapStyle.PROJECTING_SQUARE)
                 .rectangle(180, 531, 120, 48)
                 .stroke()
                 .rectangle(181, 532,118, 47)
