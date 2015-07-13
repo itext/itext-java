@@ -59,6 +59,7 @@ public class TableRenderer extends AbstractRenderer {
             BlockRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
             boolean split = false;
+            boolean hasContent = true;
             ArrayList<BlockRenderer> currChildRenderers = new ArrayList<>();
             for (int col = 0; col < currentRow.length; col++) {
                 BlockRenderer cell = currentRow[col];
@@ -86,30 +87,35 @@ public class TableRenderer extends AbstractRenderer {
                 LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
                 //width of BlockRenderer depends from child areas, while in cell case it is hardly define.
                 cell.getOccupiedArea().getBBox().setWidth(cellWidth);
+
                 if (cellResult.getStatus() != LayoutResult.FULL) {
                     split = true;
+                    if (cellResult.getStatus() == LayoutResult.NOTHING) {
+                        hasContent = false;
+                    }
                     splits[col] = cellResult;
                 }
                 if (cellResult.getStatus() != LayoutResult.NOTHING) {
                     rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
                 }
             }
-            heights.add(rowHeight);
-
-            for (int col = 0; col < currentRow.length; col++) {
-                if (currentRow[col] == null) continue;
-                float height = 0;
-                int rowspan = currentRow[col].getPropertyAsInteger(Property.ROWSPAN);
-                for (int i = row; i > row - rowspan; i--) {
-                    height += heights.get(i);
+            if (hasContent) {
+                heights.add(rowHeight);
+                for (int col = 0; col < currentRow.length; col++) {
+                    if (currentRow[col] == null) continue;
+                    float height = 0;
+                    int rowspan = currentRow[col].getPropertyAsInteger(Property.ROWSPAN);
+                    for (int i = row; i > row - rowspan; i--) {
+                        height += heights.get(i);
+                    }
+                    float shift = height - currentRow[col].getOccupiedArea().getBBox().getHeight();
+                    currentRow[col].getOccupiedArea().getBBox().moveDown(shift);
+                    currentRow[col].getOccupiedArea().getBBox().setHeight(height);
                 }
-                float shift = height - currentRow[col].getOccupiedArea().getBBox().getHeight();
-                currentRow[col].getOccupiedArea().getBBox().moveDown(shift);
-                currentRow[col].getOccupiedArea().getBBox().setHeight(height);
-            }
 
-            occupiedArea.getBBox().moveDown(rowHeight);
-            occupiedArea.getBBox().incrementHeight(rowHeight);
+                occupiedArea.getBBox().moveDown(rowHeight);
+                occupiedArea.getBBox().incrementHeight(rowHeight);
+            }
 
             if (split) {
                 TableRenderer splitRenderer = createSplitRenderer();
@@ -131,7 +137,7 @@ public class TableRenderer extends AbstractRenderer {
                         Property.BorderConfig borders = new Property.BorderConfig(new DeviceRgb(160, 160, 160),
                                 0.5f, Property.BorderConfig.BorderStyle.SOLID);
                         currentRow[col].setProperty(Property.BORDER, borders);
-                    } else {
+                    } else if (hasContent) {
                         Cell splitCell = (Cell)currentRow[col].getModelElement();
                         Cell overflowCell = splitCell.clone(false);
                         childRenderers.add(currentRow[col]);
