@@ -194,6 +194,7 @@ public class PdfException extends RuntimeException {
     public static final String YouCannotFlushStructTreeRootManually = "you.cannot.flush.structtreeroot.manually";
     public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
     public static final String IllegalResourceTree = "illegal.resources.tree";
+    public static final String TextMustBeEven = "the.text.length.must.be.even";
 
     protected Object object;
     protected String composedMessage;
