@@ -341,7 +341,6 @@ public abstract class Barcode1D {
     /**
      * Gets the maximum area that the barcode and the text, if
      * any, will occupy. The lower left corner is always (0, 0).
-     *
      * @return the size the barcode occupies.
      */
     public abstract Rectangle getBarcodeSize();
