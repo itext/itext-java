@@ -11,7 +11,6 @@ import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Table;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -67,7 +66,9 @@ public class TableTest {
                 .addCell(new Cell().add(new Paragraph("cell 1, 1")))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2")))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1")))
-                .addCell(new Cell().add(new Paragraph("cell 2, 2")));
+                .addCell(new Cell().add(new Paragraph("cell 2, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1")))
+                .addCell(new Cell());
         doc.add(table);
 
         doc.close();
@@ -453,7 +454,6 @@ public class TableTest {
     }
 
     @Test
-    @Ignore
     public void simpleTableTest16() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "tableTest16.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest16.pdf";
