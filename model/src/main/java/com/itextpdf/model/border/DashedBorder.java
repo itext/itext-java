@@ -13,7 +13,7 @@ public class DashedBorder extends Border {
     }
 
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float joinAreaBefore, float joinAreaAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float initialGap = width * gapModifier;
         float dash = width * dashModifier;
         float dx = x2 - x1;

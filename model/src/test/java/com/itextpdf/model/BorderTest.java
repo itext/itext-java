@@ -54,12 +54,12 @@ public class BorderTest {
 
         ListItem dashedBorderItem = new ListItem("dashed");
         dashedBorderItem.setBorder(new DashedBorder(Color.Gray, 2)).setMarginBottom(5);
-        dashedBorderItem.setBorderBottom(new DashedBorder(Color.Black, 4)).setMarginBottom(5);
+        dashedBorderItem.setBorderBottom(new DashedBorder(Color.Black, 4));
         list.add(dashedBorderItem);
 
         ListItem dottedBorderItem = new ListItem("dotted");
         dottedBorderItem.setBorder(new DottedBorder(Color.Black, 3)).setMarginBottom(5);
-        dottedBorderItem.setBorderLeft(new DottedBorder(Color.Gray, 6)).setMarginBottom(5);
+        dottedBorderItem.setBorderLeft(new DottedBorder(Color.Gray, 6));
         list.add(dottedBorderItem);
 
         ListItem roundDotsBorderItem = new ListItem("round dots");
@@ -81,19 +81,19 @@ public class BorderTest {
         List list = new List();
 
         ListItem grooveBorderItem = new ListItem("groove");
-        grooveBorderItem.setBorder(new GrooveBorder(Color.Silver, 2)).setMarginBottom(5);
+        grooveBorderItem.setBorder(new GrooveBorder(Color.Silver, 2)).setMarginBottom(5).setWidth(100);
         list.add(grooveBorderItem);
 
         ListItem ridgeBorderItem = new ListItem("ridge");
-        ridgeBorderItem.setBorder(new RidgeBorder(Color.Silver, 3)).setMarginBottom(5);
+        ridgeBorderItem.setBorder(new RidgeBorder(Color.Silver, 2)).setMarginBottom(5).setWidth(100);
         list.add(ridgeBorderItem);
 
         ListItem insetBorderItem = new ListItem("inset");
-        insetBorderItem.setBorder(new InsetBorder(Color.Silver, 2)).setMarginBottom(5);
+        insetBorderItem.setBorder(new InsetBorder(Color.Silver, 1)).setMarginBottom(5).setWidth(100);
         list.add(insetBorderItem);
 
         ListItem outsetBorderItem = new ListItem("outset");
-        outsetBorderItem.setBorder(new OutsetBorder(Color.Silver, 3)).setMarginBottom(5);
+        outsetBorderItem.setBorder(new OutsetBorder(Color.Silver, 1)).setMarginBottom(5).setWidth(100);
         list.add(outsetBorderItem);
 
         doc.add(list);

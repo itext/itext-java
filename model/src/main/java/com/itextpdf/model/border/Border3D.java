@@ -2,45 +2,50 @@ package com.itextpdf.model.border;
 
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
+import com.itextpdf.canvas.color.DeviceRgb;
 
 public abstract class Border3D extends Border{
+    public static final DeviceRgb gray = new DeviceRgb(212, 208, 200);
+    public static final DeviceRgb darkGray = new DeviceRgb(128, 128, 128);
+
+
     public Border3D(Color color, float width) {
         super(color, width);
     }
 
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float joinAreaBefore, float joinAreaAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
         float x4 = 0, y4 = 0;
         float widthHalf = width / 2;
-        float halfOfJoinsBefore = joinAreaBefore / 2;
-        float halfOfJoinsAfter = joinAreaAfter / 2;
+        float halfOfWidthBefore = borderWidthBefore / 2;
+        float halfOfWidthAfter = borderWidthAfter / 2;
 
         Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
         switch (borderSide) {
             case TOP:
-                x3 = x2 + halfOfJoinsAfter;
+                x3 = x2 + halfOfWidthAfter;
                 y3 = y2 + widthHalf;
-                x4 = x1 - halfOfJoinsBefore;
+                x4 = x1 - halfOfWidthBefore;
                 y4 = y1 + widthHalf;
                 break;
             case RIGHT:
                 x3 = x2 + widthHalf;
-                y3 = y2 - halfOfJoinsAfter;
+                y3 = y2 - halfOfWidthAfter;
                 x4 = x1 + widthHalf;
-                y4 = y1 + halfOfJoinsBefore;
+                y4 = y1 + halfOfWidthBefore;
                 break;
             case BOTTOM:
-                x3 = x2 - halfOfJoinsAfter;
+                x3 = x2 - halfOfWidthAfter;
                 y3 = y2 - widthHalf;
-                x4 = x1 + halfOfJoinsBefore;
+                x4 = x1 + halfOfWidthBefore;
                 y4 = y1 - widthHalf;
                 break;
             case LEFT:
                 x3 = x2 - widthHalf;
-                y3 = y2 + halfOfJoinsAfter;
+                y3 = y2 + halfOfWidthAfter;
                 x4 = x1 - widthHalf;
-                y4 = y1 - halfOfJoinsBefore;
+                y4 = y1 - halfOfWidthBefore;
                 break;
         }
 
@@ -49,28 +54,28 @@ public abstract class Border3D extends Border{
 
         switch (borderSide) {
             case TOP:
-                x2 += joinAreaAfter;
+                x2 += borderWidthAfter;
                 y2 += width;
-                x1 -= joinAreaBefore;
+                x1 -= borderWidthBefore;
                 y1 += width;
                 break;
             case RIGHT:
                 x2 += width;
-                y2 -= joinAreaAfter;
+                y2 -= borderWidthAfter;
                 x1 += width;
-                y1 += joinAreaBefore;
+                y1 += borderWidthBefore;
                 break;
             case BOTTOM:
-                x2 -= joinAreaAfter;
+                x2 -= borderWidthAfter;
                 y2 -= width;
-                x1 += joinAreaBefore;
+                x1 += borderWidthBefore;
                 y1 -= width;
                 break;
             case LEFT:
                 x2 -= width;
-                y2 += joinAreaAfter;
+                y2 += borderWidthAfter;
                 x1 -= width;
-                y1 -= joinAreaBefore;
+                y1 -= borderWidthBefore;
                 break;
         }
 
