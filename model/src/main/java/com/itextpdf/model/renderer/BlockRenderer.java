@@ -145,7 +145,7 @@ public class BlockRenderer extends AbstractRenderer {
 
         applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
-        if (getProperty(Property.ANGLE) != null) {
+        if (getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout();
             if (isNotFittingHeight(layoutContext.getArea())) {
                 return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);

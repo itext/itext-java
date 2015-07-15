@@ -182,7 +182,7 @@ public class ParagraphRenderer extends AbstractRenderer {
 
         applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
-        if (getProperty(Property.ANGLE) != null) {
+        if (getProperty(Property.ROTATION_ANGLE) != null) {
             calculateRotationPointAndRotate(maxLineWidth);
 
             if (isNotFittingHeight(layoutContext.getArea())) {

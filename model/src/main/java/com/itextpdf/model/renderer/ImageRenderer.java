@@ -39,7 +39,7 @@ public class ImageRenderer extends AbstractRenderer {
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         width = width == null ? getPropertyAsFloat(Property.WIDTH) : width;
-        Float angle = getPropertyAsFloat(Property.ANGLE);
+        Float angle = getPropertyAsFloat(Property.IMAGE_ROTATION_ANGLE);
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
         if (xObject instanceof PdfImageXObject) {

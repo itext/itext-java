@@ -51,20 +51,20 @@ public class RotationTest {
         Document document = new Document(pdfDocument);
 
         SolidBorder border = new SolidBorder(Color.Black, 0.5f);
-        document.add(new Paragraph("text to be rotatedg").setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setFixedPosition(350, 600)
+        document.add(new Paragraph("text to be rotatedg").setRotationAngle((Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setFixedPosition(350, 600)
                 .setBorder(border));
-        document.add(new Paragraph("text to be rotatedg").setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(350, 600)
+        document.add(new Paragraph("text to be rotatedg").setRotationAngle((Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(350, 600)
                 .setBorder(border));
-        document.add(new Paragraph("text to be rotatedg").setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.RIGHT).setFixedPosition(350, 600)
+        document.add(new Paragraph("text to be rotatedg").setRotationAngle((Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.RIGHT).setFixedPosition(350, 600)
                 .setBorder(border));
         document.add(new Paragraph("text to be rotatedg").setFixedPosition(350, 600)
                 .setBorder(border));
 
         String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                 "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text";
-        document.add(new Paragraph(longText).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setFixedPosition(50, 300));
-        document.add(new Paragraph(longText).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(50, 300));
-        document.add(new Paragraph(longText).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.RIGHT).setFixedPosition(50, 300));
+        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setFixedPosition(50, 300));
+        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(50, 300));
+        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.RIGHT).setFixedPosition(50, 300));
         document.add(new Paragraph(longText).setFixedPosition(50, 300));
 
         document.close();
@@ -82,7 +82,7 @@ public class RotationTest {
 
         String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                 "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text";
-        document.add(new Paragraph(longText).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(50, 50));
+        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(50, 50));
         document.add(new Paragraph(longText).setFixedPosition(50, 50));
 
         document.close();
@@ -101,7 +101,7 @@ public class RotationTest {
         String simpleText = "text simple text";
         float x = 50;
         float y = 380;
-        document.add(new Paragraph(simpleText).setRotateAngle( (Math.PI / 2)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(x, y));
+        document.add(new Paragraph(simpleText).setRotationAngle((Math.PI / 2)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(x, y));
         document.add(new Paragraph(simpleText).setFixedPosition(x, y));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
@@ -123,7 +123,7 @@ public class RotationTest {
         String simpleText = "text simple text";
         float x = 50;
         float y = 380;
-        document.add(new Paragraph(simpleText).setRotateAngle(-(Math.PI / 4)).setBackgroundColor(Color.Red).setFixedPosition(x, y));
+        document.add(new Paragraph(simpleText).setRotationAngle(-(Math.PI / 4)).setBackgroundColor(Color.Red).setFixedPosition(x, y));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
         drawCross(canvas, x, y);
@@ -144,7 +144,7 @@ public class RotationTest {
         Paragraph p = new Paragraph();
         for (int i = 0; i < 7; ++i)
             p.add(para2Text);
-        document.add(p.setRotateAngle((68 * Math.PI / 180)).setBackgroundColor(Color.Blue));
+        document.add(p.setRotationAngle((68 * Math.PI / 180)).setBackgroundColor(Color.Blue));
         document.add(new Paragraph("text line text line text line text line text line text line text line text line text line text line text line text line text line"));
 
         document.close();
@@ -161,9 +161,9 @@ public class RotationTest {
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph(para2Text).setRotateAngle((Math.PI / 12)).setRotateAlignment(Property.HorizontalAlignment.LEFT));
+        document.add(new Paragraph(para2Text).setRotationAngle((Math.PI / 12)).setRotateAlignment(Property.HorizontalAlignment.LEFT));
         document.add(new Paragraph(new Text(para2Text).setBackgroundColor(Color.Green)).
-                setRotateAngle((-Math.PI / 12)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setBackgroundColor(Color.Blue));
+                setRotationAngle((-Math.PI / 12)).setRotateAlignment(Property.HorizontalAlignment.CENTER).setBackgroundColor(Color.Blue));
         document.add(new Paragraph(para3Text));
 
         document.close();
@@ -180,8 +180,8 @@ public class RotationTest {
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph(para2Text).setRotateAngle( (Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setBackgroundColor(Color.Red));
-        document.add(new Paragraph(para2Text).setRotateAngle((-Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER));
+        document.add(new Paragraph(para2Text).setRotationAngle((Math.PI / 6)).setRotateAlignment(Property.HorizontalAlignment.LEFT).setBackgroundColor(Color.Red));
+        document.add(new Paragraph(para2Text).setRotationAngle((-Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER));
         document.add(new Paragraph(para3Text));
 
         document.close();
@@ -198,7 +198,7 @@ public class RotationTest {
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph("short text string").setRotateAngle((Math.PI / 6)).setBackgroundColor(Color.Red));
+        document.add(new Paragraph("short text string").setRotationAngle((Math.PI / 6)).setBackgroundColor(Color.Red));
         document.add(new Paragraph(para3Text));
 
         document.close();
@@ -217,9 +217,9 @@ public class RotationTest {
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph(para1Text).setRotateAngle( (Math.PI / 4)));
+        document.add(new Paragraph(para1Text).setRotationAngle((Math.PI / 4)));
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph(para2Text).setRotateAngle((-Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER));
+        document.add(new Paragraph(para2Text).setRotationAngle((-Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER));
         document.add(new Paragraph(para3Text));
 
         document.close();
@@ -238,7 +238,7 @@ public class RotationTest {
 
         Document document = new Document(pdfDocument);
 
-        document.add(new Paragraph(para1Text).setRotateAngle((Math.PI / 2)));
+        document.add(new Paragraph(para1Text).setRotationAngle((Math.PI / 2)));
 
         document.close();
 
@@ -258,7 +258,7 @@ public class RotationTest {
 
         doc.add(new Paragraph(para1Text));
 
-        Table table = new Table(new float[]{50, 50}).setRotateAngle((Math.PI / 3)).setBackgroundColor(Color.Red)
+        Table table = new Table(new float[]{50, 50}).setRotationAngle((Math.PI / 3)).setBackgroundColor(Color.Red)
                 .addCell(new Cell().add(new Paragraph("cell 1, 1")))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2")))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1")))
@@ -283,10 +283,10 @@ public class RotationTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{50, 50})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1").setRotateAngle((Math.PI / 2))))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotateAngle((Math.PI / 3))))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotateAngle((Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 2").setRotateAngle((Math.PI))));
+                .addCell(new Cell().add(new Paragraph("cell 1, 1").setRotationAngle((Math.PI / 2))))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotationAngle((Math.PI / 3))))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotationAngle((Math.PI / 3)).setRotateAlignment(Property.HorizontalAlignment.CENTER)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2").setRotationAngle((Math.PI))));
         doc.add(table);
 
         doc.close();
@@ -307,11 +307,11 @@ public class RotationTest {
         Document doc = new Document(pdfDoc);
 
         Div div = new Div();
-        div.add(new Paragraph(para1Text)).setRotateAngle(Math.PI / 4);
+        div.add(new Paragraph(para1Text)).setRotationAngle(Math.PI / 4);
         doc.add(div);
 
         div = new Div();
-        div.add(new Paragraph(para1Text)).setRotateAngle(Math.PI / 2);
+        div.add(new Paragraph(para1Text)).setRotationAngle(Math.PI / 2);
         doc.add(div);
 
         doc.close();
@@ -331,7 +331,7 @@ public class RotationTest {
 
         doc.add(new Paragraph(para1Text));
 
-        List list = new List().setRotateAngle(3*Math.PI / 4).setBackgroundColor(Color.Green);
+        List list = new List().setRotationAngle(3 * Math.PI / 4).setBackgroundColor(Color.Green);
         list.add(new ListItem("text of first list item"));
         list.add("text of second list item");
         list.add("text of third list item");
@@ -358,7 +358,7 @@ public class RotationTest {
         doc.add(new Paragraph(para1Text));
         doc.add(new Paragraph(para1Text));
 
-        List list = new List().setRotateAngle(Math.PI / 2).setBackgroundColor(Color.Green);
+        List list = new List().setRotationAngle(Math.PI / 2).setBackgroundColor(Color.Green);
         String itemText = "list item text long item txt list item text long item txt list item text long item txt list item text long item txt list item text long item txt ";
         for (int i = 0; i < 10; ++i) {
             list.add(itemText);
@@ -386,7 +386,7 @@ public class RotationTest {
 
         Paragraph p = new Paragraph();
         p.add("texttext").setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
-        p.setRotateAngle(Math.PI / 4);
+        p.setRotationAngle(Math.PI / 4);
         doc.add(p);
 
         doc.add(new Paragraph(para3Text));

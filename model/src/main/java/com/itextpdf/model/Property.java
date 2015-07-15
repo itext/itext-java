@@ -41,7 +41,7 @@ public class Property {
     public static final int LIST_SYMBOL = 32;
     public static final int LIST_SYMBOL_INDENT = 33;
     public static final int TRANSFORMATION_MATRIX = 34;
-    public static final int ANGLE = 35;
+    public static final int IMAGE_ROTATION_ANGLE = 35;
     public static final int X_DISTANCE = 36;
     public static final int Y_DISTANCE = 37;
     public static final int VERTICAL_SCALING = 38;
@@ -64,6 +64,17 @@ public class Property {
     public static final int COLSPAN = 55;
     public static final int AUTO_SCALE = 56;
     public static final int ROTATION_ALIGNMENT = 57;
+    public static final int ROTATION_ANGLE = 58;
+    /**
+     * ROTATION_POINT is defined on layouting and is used on drawing.
+     * This point corresponds to the element position before rotating and before resizing the element's occupied area.
+     */
+    public static final int ROTATION_POINT_X = 59;
+    public static final int ROTATION_POINT_Y = 60;
+    /**
+     * The vertical shift of the rotated element after layout but before drawing
+     */
+    public static final int ROTATION_LAYOUT_SHIFT = 61;
 
     private static int[] inheritedProperties = { FONT, HORIZONTAL_ALIGNMENT, TEXT_RISE, FONT_SIZE, FONT_COLOR,
             CHARACTER_SPACING, TEXT_RENDERING_MODE, FIRST_LINE_INDENT, KEEP_TOGETHER, WORD_SPACING, SPACING_RATIO };

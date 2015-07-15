@@ -151,7 +151,7 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.decrementHeight(rowHeight);
         }
 
-        if (getProperty(Property.ANGLE) != null) {
+        if (getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout();
             if (isNotFittingHeight(layoutContext.getArea())) {
                 new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
