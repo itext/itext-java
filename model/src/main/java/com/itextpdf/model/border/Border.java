@@ -17,25 +17,28 @@ public abstract class Border {
     /**
      * <p>
      * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the
-     * drawing direction.
+     * drawing direction. Borders are drawn in this order: top, right, bottom, left.
      * </p>
      * <p>
      * Given points specify the line which lies on the border of the content area,
      * therefore the border itself should be drawn to the left from the drawing direction.
      * </p>
      * <p>
-     * <code>joinAreaBefore</code> and <code>joinAreaAfter</code> parameters are used to
-     * define the length of the areas where border is colliding other borders.
+     * <code>borderWidthBefore</code> and <code>borderWidthAfter</code> parameters are used to
+     * define the widths of the borders that are before and after the current border, e.g. for
+     * the bottom border, <code>borderWidthBefore</code> specifies width of the right border and
+     * <code>borderWidthAfter</code> - width of the left border. Those width are used to handle areas
+     * of border joins.
      * </p>
      * @param canvas PdfCanvas to be written to
      * @param x1 x coordinate of the beginning point of the element side, that should be bordered
      * @param y1 y coordinate of the beginning point of the element side, that should be bordered
      * @param x2 x coordinate of the ending point of the element side, that should be bordered
      * @param y2 y coordinate of the ending point of the element side, that should be bordered
-     * @param joinAreaBefore defines length of the borders colliding area before the border
-     * @param joinAreaAfter defines length of the borders colliding area after the border
+     * @param borderWidthBefore defines width of the border that is before the current one
+     * @param borderWidthAfter defines width of the border that is after the current one
      */
-    public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float joinAreaBefore, float joinAreaAfter);
+    public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter);
 
     public Color getColor() {
         return color;

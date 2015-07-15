@@ -15,11 +15,11 @@ public class InsetBorder extends Border3D {
             case TOP:
             case LEFT:
                 //TODO make darker shade of color field
-                canvas.setFillColor(Color.Gray);
+                canvas.setFillColor(darkGray);
                 break;
             case BOTTOM:
             case RIGHT:
-                canvas.setFillColor(color);
+                canvas.setFillColor(gray);
                 break;
         }
     }
@@ -30,11 +30,11 @@ public class InsetBorder extends Border3D {
             case TOP:
             case LEFT:
                 //TODO make darker shade of color field
-                canvas.setFillColor(Color.Gray);
+                canvas.setFillColor(darkGray);
                 break;
             case BOTTOM:
             case RIGHT:
-                canvas.setFillColor(color);
+                canvas.setFillColor(gray);
                 break;
         }
     }

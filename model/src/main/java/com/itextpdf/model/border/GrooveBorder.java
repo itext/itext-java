@@ -13,12 +13,12 @@ public class GrooveBorder extends Border3D {
         switch (side) {
             case TOP:
             case LEFT:
-                canvas.setFillColor(color);
+                canvas.setFillColor(gray);
                 break;
             case BOTTOM:
             case RIGHT:
                 //TODO make darker shade of color field
-                canvas.setFillColor(Color.Gray);
+                canvas.setFillColor(darkGray);
                 break;
         }
     }
@@ -29,11 +29,11 @@ public class GrooveBorder extends Border3D {
             case TOP:
             case LEFT:
                 //TODO make darker shade of color field
-                canvas.setFillColor(Color.Gray);
+                canvas.setFillColor(darkGray);
                 break;
             case BOTTOM:
             case RIGHT:
-                canvas.setFillColor(color);
+                canvas.setFillColor(gray);
                 break;
         }
     }

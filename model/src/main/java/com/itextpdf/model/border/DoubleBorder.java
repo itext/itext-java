@@ -10,39 +10,39 @@ public class DoubleBorder extends Border{
     }
 
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float joinAreaBefore, float joinAreaAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
         float x4 = 0, y4 = 0;
         float thirdOfWidth = width / 3;
-        float thirdOfJoinsBefore = joinAreaBefore / 3;
-        float thirdOfJoinsAfter = joinAreaAfter / 3;
+        float thirdOfWidthBefore = borderWidthBefore / 3;
+        float thirdOfWidthAfter = borderWidthAfter / 3;
 
         Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
 
         switch (borderSide) {
             case TOP:
-                x3 = x2 + thirdOfJoinsAfter;
+                x3 = x2 + thirdOfWidthAfter;
                 y3 = y2 + thirdOfWidth;
-                x4 = x1 - thirdOfJoinsBefore;
+                x4 = x1 - thirdOfWidthBefore;
                 y4 = y1 + thirdOfWidth;
                 break;
             case RIGHT:
                 x3 = x2 + thirdOfWidth;
-                y3 = y2 - thirdOfJoinsAfter;
+                y3 = y2 - thirdOfWidthAfter;
                 x4 = x1 + thirdOfWidth;
-                y4 = y1 + thirdOfJoinsBefore;
+                y4 = y1 + thirdOfWidthBefore;
                 break;
             case BOTTOM:
-                x3 = x2 - thirdOfJoinsAfter;
+                x3 = x2 - thirdOfWidthAfter;
                 y3 = y2 - thirdOfWidth;
-                x4 = x1 + thirdOfJoinsBefore;
+                x4 = x1 + thirdOfWidthBefore;
                 y4 = y1 - thirdOfWidth;
                 break;
             case LEFT:
                 x3 = x2 - thirdOfWidth;
-                y3 = y2 + thirdOfJoinsAfter;
+                y3 = y2 + thirdOfWidthAfter;
                 x4 = x1 - thirdOfWidth;
-                y4 = y1 - thirdOfJoinsBefore;
+                y4 = y1 - thirdOfWidthBefore;
                 break;
         }
 
@@ -51,44 +51,44 @@ public class DoubleBorder extends Border{
 
         switch (borderSide) {
             case TOP:
-                x2 += 2*thirdOfJoinsAfter;
+                x2 += 2*thirdOfWidthAfter;
                 y2 += 2*thirdOfWidth;
-                x3 += 2*thirdOfJoinsAfter;
+                x3 += 2*thirdOfWidthAfter;
                 y3 += 2*thirdOfWidth;
-                x4 -= 2*thirdOfJoinsBefore;
+                x4 -= 2*thirdOfWidthBefore;
                 y4 += 2*thirdOfWidth;
-                x1 -= 2*thirdOfJoinsBefore;
+                x1 -= 2*thirdOfWidthBefore;
                 y1 += 2*thirdOfWidth;
                 break;
             case RIGHT:
                 x2 += 2*thirdOfWidth;
-                y2 -= 2*thirdOfJoinsAfter;
+                y2 -= 2*thirdOfWidthAfter;
                 x3 += 2*thirdOfWidth;
-                y3 -= 2*thirdOfJoinsAfter;
+                y3 -= 2*thirdOfWidthAfter;
                 x4 += 2*thirdOfWidth;
-                y4 += 2*thirdOfJoinsBefore;
+                y4 += 2*thirdOfWidthBefore;
                 x1 += 2*thirdOfWidth;
-                y1 += 2*thirdOfJoinsBefore;
+                y1 += 2*thirdOfWidthBefore;
                 break;
             case BOTTOM:
-                x2 -= 2*thirdOfJoinsAfter;
+                x2 -= 2*thirdOfWidthAfter;
                 y2 -= 2*thirdOfWidth;
-                x3 -= 2*thirdOfJoinsAfter;
+                x3 -= 2*thirdOfWidthAfter;
                 y3 -= 2*thirdOfWidth;
-                x4 += 2*thirdOfJoinsBefore;
+                x4 += 2*thirdOfWidthBefore;
                 y4 -= 2*thirdOfWidth;
-                x1 += 2*thirdOfJoinsBefore;
+                x1 += 2*thirdOfWidthBefore;
                 y1 -= 2*thirdOfWidth;
                 break;
             case LEFT:
                 x2 -= 2*thirdOfWidth;
-                y2 += 2*thirdOfJoinsAfter;
+                y2 += 2*thirdOfWidthAfter;
                 x3 -= 2*thirdOfWidth;
-                y3 += 2*thirdOfJoinsAfter;
+                y3 += 2*thirdOfWidthAfter;
                 x4 -= 2*thirdOfWidth;
-                y4 -= 2*thirdOfJoinsBefore;
+                y4 -= 2*thirdOfWidthBefore;
                 x1 -= 2*thirdOfWidth;
-                y1 -= 2*thirdOfJoinsBefore;
+                y1 -= 2*thirdOfWidthBefore;
                 break;
         }
 

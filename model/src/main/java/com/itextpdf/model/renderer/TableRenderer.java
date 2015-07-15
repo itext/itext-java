@@ -1,9 +1,7 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.model.Property;
-import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.element.Table;
 import com.itextpdf.model.layout.LayoutArea;
@@ -78,7 +76,7 @@ public class TableRenderer extends AbstractRenderer {
                     colOffset += tableModel.getColumnWidth(i);
                 }
                 float rowspanOffset = 0;
-                for (int i = row - 1; i > row - rowspan; i--) {
+                for (int i = row - 1; i > row - rowspan && i >= 0; i--) {
                     rowspanOffset += heights.get(i);
                 }
                 Rectangle cellLayoutBox = new Rectangle(layoutBox.getX() + colOffset, layoutBox.getY(),
@@ -106,7 +104,7 @@ public class TableRenderer extends AbstractRenderer {
                     if (currentRow[col] == null) continue;
                     float height = 0;
                     int rowspan = currentRow[col].getPropertyAsInteger(Property.ROWSPAN);
-                    for (int i = row; i > row - rowspan; i--) {
+                    for (int i = row; i > row - rowspan && i >= 0; i--) {
                         height += heights.get(i);
                     }
                     float shift = height - currentRow[col].getOccupiedArea().getBBox().getHeight();
@@ -135,9 +133,8 @@ public class TableRenderer extends AbstractRenderer {
                         //TODO to handle cell-renderer specific properties makes sense to add CellRenderer.
                         currentRow[col].setProperty(Property.ROWSPAN, cellSplit.getPropertyAsInteger(Property.ROWSPAN));
                         currentRow[col].setProperty(Property.COLSPAN, cellSplit.getPropertyAsInteger(Property.COLSPAN));
-                        SolidBorder borders = new SolidBorder(new DeviceRgb(160, 160, 160), 0.5f);
-                        currentRow[col].setProperty(Property.BORDER, borders);
-                    } else if (hasContent) {
+                        currentRow[col].setProperty(Property.BORDER, cellSplit.getProperty(Property.BORDER));
+                    } else if (hasContent && currentRow[col] != null) {
                         Cell splitCell = (Cell)currentRow[col].getModelElement();
                         Cell overflowCell = splitCell.clone(false);
                         childRenderers.add(currentRow[col]);
@@ -154,7 +151,7 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.decrementHeight(rowHeight);
         }
 
-        if (getProperty(Property.ANGLE) != null) {
+        if (getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout();
             if (isNotFittingHeight(layoutContext.getArea())) {
                 new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
@@ -182,13 +179,13 @@ public class TableRenderer extends AbstractRenderer {
 
 //    @Override
 //    public void drawBorder(com.itextpdf.core.pdf.PdfDocument document, com.itextpdf.canvas.PdfCanvas canvas) {
-//        drawRectangle(occupiedArea.getBBox(), canvas, DeviceRgb.Red);
+//        drawRectangle(occupiedArea.getBBox(), canvas, com.itextpdf.canvas.color.DeviceRgb.Red);
 //    }
 //
 //    private void drawRectangle(Rectangle bbox, com.itextpdf.canvas.PdfCanvas canvas, com.itextpdf.canvas.color.Color color) {
 //        canvas.saveState();
 //        canvas.setStrokeColor(color);
-//        canvas.setLineWidth(3f);
+//        canvas.setLineWidth(0.5f);
 //        canvas.rectangle(bbox).stroke();
 //        canvas.restoreState();
 //    }

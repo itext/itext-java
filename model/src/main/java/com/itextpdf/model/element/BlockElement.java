@@ -127,13 +127,13 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         return setProperty(Property.KEEP_TOGETHER, keepTogether);
     }
 
-    public T setRotateAngle(float angle) {
-        setProperty(Property.ANGLE, angle);
+    public T setRotationAngle(float angle) {
+        setProperty(Property.ROTATION_ANGLE, angle);
         return (T) this;
     }
 
-    public T setRotateAngle(double angle) {
-        setProperty(Property.ANGLE, Float.valueOf((float) angle));
+    public T setRotationAngle(double angle) {
+        setProperty(Property.ROTATION_ANGLE, Float.valueOf((float) angle));
         return (T) this;
     }
 

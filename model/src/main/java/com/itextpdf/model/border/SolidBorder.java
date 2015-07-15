@@ -10,35 +10,35 @@ public class SolidBorder extends Border {
     }
 
     @Override
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float joinAreaBefore, float joinAreaAfter) {
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
         float x4 = 0, y4 = 0;
 
         Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
         switch (borderSide) {
             case TOP:
-                x3 = x2 + joinAreaAfter;
+                x3 = x2 + borderWidthAfter;
                 y3 = y2 + width;
-                x4 = x1 - joinAreaBefore;
+                x4 = x1 - borderWidthBefore;
                 y4 = y1 + width;
                 break;
             case RIGHT:
                 x3 = x2 + width;
-                y3 = y2 - joinAreaAfter;
+                y3 = y2 - borderWidthAfter;
                 x4 = x1 + width;
-                y4 = y1 + joinAreaBefore;
+                y4 = y1 + borderWidthBefore;
                 break;
             case BOTTOM:
-                x3 = x2 - joinAreaAfter;
+                x3 = x2 - borderWidthAfter;
                 y3 = y2 - width;
-                x4 = x1 + joinAreaBefore;
+                x4 = x1 + borderWidthBefore;
                 y4 = y1 - width;
                 break;
             case LEFT:
                 x3 = x2 - width;
-                y3 = y2 + joinAreaAfter;
+                y3 = y2 + borderWidthAfter;
                 x4 = x1 - width;
-                y4 = y1 - joinAreaBefore;
+                y4 = y1 - borderWidthBefore;
                 break;
         }
 

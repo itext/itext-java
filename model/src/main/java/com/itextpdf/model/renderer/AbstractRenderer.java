@@ -27,11 +27,6 @@ public abstract class AbstractRenderer implements IRenderer {
     protected IRenderer parent;
     protected Map<Integer, Object> properties = new HashMap<>();
 
-    protected float rotationPointX;
-    protected float rotationPointY;
-    protected float actualWidth;
-    protected float actualHeight;
-
     public AbstractRenderer() {
     }
 
@@ -155,29 +150,8 @@ public abstract class AbstractRenderer implements IRenderer {
 
         beginRotationIfApplied(canvas);
 
-        //TODO probably actualWidth/actualHeight stuff, which is used for the borders and background,
-        //should be refactored into some borderbox field, which will contain actual size of the element.
-        //
-        //rotationPoint fields will also be redundant if such borderbox field will appear, because they are
-        //only needed for the text rotation (you can't get precise width of text from the occupiedArea of the paragraph)
-        float rotatedHeight = 0;
-        float rotatedWidth = 0;
-        boolean rotationIsApplied = getProperty(Property.ANGLE) != null;
-        if (rotationIsApplied) {
-            rotatedHeight = occupiedArea.getBBox().getHeight();
-            rotatedWidth = occupiedArea.getBBox().getWidth();
-            occupiedArea.getBBox().setWidth(actualWidth);
-            occupiedArea.getBBox().setHeight(actualHeight);
-        }
-
         drawBackground(document, canvas);
         drawBorder(document, canvas);
-
-        if (rotationIsApplied) {
-            occupiedArea.getBBox().setWidth(rotatedWidth);
-            occupiedArea.getBBox().setHeight(rotatedHeight);
-        }
-
         for (IRenderer child : childRenderers) {
             child.draw(document, canvas);
         }
@@ -194,7 +168,16 @@ public abstract class AbstractRenderer implements IRenderer {
     public void drawBackground(PdfDocument document, PdfCanvas canvas) {
         Property.Background background = getProperty(Property.BACKGROUND);
         if (background != null) {
-            Rectangle backgroundArea = applyMargins(occupiedArea.getBBox().clone(), false);
+
+            Rectangle bBox = this.occupiedArea.getBBox().clone();
+
+            Float rotationAngle = getProperty(Property.ROTATION_ANGLE);
+            if (rotationAngle != null) {
+                bBox.setWidth(getWidthBeforeRotation(rotationAngle));
+                bBox.setHeight(getHeightBeforeRotation());
+            }
+
+            Rectangle backgroundArea = applyMargins(bBox, false);
             canvas.saveState().setFillColor(background.getColor()).
                     rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
                             backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
@@ -218,15 +201,19 @@ public abstract class AbstractRenderer implements IRenderer {
             float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
             float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
 
-            applyMargins(occupiedArea.getBBox(), false);
-            applyBorderBox(occupiedArea.getBBox(), false);
-            float x1 = occupiedArea.getBBox().getX();
-            float y1 = occupiedArea.getBBox().getY();
-            float x2 = occupiedArea.getBBox().getX() + occupiedArea.getBBox().getWidth();
-            float y2 = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight();
-            applyBorderBox(occupiedArea.getBBox(), true);
-            applyMargins(occupiedArea.getBBox(), true);
+            Rectangle bBox = occupiedArea.getBBox().clone();
+            Float rotationAngle = getProperty(Property.ROTATION_ANGLE);
+            if (rotationAngle != null) {
+                bBox.setWidth(getWidthBeforeRotation(rotationAngle));
+                bBox.setHeight(getHeightBeforeRotation());
+            }
 
+            applyMargins(bBox, false);
+            applyBorderBox(bBox, false);
+            float x1 = bBox.getX();
+            float y1 = bBox.getY();
+            float x2 = bBox.getX() + bBox.getWidth();
+            float y2 = bBox.getY() + bBox.getHeight();
 
             if (borders[0] != null) {
                 canvas.saveState();
@@ -344,27 +331,28 @@ public abstract class AbstractRenderer implements IRenderer {
 
 
     protected void applyRotationLayout(float rotationPointX, float rotationPointY) {
-        Float angle = getPropertyAsFloat(Property.ANGLE);
-        float height = actualHeight = occupiedArea.getBBox().getHeight();
-        float width = actualWidth = occupiedArea.getBBox().getWidth();
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        setProperty(Property.ROTATION_POINT_X, rotationPointX);
+        setProperty(Property.ROTATION_POINT_Y, rotationPointY);
+
+        float height = occupiedArea.getBBox().getHeight();
+        float width = occupiedArea.getBBox().getWidth();
 
         double cos = Math.abs(Math.cos(angle));
         double sin = Math.abs(Math.sin(angle));
-
-        float newWidth = (float) (height*sin + width*cos);
         float newHeight = (float) (height*cos + width*sin);
+        float newWidth = (float) (height*sin + width*cos);
 
         occupiedArea.getBBox().setWidth(newWidth);
         occupiedArea.getBBox().setHeight(newHeight);
 
         float heightDiff = height - newHeight;
         move(0, heightDiff);
-        this.rotationPointX = rotationPointX;
-        this.rotationPointY = rotationPointY + heightDiff;
+        setProperty(Property.ROTATION_LAYOUT_SHIFT, heightDiff);
     }
 
     protected float[] applyRotation() {
-        Float angle = getPropertyAsFloat(Property.ANGLE);
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         AffineTransform transform = new AffineTransform();
         transform.rotate(angle);
 
@@ -372,13 +360,13 @@ public abstract class AbstractRenderer implements IRenderer {
         if (!isPositioned()) {
             float x = occupiedArea.getBBox().getX();
             float y = occupiedArea.getBBox().getY();
-            float height = actualHeight;
-            float width = actualWidth;
+            float actualWidth = getWidthBeforeRotation(angle);
+            float actualHeight = getHeightBeforeRotation();
 
             Point2D p00 = transform.transform(new Point2D.Float(x, y), new Point2D.Float());
-            Point2D p01 = transform.transform(new Point2D.Float(x + width, y), new Point2D.Float());
-            Point2D p10 = transform.transform(new Point2D.Float(x + width, y + height), new Point2D.Float());
-            Point2D p11 = transform.transform(new Point2D.Float(x, y + height), new Point2D.Float());
+            Point2D p01 = transform.transform(new Point2D.Float(x + actualWidth, y), new Point2D.Float());
+            Point2D p10 = transform.transform(new Point2D.Float(x + actualWidth, y + actualHeight), new Point2D.Float());
+            Point2D p11 = transform.transform(new Point2D.Float(x, y + actualHeight), new Point2D.Float());
 
             List<Double> xValues = Arrays.asList(p00.getX(), p01.getX(), p10.getX(), p11.getX());
             List<Double> yValues = Arrays.asList(p00.getY(), p01.getY(), p10.getY(), p11.getY());
@@ -386,15 +374,17 @@ public abstract class AbstractRenderer implements IRenderer {
             double minX = Collections.min(xValues);
             double maxY = Collections.max(yValues);
 
-            dy = (float) ((y + height) - maxY);
+            dy = (float) ((y + actualHeight) - maxY);
             dx = (float) (x - minX);
         }
+
+        float rotationPointX = getPropertyAsFloat(Property.ROTATION_POINT_X);
+        float rotationPointY = getPropertyAsFloat(Property.ROTATION_POINT_Y);
 
         float[] ctm = new float[6];
         transform.getMatrix(ctm);
         ctm[4] = rotationPointX + dx;
-        float heightDiff = (occupiedArea.getBBox().getHeight() - actualHeight);
-        ctm[5] = rotationPointY + dy + heightDiff;
+        ctm[5] = rotationPointY + dy;
         return ctm;
     }
 
@@ -454,17 +444,51 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     private void beginRotationIfApplied(PdfCanvas canvas) {
-        if (getProperty(Property.ANGLE) != null) {
-            move(-rotationPointX, -rotationPointY);
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        if (angle != null) {
+            float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
+
+            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
+            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
+
+            move(-shiftX, -shiftY);
             float[] ctm = applyRotation();
             canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
         }
     }
 
     private void endRotationIfApplied(PdfCanvas canvas) {
-        if (getProperty(Property.ANGLE) != null) {
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        if (angle != null) {
+            float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
+
+            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
+            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
+            setProperty(Property.ROTATION_POINT_X, null);
+            setProperty(Property.ROTATION_POINT_Y, null);
+            setProperty(Property.ROTATION_LAYOUT_SHIFT, null);
+
             canvas.restoreState();
-            move(rotationPointX, rotationPointY);
+            move(shiftX, shiftY);
         }
+    }
+
+    private float getWidthBeforeRotation(float angle) {
+        float rotatedWidth = occupiedArea.getBBox().getWidth();
+        float rotatedHeight = occupiedArea.getBBox().getHeight();
+
+        if (rotatedHeight == rotatedWidth)
+            return (float) (rotatedWidth*Math.sqrt(2) - getHeightBeforeRotation());
+
+        double cos = Math.abs(Math.cos(angle));
+        double sin = Math.abs(Math.sin(angle));
+
+        return (float) ((rotatedHeight*sin - rotatedWidth*cos)/(sin*sin - cos*cos));
+    }
+
+    private float getHeightBeforeRotation() {
+        float rotatedHeight = occupiedArea.getBBox().getHeight();
+        float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
+        return rotatedHeight + heightDiff;
     }
 }
