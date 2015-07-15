@@ -95,7 +95,9 @@ public class ParagraphRenderer extends AbstractRenderer {
             Property.HorizontalAlignment horizontalAlignment = getProperty(Property.HORIZONTAL_ALIGNMENT);
             if (result.getStatus() == LayoutResult.PARTIAL && horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
                     horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED_ALL) {
-                processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+                if (processedRenderer != null) {
+                    processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+                }
             } else if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT && processedRenderer != null) {
                 float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (horizontalAlignment) {

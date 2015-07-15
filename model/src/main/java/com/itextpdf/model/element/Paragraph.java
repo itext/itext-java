@@ -5,7 +5,6 @@ import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ParagraphRenderer;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.TreeMap;
 
 public class Paragraph extends BlockElement<Paragraph> {
@@ -27,6 +26,13 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     public <T extends Paragraph> T add(ILeafElement element) {
         childElements.add(element);
+        return (T) this;
+    }
+
+    public <T extends Paragraph> T addAll(java.util.List<? extends ILeafElement> elements) {
+        for (ILeafElement element : elements) {
+            add(element);
+        }
         return (T) this;
     }
 
@@ -97,7 +103,7 @@ public class Paragraph extends BlockElement<Paragraph> {
     private void addTabStopsAsProperty(java.util.List<TabStop> newTabStops) {
         TreeMap<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
         if (tabStops == null) {
-            tabStops = new TreeMap<Float, TabStop>();
+            tabStops = new TreeMap<>();
             setProperty(Property.TAB_STOPS, tabStops);
         }
         for (TabStop tabStop : newTabStops) {

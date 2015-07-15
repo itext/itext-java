@@ -38,7 +38,7 @@ public class ImageRenderer extends AbstractRenderer {
         Rectangle layoutBox = area.getBBox();
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
-        width = width == null ? getPropertyAsFloat(Property.WIDTH) : width;
+        width = getPropertyAsFloat(Property.WIDTH);
         Float angle = getPropertyAsFloat(Property.ANGLE);
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
@@ -68,17 +68,19 @@ public class ImageRenderer extends AbstractRenderer {
             rotateImage(angle, t);
         } else {
             t.scale(width, height);
-            t.getMatrix(matrix);
-            if (horizontalScaling != null)
-                scale(horizontalScaling, verticalScaling, t);
+            if (horizontalScaling != null) {
+                t.scale(horizontalScaling, verticalScaling);
+                width = t.getScaleX();
+                height = t.getScaleY();
+            }
             t.getMatrix(matrix);
         }
 
-        if (width > layoutBox.getWidth()){
-            return new LayoutResult(LayoutResult.IMAGE_PARTIAL, occupiedArea, null, this);
+        if (t.getScaleX() > layoutBox.getWidth()){
+            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
         }
-        if (height > layoutBox.getHeight()){
-            return new LayoutResult(LayoutResult.IMAGE_PARTIAL, occupiedArea, null, this);
+        if (t.getScaleY() > layoutBox.getHeight()){
+            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
         }
 
         occupiedArea.getBBox().moveDown(height);
@@ -128,9 +130,9 @@ public class ImageRenderer extends AbstractRenderer {
     }
 
     protected ImageRenderer autoScale(LayoutArea area){
-        if (width > area.getBBox().getWidth()){
-            height = area.getBBox().getWidth() / width * imageHeight;
-            width = area.getBBox().getWidth();
+        if (width > area.getBBox().getWidth()) {
+            setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);
+            setProperty(Property.WIDTH, area.getBBox().getWidth());
         }
 
         return this;
@@ -190,12 +192,5 @@ public class ImageRenderer extends AbstractRenderer {
         }
         fixedXPosition += t.getTranslateX();
         fixedYPosition += t.getTranslateY();
-    }
-
-    private void scale(float horizontalScaling, float verticalScaling, AffineTransform t) {
-        t.scale(horizontalScaling, verticalScaling);
-
-        width = t.getScaleX();
-        height = t.getScaleY();
     }
 }

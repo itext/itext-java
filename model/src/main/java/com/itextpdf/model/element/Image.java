@@ -65,6 +65,15 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         return setProperty(Property.HORIZONTAL_SCALING, horizontalScaling).setProperty(Property.VERTICAL_SCALING, verticalScaling);
     }
 
+    public Image scaleToFit(float fitWidth, float fitHeight) {
+        if (xObject instanceof PdfImageXObject) {
+            float horizontalScaling = fitWidth / ((PdfImageXObject)xObject).getWidth();
+            float verticalScaling = fitHeight / ((PdfImageXObject)xObject).getHeight();
+            return scale(Math.min(horizontalScaling, verticalScaling), Math.min(horizontalScaling, verticalScaling));
+        }
+        return this;
+    }
+
     public Image setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
         return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
     }

@@ -37,7 +37,10 @@ public class LineRenderer extends AbstractRenderer {
             LayoutResult childResult;
             Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
 
-            if (childRenderer instanceof TabRenderer) {
+            if (childRenderer instanceof TextRenderer) {
+                childRenderer.setProperty(Property.CHARACTER_SPACING, null);
+                childRenderer.setProperty(Property.WORD_SPACING, null);
+            } else if (childRenderer instanceof TabRenderer) {
                 if (nextTabStop != null) {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
@@ -104,7 +107,7 @@ public class LineRenderer extends AbstractRenderer {
                         anythingPlaced = true;
                     }
 
-                    if (childResult.getStatus() == LayoutResult.IMAGE_PARTIAL){
+                    if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getOverflowRenderer() instanceof ImageRenderer){
                         ((ImageRenderer)childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
                     }
 

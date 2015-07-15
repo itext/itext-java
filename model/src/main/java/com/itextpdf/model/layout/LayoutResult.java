@@ -8,7 +8,6 @@ public class LayoutResult {
     public static final int FULL = 1;
     public static final int PARTIAL = 2;
     public static final int NOTHING = 3;
-    public static final int IMAGE_PARTIAL = 4;
 
     protected int status;
     protected LayoutArea occupiedArea;
