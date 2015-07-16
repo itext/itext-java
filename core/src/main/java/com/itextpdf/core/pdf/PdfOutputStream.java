@@ -420,8 +420,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         PdfObject filter = pdfStream.get(PdfName.Filter);
         if (filter != null) {
             if (filter.getType() == PdfObject.Name) {
-                if (PdfName.FlateDecode.equals(filter))
+                if (PdfName.FlateDecode.equals(filter)) {
                     return false;
+                } else if (PdfName.CCITTFaxDecode.equals(filter)) {
+                    //@TODO Perhaps, we should return false for all images if there is any compression.
+                    return false;
+                }
             } else if (filter.getType() == PdfObject.Array) {
                 if (((PdfArray) filter).contains(PdfName.FlateDecode))
                     return false;
