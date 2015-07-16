@@ -13,6 +13,7 @@ import java.util.zip.DeflaterOutputStream;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
+    //TODO review location and use of the constants
     /**
      * Type of encryption.
      */

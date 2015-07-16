@@ -15,12 +15,12 @@ import java.util.List;
 
 public class TableRenderer extends AbstractRenderer {
 
-    List<BlockRenderer[]> rows = new ArrayList<>();
+    List<CellRenderer[]> rows = new ArrayList<>();
 
     public TableRenderer(Table modelElement) {
         super(modelElement);
         for (int row = 0; row < modelElement.getNumberOfRows(); row++) {
-            rows.add(new BlockRenderer[modelElement.getNumberOfColumns()]);
+            rows.add(new CellRenderer[modelElement.getNumberOfColumns()]);
         }
     }
 
@@ -31,7 +31,7 @@ public class TableRenderer extends AbstractRenderer {
             // In case rowspan or colspan save cell into bottom left corner.
             // In in this case it will be easier handle row heights in case rowspan.
             Cell cell = (Cell) renderer.getModelElement();
-            rows.get(cell.getRow() + cell.getRowspan() - 1)[cell.getCol()] = (BlockRenderer) renderer;
+            rows.get(cell.getRow() + cell.getRowspan() - 1)[cell.getCol()] = (CellRenderer) renderer;
         } else {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
             logger.error("Only BlockRenderer with Cell model element could be added");
@@ -55,13 +55,13 @@ public class TableRenderer extends AbstractRenderer {
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
 
         for (int row = 0; row < rows.size(); row++) {
-            BlockRenderer[] currentRow = rows.get(row);
+            CellRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
             boolean split = false;
             boolean hasContent = true;
-            ArrayList<BlockRenderer> currChildRenderers = new ArrayList<>();
+            ArrayList<CellRenderer> currChildRenderers = new ArrayList<>();
             for (int col = 0; col < currentRow.length; col++) {
-                BlockRenderer cell = currentRow[col];
+                CellRenderer cell = currentRow[col];
                 if (cell == null) {
                     continue;
                 }
@@ -82,7 +82,6 @@ public class TableRenderer extends AbstractRenderer {
                 Rectangle cellLayoutBox = new Rectangle(layoutBox.getX() + colOffset, layoutBox.getY(),
                         cellWidth, layoutBox.getHeight() + rowspanOffset);
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(), cellLayoutBox);
-                //cell.setProperty(Property.KEEP_TOGETHER, true);
                 LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
                 //width of BlockRenderer depends from child areas, while in cell case it is hardly define.
                 cell.getOccupiedArea().getBBox().setWidth(cellWidth);
@@ -100,16 +99,18 @@ public class TableRenderer extends AbstractRenderer {
             }
             if (hasContent) {
                 heights.add(rowHeight);
-                for (int col = 0; col < currentRow.length; col++) {
-                    if (currentRow[col] == null) continue;
+                for (CellRenderer cell : currentRow) {
+                    if (cell == null) {
+                        continue;
+                    }
                     float height = 0;
-                    int rowspan = currentRow[col].getPropertyAsInteger(Property.ROWSPAN);
+                    int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
                     for (int i = row; i > row - rowspan && i >= 0; i--) {
                         height += heights.get(i);
                     }
-                    float shift = height - currentRow[col].getOccupiedArea().getBBox().getHeight();
-                    currentRow[col].getOccupiedArea().getBBox().moveDown(shift);
-                    currentRow[col].getOccupiedArea().getBBox().setHeight(height);
+                    float shift = height - cell.getOccupiedArea().getBBox().getHeight();
+                    cell.getOccupiedArea().getBBox().moveDown(shift);
+                    cell.getOccupiedArea().getBBox().setHeight(height);
                 }
 
                 occupiedArea.getBBox().moveDown(rowHeight);
@@ -129,19 +130,14 @@ public class TableRenderer extends AbstractRenderer {
                             cellSplit.getOccupiedArea().getBBox().setHeight(rowHeight);
                             childRenderers.add(cellSplit);
                         }
-                        currentRow[col] = (BlockRenderer) splits[col].getOverflowRenderer();
-                        //TODO to handle cell-renderer specific properties makes sense to add CellRenderer.
-                        currentRow[col].setProperty(Property.ROWSPAN, cellSplit.getPropertyAsInteger(Property.ROWSPAN));
-                        currentRow[col].setProperty(Property.COLSPAN, cellSplit.getPropertyAsInteger(Property.COLSPAN));
-                        currentRow[col].setProperty(Property.BORDER, cellSplit.getProperty(Property.BORDER));
+                        currentRow[col] = (CellRenderer) splits[col].getOverflowRenderer();
                     } else if (hasContent && currentRow[col] != null) {
-                        Cell splitCell = (Cell)currentRow[col].getModelElement();
-                        Cell overflowCell = splitCell.clone(false);
+                        Cell overflowCell = currentRow[col].getModelElement().clone(false);
                         childRenderers.add(currentRow[col]);
                         currentRow[col] = overflowCell.makeRenderer();
                     }
                 }
-                return new LayoutResult(row == 0 ? LayoutResult.NOTHING : LayoutResult.PARTIAL,
+                return new LayoutResult(childRenderers.isEmpty() ? LayoutResult.NOTHING : LayoutResult.PARTIAL,
                         occupiedArea, splitRenderer, overflowRenderer);
             } else {
                 childRenderers.addAll(currChildRenderers);
@@ -166,6 +162,7 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.childRenderers = childRenderers;
+        splitRenderer.addAllProperties(getOwnProperties());
         return splitRenderer;
     }
 
@@ -174,6 +171,7 @@ public class TableRenderer extends AbstractRenderer {
         TableRenderer overflowRenderer = new TableRenderer((Table) modelElement);
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
+        overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
     }
 

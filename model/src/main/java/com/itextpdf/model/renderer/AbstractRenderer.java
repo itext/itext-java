@@ -45,7 +45,7 @@ public abstract class AbstractRenderer implements IRenderer {
         } else if (positioning == LayoutPosition.FIXED) {
             AbstractRenderer root = this;
             while (root.parent instanceof AbstractRenderer) {
-                root = (AbstractRenderer)root.parent;
+                root = (AbstractRenderer) root.parent;
             }
             if (root == this) {
                 positionedRenderers.add(renderer);
@@ -56,7 +56,7 @@ public abstract class AbstractRenderer implements IRenderer {
         } else if (positioning == LayoutPosition.ABSOLUTE) {
             AbstractRenderer root = this;
             while (root.getPropertyAsInteger(Property.POSITION) == LayoutPosition.STATIC && root.parent instanceof AbstractRenderer) {
-                root = (AbstractRenderer)root.parent;
+                root = (AbstractRenderer) root.parent;
             }
             if (root == this) {
                 positionedRenderers.add(renderer);
@@ -117,7 +117,6 @@ public abstract class AbstractRenderer implements IRenderer {
                 return null;
         }
     }
-
 
     public PdfFont getPropertyAsFont(int key) {
         return getProperty(key);
@@ -259,6 +258,15 @@ public abstract class AbstractRenderer implements IRenderer {
         return Collections.singletonList(context.getArea());
     }
 
+    //TODO is behavior of coping all properties in split case common to all renderers?
+    protected Map<Integer, Object> getOwnProperties() {
+        return properties;
+    }
+
+    protected void addAllProperties(Map<Integer, Object> properties) {
+        this.properties.putAll(properties);
+    }
+
     /**
      * Gets the first yLine of the nested children recursively. E.g. for a list, this will be the yLine of the
      * first item (if the first item is indeed a paragraph).
@@ -268,7 +276,7 @@ public abstract class AbstractRenderer implements IRenderer {
         if (childRenderers.size() == 0) {
             throw new RuntimeException("Cannot get yLine of empty paragraph");
         }
-        return ((AbstractRenderer)childRenderers.get(0)).getFirstYLineRecursively();
+        return ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
     }
 
     protected <T extends AbstractRenderer> T createSplitRenderer() {
@@ -421,6 +429,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Gets borders of the element in the specified order: top, right, bottom, left.
+     *
      * @return an array of BorderDrawer objects.
      * In case when certain border isn't set <code>Property.BORDER</code> is used,
      * and if <code>Property.BORDER</code> is also not set then <code>null<code/> is returned
