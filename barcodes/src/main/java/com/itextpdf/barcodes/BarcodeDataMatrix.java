@@ -133,7 +133,29 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     @Override
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground) {
-        return placeBarcode(canvas, foreground, DEFAULT_MODULE_HEIGHT, DEFAULT_MODULE_WIDTH);
+        return placeBarcode(canvas, foreground, DEFAULT_MODULE_SIZE, DEFAULT_MODULE_SIZE);
+    }
+
+    @Override
+    public PdfFormXObject createFormXObject(PdfDocument document, Color foreground) {
+        return createFormXObject(document, foreground, DEFAULT_MODULE_SIZE, DEFAULT_MODULE_SIZE);
+    }
+
+    /**
+     * Creates a PdfFormXObject with the barcode with given module width and module height.
+     *
+     * @param document
+     * @param foreground   the color of the pixels. It can be <CODE>null</CODE>
+     * @param moduleWidth  the width of the pixels.
+     * @param moduleHeight the height of the pixels.
+     * @return the XObject.
+     */
+    public PdfFormXObject createFormXObject(PdfDocument document, Color foreground, float moduleWidth, float moduleHeight) {
+        PdfFormXObject xObject = new PdfFormXObject(document, null);
+        Rectangle rect = placeBarcode(new PdfCanvas(xObject), foreground, moduleWidth, moduleHeight);
+        xObject.setBBox(rect.toPdfArray());
+
+        return xObject;
     }
 
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground, float moduleHeight, float moduleWidth) {
@@ -205,8 +227,6 @@ public class BarcodeDataMatrix extends Barcode2D {
     public Rectangle getBarcodeSize(float moduleHeight, float moduleWidth) {
         return new Rectangle(0, 0, (width + 2 * ws) * moduleHeight, (height + 2 * ws) * moduleWidth);
     }
-
-
 
     /**
      * Creates a barcode. The <CODE>String</CODE> is interpreted with the ISO-8859-1 encoding
