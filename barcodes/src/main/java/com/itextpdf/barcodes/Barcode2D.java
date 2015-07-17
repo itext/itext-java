@@ -4,9 +4,14 @@ import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfResources;
+import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 public abstract class Barcode2D {
+
+    protected static final float DEFAULT_MODULE_WIDTH = 1;
+    protected static final float DEFAULT_MODULE_HEIGHT = 1;
 
     public Barcode2D () {
     }
@@ -33,7 +38,16 @@ public abstract class Barcode2D {
      * @param foreground the color of the pixels. It can be <CODE>null</CODE>
      * @return the XObject.
      */
-    public abstract PdfFormXObject createFormXObject(PdfDocument document, Color foreground);
+
+    public PdfFormXObject createFormXObject(PdfDocument document, Color foreground) {
+        PdfStream stream = new PdfStream(document);
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+        Rectangle rect = placeBarcode(canvas, foreground);
+
+        PdfFormXObject xObject = new PdfFormXObject(document, rect);
+        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+        return xObject;
+    }
 }
 
 

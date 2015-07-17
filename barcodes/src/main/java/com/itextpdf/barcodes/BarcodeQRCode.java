@@ -103,36 +103,6 @@ public class BarcodeQRCode extends Barcode2D {
         return getBarcodeSize(moduleSide);
     }
 
-    /** Gets an <CODE>Image</CODE> with the barcode.
-     * @return the barcode <CODE>Image</CODE>
-     */
-    @Deprecated
-    public Image getImage() {
-        byte[] b = getBitMatrix();
-        byte g4[] = CCITTG4Encoder.compress(b, bm.getWidth(), bm.getHeight());
-        RawImage image = (RawImage) ImageFactory.getImage(bm.getWidth(), bm.getHeight(), false, RawImage.CCITTG4, RawImage.CCITT_BLACKIS1, g4, null);
-        image.setRawData(g4);
-        image.setBpc(RawImage.CCITTG4);
-        return image;
-    }
-
-    /** Creates a PdfFormXObject with the barcode.
-     * @param document
-     * @param foreground the color of the pixels. It can be <CODE>null</CODE>
-     * @return the XObject.
-     */
-    @Override
-    public PdfFormXObject createFormXObject(PdfDocument document, Color foreground) {
-        PdfStream stream = new PdfStream(document);
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
-        Rectangle rect = placeBarcode(canvas, foreground);
-
-        PdfFormXObject xObject = new PdfFormXObject(document, rect);
-        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
-
-        return xObject;
-    }
-
     /** Creates a <CODE>java.awt.Image</CODE>.
      * @param foreground the color of the bars
      * @param background the color of the background
@@ -157,6 +127,21 @@ public class BarcodeQRCode extends Barcode2D {
         java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(width, height, pix, 0, width));
         return img;
     }
+
+
+    /** Gets an <CODE>Image</CODE> with the barcode.
+     * @return the barcode <CODE>Image</CODE>
+     */
+    @Deprecated
+    public Image getImage() {
+        byte[] b = getBitMatrix();
+        byte g4[] = CCITTG4Encoder.compress(b, bm.getWidth(), bm.getHeight());
+        RawImage image = (RawImage) ImageFactory.getImage(bm.getWidth(), bm.getHeight(), false, RawImage.CCITTG4, RawImage.CCITT_BLACKIS1, g4, null);
+        image.setRawData(g4);
+        image.setBpc(RawImage.CCITTG4);
+        return image;
+    }
+
 
     private byte[] getBitMatrix() {
         int width = bm.getWidth();

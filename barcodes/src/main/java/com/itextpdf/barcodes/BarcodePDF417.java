@@ -96,8 +96,7 @@ public class BarcodePDF417 extends Barcode2D {
     protected static final int MAX_DATA_CODEWORDS = 926;
     protected static final int MACRO_SEGMENT_ID = 928;
     protected static final int MACRO_LAST_SEGMENT = 922;
-    protected static final float DEFAUL_MODULE_WIDTH = 1;
-    protected static final float DEFAUL_MODULE_HEIGHT = 1;
+
 
     private static final String MIXED_SET = "0123456789&\r\t,:#-.$/+%*=^";
     private static final String PUNCTUATION_SET = ";<>@[\\]_`~!\r\t,:\n-.$/\"|*()?{}'";
@@ -657,7 +656,7 @@ public class BarcodePDF417 extends Barcode2D {
 
     @Override
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground) {
-        return placeBarcode(canvas, foreground, DEFAUL_MODULE_WIDTH, DEFAUL_MODULE_HEIGHT);
+        return placeBarcode(canvas, foreground, DEFAULT_MODULE_WIDTH, DEFAULT_MODULE_HEIGHT);
     }
 
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground, float moduleWidth, float moduleHeight) {
@@ -813,22 +812,7 @@ public class BarcodePDF417 extends Barcode2D {
         return img;
     }
 
-    /** Creates a PdfFormXObject with the barcode.
-     * @param document
-     * @param foreground the color of the pixels. It can be <CODE>null</CODE>
-     * @return the XObject.
-     */
-    @Override
-    public PdfFormXObject createFormXObject(PdfDocument document, Color foreground) {
-        PdfStream stream = new PdfStream(document);
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
-        Rectangle rect = placeBarcode(canvas, foreground);
 
-        PdfFormXObject xObject = new PdfFormXObject(document, rect);
-        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
-
-        return xObject;
-    }
 
     /**
      * Creates a <CODE>java.awt.Image</CODE>.
