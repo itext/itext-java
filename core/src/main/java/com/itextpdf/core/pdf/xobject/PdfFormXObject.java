@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf.xobject;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
@@ -11,7 +12,9 @@ public class PdfFormXObject extends PdfXObject {
         super(new PdfStream(document), document);
         getPdfObject().put(PdfName.Type, PdfName.XObject);
         getPdfObject().put(PdfName.Subtype, PdfName.Form);
-        getPdfObject().put(PdfName.BBox, new PdfArray(bBox));
+        if (bBox != null) {
+            getPdfObject().put(PdfName.BBox, new PdfArray(bBox));
+        }
     }
 
     public PdfFormXObject(PdfStream pdfObject, PdfDocument pdfDocument) {
@@ -51,6 +54,9 @@ public class PdfFormXObject extends PdfXObject {
     @Override
     public void flush() {
         resources = null;
+        if (getPdfObject().get(PdfName.BBox) == null) {
+            throw new PdfException(PdfException.FormXObjectMustHaveBbox);
+        }
         super.flush();
     }
 
@@ -94,5 +100,13 @@ public class PdfFormXObject extends PdfXObject {
 
     public PdfString getMarkStyle() {
         return getPdfObject().getAsString(PdfName.MarkStyle);
+    }
+
+    public PdfArray getBBox() {
+        return getPdfObject().getAsArray(PdfName.BBox);
+    }
+
+    public void setBBox(PdfArray bBox) {
+        getPdfObject().put(PdfName.BBox, bBox);
     }
 }

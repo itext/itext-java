@@ -4,6 +4,7 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ImageRenderer;
 
@@ -26,17 +27,17 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     public Image (PdfImageXObject xObject, float x, float y, float width){
         this.xObject = xObject;
-        setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.WIDTH, width);
+        setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.WIDTH, width).setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
     public Image (PdfImageXObject xObject, float x, float y){
         this.xObject = xObject;
-        setProperty(Property.X, x).setProperty(Property.Y, y);
+        setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
     public Image (PdfFormXObject xObject, float x, float y){
         this.xObject = xObject;
-        setProperty(Property.X, x).setProperty(Property.Y, y);
+        setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
     @Override
@@ -87,6 +88,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         switch (propertyKey) {
             case Property.AUTO_SCALE:
                 return (T) Boolean.valueOf(false);
+            case Property.HORIZONTAL_SCALING:
+            case Property.VERTICAL_SCALING:
+                return (T) Float.valueOf(1);
             default:
                 return super.getDefaultProperty(propertyKey);
         }
