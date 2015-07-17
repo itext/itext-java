@@ -50,17 +50,25 @@ public class DocumentRenderer extends AbstractRenderer {
             LayoutArea nextStoredArea = null;
             while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
-                    resultRenderers.add(result.getSplitRenderer());
-                    if (nextStoredArea != null) {
-                        currentArea = nextStoredArea;
-                        currentPageNumber = nextStoredArea.getPageNumber();
-                        nextStoredArea = null;
+                    if (result.getOverflowRenderer() instanceof ImageRenderer) {
+                        ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
-                        getNextArea();
+                        resultRenderers.add(result.getSplitRenderer());
+                        if (nextStoredArea != null) {
+                            currentArea = nextStoredArea;
+                            currentPageNumber = nextStoredArea.getPageNumber();
+                            nextStoredArea = null;
+                        } else {
+                            getNextArea();
+                        }
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
-                        getNextArea();
+                        if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).imageHeight) {
+                            getNextArea();
+                        }
+
+
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
                         if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {

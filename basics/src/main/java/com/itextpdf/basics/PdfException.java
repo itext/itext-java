@@ -119,6 +119,7 @@ public class PdfException extends RuntimeException {
     public static final String InvalidCodeEncountered = "invalid.code.encountered";
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData = "invalid.code.encountered.while.decoding.2d.group.3.compressed.data";
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData = "invalid.code.encountered.while.decoding.2d.group.4.compressed.data";
+    public static final String InvalidCodewordSize = "invalid.codeword.size";
 
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "invalid.cross.reference.entry.in.this.xref.subsection";
     public static final String InvalidIndirectReference1 = "invalid.indirect.reference.1";
@@ -138,6 +139,9 @@ public class PdfException extends RuntimeException {
     public static final String Jpeg2000ImageException = "jpeg2000.image.exception";
     public static final String LzwDecoderException = "lzw.decoder.exception";
     public static final String LzwFlavourNotSupported = "lzw.flavour.not.supported";
+    public static final String MacroSegmentIdMustBeGtOrEqZero = "macrosegmentid.must.be.gt.eq.0";
+    public static final String MacroSegmentIdMustBeGtZero = "macrosegmentid.must.be.gt.0";
+    public static final String MacroSegmentIdMustBeLtMacroSegmentCount = "macrosegmentid.must.be.lt.macrosegmentcount";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
     public static final String NameAlreadyExistsInTheNameTree = "name.already.exist.in.the.name.tree";
@@ -170,6 +174,8 @@ public class PdfException extends RuntimeException {
     public static final String StructureElementIsNotLinkedToStructParent = "structure.element.is.not.linked.to.structparent";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String StructureElementShallContainPgKey = "structure.element.shall.contain.pg.key";
+    public static final String TextIsTooBig = "text.is.too.big";
+    public static final String TextCannotBeNull = "text.cannot.be.null";
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
     public static final String TiffFillOrderTagMustBeEither1Or2 = "tiff.fill.order.tag.must.be.either.1.or.2";

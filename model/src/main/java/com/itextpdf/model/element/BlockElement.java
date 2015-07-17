@@ -137,7 +137,7 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         return (T) this;
     }
 
-    public T setRotateAlignment(Property.HorizontalAlignment alignment) {
+    public T setRotationAlignment(Property.HorizontalAlignment alignment) {
         setProperty(Property.ROTATION_ALIGNMENT, alignment);
         return (T) this;
     }
