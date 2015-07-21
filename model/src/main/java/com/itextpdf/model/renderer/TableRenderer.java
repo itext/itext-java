@@ -43,7 +43,7 @@ public class TableRenderer extends AbstractRenderer {
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox();
         Table tableModel = (Table) getModelElement();
-        if (tableModel.getTotalWidth() == 0) {
+        if (tableModel.getWidth() == 0) {
             // In this case get available occupiedArea, but don't save to model element.
             // Also recalculate column widths, and also don't save it to the model element.
         }
@@ -51,7 +51,7 @@ public class TableRenderer extends AbstractRenderer {
         occupiedArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
         occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight());
         occupiedArea.getBBox().setHeight(0);
-        occupiedArea.getBBox().setWidth(tableModel.getTotalWidth());
+        occupiedArea.getBBox().setWidth(tableModel.getWidth());
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
 
         for (int row = 0; row < rows.size(); row++) {
