@@ -203,6 +203,10 @@ public class PdfException extends RuntimeException {
     public static final String IllegalResourceTree = "illegal.resources.tree";
     public static final String TextMustBeEven = "the.text.length.must.be.even";
     public static final String TwoBarcodeMustBeExternally = "the.two.barcodes.must.be.composed.externally";
+    public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "codabar.must.have.at.least.a.start.and.stop.character";
+    public static final String CodabarMustHaveOneAbcdAsStartStopCharacter  = "codabar.must.have.one.of.abcd.as.start.stop.character";
+    public static final String CodabarStartStopCharacterAreOnlyExtremes =  "in.codabar.start.stop.characters.are.only.allowed.at.the.extremes";
+    public static final String CodabarCharacterOneIsIllegal = "the.character.1.is.illegal.in.codabar";
 
     protected Object object;
     protected String composedMessage;
