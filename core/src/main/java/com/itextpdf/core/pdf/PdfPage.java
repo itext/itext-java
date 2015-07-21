@@ -163,6 +163,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             add(PdfName.StructParents);
         }}, true);
         PdfPage page = new PdfPage(dictionary, toDocument);
+        // This key contains reference to all articles, while this articles could reference to lots of pages.
+        // See DEVSIX-191
+        page.getPdfObject().remove(PdfName.B);
         if (toDocument.isTagged()) {
             page.structParents = toDocument.getNextStructParentIndex();
             page.getPdfObject().put(PdfName.StructParents, new PdfNumber(page.structParents));

@@ -8,6 +8,8 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 public abstract class Barcode2D {
 
+    protected static final float DEFAULT_MODULE_SIZE = 1;
+
     public Barcode2D () {
     }
 

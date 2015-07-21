@@ -95,4 +95,40 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
                 return super.getDefaultProperty(propertyKey);
         }
     }
+
+    /**
+     * Gets width of the image. If a user didn't set Width property before it returns width of image or form XObject
+     * @return
+     */
+    @Override
+    public Float getWidth() {
+        Float width = super.getWidth();
+        if (width == null) {
+            if (xObject instanceof PdfImageXObject) {
+                width = ((PdfImageXObject) xObject).getWidth();
+            } else {
+                width = ((PdfFormXObject)xObject).getBBox().getAsFloat(2);
+            }
+        }
+
+        return width;
+    }
+
+    /**
+     * Gets height of the image. If a user didn't set Height property before it returns height of image or form XObject
+     * @return
+     */
+    @Override
+    public Float getHeight() {
+        Float height = super.getHeight();
+        if (height == null) {
+            if (xObject instanceof PdfImageXObject) {
+                height = ((PdfImageXObject) xObject).getHeight();
+            } else {
+                height = ((PdfFormXObject)xObject).getBBox().getAsFloat(3);
+            }
+        }
+
+        return height;
+    }
 }

@@ -63,13 +63,13 @@ public class BarcodeQRCode extends Barcode2D {
     /**
      * Gets the barcode size
      */
-    public Rectangle getBarcodeSize(float moduleSide) {
-        return new Rectangle(0, 0, bm.getWidth() * moduleSide, bm.getHeight() * moduleSide);
+    public Rectangle getBarcodeSize(float moduleSize) {
+        return new Rectangle(0, 0, bm.getWidth() * moduleSize, bm.getHeight() * moduleSize);
     }
 
     @Override
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground) {
-        return placeBarcode(canvas, foreground, 1);
+        return placeBarcode(canvas, foreground, DEFAULT_MODULE_SIZE);
     }
 
     /**
@@ -123,12 +123,20 @@ public class BarcodeQRCode extends Barcode2D {
      */
     @Override
     public PdfFormXObject createFormXObject(PdfDocument document, Color foreground) {
-        PdfStream stream = new PdfStream(document);
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
-        Rectangle rect = placeBarcode(canvas, foreground);
+        return createFormXObject(document, foreground, DEFAULT_MODULE_SIZE);
+    }
 
-        PdfFormXObject xObject = new PdfFormXObject(document, rect);
-        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+    /**
+     * Creates a PdfFormXObject with the barcode.
+     * @param document
+     * @param foreground the color of the pixels. It can be <CODE>null</CODE>
+     * @param moduleSize the size of the pixels.
+     * @return the XObject.
+     */
+    public PdfFormXObject createFormXObject(PdfDocument document, Color foreground, float moduleSize) {
+        PdfFormXObject xObject = new PdfFormXObject(document, null);
+        Rectangle rect = placeBarcode(new PdfCanvas(xObject), foreground, moduleSize);
+        xObject.setBBox(rect.toPdfArray());
 
         return xObject;
     }
