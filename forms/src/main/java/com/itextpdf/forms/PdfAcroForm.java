@@ -1,18 +1,10 @@
 package com.itextpdf.forms;
 
 
-import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.forms.formfields.PdfButtonFormField;
 import com.itextpdf.forms.formfields.PdfFormField;
-import com.itextpdf.forms.formfields.PdfTextFormField;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
