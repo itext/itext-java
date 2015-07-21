@@ -202,6 +202,7 @@ public class PdfException extends RuntimeException {
     public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
     public static final String IllegalResourceTree = "illegal.resources.tree";
     public static final String TextMustBeEven = "the.text.length.must.be.even";
+    public static final String TwoBarcodeMustBeExternally = "the.two.barcodes.must.be.composed.externally";
 
     protected Object object;
     protected String composedMessage;
