@@ -39,7 +39,7 @@ public class BarcodeQRCode extends Barcode2D {
             bm = qc.encode(content, 1, 1, hints);
         }
         catch (WriterException ex) {
-            throw new IllegalArgumentException(ex.getMessage());
+            throw new IllegalArgumentException(ex.getMessage(),ex.getCause());
         }
     }
 
