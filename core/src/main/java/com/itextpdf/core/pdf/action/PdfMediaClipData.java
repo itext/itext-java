@@ -8,7 +8,8 @@ public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
     private static final PdfString TEMPACCESS = new PdfString("TEMPACCESS");
 
     public PdfMediaClipData(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
     }
 
     public PdfMediaClipData(PdfDocument pdfDocument, String file, PdfFileSpec fs, String mimeType) {

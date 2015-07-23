@@ -8,23 +8,19 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
         super(pdfObject);
     }
 
-    public PdfColorSpace(T pdfObject, PdfDocument document) {
-        super(pdfObject, document);
-    }
-
     abstract public int getNumOfComponents();
 
     static public PdfColorSpace makeColorSpace(PdfObject pdfObject, PdfDocument document) {
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (PdfName.DeviceGray.equals(pdfObject))
-            return new PdfDeviceCs.Gray(document);
+            return new PdfDeviceCs.Gray().makeIndirect(document);
         else if (PdfName.DeviceRGB.equals(pdfObject))
-            return new PdfDeviceCs.Rgb(document);
+            return new PdfDeviceCs.Rgb().makeIndirect(document);
         else if (PdfName.DeviceCMYK.equals(pdfObject))
-            return new PdfDeviceCs.Cmyk(document);
+            return new PdfDeviceCs.Cmyk().makeIndirect(document);
         else if (PdfName.Pattern.equals(pdfObject))
-            return new PdfSpecialCs.Pattern(document);
+            return new PdfSpecialCs.Pattern().makeIndirect(document);
         else if (pdfObject.isArray()) {
             PdfArray array = (PdfArray) pdfObject;
             PdfName csType = array.getAsName(0);

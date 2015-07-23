@@ -13,7 +13,4 @@ public class PdfStringFS extends PdfFileSpec<PdfString> {
         super(pdfObject);
     }
 
-    public PdfStringFS(PdfString pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
 }

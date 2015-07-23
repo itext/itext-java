@@ -12,7 +12,7 @@ public class PdfPatternCanvas extends PdfCanvas {
 
     public PdfPatternCanvas(PdfStream contentStream, PdfResources resources) {
         super(contentStream, resources);
-        this.tilingPattern = new PdfPattern.Tiling(contentStream, document);
+        this.tilingPattern = new PdfPattern.Tiling(contentStream);
     }
 
     public PdfPatternCanvas(PdfPattern.Tiling pattern) {

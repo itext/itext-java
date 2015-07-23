@@ -438,7 +438,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 "endcmap\n" +
                 "CMapName currentdict /CMap defineresource pop\n" +
                 "end end\n");
-        return new PdfStream(getDocument(), PdfEncodings.convertToBytes(buf.toString(), null));
+        return new PdfStream(PdfEncodings.convertToBytes(buf.toString(), null)).makeIndirect(getDocument());
     }
 
     protected static String convertToHCIDMetrics(int keys[], IntHashtable h) {

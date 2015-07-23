@@ -47,7 +47,7 @@ public class IccBased extends Color {
 
     static private PdfStream getStream(PdfDocument document, InputStream iccStream) {
         IccProfile iccProfile = IccProfile.getInstance(iccStream);
-        PdfStream stream = new PdfStream(document, iccProfile.getData());
+        PdfStream stream = new PdfStream(iccProfile.getData()).makeIndirect(document);
         stream.put(PdfName.N, new PdfNumber(iccProfile.getNumComponents()));
         switch (iccProfile.getNumComponents()) {
             case 1:

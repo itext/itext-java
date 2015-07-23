@@ -141,7 +141,7 @@ public class AlignmentTest {
         Document document = new Document(pdfDocument);
 
         Div div = new Div();
-        PdfImageXObject xObject = new PdfImageXObject(pdfDocument, ImageFactory.getJpegImage(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
         Image image1 = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.RIGHT);
         Image image2 = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
         Image image3 = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.LEFT);
@@ -169,7 +169,7 @@ public class AlignmentTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.RIGHT);
 
         doc.add(image);

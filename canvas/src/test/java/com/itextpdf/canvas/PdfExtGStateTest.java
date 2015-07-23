@@ -36,7 +36,7 @@ public class PdfExtGStateTest {
         PdfCanvas canvas = new PdfCanvas(page);
 
         //Create ExtGState and fill it with line width and font
-        PdfExtGState egs = new PdfExtGState(document);
+        PdfExtGState egs = new PdfExtGState();
         egs.getPdfObject().put(PdfName.LW, new PdfNumber(5));
         PdfArray font = new PdfArray();
         PdfFont pdfFont = new PdfType1Font(document, new Type1Font(FontConstants.COURIER, ""));

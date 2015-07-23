@@ -77,12 +77,9 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     protected int type = Unknown;
 
-    public PdfStructElem(PdfDictionary pdfObject) {
-        this(pdfObject, null);
-    }
-
     public PdfStructElem(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
         PdfName role = getPdfObject().getAsName(PdfName.S);
         type = getType(role);
     }
@@ -220,7 +217,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             case PdfObject.Dictionary:
                 PdfDictionary d = (PdfDictionary) k;
                 if (isStructElem(d))
-                    kids.add(new PdfStructElem(d));
+                    kids.add(new PdfStructElem(d, getDocument()));
                 else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
                     kids.add(new PdfMcrDictionary(d, this));
                 else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))
@@ -235,7 +232,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
                             d = a.getAsDictionary(i);
                             if (d != null) {
                                 if (isStructElem(d))
-                                    kids.add(new PdfStructElem(d));
+                                    kids.add(new PdfStructElem(d, getDocument()));
                                 else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
                                     kids.add(new PdfMcrDictionary(d, this));
                                 else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))

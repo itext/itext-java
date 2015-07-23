@@ -104,7 +104,6 @@ public class PdfCanvas {
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
     protected PdfStream contentStream;
     protected PdfResources resources;
-    protected PdfDocument document;
     protected int mcDepth;
     protected int mcid = 0;
     protected ArrayList<Integer> layerDepth;
@@ -117,7 +116,6 @@ public class PdfCanvas {
     public PdfCanvas(PdfStream contentStream, PdfResources resources) {
         this.contentStream = contentStream;
         this.resources = resources;
-        document = contentStream.getDocument();
     }
 
     /**
@@ -170,7 +168,6 @@ public class PdfCanvas {
         currentGs = null;
         contentStream = null;
         resources = null;
-        document = null;
     }
 
     /**
@@ -1318,15 +1315,16 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            return wmf.createPdfForm(document);
-        } else if (asInline) {
-            PdfImageXObject imageXObject = new PdfImageXObject(null, image);
-            addInlineImage(imageXObject, a, b, c, d, e, f);
-            return null;
+            return wmf.createPdfForm();
         } else {
-            PdfImageXObject imageXObject = new PdfImageXObject(document, image);
-            addImage(imageXObject, a, b, c, d, e, f);
-            return imageXObject;
+            PdfImageXObject imageXObject = new PdfImageXObject(image);
+            if (asInline) {
+                addInlineImage(imageXObject, a, b, c, d, e, f);
+                return null;
+            } else {
+                addImage(imageXObject, a, b, c, d, e, f);
+                return imageXObject;
+            }
         }
     }
 
@@ -1357,15 +1355,16 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            return wmf.createPdfForm(document);
-        } else if (asInline) {
-            PdfImageXObject imageXObject = new PdfImageXObject(null, image);
-            addInlineImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
-            return null;
+            return wmf.createPdfForm();
         } else {
-            PdfImageXObject imageXObject = new PdfImageXObject(document, image);
-            addImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
-            return imageXObject;
+            PdfImageXObject imageXObject = new PdfImageXObject(image);
+            if (asInline) {
+                addInlineImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
+                return null;
+            } else {
+                addImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
+                return imageXObject;
+            }
         }
     }
 
@@ -1384,17 +1383,18 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            PdfXObject xObject = wmf.createPdfForm(document);
+            PdfXObject xObject = wmf.createPdfForm();
             addImage(xObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
             return xObject;
-        } else if (asInline) {
-            PdfImageXObject imageXObject = new PdfImageXObject(null, image);
-            addInlineImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
-            return null;
         } else {
-            PdfImageXObject imageXObject = new PdfImageXObject(document, image);
-            addImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
-            return imageXObject;
+            PdfImageXObject imageXObject = new PdfImageXObject(image);
+            if (asInline) {
+                addInlineImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+                return null;
+            } else {
+                addImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+                return imageXObject;
+            }
         }
     }
 
@@ -1524,7 +1524,7 @@ public class PdfCanvas {
     }
 
     public PdfExtGState setExtGState(PdfDictionary extGState) {
-        PdfExtGState egs = new PdfExtGState(extGState, document);
+        PdfExtGState egs = new PdfExtGState(extGState);
         setExtGState(egs);
         return egs;
     }

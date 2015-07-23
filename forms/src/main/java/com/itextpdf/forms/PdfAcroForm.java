@@ -23,12 +23,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
-    public PdfAcroForm(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
-
-    public PdfAcroForm(PdfDocument document, PdfArray fields) {
-        this(new PdfDictionary(), document);
+    public PdfAcroForm(PdfArray fields) {
+        this(new PdfDictionary());
         put(PdfName.Fields, fields);
     }
 
@@ -44,7 +40,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfAcroForm acroForm = null;
         if (acroFormDictionary == null) {
             if (createIfNotExist) {
-                acroForm = new PdfAcroForm(document, new PdfArray());
+                acroForm = new PdfAcroForm(new PdfArray()).makeIndirect(document);
                 document.getCatalog().put(PdfName.AcroForm, acroForm);
                 acroForm.setDefaultAppearance("/Helv 0 Tf 0 g ");
             }

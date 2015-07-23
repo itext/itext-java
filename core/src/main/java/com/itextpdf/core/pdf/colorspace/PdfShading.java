@@ -16,11 +16,13 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
     }
 
     public PdfShading(T pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
     }
 
     public PdfShading(T pdfObject, int type, PdfObject colorSpace, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
 
         getPdfObject().put(PdfName.ShadingType, new PdfNumber(type));
         getPdfObject().put(PdfName.ColorSpace, colorSpace);
@@ -247,7 +249,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         }
 
         public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode, PdfDocument pdfDocument) {
-            super(new PdfStream(pdfDocument), ShadingType.FreeFormGouraudShadedTriangleMesh, cs.getPdfObject(), pdfDocument);
+            super(new PdfStream(), ShadingType.FreeFormGouraudShadedTriangleMesh, cs.getPdfObject(), pdfDocument);
 
             setBitsPerCoordinate(bitsPerCoordinate);
             setBitsPerComponent(bitsPerComponent);
@@ -305,8 +307,9 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         }
 
         public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int verticesPerRow, PdfArray decode, PdfDocument pdfDocument) {
-            super(new PdfStream(pdfDocument), ShadingType.LatticeFormGouraudShadedTriangleMesh, cs.getPdfObject(), pdfDocument);
+            super(new PdfStream(), ShadingType.LatticeFormGouraudShadedTriangleMesh, cs.getPdfObject(), pdfDocument);
 
+            getPdfObject().makeIndirect(pdfDocument);
             setBitsPerCoordinate(bitsPerCoordinate);
             setBitsPerComponent(bitsPerComponent);
             setVerticesPerRow(verticesPerRow);
@@ -363,8 +366,8 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         }
 
         public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode, PdfDocument pdfDocument) {
-            super(new PdfStream(pdfDocument), ShadingType.CoonsPatchMesh, cs.getPdfObject(), pdfDocument);
-
+            super(new PdfStream(), ShadingType.CoonsPatchMesh, cs.getPdfObject(), pdfDocument);
+            getPdfObject().makeIndirect(pdfDocument);
             setBitsPerCoordinate(bitsPerCoordinate);
             setBitsPerComponent(bitsPerComponent);
             setBitsPerFlag(bitsPerFlag);
@@ -421,8 +424,9 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         }
 
         public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode, PdfDocument pdfDocument) {
-            super(new PdfStream(pdfDocument), ShadingType.TensorProductPatchMesh, cs.getPdfObject(), pdfDocument);
+            super(new PdfStream(), ShadingType.TensorProductPatchMesh, cs.getPdfObject(), pdfDocument);
 
+            getPdfObject().makeIndirect(pdfDocument);
             setBitsPerCoordinate(bitsPerCoordinate);
             setBitsPerComponent(bitsPerComponent);
             setBitsPerFlag(bitsPerFlag);

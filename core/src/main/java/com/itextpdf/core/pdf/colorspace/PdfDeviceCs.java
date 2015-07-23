@@ -10,18 +10,10 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
         super(pdfObject);
     }
 
-    public PdfDeviceCs(PdfName pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
-
     static public class Gray extends PdfDeviceCs {
 
         public Gray() {
             super(PdfName.DeviceGray);
-        }
-
-        public Gray(PdfDocument pdfDocument) {
-            super(PdfName.DeviceGray, pdfDocument);
         }
 
         @Override
@@ -36,10 +28,6 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
             super(PdfName.DeviceRGB);
         }
 
-        public Rgb(PdfDocument pdfDocument) {
-            super(PdfName.DeviceRGB, pdfDocument);
-        }
-
         @Override
         public int getNumOfComponents() {
             return 3;
@@ -50,10 +38,6 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
 
         public Cmyk() {
             super(PdfName.DeviceCMYK);
-        }
-
-        public Cmyk(PdfDocument pdfDocument) {
-            super(PdfName.DeviceCMYK, pdfDocument);
         }
 
         @Override

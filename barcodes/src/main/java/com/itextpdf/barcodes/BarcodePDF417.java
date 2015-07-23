@@ -816,26 +816,24 @@ public class BarcodePDF417 extends Barcode2D {
     /**
      * Creates a PdfFormXObject with the barcode.
      *
-     * @param document
      * @param foreground the color of the pixels. It can be <CODE>null</CODE>
      * @return the XObject.
      */
     @Override
-    public PdfFormXObject createFormXObject(PdfDocument document, Color foreground) {
-        return createFormXObject(document, foreground, DEFAULT_MODULE_SIZE, DEFAULT_MODULE_SIZE);
+    public PdfFormXObject createFormXObject(Color foreground) {
+        return createFormXObject(foreground, DEFAULT_MODULE_SIZE, DEFAULT_MODULE_SIZE);
     }
 
     /**
      * Creates a PdfFormXObject with the barcode with given module width and module height.
      *
-     * @param document
      * @param foreground   the color of the pixels. It can be <CODE>null</CODE>
      * @param moduleWidth  the width of the pixels.
      * @param moduleHeight the height of the pixels.
      * @return the XObject.
      */
-    public PdfFormXObject createFormXObject(PdfDocument document, Color foreground, float moduleWidth, float moduleHeight) {
-        PdfFormXObject xObject = new PdfFormXObject(document, null);
+    public PdfFormXObject createFormXObject(Color foreground, float moduleWidth, float moduleHeight) {
+        PdfFormXObject xObject = new PdfFormXObject((Rectangle)null);
         Rectangle rect = placeBarcode(new PdfCanvas(xObject), foreground, moduleWidth, moduleHeight);
         xObject.setBBox(rect.toPdfArray());
 

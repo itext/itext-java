@@ -2,29 +2,7 @@ package com.itextpdf.core.pdf;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
-    // Indicates if the refersTo object has been flushed.
-    protected static final byte Flushed = 1;
-    // Indicates that the reference could be reused or have to be marked as free.
-    protected static final byte Free = 2;
-    // Indicates that definition of the reference still not found (e.g. keys in XRefStm).
-    protected static final byte Reading = 4;
-    // Indicates that @see refersTo changed (using in stamp mode).
-    protected static final byte Modified = 8;
-    // Indicates that the reference represents ObjectStream from original document.
-    // When PdfReader read ObjectStream reference marked as OriginalObjectStream
-    // to avoid further reusing.
-    protected static final byte OriginalObjectStream = 16;
-    // For internal usage only. Marks objects that shall be written to the output document.
-    // Option is needed to build the correct PDF objects tree when closing the document.
-    // As a result it avoids writing unused (removed) objects.
-    protected static final byte MustBeFlushed = 32;
-
     private static final int LengthOfIndirectsChain = 31;
-
-    /**
-     * Indicate same special states of PdfIndirectObject like @see Free, @see Reading, @see Modified.
-     */
-    private byte state;
 
     /**
      * Object number.
@@ -140,33 +118,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      */
     public int getIndex() {
         return objectStreamNumber == 0 ? 0 : (int)offsetOrIndex;
-    }
-
-    /**
-     * Checks state of the flag of current object.
-     * @param state special flag to check
-     * @return true if the state was set.
-     */
-    protected boolean checkState(byte state) {
-        return (this.state & state) == state;
-    }
-
-    /**
-     * Sets special states of current object.
-     * @param state special flag of current object
-     */
-    protected PdfIndirectReference setState(byte state) {
-        this.state |= state;
-        return this;
-    }
-
-    /**
-     * Clear state of the flag of current object.
-     * @param state special flag state to clear
-     */
-    protected PdfIndirectReference clearState(byte state) {
-        this.state &= 0xFF^state;
-        return this;
     }
 
     @Override

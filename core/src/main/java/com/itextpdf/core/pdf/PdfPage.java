@@ -25,13 +25,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     PdfPages parentPages;
 
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
         pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
     }
 
     protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
-        super(new PdfDictionary(), pdfDocument);
-        PdfStream contentStream = new PdfStream(pdfDocument);
+        super(new PdfDictionary());
+        makeIndirect(pdfDocument);
+        PdfStream contentStream = new PdfStream().makeIndirect(pdfDocument);
         getPdfObject().put(PdfName.Contents, contentStream);
         getPdfObject().put(PdfName.Type, PdfName.Page);
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
@@ -128,7 +130,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @throws IOException
      */
     public void setXmpMetadata(final byte[] xmpMetadata) throws IOException {
-        PdfStream xmp = new PdfStream(getDocument());
+        PdfStream xmp = new PdfStream().makeIndirect(getDocument());
         xmp.getOutputStream().write(xmpMetadata);
         xmp.put(PdfName.Type, PdfName.Metadata);
         xmp.put(PdfName.Subtype, PdfName.XML);
@@ -335,10 +337,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject().getIndirectReference());
     }
 
-    protected void makeIndirect(PdfDocument pdfDocument) {
-        getPdfObject().makeIndirect(pdfDocument);
-    }
-
     private PdfArray getAnnots(boolean create) {
         PdfArray annots = getPdfObject().getAsArray(PdfName.Annots);
         if (annots == null && create) {
@@ -423,7 +421,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else {
             throw new PdfException(PdfException.PdfPageShallHaveContent);
         }
-        PdfStream contentStream = new PdfStream(getPdfObject().getDocument());
+        PdfStream contentStream = new PdfStream().makeIndirect(getPdfObject().getDocument());
         if (before) {
             array.add(0, contentStream);
         } else {

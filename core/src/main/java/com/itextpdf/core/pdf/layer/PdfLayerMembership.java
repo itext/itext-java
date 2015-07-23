@@ -21,7 +21,8 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
      * @throws PdfException
      */
     public PdfLayerMembership(PdfDocument doc) {
-        super(new PdfDictionary(), doc);
+        super(new PdfDictionary());
+        makeIndirect(doc);
         getPdfObject().put(PdfName.Type, PdfName.OCMD);
     }
 
@@ -30,7 +31,8 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
      * @throws PdfException
      */
     public PdfLayerMembership(PdfDictionary membershipDictionary, PdfDocument doc) {
-        super(membershipDictionary, doc);
+        super(membershipDictionary);
+        makeIndirect(doc);
         if (!PdfName.OCMD.equals(membershipDictionary.getAsName(PdfName.Type)))
             throw new IllegalArgumentException("Invalid membershipDictionary.");
     }

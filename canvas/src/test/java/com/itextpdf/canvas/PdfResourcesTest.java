@@ -27,8 +27,8 @@ public class PdfResourcesTest {
         final PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
-        PdfExtGState egs1 = new PdfExtGState(document);
-        PdfExtGState egs2 = new PdfExtGState(document);
+        PdfExtGState egs1 = new PdfExtGState();
+        PdfExtGState egs2 = new PdfExtGState();
         PdfResources resources = page.getResources();
         PdfName n1 = resources.addExtGState(egs1);
         Assert.assertEquals("Gs1", n1.getValue());
@@ -46,8 +46,8 @@ public class PdfResourcesTest {
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
-        PdfExtGState egs1 = new PdfExtGState(document);
-        PdfExtGState egs2 = new PdfExtGState(document);
+        PdfExtGState egs1 = new PdfExtGState();
+        PdfExtGState egs2 = new PdfExtGState();
         PdfResources resources = page.getResources();
         resources.addExtGState(egs1);
         resources.addExtGState(egs2);
@@ -64,7 +64,7 @@ public class PdfResourcesTest {
         Assert.assertEquals("Gs1", n1.getValue());
         PdfName n2 = iterator.next();
         Assert.assertEquals("Gs2", n2.getValue());
-        PdfExtGState egs3 = new PdfExtGState(document);
+        PdfExtGState egs3 = new PdfExtGState();
         PdfName n3 = resources.addExtGState(egs3);
         Assert.assertEquals("Gs3", n3.getValue());
         PdfDictionary egsResources = page.getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.ExtGState);
@@ -74,7 +74,7 @@ public class PdfResourcesTest {
         PdfObject e2 = egsResources.get(new PdfName("Gs2"));
         n2 = resources.addExtGState(e2);
         Assert.assertEquals("Gs2", n2.getValue());
-        PdfObject e4 = e2.copy();
+        PdfObject e4 = e2.copy(document);
         PdfName n4 = resources.addExtGState(e4);
         Assert.assertEquals("Gs4", n4.getValue());
         document.close();

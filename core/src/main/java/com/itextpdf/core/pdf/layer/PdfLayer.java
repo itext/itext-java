@@ -33,7 +33,8 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @throws PdfException
      */
     public PdfLayer(PdfDictionary layerDictionary,PdfDocument document) {
-        super(layerDictionary, document);
+        super(layerDictionary);
+        makeIndirect(document);
     }
 
     /**
@@ -49,7 +50,8 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     }
 
     private PdfLayer(PdfDocument document) {
-        super(new PdfDictionary(), document);
+        super(new PdfDictionary());
+        makeIndirect(document);
         getPdfObject().put(PdfName.Type, PdfName.OCG);
     }
 

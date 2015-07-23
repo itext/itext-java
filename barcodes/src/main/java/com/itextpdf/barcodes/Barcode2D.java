@@ -31,11 +31,10 @@ public abstract class Barcode2D {
     public abstract Rectangle placeBarcode(PdfCanvas canvas, Color foreground);
 
     /** Creates a PdfFormXObject with the barcode.
-     * @param document
      * @param foreground the color of the pixels. It can be <CODE>null</CODE>
      * @return the XObject.
      */
-    public abstract PdfFormXObject createFormXObject(PdfDocument document, Color foreground);
+    public abstract PdfFormXObject createFormXObject(Color foreground);
 }
 
 

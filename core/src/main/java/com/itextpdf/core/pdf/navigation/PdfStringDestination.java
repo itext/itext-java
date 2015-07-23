@@ -14,10 +14,6 @@ public class PdfStringDestination extends PdfDestination<PdfString> {
         super(pdfObject);
     }
 
-    public PdfStringDestination(PdfString pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
-
     @Override
     public PdfObject getDestinationPage(HashMap<Object, PdfObject> names) {
         PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());

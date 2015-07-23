@@ -16,20 +16,16 @@ public class PdfButtonFormField extends PdfFormField {
     public final static int FF_PUSH_BUTTON = makeFieldFlag(17);
     public final static int FF_RADIOS_IN_UNISON = makeFieldFlag(26);
 
-    public PdfButtonFormField(PdfDocument pdfDocument) {
-        super(pdfDocument);
+    public PdfButtonFormField() {
+        super();
     }
 
-    public PdfButtonFormField(PdfDocument pdfDocument, PdfWidgetAnnotation widget) {
-        super(pdfDocument, widget);
+    public PdfButtonFormField(PdfWidgetAnnotation widget) {
+        super(widget);
     }
 
     protected PdfButtonFormField(PdfDictionary pdfObject) {
         super(pdfObject);
-    }
-
-    protected PdfButtonFormField(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
     }
 
     @Override

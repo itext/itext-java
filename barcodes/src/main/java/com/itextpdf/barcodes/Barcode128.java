@@ -313,7 +313,7 @@ public class Barcode128 extends Barcode1D {
         for (int k = 0; k < tLen; ++k) {
             c = text.charAt(k);
             if (c > 127 && c != FNC1)
-                throw new PdfException("There are illegal characters for barcode 128 in 1");
+                throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
         }
         c = text.charAt(0);
         char currentCode = START_B;
@@ -344,7 +344,7 @@ public class Barcode128 extends Barcode1D {
             ++index;
         }
         if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
-            throw new PdfException("There are illegal characters for barcode 128 in 1");
+            throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
         while (index < tLen) {
             switch (currentCode) {
                 case START_A: {
@@ -413,7 +413,7 @@ public class Barcode128 extends Barcode1D {
                 break;
             }
             if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
-                throw new PdfException("There are illegal characters for barcode 128 in 1");
+                throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
         }
         return out;
     }

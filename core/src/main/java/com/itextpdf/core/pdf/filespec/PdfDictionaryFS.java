@@ -9,7 +9,4 @@ public class PdfDictionaryFS extends PdfFileSpec<PdfDictionary> {
         super(pdfObject);
     }
 
-    public PdfDictionaryFS(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
 }

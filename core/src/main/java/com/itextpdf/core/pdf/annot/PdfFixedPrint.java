@@ -9,7 +9,8 @@ public class PdfFixedPrint extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfFixedPrint(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
         pdfObject.put(PdfName.Type, PdfName.FixedPrint);
     }
 

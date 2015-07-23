@@ -121,7 +121,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         if (fontStreamBytes == null) {
             return null;
         }
-        PdfStream fontStream = new PdfStream(getDocument(), fontStreamBytes);
+        PdfStream fontStream = new PdfStream(fontStreamBytes).makeIndirect(getDocument());
         int[] fontStreamLengths = getFontProgram().getFontStreamLengths();
         for (int k = 0; k < fontStreamLengths.length; ++k) {
             fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));

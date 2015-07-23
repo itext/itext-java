@@ -8,8 +8,8 @@ public class PdfFormXObject extends PdfXObject {
 
     private PdfResources resources = null;
 
-    public PdfFormXObject(PdfDocument document, Rectangle bBox) {
-        super(new PdfStream(document), document);
+    public PdfFormXObject(Rectangle bBox) {
+        super(new PdfStream());
         getPdfObject().put(PdfName.Type, PdfName.XObject);
         getPdfObject().put(PdfName.Subtype, PdfName.Form);
         if (bBox != null) {
@@ -17,8 +17,8 @@ public class PdfFormXObject extends PdfXObject {
         }
     }
 
-    public PdfFormXObject(PdfStream pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+    public PdfFormXObject(PdfStream pdfObject) {
+        super(pdfObject);
     }
 
     /**
@@ -27,9 +27,9 @@ public class PdfFormXObject extends PdfXObject {
      * @param page
      */
     public PdfFormXObject(PdfPage page) {
-        this(page.getDocument(), page.getCropBox());
+        this(page.getCropBox());
         getPdfObject().getOutputStream().writeBytes(page.getContentBytes());
-        resources = new PdfResources((PdfDictionary)page.getResources().getPdfObject().copy());
+        resources = new PdfResources((PdfDictionary)page.getResources().getPdfObject().copy(page.getDocument()));
         getPdfObject().put(PdfName.Resources, resources.getPdfObject());
 
     }
@@ -48,7 +48,7 @@ public class PdfFormXObject extends PdfXObject {
 
     @Override
     public PdfFormXObject copy(PdfDocument document) {
-        return new PdfFormXObject((PdfStream)getPdfObject().copy(document), document);
+        return new PdfFormXObject((PdfStream)getPdfObject().copy(document));
     }
 
     @Override

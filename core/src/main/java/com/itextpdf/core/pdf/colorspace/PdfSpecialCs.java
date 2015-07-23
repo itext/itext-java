@@ -10,7 +10,8 @@ import java.util.List;
 abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     public PdfSpecialCs(PdfArray pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+        super(pdfObject);
+        makeIndirect(document);
     }
 
     static public class Indexed extends PdfSpecialCs {
@@ -150,17 +151,14 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     }
 
-    static public class Pattern extends PdfColorSpace {
+    static public class Pattern extends PdfColorSpace<PdfObject> {
         public Pattern() {
             super(PdfName.Pattern);
         }
 
-        public Pattern(PdfDocument pdfDocument) {
-            super(PdfName.Pattern, pdfDocument);
-        }
-
         protected Pattern(PdfObject pdfObj, PdfDocument pdfDoc) {
-            super(pdfObj, pdfDoc);
+            super(pdfObj);
+            makeIndirect(pdfDoc);
         }
 
         @Override

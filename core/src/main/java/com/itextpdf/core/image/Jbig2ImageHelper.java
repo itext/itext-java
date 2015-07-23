@@ -91,10 +91,14 @@ public class Jbig2ImageHelper {
             //TODO JBIG2 globals caching
             byte[] globals = sr.getGlobal(true);
 
+
+            //TODO due to the fact, that streams now may be transformed to indirect objects only on writing,
+            //pdfStream.getDocument() cannot longer be the sign of inline/indirect images
+
             // in case inline image pdfStream.getDocument() will be null
             if (globals != null && pdfStream.getDocument() != null) {
                 PdfDictionary decodeParms = new PdfDictionary();
-                PdfStream globalsStream = new PdfStream(pdfStream.getDocument());
+                PdfStream globalsStream = new PdfStream().makeIndirect(pdfStream.getDocument());
                 globalsStream.getOutputStream().write(globals);
                 decodeParms.put(PdfName.JBIG2Globals, globalsStream.getIndirectReference());
                 pdfStream.put(PdfName.DecodeParms, decodeParms);

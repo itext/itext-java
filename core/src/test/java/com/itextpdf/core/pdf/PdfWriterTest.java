@@ -174,7 +174,7 @@ public class PdfWriterTest {
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
-        catalog2.put(new PdfName("aDirect"), aDirect.copy());
+        catalog2.put(new PdfName("aDirect"), aDirect.copy(pdfDoc2));
 
         pdfDoc1.close();
         pdfDoc2.close();
@@ -328,7 +328,7 @@ public class PdfWriterTest {
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
-        PdfStream stream1 = new PdfStream(pdfDoc1);
+        PdfStream stream1 = new PdfStream().makeIndirect(pdfDoc1);
         stream1.getOutputStream().write(new PdfArray(new ArrayList<PdfObject>() {{
             add(new PdfNumber(1));
             add(new PdfNumber(2));

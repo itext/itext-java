@@ -65,7 +65,7 @@ public final class RawImageHelper {
                 stream.put(PdfName.Filter, PdfName.FlateDecode);
             }
             if (image.getImageMask() != null){
-                stream.put(PdfName.SMask, new PdfImageXObject(stream.getDocument(), image.getImageMask()).getPdfObject());
+                stream.put(PdfName.SMask, new PdfImageXObject(image.getImageMask()).getPdfObject());
             }
         }
     }

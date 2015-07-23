@@ -11,10 +11,6 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
-    public PdfTargetDictionary(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
-
     public PdfTargetDictionary(PdfName r) {
         this(new PdfDictionary());
         put(PdfName.R, r);

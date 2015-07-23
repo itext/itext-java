@@ -11,10 +11,6 @@ public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
-    public PdfWin(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
-
     public PdfWin(PdfString f) {
         this(new PdfDictionary());
         put(PdfName.F, f);

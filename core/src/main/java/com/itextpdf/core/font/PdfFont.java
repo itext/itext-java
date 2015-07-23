@@ -36,12 +36,14 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected ArrayList<int[]> subsetRanges;
 
     public PdfFont(PdfDocument pdfDocument, PdfDictionary pdfObject) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
     protected PdfFont(PdfDocument document, PdfDictionary pdfDictionary, boolean isCopy){
-        super(new PdfDictionary(), document);
+        super(new PdfDictionary());
+        makeIndirect(document);
         getPdfObject().put(PdfName.Type, PdfName.Font);
         this.fontDictionary = pdfDictionary;
         this.isCopy = isCopy;
@@ -228,7 +230,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         if (fontStreamBytes == null) {
             return null;
         }
-        PdfStream fontStream = new PdfStream(getDocument(), fontStreamBytes);
+        PdfStream fontStream = new PdfStream(fontStreamBytes).makeIndirect(getDocument());
         for (int k = 0; k < fontStreamLengths.length; ++k) {
             fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
         }

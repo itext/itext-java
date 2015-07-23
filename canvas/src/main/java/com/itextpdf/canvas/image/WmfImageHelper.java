@@ -71,8 +71,8 @@ public class WmfImageHelper {
         }
     }
 
-    public PdfXObject createPdfForm(PdfDocument document) {
-        PdfFormXObject pdfForm = new PdfFormXObject(document, new Rectangle(0, 0, wmf.getWidth(), wmf.getHeight()));
+    public PdfXObject createPdfForm() {
+        PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, wmf.getWidth(), wmf.getHeight()));
         PdfCanvas canvas = new PdfCanvas(pdfForm);
 
         InputStream is = null;
@@ -83,7 +83,7 @@ public class WmfImageHelper {
             else{
                 is = new java.io.ByteArrayInputStream(wmf.getData());
             }
-            MetaDo meta = new MetaDo(is, canvas, document);
+            MetaDo meta = new MetaDo(is, canvas);
             meta.readAll();
         } catch (IOException e) {
             throw new PdfException(PdfException.WmfImageException, e);

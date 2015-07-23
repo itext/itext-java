@@ -4,12 +4,13 @@ import com.itextpdf.core.pdf.*;
 
 public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfExtGState(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+    public PdfExtGState(PdfDictionary pdfObject) {
+        super(pdfObject);
+        mustBeIndirect();
     }
 
-    public PdfExtGState(PdfDocument document) {
-        this(new PdfDictionary(), document);
+    public PdfExtGState() {
+        this(new PdfDictionary());
     }
 
 //    @Override

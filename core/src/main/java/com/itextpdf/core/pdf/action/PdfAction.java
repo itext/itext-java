@@ -18,7 +18,8 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfAction(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        getPdfObject().makeIndirect(pdfDocument);
     }
 
     static public PdfAction createGoTo(PdfDocument pdfDocument, PdfDestination destination) {

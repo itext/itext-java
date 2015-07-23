@@ -32,7 +32,7 @@ class PdfXrefTable {
             capacity = InitialCapacity;
         xref = new PdfIndirectReference[capacity];
         freeReferences = new TreeSet<Integer>();
-        add(new PdfIndirectReference(null, 0, MaxGeneration, 0).setState(PdfIndirectReference.Free));
+        add(new PdfIndirectReference(null, 0, MaxGeneration, 0).<PdfIndirectReference>setState(PdfIndirectReference.Free));
     }
 
     /**
@@ -165,7 +165,8 @@ class PdfXrefTable {
         int size = sections.get(sections.size() - 2) + sections.get(sections.size() - 1);
         long startxref = writer.getCurrentPos();
         if (writer.isFullCompression()) {
-            PdfStream xrefStream = new PdfStream(document);
+            PdfStream xrefStream = new PdfStream().makeIndirect(document);
+            xrefStream.makeIndirect(document);
             xrefStream.put(PdfName.Type, PdfName.XRef);
             xrefStream.put(PdfName.ID, fileId);
             if (crypto != null)

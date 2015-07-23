@@ -435,7 +435,7 @@ public abstract class Barcode1D {
      * @see #placeBarcode(PdfCanvas canvas, Color barColor, Color textColor)
      */
     public PdfFormXObject createFormXObjectWithBarcode(Color barColor, Color textColor) {
-        PdfFormXObject xObject = new PdfFormXObject(document, null);
+        PdfFormXObject xObject = new PdfFormXObject((Rectangle)null);
         Rectangle rect = placeBarcode(new PdfCanvas(xObject), barColor, textColor);
         xObject.setBBox(rect.toPdfArray());
 

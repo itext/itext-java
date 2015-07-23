@@ -7,7 +7,8 @@ import java.util.List;
 public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
 
     public PdfFunction(PdfObject pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
     }
 
     public int getType() {
@@ -37,7 +38,7 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
         }
 
         private static PdfStream makeType0(PdfDocument document, PdfArray domain, PdfArray range, PdfArray size, PdfNumber bitsPerSample, PdfNumber order, PdfArray encode, PdfArray decode, byte[] samples) {
-            PdfStream stream = new PdfStream(document, samples);
+            PdfStream stream = new PdfStream(samples).makeIndirect(document);
             stream.put(PdfName.FunctionType, new PdfNumber(0));
             stream.put(PdfName.Domain, domain);
             stream.put(PdfName.Range, range);
@@ -126,7 +127,7 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
         }
 
         private static PdfStream makeType4(PdfDocument document, PdfArray domain, PdfArray range, byte[] ps) {
-            PdfStream stream = new PdfStream(document, ps);
+            PdfStream stream = new PdfStream(ps).makeIndirect(document);
             stream.put(PdfName.FunctionType, new PdfNumber(4));
             stream.put(PdfName.Domain, domain);
             stream.put(PdfName.Range, range);

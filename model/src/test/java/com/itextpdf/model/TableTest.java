@@ -298,7 +298,7 @@ public class TableTest {
 
         doc.add(new Paragraph("Table 3"));
 
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getPngImage(new File(sourceFolder + "itext.png").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getPngImage(new File(sourceFolder + "itext.png").toURI().toURL()));
         Image image = new Image(xObject, 50);
 
         Table table3 = new Table(new float[]{100, 100})

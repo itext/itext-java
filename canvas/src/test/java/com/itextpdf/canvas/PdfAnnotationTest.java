@@ -570,7 +570,7 @@ public class PdfAnnotationTest {
                 .showText("This is Printer Mark annotation:")
                 .endText()
                 .restoreState();
-        PdfFormXObject form = new PdfFormXObject(pdfDoc1, PageSize.A4);
+        PdfFormXObject form = new PdfFormXObject(PageSize.A4);
 
         PdfCanvas canvas = new PdfCanvas(form);
         canvas
@@ -615,7 +615,7 @@ public class PdfAnnotationTest {
                 .endText()
                 .restoreState();
 
-        PdfFormXObject form = new PdfFormXObject(pdfDoc1, PageSize.A4);
+        PdfFormXObject form = new PdfFormXObject(PageSize.A4);
         PdfCanvas canvas = new PdfCanvas(form);
         canvas
                 .saveState()
@@ -1012,7 +1012,7 @@ public class PdfAnnotationTest {
 
         watermark.setFixedPrint(fixedPrint);
 
-        PdfFormXObject form = new PdfFormXObject(pdfDoc1, new Rectangle(200, 200));
+        PdfFormXObject form = new PdfFormXObject(new Rectangle(200, 200));
 
         PdfCanvas canvas = new PdfCanvas(form);
         canvas
@@ -1051,7 +1051,7 @@ public class PdfAnnotationTest {
         float[] rgb1 = { 1, 0, 0};
         PdfRedactAnnotation redact = new PdfRedactAnnotation(pdfDoc1, new Rectangle(180, 531, 120, 49));
 
-        PdfFormXObject formD = new PdfFormXObject(pdfDoc1, new Rectangle(180, 531, 120, 49));
+        PdfFormXObject formD = new PdfFormXObject(new Rectangle(180, 531, 120, 49));
         PdfCanvas canvasD = new PdfCanvas(formD);
         canvasD
                 .setFillColorGray(0)
@@ -1059,7 +1059,7 @@ public class PdfAnnotationTest {
                 .fill();
         redact.setDownAppearance(formD.getPdfObject());
 
-        PdfFormXObject formN = new PdfFormXObject(pdfDoc1, new Rectangle(179, 530, 122, 51));
+        PdfFormXObject formN = new PdfFormXObject(new Rectangle(179, 530, 122, 51));
         PdfCanvas canvasN = new PdfCanvas(formN);
         canvasN
                 .setColor(Color.Red, true)
@@ -1071,7 +1071,7 @@ public class PdfAnnotationTest {
                 .closePath();
         redact.setNormalAppearance(formN.getPdfObject());
 
-        PdfFormXObject formR = new PdfFormXObject(pdfDoc1, new Rectangle(180, 531, 120, 49));
+        PdfFormXObject formR = new PdfFormXObject(new Rectangle(180, 531, 120, 49));
         PdfCanvas canvasR = new PdfCanvas(formR);
         canvasR
                 .saveState()
@@ -1081,7 +1081,7 @@ public class PdfAnnotationTest {
                 .release();
         redact.setRolloverAppearance(formR.getPdfObject());
 
-        PdfFormXObject formRO = new PdfFormXObject(pdfDoc1, new Rectangle(180, 531, 120, 49));
+        PdfFormXObject formRO = new PdfFormXObject(new Rectangle(180, 531, 120, 49));
         PdfCanvas canvasRO = new PdfCanvas(formRO);
         canvasRO
                 .saveState()

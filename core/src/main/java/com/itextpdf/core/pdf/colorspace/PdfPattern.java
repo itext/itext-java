@@ -5,16 +5,16 @@ import com.itextpdf.core.pdf.*;
 
 abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapper<T> {
 
-    public PdfPattern(T pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfPattern(T pdfObject) {
+        super(pdfObject);
     }
 
     public static PdfPattern getPatternInstance(PdfDictionary pdfObject, PdfDocument document) {
         PdfNumber type = pdfObject.getAsNumber(PdfName.PatternType);
         if (new PdfNumber(1).equals(type) && pdfObject instanceof PdfStream)
-            return new Tiling((PdfStream)pdfObject, document);
+            return new Tiling((PdfStream)pdfObject).makeIndirect(document);
         else if (new PdfNumber(2).equals(type))
-            return new Shading(pdfObject, document);
+            return new Shading(pdfObject).makeIndirect(document);
         throw new IllegalArgumentException("pdfObject");
     }
 
@@ -42,40 +42,40 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
             public static final int ConstantSpacingAndFasterTiling = 3;
         }
 
-        public Tiling(PdfStream pdfObject, PdfDocument pdfDocument) {
-            super(pdfObject, pdfDocument);
+        public Tiling(PdfStream pdfObject) {
+            super(pdfObject);
         }
 
-        public Tiling(PdfDocument pdfDocument, float width, float height) {
-            this(pdfDocument, width, height, true);
+        public Tiling(float width, float height) {
+            this(width, height, true);
         }
 
-        public Tiling(PdfDocument pdfDocument, float width, float height, boolean colored) {
-            this(pdfDocument, new Rectangle(width, height), colored);
+        public Tiling(float width, float height, boolean colored) {
+            this(new Rectangle(width, height), colored);
         }
 
-        public Tiling(PdfDocument pdfDocument, Rectangle bbox) {
-            this(pdfDocument, bbox, true);
+        public Tiling(Rectangle bbox) {
+            this(bbox, true);
         }
 
-        public Tiling(PdfDocument pdfDocument, Rectangle bbox, boolean colored) {
-            this(pdfDocument, bbox, bbox.getWidth(), bbox.getHeight(), colored);
+        public Tiling(Rectangle bbox, boolean colored) {
+            this(bbox, bbox.getWidth(), bbox.getHeight(), colored);
         }
 
-        public Tiling(PdfDocument pdfDocument, float width, float height, float xStep, float yStep) {
-            this(pdfDocument, width, height, xStep, yStep, true);
+        public Tiling(float width, float height, float xStep, float yStep) {
+            this(width, height, xStep, yStep, true);
         }
 
-        public Tiling(PdfDocument pdfDocument, float width, float height, float xStep, float yStep, boolean colored) {
-            this(pdfDocument, new Rectangle(width, height), xStep, yStep, colored);
+        public Tiling(float width, float height, float xStep, float yStep, boolean colored) {
+            this(new Rectangle(width, height), xStep, yStep, colored);
         }
 
-        public Tiling(PdfDocument pdfDocument, Rectangle bbox, float xStep, float yStep) {
-            this(pdfDocument, bbox, xStep, yStep, true);
+        public Tiling(Rectangle bbox, float xStep, float yStep) {
+            this(bbox, xStep, yStep, true);
         }
 
-        public Tiling(PdfDocument pdfDocument, Rectangle bbox, float xStep, float yStep, boolean colored) {
-            super(new PdfStream(pdfDocument), pdfDocument);
+        public Tiling(Rectangle bbox, float xStep, float yStep, boolean colored) {
+            super(new PdfStream());
             getPdfObject().put(PdfName.Type, PdfName.Pattern);
             getPdfObject().put(PdfName.PatternType, new PdfNumber(1));
             getPdfObject().put(PdfName.PaintType, new PdfNumber(colored ? PaintType.Colored : PaintType.Uncolored));
@@ -156,12 +156,12 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
 
     public static class Shading extends PdfPattern<PdfDictionary> {
 
-        public Shading(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-            super(pdfObject, pdfDocument);
+        public Shading(PdfDictionary pdfObject) {
+            super(pdfObject);
         }
 
-        public Shading(com.itextpdf.core.pdf.colorspace.PdfShading shading, PdfDocument pdfDocument) {
-            super(new PdfDictionary(), pdfDocument);
+        public Shading(com.itextpdf.core.pdf.colorspace.PdfShading shading) {
+            super(new PdfDictionary());
             getPdfObject().put(PdfName.Type, PdfName.Pattern);
             getPdfObject().put(PdfName.PatternType, new PdfNumber(2));
             getPdfObject().put(PdfName.Shading, shading.getPdfObject());
