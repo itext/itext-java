@@ -26,14 +26,16 @@ public class PdfImageXObject extends PdfXObject {
         super(pdfObject);
     }
 
-    public float getWidth() {
+    @Override
+    public Float getWidth() {
         if (!isFlushed())
             return getPdfObject().getAsNumber(PdfName.Width).getFloatValue();
         else
             return width;
     }
 
-    public float getHeight() {
+    @Override
+    public Float getHeight() {
         if (!isFlushed())
             return getPdfObject().getAsNumber(PdfName.Height).getFloatValue();
         else

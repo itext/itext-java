@@ -40,27 +40,34 @@ public class ParagraphRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        List<LayoutArea> areas;
+        int pageNumber = layoutContext.getArea().getPageNumber();
+
+        Rectangle parentBBox = applyMargins(layoutContext.getArea().getBBox().clone(), false);
+        applyBorderBox(parentBBox, false);
+
         if (isPositioned()) {
             float x = getPropertyAsFloat(Property.X);
-            Rectangle parentBBox = layoutContext.getArea().getBBox();
             float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
-            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(relativeX + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
+            parentBBox.setX(relativeX + x);
         }
-        else {
-            areas = initElementAreas(layoutContext);
-        }
-        int currentAreaPos = 0;
 
-        int pageNumber = areas.get(0).getPageNumber();
-        Rectangle layoutBox = applyMargins(areas.get(0).getBBox().clone(), false);
-        applyBorderBox(layoutBox, false);
         Float blockWidth = getPropertyAsFloat(Property.WIDTH);
-        if (blockWidth != null && blockWidth < layoutBox.getWidth()) {
-            layoutBox.setWidth(blockWidth);
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned())) {
+            parentBBox.setWidth(blockWidth);
         }
-        applyPaddings(layoutBox, false);
-        occupiedArea = new LayoutArea(pageNumber, new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), layoutBox.getWidth(), 0));
+        applyPaddings(parentBBox, false);
+
+        List<Rectangle> areas;
+        if (isPositioned()) {
+            areas = Collections.singletonList(parentBBox);
+        } else {
+            areas = initElementAreas(new LayoutArea(pageNumber, parentBBox));
+        }
+
+        occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
+
+        int currentAreaPos = 0;
+        Rectangle layoutBox = areas.get(0).clone();
 
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
@@ -120,9 +127,7 @@ public class ParagraphRenderer extends AbstractRenderer {
             if (doesNotFit) {
                 // TODO avoid infinite loop
                 if (currentAreaPos + 1 < areas.size()) {
-                    layoutBox = applyMargins(areas.get(++currentAreaPos).getBBox().clone(), false);
-                    layoutBox = applyBorderBox(layoutBox, false);
-                    layoutBox = applyPaddings(layoutBox, false);
+                    layoutBox = areas.get(++currentAreaPos).clone();
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
                     continue;

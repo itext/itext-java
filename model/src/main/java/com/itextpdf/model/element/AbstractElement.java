@@ -86,14 +86,18 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
             setProperty(Property.BOTTOM, bottom);
     }
 
-    public Type setFixedPosition(float x, float y) {
+    public Type setFixedPosition(float x, float y, float width) {
+//        if (getProperty(Property.HEIGHT) == null) {
+//            setProperty(Property.HEIGHT, Float.MAX_VALUE);
+//        }
         return (Type) setProperty(Property.POSITION, LayoutPosition.FIXED).
             setProperty(Property.X, x).
-            setProperty(Property.Y, y);
+            setProperty(Property.Y, y).
+            setProperty(Property.WIDTH, width);
     }
 
-    public Type setFixedPosition(int pageNumber, float x, float y) {
-        return (Type) setFixedPosition(x, y).
+    public Type setFixedPosition(int pageNumber, float x, float y, float width) {
+        return (Type) setFixedPosition(x, y, width).
                setProperty(Property.PAGE_NUMBER, pageNumber);
     }
 

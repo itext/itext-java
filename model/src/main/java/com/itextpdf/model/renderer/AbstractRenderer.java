@@ -185,8 +185,6 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     public void drawBorder(PdfDocument document, PdfCanvas canvas) {
-        // TODO implement complete functionality with all settings. Take into account separate border sides configuration.
-
         Border[] borders = getBorders();
         boolean gotBorders = false;
 
@@ -253,8 +251,8 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    public List<LayoutArea> initElementAreas(LayoutContext context) {
-        return Collections.singletonList(context.getArea());
+    public List<Rectangle> initElementAreas(LayoutArea area) {
+        return Collections.singletonList(area.getBBox());
     }
 
     //TODO is behavior of copying all properties in split case common to all renderers?

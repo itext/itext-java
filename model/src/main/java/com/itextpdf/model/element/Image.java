@@ -67,12 +67,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     public Image scaleToFit(float fitWidth, float fitHeight) {
-        if (xObject instanceof PdfImageXObject) {
-            float horizontalScaling = fitWidth / ((PdfImageXObject)xObject).getWidth();
-            float verticalScaling = fitHeight / ((PdfImageXObject)xObject).getHeight();
-            return scale(Math.min(horizontalScaling, verticalScaling), Math.min(horizontalScaling, verticalScaling));
-        }
-        return this;
+        float horizontalScaling = fitWidth / xObject.getWidth();
+        float verticalScaling = fitHeight / xObject.getHeight();
+        return scale(Math.min(horizontalScaling, verticalScaling), Math.min(horizontalScaling, verticalScaling));
     }
 
     public Image setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
@@ -81,6 +78,14 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     public Image setAutoScaling(boolean autoScale){
         return setProperty(Property.AUTO_SCALE, autoScale);
+    }
+
+    public Image setFixedPosition(float x, float y) {
+        return setFixedPosition(x, y, getWidth());
+    }
+
+    public Image setFixedPosition(int pageNumber, float x, float y) {
+        return setFixedPosition(pageNumber, x, y, getWidth());
     }
 
     @Override
@@ -104,11 +109,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     public Float getWidth() {
         Float width = super.getWidth();
         if (width == null) {
-            if (xObject instanceof PdfImageXObject) {
-                width = ((PdfImageXObject) xObject).getWidth();
-            } else {
-                width = ((PdfFormXObject)xObject).getBBox().getAsFloat(2);
-            }
+            width = xObject.getWidth();
         }
 
         return width;
@@ -122,11 +123,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     public Float getHeight() {
         Float height = super.getHeight();
         if (height == null) {
-            if (xObject instanceof PdfImageXObject) {
-                height = ((PdfImageXObject) xObject).getHeight();
-            } else {
-                height = ((PdfFormXObject)xObject).getBBox().getAsFloat(3);
-            }
+            height = xObject.getHeight();
         }
 
         return height;

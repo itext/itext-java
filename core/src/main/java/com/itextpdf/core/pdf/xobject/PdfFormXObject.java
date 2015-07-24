@@ -109,4 +109,10 @@ public class PdfFormXObject extends PdfXObject {
     public void setBBox(PdfArray bBox) {
         getPdfObject().put(PdfName.BBox, bBox);
     }
+
+    @Override
+    public Float getWidth() { return getBBox() == null ? null : getBBox().getAsFloat(2);}
+
+    @Override
+    public Float getHeight() { return getBBox() == null ? null : getBBox().getAsFloat(3); }
 }

@@ -5,6 +5,7 @@ import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.layer.PdfOCG;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
@@ -31,4 +32,7 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 
+    public Float getWidth() {throw new NotImplementedException(); }
+
+    public Float getHeight() { throw new NotImplementedException(); }
 }

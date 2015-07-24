@@ -262,20 +262,16 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public void drawBackground(PdfDocument document, PdfCanvas canvas) {
-        try {
-            Property.Background background = getProperty(Property.BACKGROUND);
-            Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
-            float bottomBBoxY = occupiedArea.getBBox().getY();
-            float leftBBoxX = occupiedArea.getBBox().getX();
-            if (background != null) {
-                canvas.saveState().setFillColor(background.getColor());
-                canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + textRise - background.getExtraBottom(),
-                        occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                        occupiedArea.getBBox().getHeight() - textRise + background.getExtraTop() + background.getExtraBottom());
-                canvas.fill().restoreState();
-            }
-        } catch (Exception exc) {
-            throw new RuntimeException(exc);
+        Property.Background background = getProperty(Property.BACKGROUND);
+        Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
+        float bottomBBoxY = occupiedArea.getBBox().getY();
+        float leftBBoxX = occupiedArea.getBBox().getX();
+        if (background != null) {
+            canvas.saveState().setFillColor(background.getColor());
+            canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + textRise - background.getExtraBottom(),
+                    occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
+                    occupiedArea.getBBox().getHeight() - textRise + background.getExtraTop() + background.getExtraBottom());
+            canvas.fill().restoreState();
         }
     }
 
