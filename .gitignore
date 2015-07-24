@@ -144,5 +144,11 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-/target/
+target/
 nbactions*.xml
+.checkstyle
+.pmd
+.pmdruleset.xml
+
+# Ignore generated files
+samples/src/test/resources/db/filmfestival.log
