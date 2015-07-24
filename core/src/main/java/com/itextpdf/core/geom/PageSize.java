@@ -30,6 +30,17 @@ public class PageSize extends Rectangle {
         this.bottomMargin = bottomMargin;
     }
 
+    public PageSize(Rectangle box) {
+        this(box, 0, 0, 0, 0);
+    }
+
+    public PageSize(Rectangle box, float leftMargin, float rightMargin, float topMargin, float bottomMargin) {
+        super(box.getX(), box.getY(), box.getWidth(), box.getHeight());
+        this.leftMargin = leftMargin;
+        this.rightMargin = rightMargin;
+        this.topMargin = topMargin;
+        this.bottomMargin = bottomMargin;
+    }
 
     public float getLeftMargin() {
         return leftMargin;

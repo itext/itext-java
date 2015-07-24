@@ -6,6 +6,7 @@ import com.itextpdf.model.element.TabStop;
 import com.itextpdf.model.layout.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
 
@@ -173,7 +174,8 @@ public class LineRenderer extends AbstractRenderer {
         float characterSpacing = (1 - ratio) * baseFactor;
 
         float lastRightPos = occupiedArea.getBBox().getX();
-        for (IRenderer child : childRenderers) {
+        for (Iterator<IRenderer> iterator = childRenderers.iterator(); iterator.hasNext(); ) {
+            IRenderer child = iterator.next();
             float childX = child.getOccupiedArea().getBBox().getX();
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
@@ -181,8 +183,10 @@ public class LineRenderer extends AbstractRenderer {
                 float childHSCale = child.getProperty(Property.HORIZONTAL_SCALING);
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
-                child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() +
-                        characterSpacing * ((TextRenderer) child).length() + wordSpacing * ((TextRenderer) child).getNumberOfSpaces());
+                boolean isLastTextRenderer = !iterator.hasNext();
+                float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).length() - 1) : ((TextRenderer) child).length()) * characterSpacing +
+                        wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
+                        child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
             }
             lastRightPos = childX + child.getOccupiedArea().getBBox().getWidth();
         }

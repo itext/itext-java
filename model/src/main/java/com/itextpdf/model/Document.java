@@ -126,6 +126,8 @@ public class Document implements IPropertyContainer<Document> {
                     return (T) new Float(0);
                 case Property.SPACING_RATIO:
                     return (T) new Float(0.75f);
+                case Property.FONT_KERNING:
+                    return (T) Property.FontKerning.NO;
                 default:
                     return null;
             }

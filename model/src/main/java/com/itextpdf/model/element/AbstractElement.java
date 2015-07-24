@@ -119,8 +119,20 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         return setProperty(Property.CHARACTER_SPACING, charSpacing);
     }
 
+    /**
+     * The word-spacing parameter is added to the glyph’s horizontal or vertical displacement (depending on the writing mode).
+     */
     public Type setWordSpacing(float wordSpacing) {
         return setProperty(Property.WORD_SPACING, wordSpacing);
+    }
+
+    /**
+     * Enable or disable kerning.
+     * Some fonts may specify kern pairs, i.e. pair of glyphs, between which the amount of horizontal space is adjusted.
+     * This adjustment is typically negative, e.g. in "AV" pair the glyphs will typically be moved closer to each other.
+     */
+    public Type setFontKerning(Property.FontKerning fontKerning) {
+        return setProperty(Property.FONT_KERNING, fontKerning);
     }
 
     public Type setBackgroundColor(Color backgroundColor) {

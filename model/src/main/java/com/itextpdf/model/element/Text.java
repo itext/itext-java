@@ -73,4 +73,19 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
     public Text setStrokeWidth(float strokeWidth) {
         return setProperty(Property.STROKE_WIDTH, strokeWidth);
     }
+
+    public Float getHorizontalScaling() {
+        return getProperty(Property.HORIZONTAL_SCALING);
+    }
+
+    /**
+     * The horizontal scaling parameter adjusts the width of glyphs by stretching or
+     * compressing them in the horizontal direction.
+     * @param horizontalScaling the scaling parameter. 1 means no scaling will be applied,
+     *                          0.5 means the text will be scaled by half.
+     *                          2 means the text will be twice as wide as normal one.
+     */
+    public Text setHorizontalScaling(float horizontalScaling) {
+        return setProperty(Property.HORIZONTAL_SCALING, horizontalScaling);
+    }
 }

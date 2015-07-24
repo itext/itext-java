@@ -143,7 +143,7 @@ public class BarcodeCodabar extends Barcode1D {
     }
 
     /**
-     * Places the barcode in a <CODE>PdfContentByte</CODE>. The
+     * Places the barcode in a <CODE>PdfCanvas</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
      * The bars and text are written in the following colors:<p>

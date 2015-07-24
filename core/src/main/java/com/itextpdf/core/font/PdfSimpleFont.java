@@ -33,11 +33,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         super(document, pdfDictionary,isCopy);
     }
 
-
     public T getFontProgram() {
         return fontProgram;
     }
-
 
     protected void setFontProgram(T fontProgram) {
         this.fontProgram = fontProgram;

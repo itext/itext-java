@@ -6,6 +6,7 @@ import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.color.*;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
@@ -1195,7 +1196,6 @@ public class PdfCanvasTest {
 
     @Test
     public void colorTest04() throws Exception {
-
         //Create document with 3 colored rectangles in memory.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
@@ -1232,7 +1232,6 @@ public class PdfCanvasTest {
 
     @Test
     public void colorTest05() throws Exception {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest05.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -1259,7 +1258,6 @@ public class PdfCanvasTest {
 
     @Test
     public void colorTest06() throws Exception {
-
         byte[] bytes = new byte[256 * 3];
         int k = 0;
         for (int i = 0; i < 256; i++) {
@@ -1288,7 +1286,6 @@ public class PdfCanvasTest {
 
     @Test
     public void colorTest07() throws Exception {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest07.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
@@ -1310,7 +1307,6 @@ public class PdfCanvasTest {
 
     @Test
     public void colorTest08() throws Exception {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest08.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
@@ -1335,7 +1331,6 @@ public class PdfCanvasTest {
 
     @Test
     public void wmfImageTest01() throws IOException, InterruptedException {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest01.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -1352,7 +1347,6 @@ public class PdfCanvasTest {
 
     @Test
     public void wmfImageTest02() throws IOException, InterruptedException {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -1371,7 +1365,6 @@ public class PdfCanvasTest {
     @Test
     @Ignore("Failing is caused by commenting of 581 line in MetaDo class. Should be unignored, when issues in MetaDo will be resolved.")
     public void wmfImageTest03() throws IOException, InterruptedException {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -1389,7 +1382,6 @@ public class PdfCanvasTest {
     @Test
     @Ignore("Failing is caused by commenting of 581 line in MetaDo class. Should be unignored, when issues in MetaDo will be resolved.")
     public void wmfImageTest04() throws IOException, InterruptedException {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest04.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -1406,7 +1398,6 @@ public class PdfCanvasTest {
 
     @Test
     public void gifImageTest01() throws IOException, InterruptedException {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest01.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -1423,7 +1414,6 @@ public class PdfCanvasTest {
 
     @Test
     public void gifImageTest02() throws IOException, InterruptedException {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -1448,7 +1438,6 @@ public class PdfCanvasTest {
 
     @Test
     public void gifImageTest03() throws IOException, InterruptedException {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -1473,7 +1462,6 @@ public class PdfCanvasTest {
 
     @Test(expected = PdfException.class)
     public void gifImageTest04() throws IOException, InterruptedException {
-
         FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
@@ -1490,5 +1478,23 @@ public class PdfCanvasTest {
         PdfCanvas canvas = new PdfCanvas(page);
         Image img = ImageFactory.getGifImage(baos.toByteArray(), 3);
         canvas.addImage(img, 100, 100, 200, false);
+    }
+
+    @Test
+    public void kernedTextTest01() throws IOException, InterruptedException {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "kernedTextTest01.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        String kernableText = "AVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAV";
+        PdfFont font = new PdfType1Font(document, new Type1Font(FontConstants.HELVETICA, ""));
+        canvas.beginText().moveText(50, 600).setFontAndSize(font, 12).showText("Kerning:-" + kernableText).endText();
+        canvas.beginText().moveText(50, 650).setFontAndSize(font, 12).showTextKerned("Kerning:+" + kernableText).endText();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "kernedTextTest01.pdf", sourceFolder + "cmp_kernedTextTest01.pdf", destinationFolder, "diff_"));
     }
 }

@@ -44,7 +44,6 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         this(pdfDocument, type1Font, false);
     }
 
-
     /**
      * Returns the width of a certain character of this font.
      *

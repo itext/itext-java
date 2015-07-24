@@ -7,6 +7,7 @@ import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.tagging.*;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;
 import com.itextpdf.core.xmp.XMPMetaFactory;
@@ -15,6 +16,7 @@ import com.itextpdf.core.xmp.options.SerializeOptions;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
@@ -152,27 +154,38 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Copies page to a specified document.
+     * Copies page to the specified document.
      *
      * @param toDocument a document to copy page to.
      * @return copied page.
-     * @throws PdfException
      */
     @Override
     public PdfPage copy(PdfDocument toDocument) {
-        PdfDictionary dictionary = getPdfObject().copy(toDocument, new ArrayList<PdfName>() {{
-            add(PdfName.Parent);
-            add(PdfName.StructParents);
-        }}, true);
+        PdfDictionary dictionary = getPdfObject().copy(toDocument, Arrays.asList(
+            PdfName.Parent,
+            PdfName.StructParents,
+            // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
+            // See DEVSIX-191
+            PdfName.B
+        ), true);
         PdfPage page = new PdfPage(dictionary, toDocument);
-        // This key contains reference to all articles, while this articles could reference to lots of pages.
-        // See DEVSIX-191
-        page.getPdfObject().remove(PdfName.B);
         if (toDocument.isTagged()) {
             page.structParents = toDocument.getNextStructParentIndex();
             page.getPdfObject().put(PdfName.StructParents, new PdfNumber(page.structParents));
         }
         return page;
+    }
+
+    /**
+     * Copies page as FormXObject to the specified document.
+     * @param toDocument a document to copy to.
+     * @return resultant XObject.
+     */
+    public PdfFormXObject copyAsFormXObject(PdfDocument toDocument) {
+        // TODO
+        throw new IllegalStateException("not implemented");
+//        PdfFormXObject xObject = new PdfFormXObject(toDocument, getMediaBox());
+//        getResources().getPdfObject().copy(toDocument);
     }
 
     @Override

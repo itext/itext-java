@@ -79,7 +79,6 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public <T> T getProperty(int key) {
-        // TODO distinguish between inherit and non-inherit properties.
         Object ownProperty = getOwnProperty(key);
         if (ownProperty != null)
             return (T) ownProperty;
@@ -258,7 +257,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return Collections.singletonList(context.getArea());
     }
 
-    //TODO is behavior of coping all properties in split case common to all renderers?
+    //TODO is behavior of copying all properties in split case common to all renderers?
     protected Map<Integer, Object> getOwnProperties() {
         return properties;
     }

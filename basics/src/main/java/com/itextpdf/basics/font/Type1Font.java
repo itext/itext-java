@@ -54,13 +54,14 @@ public class Type1Font extends FontProgram {
      * This is the code, width, name and char bbox. The key is the name of the char
      * and also an Integer with the char number.
      */
-    private HashMap<Object, Object[]> charMetrics = new HashMap<Object, Object[]>();
+    private HashMap<Object, Object[]> charMetrics = new HashMap<>();
+
     /**
      * Represents the section KernPairs in the AFM file. The key is the name of the first character
      * and the value is a {@code Object[]} with two elements for each kern pair. Position 0 is the name of
      * the second character and position 1 is the kerning distance. This is repeated for all the pairs.
      */
-    private HashMap<String, Object[]> kernPairs = new HashMap<String, Object[]>();
+    private HashMap<String, Object[]> kernPairs = new HashMap<>();
 
     /**
      * Types of records in a PFB file. ASCII is 1 and BINARY is 2. They have to appear in the PFB file in this sequence.
@@ -368,7 +369,6 @@ public class Type1Font extends FontProgram {
         }
     }
 
-
     /**
      * Gets the width of a {@code String} in normalized 1000 units.
      *
@@ -396,7 +396,6 @@ public class Type1Font extends FontProgram {
         }
         return total;
     }
-
 
     /**
      * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according

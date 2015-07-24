@@ -179,7 +179,6 @@ public class Utilities {
         }
     }
 
-
     /**
      * Reads the full content of a stream and returns them in a byte array
      * @param is the stream to read
@@ -362,7 +361,7 @@ public class Utilities {
         return new String(new char[]{(char)(codePoint / 0x400 + 0xd800), (char)(codePoint % 0x400 + 0xdc00)});
     }
 
-    public static int[]  toArray(Collection<Integer> collection) {
+    public static int[] toArray(Collection<Integer> collection) {
         int[] array = new int[collection.size()];
         int k = 0;
         for (Integer key : collection) {
