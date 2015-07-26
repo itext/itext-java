@@ -20,6 +20,10 @@ public class Rectangle implements Cloneable {
         this(0, 0, width, height);
     }
 
+    public Rectangle(Rectangle rect) {
+        this(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+    }
+
     /**
      * Calculates the common rectangle which includes all the input rectangles.
      * @param rectangles list of input rectangles.

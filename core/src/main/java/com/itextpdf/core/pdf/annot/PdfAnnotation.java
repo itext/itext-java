@@ -21,6 +21,14 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     static public final int ToggleNoView = 256;
     static public final int LockedContents = 512;
 
+    /**
+     * Annotation highlighting modes.
+     */
+    public static final PdfName HIGHLIGHT_NONE = PdfName.N;
+    public static final PdfName HIGHLIGHT_INVERT = PdfName.I;
+    public static final PdfName HIGHLIGHT_OUTLINE = PdfName.O;
+    public static final PdfName HIGHLIGHT_PUSH = PdfName.P;
+    public static final PdfName HIGHLIGHT_TOGGLE = PdfName.T;
 
     /**
      * Annotation states.

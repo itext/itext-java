@@ -3,7 +3,7 @@ package com.itextpdf.forms;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.testutils.CompareTool;
-import com.itextpdf.forms.formfields.*;
+import com.itextpdf.forms.fields.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

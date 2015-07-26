@@ -1,4 +1,4 @@
-package com.itextpdf.forms.formfields;
+package com.itextpdf.forms.fields;
 
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;

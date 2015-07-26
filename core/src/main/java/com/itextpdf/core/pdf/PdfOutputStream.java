@@ -138,8 +138,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 break;
             case PdfObject.Null:
             case PdfObject.Boolean:
-            case PdfObject.Literal:
                 write((PdfPrimitiveObject) pdfObject);
+            case PdfObject.Literal:
+                write((PdfLiteral) pdfObject);
                 break;
             case PdfObject.String:
                 write((PdfString) pdfObject);
@@ -256,6 +257,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     protected void write(PdfPrimitiveObject pdfPrimitive) {
         writeBytes(pdfPrimitive.getInternalContent());
+    }
+
+    protected void write(PdfLiteral literal) {
+        literal.setPosition(getCurrentPos());
+        writeBytes(literal.getInternalContent());
     }
 
     protected void write(PdfString pdfString) {

@@ -1,18 +1,10 @@
 package com.itextpdf.forms;
 
 
-import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.forms.formfields.PdfButtonFormField;
-import com.itextpdf.forms.formfields.PdfFormField;
-import com.itextpdf.forms.formfields.PdfTextFormField;
+import com.itextpdf.forms.fields.PdfFormField;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -180,7 +172,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().get(PdfName.XFA);
     }
 
-    public PdfFormField getField(String fieldName) {
+    public PdfFormField getField(String fieldName) { // TODO: HashMap instead!
         List<PdfFormField> fields = getFormFields();
         for (PdfFormField field : fields) {
             if (field.getFieldName() != null && field.getFieldName().toUnicodeString().equals(fieldName)) {

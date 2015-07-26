@@ -139,7 +139,9 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Open PDF document in stamping mode.
+     * Opens PDF document in the stamping mode.
+     * <br/>
+     * Note: to enable append mode use {@link #PdfDocument(PdfReader, PdfWriter, boolean)} instead.
      *
      * @param reader PDF reader.
      * @param writer PDF writer.

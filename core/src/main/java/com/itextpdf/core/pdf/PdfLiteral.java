@@ -2,11 +2,20 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.font.PdfEncodings;
 
+import java.util.Arrays;
+
 public class PdfLiteral extends PdfPrimitiveObject {
+
+    private long position;
 
     public PdfLiteral(byte[] content) {
         super(true);
         this.content = content;
+    }
+
+    public PdfLiteral(int size) {
+        this(new byte[size]);
+        Arrays.fill(content, (byte) 32);
     }
 
     public PdfLiteral(String content) {
@@ -29,6 +38,18 @@ public class PdfLiteral extends PdfPrimitiveObject {
         } else {
             return "";
         }
+    }
+
+    public long getPosition() {
+        return position;
+    }
+
+    public void setPosition(long position) {
+        this.position = position;
+    }
+
+    public int getBytesCount() {
+        return content.length;
     }
 
     @Override

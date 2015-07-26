@@ -64,8 +64,9 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @param compressionLevel compression level.
      */
-    public void setCompressionLevel(int compressionLevel) {
+    public PdfWriter setCompressionLevel(int compressionLevel) {
         this.compressionLevel = compressionLevel;
+        return this;
     }
 
     /**
@@ -217,7 +218,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void writeHeader() {
         writeByte((byte) '%').
-                writeString(document.getPdfVersion().getPdfVersion()).
+                writeString(document.getPdfVersion().toString()).
                 writeString("\n%\u00e2\u00e3\u00cf\u00d3\n");
     }
 

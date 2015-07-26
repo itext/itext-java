@@ -1,10 +1,8 @@
-package com.itextpdf.forms.formfields;
+package com.itextpdf.forms.fields;
 
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.forms.PdfSigLockDictionary;
 
 public class PdfSignatureFormField extends PdfFormField {
 
@@ -32,5 +30,10 @@ public class PdfSignatureFormField extends PdfFormField {
     @Override
     public <T extends PdfFormField> T setValue(PdfObject value) {
         return put(PdfName.V, value);
+    }
+
+    public PdfSigLockDictionary getSigFieldLockDictionary() {
+        PdfDictionary sigLockDict = (PdfDictionary) getPdfObject().get(PdfName.Lock);
+        return sigLockDict == null? null : new PdfSigLockDictionary(sigLockDict, getDocument());
     }
 }

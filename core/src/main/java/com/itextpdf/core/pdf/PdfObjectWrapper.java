@@ -109,4 +109,13 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return (T1) this;
     }
 
+    public <T1 extends PdfObjectWrapper<T>> T1 remove(PdfName key) {
+        if (getPdfObject().isDictionary()) {
+            ((PdfDictionary) getPdfObject()).remove(key);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+
+        return (T1) this;
+    }
 }

@@ -25,10 +25,26 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
         return put(PdfName.Parent, parent);
     }
 
-    public PdfWidgetAnnotation setHighlightMode(String mode) {
-        return put(PdfName.H, new PdfName(mode));
+    /**
+     * Setter for the annotation's highlighting mode. Possible values are
+     * <ul>
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_NONE} - No highlighting.</li>
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_INVERT} - Invert the contents of the annotation rectangle.</li>
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_OUTLINE} - Invert the annotation's border.</li>
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_PUSH} - Display the annotation’s down appearance, if any.</li>
+     *     <li>{@link PdfAnnotation#HIGHLIGHT_TOGGLE} - Same as P.</li>
+     * </ul>
+     * @param mode The new value for the annotation's highlighting mode.
+     * @return The widget annotation which this method was called on.
+     */
+    public PdfWidgetAnnotation setHighlightMode(PdfName mode) {
+        return put(PdfName.H, mode);
     }
 
+    /**
+     * Getter for the annotation's highlighting mode.
+     * @return Current value of the annotation's highlighting mode.
+     */
     public PdfName getHighlightMode() {
         return getPdfObject().getAsName(PdfName.H);
     }

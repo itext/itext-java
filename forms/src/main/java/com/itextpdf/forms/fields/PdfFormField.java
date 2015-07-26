@@ -1,4 +1,4 @@
-package com.itextpdf.forms.formfields;
+package com.itextpdf.forms.fields;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
@@ -246,13 +246,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
-    ;
-
     public <T extends PdfFormField> T setValue(PdfObject value) {
         return put(PdfName.V, value);
     }
-
-    ;
 
     public <T extends PdfFormField> T setParent(PdfFormField parent) {
         return put(PdfName.Parent, parent);
