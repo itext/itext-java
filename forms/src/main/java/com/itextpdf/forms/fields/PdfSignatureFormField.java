@@ -30,6 +30,6 @@ public class PdfSignatureFormField extends PdfFormField {
 
     public PdfSigLockDictionary getSigFieldLockDictionary() {
         PdfDictionary sigLockDict = (PdfDictionary) getPdfObject().get(PdfName.Lock);
-        return sigLockDict == null? null : new PdfSigLockDictionary(sigLockDict, getDocument());
+        return sigLockDict == null? null : new PdfSigLockDictionary(sigLockDict);
     }
 }

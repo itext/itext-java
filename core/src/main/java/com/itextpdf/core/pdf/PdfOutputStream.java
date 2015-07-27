@@ -148,6 +148,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             case PdfObject.Null:
             case PdfObject.Boolean:
                 write((PdfPrimitiveObject) pdfObject);
+                break;
             case PdfObject.Literal:
                 write((PdfLiteral) pdfObject);
                 break;

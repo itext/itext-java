@@ -4,7 +4,6 @@ package com.itextpdf.forms;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.forms.formfields.PdfFormField;
 
 import java.util.ArrayList;
 import java.util.List;
