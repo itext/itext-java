@@ -14,6 +14,11 @@ public class ListItem extends Div {
         add(new Paragraph(text).setMarginTop(0).setMarginBottom(0));
     }
 
+    public ListItem(Image image) {
+        this();
+        add(image);
+    }
+
     @Override
     public IRenderer makeRenderer() {
         if (nextRenderer != null) {

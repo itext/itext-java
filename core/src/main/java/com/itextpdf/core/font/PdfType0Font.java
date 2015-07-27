@@ -303,7 +303,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             } else {
                 byte[] ttfBytes;
                 if (subset || ttf.getDirectoryOffset() != 0) {
-                    ttfBytes = ttf.getSubset(new HashSet<Integer>(longTag.keySet()), true);
+                    ttfBytes = ttf.getSubset(new HashSet<>(longTag.keySet()), true);
                 } else {
                     ttfBytes = ttf.getFontStreamBytes();
                 }

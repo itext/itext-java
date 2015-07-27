@@ -135,7 +135,6 @@ public class BlockRenderer extends AbstractRenderer {
                     alignChildHorizontally(childRenderer, layoutBox.getWidth());
                 }
             }
-
         }
 
         Float blockHeight = getPropertyAsFloat(Property.HEIGHT);

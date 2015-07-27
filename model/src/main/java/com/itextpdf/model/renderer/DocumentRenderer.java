@@ -37,9 +37,6 @@ public class DocumentRenderer extends AbstractRenderer {
 
         if (currentArea == null) {
             currentArea = getNextArea();
-//            try {
-//                new PdfCanvas(document.getPdfDocument().getPage(currentArea.getPageNumber())).rectangle(currentArea.getBBox()).stroke();
-//            }  catch (Exception exc) {}
         }
 
         if (childRenderers.size() != 0 && childRenderers.get(childRenderers.size() - 1) == renderer) {

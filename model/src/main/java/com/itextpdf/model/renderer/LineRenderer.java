@@ -159,7 +159,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected float getFirstYLineRecursively() {
+    protected Float getFirstYLineRecursively() {
         return getYLine();
     }
 
@@ -184,7 +184,7 @@ public class LineRenderer extends AbstractRenderer {
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
                 boolean isLastTextRenderer = !iterator.hasNext();
-                float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).length() - 1) : ((TextRenderer) child).length()) * characterSpacing +
+                float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1) : ((TextRenderer) child).lineLength()) * characterSpacing +
                         wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
                         child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
             }
@@ -212,7 +212,7 @@ public class LineRenderer extends AbstractRenderer {
         int length = 0;
         for (IRenderer child : childRenderers) {
             if (child instanceof TextRenderer) {
-                length += ((TextRenderer) child).length();
+                length += ((TextRenderer) child).lineLength();
             }
         }
         return length;

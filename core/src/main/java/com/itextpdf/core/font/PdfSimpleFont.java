@@ -29,7 +29,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         super(document, pdfDictionary);
     }
 
-    public PdfSimpleFont(PdfDocument document,PdfDictionary pdfDictionary,boolean isCopy) {
+    public PdfSimpleFont(PdfDocument document,PdfDictionary pdfDictionary, boolean isCopy) {
         super(document, pdfDictionary,isCopy);
     }
 

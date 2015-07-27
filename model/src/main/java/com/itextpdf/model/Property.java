@@ -132,6 +132,10 @@ public class Property {
         protected float extraTop;
         protected float extraBottom;
 
+        public Background(Color color) {
+            this(color, 0, 0, 0, 0);
+        }
+
         public Background(Color color, float extraLeft, final float extraTop, final float extraRight, float extraBottom) {
             this.color = color;
             this.extraLeft = extraLeft;

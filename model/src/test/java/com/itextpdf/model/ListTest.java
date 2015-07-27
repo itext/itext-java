@@ -1,7 +1,10 @@
 package com.itextpdf.model;
 
+import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.model.element.*;
 import org.junit.Assert;
@@ -148,4 +151,43 @@ public class ListTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void listEmptyItemTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listEmptyItemTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_listEmptyItemTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        List list = new List(Property.ListNumberingType.GREEK_LOWER);
+        list.add(new ListItem()).add(new ListItem()).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div()));
+
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageInListTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageInListTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageInListTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        List list = new List(Property.ListNumberingType.GREEK_LOWER);
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        Image image = new Image(xObject, 100);
+        list.add(new ListItem()).add(new ListItem(image)).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div().setHeight(70).setBackgroundColor(Color.Red)));
+
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 }

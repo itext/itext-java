@@ -4,6 +4,7 @@ import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.ListItem;
+import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
 
 public class ListItemRenderer extends BlockRenderer {
@@ -21,6 +22,15 @@ public class ListItemRenderer extends BlockRenderer {
     }
 
     @Override
+    public LayoutResult layout(LayoutContext layoutContext) {
+        if (symbolRenderer != null && getProperty(Property.HEIGHT) == null) {
+            // TODO this is actually MinHeight.
+            setProperty(Property.HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
+        }
+        return super.layout(layoutContext);
+    }
+
+    @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
         super.draw(document, canvas);
 
@@ -28,11 +38,16 @@ public class ListItemRenderer extends BlockRenderer {
         if (symbolRenderer != null) {
             float x = occupiedArea.getBBox().getX();
             if (childRenderers.size() > 0) {
-                float yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
-                if (symbolRenderer instanceof TextRenderer) {
-                    ((TextRenderer) symbolRenderer).moveYLineTo(yLine);
+                Float yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
+                if (yLine != null) {
+                    if (symbolRenderer instanceof TextRenderer) {
+                        ((TextRenderer) symbolRenderer).moveYLineTo(yLine);
+                    } else {
+                        symbolRenderer.move(0, yLine - symbolRenderer.getOccupiedArea().getBBox().getY());
+                    }
                 } else {
-                    symbolRenderer.move(0, yLine - symbolRenderer.getOccupiedArea().getBBox().getY());
+                    symbolRenderer.move(0, occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() -
+                            (symbolRenderer.getOccupiedArea().getBBox().getY() + symbolRenderer.getOccupiedArea().getBBox().getHeight()));
                 }
             } else {
                 symbolRenderer.move(0, occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() -

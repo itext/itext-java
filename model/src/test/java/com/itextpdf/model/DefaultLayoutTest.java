@@ -11,11 +11,9 @@ import com.itextpdf.model.element.Text;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -30,9 +28,9 @@ public class DefaultLayoutTest {
     }
 
     @Test
-    @Ignore("We should really think if it is worth supporting this smelly case. In case of pre-layout this probably won't work")
-    public void multipleAdditionsOfSameModelElementTest() throws FileNotFoundException {
+    public void multipleAdditionsOfSameModelElementTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "multipleAdditionsOfSameModelElementTest1.pdf";
+        String cmpFileName = sourceFolder + "cmp_multipleAdditionsOfSameModelElementTest1.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
 
         Document document = new Document(pdfDocument);
@@ -41,6 +39,8 @@ public class DefaultLayoutTest {
         document.add(p).add(p).add(new AreaBreak(PageSize.Default)).add(p);
 
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test

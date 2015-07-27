@@ -1,6 +1,8 @@
 package com.itextpdf.model.renderer;
 
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
@@ -15,27 +17,10 @@ import java.util.List;
 public class ParagraphRenderer extends AbstractRenderer {
 
     protected float previousDescent = 0;
+    protected List<LineRenderer> lines = new ArrayList<>();
 
     public ParagraphRenderer(IPropertyContainer modelElement) {
         super(modelElement);
-    }
-
-    @Override
-    public void addChild(IRenderer renderer) {
-        if (childRenderers.size() == 0) {
-            super.addChild(new LineRenderer());
-        }
-        // All the children will be line renderers. Before layout there will be only one of them.
-        LineRenderer lineRenderer = (LineRenderer) childRenderers.get(0);
-        lineRenderer.addChild(renderer);
-    }
-
-    public void addChildFront(IRenderer renderer) {
-        if (childRenderers.size() == 0) {
-            super.addChild(new LineRenderer());
-        }
-        LineRenderer lineRenderer = (LineRenderer) childRenderers.get(0);
-        lineRenderer.addChildFront(renderer);
     }
 
     @Override
@@ -72,9 +57,11 @@ public class ParagraphRenderer extends AbstractRenderer {
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
 
-        LineRenderer currentRenderer = (LineRenderer) childRenderers.get(0);
-        LineRenderer initialRenderer = (LineRenderer) childRenderers.get(0);
-        childRenderers.clear();
+        lines = new ArrayList<>();
+        LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
+        for (IRenderer child : childRenderers) {
+            currentRenderer.addChild(child);
+        }
 
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
         Property.Leading leading = getProperty(Property.LEADING);
@@ -132,21 +119,32 @@ public class ParagraphRenderer extends AbstractRenderer {
                     firstLineInBox = true;
                     continue;
                 } else {
-                    applyPaddings(occupiedArea.getBBox(), true);
-                    applyBorderBox(occupiedArea.getBBox(), true);
-                    applyMargins(occupiedArea.getBBox(), true);
-                    ParagraphRenderer[] split = split();
-                    split[0].childRenderers = new ArrayList<>(childRenderers);
-                    split[1].childRenderers.add(currentRenderer);
                     boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
                     if (keepTogether) {
-                        split[0] = null;
-                        childRenderers.clear();
-                        childRenderers.add(initialRenderer);
-                        split[1] = this;
-                        anythingPlaced = false;
+                        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                    } else {
+                        applyPaddings(occupiedArea.getBBox(), true);
+                        applyBorderBox(occupiedArea.getBBox(), true);
+                        applyMargins(occupiedArea.getBBox(), true);
+
+                        ParagraphRenderer[] split = split();
+                        split[0].lines = lines;
+                        for (LineRenderer line : lines) {
+                            split[0].childRenderers.addAll(line.getChildRenderers());
+                        }
+                        if (processedRenderer != null) {
+                            split[1].childRenderers.addAll(processedRenderer.getChildRenderers());
+                        }
+                        if (result.getOverflowRenderer() != null) {
+                            split[1].childRenderers.addAll(result.getOverflowRenderer().getChildRenderers());
+                        }
+
+                        if (anythingPlaced) {
+                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
+                        } else {
+                            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                        }
                     }
-                    return new LayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
                 }
             } else {
                 lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
@@ -160,7 +158,7 @@ public class ParagraphRenderer extends AbstractRenderer {
                 }
                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
                 layoutBox.setHeight(processedRenderer.getOccupiedArea().getBBox().getY() - layoutBox.getY());
-                childRenderers.add(processedRenderer);
+                lines.add(processedRenderer);
 
                 anythingPlaced = true;
                 firstLineInBox = false;
@@ -191,10 +189,7 @@ public class ParagraphRenderer extends AbstractRenderer {
         applyMargins(occupiedArea.getBBox(), true);
         if (getProperty(Property.ROTATION_ANGLE) != null) {
             calculateRotationPointAndRotate(maxLineWidth);
-
             if (isNotFittingHeight(layoutContext.getArea())) {
-                childRenderers.clear();
-                childRenderers.add(initialRenderer);
                 return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
             }
         }
@@ -228,7 +223,33 @@ public class ParagraphRenderer extends AbstractRenderer {
         return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
     }
 
-//    protected void applyVerticalAlignment() {
+    @Override
+    public void drawChildren(PdfDocument document, PdfCanvas canvas) {
+        if (lines != null) {
+            for (LineRenderer line : lines) {
+                line.draw(document, canvas);
+            }
+        }
+    }
+
+    @Override
+    public void move(float dxRight, float dyUp) {
+        occupiedArea.getBBox().moveRight(dxRight);
+        occupiedArea.getBBox().moveUp(dyUp);
+        for (LineRenderer line : lines) {
+            line.move(dxRight, dyUp);
+        }
+    }
+
+    @Override
+    protected Float getFirstYLineRecursively() {
+        if (lines == null || lines.size() == 0) {
+            return null;
+        }
+        return lines.get(0).getFirstYLineRecursively();
+    }
+
+    //    protected void applyVerticalAlignment() {
 //        Property.VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
 //        if (verticalAlignment != null && verticalAlignment != Property.VerticalAlignment.TOP && childRenderers.size() > 0) {
 //            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - occupiedArea.getBBox().getY();

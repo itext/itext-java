@@ -38,7 +38,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -94,7 +94,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -123,7 +123,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -152,7 +152,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -181,7 +181,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));

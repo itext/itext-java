@@ -11,12 +11,13 @@ import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
 import com.itextpdf.model.layout.LayoutArea;
-import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutPosition;
 
 import java.util.*;
 
 public abstract class AbstractRenderer implements IRenderer {
+
+    public static final float EPS = 1e-4f;
 
     // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();
@@ -150,9 +151,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
         drawBackground(document, canvas);
         drawBorder(document, canvas);
-        for (IRenderer child : childRenderers) {
-            child.draw(document, canvas);
-        }
+        drawChildren(document, canvas);
 
         endRotationIfApplied(canvas);
 
@@ -181,6 +180,12 @@ public abstract class AbstractRenderer implements IRenderer {
                             backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
                             backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
                     fill().restoreState();
+        }
+    }
+
+    public void drawChildren(PdfDocument document, PdfCanvas canvas) {
+        for (IRenderer child : childRenderers) {
+            child.draw(document, canvas);
         }
     }
 
@@ -268,10 +273,11 @@ public abstract class AbstractRenderer implements IRenderer {
      * Gets the first yLine of the nested children recursively. E.g. for a list, this will be the yLine of the
      * first item (if the first item is indeed a paragraph).
      * NOTE: this method will no go further than the first child.
+     * Returns null if there is no text found.
      */
-    protected float getFirstYLineRecursively() {
+    protected Float getFirstYLineRecursively() {
         if (childRenderers.size() == 0) {
-            throw new RuntimeException("Cannot get yLine of empty paragraph");
+            return null;
         }
         return ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
     }
@@ -483,7 +489,7 @@ public abstract class AbstractRenderer implements IRenderer {
         float rotatedWidth = occupiedArea.getBBox().getWidth();
         float rotatedHeight = occupiedArea.getBBox().getHeight();
 
-        if (rotatedHeight == rotatedWidth)
+        if (Math.abs(rotatedHeight - rotatedWidth) < EPS)
             return (float) (rotatedWidth*Math.sqrt(2) - getHeightBeforeRotation());
 
         double cos = Math.abs(Math.cos(angle));

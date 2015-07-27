@@ -303,8 +303,6 @@ public class RotationTest {
     }
 
     @Test
-    @Ignore
-    //TODO renderers should have ability to return to the initial state, that to support the case when the element does not fit the page and it has to be relayouted
     public void divRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "divRotationTest01.pdf";
@@ -314,8 +312,8 @@ public class RotationTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
-        Div div = new Div();
-        div.add(new Paragraph(para1Text)).setRotationAngle(Math.PI / 4);
+        Div div = new Div().setBackgroundColor(Color.Green);
+        div.add(new Paragraph(para1Text).setBackgroundColor(Color.Red)).setRotationAngle(Math.PI / 4);
         doc.add(div);
 
         div = new Div();
@@ -367,7 +365,7 @@ public class RotationTest {
         doc.add(new Paragraph(para1Text));
 
         List list = new List().setRotationAngle(Math.PI / 2).setBackgroundColor(Color.Green);
-        String itemText = "list item text long item txt list item text long item txt list item text long item txt list item text long item txt list item text long item txt ";
+        String itemText = "list item text long item txt list item text long item txt list item text long item txt list item text long item txt list item text long item txt END";
         for (int i = 0; i < 10; ++i) {
             list.add(itemText);
         }
@@ -398,6 +396,32 @@ public class RotationTest {
         doc.add(p);
 
         doc.add(new Paragraph(para3Text));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void innerRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "innerRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "innerRotationTest01.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Div().
+                setBackgroundColor(Color.Green).
+                setHeight(300).setWidth(300).
+                add(new Div().
+                                setBackgroundColor(Color.Red).
+                                setHeight(100).
+                                setWidth(100).
+                                setRotationAngle(Math.PI / 4)).
+                setRotationAngle(Math.PI / 8)
+        );
 
         doc.close();
 
