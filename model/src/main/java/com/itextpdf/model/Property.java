@@ -24,6 +24,7 @@ public class Property {
     public static final int FONT_COLOR = 15;
     public static final int BACKGROUND = 16;
     public static final int CHARACTER_SPACING = 17;
+    /** Value of 1 is equivalent to no scaling **/
     public static final int HORIZONTAL_SCALING = 18;
     public static final int TEXT_RENDERING_MODE = 19;
     public static final int STROKE_WIDTH = 20;
@@ -41,9 +42,10 @@ public class Property {
     public static final int LIST_SYMBOL = 32;
     public static final int LIST_SYMBOL_INDENT = 33;
     public static final int TRANSFORMATION_MATRIX = 34;
-    public static final int ANGLE = 35;
+    public static final int IMAGE_ROTATION_ANGLE = 35;
     public static final int X_DISTANCE = 36;
     public static final int Y_DISTANCE = 37;
+    /** Value of 1 is equivalent to no scaling **/
     public static final int VERTICAL_SCALING = 38;
     public static final int BORDER = 39;
     public static final int BORDER_TOP = 40;
@@ -64,9 +66,21 @@ public class Property {
     public static final int COLSPAN = 55;
     public static final int AUTO_SCALE = 56;
     public static final int ROTATION_ALIGNMENT = 57;
+    public static final int ROTATION_ANGLE = 58;
+    /**
+     * ROTATION_POINT is defined on layouting and is used on drawing.
+     * This point corresponds to the element position before rotating and before resizing the element's occupied area.
+     */
+    public static final int ROTATION_POINT_X = 59;
+    public static final int ROTATION_POINT_Y = 60;
+    /**
+     * The vertical shift of the rotated element after layout but before drawing
+     */
+    public static final int ROTATION_LAYOUT_SHIFT = 61;
+    public static final int FONT_KERNING = 62;
 
     private static int[] inheritedProperties = { FONT, HORIZONTAL_ALIGNMENT, TEXT_RISE, FONT_SIZE, FONT_COLOR,
-            CHARACTER_SPACING, TEXT_RENDERING_MODE, FIRST_LINE_INDENT, KEEP_TOGETHER, WORD_SPACING, SPACING_RATIO };
+            CHARACTER_SPACING, TEXT_RENDERING_MODE, FIRST_LINE_INDENT, KEEP_TOGETHER, WORD_SPACING, SPACING_RATIO, FONT_KERNING };
 
     static {
         Arrays.sort(inheritedProperties);
@@ -78,7 +92,6 @@ public class Property {
     public static boolean isPropertyInherited(int propertyKey, IPropertyContainer parent, IPropertyContainer descendant) {
         return Arrays.binarySearch(inheritedProperties, propertyKey) >= 0;
     }
-
 
     public enum BaseDirection {
         LTR,
@@ -148,42 +161,6 @@ public class Property {
         }
     }
 
-    public static class BorderConfig {
-
-        protected Color color;
-        protected float width;
-        protected BorderStyle borderStyle;
-
-        public BorderConfig(Color color, float width, BorderStyle borderStyle) {
-            this.color = color;
-            this.width = width;
-            this.borderStyle = borderStyle;
-        }
-
-        public Color getColor() {
-            return color;
-        }
-
-        public float getWidth() {
-            return width;
-        }
-
-        public BorderStyle getBorderStyle() {
-            return borderStyle;
-        }
-
-        public enum BorderStyle {
-            DOTTED,
-            DASHED,
-            SOLID,
-            DOUBLE,
-            GROOVE,
-            RIDGE,
-            INSET,
-            OUTSET
-        }
-    }
-
     public static class Leading {
         public static final int FIXED = 1;
         public static final int MULTIPLIED = 2;
@@ -220,6 +197,12 @@ public class Property {
         RIGHT,
         CENTER,
         ANCHOR
+    }
+
+    // TODO boolean?
+    public enum FontKerning {
+        YES,
+        NO
     }
 
 }

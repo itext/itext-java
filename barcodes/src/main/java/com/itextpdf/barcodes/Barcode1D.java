@@ -4,7 +4,7 @@ import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 public abstract class Barcode1D {
@@ -12,6 +12,13 @@ public abstract class Barcode1D {
     public static final int ALIGN_LEFT = 1;
     public static final int ALIGN_RIGHT = 2;
     public static final int ALIGN_CENTER = 3;
+
+    /** A type of barcode */
+    public static final int POSTNET = 1;
+    /** A type of barcode */
+    public static final int PLANET = 2;
+    /** A type of barcode */
+    public static final int CODABAR = 3;
 
     protected PdfDocument document;
 
@@ -334,7 +341,6 @@ public abstract class Barcode1D {
     /**
      * Gets the maximum area that the barcode and the text, if
      * any, will occupy. The lower left corner is always (0, 0).
-     *
      * @return the size the barcode occupies.
      */
     public abstract Rectangle getBarcodeSize();
@@ -421,4 +427,18 @@ public abstract class Barcode1D {
      * @return the image
      */
     public abstract java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background);
+
+    /** Creates a PdfFormXObject with the barcode.
+     * @param barColor the color of the bars. It can be <CODE>null</CODE>
+     * @param textColor the color of the text. It can be <CODE>null</CODE>
+     * @return the XObject
+     * @see #placeBarcode(PdfCanvas canvas, Color barColor, Color textColor)
+     */
+    public PdfFormXObject createFormXObject(Color barColor, Color textColor) {
+        PdfFormXObject xObject = new PdfFormXObject((Rectangle)null);
+        Rectangle rect = placeBarcode(new PdfCanvas(xObject), barColor, textColor);
+        xObject.setBBox(rect.toPdfArray());
+
+        return xObject;
+    }
 }

@@ -10,7 +10,6 @@ import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -39,7 +38,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -67,7 +66,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -95,13 +94,13 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
         Paragraph p = new Paragraph();
         p.add(image);
-        image.setRotateAngle(Math.PI/6);
+        image.setRotationAngle(Math.PI / 6);
         doc.add(p);
         doc.add(new Paragraph(new Text("Second Line")));
 
@@ -124,13 +123,13 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
         p.add(new Text("before image"));
         p.add(image);
-        image.setRotateAngle(Math.PI/6);
+        image.setRotationAngle(Math.PI / 6);
         p.add(new Text("after image"));
         doc.add(p);
 
@@ -153,7 +152,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -182,7 +181,7 @@ public class ImageTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(pdfDoc, ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));

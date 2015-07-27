@@ -151,7 +151,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         if (fontStreamBytes == null) {
             return null;
         }
-        PdfStream fontStream = new PdfStream(getDocument(), fontStreamBytes);
+        PdfStream fontStream = new PdfStream(fontStreamBytes).makeIndirect(getDocument());
         for (int k = 0; k < fontStreamLengths.length; ++k) {
             fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
         }

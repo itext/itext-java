@@ -8,17 +8,29 @@ public class PdfObjectWrapper<T extends PdfObject> {
         this.pdfObject = pdfObject;
     }
 
-    public PdfObjectWrapper(T pdfObject, PdfDocument pdfDocument) {
-        this(pdfObject);
-        pdfObject.makeIndirect(pdfDocument);
-    }
-
     public T getPdfObject() {
         return pdfObject;
     }
 
-    protected void setPdfObject(T pdfObject){
-        this.pdfObject = pdfObject;
+    /**
+     * Marks object behind wrapper to be saved as indirect.
+     *
+     * @param document a document the indirect reference will belong to.
+     * @return object itself.
+     */
+    public <T1 extends PdfObjectWrapper<T>> T1 makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+        getPdfObject().makeIndirect(document, reference);
+        return (T1) this;
+    }
+
+    /**
+     * Marks object behind wrapper to be saved as indirect.
+     *
+     * @param document a document the indirect reference will belong to.
+     * @return object itself.
+     */
+    public <T1 extends PdfObjectWrapper<T>> T1 makeIndirect(PdfDocument document) {
+        return makeIndirect(document, null);
     }
 
     public PdfObjectWrapper<T> setModified() {
@@ -117,5 +129,12 @@ public class PdfObjectWrapper<T extends PdfObject> {
         }
 
         return (T1) this;
+    }
+    protected void setPdfObject(T pdfObject){
+        this.pdfObject = pdfObject;
+    }
+
+    protected void mustBeIndirect() {
+        pdfObject.setState(PdfObject.MustBeIndirect);
     }
 }

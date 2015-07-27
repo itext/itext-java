@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<report>
+<errors count="2">
+<error>
+<message>PdfString. Characters differ at position 0. Expected: P (Page 1). Found: W (Wage 1).</message>
+<path>
+<base cmp="12 0 obj" out="12 0 obj"/>
+<dictKey>/T</dictKey>
+<offset>0</offset>
+</path>
+</error>
+<error>
+<message>PdfString. Characters differ at position 6. Expected: r (Courier Std). Found: w (Couriew Std).</message>
+<path>
+<base cmp="3 0 obj" out="3 0 obj"/>
+<dictKey>/FontFamily</dictKey>
+<offset>6</offset>
+</path>
+</error>
+</errors>
+</report>

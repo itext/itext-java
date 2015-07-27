@@ -44,7 +44,7 @@ public class PdfXObjectTest {
         PdfDocument document = new PdfDocument(writer);
         PdfImageXObject[] images = new PdfImageXObject[4];
         for (int i = 0; i < 4; i++) {
-            images[i] = new PdfImageXObject(document, ImageFactory.getImage(PdfXObjectTest.images[i]));
+            images[i] = new PdfImageXObject(ImageFactory.getImage(PdfXObjectTest.images[i]));
             images[i].setLayer(new PdfLayer("layer" + i, document));
             if (i % 2 == 0)
                 images[i].flush();
@@ -97,7 +97,7 @@ public class PdfXObjectTest {
         PdfDocument document = new PdfDocument(writer);
 
         //Create form XObject and flush to document.
-        PdfFormXObject form = new PdfFormXObject(document, new Rectangle(0, 0, 50, 50));
+        PdfFormXObject form = new PdfFormXObject(new Rectangle(0, 0, 50, 50));
         PdfCanvas canvas = new PdfCanvas(form);
         canvas.rectangle(10, 10, 30, 30);
         canvas.fill();

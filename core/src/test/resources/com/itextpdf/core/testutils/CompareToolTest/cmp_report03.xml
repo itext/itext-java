@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<report>
+<errors count="3">
+<error>
+<message>Found object which was not expected to be found.</message>
+<path>
+<base cmp="7 0 obj" out="9 0 obj"/>
+<dictKey>/EF</dictKey>
+</path>
+</error>
+<error>
+<message>PdfString. Lengths are different. Expected: 99. Found: 10</message>
+<path>
+<base cmp="7 0 obj" out="9 0 obj"/>
+<dictKey>/F</dictKey>
+</path>
+</error>
+<error>
+<message>PdfString. Lengths are different. Expected: 99. Found: 10</message>
+<path>
+<base cmp="7 0 obj" out="9 0 obj"/>
+<dictKey>/UF</dictKey>
+</path>
+</error>
+</errors>
+</report>

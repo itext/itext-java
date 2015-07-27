@@ -19,14 +19,13 @@ public class PdfStream extends PdfDictionary {
     /**
      * Constructs a {@code PdfStream}-object.
      *
-     * @param doc              {@see PdfDocument}.
      * @param bytes            initial content of {@see PdfOutputStream}.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
      * @throws PdfException on error.
      */
-    public PdfStream(PdfDocument doc, byte[] bytes, int compressionLevel) {
+    public PdfStream(byte[] bytes, int compressionLevel) {
         super();
-        makeIndirect(doc);
+        setState(MustBeIndirect);
         this.compressionLevel = compressionLevel;
         if (bytes != null && bytes.length > 0) {
             this.outputStream = new PdfOutputStream(new ByteArrayOutputStream(bytes.length));
@@ -34,13 +33,10 @@ public class PdfStream extends PdfDictionary {
         } else {
             this.outputStream = new PdfOutputStream(new ByteArrayOutputStream());
         }
-        this.outputStream.document = doc;
     }
 
-    public PdfStream(PdfDocument doc, byte[] bytes) {
-        this(doc, bytes, doc != null
-                ? doc.getWriter().getCompressionLevel()
-                : PdfWriter.DEFAULT_COMPRESSION);
+    public PdfStream(byte[] bytes) {
+        this(bytes, PdfWriter.UNDEFINED_COMPRESSION);
     }
 
     /**
@@ -98,21 +94,26 @@ public class PdfStream extends PdfDictionary {
     /**
      * Constructs a {@code PdfStream}-object.
      *
-     * @param doc              {@see PdfDocument}.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
      * @throws PdfException on error.
      */
-    public PdfStream(PdfDocument doc, int compressionLevel) {
-        this(doc, (byte[]) null, compressionLevel);
+    public PdfStream(int compressionLevel) {
+        this(null, compressionLevel);
     }
 
-    public PdfStream(PdfDocument doc) {
-        this(doc, (byte[]) null);
+    public PdfStream() {
+        this(null);
     }
 
     //NOTE This constructor only for PdfReader.
     PdfStream(long offset, PdfDictionary keys) {
         super();
+        //TODO review
+//        if (keys.get(PdfName.Filter) != null) {
+//            setCompressionLevel(PdfOutputStream.DEFAULT_COMPRESSION);
+//        } else {
+//            setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+//        }
         this.offset = offset;
         putAll(keys);
         PdfNumber length = getAsNumber(PdfName.Length);
@@ -121,11 +122,6 @@ public class PdfStream extends PdfDictionary {
         } else {
             this.length = length.getIntValue();
         }
-    }
-
-    private PdfStream() {
-        super();
-        outputStream = new PdfOutputStream(new ByteArrayOutputStream());
     }
 
     /**
@@ -145,6 +141,16 @@ public class PdfStream extends PdfDictionary {
      */
     public int getCompressionLevel() {
         return compressionLevel;
+    }
+
+    /**
+     * Sets compression level of this PdfStream.
+     * For more details @see {@link java.util.zip.Deflater}.
+     *
+     * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
+     */
+    public void setCompressionLevel(int compressionLevel) {
+        this.compressionLevel = compressionLevel;
     }
 
     @Override
@@ -192,7 +198,7 @@ public class PdfStream extends PdfDictionary {
             }
         } else if (getReader() != null) {
             try {
-                bytes = getIndirectReference().getDocument().getReader().readStreamBytes(this, decoded);
+                bytes = getReader().readStreamBytes(this, decoded);
             } catch (IOException ioe) {
                 throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
             }

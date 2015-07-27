@@ -21,7 +21,8 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * @throws PdfException
      */
     public PdfOCProperties(PdfDictionary ocPropertiesDict, PdfDocument pdfDocument) {
-        super(ocPropertiesDict, pdfDocument);
+        super(ocPropertiesDict);
+        makeIndirect(pdfDocument);
         readLayersFromDictionary();
     }
 

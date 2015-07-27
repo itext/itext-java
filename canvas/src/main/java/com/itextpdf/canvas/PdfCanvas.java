@@ -33,67 +33,68 @@ import java.util.Stack;
  */
 public class PdfCanvas {
 
-    static final private byte[] c = OutputStream.getIsoBytes("c\n");
-    static final private byte[] l = OutputStream.getIsoBytes("l\n");
-    static final private byte[] m = OutputStream.getIsoBytes("m\n");
-    static final private byte[] v = OutputStream.getIsoBytes("v\n");
-    static final private byte[] y = OutputStream.getIsoBytes("y\n");
-    static final private byte[] q = OutputStream.getIsoBytes("q\n");
-    static final private byte[] Q = OutputStream.getIsoBytes("Q\n");
-    static final private byte[] f = OutputStream.getIsoBytes("f\n");
-    static final private byte[] fStar = OutputStream.getIsoBytes("f*\n");
-    static final private byte[] re = OutputStream.getIsoBytes("re\n");
-    static final private byte[] BT = OutputStream.getIsoBytes("BT\n");
-    static final private byte[] ET = OutputStream.getIsoBytes("ET\n");
-    static final private byte[] Tf = OutputStream.getIsoBytes("Tf\n");
-    static final private byte[] Tj = OutputStream.getIsoBytes("Tj\n");
-    static final private byte[] Tm = OutputStream.getIsoBytes("Tm\n");
-    static final private byte[] Td = OutputStream.getIsoBytes("Td\n");
-    static final private byte[] Tc = OutputStream.getIsoBytes("Tc\n");
-    static final private byte[] Tr = OutputStream.getIsoBytes("Tr\n");
-    static final private byte[] Ts = OutputStream.getIsoBytes("Ts\n");
-    static final private byte[] Tw = OutputStream.getIsoBytes("Tw\n");
-    static final private byte[] w = OutputStream.getIsoBytes("w\n");
-    static final private byte[] W = OutputStream.getIsoBytes("W\n");
-    static final private byte[] WStar = OutputStream.getIsoBytes("W*\n");
-    static final private byte[] J = OutputStream.getIsoBytes("J\n");
-    static final private byte[] j = OutputStream.getIsoBytes("j\n");
-    static final private byte[] M = OutputStream.getIsoBytes("M\n");
-    static final private byte[] d = OutputStream.getIsoBytes("d\n");
-    static final private byte[] b = OutputStream.getIsoBytes("b\n");
-    static final private byte[] bStar = OutputStream.getIsoBytes("b*\n");
     static final private byte[] B = OutputStream.getIsoBytes("B\n");
-    static final private byte[] BStar = OutputStream.getIsoBytes("B*\n");
-    static final private byte[] ri = OutputStream.getIsoBytes("ri\n");
-    static final private byte[] i = OutputStream.getIsoBytes("i\n");
-    static final private byte[] h = OutputStream.getIsoBytes("h\n");
-    static final private byte[] n = OutputStream.getIsoBytes("n\n");
-    static final private byte[] S = OutputStream.getIsoBytes("S\n");
-    static final private byte[] s = OutputStream.getIsoBytes("s\n");
-    static final private byte[] sh = OutputStream.getIsoBytes("sh\n");
-    static final private byte[] Do = OutputStream.getIsoBytes("Do\n");
-    static final private byte[] cm = OutputStream.getIsoBytes("cm\n");
-    static final private byte[] gs = OutputStream.getIsoBytes("gs\n");
-    static final private byte[] BI = OutputStream.getIsoBytes("BI\n");
-    static final private byte[] ID = OutputStream.getIsoBytes("ID\n");
-    static final private byte[] EI = OutputStream.getIsoBytes("EI\n");
-    static final private byte[] BMC = OutputStream.getIsoBytes("BMC\n");
+    static final private byte[] b = OutputStream.getIsoBytes("b\n");
     static final private byte[] BDC = OutputStream.getIsoBytes("BDC\n");
-    static final private byte[] EMC = OutputStream.getIsoBytes("EMC\n");
-    static final private byte[] g = OutputStream.getIsoBytes("g\n");
-    static final private byte[] G = OutputStream.getIsoBytes("G\n");
-    static final private byte[] k = OutputStream.getIsoBytes("k\n");
-    static final private byte[] K = OutputStream.getIsoBytes("K\n");
-    static final private byte[] rg = OutputStream.getIsoBytes("rg\n");
-    static final private byte[] RG = OutputStream.getIsoBytes("RG\n");
+    static final private byte[] BI = OutputStream.getIsoBytes("BI\n");
+    static final private byte[] BMC = OutputStream.getIsoBytes("BMC\n");
+    static final private byte[] BStar = OutputStream.getIsoBytes("B*\n");
+    static final private byte[] bStar = OutputStream.getIsoBytes("b*\n");
+    static final private byte[] BT = OutputStream.getIsoBytes("BT\n");
+    static final private byte[] c = OutputStream.getIsoBytes("c\n");
+    static final private byte[] cm = OutputStream.getIsoBytes("cm\n");
     static final private byte[] cs = OutputStream.getIsoBytes("cs\n");
     static final private byte[] CS = OutputStream.getIsoBytes("CS\n");
+    static final private byte[] d = OutputStream.getIsoBytes("d\n");
+    static final private byte[] Do = OutputStream.getIsoBytes("Do\n");
+    static final private byte[] EI = OutputStream.getIsoBytes("EI\n");
+    static final private byte[] EMC = OutputStream.getIsoBytes("EMC\n");
+    static final private byte[] ET = OutputStream.getIsoBytes("ET\n");
+    static final private byte[] f = OutputStream.getIsoBytes("f\n");
+    static final private byte[] fStar = OutputStream.getIsoBytes("f*\n");
+    static final private byte[] G = OutputStream.getIsoBytes("G\n");
+    static final private byte[] g = OutputStream.getIsoBytes("g\n");
+    static final private byte[] gs = OutputStream.getIsoBytes("gs\n");
+    static final private byte[] h = OutputStream.getIsoBytes("h\n");
+    static final private byte[] i = OutputStream.getIsoBytes("i\n");
+    static final private byte[] ID = OutputStream.getIsoBytes("ID\n");
+    static final private byte[] j = OutputStream.getIsoBytes("j\n");
+    static final private byte[] J = OutputStream.getIsoBytes("J\n");
+    static final private byte[] K = OutputStream.getIsoBytes("K\n");
+    static final private byte[] k = OutputStream.getIsoBytes("k\n");
+    static final private byte[] l = OutputStream.getIsoBytes("l\n");
+    static final private byte[] m = OutputStream.getIsoBytes("m\n");
+    static final private byte[] M = OutputStream.getIsoBytes("M\n");
+    static final private byte[] n = OutputStream.getIsoBytes("n\n");
+    static final private byte[] q = OutputStream.getIsoBytes("q\n");
+    static final private byte[] Q = OutputStream.getIsoBytes("Q\n");
+    static final private byte[] re = OutputStream.getIsoBytes("re\n");
+    static final private byte[] rg = OutputStream.getIsoBytes("rg\n");
+    static final private byte[] RG = OutputStream.getIsoBytes("RG\n");
+    static final private byte[] ri = OutputStream.getIsoBytes("ri\n");
+    static final private byte[] S = OutputStream.getIsoBytes("S\n");
+    static final private byte[] s = OutputStream.getIsoBytes("s\n");
     static final private byte[] scn = OutputStream.getIsoBytes("scn\n");
     static final private byte[] SCN = OutputStream.getIsoBytes("SCN\n");
-    static final private byte[] TL = OutputStream.getIsoBytes("TL\n");
+    static final private byte[] sh = OutputStream.getIsoBytes("sh\n");
+    static final private byte[] Tc = OutputStream.getIsoBytes("Tc\n");
+    static final private byte[] Td = OutputStream.getIsoBytes("Td\n");
     static final private byte[] TD = OutputStream.getIsoBytes("TD\n");
-    static final private byte[] Tz = OutputStream.getIsoBytes("Tz\n");
+    static final private byte[] Tf = OutputStream.getIsoBytes("Tf\n");
+    static final private byte[] TJ = OutputStream.getIsoBytes("TJ\n");
+    static final private byte[] Tj = OutputStream.getIsoBytes("Tj\n");
+    static final private byte[] TL = OutputStream.getIsoBytes("TL\n");
+    static final private byte[] Tm = OutputStream.getIsoBytes("Tm\n");
+    static final private byte[] Tr = OutputStream.getIsoBytes("Tr\n");
+    static final private byte[] Ts = OutputStream.getIsoBytes("Ts\n");
     static final private byte[] TStar = OutputStream.getIsoBytes("T*\n");
+    static final private byte[] Tw = OutputStream.getIsoBytes("Tw\n");
+    static final private byte[] Tz = OutputStream.getIsoBytes("Tz\n");
+    static final private byte[] v = OutputStream.getIsoBytes("v\n");
+    static final private byte[] W = OutputStream.getIsoBytes("W\n");
+    static final private byte[] w = OutputStream.getIsoBytes("w\n");
+    static final private byte[] WStar = OutputStream.getIsoBytes("W*\n");
+    static final private byte[] y = OutputStream.getIsoBytes("y\n");
 
     static private final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
     static private final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
@@ -104,7 +105,6 @@ public class PdfCanvas {
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
     protected PdfStream contentStream;
     protected PdfResources resources;
-    protected PdfDocument document;
     protected int mcDepth;
     protected int mcid = 0;
     protected ArrayList<Integer> layerDepth;
@@ -117,7 +117,6 @@ public class PdfCanvas {
     public PdfCanvas(PdfStream contentStream, PdfResources resources) {
         this.contentStream = contentStream;
         this.resources = resources;
-        document = contentStream.getDocument();
     }
 
     /**
@@ -141,6 +140,33 @@ public class PdfCanvas {
      */
     public PdfCanvas(PdfDocument doc, int pageNum) {
         this(doc.getPage(pageNum));
+    }
+
+    /**
+     * Constructs a kern array for the text in the given font.
+     * This array may later be used as an argument of a TJ operator
+     * (@link #showText(PdfArray)}
+     */
+    public static PdfTextArray getKernArray(final String text, final PdfFont font) {
+        PdfTextArray kernArray = new PdfTextArray();
+        if (text.length() > 0) {
+            StringBuilder currentStr = new StringBuilder();
+            char chars[] = text.toCharArray();
+            currentStr.append(chars[0]);
+            for (int i = 1; i < text.length(); i++) {
+                int kern = font.getKerning(chars[i - 1], chars[i]);
+                if (kern == 0) {
+                    currentStr.append(chars[i]);
+                } else {
+                    kernArray.add(currentStr.toString());
+                    kernArray.add(-kern);
+                    currentStr.setLength(0);
+                    currentStr.append(chars[i]);
+                }
+            }
+            kernArray.add(currentStr.toString());
+        }
+        return kernArray;
     }
 
     public PdfResources getResources() {
@@ -170,7 +196,6 @@ public class PdfCanvas {
         currentGs = null;
         contentStream = null;
         resources = null;
-        document = null;
     }
 
     /**
@@ -397,7 +422,7 @@ public class PdfCanvas {
      * @param textRise a parameter
      * @return current canvas.
      */
-    public PdfCanvas setTextRise(final float textRise) {
+    public PdfCanvas setTextRise(float textRise) {
         currentGs.setTextRise(textRise);
         contentStream.getOutputStream()
                 .writeFloat(textRise).writeSpace()
@@ -411,7 +436,7 @@ public class PdfCanvas {
      * @param wordSpacing a parameter
      * @return current canvas.
      */
-    public PdfCanvas setWordSpacing(final float wordSpacing) {
+    public PdfCanvas setWordSpacing(float wordSpacing) {
         currentGs.setWordSpacing(wordSpacing);
         contentStream.getOutputStream()
                 .writeFloat(wordSpacing).writeSpace()
@@ -425,7 +450,7 @@ public class PdfCanvas {
      * @param charSpacing a parameter
      * @return current canvas.
      */
-    public PdfCanvas setCharacterSpacing(final float charSpacing) {
+    public PdfCanvas setCharacterSpacing(float charSpacing) {
         currentGs.setCharSpacing(charSpacing);
         contentStream.getOutputStream()
                 .writeFloat(charSpacing).writeSpace()
@@ -500,13 +525,54 @@ public class PdfCanvas {
     }
 
     /**
+     * Shows text (operator TJ)
+     * @param textArray the text array. Each element of array can be a string or a number.
+     *                  If the element is a string, this operator shows the string.
+     *                  If it is a number, the operator adjusts the text position by that amount.
+     *                  The number is expressed in thousandths of a unit of text space.
+     *                  This amount is subtracted from the current horizontal or vertical coordinate, depending on the writing mode.
+     * @return current canvas.
+     */
+    public PdfCanvas showText(PdfArray textArray) {
+        contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("["));
+        for (PdfObject obj : textArray) {
+            if (obj.isString()) {
+                showText2(obj.toString());
+            } else if (obj.isNumber()) {
+                contentStream.getOutputStream().writeFloat(((PdfNumber)obj).getFloatValue());
+            }
+        }
+        contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("]"));
+        contentStream.getOutputStream().writeBytes(TJ);
+        return this;
+    }
+
+    /**
+     * Shows text applying kerning, if kern pairs are specified for the current font.
+     * @param text the yexy to show
+     * @return current canvas
+     */
+    public PdfCanvas showTextKerned(String text) {
+        PdfFont currentFont = currentGs.getFont();
+        if (currentFont == null) {
+            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
+        }
+        if (currentFont.hasKernPairs()) {
+            showText(getKernArray(text, currentFont));
+        } else {
+            showText(text);
+        }
+        return this;
+    }
+
+    /**
      * Move the current point <i>(x, y)</i>, omitting any connecting line segment.
      *
      * @param x x coordinate.
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas moveTo(final float x, final float y) {
+    public PdfCanvas moveTo(float x, float y) {
         contentStream.getOutputStream()
                 .writeFloat(x)
                 .writeSpace()
@@ -523,7 +589,7 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas lineTo(final float x, final float y) {
+    public PdfCanvas lineTo(float x, float y) {
         contentStream.getOutputStream()
                 .writeFloat(x)
                 .writeSpace()
@@ -543,7 +609,7 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveTo(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
+    public PdfCanvas curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
         contentStream.getOutputStream()
                 .writeFloat(x1)
                 .writeSpace()
@@ -1009,10 +1075,12 @@ public class PdfCanvas {
      * @param phase   the value of the phase
      * @param unitsOn the number of units that must be 'on' (equals the number of units that must be 'off').
      */
-    public void setLineDash(final float unitsOn, final float phase) {
+    public PdfCanvas setLineDash(final float unitsOn, final float phase) {
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
+
+        return this;
     }
 
     /**
@@ -1027,11 +1095,12 @@ public class PdfCanvas {
      * @param unitsOn  the number of units that must be 'on'
      * @param unitsOff the number of units that must be 'off'
      */
-    public void setLineDash(final float unitsOn, final float unitsOff, final float phase) {
+    public PdfCanvas setLineDash(final float unitsOn, final float unitsOff, final float phase) {
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeSpace()
                 .writeFloat(unitsOff).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
+        return this;
     }
 
     /**
@@ -1045,7 +1114,7 @@ public class PdfCanvas {
      * @param array length of the alternating dashes and gaps
      * @param phase the value of the phase
      */
-    public final void setLineDash(final float[] array, final float phase) {
+    public final PdfCanvas setLineDash(final float[] array, final float phase) {
         PdfOutputStream out = contentStream.getOutputStream();
         out.writeByte((byte) '[');
         for (int i = 0; i < array.length; i++) {
@@ -1054,6 +1123,7 @@ public class PdfCanvas {
                 out.writeSpace();
         }
         out.writeByte((byte) ']').writeSpace().writeFloat(phase).writeSpace().writeBytes(d);
+        return this;
     }
 
     public PdfCanvas setRenderingIntent(PdfName renderingIntent) {
@@ -1314,15 +1384,16 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            return wmf.createPdfForm(document);
-        } else if (asInline) {
-            PdfImageXObject imageXObject = new PdfImageXObject(null, image);
-            addInlineImage(imageXObject, a, b, c, d, e, f);
-            return null;
+            return wmf.createPdfForm();
         } else {
-            PdfImageXObject imageXObject = new PdfImageXObject(document, image);
-            addImage(imageXObject, a, b, c, d, e, f);
-            return imageXObject;
+            PdfImageXObject imageXObject = new PdfImageXObject(image);
+            if (asInline) {
+                addInlineImage(imageXObject, a, b, c, d, e, f);
+                return null;
+            } else {
+                addImage(imageXObject, a, b, c, d, e, f);
+                return imageXObject;
+            }
         }
     }
 
@@ -1353,15 +1424,16 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            return wmf.createPdfForm(document);
-        } else if (asInline) {
-            PdfImageXObject imageXObject = new PdfImageXObject(null, image);
-            addInlineImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
-            return null;
+            return wmf.createPdfForm();
         } else {
-            PdfImageXObject imageXObject = new PdfImageXObject(document, image);
-            addImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
-            return imageXObject;
+            PdfImageXObject imageXObject = new PdfImageXObject(image);
+            if (asInline) {
+                addInlineImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
+                return null;
+            } else {
+                addImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
+                return imageXObject;
+            }
         }
     }
 
@@ -1380,17 +1452,18 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            PdfXObject xObject = wmf.createPdfForm(document);
+            PdfXObject xObject = wmf.createPdfForm();
             addImage(xObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
             return xObject;
-        } else if (asInline) {
-            PdfImageXObject imageXObject = new PdfImageXObject(null, image);
-            addInlineImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
-            return null;
         } else {
-            PdfImageXObject imageXObject = new PdfImageXObject(document, image);
-            addImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
-            return imageXObject;
+            PdfImageXObject imageXObject = new PdfImageXObject(image);
+            if (asInline) {
+                addInlineImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+                return null;
+            } else {
+                addImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+                return imageXObject;
+            }
         }
     }
 
@@ -1520,7 +1593,7 @@ public class PdfCanvas {
     }
 
     public PdfExtGState setExtGState(PdfDictionary extGState) {
-        PdfExtGState egs = new PdfExtGState(extGState, document);
+        PdfExtGState egs = new PdfExtGState(extGState);
         setExtGState(egs);
         return egs;
     }
@@ -1810,8 +1883,6 @@ public class PdfCanvas {
     private PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
     }
-
-
 
     private static boolean floatsAreEqual(Float f1, Float f2) {
         if (f1 == null && f2 == null)

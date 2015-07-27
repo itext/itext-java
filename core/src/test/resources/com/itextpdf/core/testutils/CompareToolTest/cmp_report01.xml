@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<report>
+<errors count="4">
+<error>
+<message>PdfStream. The bytes differ at index 1715. Expected: 3 ( 502 196.13 16 reS). Found: 5 ( 502 196.15 16 reS)</message>
+<path>
+<base cmp="3 0 obj" out="3 0 obj"/>
+<offset>1715</offset>
+</path>
+</error>
+<error>
+<message>PdfName. Expected: /WinAnsiEncoding. Found: /WinAnsiEndoding</message>
+<path>
+<base cmp="1 0 obj" out="1 0 obj"/>
+<dictKey>/Encoding</dictKey>
+</path>
+</error>
+<error>
+<message>PdfName. Expected: /Helvetica. Found: /Hulvetica</message>
+<path>
+<base cmp="2 0 obj" out="2 0 obj"/>
+<dictKey>/BaseFont</dictKey>
+</path>
+</error>
+<error>
+<message>PdfNumber. Expected: 595. Found: 594</message>
+<path>
+<base cmp="6 0 obj" out="6 0 obj"/>
+<dictKey>/MediaBox</dictKey>
+<arrayIndex>2</arrayIndex>
+</path>
+</error>
+</errors>
+</report>

@@ -5,24 +5,12 @@ import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.Type1Font;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.core.pdf.PdfObjectWrapper;
-import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 
 
-/**
- * Nothing here...
- * We do not yet know how the font class should look like.
- */
 public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfDictionary fontDictionary;
@@ -36,12 +24,14 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected ArrayList<int[]> subsetRanges;
 
     public PdfFont(PdfDocument pdfDocument, PdfDictionary pdfObject) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
     protected PdfFont(PdfDocument document, PdfDictionary pdfDictionary, boolean isCopy){
-        super(new PdfDictionary(), document);
+        super(new PdfDictionary());
+        makeIndirect(document);
         getPdfObject().put(PdfName.Type, PdfName.Font);
         this.fontDictionary = pdfDictionary;
         this.isCopy = isCopy;
@@ -87,6 +77,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @return a width in Text Space.
      */
     public float getWidth(int ch) {
+        // TODO abstract method
         throw new IllegalStateException();
     }
 
@@ -97,7 +88,22 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @return a width of string in Text Space.
      */
     public float getWidth(String s) {
+        // TODO abstract method
         throw new IllegalStateException();
+    }
+
+    public boolean hasKernPairs() {
+        FontProgram fontProgram = getFontProgram();
+        return fontProgram != null && fontProgram.hasKernPairs();
+    }
+
+    public int getKerning(int char1, int char2) {
+        FontProgram fontProgram = getFontProgram();
+        if (fontProgram != null) {
+            return fontProgram.getKerning(char1, char2);
+        } else {
+            return 0;
+        }
     }
 
     public FontProgram getFontProgram() {
@@ -143,10 +149,8 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public PdfFont copy(PdfDocument document) {
-        return new PdfFont(document,(PdfDictionary) getPdfObject().copy(document));
+        return new PdfFont(document, (PdfDictionary) getPdfObject().copy(document));
     }
-
-
 
     protected static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType,boolean isException) {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
@@ -228,7 +232,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         if (fontStreamBytes == null) {
             return null;
         }
-        PdfStream fontStream = new PdfStream(getDocument(), fontStreamBytes);
+        PdfStream fontStream = new PdfStream(fontStreamBytes).makeIndirect(getDocument());
         for (int k = 0; k < fontStreamLengths.length; ++k) {
             fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
         }

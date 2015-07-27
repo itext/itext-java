@@ -11,7 +11,6 @@ public class Table extends BlockElement<Table> {
 
     private ArrayList<Cell[]> rows;
 
-    private float totalWidth = 0;
     private float height;
     private float[] columnWidths;
     private int currentColumn = 0;
@@ -34,10 +33,12 @@ public class Table extends BlockElement<Table> {
             throw new IllegalArgumentException("the.widths.array.in.pdfptable.constructor.can.not.have.zero.length");
         }
         this.columnWidths = new float[columnWidths.length];
+        float width = 0;
         for (int i = 0; i < columnWidths.length; i++) {
             this.columnWidths[i] = columnWidths[i];
-            totalWidth += columnWidths[i];
+            width += columnWidths[i];
         }
+        super.setWidth(width);
         initializeRows();
     }
 
@@ -54,28 +55,22 @@ public class Table extends BlockElement<Table> {
         for (int k = 0; k < numColumns; ++k) {
             this.columnWidths[k] = 1;
         }
+        super.setWidth(0);
     }
 
     /**
      * Sets the full width of the table.
      *
-     * @param totalWidth the full width of the table.
+     * @param width the full width of the table.
      */
-    public Table setTotalWidth(final float totalWidth) {
-        if (this.totalWidth != totalWidth) {
-            this.totalWidth = totalWidth;
+    @Override
+    public Table setWidth(float width) {
+        Float currWidth = getWidth();
+        if (currWidth != width) {
+            super.setWidth(width);
             calculateWidths();
         }
         return this;
-    }
-
-    /**
-     * Gets the full width of the table.
-     *
-     * @return the full width of the table
-     */
-    public float getTotalWidth() {
-        return totalWidth;
     }
 
     public float getColumnWidth(int column) {
@@ -288,7 +283,8 @@ public class Table extends BlockElement<Table> {
     }
 
     protected void calculateWidths() {
-        if (totalWidth <= 0) {
+        Float width = getWidth();
+        if (width <= 0) {
             return;
         }
         float total = 0;
@@ -297,7 +293,7 @@ public class Table extends BlockElement<Table> {
             total += columnWidths[k];
         }
         for (int k = 0; k < numCols; ++k) {
-            columnWidths[k] = totalWidth * columnWidths[k] / total;
+            columnWidths[k] = width * columnWidths[k] / total;
         }
     }
 

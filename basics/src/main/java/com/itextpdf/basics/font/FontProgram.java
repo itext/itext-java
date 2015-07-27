@@ -240,6 +240,12 @@ public abstract class FontProgram {
 
     public abstract int getWidth(String text);
 
+    public boolean hasKernPairs() {
+        return false;
+    }
+
+    public abstract int getKerning(int char1, int char2);
+
     /**
      * Gets the descent of a <CODE>String</CODE> in normalized 1000 units. The descent will always be
      * less than or equal to zero even if all the characters have an higher descent.

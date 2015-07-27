@@ -8,7 +8,8 @@ import java.util.ArrayList;
 abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
 
     public PdfCieBasedCs(PdfArray pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+        super(pdfObject);
+        makeIndirect(document);
     }
 
     static public class CalGray extends PdfCieBasedCs {

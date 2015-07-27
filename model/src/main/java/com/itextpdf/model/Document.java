@@ -1,6 +1,7 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontFactory;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.geom.PageSize;
@@ -116,7 +117,7 @@ public class Document implements IPropertyContainer<Document> {
         try {
             switch (propertyKey) {
                 case Property.FONT:
-                    return (T) new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, ""));
+                    return (T) new PdfType1Font(pdfDocument, (Type1Font) FontFactory.createFont(FontConstants.HELVETICA, ""));
                 case Property.FONT_SIZE:
                     return (T) new Integer(12);
                 case Property.TEXT_RENDERING_MODE:
@@ -125,6 +126,8 @@ public class Document implements IPropertyContainer<Document> {
                     return (T) new Float(0);
                 case Property.SPACING_RATIO:
                     return (T) new Float(0.75f);
+                case Property.FONT_KERNING:
+                    return (T) Property.FontKerning.NO;
                 default:
                     return null;
             }

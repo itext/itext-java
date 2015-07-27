@@ -14,10 +14,6 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
         super(pdfObject);
     }
 
-    public PdfExplicitDestination(PdfArray pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
-
     @Override
     public PdfObject getDestinationPage(HashMap<Object, PdfObject> names) {
         return getPdfObject().get(0, false);

@@ -273,6 +273,28 @@ public class TrueTypeFont extends FontProgram {
         return total;
     }
 
+    @Override
+    public boolean hasKernPairs() {
+        return kerning.size() > 0;
+    }
+
+    /** Gets the kerning between two Unicode chars.
+     * @param char1 the first char
+     * @param char2 the second char
+     * @return the kerning to be applied
+     */
+    @Override
+    public int getKerning(int char1, int char2) {
+        int metrics[] = getMetrics(char1);
+        if (metrics == null)
+            return 0;
+        int c1 = metrics[0];
+        metrics = getMetrics(char2);
+        if (metrics == null)
+            return 0;
+        int c2 = metrics[0];
+        return kerning.get((c1 << 16) + c2);
+    }
 
     /**
      * Gets the glyph index and metrics for a character.

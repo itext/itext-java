@@ -24,7 +24,9 @@ class PdfObjectStream extends PdfStream {
     protected PdfOutputStream indexStream = new PdfOutputStream(new ByteArrayOutputStream());
 
     public PdfObjectStream(PdfDocument doc) {
-        super(doc);
+        super();
+        makeIndirect(doc);
+        getOutputStream().document = doc;
         put(PdfName.Type, PdfName.ObjStm);
         put(PdfName.N, size);
         put(PdfName.First, new PdfNumber(indexStream.getCurrentPos()));

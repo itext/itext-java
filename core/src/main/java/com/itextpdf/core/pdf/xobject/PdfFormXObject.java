@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf.xobject;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
@@ -7,15 +8,17 @@ public class PdfFormXObject extends PdfXObject {
 
     private PdfResources resources = null;
 
-    public PdfFormXObject(PdfDocument document, Rectangle bBox) {
-        super(new PdfStream(document), document);
+    public PdfFormXObject(Rectangle bBox) {
+        super(new PdfStream());
         getPdfObject().put(PdfName.Type, PdfName.XObject);
         getPdfObject().put(PdfName.Subtype, PdfName.Form);
-        getPdfObject().put(PdfName.BBox, new PdfArray(bBox));
+        if (bBox != null) {
+            getPdfObject().put(PdfName.BBox, new PdfArray(bBox));
+        }
     }
 
-    public PdfFormXObject(PdfStream pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+    public PdfFormXObject(PdfStream pdfObject) {
+        super(pdfObject);
     }
 
     /**
@@ -24,9 +27,9 @@ public class PdfFormXObject extends PdfXObject {
      * @param page
      */
     public PdfFormXObject(PdfPage page) {
-        this(page.getDocument(), page.getCropBox());
+        this(page.getCropBox());
         getPdfObject().getOutputStream().writeBytes(page.getContentBytes());
-        resources = new PdfResources((PdfDictionary)page.getResources().getPdfObject().copy());
+        resources = new PdfResources((PdfDictionary)page.getResources().getPdfObject().copy(page.getDocument()));
         getPdfObject().put(PdfName.Resources, resources.getPdfObject());
 
     }
@@ -45,12 +48,15 @@ public class PdfFormXObject extends PdfXObject {
 
     @Override
     public PdfFormXObject copy(PdfDocument document) {
-        return new PdfFormXObject((PdfStream)getPdfObject().copy(document), document);
+        return new PdfFormXObject((PdfStream)getPdfObject().copy(document));
     }
 
     @Override
     public void flush() {
         resources = null;
+        if (getPdfObject().get(PdfName.BBox) == null) {
+            throw new PdfException(PdfException.FormXObjectMustHaveBbox);
+        }
         super.flush();
     }
 
@@ -95,4 +101,18 @@ public class PdfFormXObject extends PdfXObject {
     public PdfString getMarkStyle() {
         return getPdfObject().getAsString(PdfName.MarkStyle);
     }
+
+    public PdfArray getBBox() {
+        return getPdfObject().getAsArray(PdfName.BBox);
+    }
+
+    public void setBBox(PdfArray bBox) {
+        getPdfObject().put(PdfName.BBox, bBox);
+    }
+
+    @Override
+    public Float getWidth() { return getBBox() == null ? null : getBBox().getAsFloat(2);}
+
+    @Override
+    public Float getHeight() { return getBBox() == null ? null : getBBox().getAsFloat(3); }
 }

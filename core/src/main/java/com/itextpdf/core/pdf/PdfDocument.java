@@ -516,7 +516,7 @@ public class PdfDocument implements IEventDispatcher {
                 if (catalog.isFlushed())
                     throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
                 if (xmpMetadata != null) {
-                    PdfStream xmp = new PdfStream(this);
+                    PdfStream xmp = new PdfStream().makeIndirect(this);
                     xmp.getOutputStream().write(xmpMetadata);
                     xmp.put(PdfName.Type, PdfName.Metadata);
                     xmp.put(PdfName.Subtype, PdfName.XML);

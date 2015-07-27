@@ -7,7 +7,7 @@ import java.util.*;
 
 public class PdfDictionary extends PdfObject {
 
-    private Map<PdfName, PdfObject> map = new TreeMap<PdfName, PdfObject>();
+    private Map<PdfName, PdfObject> map = new TreeMap<>();
 
     public PdfDictionary() {
         super();

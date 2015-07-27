@@ -22,7 +22,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+        super(pdfObject);
+        makeIndirect(document);
     }
 
     public PdfStructElem addKid(PdfStructElem structElem) {
@@ -47,7 +48,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             case PdfObject.Dictionary:
                 PdfDictionary d = (PdfDictionary) k;
                 if (PdfStructElem.isStructElem(d))
-                    kids.add(new PdfStructElem(d));
+                    kids.add(new PdfStructElem(d, getDocument()));
                 break;
             case PdfObject.Array:
                 PdfArray a = (PdfArray) k;
@@ -58,7 +59,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
                             d = a.getAsDictionary(i);
                             if (d != null) {
                                 if (PdfStructElem.isStructElem(d))
-                                    kids.add(new PdfStructElem(d));
+                                    kids.add(new PdfStructElem(d, getDocument()));
                             }
                             break;
                         default:

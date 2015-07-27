@@ -490,7 +490,7 @@ public class CompareTool {
             throw new IOException("File \"" + outPdf + "\" not found", e);
         }
         List<PdfDictionary> outPages = new ArrayList<PdfDictionary>();
-        outPagesRef = new ArrayList<PdfIndirectReference>();
+        outPagesRef = new ArrayList<>();
         loadPagesFromReader(outDocument, outPages, outPagesRef);
 
         PdfDocument cmpDocument;
@@ -500,7 +500,7 @@ public class CompareTool {
             throw new IOException("File \"" + cmpPdf + "\" not found", e);
         }
         List<PdfDictionary> cmpPages = new ArrayList<PdfDictionary>();
-        cmpPagesRef = new ArrayList<PdfIndirectReference>();
+        cmpPagesRef = new ArrayList<>();
         loadPagesFromReader(cmpDocument, cmpPages, cmpPagesRef);
 
         if (outPages.size() != cmpPages.size())
@@ -589,7 +589,7 @@ public class CompareTool {
         }
         boolean dictsAreSame = true;
         // Iterate through the union of the keys of the cmp and out dictionaries
-        Set<PdfName> mergedKeys = new HashSet<PdfName>(cmpDict.keySet());
+        Set<PdfName> mergedKeys = new TreeSet<>(cmpDict.keySet());
         mergedKeys.addAll(outDict.keySet());
         for (PdfName key : mergedKeys) {
             if (key.equals(PdfName.Parent) || key.equals(PdfName.P)) continue;
@@ -1009,7 +1009,8 @@ public class CompareTool {
     //private class CmpMarkedContentRenderFilter implements RenderListener { ... }
 
     private class CompareResult {
-        protected HashMap<ObjectPath, String> differences = new HashMap<ObjectPath, String>();
+        // LinkedHashMap to retain order. HashMap has different order in Java6/7 and Java8
+        protected Map<ObjectPath, String> differences = new LinkedHashMap<>();
         protected int messageLimit = 1;
 
         public CompareResult(int messageLimit) {
@@ -1097,12 +1098,12 @@ public class CompareTool {
         public ObjectPath resetDirectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
             ObjectPath newPath = new ObjectPath(baseCmpObject, baseOutObject);
             newPath.indirects = (Stack<Pair<PdfIndirectReference>>) indirects.clone();
-            newPath.indirects.add(new Pair<PdfIndirectReference>(baseCmpObject, baseOutObject));
+            newPath.indirects.add(new Pair<>(baseCmpObject, baseOutObject));
             return newPath;
         }
 
         public boolean isComparing(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
-            return indirects.contains(new Pair<PdfIndirectReference>(baseCmpObject, baseOutObject));
+            return indirects.contains(new Pair<>(baseCmpObject, baseOutObject));
         }
 
         public void pushArrayItemToPath(int index) {
@@ -1124,8 +1125,8 @@ public class CompareTool {
         public Node toXmlNode(Document document) {
             Element element = document.createElement("path");
             Element baseNode = document.createElement("base");
-            baseNode.setAttribute("cmp", baseCmpObject.toString() + " obj");
-            baseNode.setAttribute("out", baseOutObject.toString() + " obj");
+            baseNode.setAttribute("cmp", String.format("%s %s obj", baseCmpObject.getObjNumber(), baseCmpObject.getGenNumber()));
+            baseNode.setAttribute("out", String.format("%s %s obj", baseOutObject.getObjNumber(), baseOutObject.getGenNumber()));
             element.appendChild(baseNode);
             for (PathItem pathItem : path) {
                 element.appendChild(pathItem.toXmlNode(document));

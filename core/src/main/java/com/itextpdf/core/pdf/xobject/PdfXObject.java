@@ -5,22 +5,23 @@ import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.layer.PdfOCG;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
-    public PdfXObject(PdfDocument document) {
-        this(new PdfStream(document), document);
+    public PdfXObject() {
+        this(new PdfStream());
     }
 
-    public PdfXObject(PdfStream pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+    public PdfXObject(PdfStream pdfObject) {
+        super(pdfObject);
     }
 
-    static public PdfXObject makeXObject(PdfStream stream, PdfDocument document) {
+    static public PdfXObject makeXObject(PdfStream stream) {
         if (PdfName.Form.equals(stream.getAsName(PdfName.Subtype)) || stream.containsKey(PdfName.BBox))
-            return new PdfFormXObject(stream, document);
+            return new PdfFormXObject(stream);
         else
-            return new PdfImageXObject(stream, document);
+            return new PdfImageXObject(stream);
     }
 
     /**
@@ -31,4 +32,7 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 
+    public Float getWidth() {throw new NotImplementedException(); }
+
+    public Float getHeight() { throw new NotImplementedException(); }
 }

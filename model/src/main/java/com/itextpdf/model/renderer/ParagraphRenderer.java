@@ -40,26 +40,34 @@ public class ParagraphRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        List<LayoutArea> areas;
+        int pageNumber = layoutContext.getArea().getPageNumber();
+
+        Rectangle parentBBox = applyMargins(layoutContext.getArea().getBBox().clone(), false);
+        applyBorderBox(parentBBox, false);
+
         if (isPositioned()) {
             float x = getPropertyAsFloat(Property.X);
-            Rectangle parentBBox = layoutContext.getArea().getBBox();
             float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
-            areas = Collections.singletonList(new LayoutArea(layoutContext.getArea().getPageNumber(), new Rectangle(relativeX + x, parentBBox.getY(), parentBBox.getWidth() - x, parentBBox.getHeight())));
+            parentBBox.setX(relativeX + x);
         }
-        else {
-            areas = initElementAreas(layoutContext);
-        }
-        int currentAreaPos = 0;
 
-        int pageNumber = areas.get(0).getPageNumber();
-        Rectangle layoutBox = applyMargins(areas.get(0).getBBox().clone(), false);
         Float blockWidth = getPropertyAsFloat(Property.WIDTH);
-        if (blockWidth != null && blockWidth < layoutBox.getWidth()) {
-            layoutBox.setWidth(blockWidth);
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned())) {
+            parentBBox.setWidth(blockWidth);
         }
-        applyPaddings(layoutBox, false);
-        occupiedArea = new LayoutArea(pageNumber, new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), layoutBox.getWidth(), 0));
+        applyPaddings(parentBBox, false);
+
+        List<Rectangle> areas;
+        if (isPositioned()) {
+            areas = Collections.singletonList(parentBBox);
+        } else {
+            areas = initElementAreas(new LayoutArea(pageNumber, parentBBox));
+        }
+
+        occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
+
+        int currentAreaPos = 0;
+        Rectangle layoutBox = areas.get(0).clone();
 
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
@@ -94,7 +102,9 @@ public class ParagraphRenderer extends AbstractRenderer {
             Property.HorizontalAlignment horizontalAlignment = getProperty(Property.HORIZONTAL_ALIGNMENT);
             if (result.getStatus() == LayoutResult.PARTIAL && horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
                     horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED_ALL) {
-                processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+                if (processedRenderer != null) {
+                    processedRenderer.justify(layoutBox.getWidth() - lineIndent);
+                }
             } else if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT && processedRenderer != null) {
                 float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (horizontalAlignment) {
@@ -117,17 +127,17 @@ public class ParagraphRenderer extends AbstractRenderer {
             if (doesNotFit) {
                 // TODO avoid infinite loop
                 if (currentAreaPos + 1 < areas.size()) {
-                    layoutBox = applyMargins(areas.get(++currentAreaPos).getBBox().clone(), false);
-                    layoutBox = applyPaddings(layoutBox, false);
+                    layoutBox = areas.get(++currentAreaPos).clone();
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
                     continue;
                 } else {
+                    applyPaddings(occupiedArea.getBBox(), true);
+                    applyBorderBox(occupiedArea.getBBox(), true);
+                    applyMargins(occupiedArea.getBBox(), true);
                     ParagraphRenderer[] split = split();
                     split[0].childRenderers = new ArrayList<>(childRenderers);
                     split[1].childRenderers.add(currentRenderer);
-                    applyPaddings(occupiedArea.getBBox(), true);
-                    applyMargins(occupiedArea.getBBox(), true);
                     boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
                     if (keepTogether) {
                         split[0] = null;
@@ -177,8 +187,9 @@ public class ParagraphRenderer extends AbstractRenderer {
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
+        applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
-        if (getProperty(Property.ANGLE) != null) {
+        if (getProperty(Property.ROTATION_ANGLE) != null) {
             calculateRotationPointAndRotate(maxLineWidth);
 
             if (isNotFittingHeight(layoutContext.getArea())) {

@@ -14,10 +14,6 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         super(pdfObject);
     }
 
-    public PdfFileSpec(T pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
-
     public static PdfFileSpec createExternalFileSpec(PdfDocument doc, String filePath, boolean isUnicodeFileName) {
         PdfDictionary dict = new PdfDictionary();
 
@@ -25,14 +21,14 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         dict.put(PdfName.F, new PdfString(filePath));
         dict.put(PdfName.UF, new PdfString(filePath, isUnicodeFileName ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
 
-        PdfFileSpec fileSpec = new PdfFileSpec(dict, doc);
+        PdfFileSpec fileSpec = new PdfFileSpec<>(dict).makeIndirect(doc);
 
         return fileSpec;
     }
 
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String fileDisplay, boolean isUnicodeFileName) throws FileNotFoundException {
 
-        PdfStream stream = new PdfStream(doc, fileStore);
+        PdfStream stream = new PdfStream(fileStore).makeIndirect(doc);
 
         return createEmbeddedFileSpec(doc, stream, fileDisplay, isUnicodeFileName);
     }
@@ -65,7 +61,7 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         EF.put(PdfName.UF, stream);
         dict.put(PdfName.EF, EF);
 
-        return new PdfFileSpec(dict, doc);
+        return new PdfFileSpec<>(dict).makeIndirect(doc);
     }
 
     public PdfFileSpec setFileIdentifier(PdfArray fileIdentifier){

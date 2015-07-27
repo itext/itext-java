@@ -1,9 +1,11 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PRIndirectReference;
 import org.junit.*;
 
 import java.io.*;
@@ -1213,6 +1215,79 @@ public class PdfDocumentTest {
         }
         reader.close();
 
+    }
+
+    @Test
+    public void copying3() throws IOException {
+        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copying3_1.pdf");
+        PdfWriter writer1 = new PdfWriter(fos1);
+        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        for (int i = 0; i < 3; i++) {
+            PdfPage page1 = pdfDoc1.addNewPage();
+            page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + String.valueOf(i + 1) + "\n"));
+        }
+
+        pdfDoc1.addPage(pdfDoc1.getPage(1).copy(pdfDoc1));
+        pdfDoc1.addPage(pdfDoc1.getPage(2).copy(pdfDoc1));
+        pdfDoc1.addPage(pdfDoc1.getPage(3).copy(pdfDoc1));
+
+        pdfDoc1.close();
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copying3_1.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        for (int i = 0; i < 6; i++) {
+            byte[] bytes = reader.getPageContent(i+1);
+            Assert.assertEquals("%page " + String.valueOf(i%3 + 1) + "\n", new String(bytes));
+        }
+        reader.close();
+    }
+
+    @Test
+    public void copying4() throws IOException {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "copying4_1.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
+        helloWorld.put(new PdfName("Hello"), new PdfString("World"));
+        PdfPage page = pdfDoc.addNewPage();
+        page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
+        page.getPdfObject().put(new PdfName("HelloWorldCopy1"), helloWorld.copy(pdfDoc));
+        page.getPdfObject().put(new PdfName("HelloWorldCopy2"), helloWorld.copy(pdfDoc, true));
+        page.getPdfObject().put(new PdfName("HelloWorldCopy3"), helloWorld.copy(pdfDoc, false));
+        page.flush();
+
+        pdfDoc.close();
+
+
+        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copying4_1.pdf");
+        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+
+        com.itextpdf.text.pdf.PdfObject obj = reader.getPageN(1).get(new com.itextpdf.text.pdf.PdfName("HelloWorld"));
+        Assert.assertTrue(obj instanceof PRIndirectReference);
+        PRIndirectReference ref = (PRIndirectReference) obj;
+        Assert.assertEquals(4, ref.getNumber());
+        Assert.assertEquals(0, ref.getGeneration());
+
+        com.itextpdf.text.pdf.PdfObject obj1 = reader.getPageN(1).get(new com.itextpdf.text.pdf.PdfName("HelloWorldCopy1"));
+        Assert.assertTrue(obj1 instanceof PRIndirectReference);
+        PRIndirectReference ref1 = (PRIndirectReference) obj1;
+        Assert.assertEquals(7, ref1.getNumber());
+        Assert.assertEquals(0, ref1.getGeneration());
+
+        com.itextpdf.text.pdf.PdfObject obj2 = reader.getPageN(1).get(new com.itextpdf.text.pdf.PdfName("HelloWorldCopy2"));
+        Assert.assertTrue(obj2 instanceof PRIndirectReference);
+        PRIndirectReference ref2 = (PRIndirectReference) obj2;
+        Assert.assertEquals(8, ref2.getNumber());
+        Assert.assertEquals(0, ref2.getGeneration());
+
+        com.itextpdf.text.pdf.PdfObject obj3 = reader.getPageN(1).get(new com.itextpdf.text.pdf.PdfName("HelloWorldCopy3"));
+        Assert.assertTrue(obj3 instanceof PRIndirectReference);
+        PRIndirectReference ref3 = (PRIndirectReference) obj3;
+        Assert.assertEquals(4, ref3.getNumber());
+        Assert.assertEquals(0, ref3.getGeneration());
+
+        reader.close();
     }
 
     @Test

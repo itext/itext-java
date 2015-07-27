@@ -50,38 +50,49 @@ public class DocumentRenderer extends AbstractRenderer {
             LayoutArea nextStoredArea = null;
             while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
-                    resultRenderers.add(result.getSplitRenderer());
-                    if (nextStoredArea != null){
-                        currentArea = nextStoredArea;
-                        currentPageNumber = nextStoredArea.getPageNumber();
-                        nextStoredArea = null;
+                    if (result.getOverflowRenderer() instanceof ImageRenderer) {
+                        ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
-                        getNextArea();
+                        resultRenderers.add(result.getSplitRenderer());
+                        if (nextStoredArea != null) {
+                            currentArea = nextStoredArea;
+                            currentPageNumber = nextStoredArea.getPageNumber();
+                            nextStoredArea = null;
+                        } else {
+                            getNextArea();
+                        }
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
-                    if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)){
-                        Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
-                        logger.warn("Element doesn't fit current area. KeepTogether property will be ignored.");
-                        result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
-                        renderer = result.getOverflowRenderer();
-                        if (storedArea != null){
-                            nextStoredArea = currentArea;
-                            currentArea = storedArea;
-                            currentPageNumber = storedArea.getPageNumber();
+                    if (result.getOverflowRenderer() instanceof ImageRenderer) {
+                        if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).imageHeight) {
+                            getNextArea();
                         }
-                        continue;
-                    }
-                    storedArea = currentArea;
-                    if (result.getNewPageSize() != null)
-                        getNextPageArea(result.getNewPageSize());
-                    else {
-                        getNextArea();
+
+
+                        ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
+                    } else {
+                        if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {
+                            Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
+                            logger.warn("Element doesn't fit current area. KeepTogether property will be ignored.");
+                            result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
+                            renderer = result.getOverflowRenderer();
+                            if (storedArea != null) {
+                                nextStoredArea = currentArea;
+                                currentArea = storedArea;
+                                currentPageNumber = storedArea.getPageNumber();
+                            }
+                            continue;
+                        }
+                        storedArea = currentArea;
+                        if (result.getNewPageSize() != null)
+                            getNextPageArea(result.getNewPageSize());
+                        else {
+                            getNextArea();
+                        }
                     }
                 }
-
                 renderer = result.getOverflowRenderer();
             }
-            assert result != null;
             currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
             currentArea.setEmptyArea(false);
             if (renderer != null)

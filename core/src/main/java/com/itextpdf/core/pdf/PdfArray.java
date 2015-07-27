@@ -11,7 +11,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
 
     public PdfArray() {
         super();
-        list = new ArrayList<PdfObject>();
+        list = new ArrayList<>();
     }
 
     public PdfArray(PdfObject obj) {
@@ -20,7 +20,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     }
 
     public PdfArray(Rectangle rectangle) {
-        list = new ArrayList<PdfObject>(4);
+        list = new ArrayList<>(4);
         add(new PdfNumber(rectangle.getX()));
         add(new PdfNumber(rectangle.getY()));
         add(new PdfNumber(rectangle.getX() + rectangle.getWidth()));
@@ -28,41 +28,41 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     }
 
     public PdfArray(List<? extends PdfObject> objects) {
-        list = new ArrayList<PdfObject>(objects.size());
+        list = new ArrayList<>(objects.size());
         for (PdfObject element : objects)
             add(element);
     }
 
     public PdfArray(float[] numbers) {
-        list = new ArrayList<PdfObject>(numbers.length);
+        list = new ArrayList<>(numbers.length);
         for (float f : numbers) {
             list.add(new PdfNumber(f));
         }
     }
 
     public PdfArray(double[] numbers) {
-        list = new ArrayList<PdfObject>(numbers.length);
+        list = new ArrayList<>(numbers.length);
         for (double f : numbers) {
             list.add(new PdfNumber(f));
         }
     }
 
     public PdfArray(int[] numbers) {
-        list = new ArrayList<PdfObject>(numbers.length);
+        list = new ArrayList<>(numbers.length);
         for (float i : numbers) {
             list.add(new PdfNumber(i));
         }
     }
 
     public PdfArray(boolean[] values) {
-        list = new ArrayList<PdfObject>(values.length);
+        list = new ArrayList<>(values.length);
         for (boolean b : values) {
             list.add(new PdfBoolean(b));
         }
     }
 
     public PdfArray(List<String> strings, boolean asNames) {
-        list = new ArrayList<PdfObject>(strings.size());
+        list = new ArrayList<>(strings.size());
         for (String s : strings) {
             list.add(asNames ? new PdfName(s) : new PdfString(s));
         }
@@ -190,7 +190,6 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     }
 
     /**
-     *
      * @param asDirect true is to extract direct object always.
      * @throws PdfException
      */
@@ -200,7 +199,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         else {
             PdfObject obj = list.get(index);
             if (obj.getType() == IndirectReference)
-                return ((PdfIndirectReference)obj).getRefersTo(true);
+                return ((PdfIndirectReference) obj).getRefersTo(true);
             else
                 return obj;
         }
@@ -209,49 +208,49 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     public PdfArray getAsArray(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Array)
-            return (PdfArray)direct;
+            return (PdfArray) direct;
         return null;
     }
 
     public PdfDictionary getAsDictionary(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Dictionary)
-            return (PdfDictionary)direct;
+            return (PdfDictionary) direct;
         return null;
     }
 
     public PdfStream getAsStream(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Stream)
-            return (PdfStream)direct;
+            return (PdfStream) direct;
         return null;
     }
 
     public PdfNumber getAsNumber(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Number)
-            return (PdfNumber)direct;
+            return (PdfNumber) direct;
         return null;
     }
 
     public PdfName getAsName(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Name)
-            return (PdfName)direct;
+            return (PdfName) direct;
         return null;
     }
 
     public PdfString getAsString(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.String)
-            return (PdfString)direct;
+            return (PdfString) direct;
         return null;
     }
 
     public PdfBoolean getAsBoolean(int index) {
         PdfObject direct = get(index, true);
         if (direct != null && direct.getType() == PdfObject.Boolean)
-            return (PdfBoolean)direct;
+            return (PdfBoolean) direct;
         return null;
     }
 
@@ -295,7 +294,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
-        PdfArray array = (PdfArray)from;
+        PdfArray array = (PdfArray) from;
         for (PdfObject entry : array) {
             add(entry.copy(document, false));
         }
@@ -304,7 +303,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     /**
      * Release content of PdfArray.
      */
-    protected void releaseContent(){
+    protected void releaseContent() {
         list = null;
     }
 }

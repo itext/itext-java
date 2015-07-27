@@ -15,7 +15,7 @@ import org.junit.Test;
 import java.io.*;
 
 public class Barcode128Test {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/Barcode128/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/Barcode128/";
 
     @BeforeClass
@@ -26,7 +26,7 @@ public class Barcode128Test {
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
 
-        String filename = "barcode01.pdf";
+        String filename = "barcode128_01.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
         PdfDocument document = new PdfDocument(writer);
 
@@ -48,7 +48,7 @@ public class Barcode128Test {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
 
-        String filename = "barcode02.pdf";
+        String filename = "barcode128_02.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "DocumentWithTrueTypeFont1.pdf"));
         PdfDocument document = new PdfDocument(reader, writer);

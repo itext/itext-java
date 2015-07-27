@@ -13,6 +13,7 @@ import java.util.zip.DeflaterOutputStream;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
+    //TODO review location and use of the constants
     /**
      * Type of encryption.
      */
@@ -88,6 +89,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     /**
      * A possible compression level.
      */
+    public static final int UNDEFINED_COMPRESSION = Integer.MIN_VALUE;
+    /**
+     * A possible compression level.
+     */
     public static final int DEFAULT_COMPRESSION = Deflater.DEFAULT_COMPRESSION;
     /**
      * A possible compression level.
@@ -123,6 +128,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     }
 
     public PdfOutputStream write(PdfObject pdfObject) {
+        if (pdfObject.checkState(PdfObject.MustBeIndirect)) {
+            pdfObject.makeIndirect(document);
+            pdfObject = pdfObject.getIndirectReference();
+        }
         switch (pdfObject.getType()) {
             case PdfObject.Array:
                 write((PdfArray) pdfObject);
@@ -295,6 +304,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     protected void write(PdfStream pdfStream) {
         try {
+            if (pdfStream.getCompressionLevel() == UNDEFINED_COMPRESSION) {
+               pdfStream.setCompressionLevel(document.getWriter().getCompressionLevel());
+            }
             if (pdfStream.getInputStream() != null) {
                 java.io.OutputStream fout = this;
                 DeflaterOutputStream def = null;
@@ -331,7 +343,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 writeBytes(PdfOutputStream.endstream);
             } else {
                 //When document is opened in stamping mode the output stream can be uninitialized.
-                //We shave to initialize it and write all data from streams input to streams output.
+                //We have to initialize it and write all data from streams input to streams output.
                 if (pdfStream.getOutputStream() == null && pdfStream.getReader() != null) {
                     byte[] bytes = pdfStream.getBytes(false);
                     pdfStream.initOutputStream(new ByteArrayOutputStream(bytes.length));
@@ -426,8 +438,14 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         PdfObject filter = pdfStream.get(PdfName.Filter);
         if (filter != null) {
             if (filter.getType() == PdfObject.Name) {
-                if (PdfName.FlateDecode.equals(filter))
+                if (PdfName.FlateDecode.equals(filter)) {
                     return false;
+                } else if (PdfName.CCITTFaxDecode.equals(filter)) {
+                    //@TODO Perhaps, we should return false for all images if there is any compression.
+                    return false;
+                } else if (PdfName.DCTDecode.equals(filter)) {
+                    return false;
+                }
             } else if (filter.getType() == PdfObject.Array) {
                 if (((PdfArray) filter).contains(PdfName.FlateDecode))
                     return false;

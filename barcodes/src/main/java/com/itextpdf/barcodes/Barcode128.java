@@ -1,7 +1,9 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.basics.IntHashtable;
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
@@ -9,9 +11,7 @@ import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 
-import java.io.IOException;
-
-public class Barcode128 extends Barcode1D{
+public class Barcode128 extends Barcode1D {
 
     /** A type of barcode */
     public static final int CODE128 = 1;
@@ -19,8 +19,8 @@ public class Barcode128 extends Barcode1D{
     public static final int CODE128_UCC = 2;
     /** A type of barcode */
     public static final int CODE128_RAW = 3;
-
-    /** The bars to generate the code.
+    /**
+     * The bars to generate the code.
      */
     private static final byte BARS[][] =
             {
@@ -132,28 +132,36 @@ public class Barcode128 extends Barcode1D{
                     {2, 1, 1, 2, 3, 2}
             };
 
-    /** The stop bars.
+    /**
+     * The stop bars.
      */
     private static final byte BARS_STOP[] = {2, 3, 3, 1, 1, 1, 2};
-    /** The charset code change.
+    /**
+     * The charset code change.
      */
     public static final char CODE_AB_TO_C = 99;
-    /** The charset code change.
+    /**
+     * The charset code change.
      */
     public static final char CODE_AC_TO_B = 100;
-    /** The charset code change.
+    /**
+     * The charset code change.
      */
     public static final char CODE_BC_TO_A = 101;
-    /** The code for UCC/EAN-128.
+    /**
+     * The code for UCC/EAN-128.
      */
     public static final char FNC1_INDEX = 102;
-    /** The start code.
+    /**
+     * The start code.
      */
     public static final char START_A = 103;
-    /** The start code.
+    /**
+     * The start code.
      */
     public static final char START_B = 104;
-    /** The start code.
+    /**
+     * The start code.
      */
     public static final char START_C = 105;
 
@@ -171,19 +179,21 @@ public class Barcode128 extends Barcode1D{
 
     private static IntHashtable ais = new IntHashtable();
 
-    /** Creates new Barcode128 */
+    /**
+     * Creates new Barcode128
+     * @param document
+     */
     public Barcode128(PdfDocument document) {
         super(document);
         try {
             x = 0.8f;
-            font = new PdfType1Font(document, new Type1Font(FontConstants.HELVETICA, ""));
+            font = new PdfType1Font(document, new Type1Font(FontConstants.HELVETICA, PdfEncodings.WINANSI));
             size = 8;
             baseline = size;
             barHeight = size * 3;
             textAlignment = ALIGN_CENTER;
             codeType = CODE128;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e.getLocalizedMessage());
         }
     }
@@ -236,6 +246,7 @@ public class Barcode128 extends Barcode1D{
 
     /**
      * Gets the human readable text of a sequence of AI.
+     *
      * @param code the text
      * @return the human readable text
      */
@@ -267,12 +278,11 @@ public class Barcode128 extends Barcode1D{
                     break;
                 buf.append(removeFNC1(code.substring(0, n)));
                 code = code.substring(n);
-            }
-            else {
+            } else {
                 int idx = code.indexOf(FNC1);
                 if (idx < 0)
                     break;
-                buf.append(code.substring(0,idx));
+                buf.append(code.substring(0, idx));
                 code = code.substring(idx + 1);
             }
         }
@@ -280,11 +290,13 @@ public class Barcode128 extends Barcode1D{
         return buf.toString();
     }
 
-    /** Converts the human readable text to the characters needed to
+    /**
+     * Converts the human readable text to the characters needed to
      * create a barcode using the specified code set.
-     * @param text the text to convert
-     * @param ucc <CODE>true</CODE> if it is an UCC/EAN-128. In this case
-     * the character FNC1 is added
+     *
+     * @param text    the text to convert
+     * @param ucc     <CODE>true</CODE> if it is an UCC/EAN-128. In this case
+     *                the character FNC1 is added
      * @param codeSet forced code set, or AUTO for optimized barcode.
      * @return the code ready to be fed to getBarsCode128Raw()
      */
@@ -301,7 +313,7 @@ public class Barcode128 extends Barcode1D{
         for (int k = 0; k < tLen; ++k) {
             c = text.charAt(k);
             if (c > 127 && c != FNC1)
-                throw new RuntimeException("There are illegal characters for barcode 128 in 1");
+                throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
         }
         c = text.charAt(0);
         char currentCode = START_B;
@@ -314,27 +326,25 @@ public class Barcode128 extends Barcode1D{
             String out2 = getPackedRawDigits(text, index, 2);
             index += out2.charAt(0);
             out += out2.substring(1);
-        }
-        else if (c < ' ') {
+        } else if (c < ' ') {
             currentCode = START_A;
             out += currentCode;
             if (ucc)
                 out += FNC1_INDEX;
-            out += (char)(c + 64);
+            out += (char) (c + 64);
             ++index;
-        }
-        else {
+        } else {
             out += currentCode;
             if (ucc)
                 out += FNC1_INDEX;
             if (c == FNC1)
                 out += FNC1_INDEX;
             else
-                out += (char)(c - ' ');
+                out += (char) (c - ' ');
             ++index;
         }
         if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
-            throw new RuntimeException("There are illegal characters for barcode 128 in 1");
+            throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
         while (index < tLen) {
             switch (currentCode) {
                 case START_A: {
@@ -344,20 +354,18 @@ public class Barcode128 extends Barcode1D{
                         String out2 = getPackedRawDigits(text, index, 4);
                         index += out2.charAt(0);
                         out += out2.substring(1);
-                    }
-                    else {
+                    } else {
                         c = text.charAt(index++);
                         if (c == FNC1)
                             out += FNC1_INDEX;
                         else if (c > '_') {
                             currentCode = START_B;
                             out += CODE_AC_TO_B;
-                            out += (char)(c - ' ');
-                        }
-                        else if (c < ' ')
-                            out += (char)(c + 64);
+                            out += (char) (c - ' ');
+                        } else if (c < ' ')
+                            out += (char) (c + 64);
                         else
-                            out += (char)(c - ' ');
+                            out += (char) (c - ' ');
                     }
                 }
                 break;
@@ -368,18 +376,16 @@ public class Barcode128 extends Barcode1D{
                         String out2 = getPackedRawDigits(text, index, 4);
                         index += out2.charAt(0);
                         out += out2.substring(1);
-                    }
-                    else {
+                    } else {
                         c = text.charAt(index++);
                         if (c == FNC1)
                             out += FNC1_INDEX;
                         else if (c < ' ') {
                             currentCode = START_A;
                             out += CODE_BC_TO_A;
-                            out += (char)(c + 64);
-                        }
-                        else {
-                            out += (char)(c - ' ');
+                            out += (char) (c + 64);
+                        } else {
+                            out += (char) (c - ' ');
                         }
                     }
                 }
@@ -389,44 +395,46 @@ public class Barcode128 extends Barcode1D{
                         String out2 = getPackedRawDigits(text, index, 2);
                         index += out2.charAt(0);
                         out += out2.substring(1);
-                    }
-                    else {
+                    } else {
                         c = text.charAt(index++);
                         if (c == FNC1)
                             out += FNC1_INDEX;
                         else if (c < ' ') {
                             currentCode = START_A;
                             out += CODE_BC_TO_A;
-                            out += (char)(c + 64);
-                        }
-                        else {
+                            out += (char) (c + 64);
+                        } else {
                             currentCode = START_B;
                             out += CODE_AC_TO_B;
-                            out += (char)(c - ' ');
+                            out += (char) (c - ' ');
                         }
                     }
                 }
                 break;
             }
             if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
-                throw new RuntimeException("There are illegal characters for barcode 128 in 1");
+                throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
         }
         return out;
     }
 
-    /** Converts the human readable text to the characters needed to
+    /**
+     * Converts the human readable text to the characters needed to
      * create a barcode. Some optimization is done to get the shortest code.
+     *
      * @param text the text to convert
-     * @param ucc <CODE>true</CODE> if it is an UCC/EAN-128. In this case
-     * the character FNC1 is added
+     * @param ucc  <CODE>true</CODE> if it is an UCC/EAN-128. In this case
+     *             the character FNC1 is added
      * @return the code ready to be fed to getBarsCode128Raw()
      */
     public static String getRawText(String text, boolean ucc) {
         return getRawText(text, ucc, Barcode128CodeSet.AUTO);
     }
 
-    /** Generates the bars. The input has the actual barcodes, not
+    /**
+     * Generates the bars. The input has the actual barcodes, not
      * the human readable text.
+     *
      * @param text the barcode
      * @return the bars
      */
@@ -438,7 +446,7 @@ public class Barcode128 extends Barcode1D{
         for (int k = 1; k < text.length(); ++k)
             chk += k * text.charAt(k);
         chk = chk % 103;
-        text += (char)chk;
+        text += (char) chk;
         byte bars[] = new byte[(text.length() + 1) * 6 + 7];
         int k;
         for (k = 0; k < text.length(); ++k)
@@ -447,8 +455,10 @@ public class Barcode128 extends Barcode1D{
         return bars;
     }
 
-    /** Gets the maximum area that the barcode and the text, if
+    /**
+     * Gets the maximum area that the barcode and the text, if
      * any, will occupy. The lower left corner is always (0, 0).
+     *
      * @return the size the barcode occupies.
      */
     @Override
@@ -457,14 +467,14 @@ public class Barcode128 extends Barcode1D{
         float fontY = 0;
         String fullCode;
         if (font != null) {
-            if (baseline > 0){
+            if (baseline > 0) {
                 fontY = baseline - font.getFontProgram().getFontDescriptor(FontConstants.DESCENT, size);
             } else {
                 fontY = -baseline + size;
             }
-            if (codeType == CODE128_RAW){
+            if (codeType == CODE128_RAW) {
                 int idx = code.indexOf('\uffff');
-                if (idx < 0){
+                if (idx < 0) {
                     fullCode = "";
                 } else {
                     fullCode = code.substring(idx + 1);
@@ -482,8 +492,7 @@ public class Barcode128 extends Barcode1D{
                 fullCode = code.substring(0, idx);
             else
                 fullCode = code;
-        }
-        else {
+        } else {
             fullCode = getRawText(code, codeType == CODE128_UCC, codeSet);
         }
         int len = fullCode.length();
@@ -494,39 +503,41 @@ public class Barcode128 extends Barcode1D{
         return new Rectangle(fullWidth, fullHeight);
     }
 
-    /** Places the barcode in a <CODE>PdfCanvas</CODE>. The
+    /**
+     * Places the barcode in a <CODE>PdfCanvas</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
      * The bars and text are written in the following colors:<p>
      * <P><TABLE BORDER=1>
      * <TR>
-     *   <TH><P><CODE>barColor</CODE></TH>
-     *   <TH><P><CODE>textColor</CODE></TH>
-     *   <TH><P>Result</TH>
-     *   </TR>
+     * <TH><P><CODE>barColor</CODE></TH>
+     * <TH><P><CODE>textColor</CODE></TH>
+     * <TH><P>Result</TH>
+     * </TR>
      * <TR>
-     *   <TD><P><CODE>null</CODE></TD>
-     *   <TD><P><CODE>null</CODE></TD>
-     *   <TD><P>bars and text painted with current fill color</TD>
-     *   </TR>
+     * <TD><P><CODE>null</CODE></TD>
+     * <TD><P><CODE>null</CODE></TD>
+     * <TD><P>bars and text painted with current fill color</TD>
+     * </TR>
      * <TR>
-     *   <TD><P><CODE>barColor</CODE></TD>
-     *   <TD><P><CODE>null</CODE></TD>
-     *   <TD><P>bars and text painted with <CODE>barColor</CODE></TD>
-     *   </TR>
+     * <TD><P><CODE>barColor</CODE></TD>
+     * <TD><P><CODE>null</CODE></TD>
+     * <TD><P>bars and text painted with <CODE>barColor</CODE></TD>
+     * </TR>
      * <TR>
-     *   <TD><P><CODE>null</CODE></TD>
-     *   <TD><P><CODE>textColor</CODE></TD>
-     *   <TD><P>bars painted with current color<br>text painted with <CODE>textColor</CODE></TD>
-     *   </TR>
+     * <TD><P><CODE>null</CODE></TD>
+     * <TD><P><CODE>textColor</CODE></TD>
+     * <TD><P>bars painted with current color<br>text painted with <CODE>textColor</CODE></TD>
+     * </TR>
      * <TR>
-     *   <TD><P><CODE>barColor</CODE></TD>
-     *   <TD><P><CODE>textColor</CODE></TD>
-     *   <TD><P>bars painted with <CODE>barColor</CODE><br>text painted with <CODE>textColor</CODE></TD>
-     *   </TR>
+     * <TD><P><CODE>barColor</CODE></TD>
+     * <TD><P><CODE>textColor</CODE></TD>
+     * <TD><P>bars painted with <CODE>barColor</CODE><br>text painted with <CODE>textColor</CODE></TD>
+     * </TR>
      * </TABLE>
-     * @param canvas the <CODE>PdfCanvas</CODE> where the barcode will be placed
-     * @param barColor the color of the bars. It can be <CODE>null</CODE>
+     *
+     * @param canvas    the <CODE>PdfCanvas</CODE> where the barcode will be placed
+     * @param barColor  the color of the bars. It can be <CODE>null</CODE>
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the dimensions the barcode occupies
      */
@@ -539,8 +550,7 @@ public class Barcode128 extends Barcode1D{
                 fullCode = "";
             else
                 fullCode = code.substring(idx + 1);
-        }
-        else if (codeType == CODE128_UCC)
+        } else if (codeType == CODE128_UCC)
             fullCode = getHumanReadableUCCEAN(code);
         else
             fullCode = removeFNC1(code);
@@ -555,8 +565,7 @@ public class Barcode128 extends Barcode1D{
                 bCode = code.substring(0, idx);
             else
                 bCode = code;
-        }
-        else {
+        } else {
             bCode = getRawText(code, codeType == CODE128_UCC, codeSet);
         }
         int len = bCode.length();
@@ -616,8 +625,9 @@ public class Barcode128 extends Barcode1D{
     /**
      * Sets the code to generate. If it's an UCC code and starts with '(' it will
      * be split by the AI. This code in UCC mode is valid:
-     * <p>
+     * <p/>
      * <code>(01)00000090311314(10)ABC123(15)060916</code>
+     *
      * @param code the code to generate
      */
     public void setCode(String code) {
@@ -644,18 +654,18 @@ public class Barcode128 extends Barcode1D{
                 if (len < 0) {
                     if (idx >= 0)
                         ret.append(FNC1);
-                }
-                else if (next - end - 1 + sai.length() != len)
+                } else if (next - end - 1 + sai.length() != len)
                     throw new IllegalArgumentException("Invalid AI length");
             }
             super.setCode(ret.toString());
-        }
-        else
+        } else
             super.setCode(code);
     }
 
-    /** Creates a <CODE>java.awt.Image</CODE>. This image only
+    /**
+     * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
+     *
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
@@ -671,8 +681,7 @@ public class Barcode128 extends Barcode1D{
                 bCode = code.substring(0, idx);
             else
                 bCode = code;
-        }
-        else {
+        } else {
             bCode = getRawText(code, codeType == CODE128_UCC);
         }
         int len = bCode.length();
@@ -681,7 +690,7 @@ public class Barcode128 extends Barcode1D{
 
         boolean print = true;
         int ptr = 0;
-        int height = (int)barHeight;
+        int height = (int) barHeight;
         int pix[] = new int[fullWidth * height];
         for (int k = 0; k < bars.length; ++k) {
             int w = bars[k];
@@ -759,9 +768,11 @@ public class Barcode128 extends Barcode1D{
             ais.put(k, -1);
     }
 
-    /** Returns <CODE>true</CODE> if the next <CODE>numDigits</CODE>
+    /**
+     * Returns <CODE>true</CODE> if the next <CODE>numDigits</CODE>
      * starting from index <CODE>textIndex</CODE> are numeric skipping any FNC1.
-     * @param text the text to check
+     *
+     * @param text      the text to check
      * @param textIndex where to check from
      * @param numDigits the number of digits to check
      * @return the check result
@@ -786,9 +797,11 @@ public class Barcode128 extends Barcode1D{
         return numDigits == 0;
     }
 
-    /** Packs the digits for charset C also considering FNC1. It assumes that all the parameters
+    /**
+     * Packs the digits for charset C also considering FNC1. It assumes that all the parameters
      * are valid.
-     * @param text the text to pack
+     *
+     * @param text      the text to pack
      * @param textIndex where to pack from
      * @param numDigits the number of digits to pack. It is always an even number
      * @return the packed digits, two digits per character
@@ -805,8 +818,8 @@ public class Barcode128 extends Barcode1D{
             numDigits -= 2;
             int c1 = text.charAt(textIndex++) - '0';
             int c2 = text.charAt(textIndex++) - '0';
-            out.append((char)(c1 * 10 + c2));
+            out.append((char) (c1 * 10 + c2));
         }
-        return (char)(textIndex - start) + out.toString();
+        return (char) (textIndex - start) + out.toString();
     }
 }

@@ -6,6 +6,7 @@ import com.itextpdf.model.element.TabStop;
 import com.itextpdf.model.layout.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
 
@@ -37,7 +38,10 @@ public class LineRenderer extends AbstractRenderer {
             LayoutResult childResult;
             Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
 
-            if (childRenderer instanceof TabRenderer) {
+            if (childRenderer instanceof TextRenderer) {
+                childRenderer.setProperty(Property.CHARACTER_SPACING, null);
+                childRenderer.setProperty(Property.WORD_SPACING, null);
+            } else if (childRenderer instanceof TabRenderer) {
                 if (nextTabStop != null) {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
@@ -104,7 +108,7 @@ public class LineRenderer extends AbstractRenderer {
                         anythingPlaced = true;
                     }
 
-                    if (childResult.getStatus() == LayoutResult.IMAGE_PARTIAL){
+                    if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getOverflowRenderer() instanceof ImageRenderer){
                         ((ImageRenderer)childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
                     }
 
@@ -170,7 +174,8 @@ public class LineRenderer extends AbstractRenderer {
         float characterSpacing = (1 - ratio) * baseFactor;
 
         float lastRightPos = occupiedArea.getBBox().getX();
-        for (IRenderer child : childRenderers) {
+        for (Iterator<IRenderer> iterator = childRenderers.iterator(); iterator.hasNext(); ) {
+            IRenderer child = iterator.next();
             float childX = child.getOccupiedArea().getBBox().getX();
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
@@ -178,8 +183,10 @@ public class LineRenderer extends AbstractRenderer {
                 float childHSCale = child.getProperty(Property.HORIZONTAL_SCALING);
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
-                child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() +
-                        characterSpacing * ((TextRenderer) child).length() + wordSpacing * ((TextRenderer) child).getNumberOfSpaces());
+                boolean isLastTextRenderer = !iterator.hasNext();
+                float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).length() - 1) : ((TextRenderer) child).length()) * characterSpacing +
+                        wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
+                        child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
             }
             lastRightPos = childX + child.getOccupiedArea().getBBox().getWidth();
         }

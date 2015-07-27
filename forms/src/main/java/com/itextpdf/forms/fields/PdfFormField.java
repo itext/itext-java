@@ -2,6 +2,7 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
@@ -21,23 +22,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     protected static final int DEFAULT_FONT_SIZE = 12;
 
-    public PdfFormField(PdfDocument pdfDocument) {
-        this(new PdfDictionary(), pdfDocument);
+    public PdfFormField() {
+        this(new PdfDictionary());
         put(PdfName.FT, getFormType());
     }
 
-    public PdfFormField(PdfDocument pdfDocument, PdfWidgetAnnotation widget) {
-        this(new PdfDictionary(), pdfDocument);
+    public PdfFormField(PdfWidgetAnnotation widget) {
+        this(new PdfDictionary());
         addKid(widget);
         put(PdfName.FT, getFormType());
     }
 
     protected PdfFormField(PdfDictionary pdfObject) {
         super(pdfObject);
-    }
-
-    protected PdfFormField(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
     }
 
     /**
@@ -51,30 +48,30 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfFormField createEmptyField(PdfDocument doc) {
-        PdfFormField field = new PdfFormField(doc);
+        PdfFormField field = new PdfFormField().makeIndirect(doc);
         return field;
     }
 
     public static PdfButtonFormField createButton(PdfDocument doc, Rectangle rect, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfButtonFormField field = new PdfButtonFormField(doc, annot);
+        PdfButtonFormField field = new PdfButtonFormField(annot).makeIndirect(doc);
         field.setFieldFlags(flags);
         return field;
     }
 
     public static PdfButtonFormField createButton(PdfDocument doc, int flags) {
-        PdfButtonFormField field = new PdfButtonFormField(doc);
+        PdfButtonFormField field = new PdfButtonFormField().makeIndirect(doc);
         field.setFieldFlags(flags);
         return field;
     }
 
     public static PdfTextFormField createText(PdfDocument doc) {
-        return new PdfTextFormField(doc);
+        return new PdfTextFormField().makeIndirect(doc);
     }
 
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfTextFormField field = new PdfTextFormField(doc, annot);
+        PdfTextFormField field = new PdfTextFormField(annot).makeIndirect(doc);
 
         return field;
 
@@ -90,7 +87,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, PdfFont font, int fontSize, String value, String name) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfTextFormField field = new PdfTextFormField(doc, annot);
+        PdfTextFormField field = new PdfTextFormField(annot).makeIndirect(doc);
         field.setValue(new PdfString(value));
         field.setFieldName(name);
 
@@ -100,14 +97,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfChoiceFormField createChoice(PdfDocument doc, int flags) {
-        PdfChoiceFormField field = new PdfChoiceFormField(doc);
+        PdfChoiceFormField field = new PdfChoiceFormField().makeIndirect(doc);
         field.setFieldFlags(flags);
         return field;
     }
 
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfChoiceFormField field = new PdfChoiceFormField(doc, annot);
+        PdfChoiceFormField field = new PdfChoiceFormField(annot).makeIndirect(doc);
         field.setFieldFlags(flags);
         return field;
     }
@@ -122,7 +119,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, PdfFont font, int fontSize, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfChoiceFormField field = new PdfChoiceFormField(doc, annot);
+        PdfChoiceFormField field = new PdfChoiceFormField(annot).makeIndirect(doc);
         field.put(PdfName.Opt, options);
         field.setFieldFlags(flags);
         field.setFieldName(name);
@@ -134,12 +131,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfSignatureFormField createSignature(PdfDocument doc) {
-        return new PdfSignatureFormField(doc);
+        return new PdfSignatureFormField().makeIndirect(doc);
     }
 
     public static PdfSignatureFormField createSignature(PdfDocument doc, Rectangle rect) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        return new PdfSignatureFormField(doc, annot);
+        return new PdfSignatureFormField(annot).makeIndirect(doc);
     }
 
     public static PdfButtonFormField createRadioGroup(PdfDocument doc, String name, String defaultValue) {
@@ -151,7 +148,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfFormField radio = new PdfFormField(doc, annot);
+        PdfFormField radio = new PdfFormField(annot).makeIndirect(doc);
         String name = radioGroup.getValue().toString().substring(1);
         if (name.equals(value)) {
             annot.setAppearanceState(new PdfName(value));
@@ -175,7 +172,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption, PdfFont font, int fontSize) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfButtonFormField field = new PdfButtonFormField(doc, annot);
+        PdfButtonFormField field = new PdfButtonFormField(annot).makeIndirect(doc);
         field.setPushButton(true);
         field.setFieldName(name);
 
@@ -187,7 +184,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String value, String name) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfButtonFormField check = new PdfButtonFormField(doc, annot);
+        PdfButtonFormField check = new PdfButtonFormField(annot).makeIndirect(doc);
         check.setFieldName(name);
         check.setValue(new PdfName(value));
         annot.setAppearanceState(new PdfName(value));
@@ -228,15 +225,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary dictionary = (PdfDictionary) pdfObject;
             PdfName formType = dictionary.getAsName(PdfName.FT);
             if (PdfName.Tx.equals(formType))
-                field = (T) new PdfTextFormField(dictionary, document);
+                field = (T) new PdfTextFormField(dictionary).makeIndirect(document);
             else if (PdfName.Btn.equals(formType))
-                field = (T) new PdfButtonFormField(dictionary, document);
+                field = (T) new PdfButtonFormField(dictionary).makeIndirect(document);
             else if (PdfName.Ch.equals(formType))
-                field = (T) new PdfChoiceFormField(dictionary, document);
+                field = (T) new PdfChoiceFormField(dictionary).makeIndirect(document);
             else if (PdfName.Sig.equals(formType))
-                field = (T) new PdfSignatureFormField(dictionary, document);
+                field = (T) new PdfSignatureFormField(dictionary).makeIndirect(document);
             else
-                field = (T) new PdfFormField(dictionary, document);
+                field = (T) new PdfFormField(dictionary).makeIndirect(document);
         }
 
         return field;
@@ -459,7 +456,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfFormXObject drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
-        PdfStream stream = new PdfStream(getDocument());
+        PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
         float width = rect.getWidth();
         float height = rect.getHeight();
@@ -488,7 +485,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 endVariableText();
 
 
-        PdfFormXObject xObject = new PdfFormXObject(getDocument(), rect);
+        PdfFormXObject xObject = new PdfFormXObject(rect);
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
         xObject.getResources().addFont(font);
 
@@ -504,31 +501,31 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 setStrokeColor(Color.Silver).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 rectangle(x, y, width, height).
                 stroke().
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 setFillColor(Color.White).
                 rectangle(x + 0.5f, y + 0.5f, width - 1, height - 1).
                 fill().
                 setStrokeColor(Color.Silver).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1.5f).
                 lineTo(upperRightX - 1.5f, y + 1.5f).
                 lineTo(upperRightX - 1.5f, upperRightY - 1).
                 stroke().
                 setStrokeColor(Color.Gray).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1).
                 lineTo(x + 1, upperRightY - 1).
                 lineTo(upperRightX - 1, upperRightY - 1).
                 stroke().
                 setStrokeColor(Color.Black).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 2, y + 2).
                 lineTo(x + 2, upperRightY - 2).
                 lineTo(upperRightX - 2, upperRightY - 2).
@@ -537,22 +534,22 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public void drawRadioAppearance(float width, float height, String value) {
-        PdfStream streamOn = new PdfStream(getDocument());
+        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources());
         drawRadioField(canvasOn, 0, 0, width, height, true);
 
-        PdfStream streamOff = new PdfStream(getDocument());
+        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources());
         drawRadioField(canvasOff, 0, 0, width, height, false);
 
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfWidgetAnnotation widget = getWidgets().get(0);
-        PdfFormXObject xObjectOn = new PdfFormXObject(getDocument(), rect);
+        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         widget.setNormalAppearance(new PdfDictionary());
         widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
 
-        PdfFormXObject xObjectOff = new PdfFormXObject(getDocument(), rect);
+        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
     }
@@ -561,24 +558,24 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.
                 saveState().
                 setLineWidth(1).
-                setLineCapStyle(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
                 setStrokeColor(Color.Silver).
                 arc(x + 1, y + 1, x + width - 1, y + height - 1, 0, 360).
                 stroke().
                 setLineWidth(1).
-                setLineCapStyle(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
                 setStrokeColor(Color.Gray).
                 arc(x + 0.5f, y + 0.5f, x + width - 0.5f, y + height - 0.5f, 45, 180).
                 stroke().
                 setLineWidth(1).
-                setLineCapStyle(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
                 setStrokeColor(Color.Black).
                 arc(x + 1.5f, y + 1.5f, x + width - 1.5f, y + height - 1.5f, 45, 180).
                 stroke();
         if (on) {
             canvas.
                     setLineWidth(1).
-                    setLineCapStyle(1).
+                    setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
                     setFillColor(Color.Black).
                     arc(x + 4, y + 4, x + width - 4, y + height - 4, 0, 360).
                     fill();
@@ -587,33 +584,33 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public void drawCheckAppearance(float width, float height, String value) {
-        PdfStream streamOn = new PdfStream(getDocument());
+        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources());
         drawTextField(canvasOn, 0, 0, width, height);
 
-        PdfStream streamOff = new PdfStream(getDocument());
+        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources());
         drawTextField(canvasOff, 0, 0, width, height);
 
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfWidgetAnnotation widget = getWidgets().get(0);
-        PdfFormXObject xObjectOn = new PdfFormXObject(getDocument(), rect);
+        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         widget.setNormalAppearance(new PdfDictionary());
         widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
 
-        PdfFormXObject xObjectOff = new PdfFormXObject(getDocument(), rect);
+        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
     }
 
     public PdfFormXObject drawButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
-        PdfStream stream = new PdfStream(getDocument());
+        PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
 
         drawButton(canvas, 0, 0, width, height, text, font, fontSize);
 
-        PdfFormXObject xObject = new PdfFormXObject(getDocument(), new Rectangle(0, 0, width, height));
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
         xObject.getResources().addFont(font);
 
@@ -625,24 +622,24 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 setStrokeColor(Color.Black).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 rectangle(x, y, width, height).
                 stroke().
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 setFillColor(Color.Silver).
                 rectangle(x + 0.5f, y + 0.5f, width - 1, height - 1).
                 fill().
                 setStrokeColor(Color.White).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1).
                 lineTo(x + 1, y + height - 1).
                 lineTo(x + width - 1, y + height - 1).
                 stroke().
                 setStrokeColor(Color.Gray).
                 setLineWidth(1).
-                setLineCapStyle(0).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1).
                 lineTo(x + width - 1, y + 1).
                 lineTo(x + width - 1, y + height - 1).

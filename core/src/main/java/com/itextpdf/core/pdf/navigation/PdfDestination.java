@@ -10,10 +10,6 @@ public abstract class PdfDestination<T extends PdfObject> extends PdfObjectWrapp
         super(pdfObject);
     }
 
-    public PdfDestination(T pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
-
     public abstract PdfObject getDestinationPage(HashMap<Object, PdfObject> names);
 
     public abstract PdfDestination replaceNamedDestination(HashMap<Object, PdfObject> names);

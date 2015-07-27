@@ -11,16 +11,8 @@ public class PdfAnnotationAppearance extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
-    public PdfAnnotationAppearance(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
-    }
-
     public PdfAnnotationAppearance() {
         this(new PdfDictionary());
-    }
-
-    public PdfAnnotationAppearance(PdfDocument pdfDocument) {
-        this(new PdfDictionary(), pdfDocument);
     }
 
     public PdfAnnotationAppearance setState(PdfName stateName, PdfFormXObject state) {

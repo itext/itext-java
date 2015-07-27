@@ -5,6 +5,7 @@ import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.Rectangle;
@@ -90,7 +91,6 @@ public class MetaDo {
     public static final int META_CREATEREGION          = 0x06FF;
 
     public PdfCanvas cb;
-    public PdfDocument document;
     public InputMeta in;
     int left;
     int top;
@@ -99,9 +99,8 @@ public class MetaDo {
     int inch;
     MetaState state = new MetaState();
 
-    public MetaDo(InputStream in, PdfCanvas cb, PdfDocument document) {
+    public MetaDo(InputStream in, PdfCanvas cb) {
         this.cb = cb;
-        this.document = document;
         this.in = new InputMeta(in);
     }
 
@@ -127,8 +126,8 @@ public class MetaDo {
 
         int tsize;
         int function;
-        cb.setLineCapStyle(1);
-        cb.setLineJoinStyle(1);
+        cb.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
+        cb.setLineJoinStyle(PdfCanvasConstants.LineJoinStyle.ROUND);
         for (;;) {
             int lenMarker = in.getLength();
             tsize = in.readInt();
@@ -518,7 +517,7 @@ public class MetaDo {
 //                        bmp.setAbsolutePosition(xDest - destWidth * xSrc / srcWidth,
 //                                                      yDest + destHeight * ySrc / srcHeight - bmpImage.getScaledHeight());
                         Image bmpImage = ImageFactory.getBmpImage(b, true, b.length);
-                        PdfImageXObject imageXObject = new PdfImageXObject(document, bmpImage);
+                        PdfImageXObject imageXObject = new PdfImageXObject(bmpImage);
                         float width = destWidth * bmpImage.getWidth() / srcWidth;
                         float height = -destHeight * bmpImage.getHeight() / srcHeight;
                         float x = xDest - destWidth * xSrc / srcWidth;
@@ -577,8 +576,9 @@ public class MetaDo {
         textColor = state.getCurrentTextColor();
         cb.setFillColor(textColor);
         cb.beginText();
-        //TODO
-        cb.setFontAndSize(PdfFont.getDefaultFont(document), fontSize);
+        //TODO Actually here must be used the font which is default for the OS
+        //TODO Uncomment it after PdfDocument will be removed from PdfFont constructors
+//        cb.setFontAndSize(PdfFont.getDefaultFont(document), fontSize);
         cb.setTextMatrix(tx, ty);
         cb.showText(text);
         cb.endText();

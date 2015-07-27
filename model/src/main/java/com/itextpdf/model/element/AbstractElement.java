@@ -3,6 +3,7 @@ package com.itextpdf.model.element;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.border.Border;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
@@ -85,14 +86,18 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
             setProperty(Property.BOTTOM, bottom);
     }
 
-    public Type setFixedPosition(float x, float y) {
+    public Type setFixedPosition(float x, float y, float width) {
+//        if (getProperty(Property.HEIGHT) == null) {
+//            setProperty(Property.HEIGHT, Float.MAX_VALUE);
+//        }
         return (Type) setProperty(Property.POSITION, LayoutPosition.FIXED).
             setProperty(Property.X, x).
-            setProperty(Property.Y, y);
+            setProperty(Property.Y, y).
+            setProperty(Property.WIDTH, width);
     }
 
-    public Type setFixedPosition(int pageNumber, float x, float y) {
-        return (Type) setFixedPosition(x, y).
+    public Type setFixedPosition(int pageNumber, float x, float y, float width) {
+        return (Type) setFixedPosition(x, y, width).
                setProperty(Property.PAGE_NUMBER, pageNumber);
     }
 
@@ -118,8 +123,20 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         return setProperty(Property.CHARACTER_SPACING, charSpacing);
     }
 
+    /**
+     * The word-spacing parameter is added to the glyph’s horizontal or vertical displacement (depending on the writing mode).
+     */
     public Type setWordSpacing(float wordSpacing) {
         return setProperty(Property.WORD_SPACING, wordSpacing);
+    }
+
+    /**
+     * Enable or disable kerning.
+     * Some fonts may specify kern pairs, i.e. pair of glyphs, between which the amount of horizontal space is adjusted.
+     * This adjustment is typically negative, e.g. in "AV" pair the glyphs will typically be moved closer to each other.
+     */
+    public Type setFontKerning(Property.FontKerning fontKerning) {
+        return setProperty(Property.FONT_KERNING, fontKerning);
     }
 
     public Type setBackgroundColor(Color backgroundColor) {
@@ -130,24 +147,24 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         return setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
     }
 
-    public Type setBorder(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER, borderConfig);
+    public Type setBorder(Border border) {
+        return setProperty(Property.BORDER, border);
     }
 
-    public Type setBorderTop(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER_TOP, borderConfig);
+    public Type setBorderTop(Border border) {
+        return setProperty(Property.BORDER_TOP, border);
     }
 
-    public Type setBorderRight(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER_RIGHT, borderConfig);
+    public Type setBorderRight(Border border) {
+        return setProperty(Property.BORDER_RIGHT, border);
     }
 
-    public Type setBorderBottom(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER_BOTTOM, borderConfig);
+    public Type setBorderBottom(Border border) {
+        return setProperty(Property.BORDER_BOTTOM, border);
     }
 
-    public Type setBorderLeft(Property.BorderConfig borderConfig) {
-        return setProperty(Property.BORDER_LEFT, borderConfig);
+    public Type setBorderLeft(Border border) {
+        return setProperty(Property.BORDER_LEFT, border);
     }
 
     @Override

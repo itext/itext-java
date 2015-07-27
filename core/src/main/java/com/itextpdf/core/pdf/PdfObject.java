@@ -22,6 +22,32 @@ abstract public class PdfObject {
      */
     protected PdfIndirectReference indirectReference = null;
 
+    // Indicates if the object has been flushed.
+    protected static final byte Flushed = 1;
+    // Indicates that the indirect reference of the object could be reused or have to be marked as free.
+    protected static final byte Free = 2;
+    // Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
+    protected static final byte Reading = 4;
+    // Indicates that object changed (using in stamp mode).
+    protected static final byte Modified = 8;
+    // Indicates that the indirect reference of the object represents ObjectStream from original document.
+    // When PdfReader read ObjectStream reference marked as OriginalObjectStream
+    // to avoid further reusing.
+    protected static final byte OriginalObjectStream = 16;
+    // For internal usage only. Marks objects that shall be written to the output document.
+    // Option is needed to build the correct PDF objects tree when closing the document.
+    // As a result it avoids writing unused (removed) objects.
+    protected static final byte MustBeFlushed = 32;
+    // Indicates that the object shall be indirect when it is written to the document.
+    // It is used to postpone the creation of indirect reference for the objects that shall be indirect,
+    // so it is possible to create such objects without PdfDocument instance.
+    protected static final byte MustBeIndirect = 64;
+
+    /**
+     * Indicate same special states of PdfIndirectObject or PdfObject like @see Free, @see Reading, @see Modified.
+     */
+    private byte state;
+
     public PdfObject() {
 
     }
@@ -65,25 +91,6 @@ abstract public class PdfObject {
     }
 
     /**
-     * Copied object to a specified document.
-     *
-     * @param document document to copy object to.
-     * @return copied object.
-     */
-    public <T extends PdfObject> T copy(PdfDocument document) {
-        return copy(document, true);
-    }
-
-    /**
-     * Copies object.
-     *
-     * @return copied object.
-     */
-    public <T extends PdfObject> T copy() {
-        return copy(getDocument());
-    }
-
-    /**
      * Gets the indirect reference associated with the object.
      * The indirect reference is used when flushing object to the document.
      * If no reference is associated - create a new one.
@@ -110,6 +117,7 @@ abstract public class PdfObject {
         } else {
             indirectReference = reference;
         }
+        clearState(MustBeIndirect);
         return (T) this;
     }
 
@@ -121,6 +129,33 @@ abstract public class PdfObject {
      */
     public <T extends PdfObject> T makeIndirect(PdfDocument document) {
         return makeIndirect(document, null);
+    }
+
+    /**
+     * Checks state of the flag of current object.
+     * @param state special flag to check
+     * @return true if the state was set.
+     */
+    protected boolean checkState(byte state) {
+        return (this.state & state) == state;
+    }
+
+    /**
+     * Sets special states of current object.
+     * @param state special flag of current object
+     */
+    protected <T extends PdfObject> T setState(byte state) {
+        this.state |= state;
+        return (T) this;
+    }
+
+    /**
+     * Clear state of the flag of current object.
+     * @param state special flag state to clear
+     */
+    protected <T extends PdfObject> T clearState(byte state) {
+        this.state &= 0xFF^state;
+        return (T) this;
     }
 
     /**
@@ -152,6 +187,25 @@ abstract public class PdfObject {
         if (indirectReference != null)
             return indirectReference.getDocument();
         return null;
+    }
+
+    /**
+     * Copies object.
+     *
+     * @return copied object.
+     */
+    public <T extends PdfObject> T copy() {
+        return copy(getDocument());
+    }
+
+    /**
+     * Copied object to a specified document.
+     *
+     * @param document document to copy object to.
+     * @return copied object.
+     */
+    public <T extends PdfObject> T copy(PdfDocument document) {
+        return copy(document, true);
     }
 
     /**

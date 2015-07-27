@@ -6,7 +6,8 @@ import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 public class PdfRendition extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfRendition(PdfDictionary pdfObject, PdfDocument pdfDocument) {
-        super(pdfObject, pdfDocument);
+        super(pdfObject);
+        makeIndirect(pdfDocument);
     }
 
     public PdfRendition(PdfDocument pdfDocument, String file, PdfFileSpec fs, String mimeType) {

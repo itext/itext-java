@@ -6,11 +6,7 @@ import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.RawImage;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
