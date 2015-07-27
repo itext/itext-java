@@ -8,6 +8,10 @@ public class DashedBorder extends Border {
     private static final float dashModifier = 5f;
     private static final float gapModifier = 3.5f;
 
+    public DashedBorder(float width) {
+        super(width);
+    }
+    
     public DashedBorder(Color color, float width) {
         super(color, width);
     }

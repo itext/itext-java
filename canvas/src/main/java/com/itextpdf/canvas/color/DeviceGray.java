@@ -16,4 +16,22 @@ public class DeviceGray extends Color {
         this(0);
     }
 
+    public static DeviceGray makeLighter(DeviceGray grayColor) {
+        float v = grayColor.getColorValue()[0];
+
+        if (v == 0f)
+            return new DeviceGray(0.3f);
+
+        float multiplier = Math.min(1f, v + 0.33f) / v;
+
+        return new DeviceGray(v * multiplier);
+    }
+
+    public static DeviceGray makeDarker(DeviceGray grayColor) {
+        float v = grayColor.getColorValue()[0];
+        float multiplier = Math.max(0f, (v - 0.33f) / v);
+
+        return new DeviceGray(v * multiplier);
+    }
+
 }

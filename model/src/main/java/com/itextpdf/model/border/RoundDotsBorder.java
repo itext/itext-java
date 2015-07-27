@@ -7,6 +7,10 @@ import com.itextpdf.canvas.color.Color;
 public class RoundDotsBorder extends Border {
     private static final float gapModifier = 2.5f;
 
+    public RoundDotsBorder(float width) {
+        super(width);
+    }
+
     public RoundDotsBorder(Color color, float width) {
         super(color, width);
     }

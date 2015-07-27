@@ -5,9 +5,12 @@ import com.itextpdf.canvas.color.Color;
 
 public abstract class Border {
 
-
     protected Color color;
     protected float width;
+
+    public Border(float width) {
+        this(Color.Black, width);
+    }
 
     public Border(Color color, float width) {
         this.color = color;

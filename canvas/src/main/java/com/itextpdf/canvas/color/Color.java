@@ -35,6 +35,30 @@ public class Color {
             this.colorValue = colorValue;
     }
 
+    public static DeviceRgb convertCmykToRgb(DeviceCmyk cmykColor) {
+        float cyanComp = 1 - cmykColor.getColorValue()[0];
+        float magentaComp = 1 - cmykColor.getColorValue()[1];
+        float yellowComp = 1 - cmykColor.getColorValue()[2];
+        float blackComp = 1 - cmykColor.getColorValue()[3];
+
+        float r = cyanComp * blackComp;
+        float g = magentaComp * blackComp;
+        float b = yellowComp * blackComp;
+        return new DeviceRgb(r, g, b);
+    }
+
+    public static DeviceCmyk convertRgbToCmyk(DeviceRgb rgbColor) {
+        float redComp = rgbColor.getColorValue()[0];
+        float greenComp = rgbColor.getColorValue()[1];
+        float blueComp = rgbColor.getColorValue()[2];
+
+        float k = 1 - Math.max(Math.max(redComp, greenComp), blueComp);
+        float c = (1 - redComp - k) / (1 - k);
+        float m = (1 - greenComp - k) / (1 - k);
+        float y = (1 - blueComp - k) / (1 - k);
+        return new DeviceCmyk(c, m, y, k);
+    }
+
     public int getNumOfComponents() {
         return colorValue.length;
     }

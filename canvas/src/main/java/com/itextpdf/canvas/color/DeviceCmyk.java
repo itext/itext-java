@@ -17,4 +17,15 @@ public class DeviceCmyk extends Color {
         super(new PdfDeviceCs.Cmyk(), new float[]{c, m, y, k});
     }
 
+    public static DeviceCmyk makeLighter(DeviceCmyk cmykColor) {
+        DeviceRgb rgbEquivalent = convertCmykToRgb(cmykColor);
+        DeviceRgb lighterRgb = DeviceRgb.makeLighter((rgbEquivalent));
+        return convertRgbToCmyk(lighterRgb);
+    }
+
+    public static DeviceCmyk makeDarker(DeviceCmyk cmykColor) {
+        DeviceRgb rgbEquivalent = convertCmykToRgb(cmykColor);
+        DeviceRgb darkerRgb = DeviceRgb.makeDarker(rgbEquivalent);
+        return convertRgbToCmyk(darkerRgb);
+    }
 }

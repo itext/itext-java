@@ -77,23 +77,22 @@ public class BorderTest {
         fileName = "borders3DTest.pdf";
         Document doc = createDocument();
 
-
         List list = new List();
 
         ListItem grooveBorderItem = new ListItem("groove");
-        grooveBorderItem.setBorder(new GrooveBorder(Color.Silver, 2)).setMarginBottom(5).setWidth(100);
+        grooveBorderItem.setBorder(new GrooveBorder(2)).setMarginBottom(5).setWidth(100);
         list.add(grooveBorderItem);
 
         ListItem ridgeBorderItem = new ListItem("ridge");
-        ridgeBorderItem.setBorder(new RidgeBorder(Color.Silver, 2)).setMarginBottom(5).setWidth(100);
+        ridgeBorderItem.setBorder(new RidgeBorder(2)).setMarginBottom(5).setWidth(100);
         list.add(ridgeBorderItem);
 
         ListItem insetBorderItem = new ListItem("inset");
-        insetBorderItem.setBorder(new InsetBorder(Color.Silver, 1)).setMarginBottom(5).setWidth(100);
+        insetBorderItem.setBorder(new InsetBorder(1)).setMarginBottom(5).setWidth(100);
         list.add(insetBorderItem);
 
         ListItem outsetBorderItem = new ListItem("outset");
-        outsetBorderItem.setBorder(new OutsetBorder(Color.Silver, 1)).setMarginBottom(5).setWidth(100);
+        outsetBorderItem.setBorder(new OutsetBorder(1)).setMarginBottom(5).setWidth(100);
         list.add(outsetBorderItem);
 
         doc.add(list);
@@ -101,22 +100,59 @@ public class BorderTest {
         Paragraph emptyParagraph = new Paragraph("\n");
         doc.add(emptyParagraph);
 
+
+
+
+
+        DeviceRgb blueRgb = new DeviceRgb(0, 0, 200);
+        DeviceRgb greenRgb = new DeviceRgb(0, 255, 0);
+        DeviceCmyk magentaCmyk = new DeviceCmyk(0, 100, 0, 0);
+        DeviceCmyk yellowCmyk = new DeviceCmyk(0, 0, 100, 0);
+
         list = new List();
 
         grooveBorderItem = new ListItem("groove");
-        grooveBorderItem.setBorder(new GrooveBorder(Color.Blue, 8)).setMarginBottom(5);
+        grooveBorderItem.setBorder(new GrooveBorder(blueRgb, 2)).setMarginBottom(5).setWidth(100);
         list.add(grooveBorderItem);
 
         ridgeBorderItem = new ListItem("ridge");
-        ridgeBorderItem.setBorder(new RidgeBorder(Color.Red, 8)).setMarginBottom(5);
+        ridgeBorderItem.setBorder(new RidgeBorder(greenRgb, 2)).setMarginBottom(5).setWidth(100);
         list.add(ridgeBorderItem);
 
         insetBorderItem = new ListItem("inset");
-        insetBorderItem.setBorder(new InsetBorder(Color.Green, 8)).setMarginBottom(5);
+        insetBorderItem.setBorder(new InsetBorder(magentaCmyk, 1)).setMarginBottom(5).setWidth(100);
         list.add(insetBorderItem);
 
         outsetBorderItem = new ListItem("outset");
-        outsetBorderItem.setBorder(new OutsetBorder(Color.Black, 8)).setMarginBottom(5);
+        outsetBorderItem.setBorder(new OutsetBorder(yellowCmyk, 1)).setMarginBottom(5).setWidth(100);
+        list.add(outsetBorderItem);
+
+        doc.add(list);
+
+        emptyParagraph = new Paragraph("\n");
+        doc.add(emptyParagraph);
+
+
+
+
+
+
+        list = new List();
+
+        grooveBorderItem = new ListItem("groove");
+        grooveBorderItem.setBorder(new GrooveBorder(yellowCmyk, 8)).setMarginBottom(5);
+        list.add(grooveBorderItem);
+
+        ridgeBorderItem = new ListItem("ridge");
+        ridgeBorderItem.setBorder(new RidgeBorder(magentaCmyk, 8)).setMarginBottom(5);
+        list.add(ridgeBorderItem);
+
+        insetBorderItem = new ListItem("inset");
+        insetBorderItem.setBorder(new InsetBorder(greenRgb, 8)).setMarginBottom(5);
+        list.add(insetBorderItem);
+
+        outsetBorderItem = new ListItem("outset");
+        outsetBorderItem.setBorder(new OutsetBorder(blueRgb, 8)).setMarginBottom(5);
         list.add(outsetBorderItem);
 
         doc.add(list);

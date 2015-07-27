@@ -5,6 +5,10 @@ import com.itextpdf.canvas.color.Color;
 
 public class SolidBorder extends Border {
 
+    public SolidBorder(float width) {
+        super(width);
+    }
+
     public SolidBorder(Color color, float width) {
         super(color, width);
     }

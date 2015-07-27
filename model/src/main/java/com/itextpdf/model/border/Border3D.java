@@ -2,14 +2,27 @@ package com.itextpdf.model.border;
 
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
+import com.itextpdf.canvas.color.DeviceCmyk;
+import com.itextpdf.canvas.color.DeviceGray;
 import com.itextpdf.canvas.color.DeviceRgb;
 
 public abstract class Border3D extends Border{
     public static final DeviceRgb gray = new DeviceRgb(212, 208, 200);
-    public static final DeviceRgb darkGray = new DeviceRgb(128, 128, 128);
 
 
-    public Border3D(Color color, float width) {
+    public Border3D(float width) {
+        this(gray, width);
+    }
+
+    public Border3D(DeviceRgb color, float width) {
+        super(color, width);
+    }
+
+    public Border3D(DeviceCmyk color, float width) {
+        super(color, width);
+    }
+
+    public Border3D(DeviceGray color, float width) {
         super(color, width);
     }
 
@@ -81,6 +94,17 @@ public abstract class Border3D extends Border{
 
         setOuterHalfColor(canvas, borderSide);
         canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
+    }
+
+    protected Color getDarkerColor() {
+        if (color instanceof DeviceRgb)
+            return DeviceRgb.makeDarker((DeviceRgb)color);
+        else if (color instanceof DeviceCmyk)
+            return DeviceCmyk.makeDarker((DeviceCmyk)color);
+        else if (color instanceof DeviceGray)
+            return DeviceGray.makeDarker((DeviceGray)color);
+
+        return color;
     }
 
     protected abstract void setInnerHalfColor(PdfCanvas canvas, Side side);

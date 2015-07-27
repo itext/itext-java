@@ -5,6 +5,10 @@ import com.itextpdf.canvas.color.Color;
 
 public class DoubleBorder extends Border{
 
+    public DoubleBorder(float width) {
+        super(width);
+    }
+
     public DoubleBorder(Color color, float width) {
         super(color, width);
     }

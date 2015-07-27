@@ -6,6 +6,10 @@ import com.itextpdf.canvas.color.Color;
 public class DottedBorder extends Border {
     private static final float gapModifier = 1.5f;
 
+    public DottedBorder(float width) {
+        super(width);
+    }
+
     public DottedBorder(Color color, float width) {
         super(color, width);
     }

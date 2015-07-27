@@ -50,7 +50,7 @@ public class RotationTest {
 
         Document document = new Document(pdfDocument);
 
-        SolidBorder border = new SolidBorder(Color.Black, 0.5f);
+        SolidBorder border = new SolidBorder(0.5f);
         int x1 = 350;
         int y1 = 600;
         int width1 = 100;
