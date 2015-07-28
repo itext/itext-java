@@ -5,7 +5,7 @@ import com.itextpdf.basics.PdfException;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class PdfTokeniser {
+public class PdfTokenizer {
 
     public enum TokenType {
         Number,
@@ -77,13 +77,13 @@ public class PdfTokeniser {
     private boolean closeStream = true;
 
     /**
-     * Creates a PRTokeniser for the specified {@link RandomAccessFileOrArray}.
+     * Creates a PdfTokenizer for the specified {@link RandomAccessFileOrArray}.
      * The beginning of the file is read to determine the location of the header, and the data source is adjusted
      * as necessary to account for any junk that occurs in the byte source before the header
      *
      * @param file the source
      */
-    public PdfTokeniser(RandomAccessFileOrArray file) {
+    public PdfTokenizer(RandomAccessFileOrArray file) {
         this.file = file;
         this.outBuf = new ByteBuffer();
     }
@@ -592,26 +592,66 @@ public class PdfTokeniser {
 
     /**
      * Check whether line starts with object declaration.
-     * @param lineTokeniser tokeniser, built by single line.
+     * @param lineTokenizer tokenizer, built by single line.
      * @return object number and generation if check is successful, otherwise - null.
      */
-    public static int[] checkObjectStart(PdfTokeniser lineTokeniser) {
+    public static int[] checkObjectStart(PdfTokenizer lineTokenizer) {
         try {
-            lineTokeniser.seek(0);
-            if (!lineTokeniser.nextToken() || lineTokeniser.getTokenType() != TokenType.Number)
+            lineTokenizer.seek(0);
+            if (!lineTokenizer.nextToken() || lineTokenizer.getTokenType() != TokenType.Number)
                 return null;
-            int num = lineTokeniser.getIntValue();
-            if (!lineTokeniser.nextToken() || lineTokeniser.getTokenType() != TokenType.Number)
+            int num = lineTokenizer.getIntValue();
+            if (!lineTokenizer.nextToken() || lineTokenizer.getTokenType() != TokenType.Number)
                 return null;
-            int gen = lineTokeniser.getIntValue();
-            if (!lineTokeniser.nextToken())
+            int gen = lineTokenizer.getIntValue();
+            if (!lineTokenizer.nextToken())
                 return null;
-            if (!Arrays.equals(Obj, lineTokeniser.getByteContent()))
+            if (!Arrays.equals(Obj, lineTokenizer.getByteContent()))
                 return null;
             return new int[]{num, gen};
         } catch (Exception ioe) {
             // empty on purpose
         }
         return null;
+    }
+
+    protected static class ReusableRandomAccessSource implements RandomAccessSource {
+        private ByteBuffer buffer;
+
+        public ReusableRandomAccessSource(ByteBuffer buffer) {
+            if (buffer == null) throw new NullPointerException();
+            this.buffer = buffer;
+        }
+
+        @Override
+        public int get(long offset) {
+            if (offset >= buffer.size()) return -1;
+            return 0xff & buffer.getInternalBuffer()[(int) offset];
+        }
+
+        @Override
+        public int get(long offset, byte[] bytes, int off, int len) {
+            if (buffer == null) throw new IllegalStateException("Already closed");
+
+            if (offset >= buffer.size())
+                return -1;
+
+            if (offset + len > buffer.size())
+                len = (int) (buffer.size() - offset);
+
+            System.arraycopy(buffer.getInternalBuffer(), (int) offset, bytes, off, len);
+
+            return len;
+        }
+
+        @Override
+        public long length() {
+            return buffer.size();
+        }
+
+        @Override
+        public void close() throws IOException {
+            buffer = null;
+        }
     }
 }

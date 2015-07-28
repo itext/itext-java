@@ -1,6 +1,6 @@
 package com.itextpdf.basics.font.cmap;
 
-import com.itextpdf.basics.io.PdfTokeniser;
+import com.itextpdf.basics.io.PdfTokenizer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class CMapParser {
     private static void parseCid(String cmapName, AbstractCMap cmap, CMapLocation location, int level) throws IOException {
         if (level >= MaxLevel)
             return;
-        PdfTokeniser inp = location.getLocation(cmapName);
+        PdfTokenizer inp = location.getLocation(cmapName);
         try {
             ArrayList<CMapObject> list = new ArrayList<CMapObject>();
             CMapContentParser cp = new CMapContentParser(inp);

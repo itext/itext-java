@@ -1,10 +1,20 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.io.PdfTokenizer;
+import com.itextpdf.basics.io.RandomAccessFileOrArray;
+import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.color.Color;
+import com.itextpdf.canvas.color.DeviceCmyk;
+import com.itextpdf.canvas.color.DeviceGray;
+import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
@@ -13,14 +23,35 @@ import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 
 public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
-    protected static final int DEFAULT_FONT_SIZE = 12;
+    public static final int DEFAULT_FONT_SIZE = 12;
+    public static final int DA_FONT = 0;
+    public static final int DA_SIZE = 1;
+    public static final int DA_COLOR = 2;
+
+    /** A field with the symbol check */
+    public static final int TYPE_CHECK = 1;
+    /** A field with the symbol circle */
+    public static final int TYPE_CIRCLE = 2;
+    /** A field with the symbol cross */
+    public static final int TYPE_CROSS = 3;
+    /** A field with the symbol diamond */
+    public static final int TYPE_DIAMOND = 4;
+    /** A field with the symbol square */
+    public static final int TYPE_SQUARE = 5;
+    /** A field with the symbol star */
+    public static final int TYPE_STAR = 6;
+
+    protected static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
+
+    protected String text;
+    protected PdfFont font;
+    protected int checkType;
+    protected float borderWidth = 1;
 
     public PdfFormField() {
         this(new PdfDictionary());
@@ -88,10 +119,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, PdfFont font, int fontSize, String value, String name) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         PdfTextFormField field = new PdfTextFormField(annot).makeIndirect(doc);
-        field.setValue(new PdfString(value));
+        field.setValue(value);
         field.setFieldName(name);
 
-        annot.setNormalAppearance(field.drawTextAppearance(rect, font, fontSize, value).getPdfObject());
+        PdfFormXObject xObject = field.drawTextAppearance(rect, font, fontSize, value);
+        xObject.getResources().addFont(font);
+        annot.setNormalAppearance(xObject.getPdfObject());
 
         return field;
     }
@@ -123,9 +156,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.put(PdfName.Opt, options);
         field.setFieldFlags(flags);
         field.setFieldName(name);
-        field.setValue(new PdfString(value));
+        field.setValue(value);
 
-        annot.setNormalAppearance(field.drawTextAppearance(rect, font, fontSize, value).getPdfObject());
+        PdfFormXObject xObject = field.drawMultiLineTextAppearance(rect, font, fontSize, value);
+        xObject.getResources().addFont(font);
+        annot.setNormalAppearance(xObject.getPdfObject());
 
         return field;
     }
@@ -142,7 +177,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static PdfButtonFormField createRadioGroup(PdfDocument doc, String name, String defaultValue) {
         PdfButtonFormField radio = createButton(doc, PdfButtonFormField.FF_RADIO);
         radio.setFieldName(name);
-        radio.setValue(new PdfName(defaultValue));
+        radio.put(PdfName.V, new PdfName(defaultValue));
         return radio;
     }
 
@@ -176,17 +211,22 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.setPushButton(true);
         field.setFieldName(name);
 
-        PdfFormXObject xObject = field.drawButtonAppearance(rect.getWidth(), rect.getHeight(), caption, font, fontSize);
+        PdfFormXObject xObject = field.drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), caption, font, fontSize);
         annot.setNormalAppearance(xObject.getPdfObject());
 
         return field;
     }
 
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String value, String name) {
+        return createCheckBox(doc, rect, value, name, PdfButtonFormField.TYPE_CROSS);
+    }
+
+    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String value, String name, int checkType) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         PdfButtonFormField check = new PdfButtonFormField(annot).makeIndirect(doc);
+        check.setCheckType(checkType);
         check.setFieldName(name);
-        check.setValue(new PdfName(value));
+        check.setValue(value);
         annot.setAppearanceState(new PdfName(value));
         check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
 
@@ -243,8 +283,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
-    public <T extends PdfFormField> T setValue(PdfObject value) {
-        return put(PdfName.V, value);
+    public <T extends PdfFormField> T setValue(String value) {
+        PdfName formType = getFormType();
+        if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
+            put(PdfName.V, new PdfString(value));
+        } else if (PdfName.Btn.equals(formType)) {
+             if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
+                 //@TODO Base64 images support
+             } else {
+                 put(PdfName.V, new PdfName(value));
+             }
+        }
+
+        regenerateField();
+        return (T) this;
     }
 
     public <T extends PdfFormField> T setParent(PdfFormField parent) {
@@ -339,6 +391,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().get(PdfName.V);
     }
 
+    public String getValueAsString() {
+        PdfObject value = getPdfObject().get(PdfName.V);
+        if (value == null) {
+            return "";
+        } else if (value instanceof PdfStream) {
+            return new String(((PdfStream)value).getBytes());
+        } else if (value instanceof PdfName) {
+            return ((PdfName) value).getValue();
+        } else if (value instanceof PdfString) {
+            return ((PdfString) value).toUnicodeString();
+        } else {
+            return "";
+        }
+    }
+
     public <T extends PdfFormField> T setDefaultValue(PdfObject value) {
         return put(PdfName.DV, value);
     }
@@ -397,8 +464,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Sets default appearance string containing a sequence of valid page-content graphics or text state operators that
      * define such properties as the field’s text size and color.
      */
-    public <T extends PdfFormField> T setDefaultAppearance(PdfString defaultAppearance) {
-        getPdfObject().put(PdfName.DA, defaultAppearance);
+    public <T extends PdfFormField> T setDefaultAppearance(String defaultAppearance) {
+        byte[] b = defaultAppearance.getBytes();
+        int len = b.length;
+        for (int k = 0; k < len; ++k) {
+            if (b[k] == '\n')
+                b[k] = 32;
+        }
+        getPdfObject().put(PdfName.DA, new PdfString(new String(b)));
         return (T) this;
     }
 
@@ -458,10 +531,42 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public PdfFormXObject drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+
+        setDefaultAppearance(setFontAndSize(font, fontSize));
+
+        float height = rect.getHeight();
+        float width = rect.getWidth();
+
+        canvas.
+                beginVariableText().
+                saveState().
+                newPath().
+                beginText().
+                setFontAndSize(font, fontSize).
+                resetFillColorRgb().
+                setTextMatrix(2, height / 2 - fontSize * 0.3f).
+                showText(value).
+                endText().
+                restoreState().
+                endVariableText();
+
+
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
+        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+
+        return xObject;
+    }
+
+    public PdfFormXObject drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
+        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+
+        setDefaultAppearance(setFontAndSize(font, fontSize));
+
         float width = rect.getWidth();
         float height = rect.getHeight();
 
-        drawTextField(canvas, 0, 0, width, height);
+        drawBorder(canvas, width, height);
         canvas.
                 beginVariableText().
                 saveState().
@@ -485,50 +590,25 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 endVariableText();
 
 
-        PdfFormXObject xObject = new PdfFormXObject(rect);
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
-        xObject.getResources().addFont(font);
 
         return xObject;
     }
 
-    public void drawTextField(PdfCanvas canvas, float x, float y, float width, float height) {
+    public void drawBorder(PdfCanvas canvas, float width, float height) {
 
-        float upperRightX = x + width;
-        float upperRightY = y + height;
+        if (borderWidth <=0) {
+            return;
+        }
+
+        borderWidth = Math.max(1, borderWidth);
 
         canvas.
                 saveState().
-                setStrokeColor(Color.Silver).
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                rectangle(x, y, width, height).
-                stroke().
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                setFillColor(Color.White).
-                rectangle(x + 0.5f, y + 0.5f, width - 1, height - 1).
-                fill().
-                setStrokeColor(Color.Silver).
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                moveTo(x + 1, y + 1.5f).
-                lineTo(upperRightX - 1.5f, y + 1.5f).
-                lineTo(upperRightX - 1.5f, upperRightY - 1).
-                stroke().
-                setStrokeColor(Color.Gray).
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                moveTo(x + 1, y + 1).
-                lineTo(x + 1, upperRightY - 1).
-                lineTo(upperRightX - 1, upperRightY - 1).
-                stroke().
                 setStrokeColor(Color.Black).
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                moveTo(x + 2, y + 2).
-                lineTo(x + 2, upperRightY - 2).
-                lineTo(upperRightX - 2, upperRightY - 2).
+                setLineWidth(borderWidth).
+                rectangle(0, 0, width, height).
                 stroke().
                 restoreState();
     }
@@ -536,11 +616,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public void drawRadioAppearance(float width, float height, String value) {
         PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources());
+        drawBorder(canvasOn, width, height);
         drawRadioField(canvasOn, 0, 0, width, height, true);
 
         PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources());
-        drawRadioField(canvasOff, 0, 0, width, height, false);
+        drawBorder(canvasOff, width, height);
 
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfWidgetAnnotation widget = getWidgets().get(0);
@@ -555,58 +636,45 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public void drawRadioField(PdfCanvas canvas, final float x, final float y, final float width, final float height, final boolean on) {
-        canvas.
-                saveState().
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
-                setStrokeColor(Color.Silver).
-                arc(x + 1, y + 1, x + width - 1, y + height - 1, 0, 360).
-                stroke().
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
-                setStrokeColor(Color.Gray).
-                arc(x + 0.5f, y + 0.5f, x + width - 0.5f, y + height - 0.5f, 45, 180).
-                stroke().
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
-                setStrokeColor(Color.Black).
-                arc(x + 1.5f, y + 1.5f, x + width - 1.5f, y + height - 1.5f, 45, 180).
-                stroke();
+        canvas.saveState();
         if (on) {
             canvas.
-                    setLineWidth(1).
-                    setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND).
-                    setFillColor(Color.Black).
-                    arc(x + 4, y + 4, x + width - 4, y + height - 4, 0, 360).
+                    resetFillColorRgb().
+                    circle(width / 2, height / 2, Math.min(width, height) / 4).
                     fill();
         }
-        canvas.restoreState();
     }
 
     public void drawCheckAppearance(float width, float height, String value) {
         PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources());
-        drawTextField(canvasOn, 0, 0, width, height);
+        drawBorder(canvasOn, width, height);
+        drawCheckBox(canvasOn, width, height, DEFAULT_FONT_SIZE, true);
 
         PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources());
-        drawTextField(canvasOff, 0, 0, width, height);
+        drawBorder(canvasOff, width, height);
+        drawCheckBox(canvasOff, width, height, DEFAULT_FONT_SIZE, false);
 
         Rectangle rect = new Rectangle(0, 0, width, height);
         PdfWidgetAnnotation widget = getWidgets().get(0);
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
+        xObjectOn.getResources().addFont(getFont());
         widget.setNormalAppearance(new PdfDictionary());
         widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
 
         PdfFormXObject xObjectOff = new PdfFormXObject(rect);
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
+        xObjectOff.getResources().addFont(getFont());
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
+//        setDefaultAppearance(setFontAndSize(getFont(), DEFAULT_FONT_SIZE));
     }
-
-    public PdfFormXObject drawButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
+    
+    public PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+//        setDefaultAppearance(setFontAndSize(font, fontSize));
 
         drawButton(canvas, 0, 0, width, height, text, font, fontSize);
 
@@ -653,6 +721,166 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 restoreState();
     }
 
+
+
+    public void drawCheckBox(PdfCanvas canvas, float width, float height, int fontSize, boolean on) {
+        if (!on) {
+            return;
+        }
+        PdfFont ufont = getFont();
+        canvas.
+                beginText().
+                setFontAndSize(ufont, fontSize).
+                resetFillColorRgb().
+                setTextMatrix((width - ufont.getFontProgram().getWidthPoint(text, fontSize)) / 2, (height - ufont.getFontProgram().getAscent(text) * 0.001f * fontSize) / 2).
+                showText(text).
+                endText();
+    }
+
+    public PdfFont getFont() {
+        return font;
+    }
+
+    public void setFont(PdfFont font) {
+        this.font = font;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setCheckType(int checkType) {
+        if (checkType < TYPE_CHECK || checkType > TYPE_STAR) {
+            checkType = TYPE_CIRCLE;
+        }
+        this.checkType = checkType;
+        setText(typeChars[checkType - 1]);
+        try {
+            setFont(new PdfType1Font(getDocument(), new Type1Font(FontConstants.ZAPFDINGBATS, PdfEncodings.WINANSI)));
+        }
+        catch (IOException e) {
+            throw new PdfException(e.getLocalizedMessage());
+        }
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public boolean regenerateField() {
+        PdfName type = getFormType();
+        String value = getValueAsString();
+
+        if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {
+            try{
+                PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
+                PdfStream asNormal = null;
+                if (apDic != null) {
+                    asNormal = apDic.getAsStream(PdfName.N);
+                }
+                PdfArray bBox = getPdfObject().getAsArray(PdfName.Rect);
+                if (bBox == null) {
+                    PdfArray kids = getKids();
+                    if (kids == null) {
+                        throw new PdfException("Wrong form field to regenerate. Add annotation to the field");
+                    }
+                    bBox = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
+                }
+
+                Object[] fontAndSize = getFontAndSize(asNormal);
+                PdfFont font = (PdfFont) fontAndSize[0];
+                int fontSize = (int) fontAndSize[1];
+
+                PdfFormXObject appearance;
+                if (PdfName.Tx.equals(type)) {
+                    appearance = drawTextAppearance(bBox.toRectangle(), font, fontSize, value);
+                } else {
+                    appearance = drawMultiLineTextAppearance(bBox.toRectangle(), font, fontSize, value);
+                }
+                appearance.getResources().addFont(font);
+                PdfDictionary ap = new PdfDictionary();
+                ap.put(PdfName.N, appearance.getPdfObject());
+                put(PdfName.AP, ap);
+
+                return true;
+            } catch (IOException e) {
+                throw new PdfException(e.getLocalizedMessage());
+            }
+
+        } else if (PdfName.Btn.equals(type)) {
+            int ff = getFieldFlags();
+            if ((ff & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
+                try {
+                    Rectangle rect = getRect(getPdfObject());
+                    PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
+                    PdfStream asNormal = null;
+                    if (apDic != null) {
+                        asNormal = apDic.getAsStream(PdfName.N);
+                    }
+                    Object[] fontAndSize = getFontAndSize(asNormal);
+                    PdfFont font = (PdfFont) fontAndSize[0];
+                    int fontSize = (int) fontAndSize[1];
+                    PdfFormXObject appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, font, fontSize);
+                    appearance.getResources().addFont(font);
+                    apDic.put(PdfName.N, appearance.getPdfObject());
+                } catch (IOException e) {
+                    throw new PdfException(e.getLocalizedMessage());
+                }
+            }
+            else if ((ff & PdfButtonFormField.FF_RADIO) != 0) {
+                PdfArray kids = getKids();
+                for (PdfObject kid : kids) {
+                    if (kid.isIndirectReference()) {
+                        kid = ((PdfIndirectReference) kid).getRefersTo();
+                    }
+                    PdfFormField field = new PdfFormField((PdfDictionary) kid);
+                    PdfWidgetAnnotation widget = field.getWidgets().get(0);
+                    PdfDictionary buttonValues = field.getPdfObject().getAsDictionary(PdfName.AP).getAsDictionary(PdfName.N);
+                    String state;
+                    if (buttonValues.get(new PdfName(value)) != null) {
+                        state = value;
+                    } else {
+                        state = "Off";
+
+                    }
+                    widget.setAppearanceState(new PdfName(state));
+                }
+            } else {
+                Rectangle rect = getRect(getPdfObject());
+                setCheckType(TYPE_CROSS);
+                drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
+                PdfWidgetAnnotation widget = getWidgets().get(0);
+                if (value.equals("Yes")) {
+                    widget.setAppearanceState(new PdfName(value));
+                } else {
+                    widget.setAppearanceState(new PdfName("Off"));
+                }
+            }
+        }
+        return true;
+    }
+
+    public float getBorderWidth() {
+        return borderWidth;
+    }
+
+    public void setBorderWidth(float borderWidth) {
+        this.borderWidth = borderWidth;
+    }
+
+    protected Rectangle getRect(PdfDictionary field) {
+        PdfArray rect = field.getAsArray(PdfName.Rect);
+        if (rect == null) {
+            PdfArray kids = field.getAsArray(PdfName.Kids);
+            if (kids == null) {
+                throw new PdfException(PdfException.WrongFormFieldAddAnnotationToTheField);
+            }
+            rect = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
+        }
+
+        return rect.toRectangle();
+    }
+
     protected static PdfArray processOptions(String options[][]) {
         PdfArray array = new PdfArray();
         for (String option[] : options) {
@@ -670,5 +898,89 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             array.add(new PdfString(option));
         }
         return array;
+    }
+
+    protected String setFontAndSize(PdfFont font, int fontSize) {
+        PdfStream stream = new PdfStream();
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+        canvas.setFontAndSize(font, fontSize).resetFillColorRgb();
+        return new String(stream.getBytes());
+    }
+
+    protected Object[] getFontAndSize(PdfDictionary asNormal) throws IOException {
+        Object[] fontAndSize = new Object[2];
+        PdfDictionary resources = null;
+        if (asNormal != null) {
+            resources = asNormal.getAsDictionary(PdfName.Resources);
+        }
+        if (resources != null) {
+            PdfDictionary fontDic = resources.getAsDictionary(PdfName.Font);
+            if (fontDic != null) {
+                String str = getDefaultAppearance().toUnicodeString();
+                Object[] dab = splitDAelements(str);
+                PdfName fontName = new PdfName(dab[0].toString());
+                fontAndSize[0] =  new PdfFont(getDocument(), fontDic.getAsDictionary(fontName));
+//                fontAndSize[0] =  PdfFont.createFont(getDocument(), fontDic.getAsDictionary(fontName));
+                fontAndSize[1] = ((Integer)dab[1]).intValue();
+            }
+        } else {
+            fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
+            fontAndSize[1] = DEFAULT_FONT_SIZE;
+        }
+
+        return fontAndSize;
+    }
+
+    protected static Object[] splitDAelements(String da) {
+
+        PdfTokenizer tk = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(PdfEncodings.convertToBytes(da, null))));
+        ArrayList<String> stack = new ArrayList<String>();
+        Object ret[] = new Object[3];
+        try {
+            while (tk.nextToken()) {
+                if (tk.getTokenType() == PdfTokenizer.TokenType.Comment)
+                    continue;
+                if (tk.getTokenType() == PdfTokenizer.TokenType.Other) {
+                    String operator = tk.getStringValue();
+                    if (operator.equals("Tf")) {
+                        if (stack.size() >= 2) {
+                            ret[DA_FONT] = stack.get(stack.size() - 2);
+                            ret[DA_SIZE] = new Integer(stack.get(stack.size() - 1));
+                        }
+                    }
+                    else if (operator.equals("g")) {
+                        if (stack.size() >= 1) {
+                            float gray = new Float(stack.get(stack.size() - 1)).floatValue();
+                            if (gray != 0) {
+                                ret[DA_COLOR] = new DeviceGray(gray);
+                            }
+                        }
+                    }
+                    else if (operator.equals("rg")) {
+                        if (stack.size() >= 3) {
+                            float red = new Float(stack.get(stack.size() - 3)).floatValue();
+                            float green = new Float(stack.get(stack.size() - 2)).floatValue();
+                            float blue = new Float(stack.get(stack.size() - 1)).floatValue();
+                            ret[DA_COLOR] = new DeviceRgb(red, green, blue);
+                        }
+                    }
+                    else if (operator.equals("k")) {
+                        if (stack.size() >= 4) {
+                            float cyan = new Float(stack.get(stack.size() - 4)).floatValue();
+                            float magenta = new Float(stack.get(stack.size() - 3)).floatValue();
+                            float yellow = new Float(stack.get(stack.size() - 2)).floatValue();
+                            float black = new Float(stack.get(stack.size() - 1)).floatValue();
+                            ret[DA_COLOR] = new DeviceCmyk(cyan, magenta, yellow, black);
+                        }
+                    }
+                    stack.clear();
+                }
+                else
+                    stack.add(tk.getStringValue());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ret;
     }
 }

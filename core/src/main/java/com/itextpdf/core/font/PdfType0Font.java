@@ -742,7 +742,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     private void fillMetrics(byte[] touni, IntHashtable widths, int dw) {
         try {
-            CMapContentParser ps = new CMapContentParser(new com.itextpdf.basics.io.PdfTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(touni))));
+            CMapContentParser ps = new CMapContentParser(new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(touni))));
             CMapObject ob = null;
             boolean notFound = true;
             int nestLevel = 0;

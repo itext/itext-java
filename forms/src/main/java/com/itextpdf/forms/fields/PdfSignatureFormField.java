@@ -23,7 +23,6 @@ public class PdfSignatureFormField extends PdfFormField {
         return PdfName.Sig;
     }
 
-    @Override
     public <T extends PdfFormField> T setValue(PdfObject value) {
         return put(PdfName.V, value);
     }

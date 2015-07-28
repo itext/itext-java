@@ -30,11 +30,6 @@ public class PdfTextFormField extends PdfFormField {
         return PdfName.Tx;
     }
 
-    @Override
-    public <T extends PdfFormField> T setValue(PdfObject value) {
-        return put(PdfName.V, value);
-    }
-
     /**
      * If true, the field can contain multiple lines of text; if false, the field’s text is restricted to a single line.
      */

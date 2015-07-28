@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.basics.io.PdfTokeniser;
+import com.itextpdf.basics.io.PdfTokenizer;
 
 import java.io.ByteArrayOutputStream;
 
@@ -27,7 +27,7 @@ public class ASCII85DecodeFilter implements FilterHandler {
             int ch = in[k] & 0xff;
             if (ch == '~')
                 break;
-            if (PdfTokeniser.isWhitespace(ch))
+            if (PdfTokenizer.isWhitespace(ch))
                 continue;
             if (ch == 'z' && state == 0) {
                 out.write(0);

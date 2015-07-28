@@ -288,6 +288,9 @@ public class PdfCanvas {
             throw new PdfException(PdfException.FontSizeTooSmall, size);
         currentGs.setFontSize(size);
         PdfName fontName = resources.addFont(font);
+//        if (font.getPdfObject().getAsName(PdfName.BaseFont) != null && font.getPdfObject().getAsName(PdfName.BaseFont).getValue().equals("Helvetica")) {
+//            fontName = new PdfName("ASdasdasdasd");
+//        }
         currentGs.setFont(font);
         contentStream.getOutputStream()
                 .write(fontName)

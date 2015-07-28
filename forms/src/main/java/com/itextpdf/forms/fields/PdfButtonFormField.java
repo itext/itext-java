@@ -1,9 +1,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 
 public class PdfButtonFormField extends PdfFormField {
@@ -31,11 +29,6 @@ public class PdfButtonFormField extends PdfFormField {
     @Override
     public PdfName getFormType() {
         return PdfName.Btn;
-    }
-
-    @Override
-    public <T extends PdfFormField> T setValue(PdfObject value) {
-        return put(PdfName.V, value);
     }
 
     /**

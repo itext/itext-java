@@ -5,7 +5,7 @@ import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.basics.io.PdfTokeniser;
+import com.itextpdf.basics.io.PdfTokenizer;
 
 import java.io.ByteArrayOutputStream;
 
@@ -28,7 +28,7 @@ public class ASCIIHexDecodeFilter implements FilterHandler {
             int ch = in[k] & 0xff;
             if (ch == '>')
                 break;
-            if (PdfTokeniser.isWhitespace(ch))
+            if (PdfTokenizer.isWhitespace(ch))
                 continue;
             int n = ByteBuffer.getHex(ch);
             if (n == -1)

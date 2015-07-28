@@ -565,10 +565,6 @@ public class PdfDocument implements IEventDispatcher {
                         }
                     }
 
-//                    if (catalog.getAcroForm() != null && catalog.getAcroForm().getFields().size() != 0) {
-//                        catalog.put(PdfName.AcroForm, catalog.getAcroForm());
-//                    }
-
                     writer.flushModifiedWaitingObjects();
                     if (writer.crypto != null) {
                         assert reader.getCryptoRef() != null : "Conflict with source encryption";
@@ -596,10 +592,6 @@ public class PdfDocument implements IEventDispatcher {
                             }
                         }
                     }
-
-//                    if (catalog.getAcroForm() != null && catalog.getAcroForm().getFields().size() != 0) {
-//                        catalog.put(PdfName.AcroForm, catalog.getAcroForm());
-//                    }
 
                     catalog.getPdfObject().flush(false);
                     info.flush();
@@ -888,6 +880,21 @@ public class PdfDocument implements IEventDispatcher {
      */
     protected Set<PdfFont> getDocumentFonts() {
         return documentFonts;
+    }
+
+    /**
+     * Replaces form fields with by simple content and removes them from the document
+     */
+    protected void flatFields() {
+        if (appendMode) {
+
+        }
+        PdfDictionary acroForm = catalog.getPdfObject().getAsDictionary(PdfName.AcroForm);
+        PdfArray fields = new PdfArray();
+        if (acroForm != null) {
+            fields = acroForm.getAsArray(PdfName.Fields);
+        }
+
     }
 
     /**

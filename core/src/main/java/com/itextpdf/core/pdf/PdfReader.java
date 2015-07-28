@@ -3,7 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.ByteBuffer;
-import com.itextpdf.basics.io.PdfTokeniser;
+import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSource;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
@@ -32,7 +32,7 @@ public class PdfReader {
 
     protected static boolean correctStreamLength = true;
 
-    protected PdfTokeniser tokens;
+    protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
     protected char pdfVersion;
     protected long lastXref;
@@ -619,9 +619,9 @@ public class PdfReader {
         int first = objectStream.getAsNumber(PdfName.First).getIntValue();
         int n = objectStream.getAsNumber(PdfName.N).getIntValue();
         byte[] bytes = readStreamBytes(objectStream, true);
-        PdfTokeniser saveTokens = tokens;
+        PdfTokenizer saveTokens = tokens;
         try {
-            tokens = new PdfTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(bytes)));
+            tokens = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(bytes)));
             int address[] = new int[n];
             int objNumber[] = new int[n];
             boolean ok = true;
@@ -629,7 +629,7 @@ public class PdfReader {
                 ok = tokens.nextToken();
                 if (!ok)
                     break;
-                if (tokens.getTokenType() != PdfTokeniser.TokenType.Number) {
+                if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
                     ok = false;
                     break;
                 }
@@ -637,7 +637,7 @@ public class PdfReader {
                 ok = tokens.nextToken();
                 if (!ok)
                     break;
-                if (tokens.getTokenType() != PdfTokeniser.TokenType.Number) {
+                if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
                     ok = false;
                     break;
                 }
@@ -649,7 +649,7 @@ public class PdfReader {
                 tokens.seek(address[k]);
                 tokens.nextToken();
                 PdfObject obj;
-                if (tokens.getTokenType() == PdfTokeniser.TokenType.Number) {
+                if (tokens.getTokenType() == PdfTokenizer.TokenType.Number) {
                     obj = new PdfNumber(tokens.getByteContent());
                 } else {
                     tokens.seek(address[k]);
@@ -674,7 +674,7 @@ public class PdfReader {
 
     protected PdfObject readObject(boolean readAsDirect) throws IOException {
         tokens.nextValidToken();
-        PdfTokeniser.TokenType type = tokens.getTokenType();
+        PdfTokenizer.TokenType type = tokens.getTokenType();
         switch (type) {
             case StartDic: {
                 PdfDictionary dict = readDictionary();
@@ -683,9 +683,9 @@ public class PdfReader {
                 boolean hasNext;
                 do {
                     hasNext = tokens.nextToken();
-                } while (hasNext && tokens.getTokenType() == PdfTokeniser.TokenType.Comment);
+                } while (hasNext && tokens.getTokenType() == PdfTokenizer.TokenType.Comment);
 
-                if (hasNext && tokens.tokenValueEqualsTo(PdfTokeniser.Stream)) {
+                if (hasNext && tokens.tokenValueEqualsTo(PdfTokenizer.Stream)) {
                     //skip whitespaces
                     int ch;
                     do {
@@ -733,19 +733,19 @@ public class PdfReader {
             case EndOfFile:
                 throw new PdfException(PdfException.UnexpectedEndOfFile);
             default:
-                if (tokens.tokenValueEqualsTo(PdfTokeniser.Null)) {
+                if (tokens.tokenValueEqualsTo(PdfTokenizer.Null)) {
                     if (readAsDirect) {
                         return PdfNull.PdfNull;
                     } else {
                         return new PdfNull();
                     }
-                } else if (tokens.tokenValueEqualsTo(PdfTokeniser.True)) {
+                } else if (tokens.tokenValueEqualsTo(PdfTokenizer.True)) {
                     if (readAsDirect) {
                         return PdfBoolean.PdfTrue;
                     } else {
                         return new PdfBoolean(true);
                     }
-                } else if (tokens.tokenValueEqualsTo(PdfTokeniser.False)) {
+                } else if (tokens.tokenValueEqualsTo(PdfTokenizer.False)) {
                     if (readAsDirect) {
                         return PdfBoolean.PdfFalse;
                     } else {
@@ -770,16 +770,16 @@ public class PdfReader {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
             tokens.nextValidToken();
-            if (tokens.getTokenType() == PdfTokeniser.TokenType.EndDic)
+            if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
                 break;
-            if (tokens.getTokenType() != PdfTokeniser.TokenType.Name)
+            if (tokens.getTokenType() != PdfTokenizer.TokenType.Name)
                 tokens.throwError(PdfException.DictionaryKey1IsNotAName, tokens.getStringValue());
             PdfName name = readPdfName(true);
             PdfObject obj = readObject(true);
             if (obj == null) {
-                if (tokens.getTokenType() == PdfTokeniser.TokenType.EndDic)
+                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
                     tokens.throwError(PdfException.UnexpectedGtGt);
-                if (tokens.getTokenType() == PdfTokeniser.TokenType.EndArray)
+                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
                     tokens.throwError(PdfException.UnexpectedCloseBracket);
             }
             dic.put(name, obj);
@@ -792,9 +792,9 @@ public class PdfReader {
         while (true) {
             PdfObject obj = readObject(true);
              if (obj == null) {
-                if (tokens.getTokenType() == PdfTokeniser.TokenType.EndArray)
+                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
                     break;
-                if (tokens.getTokenType() == PdfTokeniser.TokenType.EndDic)
+                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
                     tokens.throwError(PdfException.UnexpectedGtGt);
             }
             array.add(obj);
@@ -805,10 +805,10 @@ public class PdfReader {
     protected void readXref() throws IOException {
         tokens.seek(tokens.getStartxref());
         tokens.nextToken();
-        if (!tokens.tokenValueEqualsTo(PdfTokeniser.Startxref))
+        if (!tokens.tokenValueEqualsTo(PdfTokenizer.Startxref))
             throw new PdfException(PdfException.PdfStartxrefNotFound, tokens);
         tokens.nextToken();
-        if (tokens.getTokenType() != PdfTokeniser.TokenType.Number)
+        if (tokens.getTokenType() != PdfTokenizer.TokenType.Number)
             throw new PdfException(PdfException.PdfStartxrefIsNotFollowedByANumber, tokens);
         long startxref = tokens.getLongValue();
         lastXref = startxref;
@@ -842,19 +842,19 @@ public class PdfReader {
 
     protected PdfDictionary readXrefSection() throws IOException {
         tokens.nextValidToken();
-        if (!tokens.tokenValueEqualsTo(PdfTokeniser.Xref))
+        if (!tokens.tokenValueEqualsTo(PdfTokenizer.Xref))
             tokens.throwError(PdfException.XrefSubsectionNotFound);
         PdfXrefTable xref = pdfDocument.getXref();
         int end = 0;
         while (true) {
             tokens.nextValidToken();
-            if (tokens.tokenValueEqualsTo(PdfTokeniser.Trailer))
+            if (tokens.tokenValueEqualsTo(PdfTokenizer.Trailer))
                 break;
-            if (tokens.getTokenType() != PdfTokeniser.TokenType.Number)
+            if (tokens.getTokenType() != PdfTokenizer.TokenType.Number)
                 tokens.throwError(PdfException.ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound);
             int start = tokens.getIntValue();
             tokens.nextValidToken();
-            if (tokens.getTokenType() != PdfTokeniser.TokenType.Number)
+            if (tokens.getTokenType() != PdfTokenizer.TokenType.Number)
                 tokens.throwError(PdfException.NumberOfEntriesInThisXrefSubsectionNotFound);
             end = tokens.getIntValue() + start;
             for (int num = start; num < end; ++num) {
@@ -871,13 +871,13 @@ public class PdfReader {
                 } else {
                     continue;
                 }
-                if (tokens.tokenValueEqualsTo(PdfTokeniser.N)) {
+                if (tokens.tokenValueEqualsTo(PdfTokenizer.N)) {
                     if (xref.get(num) == null) {
                         if (pos == 0)
                             tokens.throwError(PdfException.FilePosition0CrossReferenceEntryInThisXrefSubsection);
                         xref.add(reference);
                     }
-                } else if (tokens.tokenValueEqualsTo(PdfTokeniser.F)) {
+                } else if (tokens.tokenValueEqualsTo(PdfTokenizer.F)) {
                     if (xref.get(num) == null) {
                         reference.setFree();
                         xref.add(reference);
@@ -911,11 +911,11 @@ public class PdfReader {
         tokens.seek(ptr);
         if (!tokens.nextToken())
             return false;
-        if (tokens.getTokenType() != PdfTokeniser.TokenType.Number)
+        if (tokens.getTokenType() != PdfTokenizer.TokenType.Number)
             return false;
-        if (!tokens.nextToken() || tokens.getTokenType() != PdfTokeniser.TokenType.Number)
+        if (!tokens.nextToken() || tokens.getTokenType() != PdfTokenizer.TokenType.Number)
             return false;
-        if (!tokens.nextToken() || !tokens.tokenValueEqualsTo(PdfTokeniser.Obj))
+        if (!tokens.nextToken() || !tokens.tokenValueEqualsTo(PdfTokenizer.Obj))
             return false;
         PdfXrefTable xref = pdfDocument.getXref();
         PdfObject object = readObject(false);
@@ -1005,14 +1005,14 @@ public class PdfReader {
         PdfXrefTable xref = pdfDocument.getXref();
         tokens.seek(0);
         ByteBuffer buffer = new ByteBuffer(24);
-        PdfTokeniser lineTokeniser = new PdfTokeniser(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
+        PdfTokenizer lineTokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
         for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
             if (!tokens.readLineSegment(buffer, true)) // added boolean because of mailing list issue (17 Feb. 2014)
                 break;
             if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
-                int obj[] = PdfTokeniser.checkObjectStart(lineTokeniser);
+                int obj[] = PdfTokenizer.checkObjectStart(lineTokeniser);
                 if (obj == null)
                     continue;
                 int num = obj[0];
@@ -1034,14 +1034,14 @@ public class PdfReader {
         tokens.seek(0);
         trailer = null;
         ByteBuffer buffer = new ByteBuffer(24);
-        PdfTokeniser lineTokeniser = new PdfTokeniser(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
+        PdfTokenizer lineTokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
         for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
             if (!tokens.readLineSegment(buffer, true)) // added boolean because of mailing list issue (17 Feb. 2014)
                 break;
             if (buffer.get(0) == 't') {
-                if (!PdfTokeniser.checkTrailer(buffer))
+                if (!PdfTokenizer.checkTrailer(buffer))
                     continue;
                 tokens.seek(pos);
                 tokens.nextToken();
@@ -1056,7 +1056,7 @@ public class PdfReader {
                     tokens.seek(pos);
                 }
             } else if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
-                int[] obj = PdfTokeniser.checkObjectStart(lineTokeniser);
+                int[] obj = PdfTokenizer.checkObjectStart(lineTokeniser);
                 if (obj == null)
                     continue;
                 int num = obj[0];
@@ -1092,12 +1092,12 @@ public class PdfReader {
      * @return a tokeniser that is guaranteed to start at the PDF header
      * @throws IOException if there is a problem reading the byte source
      */
-    private static PdfTokeniser getOffsetTokeniser(RandomAccessSource byteSource) throws IOException {
-        PdfTokeniser tok = new PdfTokeniser(new RandomAccessFileOrArray(byteSource));
+    private static PdfTokenizer getOffsetTokeniser(RandomAccessSource byteSource) throws IOException {
+        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(byteSource));
         int offset = tok.getHeaderOffset();
         if (offset != 0) {
             RandomAccessSource offsetSource = new WindowRandomAccessSource(byteSource, offset);
-            tok = new PdfTokeniser(new RandomAccessFileOrArray(offsetSource));
+            tok = new PdfTokenizer(new RandomAccessFileOrArray(offsetSource));
         }
         return tok;
     }
@@ -1118,7 +1118,7 @@ public class PdfReader {
                 try {
                     tokens.seek(reference.getOffset());
                     tokens.nextValidToken();
-                    if (tokens.getTokenType() != PdfTokeniser.TokenType.Obj
+                    if (tokens.getTokenType() != PdfTokenizer.TokenType.Obj
                             || tokens.getObjNr() != reference.getObjNumber()
                             || tokens.getGenNr() != reference.getGenNumber()) {
                         tokens.throwError(PdfException.InvalidOffsetForObject1, reference.toString());

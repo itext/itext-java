@@ -32,11 +32,6 @@ public class PdfChoiceFormField extends PdfFormField {
         return PdfName.Ch;
     }
 
-    @Override
-    public <T extends PdfFormField> T setValue(PdfObject value) {
-        return put(PdfName.V, value);
-    }
-
     public PdfChoiceFormField setTopIndex(int index) {
         return put(PdfName.TI, new PdfNumber(index));
     }

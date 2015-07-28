@@ -3,8 +3,8 @@ package com.itextpdf.basics.font.cmap;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.io.ByteBuffer;
-import com.itextpdf.basics.io.PdfTokeniser;
-import com.itextpdf.basics.io.PdfTokeniser.TokenType;
+import com.itextpdf.basics.io.PdfTokenizer;
+import com.itextpdf.basics.io.PdfTokenizer.TokenType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,13 +21,13 @@ public class CMapContentParser {
     /**
      * Holds value of property tokeniser.
      */
-    private PdfTokeniser tokeniser;
+    private PdfTokenizer tokeniser;
 
     /**
      * Creates a new instance of PdfContentParser
      * @param tokeniser the tokeniser with the content
      */
-    public CMapContentParser(PdfTokeniser tokeniser) {
+    public CMapContentParser(PdfTokenizer tokeniser) {
         this.tokeniser = tokeniser;
     }
 

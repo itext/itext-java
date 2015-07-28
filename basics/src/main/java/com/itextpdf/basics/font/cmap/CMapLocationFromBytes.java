@@ -1,6 +1,6 @@
 package com.itextpdf.basics.font.cmap;
 
-import com.itextpdf.basics.io.PdfTokeniser;
+import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 
@@ -17,7 +17,7 @@ public class CMapLocationFromBytes implements CMapLocation {
         this.data = data;
     }
 
-    public PdfTokeniser getLocation(String location) throws IOException {
-        return new PdfTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(data)));
+    public PdfTokenizer getLocation(String location) throws IOException {
+        return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(data)));
     }
 }
