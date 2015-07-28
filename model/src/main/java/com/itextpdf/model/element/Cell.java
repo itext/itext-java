@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Cell extends BlockElement<Cell> {
 
@@ -19,8 +20,6 @@ public class Cell extends BlockElement<Cell> {
     public Cell(int rowspan, int colspan) {
         this.rowspan = Math.max(rowspan, 1);
         this.colspan = Math.max(colspan, 1);
-        SolidBorder borders = new SolidBorder(new com.itextpdf.canvas.color.DeviceRgb(160, 160, 160), 0.5f);
-        setProperty(Property.BORDER, borders);
     }
 
     public Cell () {
@@ -65,26 +64,25 @@ public class Cell extends BlockElement<Cell> {
         return this;
     }
 
-    public Cell keepTogether(boolean keepTogether) {
-        setProperty(Property.KEEP_TOGETHER, keepTogether);
-        return this;
-    }
-
     public Cell clone(boolean includeContent) {
         Cell newCell = new Cell(rowspan, colspan);
         newCell.row = row;
         newCell.col = col;
+        newCell.properties = new HashMap<>(properties);
         if (includeContent) {
             newCell.childElements = new ArrayList<>(childElements);
         }
         return newCell;
     }
 
-    protected Cell updateCellIndexes(int row, int col, int numberOfColumns) {
-        this.row = row;
-        this.col = col;
-        colspan = Math.min(colspan, numberOfColumns - this.col);
-        return this;
+    @Override
+    public <T> T getDefaultProperty(int propertyKey) {
+        switch (propertyKey) {
+            case Property.BORDER:
+                return (T) new SolidBorder(new com.itextpdf.canvas.color.DeviceRgb(160, 160, 160), 0.5f);
+            default:
+                return super.getDefaultProperty(propertyKey);
+        }
     }
 
     @Override
@@ -96,4 +94,12 @@ public class Cell extends BlockElement<Cell> {
                 ", colspan=" + colspan +
                 '}';
     }
+
+    protected Cell updateCellIndexes(int row, int col, int numberOfColumns) {
+        this.row = row;
+        this.col = col;
+        colspan = Math.min(colspan, numberOfColumns - this.col);
+        return this;
+    }
+
 }

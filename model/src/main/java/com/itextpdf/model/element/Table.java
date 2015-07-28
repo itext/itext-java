@@ -56,6 +56,7 @@ public class Table extends BlockElement<Table> {
             this.columnWidths[k] = 1;
         }
         super.setWidth(0);
+        initializeRows();
     }
 
     /**

@@ -87,12 +87,12 @@ public class Rectangle implements Cloneable {
         return this;
     }
 
-    public Rectangle incrementHeight(float extra) {
+    public Rectangle increaseHeight(float extra) {
         this.height += extra;
         return this;
     }
 
-    public Rectangle decrementHeight(float extra) {
+    public Rectangle decreaseHeight(float extra) {
         this.height -= extra;
         return this;
     }

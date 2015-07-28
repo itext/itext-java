@@ -1,16 +1,19 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Table;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -335,12 +338,12 @@ public class TableTest {
                 .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 5, 1\n" + middleTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 5, 2\n" + shortTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 6, 1\n" + middleTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 6, 2\n" + shortTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 7, 1\n" + middleTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 7, 2\n" + middleTextContent)));
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 5, 1\n" + middleTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 5, 2\n" + shortTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 6, 1\n" + middleTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 6, 2\n" + shortTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 7, 1\n" + middleTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 7, 2\n" + middleTextContent)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -370,12 +373,12 @@ public class TableTest {
                 .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 5, 1\n" + middleTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 5, 2\n" + shortTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 6, 1\n" + middleTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 6, 2\n" + shortTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 7, 1\n" + middleTextContent)))
-                .addCell(new Cell().keepTogether(true).add(new Paragraph("cell 7, 2\n" + middleTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 5, 1\n" + middleTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 5, 2\n" + shortTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 6, 1\n" + middleTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 6, 2\n" + shortTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 7, 1\n" + middleTextContent)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 7, 2\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 8, 1\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 8, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 9, 1\n" + shortTextContent)))
@@ -521,9 +524,74 @@ public class TableTest {
 
         Table table = new Table(new float[]{250, 250})
                 .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + longTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + middleTextContent)).setBorder(new SolidBorder(Color.Red, 2)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + middleTextContent + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void bigRowspanTest01() throws IOException, InterruptedException {
+        String testName = "bigRowspanTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
+                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
+        String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
+
+        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
+                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+
+        Table table = new Table(new float[]{250, 250})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + middleTextContent)));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-225. A cell has a big rowspan and we don't even try to fit it in the first available area.")
+    public void bigRowspanTest02() throws IOException, InterruptedException {
+        String testName = "bigRowspanTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
+                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
+        String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
+
+        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
+                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+
+        Table table = new Table(new float[]{250, 250})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));

@@ -26,7 +26,7 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     public void addChild(IRenderer renderer) {
-        if (renderer instanceof BlockRenderer && renderer.getModelElement() instanceof Cell) {
+        if (renderer instanceof CellRenderer) {
             renderer.setParent(this);
             // In case rowspan or colspan save cell into bottom left corner.
             // In in this case it will be easier handle row heights in case rowspan.
@@ -83,7 +83,7 @@ public class TableRenderer extends AbstractRenderer {
                         cellWidth, layoutBox.getHeight() + rowspanOffset);
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(), cellLayoutBox);
                 LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
-                //width of BlockRenderer depends from child areas, while in cell case it is hardly define.
+                //width of BlockRenderer depends on child areas, while in cell case it is hardly define.
                 cell.getOccupiedArea().getBBox().setWidth(cellWidth);
 
                 if (cellResult.getStatus() != LayoutResult.FULL) {
@@ -92,6 +92,7 @@ public class TableRenderer extends AbstractRenderer {
                         hasContent = false;
                     }
                     splits[col] = cellResult;
+                    currentRow[col] = (CellRenderer) cellResult.getSplitRenderer();
                 }
                 if (cellResult.getStatus() != LayoutResult.NOTHING) {
                     rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
@@ -108,13 +109,16 @@ public class TableRenderer extends AbstractRenderer {
                     for (int i = row; i > row - rowspan && i >= 0; i--) {
                         height += heights.get(i);
                     }
+
+                    // Coorrection of cell bbox only. We don't need #move() here.
+                    // This is because of BlockRenderer's specificity regarding occupied area.
                     float shift = height - cell.getOccupiedArea().getBBox().getHeight();
                     cell.getOccupiedArea().getBBox().moveDown(shift);
                     cell.getOccupiedArea().getBBox().setHeight(height);
                 }
 
                 occupiedArea.getBBox().moveDown(rowHeight);
-                occupiedArea.getBBox().incrementHeight(rowHeight);
+                occupiedArea.getBBox().increaseHeight(rowHeight);
             }
 
             if (split) {
@@ -127,14 +131,13 @@ public class TableRenderer extends AbstractRenderer {
                     if (splits[col] != null) {
                         BlockRenderer cellSplit = currentRow[col];
                         if (splits[col].getStatus() != LayoutResult.NOTHING) {
-                            cellSplit.getOccupiedArea().getBBox().setHeight(rowHeight);
                             childRenderers.add(cellSplit);
                         }
                         currentRow[col] = (CellRenderer) splits[col].getOverflowRenderer();
                     } else if (hasContent && currentRow[col] != null) {
                         Cell overflowCell = currentRow[col].getModelElement().clone(false);
                         childRenderers.add(currentRow[col]);
-                        currentRow[col] = overflowCell.makeRenderer();
+                        currentRow[col] = (CellRenderer) overflowCell.makeRenderer().setParent(this);
                     }
                 }
                 return new LayoutResult(childRenderers.isEmpty() ? LayoutResult.NOTHING : LayoutResult.PARTIAL,
@@ -144,7 +147,7 @@ public class TableRenderer extends AbstractRenderer {
                 currChildRenderers.clear();
             }
 
-            layoutBox.decrementHeight(rowHeight);
+            layoutBox.decreaseHeight(rowHeight);
         }
 
         if (getProperty(Property.ROTATION_ANGLE) != null) {
@@ -161,6 +164,8 @@ public class TableRenderer extends AbstractRenderer {
         TableRenderer splitRenderer = new TableRenderer((Table) modelElement);
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
+        // TODO childRenderers will be populated twice during the relayout.
+        // We should probably clean them before #layout().
         splitRenderer.childRenderers = childRenderers;
         splitRenderer.addAllProperties(getOwnProperties());
         return splitRenderer;

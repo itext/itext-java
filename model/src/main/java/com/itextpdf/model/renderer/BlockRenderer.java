@@ -82,7 +82,7 @@ public class BlockRenderer extends AbstractRenderer {
                             BlockRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
-                            splitRenderer.occupiedArea = occupiedArea.clone();
+                            splitRenderer.occupiedArea = occupiedArea;
 
                             BlockRenderer overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
                             List<IRenderer> overflowRendererChildren = new ArrayList<>();
