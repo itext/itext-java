@@ -120,9 +120,9 @@ public class Document implements IPropertyContainer<Document> {
         try {
             switch (propertyKey) {
                 case Property.FONT:
-                    //if (defaultFont == null) {
+                    if (defaultFont == null) {
                         defaultFont = new PdfType1Font(pdfDocument, (Type1Font) FontFactory.createFont(FontConstants.HELVETICA, ""));
-                    //}
+                    }
                     return (T) defaultFont;
                 case Property.FONT_SIZE:
                     return (T) new Integer(12);
