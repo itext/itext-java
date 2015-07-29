@@ -282,14 +282,6 @@ public abstract class AbstractRenderer implements IRenderer {
         return ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
     }
 
-    protected <T extends AbstractRenderer> T createSplitRenderer() {
-        return null;
-    }
-
-    protected <T extends AbstractRenderer> T createOverflowRenderer() {
-        return null;
-    }
-
     protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
         if (isPositioned())
             return rect;

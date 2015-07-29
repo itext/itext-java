@@ -320,7 +320,7 @@ public class TextRenderer extends AbstractRenderer {
             }
 
             float currentCharWidth = getCharWidth(getCharCode(line, firstNonSpaceCharIndex), font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-            float kerning = (!isLastChar(text, rightPos, firstNonSpaceCharIndex) ? getKerning(getPrevChar(line, firstNonSpaceCharIndex), getCharCode(line, firstNonSpaceCharIndex), font, fontSize, hScale) : 0) / TEXT_SPACE_COEFF;
+            float kerning = (!isFirstChar(line, firstNonSpaceCharIndex) ? getKerning(getPrevChar(line, firstNonSpaceCharIndex), getCharCode(line, firstNonSpaceCharIndex), font, fontSize, hScale) : 0) / TEXT_SPACE_COEFF;
             trimmedSpace += currentCharWidth - kerning;
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
 
@@ -413,12 +413,10 @@ public class TextRenderer extends AbstractRenderer {
         return spaces;
     }
 
-    @Override
     protected TextRenderer createSplitRenderer() {
         return new TextRenderer((Text)modelElement, null);
     }
 
-    @Override
     protected TextRenderer createOverflowRenderer() {
         return new TextRenderer((Text)modelElement, null);
     }
@@ -448,6 +446,10 @@ public class TextRenderer extends AbstractRenderer {
         } else {
             return text.charAt(strPos);
         }
+    }
+
+    private boolean isFirstChar(String text, int strPos) {
+        return strPos == 0;
     }
 
     private boolean isLastChar(String text, int rightTextPos, int strPos) {

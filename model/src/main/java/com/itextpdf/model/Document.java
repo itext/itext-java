@@ -3,13 +3,11 @@ package com.itextpdf.model;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontFactory;
 import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.model.element.AreaBreak;
-import com.itextpdf.model.element.BlockElement;
-import com.itextpdf.model.element.IElement;
-import com.itextpdf.model.element.Image;
+import com.itextpdf.model.element.*;
 import com.itextpdf.model.renderer.DocumentRenderer;
 
 import java.io.IOException;
@@ -25,6 +23,7 @@ public class Document implements IPropertyContainer<Document> {
     protected boolean immediateFlush = true;
     protected List<IElement> childElements = new ArrayList<>();
     protected Map<Integer, Object> properties = new HashMap<>();
+    protected PdfFont defaultFont;
 
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
@@ -95,6 +94,10 @@ public class Document implements IPropertyContainer<Document> {
     }
 
     public void relayout() {
+        if (immediateFlush) {
+            throw new IllegalStateException("Operation not supported with immediate flush");
+        }
+
         try {
             while (pdfDocument.getNumOfPages() > 0)
                 pdfDocument.removePage(pdfDocument.getNumOfPages());
@@ -117,7 +120,10 @@ public class Document implements IPropertyContainer<Document> {
         try {
             switch (propertyKey) {
                 case Property.FONT:
-                    return (T) new PdfType1Font(pdfDocument, (Type1Font) FontFactory.createFont(FontConstants.HELVETICA, ""));
+                    //if (defaultFont == null) {
+                        defaultFont = new PdfType1Font(pdfDocument, (Type1Font) FontFactory.createFont(FontConstants.HELVETICA, ""));
+                    //}
+                    return (T) defaultFont;
                 case Property.FONT_SIZE:
                     return (T) new Integer(12);
                 case Property.TEXT_RENDERING_MODE:

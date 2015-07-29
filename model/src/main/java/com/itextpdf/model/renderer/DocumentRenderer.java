@@ -39,6 +39,7 @@ public class DocumentRenderer extends AbstractRenderer {
             currentArea = getNextArea();
         }
 
+        // Static layout
         if (childRenderers.size() != 0 && childRenderers.get(childRenderers.size() - 1) == renderer) {
             List<IRenderer> resultRenderers = new ArrayList<>();
             LayoutResult result = null;
@@ -50,7 +51,7 @@ public class DocumentRenderer extends AbstractRenderer {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
-                        resultRenderers.add(result.getSplitRenderer());
+                        processRenderer(result.getSplitRenderer(), resultRenderers);
                         if (nextStoredArea != null) {
                             currentArea = nextStoredArea;
                             currentPageNumber = nextStoredArea.getPageNumber();
@@ -64,8 +65,6 @@ public class DocumentRenderer extends AbstractRenderer {
                         if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).imageHeight) {
                             getNextArea();
                         }
-
-
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
                         if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {
@@ -82,7 +81,7 @@ public class DocumentRenderer extends AbstractRenderer {
                         }
                         storedArea = currentArea;
                         if (result.getNewPageSize() != null)
-                            getNextPageArea(result.getNewPageSize());
+                            getNextArea(result.getNewPageSize());
                         else {
                             getNextArea();
                         }
@@ -92,31 +91,23 @@ public class DocumentRenderer extends AbstractRenderer {
             }
             currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
             currentArea.setEmptyArea(false);
-            if (renderer != null)
-                resultRenderers.add(renderer);
-
-            for (IRenderer resultRenderer : resultRenderers) {
-                alignChildHorizontally(resultRenderer, currentArea.getBBox().getWidth());
-            }
-
-            // TODO flush by page, not by elements?
-            if (immediateFlush) {
-                for (IRenderer resultRenderer : resultRenderers) {
-                    flushSingleRenderer(resultRenderer);
-                }
+            if (renderer != null) {
+                processRenderer(renderer, resultRenderers);
             }
 
             childRenderers.remove(childRenderers.size() - 1);
-            childRenderers.addAll(resultRenderers);
-        } else {
+            if (!immediateFlush) {
+                childRenderers.addAll(resultRenderers);
+            }
+        } else if (positionedRenderers.size() > 0 && positionedRenderers.get(positionedRenderers.size() - 1) == renderer) {
             Integer positionedPageNumber = renderer.getProperty(Property.PAGE_NUMBER);
             if (positionedPageNumber == null)
                 positionedPageNumber = currentPageNumber;
             renderer.layout(new LayoutContext(new LayoutArea(positionedPageNumber, currentArea.getBBox().clone())));
 
-            // TODO flush by page, not by elements?
             if (immediateFlush) {
                 flushSingleRenderer(renderer);
+                positionedRenderers.remove(positionedRenderers.size() - 1);
             }
         }
     }
@@ -129,6 +120,8 @@ public class DocumentRenderer extends AbstractRenderer {
         for (IRenderer resultRenderer : positionedRenderers) {
             flushSingleRenderer(resultRenderer);
         }
+        childRenderers.clear();
+        positionedRenderers.clear();
     }
 
     @Override
@@ -137,20 +130,24 @@ public class DocumentRenderer extends AbstractRenderer {
     }
 
     public LayoutArea getNextArea() {
-        currentPageNumber++;
-        ensureDocumentHasNPages(currentPageNumber);
-        PdfPage newPage = document.getPdfDocument().getPage(currentPageNumber);
-        return (currentArea = new LayoutArea(currentPageNumber, document.getPdfDocument().getDefaultPageSize().getEffectiveArea()));
+
+        moveToNextPage();
+        PageSize lastPageSize = ensureDocumentHasNPages(currentPageNumber);
+        if (lastPageSize == null) {
+            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getPageSize());
+        }
+        return (currentArea = new LayoutArea(currentPageNumber, lastPageSize.getEffectiveArea()));
     }
 
-    public LayoutArea getNextPageArea(PageSize pageSize) {
-        PdfPage newPage = document.getPdfDocument().addNewPage(pageSize);
+    public LayoutArea getNextArea(PageSize pageSize) {
+        moveToNextPage();
+        document.getPdfDocument().addNewPage(pageSize);
         return (currentArea = new LayoutArea(document.getPdfDocument().getNumOfPages(), pageSize.getEffectiveArea()));
     }
 
     @Override
     public LayoutArea getOccupiedArea() {
-        throw new RuntimeException();
+        throw new IllegalStateException("Not applicable for DocumentRenderer");
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
@@ -161,11 +158,39 @@ public class DocumentRenderer extends AbstractRenderer {
         }
     }
 
-    private void ensureDocumentHasNPages(int n) {
+    protected PageSize addNewPage() {
+        document.getPdfDocument().addNewPage();
+        return document.getPdfDocument().getDefaultPageSize();
+    }
+
+    /**
+     * Adds some pages so that the overall number is at least n.
+     * Returns the page size of the n'th page.
+     */
+    private PageSize ensureDocumentHasNPages(int n) {
+        PageSize lastPageSize = null;
         while (document.getPdfDocument().getNumOfPages() < n) {
-            PdfPage newPage = document.getPdfDocument().addNewPage();
+            lastPageSize = addNewPage();
+        }
+        return lastPageSize;
+    }
+
+    private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
+        alignChildHorizontally(renderer, currentArea.getBBox().getWidth());
+        if (immediateFlush) {
+            flushSingleRenderer(renderer);
+        } else {
+            resultRenderers.add(renderer);
         }
     }
 
+    private void moveToNextPage() {
+        // We don't flush this page immediately, but only flush previous one because of manipulations with areas in case
+        // of keepTogether property.
+        if (immediateFlush && currentPageNumber > 1) {
+            document.getPdfDocument().getPage(currentPageNumber - 1).flush();
+        }
+        currentPageNumber++;
+    }
 
 }

@@ -50,6 +50,21 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         this(pdfDocument, pdfDocument.getDefaultPageSize());
     }
 
+    public Rectangle getPageSize() {
+        PdfArray box = getPdfObject().getAsArray(PdfName.MediaBox);
+        if (box == null || box.size() != 4) {
+            throw new IllegalArgumentException("MediaBox");
+        }
+        Float llx = box.getAsFloat(0);
+        Float lly = box.getAsFloat(1);
+        Float urx = box.getAsFloat(2);
+        Float ury = box.getAsFloat(3);
+        if (llx == null || lly == null || urx == null || ury == null) {
+            throw new IllegalArgumentException("MediaBox");
+        }
+        return new Rectangle(llx, lly, urx - llx, ury - lly);
+    }
+
     public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
         if (index >= count)

@@ -2,6 +2,7 @@ package com.itextpdf.model;
 
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
@@ -11,6 +12,7 @@ import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Table;
+import com.itextpdf.model.renderer.DocumentRenderer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -592,6 +594,48 @@ public class TableTest {
                 .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + textContent)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void differentPageOrientationTest01() throws IOException, InterruptedException {
+        String testName = "differentPageOrientationTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        final PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        String textContent1 = "Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.";
+        String textContent2 = "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries.";
+        String textContent3 = "Themes and styles also help keep your document coordinated. When you click Design and choose a new Theme, the pictures, charts, and SmartArt graphics change to match your new theme. When you apply styles, your headings change to match the new theme.";
+
+        Table table = new Table(3);
+        for (int i = 0; i < 20; i++) {
+            table.addCell(new Cell().add(new Paragraph(textContent1)))
+                    .addCell(new Cell().add(new Paragraph(textContent3)))
+                    .addCell(new Cell().add(new Paragraph(textContent2)))
+
+                    .addCell(new Cell().add(new Paragraph(textContent3)))
+                    .addCell(new Cell().add(new Paragraph(textContent2)))
+                    .addCell(new Cell().add(new Paragraph(textContent1)))
+
+                    .addCell(new Cell().add(new Paragraph(textContent2)))
+                    .addCell(new Cell().add(new Paragraph(textContent1)))
+                    .addCell(new Cell().add(new Paragraph(textContent3)));
+        }
+        doc.setRenderer(new DocumentRenderer(doc) {
+            @Override
+            protected PageSize addNewPage() {
+                PageSize pageSize = currentPageNumber % 2 == 1 ? PageSize.A4 : PageSize.A4.rotate();
+                pdfDoc.addNewPage(pageSize);
+                return pageSize;
+            }
+        });
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));

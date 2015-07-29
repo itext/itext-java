@@ -16,10 +16,13 @@ import java.util.List;
 public class TableRenderer extends AbstractRenderer {
 
     List<CellRenderer[]> rows = new ArrayList<>();
+    // Row range of the current renderer. For large tables it may contain only a few rows.
+    Table.RowRange rowRange;
 
-    public TableRenderer(Table modelElement) {
+    public TableRenderer(Table modelElement, Table.RowRange rowRange) {
         super(modelElement);
-        for (int row = 0; row < modelElement.getNumberOfRows(); row++) {
+        this.rowRange = rowRange;
+        for (int row = rowRange.getStartRow(); row <= rowRange.getFinishRow(); row++) {
             rows.add(new CellRenderer[modelElement.getNumberOfColumns()]);
         }
     }
@@ -31,7 +34,7 @@ public class TableRenderer extends AbstractRenderer {
             // In case rowspan or colspan save cell into bottom left corner.
             // In in this case it will be easier handle row heights in case rowspan.
             Cell cell = (Cell) renderer.getModelElement();
-            rows.get(cell.getRow() + cell.getRowspan() - 1)[cell.getCol()] = (CellRenderer) renderer;
+            rows.get(cell.getRow() - rowRange.getStartRow() + cell.getRowspan() - 1)[cell.getCol()] = (CellRenderer) renderer;
         } else {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
             logger.error("Only BlockRenderer with Cell model element could be added");
@@ -43,10 +46,9 @@ public class TableRenderer extends AbstractRenderer {
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox();
         Table tableModel = (Table) getModelElement();
-        if (tableModel.getWidth() == 0) {
-            // In this case get available occupiedArea, but don't save to model element.
-            // Also recalculate column widths, and also don't save it to the model element.
-        }
+
+        float[] columnWidths = calculateScaledColumnWidths(tableModel, layoutBox.getWidth());
+
         ArrayList<Float> heights = new ArrayList<>();
         occupiedArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
         occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight());
@@ -70,10 +72,10 @@ public class TableRenderer extends AbstractRenderer {
                 int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
                 float cellWidth = 0, colOffset = 0;
                 for (int i = col; i < col + colspan; i++) {
-                    cellWidth += tableModel.getColumnWidth(i);
+                    cellWidth += columnWidths[i];
                 }
                 for (int i = 0; i < col; i++) {
-                    colOffset += tableModel.getColumnWidth(i);
+                    colOffset += columnWidths[i];
                 }
                 float rowspanOffset = 0;
                 for (int i = row - 1; i > row - rowspan && i >= 0; i--) {
@@ -122,11 +124,7 @@ public class TableRenderer extends AbstractRenderer {
             }
 
             if (split) {
-                TableRenderer splitRenderer = createSplitRenderer();
-                splitRenderer.rows = rows.subList(0, row);
-                TableRenderer overflowRenderer = createOverflowRenderer();
-                overflowRenderer.rows = rows.subList(row, rows.size());
-                splitRenderer.occupiedArea = occupiedArea;
+                TableRenderer splitResult[] = split(row);
                 for (int col = 0; col < currentRow.length; col++) {
                     if (splits[col] != null) {
                         BlockRenderer cellSplit = currentRow[col];
@@ -141,7 +139,7 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
                 return new LayoutResult(childRenderers.isEmpty() ? LayoutResult.NOTHING : LayoutResult.PARTIAL,
-                        occupiedArea, splitRenderer, overflowRenderer);
+                        occupiedArea, splitResult[0], splitResult[1]);
             } else {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
@@ -159,9 +157,35 @@ public class TableRenderer extends AbstractRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
-    @Override
-    protected TableRenderer createSplitRenderer() {
-        TableRenderer splitRenderer = new TableRenderer((Table) modelElement);
+    protected float[] calculateScaledColumnWidths(Table tableModel, float layoutWidth) {
+        float[] columnWidths = new float[tableModel.getNumberOfColumns()];
+        float widthSum = 0;
+        for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
+            columnWidths[i] = tableModel.getColumnWidth(i);
+            widthSum += columnWidths[i];
+        }
+        if (tableModel.getWidth() == 0) {
+            // In this case get available occupiedArea, but don't save to model element.
+            // Also recalculate column widths, and also don't save it to the model element.
+            for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
+                columnWidths[i] *= layoutWidth / widthSum;
+            }
+        }
+        return columnWidths;
+    }
+
+    protected TableRenderer[] split(int row) {
+        TableRenderer splitRenderer = createSplitRenderer(new Table.RowRange(rowRange.getStartRow(), rowRange.getStartRow() + row));
+        splitRenderer.rows = rows.subList(0, row);
+        TableRenderer overflowRenderer = createOverflowRenderer(new Table.RowRange(rowRange.getStartRow() + row,rowRange.getFinishRow()));
+        overflowRenderer.rows = rows.subList(row, rows.size());
+        splitRenderer.occupiedArea = occupiedArea;
+
+        return new TableRenderer[] {splitRenderer, overflowRenderer};
+    }
+
+    protected TableRenderer createSplitRenderer(Table.RowRange rowRange) {
+        TableRenderer splitRenderer = new TableRenderer((Table) modelElement, rowRange);
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         // TODO childRenderers will be populated twice during the relayout.
@@ -171,25 +195,12 @@ public class TableRenderer extends AbstractRenderer {
         return splitRenderer;
     }
 
-    @Override
-    protected TableRenderer createOverflowRenderer() {
-        TableRenderer overflowRenderer = new TableRenderer((Table) modelElement);
+    protected TableRenderer createOverflowRenderer(Table.RowRange rowRange) {
+        TableRenderer overflowRenderer = new TableRenderer((Table) modelElement, rowRange);
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
     }
 
-//    @Override
-//    public void drawBorder(com.itextpdf.core.pdf.PdfDocument document, com.itextpdf.canvas.PdfCanvas canvas) {
-//        drawRectangle(occupiedArea.getBBox(), canvas, com.itextpdf.canvas.color.DeviceRgb.Red);
-//    }
-//
-//    private void drawRectangle(Rectangle bbox, com.itextpdf.canvas.PdfCanvas canvas, com.itextpdf.canvas.color.Color color) {
-//        canvas.saveState();
-//        canvas.setStrokeColor(color);
-//        canvas.setLineWidth(0.5f);
-//        canvas.rectangle(bbox).stroke();
-//        canvas.restoreState();
-//    }
 }

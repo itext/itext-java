@@ -218,24 +218,22 @@ public class LineRenderer extends AbstractRenderer {
         return length;
     }
 
-    @Override
     protected LineRenderer createSplitRenderer() {
         return new LineRenderer();
     }
 
-    @Override
     protected LineRenderer createOverflowRenderer() {
         return new LineRenderer();
     }
 
     protected LineRenderer[] split() {
-        LineRenderer splitRenderer = new LineRenderer();
+        LineRenderer splitRenderer = createSplitRenderer();
         splitRenderer.occupiedArea = occupiedArea.clone();
         splitRenderer.parent = parent;
         splitRenderer.maxAscent = maxAscent;
         splitRenderer.maxDescent = maxDescent;
 
-        LineRenderer overflowRenderer = new LineRenderer();
+        LineRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.parent = parent;
 
         return new LineRenderer[] {splitRenderer, overflowRenderer};

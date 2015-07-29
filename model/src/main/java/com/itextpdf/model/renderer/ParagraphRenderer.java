@@ -196,7 +196,6 @@ public class ParagraphRenderer extends AbstractRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
-    @Override
     protected ParagraphRenderer createOverflowRenderer() {
         ParagraphRenderer overflowRenderer = new ParagraphRenderer(modelElement);
         // Reset first line indent in case of overflow.
@@ -207,7 +206,6 @@ public class ParagraphRenderer extends AbstractRenderer {
         return overflowRenderer;
     }
 
-    @Override
     protected ParagraphRenderer createSplitRenderer() {
         return new ParagraphRenderer(modelElement);
     }
