@@ -39,7 +39,7 @@ public class AlignmentTest {
         Paragraph paragraph = new Paragraph().setHorizontalAlignment(Property.HorizontalAlignment.JUSTIFIED);
         for (int i = 0; i < 21; i++) {
             paragraph.add(new Text ("Hello World! Hello People! " +
-                    "Hello Sky! Hello Sun! Hello Moon! Hello Stars!").setBackgroundColor(DeviceRgb.Red));
+                    "Hello Sky! Hello Sun! Hello Moon! Hello Stars!").setBackgroundColor(DeviceRgb.RED));
         }
         document.add(paragraph);
 
@@ -121,10 +121,10 @@ public class AlignmentTest {
         }
         list.setWidth(250);
         list.setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
-        list.setBackgroundColor(Color.Green);
+        list.setBackgroundColor(Color.GREEN);
 
         document.add(list);
-        list.setHorizontalAlignment(Property.HorizontalAlignment.RIGHT).setBackgroundColor(Color.Red);
+        list.setHorizontalAlignment(Property.HorizontalAlignment.RIGHT).setBackgroundColor(Color.RED);
         document.add(list);
 
         document.close();

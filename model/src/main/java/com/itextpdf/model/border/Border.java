@@ -9,7 +9,7 @@ public abstract class Border {
     protected float width;
 
     public Border(float width) {
-        this(Color.Black, width);
+        this(Color.BLACK, width);
     }
 
     public Border(Color color, float width) {

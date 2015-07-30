@@ -15,8 +15,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BarcodeDataMatrixTest {
 
@@ -42,7 +40,7 @@ public class BarcodeDataMatrixTest {
         PdfCanvas canvas = new PdfCanvas(page);
         BarcodeDataMatrix barcode = new BarcodeDataMatrix();
         barcode.generate("AAAAAAAAAA;BBBBAAAA3;00028;BBBAA05;AAAA;AAAAAA;1234567;AQWXSZ;JEAN;;;;7894561;AQWXSZ;GEO;;;;1;1;1;1;0;0;1;0;1;0;0;0;1;0;1;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1");
-        barcode.placeBarcode(canvas, Color.Green,5,6);
+        barcode.placeBarcode(canvas, Color.GREEN,5,6);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));

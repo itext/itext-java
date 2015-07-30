@@ -181,7 +181,7 @@ public class ListTest {
         List list = new List(Property.ListNumberingType.GREEK_LOWER);
         PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
-        list.add(new ListItem()).add(new ListItem(image)).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div().setHeight(70).setBackgroundColor(Color.Red)));
+        list.add(new ListItem()).add(new ListItem(image)).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div().setHeight(70).setBackgroundColor(Color.RED)));
 
         document.add(list);
 

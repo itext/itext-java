@@ -1111,9 +1111,9 @@ public class PdfCanvasTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        canvas.setFillColor(DeviceRgb.Red).rectangle(50, 500, 50, 50).fill();
-        canvas.setFillColor(DeviceRgb.Green).rectangle(150, 500, 50, 50).fill();
-        canvas.setFillColor(DeviceRgb.Blue).rectangle(250, 500, 50, 50).fill();
+        canvas.setFillColor(DeviceRgb.RED).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColor(DeviceRgb.GREEN).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColor(DeviceRgb.BLUE).rectangle(250, 500, 50, 50).fill();
         canvas.setLineWidth(5);
         canvas.setStrokeColor(DeviceCmyk.Cyan).rectangle(50, 400, 50, 50).stroke();
         canvas.setStrokeColor(DeviceCmyk.Magenta).rectangle(150, 400, 50, 50).stroke();

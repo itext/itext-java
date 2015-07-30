@@ -47,8 +47,8 @@ public class TextWritingTest {
                     setTextRise(6).
                     setFont(font).
                     setFontSize(6).
-                    setFontColor(Color.White).
-                    setBackgroundColor(Color.Black, 0,0,0,0);
+                    setFontColor(Color.WHITE).
+                    setBackgroundColor(Color.BLACK, 0,0,0,0);
             p.add(id);
             document.add(p);
         }
@@ -68,21 +68,21 @@ public class TextWritingTest {
 
         Text text1 = new Text("This is a fill and stroke text").
                 setTextRenderingMode(Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE).
-                setStrokeColor(Color.Red).
+                setStrokeColor(Color.RED).
                 setStrokeWidth(0.1f);
         document.add(new Paragraph().add(text1));
 
         Text text2 = new Text("This is a stroke-only text").
                 setTextRenderingMode(Property.TextRenderingMode.TEXT_RENDERING_MODE_STROKE).
-                setStrokeColor(Color.Green).
+                setStrokeColor(Color.GREEN).
                 setStrokeWidth(0.3f);
         document.add(new Paragraph(text2));
 
         Text text3 = new Text("This is a colorful text").
                 setTextRenderingMode(Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE).
-                setStrokeColor(Color.Blue).
+                setStrokeColor(Color.BLUE).
                 setStrokeWidth(0.3f).
-                setFontColor(Color.Green).
+                setFontColor(Color.GREEN).
                 setFontSize(20);
         document.add(new Paragraph(text3));
 
@@ -200,7 +200,7 @@ public class TextWritingTest {
                 "Themes and styles also help keep your document coordinated. When you click Design and choose a new Theme, the pictures, charts, and SmartArt graphics change to match your new theme. When you apply styles, your headings change to match the new theme.\n" +
                 "Save time in Word with new buttons that show up where you need them. To change the way a picture fits in your document, click it and a button for layout options appears next to it. When you work on a table, click where you want to add a row or a column, and then click the plus sign.\n" +
                 "Reading is easier, too, in the new Reading view. You can collapse parts of the document and focus on the text you want. If you need to stop reading before you reach the end, Word remembers where you left off - even on another device. ");
-        p.add(new Text("You can collapse parts of the document and focus.").setBackgroundColor(DeviceRgb.Green));
+        p.add(new Text("You can collapse parts of the document and focus.").setBackgroundColor(DeviceRgb.GREEN));
         p.setWordSpacing(15);
         document.add(p);
 

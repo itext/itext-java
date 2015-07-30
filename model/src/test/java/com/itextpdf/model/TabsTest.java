@@ -6,7 +6,6 @@ import com.itextpdf.canvas.draw.DashedLine;
 import com.itextpdf.canvas.draw.DottedLine;
 import com.itextpdf.canvas.draw.Drawable;
 import com.itextpdf.canvas.draw.SolidLine;
-import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -211,7 +210,7 @@ public class TabsTest {
 
         //tabstops out of page bounds
         Paragraph p = new Paragraph();
-        p.setFontColor(Color.Green);
+        p.setFontColor(Color.GREEN);
         p.add("left tab stop out of page bounds:");
         doc.add(p);
 
@@ -221,7 +220,7 @@ public class TabsTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.setFontColor(Color.Green);
+        p.setFontColor(Color.GREEN);
         p.add("right tab stop out of page bounds:");
         doc.add(p);
 
@@ -232,7 +231,7 @@ public class TabsTest {
 
         //text out of page bounds
         p = new Paragraph();
-        p.setFontColor(Color.Green);
+        p.setFontColor(Color.GREEN);
         p.add("text out of page bounds after left tab stop:");
         doc.add(p);
 
@@ -243,7 +242,7 @@ public class TabsTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.setFontColor(Color.Green);
+        p.setFontColor(Color.GREEN);
         p.add("text out of page bounds after right tab stop:");
         doc.add(p);
 

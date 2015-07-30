@@ -17,7 +17,7 @@ public class MetaPen extends MetaObject {
 
     int style = PS_SOLID;
     int penWidth = 1;
-    Color color = DeviceRgb.Black;
+    Color color = DeviceRgb.BLACK;
 
     public MetaPen() {
         type = META_PEN;

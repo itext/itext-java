@@ -8,13 +8,19 @@ import java.util.Arrays;
 
 public class Color {
 
-    static public final Color Red = new DeviceRgb(0xFF, 0, 0);
-    static public final Color Green = new DeviceRgb(0, 0xFF, 0);
-    static public final Color Blue = new DeviceRgb(0, 0, 0xFF);
-    static public final Color White = new DeviceRgb(0xFF, 0xFF, 0xFF);
-    static public final Color Black = new DeviceRgb(0, 0, 0);
-    static public final Color Silver = new DeviceRgb(0xC0, 0xC0, 0xC0);
-    static public final Color Gray = new DeviceRgb(0xA0, 0xA0, 0xA0);
+    public static final Color BLACK = new DeviceRgb(0, 0, 0);
+    public static final Color BLUE = new DeviceRgb(0, 0, 255);
+    public static final Color CYAN = new DeviceRgb(0, 255, 255);
+    public static final Color DARK_GRAY = new DeviceRgb(64, 64, 64);
+    public static final Color GRAY = new DeviceRgb(128, 128, 128);
+    public static final Color GREEN = new DeviceRgb(0, 255, 0);
+    public static final Color LIGHT_GRAY = new DeviceRgb(192, 192, 192);
+    public static final Color MAGENTA = new DeviceRgb(255, 0, 255);
+    public static final Color ORANGE = new DeviceRgb(255, 200, 0);
+    public static final Color PINK = new DeviceRgb(255, 175, 175);
+    public static final Color RED = new DeviceRgb(255, 0, 0);
+    public static final Color WHITE = new DeviceRgb(255, 255, 255);
+    public static final Color YELLOW = new DeviceRgb(255, 255, 0);
 
     protected PdfColorSpace colorSpace;
     protected float[] colorValue;

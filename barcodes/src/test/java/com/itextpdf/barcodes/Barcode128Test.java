@@ -38,7 +38,7 @@ public class Barcode128Test {
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.Black, Color.Black);
+        barcode.placeBarcode(canvas, Color.BLACK, Color.BLACK);
 
         document.close();
 
@@ -60,7 +60,7 @@ public class Barcode128Test {
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.Black, Color.Black);
+        barcode.placeBarcode(canvas, Color.BLACK, Color.BLACK);
 
         document.close();
 

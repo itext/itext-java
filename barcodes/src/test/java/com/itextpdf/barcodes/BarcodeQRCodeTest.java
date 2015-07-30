@@ -44,7 +44,7 @@ public class BarcodeQRCodeTest {
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
         BarcodeQRCode barcode = new BarcodeQRCode("some specific text 239214 hello world");
-        barcode.placeBarcode(canvas, Color.Gray, 12);
+        barcode.placeBarcode(canvas, Color.GRAY, 12);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));

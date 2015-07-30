@@ -239,9 +239,9 @@ public class PdfAnnotationTest {
 
         PdfPage page = document.addNewPage();
 
-        PdfSquareAnnotation square = new PdfSquareAnnotation(document, new Rectangle(100, 700, 100, 100)).setInteriorColor(new float[]{1, 0, 0}).setColor(new float[]{0, 1, 0}).setContents("Red Square");
+        PdfSquareAnnotation square = new PdfSquareAnnotation(document, new Rectangle(100, 700, 100, 100)).setInteriorColor(new float[]{1, 0, 0}).setColor(new float[]{0, 1, 0}).setContents("RED Square");
         page.addAnnotation(square);
-        PdfCircleAnnotation circle = new PdfCircleAnnotation(document, new Rectangle(300, 700, 100, 100)).setInteriorColor(new float[]{0, 1, 0}).setColor(new float[]{0, 0, 1}).setContents(new PdfString("Green Circle"));
+        PdfCircleAnnotation circle = new PdfCircleAnnotation(document, new Rectangle(300, 700, 100, 100)).setInteriorColor(new float[]{0, 1, 0}).setColor(new float[]{0, 0, 1}).setContents(new PdfString("GREEN Circle"));
         page.addAnnotation(circle);
         page.flush();
 
@@ -576,7 +576,7 @@ public class PdfAnnotationTest {
         canvas
                 .saveState()
                 .circle(265, 795, 5)
-                .setColor(Color.Green, true)
+                .setColor(Color.GREEN, true)
                 .fill()
                 .restoreState();
         canvas.release();
@@ -620,7 +620,7 @@ public class PdfAnnotationTest {
         canvas
                 .saveState()
                 .circle(272, 795, 5)
-                .setColor(Color.Green, true)
+                .setColor(Color.GREEN, true)
                 .fill()
                 .restoreState();
         canvas.release();
@@ -1018,7 +1018,7 @@ public class PdfAnnotationTest {
         canvas
                 .saveState()
                 .circle(100, 100, 50)
-                .setColor(Color.Black, true)
+                .setColor(Color.BLACK, true)
                 .fill()
                 .restoreState();
         canvas.release();
@@ -1062,7 +1062,7 @@ public class PdfAnnotationTest {
         PdfFormXObject formN = new PdfFormXObject(new Rectangle(179, 530, 122, 51));
         PdfCanvas canvasN = new PdfCanvas(formN);
         canvasN
-                .setColor(Color.Red, true)
+                .setColor(Color.RED, true)
                 .setLineWidth(1.5f)
                 .setLineCapStyle(PdfCanvasConstants.LineCapStyle.PROJECTING_SQUARE)
                 .rectangle(180, 531, 120, 48)

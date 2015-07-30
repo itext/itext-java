@@ -41,7 +41,7 @@ public class BarcodeInter25Test {
         barcode.setGenerateChecksum(true);
         barcode.setCode("41-1200076041-001");
         barcode.setTextAlignment(Barcode1D.ALIGN_CENTER);
-        barcode.placeBarcode(canvas, Color.Blue, Color.Green);
+        barcode.placeBarcode(canvas, Color.BLUE, Color.GREEN);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));

@@ -606,7 +606,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         canvas.
                 saveState().
-                setStrokeColor(Color.Black).
+                setStrokeColor(Color.BLACK).
                 setLineWidth(borderWidth).
                 rectangle(0, 0, width, height).
                 stroke().
@@ -688,24 +688,24 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font, int fontSize) {
         canvas.
                 saveState().
-                setStrokeColor(Color.Black).
+                setStrokeColor(Color.BLACK).
                 setLineWidth(1).
                 setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 rectangle(x, y, width, height).
                 stroke().
                 setLineWidth(1).
                 setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                setFillColor(Color.Silver).
+                setFillColor(Color.LIGHT_GRAY).
                 rectangle(x + 0.5f, y + 0.5f, width - 1, height - 1).
                 fill().
-                setStrokeColor(Color.White).
+                setStrokeColor(Color.WHITE).
                 setLineWidth(1).
                 setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1).
                 lineTo(x + 1, y + height - 1).
                 lineTo(x + width - 1, y + height - 1).
                 stroke().
-                setStrokeColor(Color.Gray).
+                setStrokeColor(Color.GRAY).
                 setLineWidth(1).
                 setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
                 moveTo(x + 1, y + 1).

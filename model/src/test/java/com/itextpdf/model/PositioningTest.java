@@ -86,7 +86,7 @@ public class PositioningTest {
 
         List list = new List(Property.ListNumberingType.ROMAN_UPPER).
                 setFixedPosition(2, 300, 300, 50).
-                setBackgroundColor(Color.Blue).
+                setBackgroundColor(Color.BLUE).
                 setHeight(100);
         list.add("Hello").
             add("World").
@@ -107,9 +107,9 @@ public class PositioningTest {
         Document document = new Document(pdfDocument);
         document.getPdfDocument().addNewPage();
 
-        new PdfCanvas(document.getPdfDocument().getPage(1)).setFillColor(Color.Black).rectangle(300, 300, 100, 100).fill().release();
+        new PdfCanvas(document.getPdfDocument().getPage(1)).setFillColor(Color.BLACK).rectangle(300, 300, 100, 100).fill().release();
 
-        Paragraph p = new Paragraph("Hello").setBackgroundColor(Color.Blue).setHeight(100).
+        Paragraph p = new Paragraph("Hello").setBackgroundColor(Color.BLUE).setHeight(100).
                 setFixedPosition(1, 300, 300, 100);
         document.add(p);
 

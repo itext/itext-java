@@ -52,7 +52,7 @@ public class DefaultLayoutTest {
         Document document = new Document(pdfDocument);
 
         String str = "Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.";
-        document.add(new Paragraph(new Text(str).setBackgroundColor(Color.Red)).setBackgroundColor(Color.Green)).
+        document.add(new Paragraph(new Text(str).setBackgroundColor(Color.RED)).setBackgroundColor(Color.GREEN)).
                 add(new Paragraph(str)).
                 add(new AreaBreak(PageSize.Default)).
                 add(new Paragraph(str));

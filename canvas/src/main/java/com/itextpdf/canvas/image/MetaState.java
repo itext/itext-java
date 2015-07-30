@@ -31,8 +31,8 @@ public class MetaState {
     public MetaPen currentPen;
     public MetaBrush currentBrush;
     public MetaFont currentFont;
-    public Color currentBackgroundColor = DeviceRgb.White;
-    public Color currentTextColor = DeviceRgb.Black;
+    public Color currentBackgroundColor = DeviceRgb.WHITE;
+    public Color currentTextColor = DeviceRgb.BLACK;
     public int backgroundMode = OPAQUE;
     public int polyFillMode = ALTERNATE;
     public int lineJoin = 1;

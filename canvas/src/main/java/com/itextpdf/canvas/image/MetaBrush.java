@@ -21,7 +21,7 @@ public class MetaBrush extends MetaObject {
 
     int style = BS_SOLID;
     int hatch;
-    Color color = DeviceRgb.White;
+    Color color = DeviceRgb.WHITE;
 
     public MetaBrush() {
         type = META_BRUSH;

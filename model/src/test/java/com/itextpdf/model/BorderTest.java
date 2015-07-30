@@ -43,28 +43,28 @@ public class BorderTest {
         List list = new List();
 
         ListItem solidBorderItem = new ListItem("solid");
-        solidBorderItem.setBorder(new SolidBorder(Color.Red, 6)).setMarginBottom(5);
-        solidBorderItem.setBorderTop(new SolidBorder(Color.Blue, 10));
+        solidBorderItem.setBorder(new SolidBorder(Color.RED, 6)).setMarginBottom(5);
+        solidBorderItem.setBorderTop(new SolidBorder(Color.BLUE, 10));
         list.add(solidBorderItem);
 
         ListItem doubleBorderItem = new ListItem("double");
-        doubleBorderItem.setBorder(new DoubleBorder(Color.Red, 10)).setMarginBottom(5);
-        doubleBorderItem.setBorderRight(new DoubleBorder(Color.Blue, 6));
+        doubleBorderItem.setBorder(new DoubleBorder(Color.RED, 10)).setMarginBottom(5);
+        doubleBorderItem.setBorderRight(new DoubleBorder(Color.BLUE, 6));
         list.add(doubleBorderItem);
 
         ListItem dashedBorderItem = new ListItem("dashed");
-        dashedBorderItem.setBorder(new DashedBorder(Color.Gray, 2)).setMarginBottom(5);
-        dashedBorderItem.setBorderBottom(new DashedBorder(Color.Black, 4));
+        dashedBorderItem.setBorder(new DashedBorder(Color.GRAY, 2)).setMarginBottom(5);
+        dashedBorderItem.setBorderBottom(new DashedBorder(Color.BLACK, 4));
         list.add(dashedBorderItem);
 
         ListItem dottedBorderItem = new ListItem("dotted");
-        dottedBorderItem.setBorder(new DottedBorder(Color.Black, 3)).setMarginBottom(5);
-        dottedBorderItem.setBorderLeft(new DottedBorder(Color.Gray, 6));
+        dottedBorderItem.setBorder(new DottedBorder(Color.BLACK, 3)).setMarginBottom(5);
+        dottedBorderItem.setBorderLeft(new DottedBorder(Color.GRAY, 6));
         list.add(dottedBorderItem);
 
         ListItem roundDotsBorderItem = new ListItem("round dots");
-        roundDotsBorderItem.setBorder(new RoundDotsBorder(Color.Silver, 3)).setMarginBottom(5);
-        roundDotsBorderItem.setBorderLeft(new RoundDotsBorder(Color.Blue, 5));
+        roundDotsBorderItem.setBorder(new RoundDotsBorder(Color.LIGHT_GRAY, 3)).setMarginBottom(5);
+        roundDotsBorderItem.setBorderLeft(new RoundDotsBorder(Color.BLUE, 5));
         list.add(roundDotsBorderItem);
 
         doc.add(list);
@@ -179,14 +179,14 @@ public class BorderTest {
         Paragraph p = new Paragraph(text);
 
         p.setBorderTop(new SolidBorder(DeviceCmyk.Magenta, 4));
-        p.setBorderRight(new DoubleBorder(DeviceRgb.Red, 6));
+        p.setBorderRight(new DoubleBorder(DeviceRgb.RED, 6));
         p.setBorderBottom(new RoundDotsBorder(DeviceCmyk.Cyan, 2));
         p.setBorderLeft(new DashedBorder(DeviceGray.Black, 3));
 
         doc.add(p);
 
         doc.add(new Paragraph(text).setBorderTop(new SolidBorder(DeviceCmyk.Magenta, 8)));
-        doc.add(new Paragraph(text).setBorderRight(new DoubleBorder(DeviceRgb.Red, 4)));
+        doc.add(new Paragraph(text).setBorderRight(new DoubleBorder(DeviceRgb.RED, 4)));
         doc.add(new Paragraph(text).setBorderBottom(new RoundDotsBorder(DeviceCmyk.Cyan, 3)));
         doc.add(new Paragraph(text).setBorderLeft(new DashedBorder(DeviceGray.Black, 5)));
         doc.add(new Paragraph(text).setBorder(new DottedBorder(DeviceGray.Black, 1)));
@@ -224,13 +224,13 @@ public class BorderTest {
 
         doc.add(new Paragraph(textBefore).setMargins(25, 60, 70, 80));
 
-        Paragraph p = new Paragraph(text).setBackgroundColor(Color.Gray);
+        Paragraph p = new Paragraph(text).setBackgroundColor(Color.GRAY);
         p.setMargins(25, 60, 70, 80);
-        p.setBorderLeft(new DoubleBorder(DeviceRgb.Red, 25));
-        p.setBorder(new DoubleBorder(DeviceRgb.Black, 6));
+        p.setBorderLeft(new DoubleBorder(DeviceRgb.RED, 25));
+        p.setBorder(new DoubleBorder(DeviceRgb.BLACK, 6));
         doc.add(p);
 
-        doc.add(new Paragraph(textAfter).setBorder(new DottedBorder(Color.Black, 3)).setBorderRight(new DottedBorder(Color.Black, 12)));
+        doc.add(new Paragraph(textAfter).setBorder(new DottedBorder(Color.BLACK, 3)).setBorderRight(new DottedBorder(Color.BLACK, 12)));
 
         closeDocumentAndCompareOutputs(doc);
     }

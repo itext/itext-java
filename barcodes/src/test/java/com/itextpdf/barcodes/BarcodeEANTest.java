@@ -41,7 +41,7 @@ public class BarcodeEANTest {
         barcode.setCode("9781935182610");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.Black, Color.Black);
+        barcode.placeBarcode(canvas, Color.BLACK, Color.BLACK);
 
         document.close();
 
@@ -63,7 +63,7 @@ public class BarcodeEANTest {
         barcode.setCode("97819351");
 
         barcode.setTextAlignment(Barcode1D.ALIGN_LEFT);
-        barcode.placeBarcode(canvas, Color.Black, Color.Black);
+        barcode.placeBarcode(canvas, Color.BLACK, Color.BLACK);
 
         document.close();
 
@@ -88,7 +88,7 @@ public class BarcodeEANTest {
         codeSUPP.setCode("55999");
         codeSUPP.setBaseline(-2);
         BarcodeEANSUPP eanSupp = new BarcodeEANSUPP(codeEAN, codeSUPP);
-        eanSupp.placeBarcode(canvas,null, Color.Blue);
+        eanSupp.placeBarcode(canvas,null, Color.BLUE);
 
         document.close();
 
