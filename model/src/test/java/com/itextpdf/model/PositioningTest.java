@@ -3,10 +3,12 @@ package com.itextpdf.model;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.DeviceGray;
+import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.model.border.SolidBorder;
+import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
@@ -16,6 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -26,7 +29,10 @@ public class PositioningTest {
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        File dir = new File(destinationFolder);
+        dir.mkdirs();
+        for(File file: dir.listFiles())
+            file.delete();
     }
 
     @Test
@@ -117,5 +123,133 @@ public class PositioningTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void showTextAlignedTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "showTextAlignedTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_showTextAlignedTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document document = new Document(pdfDocument);
+
+        pdfDocument.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
+
+        String text = "textapqgaPQGatext";
+        float width = 200;
+        float x, y;
+
+        y = 700;
+        x = 115;
+        drawCross(canvas, x, y);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.LEFT, Property.VerticalAlignment.BOTTOM, 0);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.LEFT, Property.VerticalAlignment.BOTTOM, (float) (Math.PI / 6 * 1));
+        x = 300;
+        drawCross(canvas, x, y);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.LEFT, Property.VerticalAlignment.MIDDLE, 0);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.LEFT, Property.VerticalAlignment.MIDDLE, (float) (Math.PI/6 * 3));
+        x = 485;
+        drawCross(canvas, x, y);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.LEFT, Property.VerticalAlignment.TOP, 0);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.LEFT, Property.VerticalAlignment.TOP, (float) (Math.PI/6 * 5));
+
+        y = 400;
+        x = 115;
+        drawCross(canvas, x, y);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.CENTER, Property.VerticalAlignment.BOTTOM, 0);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.CENTER, Property.VerticalAlignment.BOTTOM, (float) (Math.PI/6 * 2));
+        x = 300;
+        drawCross(canvas, x, y);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.CENTER, Property.VerticalAlignment.MIDDLE, 0);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.CENTER, Property.VerticalAlignment.MIDDLE, (float) (Math.PI / 6 * 4));
+        x = 485;
+        drawCross(canvas, x, y);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.CENTER, Property.VerticalAlignment.TOP, 0);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.CENTER, Property.VerticalAlignment.TOP, (float) (Math.PI/6 * 8));
+
+        y = 100;
+        x = 115;
+        drawCross(canvas, x, y);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.RIGHT, Property.VerticalAlignment.BOTTOM, 0);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.RIGHT, Property.VerticalAlignment.BOTTOM, (float) (Math.PI/6 * 9));
+        x = 300;
+        drawCross(canvas, x, y);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.RIGHT, Property.VerticalAlignment.MIDDLE, 0);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.RIGHT, Property.VerticalAlignment.MIDDLE, (float) (Math.PI/6 * 7));
+        x = 485;
+        drawCross(canvas, x, y);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.RIGHT, Property.VerticalAlignment.TOP, 0);
+        document.showTextAligned(text, x, y, Property.HorizontalAlignment.RIGHT, Property.VerticalAlignment.TOP, (float) (Math.PI/6 * 6));
+
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
+    }
+
+    @Test
+    public void showTextAlignedTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "showTextAlignedTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_showTextAlignedTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document document = new Document(pdfDocument);
+
+        String watermarkText = "WATERMARK";
+        Paragraph watermark = new Paragraph(watermarkText);
+        watermark.setFontColor(new DeviceGray(0.75f)).setFontSize(72);
+        document.showTextAligned(watermark, PageSize.A4.getWidth() / 2, PageSize.A4.getHeight() / 2, 1, Property.HorizontalAlignment.CENTER, Property.VerticalAlignment.MIDDLE, (float) (Math.PI / 4));
+
+        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
+                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
+        document.add(new Paragraph(textContent + textContent + textContent));
+        document.add(new Paragraph(textContent + textContent + textContent));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
+    }
+
+    @Test
+    public void showTextAlignedTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "showTextAlignedTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_showTextAlignedTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document document = new Document(pdfDocument);
+
+        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna." +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus." +
+                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.";
+
+        float x = 400, y = 500;
+        Paragraph p = new Paragraph(textContent).setWidth(300f).setMultipliedLeading(1.5f);
+        document.showTextAligned(p, x, y, 1, Property.HorizontalAlignment.CENTER, Property.VerticalAlignment.MIDDLE, (float) -(Math.PI / 4));
+        drawCross(new PdfCanvas(pdfDocument.getLastPage()), x, y);
+
+        x = 500; y = 50;
+        document.showTextAligned(textContent, x, y, Property.HorizontalAlignment.RIGHT, (float) -(Math.PI / 3));
+        drawCross(new PdfCanvas(pdfDocument.getLastPage()), x, y);
+
+        x = 150; y = 600;
+        document.showTextAligned("simple text", x, y, Property.HorizontalAlignment.CENTER, (float) (Math.PI / 3));
+        drawCross(new PdfCanvas(pdfDocument.getLastPage()), x, y);
+
+        x = 150; y = 150;
+        document.showTextAlignedKerned("AVAVAVAVAVAVAVVAVA", x, y, Property.HorizontalAlignment.CENTER, Property.VerticalAlignment.TOP, (float) (Math.PI / 3));
+        drawCross(new PdfCanvas(pdfDocument.getLastPage()), x, y);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
+    }
+
+    private void drawCross(PdfCanvas canvas, float x, float y) {
+        drawLine(canvas, x - 50, y, x + 50, y);
+        drawLine(canvas, x, y - 50, x, y + 50);
+    }
+
+    private void drawLine(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+        canvas.saveState().moveTo(x1, y1).lineTo(x2,y2).setLineWidth(0.5f).setLineDash(3).stroke().restoreState();
     }
 }

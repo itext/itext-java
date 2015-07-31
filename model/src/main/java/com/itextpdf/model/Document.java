@@ -70,6 +70,94 @@ public class Document implements IPropertyContainer<Document> {
         return this;
     }
 
+
+    /**
+     * Convenience method to write a text aligned about the specified point
+     * @param text text to be placed to the page
+     * @param x the point about which the text will be aligned and rotated
+     * @param y the point about which the text will be aligned and rotated
+     * @param horAlign horizontal alignment about the specified point
+     * @param angle the angle of rotation applied to the text, in radians
+     */
+    public Document showTextAligned(String text, float x, float y, Property.HorizontalAlignment horAlign, float angle) {
+        return showTextAligned(text, x, y, horAlign, Property.VerticalAlignment.BOTTOM, angle);
+    }
+
+    /**
+     * Convenience method to write a text aligned about the specified point
+     * @param text text to be placed to the page
+     * @param x the point about which the text will be aligned and rotated
+     * @param y the point about which the text will be aligned and rotated
+     * @param horAlign horizontal alignment about the specified point
+     * @param vertAlign vertical alignment about the specified point
+     * @param angle the angle of rotation applied to the text, in radians
+     */
+    public Document showTextAligned(String text, float x, float y, Property.HorizontalAlignment horAlign, Property.VerticalAlignment vertAlign, float angle) {
+        Paragraph p = new Paragraph(text);
+        return showTextAligned(p, x, y, pdfDocument.getNumOfPages(), horAlign, vertAlign, angle);
+    }
+
+    /**
+     * Convenience method to write a kerned text aligned about the specified point
+     * @param text text to be placed to the page
+     * @param x the point about which the text will be aligned and rotated
+     * @param y the point about which the text will be aligned and rotated
+     * @param horAlign horizontal alignment about the specified point
+     * @param vertAlign vertical alignment about the specified point
+     * @param angle the angle of rotation applied to the text, in radians
+     */
+    public Document showTextAlignedKerned(String text, float x, float y, Property.HorizontalAlignment horAlign, Property.VerticalAlignment vertAlign, float angle) {
+        Paragraph p = new Paragraph(text).setFontKerning(Property.FontKerning.YES);
+        return showTextAligned(p, x, y, pdfDocument.getNumOfPages(), horAlign, vertAlign, angle);
+    }
+
+    /**
+     * Convenience method to write a text aligned about the specified point
+     * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
+     *          Set width to write multiline text.
+     * @param x the point about which the text will be aligned and rotated
+     * @param y the point about which the text will be aligned and rotated
+     * @param pageNumber the page number to write the text
+     * @param horAlign horizontal alignment about the specified point
+     * @param vertAlign vertical alignment about the specified point
+     * @param angle the angle of rotation applied to the text, in radians
+     */
+    public Document showTextAligned(Paragraph p, float x, float y, int pageNumber, Property.HorizontalAlignment horAlign, Property.VerticalAlignment vertAlign, float angle) {
+        Div div = new Div();
+        div.setHorizontalAlignment(horAlign).setVerticalAlignment(vertAlign);
+        if (angle != 0) {
+            div.setRotationAngle(angle);
+        }
+        div.setProperty(Property.ROTATION_POINT_X, x);
+        div.setProperty(Property.ROTATION_POINT_Y, y);
+
+        float divWidth = 10000;
+        float divHeight = 10000;
+        float divX = x, divY = y;
+        if (horAlign == Property.HorizontalAlignment.CENTER) {
+            divX = x - divWidth / 2;
+        } else if (horAlign == Property.HorizontalAlignment.RIGHT) {
+            divX = x - divWidth;
+        }
+
+        if (vertAlign == Property.VerticalAlignment.MIDDLE) {
+            divY = y - divHeight / 2;
+        } else if (vertAlign == Property.VerticalAlignment.TOP) {
+            divY = y - divHeight;
+        }
+
+        if (pageNumber == 0)
+            pageNumber = 1;
+        div.setFixedPosition(pageNumber, divX, divY, divWidth).setHeight(divHeight);
+        if (p.getProperty(Property.LEADING) == null) {
+            p.setMultipliedLeading(1);
+        }
+        div.add(p.setMargins(0, 0, 0, 0));
+        this.add(div);
+
+        return this;
+    }
+
     /**
      * Gets PDF document.
      *
