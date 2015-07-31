@@ -95,6 +95,10 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
     }
 
+    public T setVerticalAlignment(Property.VerticalAlignment verticalAlignment) {
+        return setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
+    }
+
     /**
      * Sets a ratio which determines in which proportion will word spacing and character spacing
      * be applied when horizontal alignment is justified.
@@ -134,11 +138,6 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
 
     public T setRotationAngle(double angle) {
         setProperty(Property.ROTATION_ANGLE, Float.valueOf((float) angle));
-        return (T) this;
-    }
-
-    public T setRotationAlignment(Property.HorizontalAlignment alignment) {
-        setProperty(Property.ROTATION_ALIGNMENT, alignment);
         return (T) this;
     }
 }

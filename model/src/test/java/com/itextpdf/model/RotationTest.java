@@ -54,11 +54,7 @@ public class RotationTest {
         int x1 = 350;
         int y1 = 600;
         int width1 = 100;
-        document.add(new Paragraph("text to be rotatedg").setRotationAngle((Math.PI / 6)).setRotationAlignment(Property.HorizontalAlignment.LEFT).setFixedPosition(x1, y1, width1)
-                .setBorder(border));
-        document.add(new Paragraph("text to be rotatedg").setRotationAngle((Math.PI / 6)).setRotationAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(x1, y1, width1)
-                .setBorder(border));
-        document.add(new Paragraph("text to be rotatedg").setRotationAngle((Math.PI / 6)).setRotationAlignment(Property.HorizontalAlignment.RIGHT).setFixedPosition(x1, y1, width1)
+        document.add(new Paragraph("text to be rotatedg").setRotationAngle((Math.PI / 6)).setFixedPosition(x1, y1, width1)
                 .setBorder(border));
         document.add(new Paragraph("text to be rotatedg").setFixedPosition(x1, y1, width1)
                 .setBorder(border));
@@ -68,9 +64,7 @@ public class RotationTest {
         int x2 = 50;
         int y2 = 300;
         int width2 = 450;
-        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setRotationAlignment(Property.HorizontalAlignment.LEFT).setFixedPosition(x2, y2, width2));
-        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setRotationAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(x2, y2, width2));
-        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setRotationAlignment(Property.HorizontalAlignment.RIGHT).setFixedPosition(x2, y2, width2));
+        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setFixedPosition(x2, y2, width2));
         document.add(new Paragraph(longText).setFixedPosition(x2, y2, width2));
 
         document.close();
@@ -88,7 +82,7 @@ public class RotationTest {
 
         String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                 "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text";
-        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setRotationAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(50, 50, 450));
+        document.add(new Paragraph(longText).setRotationAngle(-(Math.PI / 6)).setFixedPosition(50, 50, 450));
         document.add(new Paragraph(longText).setFixedPosition(50, 50, 450));
 
         document.close();
@@ -108,7 +102,7 @@ public class RotationTest {
         float x = 50;
         float y = 380;
         float width = 200;
-        document.add(new Paragraph(simpleText).setRotationAngle((Math.PI / 2)).setRotationAlignment(Property.HorizontalAlignment.CENTER).setFixedPosition(x, y, width));
+        document.add(new Paragraph(simpleText).setRotationAngle((Math.PI / 2)).setFixedPosition(x, y, width));
         document.add(new Paragraph(simpleText).setFixedPosition(x, y, width));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
@@ -169,9 +163,9 @@ public class RotationTest {
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph(para2Text).setRotationAngle((Math.PI / 12)).setRotationAlignment(Property.HorizontalAlignment.LEFT));
+        document.add(new Paragraph(para2Text).setRotationAngle((Math.PI / 12)));
         document.add(new Paragraph(new Text(para2Text).setBackgroundColor(Color.GREEN)).
-                setRotationAngle((-Math.PI / 12)).setRotationAlignment(Property.HorizontalAlignment.CENTER).setBackgroundColor(Color.BLUE));
+                setRotationAngle((-Math.PI / 12)).setBackgroundColor(Color.BLUE));
         document.add(new Paragraph(para3Text));
 
         document.close();
@@ -188,8 +182,8 @@ public class RotationTest {
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph(para2Text).setRotationAngle((Math.PI / 6)).setRotationAlignment(Property.HorizontalAlignment.LEFT).setBackgroundColor(Color.RED));
-        document.add(new Paragraph(para2Text).setRotationAngle((-Math.PI / 3)).setRotationAlignment(Property.HorizontalAlignment.CENTER));
+        document.add(new Paragraph(para2Text).setRotationAngle((Math.PI / 6)).setBackgroundColor(Color.RED));
+        document.add(new Paragraph(para2Text).setRotationAngle((-Math.PI / 3)));
         document.add(new Paragraph(para3Text));
 
         document.close();
@@ -227,7 +221,7 @@ public class RotationTest {
         document.add(new Paragraph(para1Text));
         document.add(new Paragraph(para1Text).setRotationAngle((Math.PI / 4)));
         document.add(new Paragraph(para1Text));
-        document.add(new Paragraph(para2Text).setRotationAngle((-Math.PI / 3)).setRotationAlignment(Property.HorizontalAlignment.CENTER));
+        document.add(new Paragraph(para2Text).setRotationAngle((-Math.PI / 3)));
         document.add(new Paragraph(para3Text));
 
         document.close();
@@ -254,33 +248,6 @@ public class RotationTest {
     }
 
     @Test
-    //TODO tables rotation should be rechecked after finishing the tables implementation
-    public void tableRotationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "tableRotationTest01.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest01.pdf";
-
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        Document doc = new Document(pdfDoc);
-
-        doc.add(new Paragraph(para1Text));
-
-        Table table = new Table(new float[]{50, 50}).setRotationAngle((Math.PI / 3)).setBackgroundColor(Color.RED)
-                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2")))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1")))
-                .addCell(new Cell().add(new Paragraph("cell 2, 2")));
-        doc.add(table);
-
-        doc.add(new Paragraph(para2Text));
-
-        doc.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
-    }
-
-    @Test
     public void tableRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "tableRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest02.pdf";
@@ -293,7 +260,7 @@ public class RotationTest {
         Table table = new Table(new float[]{50, 50})
                 .addCell(new Cell().add(new Paragraph("cell 1, 1").setRotationAngle((Math.PI / 2))))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotationAngle((Math.PI / 3))))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotationAngle((Math.PI / 3)).setRotationAlignment(Property.HorizontalAlignment.CENTER)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotationAngle((Math.PI / 3))))
                 .addCell(new Cell().add(new Paragraph("cell 2, 2").setRotationAngle((Math.PI))));
         doc.add(table);
 

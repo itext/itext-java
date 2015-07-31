@@ -5,6 +5,8 @@ import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.element.BlockElement;
+import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
@@ -14,12 +16,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ParagraphRenderer extends AbstractRenderer {
+public class ParagraphRenderer extends BlockRenderer {
 
     protected float previousDescent = 0;
     protected List<LineRenderer> lines = new ArrayList<>();
 
-    public ParagraphRenderer(IPropertyContainer modelElement) {
+    public ParagraphRenderer(Paragraph modelElement) {
         super(modelElement);
     }
 
@@ -68,7 +70,6 @@ public class ParagraphRenderer extends AbstractRenderer {
         float leadingValue = 0;
 
         float lastLineHeight = 0;
-        float maxLineWidth = 0;
 
         while (currentRenderer != null) {
             currentRenderer.setProperty(Property.TAB_DEFAULT, getPropertyAsFloat(Property.TAB_DEFAULT));
@@ -165,7 +166,6 @@ public class ParagraphRenderer extends AbstractRenderer {
 
                 currentRenderer = (LineRenderer) result.getOverflowRenderer();
                 previousDescent = processedRenderer.getMaxDescent();
-                maxLineWidth = Math.max(processedRenderer.getOccupiedArea().getBBox().getWidth(), maxLineWidth);
             }
         }
 
@@ -177,7 +177,7 @@ public class ParagraphRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
             occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
-            //applyVerticalAlignment();
+            applyVerticalAlignment();
         }
         if (isPositioned()) {
             float y = getPropertyAsFloat(Property.Y);
@@ -188,7 +188,7 @@ public class ParagraphRenderer extends AbstractRenderer {
         applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
         if (getProperty(Property.ROTATION_ANGLE) != null) {
-            calculateRotationPointAndRotate(maxLineWidth);
+            applyRotationLayout();
             if (isNotFittingHeight(layoutContext.getArea())) {
                 return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
             }
@@ -197,7 +197,7 @@ public class ParagraphRenderer extends AbstractRenderer {
     }
 
     protected ParagraphRenderer createOverflowRenderer() {
-        ParagraphRenderer overflowRenderer = new ParagraphRenderer(modelElement);
+        ParagraphRenderer overflowRenderer = new ParagraphRenderer((Paragraph)modelElement);
         // Reset first line indent in case of overflow.
         float firstLineIndent = getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != 0) {
@@ -207,7 +207,7 @@ public class ParagraphRenderer extends AbstractRenderer {
     }
 
     protected ParagraphRenderer createSplitRenderer() {
-        return new ParagraphRenderer(modelElement);
+        return new ParagraphRenderer((Paragraph)modelElement);
     }
 
     protected ParagraphRenderer[] split() {
@@ -245,39 +245,5 @@ public class ParagraphRenderer extends AbstractRenderer {
             return null;
         }
         return lines.get(0).getFirstYLineRecursively();
-    }
-
-    //    protected void applyVerticalAlignment() {
-//        Property.VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
-//        if (verticalAlignment != null && verticalAlignment != Property.VerticalAlignment.TOP && childRenderers.size() > 0) {
-//            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - occupiedArea.getBBox().getY();
-//            switch (verticalAlignment) {
-//                case BOTTOM:
-//                    for (IRenderer child : childRenderers) {
-//                        child.move(0, -deltaY);
-//                    }
-//                    break;
-//                case MIDDLE:
-//                    for (IRenderer child : childRenderers) {
-//                        child.move(0, -deltaY / 2);
-//                    }
-//                    break;
-//            }
-//        }
-//    }
-
-    private void calculateRotationPointAndRotate(float maxLineWidth) {
-        float x = occupiedArea.getBBox().getX();
-        float y = occupiedArea.getBBox().getY();
-        Property.HorizontalAlignment rotationAlignment = getProperty(Property.ROTATION_ALIGNMENT);
-        if (rotationAlignment != null) {
-            if (rotationAlignment == Property.HorizontalAlignment.CENTER) {
-                x += maxLineWidth / 2;
-            }
-            else if (rotationAlignment == Property.HorizontalAlignment.RIGHT) {
-                x += maxLineWidth;
-            }
-        }
-        applyRotationLayout(x, y);
     }
 }

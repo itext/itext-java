@@ -5,7 +5,6 @@ import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
@@ -39,7 +38,7 @@ public class ImageRenderer extends AbstractRenderer {
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         width = getPropertyAsFloat(Property.WIDTH);
-        Float angle = getPropertyAsFloat(Property.IMAGE_ROTATION_ANGLE);
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
         imageWidth = xObject.getWidth();

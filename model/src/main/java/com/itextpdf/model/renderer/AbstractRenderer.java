@@ -1,7 +1,5 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.geom.AffineTransform;
-import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
@@ -145,13 +143,9 @@ public abstract class AbstractRenderer implements IRenderer {
             applyAbsolutePositioningTranslation(false);
         }
 
-        beginRotationIfApplied(canvas);
-
         drawBackground(document, canvas);
         drawBorder(document, canvas);
         drawChildren(document, canvas);
-
-        endRotationIfApplied(canvas);
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);
@@ -164,13 +158,7 @@ public abstract class AbstractRenderer implements IRenderer {
         Property.Background background = getProperty(Property.BACKGROUND);
         if (background != null) {
 
-            Rectangle bBox = this.occupiedArea.getBBox().clone();
-
-            Float rotationAngle = getProperty(Property.ROTATION_ANGLE);
-            if (rotationAngle != null) {
-                bBox.setWidth(getWidthBeforeRotation(rotationAngle));
-                bBox.setHeight(getHeightBeforeRotation());
-            }
+            Rectangle bBox = getOccupiedAreaBBox();
 
             Rectangle backgroundArea = applyMargins(bBox, false);
             canvas.saveState().setFillColor(background.getColor()).
@@ -200,12 +188,7 @@ public abstract class AbstractRenderer implements IRenderer {
             float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
             float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
 
-            Rectangle bBox = occupiedArea.getBBox().clone();
-            Float rotationAngle = getProperty(Property.ROTATION_ANGLE);
-            if (rotationAngle != null) {
-                bBox.setWidth(getWidthBeforeRotation(rotationAngle));
-                bBox.setHeight(getHeightBeforeRotation());
-            }
+            Rectangle bBox = getOccupiedAreaBBox();
 
             applyMargins(bBox, false);
             applyBorderBox(bBox, false);
@@ -256,6 +239,10 @@ public abstract class AbstractRenderer implements IRenderer {
 
     public List<Rectangle> initElementAreas(LayoutArea area) {
         return Collections.singletonList(area.getBBox());
+    }
+
+    protected Rectangle getOccupiedAreaBBox() {
+        return occupiedArea.getBBox().clone();
     }
 
     //TODO is behavior of copying all properties in split case common to all renderers?
@@ -317,78 +304,6 @@ public abstract class AbstractRenderer implements IRenderer {
             move(dxRight, dyUp);
     }
 
-    protected void applyRotationLayout() {
-        float dx = 0;
-        float width = occupiedArea.getBBox().getWidth();
-        Property.HorizontalAlignment alignment = getProperty(Property.ROTATION_ALIGNMENT);
-        if (alignment != null) {
-            if (alignment == Property.HorizontalAlignment.CENTER)
-                dx = width / 2;
-            else if (alignment == Property.HorizontalAlignment.RIGHT)
-                dx = width;
-        }
-        applyRotationLayout(occupiedArea.getBBox().getX() + dx, occupiedArea.getBBox().getY());
-    }
-
-
-    protected void applyRotationLayout(float rotationPointX, float rotationPointY) {
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
-        setProperty(Property.ROTATION_POINT_X, rotationPointX);
-        setProperty(Property.ROTATION_POINT_Y, rotationPointY);
-
-        float height = occupiedArea.getBBox().getHeight();
-        float width = occupiedArea.getBBox().getWidth();
-
-        double cos = Math.abs(Math.cos(angle));
-        double sin = Math.abs(Math.sin(angle));
-        float newHeight = (float) (height*cos + width*sin);
-        float newWidth = (float) (height*sin + width*cos);
-
-        occupiedArea.getBBox().setWidth(newWidth);
-        occupiedArea.getBBox().setHeight(newHeight);
-
-        float heightDiff = height - newHeight;
-        move(0, heightDiff);
-        setProperty(Property.ROTATION_LAYOUT_SHIFT, heightDiff);
-    }
-
-    protected float[] applyRotation() {
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
-        AffineTransform transform = new AffineTransform();
-        transform.rotate(angle);
-
-        float dx = 0, dy = 0;
-        if (!isPositioned()) {
-            float x = occupiedArea.getBBox().getX();
-            float y = occupiedArea.getBBox().getY();
-            float actualWidth = getWidthBeforeRotation(angle);
-            float actualHeight = getHeightBeforeRotation();
-
-            Point2D p00 = transform.transform(new Point2D.Float(x, y), new Point2D.Float());
-            Point2D p01 = transform.transform(new Point2D.Float(x + actualWidth, y), new Point2D.Float());
-            Point2D p10 = transform.transform(new Point2D.Float(x + actualWidth, y + actualHeight), new Point2D.Float());
-            Point2D p11 = transform.transform(new Point2D.Float(x, y + actualHeight), new Point2D.Float());
-
-            List<Double> xValues = Arrays.asList(p00.getX(), p01.getX(), p10.getX(), p11.getX());
-            List<Double> yValues = Arrays.asList(p00.getY(), p01.getY(), p10.getY(), p11.getY());
-
-            double minX = Collections.min(xValues);
-            double maxY = Collections.max(yValues);
-
-            dy = (float) ((y + actualHeight) - maxY);
-            dx = (float) (x - minX);
-        }
-
-        float rotationPointX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-        float rotationPointY = getPropertyAsFloat(Property.ROTATION_POINT_Y);
-
-        float[] ctm = new float[6];
-        transform.getMatrix(ctm);
-        ctm[4] = rotationPointX + dx;
-        ctm[5] = rotationPointY + dy;
-        return ctm;
-    }
-
     protected boolean isNotFittingHeight(LayoutArea layoutArea) {
         Rectangle area = applyMargins(layoutArea.getBBox().clone(), false);
         area = applyPaddings(area, false);
@@ -443,54 +358,5 @@ public abstract class AbstractRenderer implements IRenderer {
         }
 
         return borders;
-    }
-
-    private void beginRotationIfApplied(PdfCanvas canvas) {
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
-        if (angle != null) {
-            float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
-
-            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
-
-            move(-shiftX, -shiftY);
-            float[] ctm = applyRotation();
-            canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
-        }
-    }
-
-    private void endRotationIfApplied(PdfCanvas canvas) {
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
-        if (angle != null) {
-            float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
-
-            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
-            setProperty(Property.ROTATION_POINT_X, null);
-            setProperty(Property.ROTATION_POINT_Y, null);
-            setProperty(Property.ROTATION_LAYOUT_SHIFT, null);
-
-            canvas.restoreState();
-            move(shiftX, shiftY);
-        }
-    }
-
-    private float getWidthBeforeRotation(float angle) {
-        float rotatedWidth = occupiedArea.getBBox().getWidth();
-        float rotatedHeight = occupiedArea.getBBox().getHeight();
-
-        if (Math.abs(rotatedHeight - rotatedWidth) < EPS)
-            return (float) (rotatedWidth*Math.sqrt(2) - getHeightBeforeRotation());
-
-        double cos = Math.abs(Math.cos(angle));
-        double sin = Math.abs(Math.sin(angle));
-
-        return (float) ((rotatedHeight*sin - rotatedWidth*cos)/(sin*sin - cos*cos));
-    }
-
-    private float getHeightBeforeRotation() {
-        float rotatedHeight = occupiedArea.getBBox().getHeight();
-        float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
-        return rotatedHeight + heightDiff;
     }
 }

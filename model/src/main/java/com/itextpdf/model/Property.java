@@ -27,7 +27,6 @@ public enum Property {
      * Value of 1 is equivalent to no scaling
      **/
     HORIZONTAL_SCALING,
-    IMAGE_ROTATION_ANGLE,
     KEEP_TOGETHER(true),
     LEADING,
     LEFT,
@@ -47,12 +46,11 @@ public enum Property {
     ROTATION_ALIGNMENT,
     ROTATION_ANGLE,
     /**
-     * The vertical shift of the rotated element after layout but before drawing
+     * The vertical shift of the element content, which is the result of the height changes on rotation layout
      */
     ROTATION_LAYOUT_SHIFT,
     /**
-     * ROTATION_POINT is defined on layouting and is used on drawing.
-     * This point corresponds to the element position before rotating and before resizing the element's occupied area.
+     *  If defined, determines the specific point of rotation
      */
     ROTATION_POINT_X,
     ROTATION_POINT_Y,
@@ -72,6 +70,7 @@ public enum Property {
     /**
      * Value of 1 is equivalent to no scaling
      **/
+    VERTICAL_ALIGNMENT,
     VERTICAL_SCALING,
     WIDTH,
     WORD_SPACING(true),

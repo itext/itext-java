@@ -1,13 +1,19 @@
 package com.itextpdf.model.renderer;
 
+import com.itextpdf.basics.geom.AffineTransform;
+import com.itextpdf.basics.geom.Point2D;
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
+import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.layout.LayoutResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -76,7 +82,7 @@ public class BlockRenderer extends AbstractRenderer {
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
 
-                       layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
+                        layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
                         if (currentAreaPos + 1 == areas.size()) {
                             BlockRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
@@ -90,7 +96,7 @@ public class BlockRenderer extends AbstractRenderer {
                             overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                             overflowRenderer.childRenderers = overflowRendererChildren;
 
-                            applyPaddings(occupiedArea.getBBox(), false);
+                            applyPaddings(occupiedArea.getBBox(), true);
                             applyBorderBox(occupiedArea.getBBox(), true);
                             applyMargins(occupiedArea.getBBox(), true);
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
@@ -118,7 +124,7 @@ public class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
 
-                        applyPaddings(occupiedArea.getBBox(), false);
+                        applyPaddings(occupiedArea.getBBox(), true);
                         applyBorderBox(occupiedArea.getBBox(), true);
                         applyMargins(occupiedArea.getBBox(), true);
                         return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
@@ -141,6 +147,7 @@ public class BlockRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
             occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
+            applyVerticalAlignment();
         }
         if (isPositioned()) {
             float y = getPropertyAsFloat(Property.Y);
@@ -172,5 +179,175 @@ public class BlockRenderer extends AbstractRenderer {
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         return overflowRenderer;
+    }
+
+    @Override
+    public void draw(PdfDocument document, PdfCanvas canvas) {
+        int position = getPropertyAsInteger(Property.POSITION);
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(false);
+        }
+
+        beginRotationIfApplied(canvas);
+
+        drawBackground(document, canvas);
+        drawBorder(document, canvas);
+        drawChildren(document, canvas);
+
+        endRotationIfApplied(canvas);
+
+        if (position == LayoutPosition.RELATIVE) {
+            applyAbsolutePositioningTranslation(true);
+        }
+
+        flushed = true;
+    }
+
+    @Override
+    protected Rectangle getOccupiedAreaBBox() {
+        Rectangle bBox = occupiedArea.getBBox().clone();
+        Float rotationAngle = getProperty(Property.ROTATION_ANGLE);
+        if (rotationAngle != null) {
+            bBox.setWidth(getWidthBeforeRotation(rotationAngle));
+            bBox.setHeight(getHeightBeforeRotation());
+        }
+        return bBox;
+    }
+
+    protected void applyVerticalAlignment() {
+        Property.VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
+        if (verticalAlignment != null && verticalAlignment != Property.VerticalAlignment.TOP && childRenderers.size() > 0) {
+            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - occupiedArea.getBBox().getY();
+            switch (verticalAlignment) {
+                case BOTTOM:
+                    for (IRenderer child : childRenderers) {
+                        child.move(0, -deltaY);
+                    }
+                    break;
+                case MIDDLE:
+                    for (IRenderer child : childRenderers) {
+                        child.move(0, -deltaY / 2);
+                    }
+                    break;
+            }
+        }
+    }
+
+    protected void applyRotationLayout() {
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+
+        Float rotationPointX = getPropertyAsFloat(Property.ROTATION_POINT_X);
+        Float rotationPointY = getPropertyAsFloat(Property.ROTATION_POINT_Y);
+
+        if (rotationPointX == null || rotationPointY == null) {
+            // if rotation point was not specified, the most bottom-left point is used
+            rotationPointX = occupiedArea.getBBox().getX();
+            rotationPointY = occupiedArea.getBBox().getY();
+            setProperty(Property.ROTATION_POINT_X, rotationPointX);
+            setProperty(Property.ROTATION_POINT_Y, rotationPointY);
+        }
+
+        float height = occupiedArea.getBBox().getHeight();
+        float width = occupiedArea.getBBox().getWidth();
+
+        double cos = Math.abs(Math.cos(angle));
+        double sin = Math.abs(Math.sin(angle));
+        float newHeight = (float) (height*cos + width*sin);
+        float newWidth = (float) (height*sin + width*cos);
+
+        occupiedArea.getBBox().setWidth(newWidth);
+        occupiedArea.getBBox().setHeight(newHeight);
+
+        float heightDiff = height - newHeight;
+        move(0, heightDiff);
+        setProperty(Property.ROTATION_LAYOUT_SHIFT, heightDiff);
+    }
+
+    protected float[] applyRotation() {
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        AffineTransform transform = new AffineTransform();
+        transform.rotate(angle);
+
+        float dx = 0, dy = 0;
+        if (!isPositioned()) {
+            float x = occupiedArea.getBBox().getX();
+            float y = occupiedArea.getBBox().getY();
+            float actualWidth = getWidthBeforeRotation(angle);
+            float actualHeight = getHeightBeforeRotation();
+
+            Point2D p00 = transform.transform(new Point2D.Float(x, y), new Point2D.Float());
+            Point2D p01 = transform.transform(new Point2D.Float(x + actualWidth, y), new Point2D.Float());
+            Point2D p10 = transform.transform(new Point2D.Float(x + actualWidth, y + actualHeight), new Point2D.Float());
+            Point2D p11 = transform.transform(new Point2D.Float(x, y + actualHeight), new Point2D.Float());
+
+            List<Double> xValues = Arrays.asList(p00.getX(), p01.getX(), p10.getX(), p11.getX());
+            List<Double> yValues = Arrays.asList(p00.getY(), p01.getY(), p10.getY(), p11.getY());
+
+            double minX = Collections.min(xValues);
+            double maxY = Collections.max(yValues);
+
+            dy = (float) ((y + actualHeight) - maxY);
+            dx = (float) (x - minX);
+        }
+
+        float rotationPointX = getPropertyAsFloat(Property.ROTATION_POINT_X);
+        float rotationPointY = getPropertyAsFloat(Property.ROTATION_POINT_Y);
+
+        float[] ctm = new float[6];
+        transform.getMatrix(ctm);
+        ctm[4] = rotationPointX + dx;
+        ctm[5] = rotationPointY + dy;
+        return ctm;
+    }
+
+
+
+    private void beginRotationIfApplied(PdfCanvas canvas) {
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        if (angle != null) {
+            float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
+
+            float rotationPointX = getProperty(Property.ROTATION_POINT_X);
+            float rotationPointY = getProperty(Property.ROTATION_POINT_Y);
+
+            float shiftX = rotationPointX;
+            float shiftY = rotationPointY + heightDiff;
+
+            move(-shiftX, -shiftY);
+            float[] ctm = applyRotation();
+            canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
+        }
+    }
+
+    private void endRotationIfApplied(PdfCanvas canvas) {
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        if (angle != null) {
+            float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
+
+            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
+            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
+
+            canvas.restoreState();
+            move(shiftX, shiftY);
+        }
+    }
+
+    private float getWidthBeforeRotation(float angle) {
+        float rotatedWidth = occupiedArea.getBBox().getWidth();
+        float rotatedHeight = occupiedArea.getBBox().getHeight();
+
+        if (Math.abs(rotatedHeight - rotatedWidth) < EPS)
+            return (float) (rotatedWidth*Math.sqrt(2) - getHeightBeforeRotation());
+
+        double cos = Math.abs(Math.cos(angle));
+        double sin = Math.abs(Math.sin(angle));
+
+        return (float) ((rotatedHeight*sin - rotatedWidth*cos)/(sin*sin - cos*cos));
+    }
+
+    private float getHeightBeforeRotation() {
+        float rotatedHeight = occupiedArea.getBBox().getHeight();
+        float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
+        return rotatedHeight + heightDiff;
     }
 }

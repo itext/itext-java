@@ -55,7 +55,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     public Image setRotationAngle(double angle){
-        return setProperty(Property.IMAGE_ROTATION_ANGLE, angle);
+        return setProperty(Property.ROTATION_ANGLE, angle);
     }
 
     public Image setTranslationDistance(float xDistance, float yDistance){
