@@ -354,12 +354,12 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     protected java.util.List<RowRange> getRowGroups() {
         int lastRowWeCanFlush = currentColumn == columnWidths.length ? currentRow : currentRow - 1;
         int[] cellBottomRows = new int[columnWidths.length];
-        for (int i = 0; i < columnWidths.length; i++) {
-            cellBottomRows[i] = rowWindowStart;
-        }
         int currentRowGroupStart = rowWindowStart;
         java.util.List<RowRange> rowGroups = new ArrayList<>();
         while (currentRowGroupStart <= lastRowWeCanFlush) {
+            for (int i = 0; i < columnWidths.length; i++) {
+                cellBottomRows[i] = currentRowGroupStart;
+            }
             int maxRowGroupFinish = cellBottomRows[0] + rows.get(cellBottomRows[0] - rowWindowStart)[0].getRowspan() - 1;
             boolean converged = false;
             boolean rowGroupComplete = true;
