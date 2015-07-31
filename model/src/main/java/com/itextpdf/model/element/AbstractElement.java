@@ -7,15 +7,13 @@ import com.itextpdf.model.border.Border;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractElement<Type extends AbstractElement> implements IElement<Type> {
 
     protected IRenderer nextRenderer;
-    protected Map<Integer, Object> properties = new HashMap<>();
+    protected Map<Property, Object> properties = new EnumMap<>(Property.class);
     protected List<IElement> childElements = new ArrayList<>();
 
     @Override
@@ -33,29 +31,29 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
     }
 
     @Override
-    public <T extends Type> T setProperty(int propertyKey, Object value) {
-        properties.put(propertyKey, value);
+    public <T extends Type> T setProperty(Property property, Object value) {
+        properties.put(property, value);
         return (T) this;
     }
 
     @Override
-    public <T> T getProperty(int propertyKey) {
-        return (T) properties.get(propertyKey);
+    public <T> T getProperty(Property property) {
+        return (T) properties.get(property);
     }
 
     @Override
-    public <T> T getDefaultProperty(int propertyKey) {
-        switch (propertyKey) {
-            case Property.MARGIN_TOP:
-            case Property.MARGIN_RIGHT:
-            case Property.MARGIN_BOTTOM:
-            case Property.MARGIN_LEFT:
-            case Property.PADDING_TOP:
-            case Property.PADDING_RIGHT:
-            case Property.PADDING_BOTTOM:
-            case Property.PADDING_LEFT:
+    public <T> T getDefaultProperty(Property property) {
+        switch (property) {
+            case MARGIN_TOP:
+            case MARGIN_RIGHT:
+            case MARGIN_BOTTOM:
+            case MARGIN_LEFT:
+            case PADDING_TOP:
+            case PADDING_RIGHT:
+            case PADDING_BOTTOM:
+            case PADDING_LEFT:
                 return (T) Float.valueOf(0);
-            case Property.POSITION:
+            case POSITION:
                 return (T)Integer.valueOf(LayoutPosition.STATIC);
             default:
                 return null;

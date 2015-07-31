@@ -11,10 +11,8 @@ import com.itextpdf.model.element.*;
 import com.itextpdf.model.renderer.DocumentRenderer;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class Document implements IPropertyContainer<Document> {
 
@@ -22,7 +20,7 @@ public class Document implements IPropertyContainer<Document> {
     protected DocumentRenderer documentRenderer;
     protected boolean immediateFlush = true;
     protected List<IElement> childElements = new ArrayList<>();
-    protected Map<Integer, Object> properties = new HashMap<>();
+    protected Map<Property, Object> properties = new EnumMap<>(Property.class);
     protected PdfFont defaultFont;
 
     public Document(PdfDocument pdfDoc) {
@@ -111,28 +109,28 @@ public class Document implements IPropertyContainer<Document> {
     }
 
     @Override
-    public <T> T getProperty(int propertyKey) {
-        return (T) properties.get(propertyKey);
+    public <T> T getProperty(Property property) {
+        return (T) properties.get(property);
     }
 
     @Override
-    public <T> T getDefaultProperty(int propertyKey) {
+    public <T> T getDefaultProperty(Property property) {
         try {
-            switch (propertyKey) {
-                case Property.FONT:
+            switch (property) {
+                case FONT:
                     if (defaultFont == null) {
                         defaultFont = new PdfType1Font(pdfDocument, (Type1Font) FontFactory.createFont(FontConstants.HELVETICA, ""));
                     }
                     return (T) defaultFont;
-                case Property.FONT_SIZE:
+                case FONT_SIZE:
                     return (T) new Integer(12);
-                case Property.TEXT_RENDERING_MODE:
+                case TEXT_RENDERING_MODE:
                     return (T) Integer.valueOf(Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL);
-                case Property.TEXT_RISE:
+                case TEXT_RISE:
                     return (T) new Float(0);
-                case Property.SPACING_RATIO:
+                case SPACING_RATIO:
                     return (T) new Float(0.75f);
-                case Property.FONT_KERNING:
+                case FONT_KERNING:
                     return (T) Property.FontKerning.NO;
                 default:
                     return null;
@@ -143,8 +141,8 @@ public class Document implements IPropertyContainer<Document> {
     }
 
     @Override
-    public Document setProperty(int propertyKey, Object value) {
-        properties.put(propertyKey, value);
+    public Document setProperty(Property property, Object value) {
+        properties.put(property, value);
         return this;
     }
 

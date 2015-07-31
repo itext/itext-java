@@ -110,12 +110,12 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
     }
 
     @Override
-    public <T> T getDefaultProperty(int propertyKey) {
-        switch (propertyKey) {
-            case Property.KEEP_TOGETHER:
+    public <T> T getDefaultProperty(Property property) {
+        switch (property) {
+            case KEEP_TOGETHER:
                 return (T) Boolean.valueOf(false);
             default:
-                return super.getDefaultProperty(propertyKey);
+                return super.getDefaultProperty(property);
         }
     }
 

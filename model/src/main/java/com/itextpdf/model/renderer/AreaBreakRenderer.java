@@ -3,6 +3,7 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
+import com.itextpdf.model.Property;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
@@ -42,22 +43,22 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
-    public <T> T getProperty(int key) {
+    public <T> T getProperty(Property key) {
         return null;
     }
 
     @Override
-    public <T> T getDefaultProperty(int propertyKey) {
+    public <T> T getDefaultProperty(Property property) {
         return null;
     }
 
     @Override
-    public <T> T getProperty(int key, T defaultValue) {
+    public <T> T getProperty(Property property, T defaultValue) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T extends IRenderer> T setProperty(int propertyKey, Object value) {
+    public <T extends IRenderer> T setProperty(Property property, Object value) {
         throw new UnsupportedOperationException();
     }
 

@@ -66,22 +66,22 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     @Override
-    public <T> T getDefaultProperty(int propertyKey) {
-        switch (propertyKey) {
-            case Property.LEADING:
+    public <T> T getDefaultProperty(Property property) {
+        switch (property) {
+            case LEADING:
                 if (childElements.size() == 1 && childElements.get(0) instanceof Image)
                     return (T) new Property.Leading(Property.Leading.MULTIPLIED, 1f);
                 else
                     return (T) new Property.Leading(Property.Leading.MULTIPLIED, 1.5f);
-            case Property.FIRST_LINE_INDENT:
+            case FIRST_LINE_INDENT:
                 return (T) Float.valueOf(0);
-            case Property.MARGIN_TOP:
-            case Property.MARGIN_BOTTOM:
+            case MARGIN_TOP:
+            case MARGIN_BOTTOM:
                 return (T) Float.valueOf(4);
-            case Property.TAB_DEFAULT:
+            case TAB_DEFAULT:
                 return (T) Float.valueOf(50);
             default:
-                return super.getDefaultProperty(propertyKey);
+                return super.getDefaultProperty(property);
         }
     }
 

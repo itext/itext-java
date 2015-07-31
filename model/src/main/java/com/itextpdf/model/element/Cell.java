@@ -1,6 +1,7 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.model.Property;
+import com.itextpdf.model.border.Border;
 import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.renderer.CellRenderer;
 import com.itextpdf.model.renderer.IRenderer;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Cell extends BlockElement<Cell> {
+
+    private static final Border defaultBorder = new SolidBorder(new com.itextpdf.canvas.color.DeviceRgb(160, 160, 160), 0.5f);
 
     private int row;
     private int col;
@@ -76,12 +79,12 @@ public class Cell extends BlockElement<Cell> {
     }
 
     @Override
-    public <T> T getDefaultProperty(int propertyKey) {
-        switch (propertyKey) {
-            case Property.BORDER:
-                return (T) new SolidBorder(new com.itextpdf.canvas.color.DeviceRgb(160, 160, 160), 0.5f);
+    public <T> T getDefaultProperty(Property property) {
+        switch (property) {
+            case BORDER:
+                return (T) defaultBorder;
             default:
-                return super.getDefaultProperty(propertyKey);
+                return super.getDefaultProperty(property);
         }
     }
 

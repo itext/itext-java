@@ -3,6 +3,7 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
+import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
@@ -19,7 +20,7 @@ public interface IRenderer extends IPropertyContainer<IRenderer> {
 
     LayoutArea getOccupiedArea();
 
-    <T> T getProperty(int key, T defaultValue);
+    <T> T getProperty(Property property, T defaultValue);
 
     IRenderer setParent(IRenderer parent);
 

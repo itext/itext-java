@@ -26,7 +26,7 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean flushed = false;
     protected LayoutArea occupiedArea;
     protected IRenderer parent;
-    protected Map<Integer, Object> properties = new HashMap<>();
+    protected Map<Property, Object> properties = new EnumMap<>(Property.class);
 
     public AbstractRenderer() {
     }
@@ -79,60 +79,58 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public <T> T getProperty(int key) {
-        Object ownProperty = getOwnProperty(key);
-        if (ownProperty != null)
-            return (T) ownProperty;
-        Object modelProperty = modelElement != null ? modelElement.getProperty(key) : null;
-        if (modelProperty != null)
-            return (T) modelProperty;
-        Object baseProperty = parent != null && Property.isPropertyInherited(key, modelElement, parent.getModelElement()) ? parent.getProperty(key) : null;
-        if (baseProperty != null)
-            return (T) baseProperty;
+    public <T> T getProperty(Property key) {
+        Object property;
+        if ((property = properties.get(key)) != null) {
+            return (T) property;
+        }
+        if (modelElement != null && (property = modelElement.getProperty(key)) != null) {
+            return (T) property;
+        }
+        // TODO in some situations we will want to check inheritance with additional info, such as parent and descendant.
+        if (parent != null && key.isInherited() && (property = parent.getProperty(key)) != null) {
+            return (T) property;
+        }
         return modelElement != null ? (T) modelElement.getDefaultProperty(key) : (T) getDefaultProperty(key);
     }
 
     @Override
-    public <T> T getProperty(int key, T defaultValue) {
-        T result = getProperty(key);
+    public <T> T getProperty(Property property, T defaultValue) {
+        T result = getProperty(property);
         return result != null ? result : defaultValue;
     }
 
-    public <T> T getOwnProperty(int key) {
-        return (T) properties.get(key);
-    }
-
     @Override
-    public <T extends IRenderer> T setProperty(int propertyKey, Object value) {
-        properties.put(propertyKey, value);
+    public <T extends IRenderer> T setProperty(Property property, Object value) {
+        properties.put(property, value);
         return (T) this;
     }
 
     @Override
-    public <T> T getDefaultProperty(int propertyKey) {
-        switch (propertyKey) {
-            case Property.POSITION:
+    public <T> T getDefaultProperty(Property property) {
+        switch (property) {
+            case POSITION:
                 return (T) Integer.valueOf(LayoutPosition.STATIC);
             default:
                 return null;
         }
     }
 
-    public PdfFont getPropertyAsFont(int key) {
-        return getProperty(key);
+    public PdfFont getPropertyAsFont(Property property) {
+        return getProperty(property);
     }
 
-    public Color getPropertyAsColor(int key) {
-        return getProperty(key);
+    public Color getPropertyAsColor(Property property) {
+        return getProperty(property);
     }
 
-    public Float getPropertyAsFloat(int key) {
-        Number value = getProperty(key);
+    public Float getPropertyAsFloat(Property property) {
+        Number value = getProperty(property);
         return value != null ? value.floatValue() : null;
     }
 
-    public Integer getPropertyAsInteger(int key) {
-        Number value = getProperty(key);
+    public Integer getPropertyAsInteger(Property property) {
+        Number value = getProperty(property);
         return value != null ? value.intValue() : null;
     }
 
@@ -261,11 +259,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     //TODO is behavior of copying all properties in split case common to all renderers?
-    protected Map<Integer, Object> getOwnProperties() {
+    protected Map<Property, Object> getOwnProperties() {
         return properties;
     }
 
-    protected void addAllProperties(Map<Integer, Object> properties) {
+    protected void addAllProperties(Map<Property, Object> properties) {
         this.properties.putAll(properties);
     }
 
