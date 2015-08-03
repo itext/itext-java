@@ -3,20 +3,26 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.itextpdf</groupId>
         <artifactId>root</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <groupId>com.itextpdf</groupId>
     <artifactId>basics</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <url>http://maven.apache.org</url>
+    <name>iText 6 (Arya) - basics</name>
+    <url>http://itextpdf.com/</url>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
     </dependencies>
+
     <build>
         <resources>
             <resource>
@@ -45,4 +51,5 @@
             </testResource>
         </testResources>
     </build>
+
 </project>

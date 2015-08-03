@@ -7,7 +7,13 @@
     <artifactId>root</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <url>http://maven.apache.org</url>
+    <name>iText 6 (Arya) - parent POM</name>
+    <url>http://itextpdf.com/</url>
+
+    <organization>
+        <name>iText Group NV</name>
+        <url>http://itextpdf.com/</url>
+    </organization>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,6 +46,7 @@
         <module>pdftest</module>
         
     </modules>
+
     <dependencies>
         <dependency>
             <groupId>com.itextpdf</groupId>
