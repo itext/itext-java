@@ -77,12 +77,22 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
+    public boolean hasProperty(Property property) {
+        return properties.containsKey(property);
+    }
+
+    @Override
+    public void deleteProperty(Property property) {
+        properties.remove(property);
+    }
+
+    @Override
     public <T> T getProperty(Property key) {
         Object property;
-        if ((property = properties.get(key)) != null) {
+        if ((property = properties.get(key)) != null || properties.containsKey(key)) {
             return (T) property;
         }
-        if (modelElement != null && (property = modelElement.getProperty(key)) != null) {
+        if (modelElement != null && ((property = modelElement.getProperty(key)) != null || modelElement.hasProperty(key))) {
             return (T) property;
         }
         // TODO in some situations we will want to check inheritance with additional info, such as parent and descendant.

@@ -39,8 +39,9 @@ public class LineRenderer extends AbstractRenderer {
             Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(), layoutBox.getWidth() - curWidth, layoutBox.getHeight());
 
             if (childRenderer instanceof TextRenderer) {
-                childRenderer.setProperty(Property.CHARACTER_SPACING, null);
-                childRenderer.setProperty(Property.WORD_SPACING, null);
+                // Delete these properties in case of relayout. We might have applied them during justify().
+                childRenderer.deleteProperty(Property.CHARACTER_SPACING);
+                childRenderer.deleteProperty(Property.WORD_SPACING);
             } else if (childRenderer instanceof TabRenderer) {
                 if (nextTabStop != null) {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);

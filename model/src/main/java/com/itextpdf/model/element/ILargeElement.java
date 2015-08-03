@@ -1,5 +1,7 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.model.Document;
+
 public interface ILargeElement<Type extends ILargeElement> extends IElement<Type> {
 
     boolean isComplete();
@@ -8,7 +10,7 @@ public interface ILargeElement<Type extends ILargeElement> extends IElement<Type
 
     void flush();
 
-   // IRenderer makePartialRenderer();
+    void flushContent();
 
-   // IRenderer createPartialRendererSubTree();
+    void setDocument(Document document);
 }

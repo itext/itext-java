@@ -38,10 +38,6 @@ public class TextRenderer extends AbstractRenderer {
         rightPos = text != null ? text.length() : 0;
     }
 
-    public static void showTextAligned(final PdfCanvas canvas, final int alignment, final String text, final float x, final float y, final float rotation) {
-        throw new RuntimeException("Not implemented");
-    }
-
     @Override
     public TextLayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();

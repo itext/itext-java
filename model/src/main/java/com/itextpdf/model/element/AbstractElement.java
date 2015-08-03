@@ -37,6 +37,16 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
     }
 
     @Override
+    public boolean hasProperty(Property property) {
+        return properties.containsKey(property);
+    }
+
+    @Override
+    public void deleteProperty(Property property) {
+        properties.remove(property);
+    }
+
+    @Override
     public <T> T getProperty(Property property) {
         return (T) properties.get(property);
     }

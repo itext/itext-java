@@ -55,6 +55,10 @@ public class Document implements IPropertyContainer<Document> {
     public Document add(BlockElement element) {
         childElements.add(element);
         ensureDocumentRendererNotNull().addChild(element.createRendererSubTree());
+        if (element instanceof ILargeElement) {
+            ((ILargeElement) element).setDocument(this);
+            ((ILargeElement) element).flushContent();
+        }
         return this;
     }
 
@@ -70,6 +74,16 @@ public class Document implements IPropertyContainer<Document> {
         return this;
     }
 
+    /**
+     * Convenience method to write a text aligned about the specified point
+     * @param text text to be placed to the page
+     * @param x the point about which the text will be aligned and rotated
+     * @param y the point about which the text will be aligned and rotated
+     * @param horAlign horizontal alignment about the specified point
+     */
+    public Document showTextAligned(String text, float x, float y, Property.HorizontalAlignment horAlign) {
+        return showTextAligned(text, x, y, horAlign, 0);
+    }
 
     /**
      * Convenience method to write a text aligned about the specified point
@@ -197,6 +211,11 @@ public class Document implements IPropertyContainer<Document> {
     }
 
     @Override
+    public boolean hasProperty(Property property) {
+        return properties.containsKey(property);
+    }
+
+    @Override
     public <T> T getProperty(Property property) {
         return (T) properties.get(property);
     }
@@ -226,6 +245,11 @@ public class Document implements IPropertyContainer<Document> {
         } catch (IOException exc) {
             throw new RuntimeException(exc);
         }
+    }
+
+    @Override
+    public void deleteProperty(Property property) {
+        properties.remove(property);
     }
 
     @Override

@@ -43,6 +43,11 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
+    public boolean hasProperty(Property property) {
+        return false;
+    }
+
+    @Override
     public <T> T getProperty(Property key) {
         return null;
     }
@@ -60,6 +65,11 @@ public class AreaBreakRenderer implements IRenderer {
     @Override
     public <T extends IRenderer> T setProperty(Property property, Object value) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void deleteProperty(Property property) {
+
     }
 
     @Override

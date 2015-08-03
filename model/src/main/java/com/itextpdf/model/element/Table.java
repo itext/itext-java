@@ -1,5 +1,6 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.model.Document;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.TableRenderer;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     // Start number of the row "window" (range) that this table currently contain.
     // For large tables we might contain only a few rows, not all of them, other ones might have been flushed.
     private int rowWindowStart = 0;
+    private Document document;
 
     /**
      * Constructs a {@code Table} with the relative column widths.
@@ -312,10 +314,16 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     @Override
     public void complete() {
         isComplete = true;
+        flush();
     }
 
     @Override
     public void flush() {
+        document.add(this);
+    }
+
+    @Override
+    public void flushContent() {
         if (lastAddedRowGroups == null || lastAddedRowGroups.size() == 0)
             return;
         int firstRow = lastAddedRowGroups.get(0).startRow;
@@ -334,6 +342,10 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         rowWindowStart = lastAddedRowGroups.get(lastAddedRowGroups.size() - 1).getFinishRow() + 1;
 
         lastAddedRowGroups = null;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
     protected void calculateWidths() {
