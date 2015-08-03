@@ -10,45 +10,44 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.itextpdf</groupId>
     <artifactId>sign</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>iText 6 (Arya) - sign</name>
     <url>http://itextpdf.com/</url>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>canvas</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>forms</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.49</version>
+            <version>${org.bouncycastle.version}</version>
             <type>jar</type>
             <scope>compile</scope>
             <optional>true</optional>
@@ -56,7 +55,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.49</version>
+            <version>${org.bouncycastle.version}</version>
             <type>jar</type>
             <scope>compile</scope>
             <optional>true</optional>

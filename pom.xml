@@ -16,6 +16,12 @@
     </organization>
 
     <properties>
+        <java.version>1.7</java.version>
+        <itext.legacy.version>5.5.6</itext.legacy.version>
+        <junit.version>4.12</junit.version>
+        <maven.surefire.version>2.18.1</maven.surefire.version>
+        <org.bouncycastle.version>1.49</org.bouncycastle.version>
+        <org.slf4j.version>1.7.12</org.slf4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -24,8 +30,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -51,24 +57,24 @@
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-            <version>5.5.6</version>
+            <version>${itext.legacy.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.7</version>
+            <version>${org.slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.7</version>
+            <version>${org.slf4j.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
