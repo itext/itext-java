@@ -15,10 +15,6 @@
     <name>iText 6 (Arya) - core</name>
     <url>http://itextpdf.com/</url>
     
-    <properties>
-        <bouncycastle.version>1.49</bouncycastle.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.itextpdf</groupId>
