@@ -6,6 +6,7 @@ import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.color.*;
+import com.itextpdf.canvas.image.WmfImage;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
@@ -1337,7 +1338,7 @@ public class PdfCanvasTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getImage(sourceFolder + "example.wmf");
+        Image img = new WmfImage(sourceFolder + "example.wmf");
         canvas.addImage(img, 0, 0, 0.1f, false);
 
         document.close();
@@ -1353,7 +1354,7 @@ public class PdfCanvasTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getImage(sourceFolder + "butterfly.wmf");
+        Image img = new WmfImage(sourceFolder + "butterfly.wmf");
         canvas.addImage(img, 0, 0, 1, false);
 
         document.close();
@@ -1371,7 +1372,7 @@ public class PdfCanvasTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getImage(sourceFolder + "type1.wmf");
+        Image img = new WmfImage(sourceFolder + "type1.wmf");
         canvas.addImage(img, 0, 0, 1, false);
 
         document.close();
@@ -1388,7 +1389,7 @@ public class PdfCanvasTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getImage(sourceFolder + "type0.wmf");
+        Image img = new WmfImage(sourceFolder + "type0.wmf");
         canvas.addImage(img, 0, 0, 1, false);
 
         document.close();

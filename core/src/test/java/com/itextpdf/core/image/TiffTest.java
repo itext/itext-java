@@ -2,6 +2,7 @@ package com.itextpdf.core.image;
 
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.basics.image.TiffImageHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

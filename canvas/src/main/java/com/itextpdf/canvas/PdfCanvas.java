@@ -1387,7 +1387,9 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            return wmf.createPdfForm();
+            PdfXObject xObject = wmf.createPdfForm();
+            addXObject(xObject, a, b, c, d, e, f);
+            return xObject;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(image);
             if (asInline) {
@@ -1427,7 +1429,9 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            return wmf.createPdfForm();
+            PdfXObject xObject = wmf.createPdfForm();
+            addXObject(xObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
+            return xObject;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(image);
             if (asInline) {

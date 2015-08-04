@@ -3,6 +3,7 @@ package com.itextpdf.core.image;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.basics.image.Jpeg2000ImageHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

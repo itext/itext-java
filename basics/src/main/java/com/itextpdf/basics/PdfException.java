@@ -135,6 +135,7 @@ public class PdfException extends RuntimeException {
     public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String InvalidXrefStream = "invalid.xref.stream";
     public static final String IoException = "io.exception";
+    public static final String IsNotWmfImage = "is.not.wmf.image";
     public static final String Jbig2ImageException = "jbig2.image.exception";
     public static final String JpegImageException = "jpeg.image.exception";
     public static final String Jpeg2000ImageException = "jpeg2000.image.exception";

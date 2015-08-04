@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.codec.TIFFFaxDecoder;
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -91,7 +92,10 @@ public final class ImageFactory {
     public static Image getBmpImage(URL url, boolean noHeader, int size) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, bmp)) {
-            return new BmpImage(url, noHeader, size);
+            Image image = new BmpImage(url, noHeader, size);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            BmpImageHelper.processImage(image, baos);
+            return image;
         }
         throw new IllegalArgumentException("BMP image expected.");
     }
@@ -99,7 +103,10 @@ public final class ImageFactory {
     public static Image getBmpImage(byte[] bytes, boolean noHeader, int size) {
         byte[] imageType = readImageType(bytes);
         if (noHeader || imageTypeIs(imageType, bmp)) {
-            return new BmpImage(bytes, noHeader, size);
+            Image image = new BmpImage(bytes, noHeader, size);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            BmpImageHelper.processImage(image, baos);
+            return image;
         }
         throw new IllegalArgumentException("BMP image expected.");
     }
@@ -107,7 +114,10 @@ public final class ImageFactory {
     public static Image getGifImage(URL url, int frame) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, gif)) {
-            return new GifImage(url, frame);
+            Image image = new GifImage(url, frame);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            GifImageHelper.processImage(image, baos);
+            return image;
         }
         throw new IllegalArgumentException("GIF image expected.");
     }
@@ -115,7 +125,10 @@ public final class ImageFactory {
     public static Image getGifImage(byte[] bytes, int frame) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
-            return new GifImage(bytes, frame);
+            Image image = new GifImage(bytes, frame);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            GifImageHelper.processImage(image, baos);
+            return image;
         }
         throw new IllegalArgumentException("GIF image expected.");
 
@@ -126,7 +139,11 @@ public final class ImageFactory {
             throw new IllegalArgumentException("The page number must be greater than 0");
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jbig2)) {
-            return new Jbig2Image(url, page);
+            Image image = new Jbig2Image(url, page);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Jbig2ImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new IllegalArgumentException("JBIG2 image expected.");
     }
@@ -136,7 +153,11 @@ public final class ImageFactory {
             throw new IllegalArgumentException("The page number must be greater than 0");
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jbig2)) {
-            return new Jbig2Image(bytes, page);
+            Image image = new Jbig2Image(bytes, page);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Jbig2ImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new IllegalArgumentException("JBIG2 image expected.");
 
@@ -145,7 +166,11 @@ public final class ImageFactory {
     public static Image getJpegImage(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jpeg)) {
-            return new JpegImage(url);
+            Image image = new JpegImage(url);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JpegImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new IllegalArgumentException("JPEG image expected.");
     }
@@ -153,7 +178,11 @@ public final class ImageFactory {
     public static Image getJpegImage(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jpeg)) {
-            return new JpegImage(bytes);
+            Image image = new JpegImage(bytes);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JpegImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new IllegalArgumentException("JPEG image expected.");
 
@@ -162,7 +191,11 @@ public final class ImageFactory {
     public static Image getJpeg2000Image(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
-            return new Jpeg2000Image(url);
+            Image image = new Jpeg2000Image(url);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Jpeg2000ImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new IllegalArgumentException("JPEG2000 image expected.");
     }
@@ -170,7 +203,11 @@ public final class ImageFactory {
     public static Image getJpeg2000Image(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
-            return new Jpeg2000Image(bytes);
+            Image image = new Jpeg2000Image(bytes);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Jpeg2000ImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new IllegalArgumentException("JPEG2000 image expected.");
 
@@ -179,7 +216,11 @@ public final class ImageFactory {
     public static Image getPngImage(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, png)) {
-            return new PngImage(url);
+            Image image = new PngImage(url);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PngImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new IllegalArgumentException("PNG image expected.");
     }
@@ -187,7 +228,11 @@ public final class ImageFactory {
     public static Image getPngImage(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, png)) {
-            return new PngImage(bytes);
+            Image image = new PngImage(bytes);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PngImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new IllegalArgumentException("PNG image expected.");
     }
@@ -195,7 +240,10 @@ public final class ImageFactory {
     public static Image getTiffImage(URL url, boolean recoverFromImageError, int page, boolean direct) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
-            return new TiffImage(url, recoverFromImageError, page, direct);
+            Image image = new TiffImage(url, recoverFromImageError, page, direct);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            TiffImageHelper.processImage(image, baos);
+            return image;
         }
         throw new IllegalArgumentException("TIFF image expected.");
     }
@@ -203,25 +251,12 @@ public final class ImageFactory {
     public static Image getTiffImage(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
-            return new TiffImage(bytes, recoverFromImageError, page, direct);
+            Image image = new TiffImage(bytes, recoverFromImageError, page, direct);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            TiffImageHelper.processImage(image, baos);
+            return image;
         }
         throw new IllegalArgumentException("TIFF image expected.");
-    }
-
-    public static Image getWmfImage(URL url) {
-        byte[] imageType = readImageType(url);
-        if (imageTypeIs(imageType, wmf)) {
-            return new WmfImage(url);
-        }
-        throw new IllegalArgumentException("WMF image expected.");
-    }
-
-    public static Image getWmfImage(byte[] bytes) {
-        byte[] imageType = readImageType(bytes);
-        if (imageTypeIs(imageType, wmf)) {
-            return new WmfImage(bytes);
-        }
-        throw new IllegalArgumentException("WMF image expected.");
     }
 
     public static Image getRawImage(byte[] bytes) {
@@ -231,21 +266,44 @@ public final class ImageFactory {
     private static Image getImageInstance(URL source, boolean recoverImage) {
         byte[] imageType = readImageType(source);
         if (imageTypeIs(imageType, gif)) {
-            return new GifImage(source, 1);
+            Image image = new GifImage(source, 1);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            GifImageHelper.processImage(image, baos);
+            return image;
         } else if (imageTypeIs(imageType, jpeg)) {
-            return new JpegImage(source);
+            Image image = new JpegImage(source);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JpegImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
-            return new Jpeg2000Image(source);
+            Image image = new Jpeg2000Image(source);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Jpeg2000ImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         } else if (imageTypeIs(imageType, png)) {
-            return new PngImage(source);
-        } else if (imageTypeIs(imageType, wmf)) {
-            return new WmfImage(source);
+            Image image = new PngImage(source);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PngImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         } else if (imageTypeIs(imageType, bmp)) {
-            return new BmpImage(source, false, 0);
+            Image image = new BmpImage(source, false, 0);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            BmpImageHelper.processImage(image, baos);
+            return image;
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
-            return new TiffImage(source, recoverImage, 1, false);
+            Image image = new TiffImage(source, recoverImage, 1, false);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            TiffImageHelper.processImage(image, baos);
+            return image;
         } else if (imageTypeIs(imageType, jbig2)) {
-            return new Jbig2Image(source, 1);
+            Image image = new Jbig2Image(source, 1);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Jbig2ImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new PdfException(PdfException.ImageFormatCannotBeRecognized);
     }
@@ -260,8 +318,6 @@ public final class ImageFactory {
             return new Jpeg2000Image(bytes);
         } else if (imageTypeIs(imageType, png)) {
             return new PngImage(bytes);
-        } else if (imageTypeIs(imageType, wmf)) {
-            return new WmfImage(bytes);
         } else if (imageTypeIs(imageType, bmp)) {
             return new BmpImage(bytes, false, 0);
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {

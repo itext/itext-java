@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.color.IccProfile;
 
 import java.net.URL;
+import java.util.HashMap;
 
 public abstract class Image {
 
@@ -34,6 +35,10 @@ public abstract class Image {
 
     protected int colorSpace = -1;
 
+    protected float[] decode;
+
+    protected HashMap<String, Object> decodeParms;
+
     protected boolean inverted = false;
 
     protected float rotation;
@@ -55,6 +60,10 @@ public abstract class Image {
     protected boolean interpolation;
 
     protected float XYRatio = 0;
+
+    protected String filter;
+
+    protected HashMap<String, Object> imageAttributes;
 
     protected Long mySerialId = getSerialId();
 
@@ -229,6 +238,34 @@ public abstract class Image {
 
     public void setXYRatio(float XYRatio) {
         this.XYRatio = XYRatio;
+    }
+
+    public HashMap<String, Object> getImageAttributes() {
+        return imageAttributes;
+    }
+
+    public void setImageAttributes(HashMap<String, Object> imageAttributes) {
+        this.imageAttributes = imageAttributes;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public HashMap<String, Object> getDecodeParms() {
+        return decodeParms;
+    }
+
+    public float[] getDecode() {
+        return decode;
+    }
+
+    public void setDecode(float[] decode) {
+        this.decode = decode;
     }
 
     /** a static that is used for attributing a unique id to each image. */

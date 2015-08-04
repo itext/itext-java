@@ -2,10 +2,8 @@ package com.itextpdf.canvas.image;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.image.WmfImage;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
 
