@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class PdfFormFieldTest {
 
@@ -30,8 +31,8 @@ public class PdfFormFieldTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
 
-        ArrayList<PdfFormField> fields = (ArrayList<PdfFormField>) form.getFormFields();
-        PdfFormField field = fields.get(3);
+        Map<String, PdfFormField> fields = form.getFormFields();
+        PdfFormField field = fields.get("Text1");
 
         Assert.assertTrue(fields.size() == 6);
         Assert.assertTrue(field.getFieldName().toUnicodeString().equals("Text1"));
