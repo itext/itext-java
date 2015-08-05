@@ -1,11 +1,10 @@
 package com.itextpdf.core.pdf.xobject;
 
-import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.basics.NotImplementedException;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.layer.PdfOCG;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
