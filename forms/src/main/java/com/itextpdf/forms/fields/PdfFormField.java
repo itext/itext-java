@@ -223,14 +223,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String value, String name, int checkType) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfButtonFormField check = new PdfButtonFormField(annot).makeIndirect(doc);
+        PdfFormField check = new PdfButtonFormField(annot).makeIndirect(doc);
         check.setCheckType(checkType);
         check.setFieldName(name);
         check.setValue(value);
         annot.setAppearanceState(new PdfName(value));
         check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
 
-        return check;
+        return (PdfButtonFormField) check;
     }
 
     public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[][], String value, String name) {
@@ -643,6 +643,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     circle(width / 2, height / 2, Math.min(width, height) / 4).
                     fill();
         }
+        canvas.restoreState();
     }
 
     public void drawCheckAppearance(float width, float height, String value) {
@@ -751,7 +752,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public void setCheckType(int checkType) {
         if (checkType < TYPE_CHECK || checkType > TYPE_STAR) {
-            checkType = TYPE_CIRCLE;
+            checkType = TYPE_CROSS;
         }
         this.checkType = checkType;
         setText(typeChars[checkType - 1]);
@@ -847,7 +848,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             } else {
                 Rectangle rect = getRect(getPdfObject());
-                setCheckType(TYPE_CROSS);
+                setCheckType(checkType);
                 drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
                 PdfWidgetAnnotation widget = getWidgets().get(0);
                 if (value.equals("Yes")) {

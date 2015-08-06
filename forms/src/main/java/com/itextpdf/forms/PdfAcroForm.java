@@ -8,10 +8,7 @@ import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
@@ -22,7 +19,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     static public final int APPEND_ONLY = 2;
 
     protected boolean generateAppearance;
-    protected HashMap<String, PdfFormField> fields = new HashMap<>();
+    protected LinkedHashMap<String, PdfFormField> fields = new LinkedHashMap<>();
     protected PdfDocument document;
 
     private static PdfName resourceNames[] = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
@@ -108,7 +105,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public HashMap<String, PdfFormField> getFormFields() {
+    public LinkedHashMap<String, PdfFormField> getFormFields() {
         if (fields.size() == 0) {
             fields = iterateFields(getFields());
         }
@@ -308,8 +305,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsArray(PdfName.Fields);
     }
 
-    private HashMap<String, PdfFormField> iterateFields(PdfArray array) {
-        HashMap<String, PdfFormField> fields = new HashMap<>();
+    private LinkedHashMap<String, PdfFormField> iterateFields(PdfArray array) {
+        LinkedHashMap<String, PdfFormField> fields = new LinkedHashMap<>();
 
         int index = 1;
         for (PdfObject field : array) {
