@@ -157,7 +157,7 @@ public class PdfImageXObject extends PdfXObject {
                 if (value instanceof Integer) {
                     dictionary.put(new PdfName(key), new PdfNumber((Integer) value));
                 } else if (value instanceof Float) {
-                    dictionary.put(new PdfName(key), new PdfNumber((Double) value));
+                    dictionary.put(new PdfName(key), new PdfNumber((Float) value));
                 } else if (value instanceof String) {
                     if (value.equals("Mask")) {
                         dictionary.put(PdfName.Mask, new PdfLiteral((String) value));

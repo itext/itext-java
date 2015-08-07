@@ -1,19 +1,11 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.image.RawImage;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfResources;
-import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
 import java.util.ArrayList;
 
@@ -793,24 +785,6 @@ public class BarcodePDF417 extends Barcode2D {
         calculateErrorCorrection(lenCodewords);
         lenCodewords = tot;
         outPaintCode();
-    }
-
-    /**
-     * Gets an <CODE>Image</CODE> with the barcode. The image will have to be
-     * scaled in the Y direction by <CODE>yHeight</CODE>for the barcode
-     * to have the right printing aspect.
-     *
-     * @return the barcode <CODE>Image</CODE>
-     */
-    @Deprecated
-    public Image getImage() {
-        paintCode();
-        byte g4[] = CCITTG4Encoder.compress(outBits, bitColumns, codeRows);
-        RawImage img = (RawImage) ImageFactory.getImage(bitColumns, codeRows, false, RawImage.CCITTG4, 0, g4, null);
-        img.setBpc(RawImage.CCITTG4);
-        img.setRawData(g4);
-
-        return img;
     }
 
     /**

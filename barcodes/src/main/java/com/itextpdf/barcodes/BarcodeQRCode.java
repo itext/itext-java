@@ -4,16 +4,9 @@ import com.itextpdf.barcodes.qrcode.ByteMatrix;
 import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.barcodes.qrcode.QRCodeWriter;
 import com.itextpdf.barcodes.qrcode.WriterException;
-import com.itextpdf.basics.codec.CCITTG4Encoder;
-import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.image.RawImage;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfResources;
-import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 import java.util.Map;
@@ -101,19 +94,6 @@ public class BarcodeQRCode extends Barcode2D {
         canvas.fill();
 
         return getBarcodeSize(moduleSide);
-    }
-
-    /** Gets an <CODE>Image</CODE> with the barcode.
-     * @return the barcode <CODE>Image</CODE>
-     */
-    @Deprecated
-    public Image getImage() {
-        byte[] b = getBitMatrix();
-        byte g4[] = CCITTG4Encoder.compress(b, bm.getWidth(), bm.getHeight());
-        RawImage image = (RawImage) ImageFactory.getImage(bm.getWidth(), bm.getHeight(), false, RawImage.CCITTG4, RawImage.CCITT_BLACKIS1, g4, null);
-        image.setRawData(g4);
-        image.setBpc(RawImage.CCITTG4);
-        return image;
     }
 
     /** Creates a PdfFormXObject with the barcode.

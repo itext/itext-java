@@ -392,7 +392,7 @@ public class TiffImageHelper {
                 posFilePointer += jpegOffset;
                 s.seek(posFilePointer);
                 s.readFully(jpeg);
-                tiff.image.setRawData(jpeg);
+                tiff.image.data = jpeg;
                 tiff.image.setOriginalType(Image.JPEG);
                 JpegImageHelper.processImage(tiff.image, tiff.stream);
                 tiff.jpegProcessing = true;
@@ -426,7 +426,7 @@ public class TiffImageHelper {
                     System.arraycopy(jpeg, 2, jpegwithtables, tables.length + 2, jpeg.length - 2);
                     jpeg = jpegwithtables;
                 }
-                tiff.image.setRawData(jpeg);
+                tiff.image.data = jpeg;
                 tiff.image.setOriginalType(Image.JPEG);
                 JpegImageHelper.processImage(tiff.image, tiff.stream);
                 tiff.jpegProcessing = true;

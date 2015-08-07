@@ -82,10 +82,7 @@ public class JpegImageHelper {
         InputStream is = null;
         try {
             String errorID;
-            if (image.isRawImage()) {
-                is = new java.io.ByteArrayInputStream(((RawImage)image).getRawData());
-                errorID = "Byte array";
-            } else if (image.getData() == null) {
+            if (image.getData() == null) {
                 is = image.getUrl().openStream();
                 errorID = image.getUrl().toString();
             } else {

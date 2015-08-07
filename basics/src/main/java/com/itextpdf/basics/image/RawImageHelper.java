@@ -14,15 +14,15 @@ public final class RawImageHelper {
             throw new IllegalArgumentException("Raw image expected.");
         // will also have the CCITT parameters
         int colorSpace = image.getColorSpace();
-        byte[] imgBytes = image.getRawData();
+        byte[] imgBytes = image.getData();
         baos.assignBytes(imgBytes, imgBytes.length);
-        int bpc = image.getBpc();
-        if (bpc > 0xff) {
+        int typeCCITT = image.getTypeCcitt();
+        if (typeCCITT > 0xff) {
             if (!image.isMask())
                 image.setColorSpace(1);
             image.setBpc(1);
             image.setFilter("CCITTFaxDecode");
-            int k = bpc - RawImage.CCITTG3_1D;
+            int k = typeCCITT - RawImage.CCITTG3_1D;
             HashMap<String, Object> decodeparms = new HashMap<>();
             if (k != 0)
                 decodeparms.put("K", k);
@@ -83,7 +83,7 @@ public final class RawImageHelper {
             throw new PdfException(PdfException.BitsPerComponentMustBe1_2_4or8);
         image.setColorSpace(components);
         image.setBpc(bpc);
-        image.setRawData(data);
+        image.data = data;
     }
 
     protected static void updateRawImageParameters(RawImage image, int width, int height, int components,
@@ -117,6 +117,6 @@ public final class RawImageHelper {
         image.setWidth(width);
         image.setColorSpace(parameters);
         image.setTypeCcitt(typeCcitt);
-        image.setRawData(data);
+        image.data = data;
     }
 }

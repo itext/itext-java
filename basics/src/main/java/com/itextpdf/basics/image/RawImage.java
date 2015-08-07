@@ -47,7 +47,6 @@ public class RawImage extends Image {
     //NOTE in itext5 instead of typeCcitt bpc property was using for both bpc and type CCITT.
     protected int typeCcitt;
 
-    private byte[] rawData;
 
     protected RawImage(URL url, int type) {
         super(url, type);
@@ -55,14 +54,6 @@ public class RawImage extends Image {
 
     protected RawImage(byte[] bytes, int type) {
         super(bytes, type);
-    }
-
-    public byte[] getRawData() {
-        return rawData;
-    }
-
-    public void setRawData(byte[] rawData) {
-        this.rawData = rawData;
     }
 
     @Override

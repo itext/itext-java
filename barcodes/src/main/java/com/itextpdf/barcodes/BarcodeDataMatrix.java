@@ -3,19 +3,13 @@ package com.itextpdf.barcodes;
 import com.itextpdf.barcodes.dmcode.DmParams;
 import com.itextpdf.barcodes.dmcode.Placement;
 import com.itextpdf.barcodes.dmcode.ReedSolomon;
-import com.itextpdf.basics.codec.CCITTG4Encoder;
-import com.itextpdf.basics.image.Image;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfResources;
-import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.Hashtable;
 
 
 public class BarcodeDataMatrix extends Barcode2D {
@@ -306,19 +300,6 @@ public class BarcodeDataMatrix extends Barcode2D {
         ReedSolomon.generateECC(data, dm.dataSize, dm.dataBlock, dm.errorBlock);
         draw(data, full, dm);
         return DM_NO_ERROR;
-    }
-
-
-    /**
-     * Gets the generated image. The image is represented as a stream of bytes, each byte representing
-     * 8 pixels, 0 for white and 1 for black, with the high-order bit of each byte first. Each row
-     * is aligned at byte boundaries. The dimensions of the image are defined by height and width
-     * plus 2 * ws.
-     *
-     * @return the generated image
-     */
-    public byte[] getImage() {
-        return image;
     }
 
     /**
