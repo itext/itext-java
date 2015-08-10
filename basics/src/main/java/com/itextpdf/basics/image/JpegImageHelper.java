@@ -101,11 +101,11 @@ public class JpegImageHelper {
         }
 
         if (stream != null) {
-            updatePdfStream(stream, image);
+            updateStream(stream, image);
         }
     }
 
-    private static void updatePdfStream(ByteArrayOutputStream stream, Image image) {
+    private static void updateStream(ByteArrayOutputStream stream, Image image) {
         image.filter = "DCTDecode";
         if (image.getColorTransform() == 0) {
             HashMap<String, Object> decodeParms = new HashMap<>();

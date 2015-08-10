@@ -82,9 +82,6 @@ public final class Jpeg2000ImageHelper {
 
     private static void updateStream(ByteArrayOutputStream stream, Jpeg2000Parameters jp2) {
         jp2.image.setFilter("JPXDecode");
-        if (jp2.image.getColorSpace() <= 0) {
-            jp2.image.setBpc(0);
-        }
         if (jp2.image.getData() != null) {
             byte[] imgBytes = jp2.image.getData();
             stream.assignBytes(imgBytes, imgBytes.length);

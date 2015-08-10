@@ -70,6 +70,11 @@ public class PdfImageXObject extends PdfXObject {
         } else {
             stream = new PdfStream(image.getData());
         }
+        String filter = image.getFilter();
+        if (filter != null && filter.equals("JPXDecode") && image.getColorSpace() <= 0) {
+            stream.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+            image.setBpc(0);
+        }
         stream.put(PdfName.Type, PdfName.XObject);
         stream.put(PdfName.Subtype, PdfName.Image);
         PdfDictionary decodeParms = createDictionaryFromMap(stream, image.getDecodeParms());

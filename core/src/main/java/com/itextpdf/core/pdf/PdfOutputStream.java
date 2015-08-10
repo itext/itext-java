@@ -441,11 +441,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             if (filter.getType() == PdfObject.Name) {
                 if (PdfName.FlateDecode.equals(filter)) {
                     return false;
-                } else if (PdfName.CCITTFaxDecode.equals(filter)) {
-                    //@TODO Perhaps, we should return false for all images if there is any compression.
-                    return false;
-                } else if (PdfName.DCTDecode.equals(filter)) {
-                    return false;
                 }
             } else if (filter.getType() == PdfObject.Array) {
                 if (((PdfArray) filter).contains(PdfName.FlateDecode))
@@ -465,6 +460,18 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             PdfArray filters = new PdfArray();
             filters.add(PdfName.FlateDecode);
             filters.add(filter);
+            PdfObject decodeParms = pdfStream.get(PdfName.DecodeParms);
+            if (decodeParms != null) {
+                if (decodeParms instanceof PdfDictionary) {
+                    PdfArray array = new PdfArray();
+                    array.add(new PdfNull());
+                    array.add(decodeParms);
+                    pdfStream.put(PdfName.DecodeParms, array);
+                } else if (decodeParms instanceof PdfArray) {
+                    ((PdfArray) decodeParms).add(0, new PdfNull());
+                }
+
+            }
             pdfStream.put(PdfName.Filter, filters);
         }
     }

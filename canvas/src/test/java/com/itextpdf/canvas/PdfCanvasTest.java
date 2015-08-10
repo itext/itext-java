@@ -1,10 +1,12 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.basics.image.RawImage;
 import com.itextpdf.canvas.color.*;
 import com.itextpdf.canvas.image.WmfImage;
 import com.itextpdf.core.font.PdfFont;
@@ -16,6 +18,7 @@ import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.BarcodePDF417;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -1497,5 +1500,33 @@ public class PdfCanvasTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "kernedTextTest01.pdf", sourceFolder + "cmp_kernedTextTest01.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void ccittImageTest01() throws IOException, InterruptedException {
+        String filename = "ccittImage01.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        String text = "Call me Ishmael. Some years ago--never mind how long "
+                + "precisely --having little or no money in my purse, and nothing "
+                + "particular to interest me on shore, I thought I would sail about "
+                + "a little and see the watery part of the world.";
+
+        BarcodePDF417 barcode = new BarcodePDF417();
+        barcode.setText(text);
+        barcode.paintCode();
+
+        byte g4[] = CCITTG4Encoder.compress(barcode.getOutBits(), barcode.getBitColumns(), barcode.getCodeRows());
+        RawImage img = (RawImage) ImageFactory.getImage(barcode.getBitColumns(), barcode.getCodeRows(), false, RawImage.CCITTG4, 0, g4, null);
+        img.setTypeCcitt(RawImage.CCITTG4);
+        canvas.addImage(img, 100, 100, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 }
