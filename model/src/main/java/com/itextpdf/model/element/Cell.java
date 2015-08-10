@@ -90,12 +90,7 @@ public class Cell extends BlockElement<Cell> {
 
     @Override
     public String toString() {
-        return "Cell{" +
-                "row=" + row +
-                ", col=" + col +
-                ", rowspan=" + rowspan +
-                ", colspan=" + colspan +
-                '}';
+        return String.format("Cell{row=%d, col=%d, rowspan=%d, colspan=%d}", row, col, rowspan, colspan);
     }
 
     protected Cell updateCellIndexes(int row, int col, int numberOfColumns) {
