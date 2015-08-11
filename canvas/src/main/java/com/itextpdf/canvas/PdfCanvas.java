@@ -19,6 +19,8 @@ import com.itextpdf.core.pdf.tagging.IPdfTag;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1392,7 +1394,7 @@ public class PdfCanvas {
             return xObject;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(image);
-            if (asInline) {
+            if (asInline && image.canImageBeInline()) {
                 addInlineImage(imageXObject, a, b, c, d, e, f);
                 return null;
             } else {
@@ -1434,7 +1436,7 @@ public class PdfCanvas {
             return xObject;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(image);
-            if (asInline) {
+            if (asInline && image.canImageBeInline()) {
                 addInlineImage(imageXObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
                 return null;
             } else {
@@ -1464,7 +1466,7 @@ public class PdfCanvas {
             return xObject;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(image);
-            if (asInline) {
+            if (asInline && image.canImageBeInline()) {
                 addInlineImage(imageXObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
                 return null;
             } else {

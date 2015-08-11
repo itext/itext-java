@@ -311,19 +311,44 @@ public final class ImageFactory {
     private static Image getImageInstance(byte[] bytes, boolean recoverImage) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
-            return new GifImage(bytes, 1);
+            Image image = new GifImage(bytes, 1);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            GifImageHelper.processImage(image, baos);
+            return image;
         } else if (imageTypeIs(imageType, jpeg)) {
-            return new JpegImage(bytes);
+            Image image = new JpegImage(bytes);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JpegImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
-            return new Jpeg2000Image(bytes);
+            Image image = new Jpeg2000Image(bytes);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Jpeg2000ImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         } else if (imageTypeIs(imageType, png)) {
-            return new PngImage(bytes);
+            Image image = new PngImage(bytes);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PngImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         } else if (imageTypeIs(imageType, bmp)) {
-            return new BmpImage(bytes, false, 0);
+            Image image = new BmpImage(bytes, false, 0);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            BmpImageHelper.processImage(image, baos);
+            return image;
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
-            return new TiffImage(bytes, recoverImage, 1, false);
+            Image image = new TiffImage(bytes, recoverImage, 1, false);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            TiffImageHelper.processImage(image, baos);
+            return image;
         } else if (imageTypeIs(imageType, jbig2)) {
-            return new Jbig2Image(bytes, 1);
+            Image image = new Jbig2Image(bytes, 1);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Jbig2ImageHelper.processImage(image, baos);
+            image.data = baos.toByteArray();
+            return image;
         }
         throw new PdfException(PdfException.ImageFormatCannotBeRecognized);
     }

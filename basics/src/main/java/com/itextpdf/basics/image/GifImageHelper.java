@@ -74,10 +74,12 @@ public final class GifImageHelper {
                 while ((read = is.read(bytes)) != -1) {
                     stream.write(bytes, 0, read);
                 }
+                image.imageSize = stream.toByteArray().length;
                 is.close();
                 is = new ByteArrayInputStream(stream.toByteArray());
             } else {
                 is = new ByteArrayInputStream(gif.image.getData());
+                image.imageSize = image.getData().length;
             }
             process(is, gif);
         } catch (IOException e) {

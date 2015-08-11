@@ -134,6 +134,7 @@ public class JpegImageHelper {
                 }
             }
         }
+        image.imageSize = stream.toByteArray().length;
     }
 
     /**

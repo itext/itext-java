@@ -126,10 +126,12 @@ public class PngImageHelper {
                 while ((read = is.read(bytes)) != -1) {
                     stream.write(bytes, 0, read);
                 }
+                image.imageSize = stream.toByteArray().length;
                 is.close();
                 is = new ByteArrayInputStream(stream.toByteArray());
             } else {
                 is = new ByteArrayInputStream(png.image.getData());
+                image.imageSize = image.getData().length;
             }
             processPng(is, png);
         } catch (IOException e) {

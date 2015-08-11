@@ -1,12 +1,14 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.RawImage;
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.color.*;
 import com.itextpdf.canvas.image.WmfImage;
 import com.itextpdf.core.font.PdfFont;
@@ -1524,6 +1526,71 @@ public class PdfCanvasTest {
         RawImage img = (RawImage) ImageFactory.getImage(barcode.getBitColumns(), barcode.getCodeRows(), false, RawImage.CCITTG4, 0, g4, null);
         img.setTypeCcitt(RawImage.CCITTG4);
         canvas.addImage(img, 100, 100, false);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void inlineImagesTest01() throws IOException, InterruptedException {
+        String filename = "inlineImages01.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.addImage(ImageFactory.getImage(sourceFolder + "Desert.jpg"), 36, 700, 100, true);
+        canvas.addImage(ImageFactory.getImage(sourceFolder + "bulb.gif"), 36, 600, 100, true);
+        canvas.addImage(ImageFactory.getImage(sourceFolder + "smpl.bmp"), 36, 500, 100, true);
+        canvas.addImage(ImageFactory.getImage(sourceFolder + "itext.png"), 36, 460, 100, true);
+        canvas.addImage(ImageFactory.getImage(sourceFolder + "0047478.jpg"), 36, 300, 100, true);
+        canvas.addImage(ImageFactory.getImage(sourceFolder + "map.jp2"), 36, 200, 100, true);
+        canvas.addImage(ImageFactory.getImage(sourceFolder + "amb.jb2"), 36, 30, 100, true);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void inlineImagesTest02() throws IOException, InterruptedException {
+        String filename = "inlineImages02.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        InputStream stream = Utilities.toURL(sourceFolder + "Desert.jpg").openStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Utilities.transferBytes(stream, baos);
+        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 700, 100, true);
+        stream = Utilities.toURL(sourceFolder + "bulb.gif").openStream();
+        baos = new ByteArrayOutputStream();
+        Utilities.transferBytes(stream, baos);
+        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 600, 100, true);
+        stream = Utilities.toURL(sourceFolder + "smpl.bmp").openStream();
+        baos = new ByteArrayOutputStream();
+        Utilities.transferBytes(stream, baos);
+        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 500, 100, true);
+        stream = Utilities.toURL(sourceFolder + "itext.png").openStream();
+        baos = new ByteArrayOutputStream();
+        Utilities.transferBytes(stream, baos);
+        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 460, 100, true);
+        stream = Utilities.toURL(sourceFolder + "0047478.jpg").openStream();
+        baos = new ByteArrayOutputStream();
+        Utilities.transferBytes(stream, baos);
+        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 300, 100, true);
+        stream = Utilities.toURL(sourceFolder + "map.jp2").openStream();
+        baos = new ByteArrayOutputStream();
+        Utilities.transferBytes(stream, baos);
+        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 200, 100, true);
+        stream = Utilities.toURL(sourceFolder + "amb.jb2").openStream();
+        baos = new ByteArrayOutputStream();
+        Utilities.transferBytes(stream, baos);
+        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 30, 100, true);
 
         document.close();
 

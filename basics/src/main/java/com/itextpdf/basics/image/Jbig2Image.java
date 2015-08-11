@@ -5,6 +5,8 @@ import com.itextpdf.basics.codec.Jbig2SegmentReader;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSource;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 
@@ -49,5 +51,12 @@ public class Jbig2Image extends Image {
         } catch (Exception e) {
             throw new PdfException(PdfException.Jbig2ImageException, e);
         }
+    }
+
+    @Override
+    public boolean canImageBeInline() {
+        Logger logger = LoggerFactory.getLogger(Image.class);
+        logger.warn("Image cannot be inline if it has JBIG2Decode filter");
+        return false;
     }
 }

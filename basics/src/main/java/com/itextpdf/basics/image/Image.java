@@ -2,6 +2,8 @@ package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.color.IccProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -30,6 +32,8 @@ public abstract class Image {
     protected float height;
 
     protected byte[] data;
+
+    protected int imageSize;
 
     protected int bpc = 1;
 
@@ -266,6 +270,20 @@ public abstract class Image {
 
     public void setDecode(float[] decode) {
         this.decode = decode;
+    }
+
+    public boolean canImageBeInline() {
+        Logger logger = LoggerFactory.getLogger(Image.class);
+        if (imageSize > 4096) {
+            logger.warn("Inline image cannot be more than 4KB.");
+            return false;
+        }
+        if (imageMask != null) {
+            logger.warn("Image cannot be inline if it has a Mask");
+            return false;
+        }
+
+        return true;
     }
 
     /** a static that is used for attributing a unique id to each image. */
