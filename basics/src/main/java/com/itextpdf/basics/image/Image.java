@@ -272,6 +272,10 @@ public abstract class Image {
         this.decode = decode;
     }
 
+    /**
+     * Checks if image can be inline
+     * @return if the image can be inline
+     */
     public boolean canImageBeInline() {
         Logger logger = LoggerFactory.getLogger(Image.class);
         if (imageSize > 4096) {
