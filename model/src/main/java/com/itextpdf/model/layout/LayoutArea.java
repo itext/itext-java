@@ -35,7 +35,9 @@ public class LayoutArea implements Cloneable {
 
     @Override
     public LayoutArea clone() {
-        return new LayoutArea(pageNumber, bBox.clone());
+        LayoutArea area = new LayoutArea(pageNumber, bBox.clone());
+        area.setEmptyArea(emptyArea);
+        return area;
     }
 
     @Override

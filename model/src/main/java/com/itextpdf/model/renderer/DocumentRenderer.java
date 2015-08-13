@@ -1,5 +1,6 @@
 package com.itextpdf.model.renderer;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfPage;
@@ -68,15 +69,20 @@ public class DocumentRenderer extends AbstractRenderer {
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
                         if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {
-                            Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
-                            logger.warn("Element doesn't fit current area. KeepTogether property will be ignored.");
-                            result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
+                            if (result.getOverflowRenderer().getModelElement().getProperty(Property.KEEP_TOGETHER) == true) {
+                                result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
+                                Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
+                                logger.warn("Element doesn't fit current area. KeepTogether property will be ignored.");
+                            } else {
+                                throw new PdfException("Element cannot fit any area.");
+                            }
                             renderer = result.getOverflowRenderer();
                             if (storedArea != null) {
                                 nextStoredArea = currentArea;
                                 currentArea = storedArea;
                                 currentPageNumber = storedArea.getPageNumber();
                             }
+                            storedArea = currentArea;
                             continue;
                         }
                         storedArea = currentArea;

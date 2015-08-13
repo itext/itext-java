@@ -1,6 +1,8 @@
 package com.itextpdf.model;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -8,10 +10,7 @@ import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.model.border.SolidBorder;
-import com.itextpdf.model.element.Cell;
-import com.itextpdf.model.element.Image;
-import com.itextpdf.model.element.Paragraph;
-import com.itextpdf.model.element.Table;
+import com.itextpdf.model.element.*;
 import com.itextpdf.model.renderer.DocumentRenderer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -698,5 +697,41 @@ public class TableTest {
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test(expected = PdfException.class)
+    public void toLargeElementWithKeepTogetherPropertyInTableTest01() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1);
+        Cell cell = new Cell();
+        String str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        String result = "";
+        for (int i = 0; i < 53; i++) {
+            result += str;
+        }
+        Paragraph p = new Paragraph(new Text(result));
+        p.setProperty(Property.KEEP_TOGETHER, true);
+        cell.add(p);
+        table.addCell(cell);
+        doc.add(table);
+
+        pdfDoc.close();
+    }
+
+    @Test(expected = PdfException.class)
+    public void toLargeElementInTableTest01() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(new float[]{5});
+        Cell cell = new Cell();
+        Paragraph p = new Paragraph(new Text("a"));
+        cell.add(p);
+        table.addCell(cell);
+        doc.add(table);
+
+        pdfDoc.close();
     }
 }

@@ -230,17 +230,33 @@ public class RotationTest {
     }
 
     @Test
-    @Ignore
-    //TODO infinite loop should be handled at the DocumentRenderer level not only for the KeepTogether case
-    public void rotationInfiniteLoopTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "rotationInfiniteLoopTest.pdf";
-        String cmpFileName = sourceFolder + cmpPrefix + "rotationInfiniteLoopTest.pdf";
+    public void rotationInfiniteLoopTest01() throws IOException, InterruptedException {
+        String fileName = "rotationInfiniteLoopTest01.pdf";
+        String outFileName = destinationFolder + fileName;
+        String cmpFileName = sourceFolder + cmpPrefix + fileName;
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         pdfDocument.setDefaultPageSize(PageSize.A5.rotate());
 
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph(para1Text).setRotationAngle((Math.PI / 2)));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void rotationInfiniteLoopTest02() throws IOException, InterruptedException {
+        String fileName = "rotationInfiniteLoopTest02.pdf";
+        String outFileName = destinationFolder + fileName;
+        String cmpFileName = sourceFolder + cmpPrefix + fileName;
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        pdfDocument.setDefaultPageSize(PageSize.A5.rotate());
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new List().add(para1Text).setRotationAngle((Math.PI / 2)));
 
         document.close();
 

@@ -190,7 +190,9 @@ public class ParagraphRenderer extends BlockRenderer {
         if (getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout();
             if (isNotFittingHeight(layoutContext.getArea())) {
-                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                if (!layoutContext.getArea().isEmptyArea()) {
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                }
             }
         }
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
