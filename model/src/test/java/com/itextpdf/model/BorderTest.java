@@ -181,15 +181,15 @@ public class BorderTest {
         p.setBorderTop(new SolidBorder(DeviceCmyk.Magenta, 4));
         p.setBorderRight(new DoubleBorder(DeviceRgb.RED, 6));
         p.setBorderBottom(new RoundDotsBorder(DeviceCmyk.Cyan, 2));
-        p.setBorderLeft(new DashedBorder(DeviceGray.Black, 3));
+        p.setBorderLeft(new DashedBorder(DeviceGray.BLACK, 3));
 
         doc.add(p);
 
         doc.add(new Paragraph(text).setBorderTop(new SolidBorder(DeviceCmyk.Magenta, 8)));
         doc.add(new Paragraph(text).setBorderRight(new DoubleBorder(DeviceRgb.RED, 4)));
         doc.add(new Paragraph(text).setBorderBottom(new RoundDotsBorder(DeviceCmyk.Cyan, 3)));
-        doc.add(new Paragraph(text).setBorderLeft(new DashedBorder(DeviceGray.Black, 5)));
-        doc.add(new Paragraph(text).setBorder(new DottedBorder(DeviceGray.Black, 1)));
+        doc.add(new Paragraph(text).setBorderLeft(new DashedBorder(DeviceGray.BLACK, 5)));
+        doc.add(new Paragraph(text).setBorder(new DottedBorder(DeviceGray.BLACK, 1)));
 
         closeDocumentAndCompareOutputs(doc);
     }

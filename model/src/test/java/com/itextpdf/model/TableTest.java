@@ -699,4 +699,40 @@ public class TableTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
+
+    @Test
+    public void nestedTableSkipHeaderFooterTest() throws IOException, InterruptedException {
+        String testName = "nestedTableSkipHeaderFooter.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        final PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        Table table = new Table(5);
+        // TODO
+        // table.setWidthPercentage(100);
+        table.addHeaderCell(new Cell(1, 5).
+            add(new Paragraph("Table XYZ (Continued)")));
+        table.addFooterCell(new Cell(1, 5).
+            add(new Paragraph("Continue on next page")));
+        table.setSkipFirstHeader(true);
+        table.setSkipLastFooter(true);
+        for (int i = 0; i < 350; i++) {
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
+        }
+
+        Table t = new Table(1);
+        t.addCell(new Cell().
+            setBorder(new SolidBorder(Color.RED, 1)).
+            setPaddings(3, 3, 3, 3).
+            add(table));
+
+        doc.add(t);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
 }

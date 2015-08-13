@@ -41,8 +41,8 @@ public class PdfGraphicsState {
     private Float fillAlpha;
     private Boolean alphaIsShape;
     private Boolean textKnockout;
-    private Color fillColor = DeviceGray.Black;
-    private Color strokeColor = DeviceGray.Black;
+    private Color fillColor = DeviceGray.BLACK;
+    private Color strokeColor = DeviceGray.BLACK;
     private Integer textRenderingMode;
     private Float textRise;
     private Float wordSpacing;

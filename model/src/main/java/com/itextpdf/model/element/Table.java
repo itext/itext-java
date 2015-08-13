@@ -16,8 +16,8 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     private float[] columnWidths;
     private int currentColumn = 0;
     private int currentRow = -1;
-    private int headerRows;
-    private int footerRows;
+    private Table header;
+    private Table footer;
     private boolean skipFirstHeader;
     private boolean skipLastFooter;
     private boolean isComplete;
@@ -114,64 +114,47 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     }
 
     /**
-     * Gets the number of the rows that constitute the header.
-     *
-     * @return the number of the rows that constitute the header
+     * Adds a new cell to the header of the table.
+     * The header will be displayed in the top of every area of this table.
+     * See also {@link #setSkipFirstHeader(boolean)}.
+     * @param headerCell a header cell to be added
      */
-    public int getHeaderRows() {
-        return headerRows;
+    public void addHeaderCell(Cell headerCell) {
+        if (header == null) {
+            header = new Table(columnWidths);
+            header.setWidth(getWidth());
+        }
+        header.addCell(headerCell);
     }
 
     /**
-     * Gets the number of rows in the footer.
-     *
-     * @return the number of rows in the footer
+     * Gets the header of the table. The header is represented as a distinct table and might have its own properties.
+     * @return table header or {@code null}, if {@link #addHeaderCell(Cell)} hasn't been called.
      */
-    public int getFooterRows() {
-        return this.footerRows;
+    public Table getHeader() {
+        return header;
     }
 
     /**
-     * Sets the number of the top rows that constitute the header. This header
-     * has only meaning if the table crosses pages.
-     *
-     * @param headerRows the number of the top rows that constitute the header
+     * Adds a new cell to the footer of the table.
+     * The footer will be displayed in the bottom of every area of this table.
+     * See also {@link #setSkipLastFooter(boolean)}.
+     * @param footerCell a footer cell
      */
-    public Table setHeaderRows(int headerRows) {
-        if (headerRows < 0) {
-            headerRows = 0;
+    public void addFooterCell(Cell footerCell) {
+        if (footer == null) {
+            footer = new Table(columnWidths);
+            footer.setWidth(getWidth());
         }
-        this.headerRows = headerRows;
-        return this;
+        footer.addCell(footerCell);
     }
 
     /**
-     * Sets the number of the top rows that constitute the header
-     * and sets the number of rows to be used for the footer. The number of footer
-     * rows are subtracted from the header rows. For example, for a table with
-     * two header rows and one footer row the code would be:
-     * <pre>
-     * table.setHeaderRows(3);
-     * table.setFooterRows(1);
-     * </pre> Row 0 and 1 will be the header rows and row 2 will be the footer
-     * row.
-     *
-     * @param headerRows the number of the top rows that constitute the header
-     * @param footerRows the number of rows to be used for the footer
+     * Gets the footer of the table. The footer is represented as a distinct table and might have its own properties.
+     * @return table footer or {@code null}, if {@link #addFooterCell(Cell)} hasn't been called.
      */
-    public Table setHeaderAndFooterRows(int headerRows, int footerRows) {
-        if (headerRows < 0) {
-            headerRows = 0;
-        }
-        if (footerRows < 0) {
-            footerRows = 0;
-        }
-        if (footerRows > headerRows) {
-            footerRows = headerRows;
-        }
-        this.headerRows = headerRows;
-        this.footerRows = footerRows;
-        return this;
+    public Table getFooter() {
+        return footer;
     }
 
     /**
@@ -279,9 +262,6 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     @Override
     public TableRenderer createRendererSubTree() {
         TableRenderer rendererRoot = makeRenderer();
-        // In case of large tables, we only add to the renderer the cells from complete row groups,
-        // for incomplete ones we may have problem with partial rendering because of cross-dependency.
-        lastAddedRowGroups = isComplete ? null : getRowGroups();
         for (IElement child : childElements) {
             boolean childShouldBeAdded = isComplete || cellBelongsToAnyRowGroup((Cell) child, lastAddedRowGroups);
             if (childShouldBeAdded) {
@@ -303,7 +283,15 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
                 logger.error("Invalid renderer for Table: must be inherited from TableRenderer");
             }
         }
-        return new TableRenderer(this, new RowRange(rowWindowStart, rowWindowStart + rows.size() - 1));
+        // In case of large tables, we only add to the renderer the cells from complete row groups,
+        // for incomplete ones we may have problem with partial rendering because of cross-dependency.
+        lastAddedRowGroups = isComplete ? null : getRowGroups();
+        if (isComplete) {
+            return new TableRenderer(this, new RowRange(rowWindowStart, rowWindowStart + rows.size() - 1));
+        } else {
+            int rowWindowFinish = lastAddedRowGroups.size() != 0 ? lastAddedRowGroups.get(lastAddedRowGroups.size() - 1).finishRow : -1;
+            return new TableRenderer(this, new RowRange(rowWindowStart, rowWindowFinish));
+        }
     }
 
     @Override
@@ -311,17 +299,34 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         return isComplete;
     }
 
+    /**
+     * Indicates that all the desired content has been added to this large element.
+     * After this method is called, more precise rendering is activated.
+     * For instance, a table may have a {@link #setSkipLastFooter(boolean)} method set to true,
+     * and in case of large table on {@link #flush()} we do not know if any more content will be added,
+     * so we might not place the content in the bottom of the page where it would fit, but instead add a footer, and
+     * place that content in the start of the page. Technically such result would look all right, but it would be
+     * more concise if we placed the content in the bottom and did not start new page. For such cases to be
+     * renderered more accurately, one can call {@link #complete()} when some content is still there and not flushed.
+     */
     @Override
     public void complete() {
         isComplete = true;
         flush();
     }
 
+    /**
+     * Writes the newly added content to the document.
+     */
     @Override
     public void flush() {
         document.add(this);
     }
 
+    /**
+     * Flushes the content which has just been added to the document.
+     * This is a method for internal usage and is called automatically by the docunent.
+     */
     @Override
     public void flushContent() {
         if (lastAddedRowGroups == null || lastAddedRowGroups.size() == 0)

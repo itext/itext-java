@@ -62,7 +62,17 @@ public class Cell extends BlockElement<Cell> {
         return colspan;
     }
 
-    public Cell add(AbstractElement element) {
+    public Cell add(BlockElement element) {
+        childElements.add(element);
+        return this;
+    }
+
+    public Cell add(Image element) {
+        childElements.add(element);
+        return this;
+    }
+
+    public Cell add(Table element) {
         childElements.add(element);
         return this;
     }

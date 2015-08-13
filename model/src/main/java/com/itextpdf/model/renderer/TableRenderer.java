@@ -1,6 +1,8 @@
 package com.itextpdf.model.renderer;
 
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.element.Table;
@@ -20,6 +22,10 @@ public class TableRenderer extends AbstractRenderer {
     List<CellRenderer[]> rows = new ArrayList<>();
     // Row range of the current renderer. For large tables it may contain only a few rows.
     Table.RowRange rowRange;
+    TableRenderer headerRenderer;
+    TableRenderer footerRenderer;
+    /** True for newly created renderer. For split renderers this is set to false. Used for tricky layout. **/
+    boolean isOriginalNonSplitRenderer = true;
 
     public TableRenderer(Table modelElement, Table.RowRange rowRange) {
         super(modelElement);
@@ -46,16 +52,40 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
-        Rectangle layoutBox = area.getBBox();
+        Rectangle layoutBox = area.getBBox().clone();
         Table tableModel = (Table) getModelElement();
 
-        float[] columnWidths = calculateScaledColumnWidths(tableModel, layoutBox.getWidth());
+        float tableWidth = tableModel.getWidth() != 0 ? tableModel.getWidth() : layoutBox.getWidth();
+        occupiedArea = new LayoutArea(area.getPageNumber(),
+                new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), tableWidth, 0));
 
+        Table headerElement = tableModel.getHeader();
+        boolean isFirstHeader = rowRange.getStartRow() == 0 && isOriginalNonSplitRenderer;
+        boolean headerShouldBeApplied = !rows.isEmpty() && (!isOriginalNonSplitRenderer || isFirstHeader && !tableModel.isSkipFirstHeader());
+        if (headerElement != null && headerShouldBeApplied) {
+            headerRenderer = (TableRenderer) headerElement.createRendererSubTree().setParent(this);
+            LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
+            if (result.getStatus() != LayoutResult.FULL) {
+                return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+            }
+            float headerHeight = result.getOccupiedArea().getBBox().getHeight();
+            layoutBox.decreaseHeight(headerHeight);
+            occupiedArea.getBBox().moveDown(headerHeight).increaseHeight(headerHeight);
+        }
+        Table footerElement = tableModel.getFooter();
+        if (footerElement != null) {
+            footerRenderer = (TableRenderer) footerElement.createRendererSubTree().setParent(this);
+            LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
+            if (result.getStatus() != LayoutResult.FULL) {
+                return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+            }
+            float footerHeight = result.getOccupiedArea().getBBox().getHeight();
+            footerRenderer.move(0, - (layoutBox.getHeight() - footerHeight));
+            layoutBox.moveUp(footerHeight).decreaseHeight(footerHeight);
+        }
+
+        float[] columnWidths = calculateScaledColumnWidths(tableModel, layoutBox.getWidth());
         ArrayList<Float> heights = new ArrayList<>();
-        occupiedArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
-        occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight());
-        occupiedArea.getBBox().setHeight(0);
-        occupiedArea.getBBox().setWidth(tableModel.getWidth());
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
         // This represents the target row index for the overflow renderer to be placed to.
         // Usually this is just the current row id of a cell, but it has valuable meaning when a cell has rowspan.
@@ -84,9 +114,9 @@ public class TableRenderer extends AbstractRenderer {
                 int col = currentCellInfo.column;
                 CellRenderer cell = currentCellInfo.cellRenderer;
                 targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
+                // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
                 boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
 
-                currChildRenderers.add(cell);
                 int colspan = cell.getPropertyAsInteger(Property.COLSPAN);
                 int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
                 float cellWidth = 0, colOffset = 0;
@@ -109,6 +139,7 @@ public class TableRenderer extends AbstractRenderer {
                 cell.getOccupiedArea().getBBox().setWidth(cellWidth);
 
                 if (currentCellHasBigRowspan) {
+                    // cell from the future
                     if (cellResult.getStatus() == LayoutResult.PARTIAL) {
                         splits[col] = cellResult;
                         currentRow[col] = (CellRenderer) cellResult.getSplitRenderer();
@@ -120,6 +151,29 @@ public class TableRenderer extends AbstractRenderer {
                     if (cellResult.getStatus() != LayoutResult.FULL) {
                         // first time split occurs
                         if (!split) {
+                            // This is a case when last footer should be skipped and we might face an end of the table.
+                            // We check if we can fit all the rows right now and the split occurred only because we reserved
+                            // space for footer before, and if yes we skip footer and write all the content right now.
+                            if (footerRenderer != null && tableModel.isSkipLastFooter() && tableModel.isComplete()) {
+                                LayoutArea potentialArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
+                                float footerHeight = footerRenderer.getOccupiedArea().getBBox().getHeight();
+                                potentialArea.getBBox().moveDown(footerHeight).increaseHeight(footerHeight);
+                                if (canFitRowsInGivenArea(potentialArea, row, columnWidths, heights)) {
+                                    layoutBox.increaseHeight(footerHeight).moveDown(footerHeight);
+                                    cellProcessingQueue.clear();
+                                    for (int addCol = 0; addCol < currentRow.length; addCol++) {
+                                        if (currentRow[addCol] != null) {
+                                            cellProcessingQueue.add(new CellRendererInfo(currentRow[addCol], addCol, row));
+                                        }
+                                    }
+                                    footerRenderer = null;
+                                    continue;
+                                }
+                            }
+
+                            // Here we look for a cell with big rowpsan (i.e. one which would not be normally processed in
+                            // the scope of this row), and we add such cells to the queue, because we need to write them
+                            // at least partially into the available area we have.
                             for (int addCol = 0; addCol < currentRow.length; addCol++) {
                                 if (currentRow[addCol] == null) {
                                     // Search for the next cell including rowspan.
@@ -146,6 +200,8 @@ public class TableRenderer extends AbstractRenderer {
                         currentRow[col] = (CellRenderer) cellResult.getSplitRenderer();
                     }
                 }
+
+                currChildRenderers.add(cell);
 
                 if (!currentCellHasBigRowspan && cellResult.getStatus() != LayoutResult.NOTHING) {
                     rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
@@ -193,8 +249,9 @@ public class TableRenderer extends AbstractRenderer {
                         rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.makeRenderer().setParent(this);
                     }
                 }
-                return new LayoutResult(childRenderers.isEmpty() ? LayoutResult.NOTHING : LayoutResult.PARTIAL,
-                        occupiedArea, splitResult[0], splitResult[1]);
+                adjustFooterAndFixOccupiedArea(layoutBox);
+                int status = childRenderers.isEmpty() && footerRenderer == null ? LayoutResult.NOTHING : LayoutResult.PARTIAL;
+                return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1]);
             } else {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
@@ -203,7 +260,22 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.decreaseHeight(rowHeight);
         }
 
+        if (tableModel.isSkipLastFooter() || !tableModel.isComplete()) {
+            footerRenderer = null;
+        }
+        adjustFooterAndFixOccupiedArea(layoutBox);
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+    }
+
+    @Override
+    public void drawChildren(PdfDocument document, PdfCanvas canvas) {
+        if (headerRenderer != null) {
+            headerRenderer.draw(document, canvas);
+        }
+        super.drawChildren(document, canvas);
+        if (footerRenderer != null) {
+            footerRenderer.draw(document, canvas);
+        }
     }
 
     protected float[] calculateScaledColumnWidths(Table tableModel, float layoutWidth) {
@@ -241,6 +313,8 @@ public class TableRenderer extends AbstractRenderer {
         // We should probably clean them before #layout().
         splitRenderer.childRenderers = childRenderers;
         splitRenderer.addAllProperties(getOwnProperties());
+        splitRenderer.headerRenderer = headerRenderer;
+        splitRenderer.footerRenderer = footerRenderer;
         return splitRenderer;
     }
 
@@ -249,7 +323,65 @@ public class TableRenderer extends AbstractRenderer {
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
+        overflowRenderer.isOriginalNonSplitRenderer = false;
         return overflowRenderer;
+    }
+
+    /**
+     * If there is some space left, we move footer up, because initially footer will be at the very bottom of the area.
+     * We also adjust occupied area by footer size if it is present.
+     * @param layoutBox the layout box which represents the area which is left free.
+     */
+    private void adjustFooterAndFixOccupiedArea(Rectangle layoutBox) {
+        if (footerRenderer != null) {
+            footerRenderer.move(0, layoutBox.getHeight());
+            float footerHeight = footerRenderer.getOccupiedArea().getBBox().getHeight();
+            occupiedArea.getBBox().moveDown(footerHeight).increaseHeight(footerHeight);
+        }
+    }
+
+    /**
+     * This method checks if we can completely fit the rows in the given area, staring from the startRow.
+     */
+    private boolean canFitRowsInGivenArea(LayoutArea layoutArea, int startRow, float[] columnWidths, List<Float> heights) {
+        layoutArea = layoutArea.clone();
+        heights = new ArrayList<>(heights);
+        for (int row = startRow; row < rows.size(); row++) {
+            CellRenderer[] rowCells = rows.get(row);
+            float rowHeight = 0;
+            for (int col = 0; col < rowCells.length; col++) {
+                CellRenderer cell = rowCells[col];
+                if (cell == null) {
+                    continue;
+                }
+
+                int colspan = cell.getPropertyAsInteger(Property.COLSPAN);
+                int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
+                float cellWidth = 0, colOffset = 0;
+                for (int i = col; i < col + colspan; i++) {
+                    cellWidth += columnWidths[i];
+                }
+                for (int i = 0; i < col; i++) {
+                    colOffset += columnWidths[i];
+                }
+                float rowspanOffset = 0;
+                for (int i = row - 1; i > row - rowspan && i >= 0; i--) {
+                    rowspanOffset += heights.get(i);
+                }
+                float cellLayoutBoxHeight = rowspanOffset + layoutArea.getBBox().getHeight();
+                Rectangle cellLayoutBox = new Rectangle(layoutArea.getBBox().getX() + colOffset, layoutArea.getBBox().getY(), cellWidth, cellLayoutBoxHeight);
+                LayoutArea cellArea = new LayoutArea(layoutArea.getPageNumber(), cellLayoutBox);
+                LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
+
+                if (cellResult.getStatus() != LayoutResult.FULL) {
+                    return false;
+                }
+                rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight());
+            }
+            heights.add(rowHeight);
+            layoutArea.getBBox().moveUp(rowHeight).decreaseHeight(rowHeight);
+        }
+        return true;
     }
 
     /**
