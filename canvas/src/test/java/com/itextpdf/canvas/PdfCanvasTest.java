@@ -10,6 +10,7 @@ import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.RawImage;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.color.*;
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.image.WmfImage;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType1Font;
@@ -26,6 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -37,6 +39,15 @@ public class PdfCanvasTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfCanvasTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/canvas/PdfCanvasTest/";
+
+    /** Paths to images. */
+    public static final String[] RESOURCES = {
+            "Desert.jpg",
+            "bulb.gif",
+            "0047478.jpg",
+            "itext.png"
+
+    };
 
     @BeforeClass
     static public void beforeClass() {
@@ -1591,6 +1602,29 @@ public class PdfCanvasTest {
         baos = new ByteArrayOutputStream();
         Utilities.transferBytes(stream, baos);
         canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 30, 100, true);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void awtImagesTest01() throws IOException, InterruptedException {
+        String filename = "awtImagesTest01.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        int x = 36;
+        int y = 700;
+        int width = 100;
+        for (String image : RESOURCES) {
+            java.awt.Image awtImage = Toolkit.getDefaultToolkit().createImage(sourceFolder + image);
+            canvas.addImage(ImageFactory.getImage(awtImage, null), x, y, width, false);
+            y -= 150;
+        }
 
         document.close();
 

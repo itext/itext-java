@@ -74,7 +74,7 @@ public class DocumentRenderer extends AbstractRenderer {
                                 Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
                                 logger.warn("Element doesn't fit current area. KeepTogether property will be ignored.");
                             } else {
-                                throw new PdfException("Element cannot fit any area.");
+                                throw new PdfException(PdfException.ElementCannotFitAnyArea);
                             }
                             renderer = result.getOverflowRenderer();
                             if (storedArea != null) {

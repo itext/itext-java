@@ -66,6 +66,7 @@ public class PdfException extends RuntimeException {
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
     public static final String DocumentHasNoPages = "document.has.no.pages";
     public static final String DocumentHasNoCatalogObject = "document.has.no.catalog.object";
+    public static final String ElementCannotFitAnyArea = "element.cannot.fit.any.area";
     public static final String EncryptionCanOnlyBeAddedBeforeOpeningDocument = "encryption.can.only.be.added.before.opening.the.document";
     public static final String EolCodeWordEncounteredInBlackRun = "eol.code.word.encountered.in.black.run";
     public static final String EolCodeWordEncounteredInWhiteRun = "eol.code.word.encountered.in.white.run";
