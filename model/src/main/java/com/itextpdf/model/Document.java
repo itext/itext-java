@@ -8,6 +8,7 @@ import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.element.*;
+import com.itextpdf.model.renderer.AbstractRenderer;
 import com.itextpdf.model.renderer.DocumentRenderer;
 
 import java.io.IOException;
@@ -145,8 +146,8 @@ public class Document implements IPropertyContainer<Document> {
         div.setProperty(Property.ROTATION_POINT_X, x);
         div.setProperty(Property.ROTATION_POINT_Y, y);
 
-        float divWidth = 10000;
-        float divHeight = 10000;
+        float divWidth = AbstractRenderer.INF;
+        float divHeight = AbstractRenderer.INF;
         float divX = x, divY = y;
         if (horAlign == Property.HorizontalAlignment.CENTER) {
             divX = x - divWidth / 2;

@@ -27,7 +27,11 @@ public class BlockRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         int pageNumber = layoutContext.getArea().getPageNumber();
 
-        Rectangle parentBBox = applyMargins(layoutContext.getArea().getBBox().clone(), false);
+        Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
+        if (getProperty(Property.ROTATION_ANGLE) != null) {
+            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
+        }
+        applyMargins(parentBBox, false);
         applyBorderBox(parentBBox, false);
 
         if (isPositioned()) {
@@ -338,7 +342,9 @@ public class BlockRenderer extends AbstractRenderer {
         float rotatedWidth = occupiedArea.getBBox().getWidth();
         float rotatedHeight = occupiedArea.getBBox().getHeight();
 
-        if (Math.abs(rotatedHeight - rotatedWidth) < EPS)
+        float pi4 = (float) (Math.PI / 4);
+        float pi2 = (float) (Math.PI / 2);
+        if (checkIfMultiple(angle, pi4) && !checkIfMultiple(angle, pi2))
             return (float) (rotatedWidth*Math.sqrt(2) - getHeightBeforeRotation());
 
         double cos = Math.abs(Math.cos(angle));
@@ -351,5 +357,10 @@ public class BlockRenderer extends AbstractRenderer {
         float rotatedHeight = occupiedArea.getBBox().getHeight();
         float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
         return rotatedHeight + heightDiff;
+    }
+
+    private boolean checkIfMultiple(float multipleOfNumber, float number) {
+        float remainder = Math.abs(multipleOfNumber % number);
+        return remainder < EPS || number - remainder < EPS;
     }
 }

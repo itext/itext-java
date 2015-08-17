@@ -16,6 +16,7 @@ import java.util.*;
 public abstract class AbstractRenderer implements IRenderer {
 
     public static final float EPS = 1e-4f;
+    public static final float INF = 1e6f;
 
     // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();

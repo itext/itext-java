@@ -29,7 +29,11 @@ public class ParagraphRenderer extends BlockRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         int pageNumber = layoutContext.getArea().getPageNumber();
 
-        Rectangle parentBBox = applyMargins(layoutContext.getArea().getBBox().clone(), false);
+        Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
+        if (getProperty(Property.ROTATION_ANGLE) != null) {
+            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
+        }
+        applyMargins(parentBBox, false);
         applyBorderBox(parentBBox, false);
 
         if (isPositioned()) {

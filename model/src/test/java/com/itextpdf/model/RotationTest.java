@@ -209,8 +209,6 @@ public class RotationTest {
     }
 
     @Test
-    @Ignore
-    //TODO rotated element should have unlimited height for their children positioning, thus such rotated elements will never return PARTIAL status
     public void splitTextRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "splitTextRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "splitTextRotationTest01.pdf";
@@ -223,6 +221,31 @@ public class RotationTest {
         document.add(new Paragraph(para1Text));
         document.add(new Paragraph(para2Text).setRotationAngle((-Math.PI / 3)));
         document.add(new Paragraph(para3Text));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void splitTextRotationTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "splitTextRotationTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "splitTextRotationTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph(para1Text));
+        document.add(new Paragraph(para1Text));
+        document.add(new Paragraph(para1Text));
+
+        String extremelyLongText = "";
+        for (int i = 0; i < 300; ++i) {
+            extremelyLongText += para2Text;
+        }
+
+        document.add(new Paragraph(extremelyLongText).setRotationAngle(Math.PI / 2));
+        document.add(new Paragraph(extremelyLongText).setRotationAngle(Math.PI / 4));
 
         document.close();
 
@@ -303,6 +326,32 @@ public class RotationTest {
         div.add(new Paragraph(para1Text)).setRotationAngle(Math.PI / 2);
         doc.add(div);
 
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void divRotationTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "divRotationTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "divRotationTest02.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph(para1Text));
+        doc.add(new Paragraph(para1Text));
+        doc.add(new Paragraph(para1Text));
+
+        String extremelyLongText = "";
+        for (int i = 0; i < 300; ++i) {
+            extremelyLongText += para2Text;
+        }
+
+        doc.add(new Div().add(new Paragraph(extremelyLongText)).setRotationAngle(Math.PI / 2));
+        doc.add(new Div().add(new Paragraph(extremelyLongText)).setRotationAngle(Math.PI / 4));
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
