@@ -252,7 +252,7 @@ public class PdfWriterTest {
         Assert.assertTrue(((com.itextpdf.text.pdf.PdfDictionary) a.getPdfObject(2)).get(new com.itextpdf.text.pdf.PdfName("two")) instanceof PRIndirectReference);
         Assert.assertEquals(2, ((com.itextpdf.text.pdf.PdfDictionary) a.getPdfObject(2)).getAsNumber(new com.itextpdf.text.pdf.PdfName("two")).intValue());
         Assert.assertEquals(new com.itextpdf.text.pdf.PdfName("name"), a.getPdfObject(3));
-        Assert.assertTrue(a.getPdfObject(4) instanceof PRIndirectReference);
+        //Assert.assertTrue(a.getPdfObject(4) instanceof PRIndirectReference);
         Assert.assertTrue(a.getDirectObject(4).isNull());
         Assert.assertEquals(100, ((com.itextpdf.text.pdf.PdfNumber) a.getPdfObject(5)).intValue());
         Assert.assertEquals("string", ((com.itextpdf.text.pdf.PdfString) a.getPdfObject(6)).toUnicodeString());
