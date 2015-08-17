@@ -1289,7 +1289,6 @@ public class PdfDocumentTest {
         reader.close();
     }
 
-    //@Ignore("not ready yet")
     @Test
     public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException, DocumentException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
