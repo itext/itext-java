@@ -26,9 +26,10 @@ public class PdfNull extends PdfPrimitiveObject {
         content = NullContent;
     }
 
+    //Here we create new object, because if we use static object it can cause unpredictable behavior during copy objects
     @Override
     protected PdfNull newInstance() {
-        return PdfNull;
+        return new PdfNull();
     }
 
     @Override
