@@ -279,7 +279,7 @@ public abstract class Image {
     public boolean canImageBeInline() {
         Logger logger = LoggerFactory.getLogger(Image.class);
         if (imageSize > 4096) {
-            logger.warn("Inline image cannot be more than 4KB.");
+            logger.warn("Inline image size cannot be more than 4KB. It will be added as an ImageXObject");
             return false;
         }
         if (imageMask != null) {

@@ -56,7 +56,7 @@ public class Jbig2Image extends Image {
     @Override
     public boolean canImageBeInline() {
         Logger logger = LoggerFactory.getLogger(Image.class);
-        logger.warn("Image cannot be inline if it has JBIG2Decode filter");
+        logger.warn("Image cannot be inline if it has JBIG2Decode filter. It will be added as an ImageXObject");
         return false;
     }
 }
