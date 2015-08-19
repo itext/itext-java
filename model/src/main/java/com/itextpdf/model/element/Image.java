@@ -40,6 +40,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
+    public Image (com.itextpdf.basics.image.Image img) {
+        this.xObject = new PdfImageXObject(img);
+    }
+
     @Override
     public IRenderer makeRenderer() {
         if (nextRenderer != null) {
