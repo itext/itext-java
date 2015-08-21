@@ -1350,6 +1350,24 @@ public class PdfDocumentTest {
         pdfDoc.close();
     }
 
+    @Test
+    public void copyDocumentsWithFormFieldsTest() throws IOException, InterruptedException {
+        String filename = sourceFolder + "fieldsOn2-sPage.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(filename));
+        FileOutputStream fos = new FileOutputStream(destinationFolder+"copyDocumentsWithFormFields.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+
+        PdfDocument sourceDoc = new PdfDocument(reader);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        sourceDoc.copyPages(1, sourceDoc.getNumOfPages(), pdfDoc);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder+"copyDocumentsWithFormFields.pdf", sourceFolder + "cmp_copyDocumentsWithFormFields.pdf", destinationFolder, "diff_"));
+    }
+
     static void verifyPdfPagesCount(PdfObject root) {
         if (root.getType() == PdfObject.IndirectReference)
             root = ((PdfIndirectReference)root).getRefersTo();

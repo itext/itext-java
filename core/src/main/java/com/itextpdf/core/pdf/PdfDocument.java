@@ -89,6 +89,9 @@ public class PdfDocument implements IEventDispatcher {
 
     protected Set<PdfFont> documentFonts = new HashSet<PdfFont>();
 
+    //forewarned is forearmed
+    protected boolean isUserWarned;
+
     /**
      * Open PDF document in reading mode.
      *
@@ -682,11 +685,28 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
+        return copyPages(pageFrom, pageTo, toDocument, insertBeforePage, null);
+    }
+
+    /**
+     * Copies a range of pages from current document to {@code toDocument}.
+     * Use this method if you want to copy pages across tagged documents.
+     * This will keep resultant PDF structure consistent.
+     *
+     * @param pageFrom         start of the range of pages to be copied.
+     * @param pageTo           end of the range of pages to be copied.
+     * @param toDocument       a document to copy pages to.
+     * @param insertBeforePage a position where to insert copied pages.
+     * @param copier           a copier which bears a special copy logic. May be NULL
+     * @return list of copied pages
+     * @throws PdfException
+     */
+    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         TreeSet<Integer> pages = new TreeSet<Integer>();
         for (int i = pageFrom; i <= pageTo; i++) {
             pages.add(i);
         }
-        return copyPages(pages, toDocument, insertBeforePage);
+        return copyPages(pages, toDocument, insertBeforePage, copier);
     }
 
     /**
@@ -701,9 +721,24 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument) {
-        return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumOfPages() + 1);
+        return copyPages(pageFrom, pageTo, toDocument, null);
     }
 
+    /**
+     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
+     * Use this method if you want to copy pages across tagged documents.
+     * This will keep resultant PDF structure consistent.
+     *
+     * @param pageFrom
+     * @param pageTo
+     * @param toDocument
+     * @param copier a copier which bears a special copy logic. May be NULL
+     * @return list of copied pages
+     * @throws PdfException
+     */
+    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+        return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumOfPages() + 1, copier);
+    }
 
     /**
      * Copies a range of pages from current document to {@code toDocument}.
@@ -717,13 +752,29 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) {
+        return copyPages(pagesToCopy, toDocument, insertBeforePage, null);
+    }
+
+    /**
+     * Copies a range of pages from current document to {@code toDocument}.
+     * Use this method if you want to copy pages across tagged documents.
+     * This will keep resultant PDF structure consistent.
+     *
+     * @param pagesToCopy      list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param toDocument       a document to copy pages to.
+     * @param insertBeforePage a position where to insert copied pages.
+     * @param copier           a copier which bears a special copy logic. May be NULL
+     * @return list of copied pages
+     * @throws PdfException
+     */
+    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         List<PdfPage> copiedPages = new ArrayList<PdfPage>();
         LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
         HashMap<PdfPage, List<PdfOutline>> page2Outlines = new HashMap<PdfPage, List<PdfOutline>>();
         Set<PdfOutline> outlinesToCopy = new HashSet<PdfOutline>();
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage(pageNum);
-            PdfPage newPage = page.copy(toDocument);
+            PdfPage newPage = page.copy(toDocument, copier);
             copiedPages.add(newPage);
             page2page.put(page, newPage);
             if (insertBeforePage < toDocument.getNumOfPages() + 1) {
@@ -763,7 +814,22 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument) {
-        return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1);
+        return copyPages(pagesToCopy, toDocument, null);
+    }
+
+    /**
+     * Copies a range of pages from current document to {@code toDocument} appending copied pages to the end.
+     * Use this method if you want to copy pages across tagged documents.
+     * This will keep resultant PDF structure consistent.
+     *
+     * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
+     * @param toDocument  a document to copy pages to.
+     * @param copier      a copier which bears a special copy logic
+     * @return list of copied pages
+     * @throws PdfException
+     */
+    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+        return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1, copier);
     }
 
     public boolean isCloseReader() {

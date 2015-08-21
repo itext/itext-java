@@ -56,11 +56,13 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             acroForm = new PdfAcroForm(acroFormDictionary);
         }
 
-        acroForm.defaultResources = acroForm.getDefaultResources();
-        if (acroForm.defaultResources == null) {
-            acroForm.defaultResources = new PdfDictionary();
+        if (acroForm != null) {
+            acroForm.defaultResources = acroForm.getDefaultResources();
+            if (acroForm.defaultResources == null) {
+                acroForm.defaultResources = new PdfDictionary();
+            }
+            acroForm.document = document;
         }
-        acroForm.document = document;
 
         return acroForm;
     }
@@ -94,7 +96,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         getFields().add(fieldDic);
         fields.put(field.getFieldName().toUnicodeString(), field);
 
-        if (field.getFormType().equals(PdfName.Tx)) {
+        if (field.getFormType() != null && field.getFormType().equals(PdfName.Tx)) {
             List<PdfDictionary> resources = getResources(field.getPdfObject());
             for (PdfDictionary resDict : resources) {
                 mergeResources(defaultResources, resDict, field);
@@ -106,7 +108,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public LinkedHashMap<String, PdfFormField> getFormFields() {
-        if (fields.size() == 0) {
+        if (fields.isEmpty()) {
             fields = iterateFields(getFields());
         }
         return fields;
@@ -345,6 +347,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         } else {
             for (PdfObject kid : kids){
+                if (kid.isIndirectReference()) {
+                    kid = ((PdfIndirectReference)kid).getRefersTo();
+                }
                 PdfArray otherKids = ((PdfDictionary)kid).getAsArray(PdfName.Kids);
                 if (otherKids != null) {
                     processKids(otherKids, (PdfDictionary) kid, page);

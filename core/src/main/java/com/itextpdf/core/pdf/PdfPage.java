@@ -12,6 +12,8 @@ import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;
 import com.itextpdf.core.xmp.XMPMetaFactory;
 import com.itextpdf.core.xmp.options.SerializeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -176,20 +178,44 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     @Override
     public PdfPage copy(PdfDocument toDocument) {
+        return copy(toDocument, null);
+    }
+
+    /**
+     * Copies page to the specified document.
+     *
+     * @param toDocument a document to copy page to.
+     * @param copier a copier which bears a specific copy logic. May be NULL
+     * @return copied page.
+     */
+    public PdfPage copy(PdfDocument toDocument, IPdfPageExtraCopier copier) {
         PdfDictionary dictionary = getPdfObject().copy(toDocument, Arrays.asList(
-            PdfName.Parent,
-            PdfName.StructParents,
-            // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
-            // See DEVSIX-191
-            PdfName.B
+                PdfName.Parent,
+                PdfName.StructParents,
+                // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
+                // See DEVSIX-191
+                PdfName.B
         ), true);
         PdfPage page = new PdfPage(dictionary, toDocument);
         if (toDocument.isTagged()) {
             page.structParents = toDocument.getNextStructParentIndex();
             page.getPdfObject().put(PdfName.StructParents, new PdfNumber(page.structParents));
         }
+
+        if (copier != null) {
+            copier.copy(this, page);
+        } else {
+            if (!getDocument().isUserWarned && getDocument().getCatalog().getPdfObject().containsKey(PdfName.AcroForm)) {
+                Logger logger = LoggerFactory.getLogger(PdfPage.class);
+                logger.warn("Source document has AcroForm dictionary. The pages you're going to copy may have FormFields, but they won't be copied, " +
+                        "because you haven't used any IPdfPageExtraCopier.");
+                getDocument().isUserWarned = true;
+            }
+        }
+
         return page;
     }
+
 
     /**
      * Copies page as FormXObject to the specified document.
