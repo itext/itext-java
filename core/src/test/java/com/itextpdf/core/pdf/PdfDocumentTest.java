@@ -1368,6 +1368,14 @@ public class PdfDocumentTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder+"copyDocumentsWithFormFields.pdf", sourceFolder + "cmp_copyDocumentsWithFormFields.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    public void freeReferencesInObjectStream() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "styledLineArts_Redacted.pdf"), new PdfWriter(new ByteArrayOutputStream()), true);
+        PdfDictionary dict = new PdfDictionary();
+        dict.makeIndirect(document);
+        Assert.assertTrue(dict.getIndirectReference().getObjNumber() > 0);
+    }
+
     static void verifyPdfPagesCount(PdfObject root) {
         if (root.getType() == PdfObject.IndirectReference)
             root = ((PdfIndirectReference)root).getRefersTo();

@@ -972,8 +972,14 @@ public class PdfReader {
                 PdfIndirectReference newReference;
                 switch (type) {
                     case 0:
-                        newReference = new PdfIndirectReference(pdfDocument, base, field3, 0);
-                        newReference.setFree();
+                        if (base == 0) {
+                            //indirect reference with number = 0 can't be overridden
+                            //xref table already has indirect reference 0 65535 R
+                            newReference = xref.get(base);
+                        } else {
+                            newReference = new PdfIndirectReference(pdfDocument, base, field3, 0);
+                            newReference.setFree();
+                        }
                         break;
                     case 1:
                         newReference = new PdfIndirectReference(pdfDocument, base, field3, field2);
