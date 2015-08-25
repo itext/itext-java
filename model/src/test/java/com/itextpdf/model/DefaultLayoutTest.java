@@ -1,7 +1,7 @@
 package com.itextpdf.model;
 
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;

@@ -15,7 +15,7 @@ import com.itextpdf.canvas.color.DeviceGray;
 import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType1Font;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;

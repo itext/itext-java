@@ -6,7 +6,8 @@ import com.itextpdf.barcodes.qrcode.QRCodeWriter;
 import com.itextpdf.barcodes.qrcode.WriterException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 import java.util.Map;
@@ -114,7 +115,7 @@ public class BarcodeQRCode extends Barcode2D {
     public PdfFormXObject createFormXObject(Color foreground, float moduleSize) {
         PdfFormXObject xObject = new PdfFormXObject((Rectangle) null);
         Rectangle rect = placeBarcode(new PdfCanvas(xObject), foreground, moduleSize);
-        xObject.setBBox(rect.toPdfArray());
+        xObject.setBBox(new PdfArray(rect));
 
         return xObject;
     }

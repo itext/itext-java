@@ -5,7 +5,7 @@ import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.TrueTypeFont;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

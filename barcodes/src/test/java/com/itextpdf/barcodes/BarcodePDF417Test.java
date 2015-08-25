@@ -1,21 +1,13 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.image.RawImage;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.canvas.color.Color;
-import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.awt.color.ColorSpace;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

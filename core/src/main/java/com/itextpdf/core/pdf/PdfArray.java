@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 
 import java.util.*;
 
@@ -21,10 +21,10 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
 
     public PdfArray(Rectangle rectangle) {
         list = new ArrayList<>(4);
-        add(new PdfNumber(rectangle.getX()));
-        add(new PdfNumber(rectangle.getY()));
-        add(new PdfNumber(rectangle.getX() + rectangle.getWidth()));
-        add(new PdfNumber(rectangle.getY() + rectangle.getHeight()));
+        add(new PdfNumber(rectangle.getLeft()));
+        add(new PdfNumber(rectangle.getBottom()));
+        add(new PdfNumber(rectangle.getRight()));
+        add(new PdfNumber(rectangle.getTop()));
     }
 
     public PdfArray(List<? extends PdfObject> objects) {

@@ -8,7 +8,7 @@ import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.core.xmp.*;

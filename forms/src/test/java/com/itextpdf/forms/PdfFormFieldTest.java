@@ -1,6 +1,6 @@
 package com.itextpdf.forms;
 
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.forms.fields.*;
@@ -11,7 +11,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
 
 public class PdfFormFieldTest {

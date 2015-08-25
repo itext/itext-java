@@ -3,7 +3,7 @@ package com.itextpdf.barcodes;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
@@ -437,7 +437,7 @@ public abstract class Barcode1D {
     public PdfFormXObject createFormXObject(Color barColor, Color textColor) {
         PdfFormXObject xObject = new PdfFormXObject((Rectangle)null);
         Rectangle rect = placeBarcode(new PdfCanvas(xObject), barColor, textColor);
-        xObject.setBBox(rect.toPdfArray());
+        xObject.setBBox(new PdfArray(rect));
 
         return xObject;
     }

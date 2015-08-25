@@ -1,7 +1,7 @@
 package com.itextpdf.core.testutils;
 
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;

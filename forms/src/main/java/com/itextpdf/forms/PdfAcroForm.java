@@ -2,7 +2,7 @@ package com.itextpdf.forms;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;

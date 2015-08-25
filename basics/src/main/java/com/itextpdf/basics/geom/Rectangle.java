@@ -1,6 +1,4 @@
-package com.itextpdf.core.geom;
-
-import com.itextpdf.core.pdf.PdfArray;
+package com.itextpdf.basics.geom;
 
 public class Rectangle implements Cloneable {
 
@@ -22,6 +20,14 @@ public class Rectangle implements Cloneable {
 
     public Rectangle(Rectangle rect) {
         this(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+    }
+
+    public Rectangle setBbox(float llx, float lly, float urx, float ury) {
+        x = llx;
+        y = lly;
+        width = urx - llx;
+        height = ury - lly;
+        return this;
     }
 
     /**
@@ -97,6 +103,34 @@ public class Rectangle implements Cloneable {
         return this;
     }
 
+    /**
+     *  Gets llx, the same: {@code getX()}.
+     */
+    public float getLeft() {
+        return x;
+    }
+
+    /**
+     * Gets urx, the same to {@code getX() + getWidth()}.
+     */
+    public float getRight() {
+        return x + width;
+    }
+
+    /**
+     * Gets ury, the same to {@code getY() + getHeight()}.
+     */
+    public float getTop() {
+        return y + height;
+    }
+
+    /**
+     * Gets lly, the same to {@code getY()}.
+     */
+    public float getBottom() {
+        return y;
+    }
+
     public Rectangle moveDown(float move) {
         y -= move;
         return this;
@@ -136,9 +170,5 @@ public class Rectangle implements Cloneable {
             return false;
         Rectangle that = (Rectangle) obj;
         return x == that.x && y == that.y && width == that.width && height == that.height;
-    }
-
-    public PdfArray toPdfArray(){
-        return new PdfArray(this);
     }
 }

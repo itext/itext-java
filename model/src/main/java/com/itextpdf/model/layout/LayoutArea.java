@@ -1,6 +1,6 @@
 package com.itextpdf.model.layout;
 
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 
 public class LayoutArea implements Cloneable {
 

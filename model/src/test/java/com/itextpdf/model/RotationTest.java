@@ -2,7 +2,7 @@ package com.itextpdf.model;
 
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
@@ -10,7 +10,6 @@ import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;

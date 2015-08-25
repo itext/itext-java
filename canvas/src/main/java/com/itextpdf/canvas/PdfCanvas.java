@@ -2,13 +2,13 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.PatternColor;
 import com.itextpdf.canvas.image.WmfImageHelper;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.*;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
@@ -19,8 +19,6 @@ import com.itextpdf.core.pdf.tagging.IPdfTag;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;

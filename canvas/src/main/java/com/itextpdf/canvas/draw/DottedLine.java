@@ -2,7 +2,7 @@ package com.itextpdf.canvas.draw;
 
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.PdfCanvasConstants;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 
 public class DottedLine implements Drawable{
 

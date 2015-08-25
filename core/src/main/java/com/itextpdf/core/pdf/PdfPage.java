@@ -2,8 +2,8 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.events.PdfDocumentEvent;
-import com.itextpdf.core.geom.PageSize;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.PageSize;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.tagging.*;
@@ -267,7 +267,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (cropBox == null) {
             cropBox = (PdfArray) getParentValue(parentPages, PdfName.CropBox);
             if (cropBox == null) {
-                cropBox = getMediaBox().toPdfArray();
+                cropBox = new PdfArray(getMediaBox());
             }
         }
         return cropBox.toRectangle();

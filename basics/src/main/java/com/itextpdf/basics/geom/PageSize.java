@@ -1,4 +1,4 @@
-package com.itextpdf.core.geom;
+package com.itextpdf.basics.geom;
 
 public class PageSize extends Rectangle {
 

@@ -2,7 +2,7 @@ package com.itextpdf.core.font;
 
 
 import com.itextpdf.basics.font.*;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;

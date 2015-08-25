@@ -5,7 +5,7 @@ import com.itextpdf.basics.font.FontFactory;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType1Font;
-import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.element.*;
 import com.itextpdf.model.renderer.AbstractRenderer;

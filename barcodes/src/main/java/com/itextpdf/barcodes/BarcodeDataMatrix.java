@@ -5,7 +5,8 @@ import com.itextpdf.barcodes.dmcode.Placement;
 import com.itextpdf.barcodes.dmcode.ReedSolomon;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 import java.io.UnsupportedEncodingException;
@@ -146,7 +147,7 @@ public class BarcodeDataMatrix extends Barcode2D {
     public PdfFormXObject createFormXObject(Color foreground, float moduleWidth, float moduleHeight) {
         PdfFormXObject xObject = new PdfFormXObject((Rectangle) null);
         Rectangle rect = placeBarcode(new PdfCanvas(xObject), foreground, moduleWidth, moduleHeight);
-        xObject.setBBox(rect.toPdfArray());
+        xObject.setBBox(new PdfArray(rect));
 
         return xObject;
     }

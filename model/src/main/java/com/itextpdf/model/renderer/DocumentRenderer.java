@@ -2,7 +2,7 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.Property;
