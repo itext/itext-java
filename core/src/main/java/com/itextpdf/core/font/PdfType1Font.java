@@ -2,7 +2,6 @@ package com.itextpdf.core.font;
 
 
 import com.itextpdf.basics.font.*;
-import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
@@ -145,7 +144,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     private void flushFontData() {
         getPdfObject().put(PdfName.Subtype, PdfName.Type1);
-        getPdfObject().put(PdfName.BaseFont, new PdfName(getFontProgram().getFontName()));
+        getPdfObject().put(PdfName.BaseFont, new PdfName(fontProgram.getFontNames().getFontName()));
         int firstChar;
         int lastChar;
         for (firstChar = 0; firstChar < 256; ++firstChar) {
@@ -203,7 +202,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
             getPdfObject().put(PdfName.FirstChar, new PdfNumber(firstChar));
             getPdfObject().put(PdfName.LastChar, new PdfNumber(lastChar));
             PdfArray wd = new PdfArray();
-            int[] widths = getFontProgram().getWidths();
+            int[] widths = fontProgram.getWidths();
             for (int k = firstChar; k <= lastChar; ++k) {
                 if (shortTag[k] == 0) {
                     wd.add(new PdfNumber(0));
@@ -232,23 +231,22 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     private PdfDictionary getFontDescriptor(PdfStream fontStream) {
         if (getFontProgram().isBuiltInFont())
             return null;
+        FontMetrics fontMetrics = fontProgram.getFontMetrics();
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(getDocument());
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
-        fontDescriptor.put(PdfName.Ascent, new PdfNumber(getFontProgram().getAscender()));
-        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(getFontProgram().getCapHeight()));
-        fontDescriptor.put(PdfName.Descent, new PdfNumber(getFontProgram().getDescender()));
-        Rectangle fontBBox = new Rectangle(getFontProgram().getLlx(), getFontProgram().getLly(),
-                getFontProgram().getUrx(), getFontProgram().getUry());
-        fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontBBox));
-        fontDescriptor.put(PdfName.FontName, new PdfName(getFontProgram().getFontName()));
-        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(getFontProgram().getItalicAngle()));
-        fontDescriptor.put(PdfName.StemV, new PdfNumber(getFontProgram().getStemV()));
+        fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontMetrics.getTypoAscender()));
+        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
+        fontDescriptor.put(PdfName.Descent, new PdfNumber(fontMetrics.getTypoDescender()));
+        fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontMetrics.getBbox().clone()));
+        fontDescriptor.put(PdfName.FontName, new PdfName(fontProgram.getFontNames().getFontName()));
+        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
+        fontDescriptor.put(PdfName.StemV, new PdfNumber(fontMetrics.getStemV()));
         if (fontStream != null) {
             fontDescriptor.put(PdfName.FontFile, fontStream);
             fontStream.flush();
         }
-        fontDescriptor.put(PdfName.Flags, new PdfNumber(getFontProgram().getFlags()));
+        fontDescriptor.put(PdfName.Flags, new PdfNumber(fontProgram.getPdfFontFlags()));
         return fontDescriptor;
     }
 

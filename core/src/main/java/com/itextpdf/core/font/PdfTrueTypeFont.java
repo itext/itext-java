@@ -1,10 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.AdobeGlyphList;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.TrueTypeFont;
+import com.itextpdf.basics.font.*;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import org.slf4j.Logger;
@@ -15,9 +12,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+/**
+ * Note. For TrueType FontNames.getStyle() is the same to Subfamily(). So, we shouldn't add style to /BaseFont.
+ */
 public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
-
-
     /**
      * Forces the output of the width array. Only matters for the 14 built-in fonts.
      */
@@ -35,8 +33,10 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         super(pdfDocument,new PdfDictionary());
         setFontProgram(ttf);
         this.embedded = embedded;
-        if (embedded && !ttf.allowEmbedding()) {
-            throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions").setMessageParams(ttf.getFontName() + ttf.getStyle());
+        FontNames fontNames = ttf.getFontNames();
+        if (embedded && !fontNames.allowEmbedding()) {
+            throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions")
+                    .setMessageParams(fontNames.getFontName());
         }
     }
 
@@ -159,7 +159,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     }
 
     private void flushFontData() {
-        getPdfObject().put(PdfName.BaseFont, new PdfName(getFontProgram().getFontName()));
+        getPdfObject().put(PdfName.BaseFont, new PdfName(fontProgram.getFontNames().getFontName()));
         int firstChar;
         int lastChar;
         for (firstChar = 0; firstChar < 256; ++firstChar) {
@@ -179,7 +179,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 shortTag[k] = 1;
             }
         }
-        String fontName = getFontProgram().getFontName() + getFontProgram().getStyle();
+        String fontName = fontProgram.getFontNames().getFontName();
         String baseEncoding = getFontProgram().getEncoding().getBaseEncoding();
         String subsetPrefix = "";
         PdfStream fontStream = null;
@@ -305,22 +305,18 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
      * @return the PdfDictionary containing the font descriptor or {@code null}.
      */
     protected static PdfDictionary getFontDescriptor(PdfDocument document, TrueTypeFont ttf, PdfStream fontStream, String subsetPrefix) {
+        FontMetrics fontMetrics = ttf.getFontMetrics();
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(document);
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
-        fontDescriptor.put(PdfName.Ascent, new PdfNumber(ttf.getFontDescriptor(FontConstants.ASCENT)));
-        fontDescriptor.put(PdfName.Descent, new PdfNumber(ttf.getFontDescriptor(FontConstants.DESCENT)));
-        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(ttf.getFontDescriptor(FontConstants.CAPHEIGHT)));
+        fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontMetrics.getTypoAscender()));
+        fontDescriptor.put(PdfName.Descent, new PdfNumber(fontMetrics.getTypoDescender()));
+        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
 
-        Rectangle fontBBox = new Rectangle(
-                ttf.getFontDescriptor(FontConstants.BBOXLLX),
-                ttf.getFontDescriptor(FontConstants.BBOXLLY),
-                ttf.getFontDescriptor(FontConstants.BBOXURX),
-                ttf.getFontDescriptor(FontConstants.BBOXURY)
-        );
+        Rectangle fontBBox = new Rectangle(fontMetrics.getBbox().clone());
         fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontBBox));
-        fontDescriptor.put(PdfName.FontName, new PdfName(subsetPrefix + ttf.getFontName() + ttf.getStyle()));
-        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(ttf.getFontDescriptor(FontConstants.ITALICANGLE)));
+        fontDescriptor.put(PdfName.FontName, new PdfName(subsetPrefix + ttf.getFontNames().getFontName()));
+        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
         fontDescriptor.put(PdfName.StemV, new PdfNumber(80));
         if (fontStream != null) {
             if (ttf.isCff()) {
@@ -329,7 +325,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 fontDescriptor.put(PdfName.FontFile2, fontStream);
             }
         }
-        fontDescriptor.put(PdfName.Flags, new PdfNumber(ttf.getFlags()));
+        fontDescriptor.put(PdfName.Flags, new PdfNumber(ttf.getPdfFontFlags()));
         return fontDescriptor;
     }
 

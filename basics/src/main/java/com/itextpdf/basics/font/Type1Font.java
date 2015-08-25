@@ -15,38 +15,9 @@ public class Type1Font extends FontProgram {
     private Type1Parser fontParser;
 
     /**
-     * The full name of the font.
-     */
-    private String fullName;
-    /**
-     * The family name of the font.
-     */
-    private String familyName;
-
-
-    /**
-     * The weight of the font: normal, bold, etc.
-     */
-    private String weight = "";
-
-    /**
-     * {@code true} if all the characters have the same width.
-     */
-    private boolean isFixedPitch = false;
-    /**
      * The character set of the font.
      */
     private String characterSet;
-
-
-    /**
-     * The underline position.
-     */
-    private int underlinePosition = -100;
-    /**
-     * The underline thickness.
-     */
-    private int underlineThickness = 50;
 
     /**
      * Represents the section CharMetrics in the AFM file. Each value of this array
@@ -66,12 +37,10 @@ public class Type1Font extends FontProgram {
     /**
      * Types of records in a PFB file. ASCII is 1 and BINARY is 2. They have to appear in the PFB file in this sequence.
      */
-    private static final int PFB_TYPES[] = {1, 2, 1};
-
+    private static final int[] PFB_TYPES = {1, 2, 1};
 
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
-
 
     public Type1Font(String name, String encoding, byte[] afm, byte[] pfb) throws IOException {
         fontParser = new Type1Parser(name, afm, pfb);
@@ -94,119 +63,19 @@ public class Type1Font extends FontProgram {
         return fontParser.isBuiltInFont();
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getFamilyName() {
-        return familyName;
-    }
-
-
-    /**
-     * Gets the font parameter identified by {@code key}. Valid values
-     * for {@code key} are {@code ASCENT}, {@code CAPHEIGHT}, {@code DESCENT},
-     * {@code ITALICANGLE}, {@code BBOXLLX}, {@code BBOXLLY}, {@code BBOXURX}
-     * and {@code BBOXURY}.
-     *
-     * @param key      the parameter to be extracted.
-     * @param fontSize the font size in points.
-     * @return the parameter in points.
-     */
-    public float getFontDescriptor(int key, float fontSize) {
-        switch (key) {
-            case FontConstants.AWT_ASCENT:
-            case FontConstants.ASCENT:
-                return getAscender() * fontSize / 1000;
-            case FontConstants.CAPHEIGHT:
-                return getCapHeight() * fontSize / 1000;
-            case FontConstants.AWT_DESCENT:
-            case FontConstants.DESCENT:
-                return getDescender() * fontSize / 1000;
-            case FontConstants.ITALICANGLE:
-                return getItalicAngle();
-            case FontConstants.BBOXLLX:
-                return getLlx() * fontSize / 1000;
-            case FontConstants.BBOXLLY:
-                return getLly() * fontSize / 1000;
-            case FontConstants.BBOXURX:
-                return getUrx() * fontSize / 1000;
-            case FontConstants.BBOXURY:
-                return getUry() * fontSize / 1000;
-            case FontConstants.AWT_LEADING:
-                return 0;
-            case FontConstants.AWT_MAXADVANCE:
-                return (getUrx() - getLlx()) * fontSize / 1000;
-            case FontConstants.UNDERLINE_POSITION:
-                return underlinePosition * fontSize / 1000;
-            case FontConstants.UNDERLINE_THICKNESS:
-                return underlineThickness * fontSize / 1000;
-        }
-        return 0;
-    }
-
-    /**
-     * Sets the font parameter identified by {@code key}. Valid values
-     * for {@code key} are {@code ASCENT}, {@code AWT_ASCENT}, {@code CAPHEIGHT},
-     * {@code DESCENT}, {@code AWT_DESCENT},
-     * {@code ITALICANGLE}, {@code BBOXLLX}, {@code BBOXLLY}, {@code BBOXURX}
-     * and {@code BBOXURY}.
-     *
-     * @param key   the parameter to be updated.
-     * @param value the parameter value.
-     */
-    public void setFontDescriptor(int key, float value) {
-        switch (key) {
-            case FontConstants.AWT_ASCENT:
-            case FontConstants.ASCENT:
-                setAscender((int) value);
-                break;
-            case FontConstants.AWT_DESCENT:
-            case FontConstants.DESCENT:
-                setDescender((int) value);
-                break;
-            default:
-                break;
-        }
-    }
-
-
-    public int getUnderlinePosition() {
-        return underlinePosition;
-    }
-
-    public int getUnderlineThickness() {
-        return underlineThickness;
-    }
-
-
-    public int getStemV() {
-        return getStdVW();
-    }
-
-    public boolean isFixedPitch() {
-        return isFixedPitch;
-    }
-
-
-    public String getWeight() {
-        return weight;
-    }
-
-
-    public int getFlags() {
+    public int getPdfFontFlags() {
         int flags = 0;
-        if (isFixedPitch()) {
+        if (fontMetrics.isFixedPitch()) {
             flags |= 1;
         }
         flags |= getEncoding().isFontSpecific() ? 4 : 32;
-        if (getItalicAngle() < 0) {
+        if (fontMetrics.getItalicAngle() < 0) {
             flags |= 64;
         }
-        if (getFontName().contains("Caps") || getFontName().endsWith("SC")) {
+        if (fontNames.getFontName().contains("Caps") || fontNames.getFontName().endsWith("SC")) {
             flags |= 131072;
         }
-        if (getWeight().equals("Bold")) {
+        if (fontNames.isBold() || fontNames.getFontWeight() > 500) {
             flags |= 262144;
         }
         return flags;
@@ -214,19 +83,6 @@ public class Type1Font extends FontProgram {
 
     public String getCharacterSet() {
         return characterSet;
-    }
-
-
-    public void setFullName(String fullName) {
-        fullName = fullName;
-    }
-
-    public void setFamilyName(String familyName) {
-        familyName = familyName;
-    }
-
-    public void setWeight(String weight) {
-        weight = weight;
     }
 
     /**
@@ -469,58 +325,61 @@ public class Type1Font extends FontProgram {
             String ident = tok.nextToken();
             switch (ident) {
                 case "FontName":
-                    fontName = tok.nextToken("\u00ff").substring(1);
+                    fontNames.setFontName(tok.nextToken("\u00ff").substring(1));
                     break;
                 case "FullName":
-                    fullName = tok.nextToken("\u00ff").substring(1);
+                    String fullName = tok.nextToken("\u00ff").substring(1);
+                    fontNames.setFullName(new String[][]{new String[]{"", "", "", fullName}});
                     break;
                 case "FamilyName":
-                    familyName = tok.nextToken("\u00ff").substring(1);
+                    String familyName = tok.nextToken("\u00ff").substring(1);
+                    fontNames.setFamilyName(new String[][] {new String[]{"","","", familyName }});
                     break;
                 case "Weight":
-                    weight = tok.nextToken("\u00ff").substring(1);
+                    fontNames.setWeight(FontNames.convertFontWeight(tok.nextToken("\u00ff").substring(1)));
                     break;
                 case "ItalicAngle":
-                    setItalicAngle(Float.parseFloat(tok.nextToken()));
+                    fontMetrics.setItalicAngle(Float.parseFloat(tok.nextToken()));
                     break;
                 case "IsFixedPitch":
-                    isFixedPitch = tok.nextToken().equals("true");
+                    fontMetrics.setIsFixedPitch(tok.nextToken().equals("true"));
                     break;
                 case "CharacterSet":
                     characterSet = tok.nextToken("\u00ff").substring(1);
                     break;
                 case "FontBBox":
-                    setLlx((int) Float.parseFloat(tok.nextToken()));
-                    setLly((int) Float.parseFloat(tok.nextToken()));
-                    setUrx((int) Float.parseFloat(tok.nextToken()));
-                    setUry((int) Float.parseFloat(tok.nextToken()));
+                    int llx = (int) Float.parseFloat(tok.nextToken());
+                    int lly = (int) Float.parseFloat(tok.nextToken());
+                    int urx = (int) Float.parseFloat(tok.nextToken());
+                    int ury = (int) Float.parseFloat(tok.nextToken());
+                    fontMetrics.getBbox().setBbox(llx, lly, urx, ury);
                     break;
                 case "UnderlinePosition":
-                    underlinePosition = (int) Float.parseFloat(tok.nextToken());
+                    fontMetrics.setUnderlinePosition((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "UnderlineThickness":
-                    underlineThickness = (int) Float.parseFloat(tok.nextToken());
+                    fontMetrics.setUnderlineThickness((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "EncodingScheme":
                     encodingScheme = tok.nextToken("\u00ff").substring(1).trim();
                     break;
                 case "CapHeight":
-                    setCapHeight((int) Float.parseFloat(tok.nextToken()));
+                    fontMetrics.setCapHeight((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "XHeight":
-                    setXHeight((int) Float.parseFloat(tok.nextToken()));
+                    fontMetrics.setXHeight((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "Ascender":
-                    setAscender((int) Float.parseFloat(tok.nextToken()));
+                    fontMetrics.setTypoAscender((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "Descender":
-                    setDescender((int) Float.parseFloat(tok.nextToken()));
+                    fontMetrics.setTypoDescender((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "StdHW":
-                    setStdHW((int) Float.parseFloat(tok.nextToken()));
+                    fontMetrics.setStemH((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "StdVW":
-                    setStdVW((int) Float.parseFloat(tok.nextToken()));
+                    fontMetrics.setStemV((int) Float.parseFloat(tok.nextToken()));
                     break;
                 case "StartCharMetrics":
                     startKernPairs = true;

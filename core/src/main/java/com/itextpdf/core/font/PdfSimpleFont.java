@@ -51,7 +51,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         getPdfObject().put(PdfName.BaseFont, baseFont);
         PdfObject encodingObj = fontDictionary.get(PdfName.Encoding);
         initFontProgram(encodingObj);
-        fontProgram.setFontName(baseFont.getValue());
+        fontProgram.getFontNames().setFontName(baseFont.getValue());
         if (encodingObj == null) {
 
             if (FontConstants.BUILTIN_FONTS_14.contains(baseFont.getValue())) {
@@ -108,8 +108,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             fontProgram.setWidths(getFillWidths(widths, firstChar, lastChar));
         }
 
-        if (FontConstants.BUILTIN_FONTS_14.contains(fontProgram.getFontName())) {
-            fontProgram = initializeTypeFont(fontProgram.getFontName(), fontProgram.getEncoding().getBaseEncoding());
+        if (FontConstants.BUILTIN_FONTS_14.contains(fontProgram.getFontNames().getFontName())) {
+            fontProgram = initializeTypeFont(fontProgram.getFontNames().getFontName(), fontProgram.getEncoding().getBaseEncoding());
         }
 
         PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
@@ -144,31 +144,31 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         PdfNumber ascent = fromDescriptorDictionary.getAsNumber(PdfName.Ascent);
         if (ascent != null) {
             toDescriptorDictionary.put(PdfName.Ascent, ascent);
-            fontProgram.setAscender(ascent.getIntValue());
+            fontProgram.getFontMetrics().setTypoAscender(ascent.getIntValue());
         }
 
         PdfNumber descent = fromDescriptorDictionary.getAsNumber(PdfName.Descent);
         if (descent != null) {
             toDescriptorDictionary.put(PdfName.Descent, ascent);
-            fontProgram.setDescender(descent.getIntValue());
+            fontProgram.getFontMetrics().setTypoDescender(descent.getIntValue());
         }
 
         PdfNumber capHeight = fromDescriptorDictionary.getAsNumber(PdfName.CapHeight);
         if (capHeight != null) {
             toDescriptorDictionary.put(PdfName.CapHeight, capHeight);
-            fontProgram.setCapHeight(capHeight.getIntValue());
+            fontProgram.getFontMetrics().setCapHeight(capHeight.getIntValue());
         }
 
         PdfNumber italicAngle = fromDescriptorDictionary.getAsNumber(PdfName.ItalicAngle);
         if (italicAngle != null) {
             toDescriptorDictionary.put(PdfName.ItalicAngle, italicAngle);
-            fontProgram.setItalicAngle(italicAngle.getIntValue());
+            fontProgram.getFontMetrics().setItalicAngle(italicAngle.getIntValue());
         }
 
         PdfNumber stemV = fromDescriptorDictionary.getAsNumber(PdfName.StemV);
         if (stemV != null) {
             toDescriptorDictionary.put(PdfName.StemV, stemV);
-            fontProgram.setStemV(stemV.getIntValue());
+            fontProgram.getFontMetrics().setStemV(stemV.getIntValue());
         }
 
         PdfNumber fontWeight = fromDescriptorDictionary.getAsNumber(PdfName.FontWeight);
@@ -216,7 +216,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         PdfNumber xHeight = fromDescriptorDictionary.getAsNumber(PdfName.XHeight);
         if (xHeight != null) {
             toDescriptorDictionary.put(PdfName.XHeight, xHeight);
-            fontProgram.setXHeight(xHeight.getIntValue());
+            fontProgram.getFontMetrics().setXHeight(xHeight.getIntValue());
         }
 
         PdfName fontStretch = fromDescriptorDictionary.getAsName(PdfName.FontStretch);
@@ -237,7 +237,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             PdfString panose = fromStyleDictionary.getAsString(PdfName.Panose);
             toStyleDictionary.put(PdfName.Panose, panose);
             toDescriptorDictionary.put(PdfName.Style, toStyleDictionary);
-            fontProgram.setPanose(panose.toString());
+            fontProgram.getFontIdentification().setPanose(panose.toString());
         }
 
 
@@ -259,10 +259,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 lly = ury;
                 ury = t;
             }
-            fontProgram.setLlx(llx);
-            fontProgram.setLly(lly);
-            fontProgram.setUrx(urx);
-            fontProgram.setUry(ury);
+            fontProgram.getFontMetrics().getBbox().setBbox(llx, lly, urx, ury);
         }
 
         return toDescriptorDictionary;

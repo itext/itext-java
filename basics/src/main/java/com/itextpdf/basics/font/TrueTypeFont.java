@@ -7,6 +7,7 @@ import com.itextpdf.basics.Utilities;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 
@@ -14,44 +15,16 @@ public class TrueTypeFont extends FontProgram {
 
     private OpenTypeParser fontParser;
 
-    protected String[][] fullFontName;
-    protected String[][] familyFontName;
-    protected String[][] allNameEntries;
-
-    /**
-     * The content of 'HEAD' table.
-     */
-    protected OpenTypeParser.FontHeader head;
-    /**
-     * The content of 'HHEA' table.
-     */
-    protected OpenTypeParser.HorizontalHeader hhea;
-    /**
-     * The content of 'OS/2' table.
-     */
-    protected OpenTypeParser.WindowsMetrics os_2;
-    /**
-     * The content of 'POST' table.
-     */
-    protected OpenTypeParser.PostTable post;
-    /**
-     * The content of 'CMAP' table.
-     */
-    protected OpenTypeParser.Cmaps cmaps;
-    /**
-     * The width of the glyphs. This is essentially the content of table
-     * 'hmtx' normalized to 1000 units.
-     */
-    protected int[] glyphWidthsByIndex;
     /**
      * Contains the smallest box enclosing the character contours.
      */
     private int[][] charBBoxes;
 
-
     private boolean isUnicode;
 
     protected int[][] bBoxes;
+
+    protected HashMap<Integer, List<String[]>> allNames;
 
     protected int maxGlyphId;
 
@@ -73,26 +46,86 @@ public class TrueTypeFont extends FontProgram {
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
 
+    // TODO remove 'name' parameter
     public TrueTypeFont(String name, String baseEncoding, byte[] ttf) throws IOException {
         fontParser = new OpenTypeParser(name, ttf);
-        this.fontName = fontParser.getFontName();
-        fullFontName = fontParser.getFullName();
-        familyFontName = fontParser.getFamilyName();
-        allNameEntries = fontParser.getAllNameEntries();
 
-        head = fontParser.readHeadTable();
-        hhea = fontParser.readHheaTable();
-        os_2 = fontParser.readOs2Table(head.unitsPerEm);
-        post = fontParser.readPostTable();
-        if (post == null) {
-            post = new OpenTypeParser.PostTable();
-            post.italicAngle = -Math.atan2(hhea.caretSlopeRun, hhea.caretSlopeRise) * 180 / Math.PI;
-        }
-        maxGlyphId = fontParser.readMaxGlyphId();
-        glyphWidthsByIndex = fontParser.readGlyphWidths(hhea.numberOfHMetrics, head.unitsPerEm);
-        cmaps = fontParser.readCMaps();
+        // initialize sfnt tables
+        OpenTypeParser.HeaderTable head = fontParser.getHeadTable();
+        OpenTypeParser.HorizontalHeader hhea = fontParser.getHheaTable();
+        OpenTypeParser.WindowsMetrics os_2 = fontParser.getOs_2Table();
+        OpenTypeParser.PostTable post = fontParser.getPostTable();
+        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
         kerning = fontParser.readKerning(head.unitsPerEm);
         bBoxes = fontParser.readBbox(head.unitsPerEm);
+        allNames = fontParser.getAllNameEntries();
+
+        // font names group
+        fontNames.setFontName(fontParser.getPsFontName());
+        fontNames.setFullName(getNames(4));
+        String[][] otfFamilyName = getNames(16);
+        if (otfFamilyName != null) {
+            fontNames.setFamilyName(otfFamilyName);
+        } else {
+            fontNames.setFamilyName(getNames(1));
+        }
+        String[][] subfamily = getNames(2);
+        if (subfamily != null) {
+            fontNames.setStyle(subfamily[0][3]);
+        }
+        String[][] otfSubFamily = getNames(17);
+        if (otfFamilyName != null) {
+            fontNames.setSubfamily(otfSubFamily);
+        } else {
+            fontNames.setSubfamily(subfamily);
+        }
+        String[][] cidName = getNames(20);
+        if (cidName != null) {
+            fontNames.setCidFontName(cidName[0][3]);
+        }
+        fontNames.setWeight(os_2.usWeightClass);
+        fontNames.setWidth(os_2.usWidthClass);
+        fontNames.setMacStyle(head.macStyle);
+        fontNames.setAllowEmbedding(os_2.fsType != 2);
+
+        // font metrics group
+        fontMetrics.setUnitsPerEm(head.unitsPerEm);
+        fontMetrics.updateBbox(head.xMin, head.yMin, head.xMax, head.yMax);
+        fontMetrics.setMaxGlyphId(fontParser.readMaxGlyphId());
+        fontMetrics.setGlyphWidths(fontParser.getGlyphWidthsByIndex());
+        fontMetrics.setTypoAscender(os_2.sTypoAscender);
+        fontMetrics.setTypoDescender(os_2.sTypoDescender);
+        fontMetrics.setCapHeight(os_2.sCapHeight);
+        fontMetrics.setXHeight(os_2.sxHeight);
+        fontMetrics.setItalicAngle(post.italicAngle);
+        fontMetrics.setAscender(hhea.Ascender);
+        fontMetrics.setDescender(hhea.Descender);
+        fontMetrics.setLineGap(hhea.LineGap);
+        fontMetrics.setWinAscender(os_2.usWinAscent);
+        fontMetrics.setWinDescender(os_2.usWinDescent);
+        fontMetrics.setAdvanceWidthMax(hhea.advanceWidthMax);
+        fontMetrics.setUnderlinePosition((post.underlinePosition - post.underlineThickness) / 2);
+        fontMetrics.setUnderlineThickness(post.underlineThickness);
+        fontMetrics.setStrikeoutPosition(os_2.yStrikeoutPosition);
+        fontMetrics.setStrikeoutSize(os_2.yStrikeoutSize);
+        fontMetrics.setSubscriptOffset(-os_2.ySubscriptYOffset);
+        fontMetrics.setSubscriptSize(os_2.ySubscriptYSize);
+        fontMetrics.setSuperscriptOffset(os_2.ySuperscriptYOffset);
+        fontMetrics.setSuperscriptSize(os_2.ySuperscriptYSize);
+        fontMetrics.setIsFixedPitch(post.isFixedPitch);
+
+        // font identification group
+        String[][] ttfVersion = getNames(5);
+        if (ttfVersion != null) {
+            fontIdentification.setTtfVersion(ttfVersion[0][3]);
+        }
+        String[][] ttfUniqueId = getNames(3);
+        if (ttfUniqueId != null) {
+            fontIdentification.setTtfVersion(ttfVersion[0][3]);
+        }
+        fontIdentification.setPanose(os_2.panose);
+
+
         this.baseEncoding = baseEncoding;
         if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
             isUnicode = true;
@@ -116,27 +149,9 @@ public class TrueTypeFont extends FontProgram {
         if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
             isUnicode = true;
             isVertical = this.baseEncoding.endsWith("V");
-
         } else {
             this.encoding = new FontEncoding(encoding, true);
         }
-    }
-
-
-    public boolean allowEmbedding() { // TODO: put it to FontProgram
-        return os_2.fsType != 2;
-    }
-
-
-
-    /*@Override
-    public String getFontName() {
-        return postscriptFontName;
-    }*/
-
-    @Override
-    public String getStyle() {
-        return fontParser.getStyle();
     }
 
     /**
@@ -151,7 +166,7 @@ public class TrueTypeFont extends FontProgram {
             char[] glyph;
             int[] metrics;
             int i = 0;
-            if (cmaps.fontSpecific) {
+            if (fontParser.getCmapTable().fontSpecific) {
                 byte[] b = PdfEncodings.convertToBytes(text, "symboltt");
                 glyph = new char[b.length];
                 for (int k = 0; k < b.length; ++k) {
@@ -199,7 +214,7 @@ public class TrueTypeFont extends FontProgram {
         if (isUnicode) {
             if (isVertical) {
                 return 1000;
-            } else if (cmaps.fontSpecific) {
+            } else if (fontParser.getCmapTable().fontSpecific) {
                 if ((ch & 0xff00) == 0 || (ch & 0xff00) == 0xf000) {
                     return getRawWidth(ch & 0xff, null);
                 } else {
@@ -235,7 +250,7 @@ public class TrueTypeFont extends FontProgram {
         if (isUnicode) {
             if (isVertical) {
                 return text.length() * 1000;
-            } else if (cmaps.fontSpecific) {
+            } else if (fontParser.getCmapTable().fontSpecific) {
                 char[] chars = text.toCharArray();
                 for (char ch : chars) {
                     if ((ch & 0xff00) == 0 || (ch & 0xff00) == 0xf000) {
@@ -303,6 +318,7 @@ public class TrueTypeFont extends FontProgram {
      * @return an {@code int} array with {glyph index, width}
      */
     public int[] getMetrics(int c) {
+        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
         if (isUnicode) {
             if (cmaps.cmapExt != null) {
                 return cmaps.cmapExt.get(Integer.valueOf(c));
@@ -344,7 +360,12 @@ public class TrueTypeFont extends FontProgram {
         return fontParser.isCff();
     }
 
+    public HashMap<Integer, List<String[]>> getAllNames() {
+        return allNames;
+    }
+
     public HashMap<Integer, int[]> getActiveCmap() {
+        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
         if (!cmaps.fontSpecific && cmaps.cmap31 != null) {
             return cmaps.cmap31;
         } else if (cmaps.fontSpecific && cmaps.cmap10 != null) {
@@ -377,111 +398,35 @@ public class TrueTypeFont extends FontProgram {
         return fontStreamLengths;
     }
 
-    /**
-     * Gets the font parameter identified by <CODE>key</CODE>. Valid values
-     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
-     * and <CODE>ITALICANGLE</CODE>.
-     *
-     * @param key      the parameter to be extracted
-     * @param fontSize the font size in points
-     * @return the parameter in points
-     */
-    public float getFontDescriptor(int key, float fontSize) {
-        switch (key) {
-            case FontConstants.ASCENT:
-                return os_2.sTypoAscender * fontSize / head.unitsPerEm;
-            case FontConstants.CAPHEIGHT:
-                return os_2.sCapHeight * fontSize / head.unitsPerEm;
-            case FontConstants.DESCENT:
-                return os_2.sTypoDescender * fontSize / head.unitsPerEm;
-            case FontConstants.ITALICANGLE:
-                return (float) post.italicAngle;
-            case FontConstants.BBOXLLX:
-                return fontSize * head.xMin / head.unitsPerEm;
-            case FontConstants.BBOXLLY:
-                return fontSize * head.yMin / head.unitsPerEm;
-            case FontConstants.BBOXURX:
-                return fontSize * head.xMax / head.unitsPerEm;
-            case FontConstants.BBOXURY:
-                return fontSize * head.yMax / head.unitsPerEm;
-            case FontConstants.AWT_ASCENT:
-                return fontSize * hhea.Ascender / head.unitsPerEm;
-            case FontConstants.AWT_DESCENT:
-                return fontSize * hhea.Descender / head.unitsPerEm;
-            case FontConstants.AWT_LEADING:
-                return fontSize * hhea.LineGap / head.unitsPerEm;
-            case FontConstants.AWT_MAXADVANCE:
-                return fontSize * hhea.advanceWidthMax / head.unitsPerEm;
-            case FontConstants.UNDERLINE_POSITION:
-                return (post.underlinePosition - post.underlineThickness / 2) * fontSize / head.unitsPerEm;
-            case FontConstants.UNDERLINE_THICKNESS:
-                return post.underlineThickness * fontSize / head.unitsPerEm;
-            case FontConstants.STRIKETHROUGH_POSITION:
-                return os_2.yStrikeoutPosition * fontSize / head.unitsPerEm;
-            case FontConstants.STRIKETHROUGH_THICKNESS:
-                return os_2.yStrikeoutSize * fontSize / head.unitsPerEm;
-            case FontConstants.SUBSCRIPT_SIZE:
-                return os_2.ySubscriptYSize * fontSize / head.unitsPerEm;
-            case FontConstants.SUBSCRIPT_OFFSET:
-                return -os_2.ySubscriptYOffset * fontSize / head.unitsPerEm;
-            case FontConstants.SUPERSCRIPT_SIZE:
-                return os_2.ySuperscriptYSize * fontSize / head.unitsPerEm;
-            case FontConstants.SUPERSCRIPT_OFFSET:
-                return os_2.ySuperscriptYOffset * fontSize / head.unitsPerEm;
-            case FontConstants.WEIGHT_CLASS:
-                return os_2.usWeightClass;
-            case FontConstants.WIDTH_CLASS:
-                return os_2.usWidthClass;
-        }
-        return 0;
-    }
-
-    public int getFlags() {
+    public int getPdfFontFlags() {
         int flags = 0;
-        if (isFixedPitch()) {
+        if (fontMetrics.isFixedPitch()) {
             flags |= 1;
         }
         flags |= isFontSpecific() ? 4 : 32;
-        if ((getMacStyle() & 2) != 0) {
+        if (fontNames.isItalic()) {
             flags |= 64;
         }
-        if ((getMacStyle() & 1) != 0) {
+        if (fontNames.isBold() || fontNames.getFontWeight() > 500) {
             flags |= 262144;
         }
         return flags;
     }
 
-
-    /**
-     * Gets the font parameter identified by <CODE>key</CODE>. Valid values
-     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
-     * and <CODE>ITALICANGLE</CODE>.
-     *
-     * @param key the parameter to be extracted
-     * @return the parameter in points
-     */
-    public float getFontDescriptor(int key) {
-        return getFontDescriptor(key, 1000);
-    }
-
-    public boolean isFixedPitch() {
-        return post.isFixedPitch;
-    }
-
     public boolean isFontSpecific() {
-        return cmaps.fontSpecific;
-    }
-
-    public int getMacStyle() {
-        return head.macStyle;
+        return fontParser.getCmapTable().fontSpecific;
     }
 
     public HashMap<Integer, int[]> getCmap10() {
-        return cmaps != null ? cmaps.cmap10 : null;
+        return fontParser.getCmapTable() != null
+                ? fontParser.getCmapTable().cmap10
+                : null;
     }
 
     public HashMap<Integer, int[]> getCmap31() {
-        return cmaps != null ? cmaps.cmap31 : null;
+        return fontParser.getCmapTable() != null
+                ? fontParser.getCmapTable().cmap31
+                : null;
     }
 
     /**
@@ -524,6 +469,7 @@ public class TrueTypeFont extends FontProgram {
     }
 
     protected int[] getRawCharBBox(int c, String name) {
+        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
         HashMap<Integer, int[]> map;
         if (name == null || cmaps.cmap31 == null) {
             map = cmaps.cmap10;
@@ -538,5 +484,22 @@ public class TrueTypeFont extends FontProgram {
             return null;
         }
         return bBoxes[metric[0]];
+    }
+
+    /** Extracts the names of the font in all the languages available.
+     * @param id the name id to retrieve
+     * @return not empty {@code String[][]} if any names exists, otherwise {@code null}.
+     */
+    protected String[][] getNames(int id) throws IOException {
+        List<String[]> names = allNames.get(id);
+        return names != null && names.size() > 0 ? listToArray(names) : null;
+    }
+
+    private String[][] listToArray(List<String[]> list) {
+        String[][] array = new String[list.size()][];
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
+        }
+        return array;
     }
 }

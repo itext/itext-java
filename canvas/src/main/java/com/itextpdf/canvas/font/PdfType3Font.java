@@ -3,16 +3,9 @@ package com.itextpdf.canvas.font;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.Type3Font;
-import com.itextpdf.core.font.PdfSimpleFont;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfIndirectReference;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.font.PdfSimpleFont;
+import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -85,7 +78,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      */
     public Type3Glyph createGlyph(char c, int wx, int llx, int lly, int urx, int ury) {
         usedSlot[c] = true;
-        Integer ck = Integer.valueOf(c);
+        Integer ck = (int) c;
         Type3Glyph glyph = charGlyphs.get(ck);
 
         if (glyph != null) {
@@ -93,20 +86,19 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         }
 
         if (!isColor) {
-            if (fontProgram.getWidthsTable().size()==0) {
-                fontProgram.setLlx(llx);
-                fontProgram.setLly(lly);
-                fontProgram.setUrx(urx);
-                fontProgram.setUry(ury);
+            Rectangle bbox = fontProgram.getFontMetrics().getBbox();
+            if (fontProgram.getWidthsTable().size() == 0) {
+                bbox.setBbox(llx, lly, urx, ury);
             } else {
-                fontProgram.setLlx(Math.min(fontProgram.getLlx(), llx));
-                fontProgram.setLly(Math.min(fontProgram.getLly(), lly));
-                fontProgram.setUrx(Math.max(fontProgram.getUrx(), urx));
-                fontProgram.setUry(Math.max(fontProgram.getUry(), ury));
+                float newLlx = Math.min(bbox.getLeft(), llx);
+                float newLly = Math.min(bbox.getBottom(), lly);
+                float newUrx = Math.max(bbox.getRight(), urx);
+                float newUry = Math.max(bbox.getTop(), ury);
+                bbox.setBbox(newLlx, newLly, newUrx, newUry);
             }
         }
 
-        fontProgram.getWidthsTable().put(c, (int) wx);
+        fontProgram.getWidthsTable().put(c, wx);
 
 
         glyph = new Type3Glyph(getDocument());
@@ -223,15 +215,14 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         if (differences == null) {
             differences = new PdfArray();
         }
-        fontProgram.setLlx((int) fontBBoxRec.getX());
-        fontProgram.setLly((int) fontBBoxRec.getY());
-        fontProgram.setUrx((int) fontBBoxRec.getWidth());
-        fontProgram.setUry((int) fontBBoxRec.getHeight());
+        fontProgram.getFontMetrics().getBbox()
+                .setBbox(fontBBoxRec.getX(), fontBBoxRec.getY(), fontBBoxRec.getWidth(), fontBBoxRec.getHeight());
         int width[] = getWidths();
         double[] fontMatrix = new double[6];
         for (int i = 0; i < fontMatrixArray.size(); i++) {
             fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
         }
+        fontProgram.setFontMatrix(fontMatrix);
 
         for (int i = 0; i < width.length; i++) {
             if (width[i] != 0) {
@@ -257,7 +248,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         if (isColor) {
             getPdfObject().put(PdfName.FontBBox, new PdfArray(new Rectangle(0, 0, 0, 0)));
         } else {
-            getPdfObject().put(PdfName.FontBBox, new PdfArray(new Rectangle(fontProgram.getLlx(), fontProgram.getLly(), fontProgram.getUrx(), fontProgram.getUry())));
+            getPdfObject().put(PdfName.FontBBox, new PdfArray(new Rectangle(fontProgram.getFontMetrics().getBbox().clone())));
         }
 
         getPdfObject().put(PdfName.FontMatrix, new PdfArray(fontProgram.getFontMatrix()));

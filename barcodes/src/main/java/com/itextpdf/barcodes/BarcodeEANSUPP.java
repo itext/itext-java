@@ -2,7 +2,7 @@ package com.itextpdf.barcodes;
 
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.basics.geom.Rectangle;
@@ -84,10 +84,13 @@ public class BarcodeEANSUPP extends Barcode1D {
      */
     @Override
     public Rectangle placeBarcode(PdfCanvas canvas, Color barColor, Color textColor) {
-        if (supp.getFont() != null)
-            supp.setBarHeight(ean.getBarHeight() + supp.getBaseline() - supp.getFont().getFontProgram().getFontDescriptor(FontConstants.CAPHEIGHT, supp.getSize()));
-        else
+        if (supp.getFont() != null) {
+            float sizeCoef = supp.getSize() / FontProgram.UNITS_NORMALIZATION;
+            supp.setBarHeight(ean.getBarHeight() + supp.getBaseline()
+                    - supp.getFont().getFontProgram().getFontMetrics().getCapHeight() * sizeCoef);
+        } else {
             supp.setBarHeight(ean.getBarHeight());
+        }
         Rectangle eanR = ean.getBarcodeSize();
         canvas.saveState();
         ean.placeBarcode(canvas, barColor, textColor);

@@ -550,8 +550,8 @@ public class MetaDo {
         float textWidth = fp.getWidthPoint(text, fontSize);
         float tx = 0;
         float ty = 0;
-        float descender = fp.getDescender();
-        float ury = fp.getUry();
+        float descender = fp.getFontMetrics().getTypoDescender();
+        float ury = fp.getFontMetrics().getBbox().getTop();
         cb.saveState();
         cb.concatMatrix(cos, sin, -sin, cos, refX, refY);
         if ((align & MetaState.TA_CENTER) == MetaState.TA_CENTER)
@@ -647,7 +647,7 @@ public class MetaDo {
         if (image.getOriginalType() != Image.BMP)
             throw new PdfException(PdfException.OnlyBmpCanBeWrappedInWmf);
         InputStream imgIn;
-        byte data[] = null;
+        byte data[];
         if (image.getData() == null) {
             imgIn = image.getUrl().openStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();

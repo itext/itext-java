@@ -121,10 +121,11 @@ public class BarcodeCodabar extends Barcode1D {
         if (!startStopText)
             text = text.substring(1, text.length() - 1);
         if (font != null) {
-            if (baseline > 0)
-                fontY = baseline - font.getFontProgram().getFontDescriptor(FontConstants.DESCENT, size);
-            else
+            if (baseline > 0) {
+                fontY = baseline - getDescender();
+            } else {
                 fontY = -baseline + size;
+            }
             fontX = font.getFontProgram().getWidthPoint(altText != null ? altText : text, size);
         }
         text = code;
@@ -221,7 +222,7 @@ public class BarcodeCodabar extends Barcode1D {
             if (baseline <= 0)
                 textStartY = barHeight - baseline;
             else {
-                textStartY = -font.getFontProgram().getFontDescriptor(FontConstants.DESCENT, size);
+                textStartY = -getDescender();
                 barStartY = textStartY + baseline;
             }
         }

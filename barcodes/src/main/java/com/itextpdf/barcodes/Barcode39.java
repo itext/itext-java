@@ -172,10 +172,11 @@ public class Barcode39 extends Barcode1D {
             fCode = getCode39Ex(code);
         }
         if (font != null) {
-            if (baseline > 0)
-                fontY = baseline - font.getFontProgram().getFontDescriptor(FontConstants.DESCENT, size);
-            else
+            if (baseline > 0) {
+                fontY = baseline - getDescender();
+            } else {
                 fontY = -baseline + size;
+            }
             String fullCode = code;
             if (generateChecksum && checksumText)
                 fullCode += getChecksum(fCode);
@@ -272,7 +273,7 @@ public class Barcode39 extends Barcode1D {
             if (baseline <= 0)
                 textStartY = barHeight - baseline;
             else {
-                textStartY = -font.getFontProgram().getFontDescriptor(FontConstants.DESCENT, size);
+                textStartY = -getDescender();
                 barStartY = textStartY + baseline;
             }
         }

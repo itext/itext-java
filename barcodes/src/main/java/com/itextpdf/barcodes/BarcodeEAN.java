@@ -452,10 +452,11 @@ public class BarcodeEAN extends Barcode1D {
         float width;
         float height = barHeight;
         if (font != null) {
-            if (baseline <= 0)
+            if (baseline <= 0) {
                 height += -baseline + size;
-            else
-                height += baseline - font.getFontProgram().getFontDescriptor(FontConstants.DESCENT, size);
+            } else {
+                height += baseline - getDescender();
+            }
         }
         switch (codeType) {
             case EAN13:
@@ -539,7 +540,7 @@ public class BarcodeEAN extends Barcode1D {
             if (baseline <= 0)
                 textStartY = barHeight - baseline;
             else {
-                textStartY = -font.getFontProgram().getFontDescriptor(FontConstants.DESCENT, size);
+                textStartY = -getDescender();
                 barStartY = textStartY + baseline;
             }
         }

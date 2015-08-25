@@ -10,6 +10,11 @@ public class Type3Font extends FontProgram {
     private IntHashtable widthsTable = new IntHashtable();
 
     @Override
+    public int getPdfFontFlags() {
+        return 0;
+    }
+
+    @Override
     protected int getRawWidth(int c, String name) {
         return 0;
     }

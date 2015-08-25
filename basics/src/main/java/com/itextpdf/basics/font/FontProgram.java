@@ -5,48 +5,11 @@ import java.util.StringTokenizer;
 public abstract class FontProgram {
 
     public static int DEFAULT_WIDTH = 1000;
+    public static final int UNITS_NORMALIZATION = 1000;
     /**
      * Font encoding.
      */
     protected FontEncoding encoding;
-
-    protected String fontName;
-    /**
-     * The llx of the FontBox.
-     */
-    private int llx = -50;
-    /**
-     * The lly of the FontBox.
-     */
-    private int lly = -200;
-    /**
-     * The lurx of the FontBox.
-     */
-    private int urx = 1000;
-    /**
-     * The ury of the FontBox.
-     */
-    private int ury = 900;
-
-    /**
-     * The italic angle of the font, usually 0.0 or negative.
-     */
-    private float italicAngle = 0.0f;
-
-    private int capHeight = 700;
-    private int xHeight = 480;
-    private int ascender = 800;
-    private int descender = -200;
-    private int stdHW;
-    private int stdVW = 80;
-    private int stemV = 80;
-
-    private int flags;
-
-    protected String panose;
-    protected String style;
-    protected String registry;
-
     /**
      * Contains the smallest box enclosing the character contours.
      */
@@ -56,42 +19,35 @@ public abstract class FontProgram {
      */
     protected int[] widths = new int[256];
 
+    FontNames fontNames = new FontNames();
+
+    FontMetrics fontMetrics = new FontMetrics();
+
+    FontIdentification fontIdentification = new FontIdentification();
+
     /**
      * The font's encoding name. This encoding is 'StandardEncoding' or 'AdobeStandardEncoding' for a font
      * that can be totally encoded according to the characters names. For all other names the font is treated as symbolic.
      */
     protected String encodingScheme = "FontSpecific";
 
-    public float getFontDescriptor(int key, float size){
-        return 0;
+    protected String registry;
+
+
+    public FontEncoding getEncoding() {
+        return encoding;
     }
 
-    public String getFontName() {
-        return fontName;
+    public FontNames getFontNames() {
+        return fontNames;
     }
 
-    public void setFontName(String fontName) {
-        this.fontName = fontName;
+    public FontMetrics getFontMetrics() {
+        return fontMetrics;
     }
 
-    public String getRegistry() {
-        return registry;
-    }
-
-    public void setRegistry(String registry) {
-        this.registry = registry;
-    }
-
-    public String getStyle() {
-        return style;
-    }
-
-    public String getPanose() {
-        return panose;
-    }
-
-    public void setPanose(String panose) {
-        this.panose = panose;
+    public FontIdentification getFontIdentification() {
+        return fontIdentification;
     }
 
     public void setWidths(int[] widths) {
@@ -100,114 +56,6 @@ public abstract class FontProgram {
 
     public int[] getWidths() {
         return widths;
-    }
-
-    public int getLlx() {
-        return llx;
-    }
-
-    public void setLlx(int llx) {
-        this.llx = llx;
-    }
-
-    public int getLly() {
-        return lly;
-    }
-
-    public void setLly(int lly) {
-        this.lly = lly;
-    }
-
-    public int getUrx() {
-        return urx;
-    }
-
-    public void setUrx(int urx) {
-        this.urx = urx;
-    }
-
-    public int getUry() {
-        return ury;
-    }
-
-    public void setUry(int ury) {
-        this.ury = ury;
-    }
-
-    public float getItalicAngle() {
-        return italicAngle;
-    }
-
-    public void setItalicAngle(float italicAngle) {
-        this.italicAngle = italicAngle;
-    }
-
-    public int getCapHeight() {
-        return capHeight;
-    }
-
-    public void setCapHeight(int capHeight) {
-        this.capHeight = capHeight;
-    }
-
-    public int getXHeight() {
-        return xHeight;
-    }
-
-    public void setXHeight(int xHeight) {
-        this.xHeight = xHeight;
-    }
-
-    public int getAscender() {
-        return ascender;
-    }
-
-    public void setAscender(int ascender) {
-        this.ascender = ascender;
-    }
-
-    public int getDescender() {
-        return descender;
-    }
-
-    public void setDescender(int descender) {
-        this.descender = descender;
-    }
-
-    public int getStdHW() {
-        return stdHW;
-    }
-
-    public void setStdHW(int stdHW) {
-        this.stdHW = stdHW;
-    }
-
-    public int getStdVW() {
-        return stdVW;
-    }
-
-    public void setStdVW(int stdVW) {
-        this.stdVW = stdVW;
-    }
-
-    public int getStemV() {
-        return stemV;
-    }
-
-    public void setStemV(int stemV) {
-        this.stemV = stemV;
-    }
-
-    public int getFlags() {
-        return flags;
-    }
-
-    protected void setFlags(int flags) {
-        this.flags = flags;
-    }
-
-    public FontEncoding getEncoding() {
-        return encoding;
     }
 
     /**
@@ -231,6 +79,12 @@ public abstract class FontProgram {
     public float getWidthPoint(int char1, float fontSize) {
         return getWidth(char1) * 0.001f * fontSize;
     }
+
+    public String getRegistry() {
+        return registry;
+    }
+
+    public abstract int getPdfFontFlags();
 
     protected abstract int getRawWidth(int c, String name);
 
@@ -291,6 +145,11 @@ public abstract class FontProgram {
         } else {
             return charBBoxes[b[0] & 0xff];
         }
+    }
+
+    //TODO change to protected!
+    public void setRegistry(String registry) {
+        this.registry = registry;
     }
 
     /**
@@ -383,13 +242,14 @@ public abstract class FontProgram {
      * @return the name without the modifiers Bold, Italic or BoldItalic
      */
     protected static String getBaseName(String name) {
-        if (name.endsWith(",Bold"))
+        if (name.endsWith(",Bold")) {
             return name.substring(0, name.length() - 5);
-        else if (name.endsWith(",Italic"))
+        } else if (name.endsWith(",Italic")) {
             return name.substring(0, name.length() - 7);
-        else if (name.endsWith(",BoldItalic"))
+        } else if (name.endsWith(",BoldItalic")) {
             return name.substring(0, name.length() - 11);
-        else
+        } else {
             return name;
+        }
     }
 }

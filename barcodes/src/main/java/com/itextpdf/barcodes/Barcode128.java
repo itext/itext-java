@@ -468,7 +468,7 @@ public class Barcode128 extends Barcode1D {
         String fullCode;
         if (font != null) {
             if (baseline > 0) {
-                fontY = baseline - font.getFontProgram().getFontDescriptor(FontConstants.DESCENT, size);
+                fontY = baseline - getDescender();
             } else {
                 fontY = -baseline + size;
             }
@@ -594,7 +594,7 @@ public class Barcode128 extends Barcode1D {
             if (baseline <= 0)
                 textStartY = barHeight - baseline;
             else {
-                textStartY = -font.getFontProgram().getFontDescriptor(FontConstants.DESCENT, size);
+                textStartY = -getDescender();
                 barStartY = textStartY + baseline;
             }
         }

@@ -246,7 +246,7 @@ public class PdfPagesTest {
         PdfPage page = inputPdfDoc1.getPage(1);
         List<PdfFont> list = page.getResources().getFonts(true);
         Assert.assertEquals(1, list.size());
-        Assert.assertEquals("ASJKFO+Arial-BoldMT", list.get(0).getFontProgram().getFontName());
+        Assert.assertEquals("ASJKFO+Arial-BoldMT", list.get(0).getFontProgram().getFontNames().getFontName());
     }
 
     @Test(expected = PdfException.class)

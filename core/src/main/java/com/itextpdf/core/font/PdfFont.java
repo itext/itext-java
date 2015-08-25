@@ -44,14 +44,14 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        if(checkFontDictionary(fontDictionary,PdfName.Type1,false)){
-           return new PdfType1Font(pdfDocument,fontDictionary);
-        }else if(checkFontDictionary(fontDictionary,PdfName.Type0,false)){
-           return new PdfType0Font(pdfDocument,fontDictionary);
-        }else if(checkFontDictionary(fontDictionary, PdfName.TrueType, false)){
-           return new PdfTrueTypeFont(pdfDocument,fontDictionary);
-        }else{
-           throw new PdfException(PdfException.DictionaryNotContainFontData);
+        if (checkFontDictionary(fontDictionary, PdfName.Type1, false)) {
+            return new PdfType1Font(pdfDocument, fontDictionary);
+        } else if (checkFontDictionary(fontDictionary, PdfName.Type0, false)) {
+            return new PdfType0Font(pdfDocument, fontDictionary);
+        } else if (checkFontDictionary(fontDictionary, PdfName.TrueType, false)) {
+            return new PdfTrueTypeFont(pdfDocument, fontDictionary);
+        } else {
+            throw new PdfException(PdfException.DictionaryNotContainFontData);
         }
     }
 
