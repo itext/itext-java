@@ -3,6 +3,7 @@ package com.itextpdf.barcodes;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 public abstract class Barcode2D {
@@ -33,7 +34,7 @@ public abstract class Barcode2D {
      * @param foreground the color of the pixels. It can be <CODE>null</CODE>
      * @return the XObject.
      */
-    public abstract PdfFormXObject createFormXObject(Color foreground);
+    public abstract PdfFormXObject createFormXObject(Color foreground, PdfDocument document);
 }
 
 

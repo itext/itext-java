@@ -7,6 +7,7 @@ import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 import java.io.UnsupportedEncodingException;
@@ -132,8 +133,8 @@ public class BarcodeDataMatrix extends Barcode2D {
     }
 
     @Override
-    public PdfFormXObject createFormXObject(Color foreground) {
-        return createFormXObject(foreground, DEFAULT_MODULE_SIZE, DEFAULT_MODULE_SIZE);
+    public PdfFormXObject createFormXObject(Color foreground, PdfDocument document) {
+        return createFormXObject(foreground, DEFAULT_MODULE_SIZE, DEFAULT_MODULE_SIZE, document);
     }
 
     /**
@@ -144,9 +145,9 @@ public class BarcodeDataMatrix extends Barcode2D {
      * @param moduleHeight the height of the pixels.
      * @return the XObject.
      */
-    public PdfFormXObject createFormXObject(Color foreground, float moduleWidth, float moduleHeight) {
+    public PdfFormXObject createFormXObject(Color foreground, float moduleWidth, float moduleHeight, PdfDocument document) {
         PdfFormXObject xObject = new PdfFormXObject((Rectangle) null);
-        Rectangle rect = placeBarcode(new PdfCanvas(xObject), foreground, moduleWidth, moduleHeight);
+        Rectangle rect = placeBarcode(new PdfCanvas(xObject, document), foreground, moduleWidth, moduleHeight);
         xObject.setBBox(new PdfArray(rect));
 
         return xObject;

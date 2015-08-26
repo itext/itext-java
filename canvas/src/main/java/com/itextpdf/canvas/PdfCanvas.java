@@ -105,6 +105,7 @@ public class PdfCanvas {
     protected PdfGraphicsState currentGs = new PdfGraphicsState();
     protected PdfStream contentStream;
     protected PdfResources resources;
+    protected PdfDocument document;
     protected int mcDepth;
     protected int mcid = 0;
     protected ArrayList<Integer> layerDepth;
@@ -114,9 +115,10 @@ public class PdfCanvas {
      *
      * @param contentStream @see PdfStream.
      */
-    public PdfCanvas(PdfStream contentStream, PdfResources resources) {
+    public PdfCanvas(PdfStream contentStream, PdfResources resources, PdfDocument document) {
         this.contentStream = contentStream;
         this.resources = resources;
+        this.document = document;
     }
 
     /**
@@ -125,11 +127,11 @@ public class PdfCanvas {
      * @param page page to create canvas from.
      */
     public PdfCanvas(PdfPage page) {
-        this(getPageStream(page), page.getResources());
+        this(getPageStream(page), page.getResources(), page.getDocument());
     }
 
-    public PdfCanvas(PdfFormXObject xObj) {
-        this(xObj.getPdfObject(), xObj.getResources());
+    public PdfCanvas(PdfFormXObject xObj, PdfDocument document) {
+        this(xObj.getPdfObject(), xObj.getResources(), document);
     }
 
     /**
@@ -1387,7 +1389,7 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            PdfXObject xObject = wmf.createPdfForm();
+            PdfXObject xObject = wmf.createPdfForm(document);
             addXObject(xObject, a, b, c, d, e, f);
             return xObject;
         } else {
@@ -1429,7 +1431,7 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            PdfXObject xObject = wmf.createPdfForm();
+            PdfXObject xObject = wmf.createPdfForm(document);
             addXObject(xObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
             return xObject;
         } else {
@@ -1459,7 +1461,7 @@ public class PdfCanvas {
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
-            PdfXObject xObject = wmf.createPdfForm();
+            PdfXObject xObject = wmf.createPdfForm(document);
             addImage(xObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
             return xObject;
         } else {

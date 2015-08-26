@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
 
@@ -69,9 +70,9 @@ public class WmfImageHelper {
         }
     }
 
-    public PdfXObject createPdfForm() {
+    public PdfXObject createPdfForm(PdfDocument document) {
         PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, wmf.getWidth(), wmf.getHeight()));
-        PdfCanvas canvas = new PdfCanvas(pdfForm);
+        PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
         InputStream is = null;
         try {

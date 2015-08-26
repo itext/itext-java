@@ -29,11 +29,11 @@ public class Type3Glyph extends PdfCanvas {
     private boolean isColor = false;
 
     public Type3Glyph(PdfDocument pdfDocument) {
-        super(new PdfStream(/*pdfDocument*/), null);
+        super(new PdfStream(), null, pdfDocument);
     }
 
     public Type3Glyph(PdfDocument pdfDocument, byte[] bytes) {
-        super(new PdfStream(/*pdfDocument,*/ bytes), null);
+        super(new PdfStream(bytes), null, pdfDocument);
         if (bytes != null) {
             fillBBFromBytes(bytes);
         }

@@ -98,7 +98,7 @@ public class PdfXObjectTest {
 
         //Create form XObject and flush to document.
         PdfFormXObject form = new PdfFormXObject(new Rectangle(0, 0, 50, 50));
-        PdfCanvas canvas = new PdfCanvas(form);
+        PdfCanvas canvas = new PdfCanvas(form, document);
         canvas.rectangle(10, 10, 30, 30);
         canvas.fill();
         canvas.release();

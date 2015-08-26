@@ -530,7 +530,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfFormXObject drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
         setDefaultAppearance(setFontAndSize(font, fontSize));
 
@@ -559,7 +559,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfFormXObject drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
         setDefaultAppearance(setFontAndSize(font, fontSize));
 
@@ -615,12 +615,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public void drawRadioAppearance(float width, float height, String value) {
         PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources());
+        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
         drawBorder(canvasOn, width, height);
         drawRadioField(canvasOn, 0, 0, width, height, true);
 
         PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources());
+        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         drawBorder(canvasOff, width, height);
 
         Rectangle rect = new Rectangle(0, 0, width, height);
@@ -648,12 +648,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public void drawCheckAppearance(float width, float height, String value) {
         PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources());
+        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
         drawBorder(canvasOn, width, height);
         drawCheckBox(canvasOn, width, height, DEFAULT_FONT_SIZE, true);
 
         PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources());
+        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         drawBorder(canvasOff, width, height);
         drawCheckBox(canvasOff, width, height, DEFAULT_FONT_SIZE, false);
 
@@ -674,7 +674,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     
     public PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 //        setDefaultAppearance(setFontAndSize(font, fontSize));
 
         drawButton(canvas, 0, 0, width, height, text, font, fontSize);
@@ -903,7 +903,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     protected String setFontAndSize(PdfFont font, int fontSize) {
         PdfStream stream = new PdfStream();
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
         canvas.setFontAndSize(font, fontSize).resetFillColorRgb();
         return new String(stream.getBytes());
     }
