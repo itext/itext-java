@@ -24,6 +24,8 @@ public class PdfEncodings {
     /** A possible encoding. */
     public static final String CP1252 = "Cp1252";
     /** A possible encoding. */
+    public static final String CP1253 = "Cp1253";
+    /** A possible encoding. */
     public static final String CP1257 = "Cp1257";
     /** A possible encoding. */
     public static final String WINANSI = "Cp1252";
