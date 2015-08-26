@@ -138,6 +138,11 @@ public abstract class AbstractRenderer implements IRenderer {
         return value != null ? value.floatValue() : null;
     }
 
+    public Boolean getPropertyAsBoolean(Property property) {
+        Boolean value = getProperty(property);
+        return value != null ? value.booleanValue() : null;
+    }
+
     public Integer getPropertyAsInteger(Property property) {
         Number value = getProperty(property);
         return value != null ? value.intValue() : null;
