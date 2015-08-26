@@ -76,10 +76,15 @@ public class ImageRenderer extends AbstractRenderer {
         float imageItselfScaledWidth = width;
         float imageItselfScaledHeight = height;
 
-        if (angle != null) {
-            t.rotate(angle);
-            adjustPositionAfterRotation(angle);
+        // See in adjustPositionAfterRotation why angle = 0 is necessary
+        if (null == angle) {
+            angle = 0f;
         }
+        t.rotate(angle);
+        float scaleCoef = adjustPositionAfterRotation(angle, layoutBox.getWidth(), layoutBox.getHeight(), getPropertyAsBoolean(Property.AUTO_SCALE));
+        imageItselfScaledHeight *= scaleCoef;
+        imageItselfScaledWidth *= scaleCoef;
+
 
         getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
 
@@ -153,41 +158,65 @@ public class ImageRenderer extends AbstractRenderer {
         return this;
     }
 
-    private void adjustPositionAfterRotation(float angle) {
-        AffineTransform t = AffineTransform.getRotateInstance(angle);
-        Point2D p00 = t.transform(new Point2D.Float(0, 0), new Point2D.Float());
-        Point2D p01 = t.transform(new Point2D.Float(0, height), new Point2D.Float());
-        Point2D p10 = t.transform(new Point2D.Float(width, 0), new Point2D.Float());
-        Point2D p11 = t.transform(new Point2D.Float(width, height), new Point2D.Float());
+    private float adjustPositionAfterRotation(float angle, float maxWidth, float maxHeight, boolean isScale) {
+        double saveMinX = 0;
+        if (0 != angle) {
+            AffineTransform t = AffineTransform.getRotateInstance(angle);
+            Point2D p00 = t.transform(new Point2D.Float(0, 0), new Point2D.Float());
+            Point2D p01 = t.transform(new Point2D.Float(0, height), new Point2D.Float());
+            Point2D p10 = t.transform(new Point2D.Float(width, 0), new Point2D.Float());
+            Point2D p11 = t.transform(new Point2D.Float(width, height), new Point2D.Float());
 
-        double[] xValues = {p01.getX(), p10.getX(), p11.getX()};
-        double[] yValues = {p01.getY(), p10.getY(), p11.getY()};
+            double[] xValues = {p01.getX(), p10.getX(), p11.getX()};
+            double[] yValues = {p01.getY(), p10.getY(), p11.getY()};
 
-        double minX = p00.getX();
-        double minY = p00.getY();
-        double maxX = minX;
-        double maxY = minY;
+            double minX = p00.getX();
+            double minY = p00.getY();
+            double maxX = minX;
+            double maxY = minY;
 
-        for (double x : xValues) {
-            minX = Math.min(minX, x);
-            maxX = Math.max(maxX, x);
+            for (double x : xValues) {
+                minX = Math.min(minX, x);
+                maxX = Math.max(maxX, x);
+            }
+            for (double y : yValues) {
+                minY = Math.min(minY, y);
+                maxY = Math.max(maxY, y);
+            }
+
+            height = (float) (maxY - minY);
+            width = (float) (maxX - minX);
+            pivotY = (float) (p00.getY() - minY);
+
+            saveMinX = minX;
         }
-        for (double y : yValues) {
-            minY = Math.min(minY, y);
-            maxY = Math.max(maxY, y);
+        // Rotating image can cause fitting into area problems.
+        // So let's find scaling coefficient
+        float scaleCoef = 1;
+        float temp = 0;
+        if (isScale && width > maxWidth) {
+            temp = width;
+            width *= maxWidth / temp;
+            height *= maxWidth / temp;
+            pivotY *= maxWidth / temp;
+            scaleCoef *= maxWidth / temp;
+
         }
-
-        pivotY = (float) (p00.getY() - minY);
-
-        height = (float) (maxY - minY);
-        width = (float) (maxX - minX);
-
-        if (occupiedArea.getBBox().getX() > minX) {
-            occupiedArea.getBBox().moveRight((float) -minX);
+        if (isScale && height > maxHeight) {
+            temp = height;
+            width *= maxHeight / temp;
+            height *= maxHeight / temp;
+            pivotY *= maxHeight / temp;
+            scaleCoef *= maxHeight / temp;
+        }
+        double minX = saveMinX;
+        if (occupiedArea.getBBox().getX() > minX*scaleCoef) {
+            occupiedArea.getBBox().moveRight((float) -minX * scaleCoef);
             if (fixedXPosition != null) {
                 fixedXPosition -= (float)minX;
             }
         }
+        return scaleCoef;
     }
 
     private void translateImage(float xDistance, float yDistance, AffineTransform t) {
