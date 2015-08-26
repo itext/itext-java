@@ -19,13 +19,13 @@ import java.util.Queue;
 
 public class TableRenderer extends AbstractRenderer {
 
-    List<CellRenderer[]> rows = new ArrayList<>();
+    protected List<CellRenderer[]> rows = new ArrayList<>();
     // Row range of the current renderer. For large tables it may contain only a few rows.
-    Table.RowRange rowRange;
-    TableRenderer headerRenderer;
-    TableRenderer footerRenderer;
+    protected Table.RowRange rowRange;
+    protected TableRenderer headerRenderer;
+    protected TableRenderer footerRenderer;
     /** True for newly created renderer. For split renderers this is set to false. Used for tricky layout. **/
-    boolean isOriginalNonSplitRenderer = true;
+    protected boolean isOriginalNonSplitRenderer = true;
 
     public TableRenderer(Table modelElement, Table.RowRange rowRange) {
         super(modelElement);
