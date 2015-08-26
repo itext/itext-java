@@ -206,6 +206,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas saveState() {
+        document.checkPdfIsoConformance('q', IsoKey.CANVAS_STACK);
         gsStack.push(currentGs);
         currentGs = new PdfGraphicsState(currentGs);
         contentStream.getOutputStream().writeBytes(q);
@@ -218,6 +219,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas restoreState() {
+        document.checkPdfIsoConformance('Q', IsoKey.CANVAS_STACK);
         currentGs = gsStack.pop();
         contentStream.getOutputStream().writeBytes(Q);
         return this;
@@ -1196,6 +1198,7 @@ public class PdfCanvas {
         boolean setColorValueOnly = false;
         Color c = fill ? currentGs.getFillColor() : currentGs.getStrokeColor();
         Color newColor = createColor(colorSpace, colorValue, pattern);
+        document.checkPdfIsoConformance(newColor, IsoKey.COLOR);
         if (c.equals(newColor))
             return this;
         else if (c.getColorSpace().equals(colorSpace)) {
@@ -1706,6 +1709,7 @@ public class PdfCanvas {
      * @on error
      */
     protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) {
+        document.checkPdfIsoConformance(imageXObject, IsoKey.INLINE_IMAGE);
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfOutputStream os = contentStream.getOutputStream();

@@ -1,6 +1,7 @@
 package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfResources;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
@@ -10,13 +11,13 @@ public class PdfPatternCanvas extends PdfCanvas {
 
     private PdfPattern.Tiling tilingPattern;
 
-    public PdfPatternCanvas(PdfStream contentStream, PdfResources resources) {
-        super(contentStream, resources);
+    public PdfPatternCanvas(PdfStream contentStream, PdfResources resources, PdfDocument document) {
+        super(contentStream, resources, document);
         this.tilingPattern = new PdfPattern.Tiling(contentStream);
     }
 
-    public PdfPatternCanvas(PdfPattern.Tiling pattern) {
-        super(pattern.getPdfObject(), pattern.getResources());
+    public PdfPatternCanvas(PdfPattern.Tiling pattern, PdfDocument document) {
+        super(pattern.getPdfObject(), pattern.getResources(), document);
         this.tilingPattern = pattern;
     }
 

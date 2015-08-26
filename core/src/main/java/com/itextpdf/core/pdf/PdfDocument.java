@@ -87,6 +87,8 @@ public class PdfDocument implements IEventDispatcher {
     protected boolean closeReader = true;
     protected boolean closeWriter = true;
 
+    protected boolean isClosing = false;
+
     protected Set<PdfFont> documentFonts = new HashSet<PdfFont>();
 
     //forewarned is forearmed
@@ -514,6 +516,7 @@ public class PdfDocument implements IEventDispatcher {
      */
     public void close() {
         try {
+            isClosing = true;
             removeAllHandlers();
             if (writer != null) {
                 if (catalog.isFlushed())
@@ -531,6 +534,7 @@ public class PdfDocument implements IEventDispatcher {
                     }
                     catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
+                checkPdfIsoConformance();
                 PdfObject crypto = null;
                 if (appendMode) {
                     if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
@@ -870,6 +874,14 @@ public class PdfDocument implements IEventDispatcher {
      */
     public PdfDictionary getTrailer() {
         return trailer;
+    }
+
+    public void checkPdfIsoConformance(Object obj, IsoKey key) { }
+
+    protected void checkPdfIsoConformance() { }
+
+    protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
+        writer.flushObject(pdfObject, canBeInObjStm);
     }
 
     /**

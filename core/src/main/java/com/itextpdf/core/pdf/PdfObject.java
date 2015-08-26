@@ -80,9 +80,10 @@ abstract public class PdfObject {
             return;
         }
         try {
-            PdfWriter writer = getWriter();
-            if (writer != null) {
-                writer.flushObject(this, canBeInObjStm && getType() != Stream
+            PdfDocument document = getDocument();
+            if (document != null) {
+                document.checkPdfIsoConformance(this, IsoKey.PDF_OBJECT);
+                document.flushObject(this, canBeInObjStm && getType() != Stream
                         && getType() != IndirectReference && getIndirectReference().getGenNumber() == 0);
             }
         } catch (IOException e) {

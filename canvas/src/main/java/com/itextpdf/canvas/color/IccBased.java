@@ -21,7 +21,7 @@ public class IccBased extends Color {
      * @throws PdfException
      */
     public IccBased(PdfDocument document, InputStream iccStream) {
-        this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream)), null);
+        this(new PdfCieBasedCs.IccBased(document, getIccProfileStream(iccStream)), null);
         colorValue = new float[getNumOfComponents()];
         for (int i = 0; i < getNumOfComponents(); i++)
             colorValue[i] = 0f;
@@ -36,18 +36,18 @@ public class IccBased extends Color {
      * @throws PdfException
      */
     public IccBased(PdfDocument document, InputStream iccStream, float[] value) {
-        this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream)), value);
+        this(new PdfCieBasedCs.IccBased(document, getIccProfileStream(iccStream)), value);
     }
 
     public IccBased(PdfDocument document, InputStream iccStream, float[] range, float[] value) {
-        this(new PdfCieBasedCs.IccBased(document, getStream(document, iccStream, range)), value);
+        this(new PdfCieBasedCs.IccBased(document, getIccProfileStream(iccStream, range)), value);
         if (getNumOfComponents() * 2 != range.length)
             throw new PdfException(PdfException.InvalidRangeArray, this);
     }
 
-    static private PdfStream getStream(PdfDocument document, InputStream iccStream) {
+    static public PdfStream getIccProfileStream(InputStream iccStream) {
         IccProfile iccProfile = IccProfile.getInstance(iccStream);
-        PdfStream stream = new PdfStream(iccProfile.getData()).makeIndirect(document);
+        PdfStream stream = new PdfStream(iccProfile.getData());
         stream.put(PdfName.N, new PdfNumber(iccProfile.getNumComponents()));
         switch (iccProfile.getNumComponents()) {
             case 1:
@@ -65,8 +65,8 @@ public class IccBased extends Color {
         return stream;
     }
 
-    static private PdfStream getStream(PdfDocument document, InputStream iccStream, float[] range) {
-        PdfStream stream = getStream(document, iccStream);
+    static public PdfStream getIccProfileStream(InputStream iccStream, float[] range) {
+        PdfStream stream = getIccProfileStream(iccStream);
         stream.put(PdfName.Range, new PdfArray(range));
         return stream;
     }
