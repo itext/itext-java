@@ -1,6 +1,8 @@
 package com.itextpdf.forms;
 
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
@@ -8,10 +10,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class PdfFormCopyTest {
 
@@ -98,5 +97,37 @@ public class PdfFormCopyTest {
         System.out.println(((System.nanoTime() - timeStart)/1000/1000));
 
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyLargeFile.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copyFieldsTest04() throws IOException, InterruptedException {
+        String srcFilename = sourceFolder + "srcFile1.pdf";
+
+        PdfDocument srcDoc = new PdfDocument(new PdfReader(new FileInputStream(srcFilename)));
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+
+        srcDoc.copyPages(1, srcDoc.getNumOfPages(), destDoc, new PdfPageFormCopier());
+        srcDoc.copyPages(1, srcDoc.getNumOfPages(), destDoc, new PdfPageFormCopier());
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(destDoc, false);
+        Assert.assertEquals(2, form.getFields().size());
+        Assert.assertNotNull(form.getField("Name1"));
+        Assert.assertNotNull(form.getField("Name1_1"));
+
+        destDoc.close();
+    }
+
+    @Test
+    public void copyFieldsTest05() throws IOException, InterruptedException {
+        String srcFilename = sourceFolder + "srcFile1.pdf";
+        String destFilename = destinationFolder + "copyFields05.pdf";
+
+        PdfDocument srcDoc = new PdfDocument(new PdfReader(new FileInputStream(srcFilename)));
+        PdfDocument destDoc = new PdfDocument(new PdfWriter(new FileOutputStream(destFilename)));
+
+        destDoc.addPage(srcDoc.getFirstPage().copy(destDoc, new PdfPageFormCopier()));
+        destDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields05.pdf", destinationFolder, "diff_"));
     }
 }

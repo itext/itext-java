@@ -191,12 +191,16 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage copy(PdfDocument toDocument, IPdfPageExtraCopier copier) {
         PdfDictionary dictionary = getPdfObject().copy(toDocument, Arrays.asList(
                 PdfName.Parent,
+                PdfName.Annots,
                 PdfName.StructParents,
                 // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
                 // See DEVSIX-191
                 PdfName.B
         ), true);
         PdfPage page = new PdfPage(dictionary, toDocument);
+        for (PdfAnnotation annot : getAnnotations()) {
+            page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copy(toDocument), toDocument));
+        }
         if (toDocument.isTagged()) {
             page.structParents = toDocument.getNextStructParentIndex();
             page.getPdfObject().put(PdfName.StructParents, new PdfNumber(page.structParents));

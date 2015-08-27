@@ -293,6 +293,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
              } else {
                  put(PdfName.V, new PdfName(value));
              }
+        } else {
+            put(PdfName.V, new PdfString(value));
         }
 
         regenerateField();
