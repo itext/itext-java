@@ -57,26 +57,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     }
 
     /**
-     * Returns the width of a certain character of this font.
-     *
-     * @param ch a certain character.
-     * @return a width in Text Space.
-     */
-    public float getWidth(int ch) {
-        return getFontProgram().getWidth(ch);
-    }
-
-    /**
-     * Returns the width of a string of this font.
-     *
-     * @param s a string content.
-     * @return a width of string in Text Space.
-     */
-    public float getWidth(String s) {
-        return getFontProgram().getWidth(s);
-    }
-
-    /**
      * Gets the state of the property.
      *
      * @return value of property forceWidthsOutput
@@ -147,6 +127,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
      * @return the PdfStream containing the font or {@code null}.
      * @if there is an error reading the font.
      */
+    @Override
     protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
         if (fontStreamBytes == null) {
             return null;

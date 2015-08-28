@@ -17,7 +17,7 @@ public class Barcode39 extends Barcode1D {
 
     /** The bars to generate the code.
      */
-    private static final byte BARS[][] =
+    private static final byte[][] BARS =
     {
             {0,0,0,1,1,0,1,0,0},
             {1,0,0,1,0,0,0,0,1},
@@ -82,7 +82,6 @@ public class Barcode39 extends Barcode1D {
 
     /**
      * Creates a new Barcode39.
-     * @param document
      */
     public Barcode39(PdfDocument document) {
         super(document);
@@ -110,7 +109,7 @@ public class Barcode39 extends Barcode1D {
      */
     public static byte[] getBarsCode39(String text) {
         text = "*" + text + "*";
-        byte bars[] = new byte[text.length() * 10 - 1];
+        byte[] bars= new byte[text.length() * 10 - 1];
         for (int k = 0; k < text.length(); ++k) {
             int idx = CHARS.indexOf(text.charAt(k));
             if (idx < 0) {
@@ -178,11 +177,13 @@ public class Barcode39 extends Barcode1D {
                 fontY = -baseline + size;
             }
             String fullCode = code;
-            if (generateChecksum && checksumText)
+            if (generateChecksum && checksumText) {
                 fullCode += getChecksum(fCode);
-            if (startStopText)
+            }
+            if (startStopText) {
                 fullCode = "*" + fullCode + "*";
-            fontX = font.getFontProgram().getWidthPoint(altText != null ? altText : fullCode, size);
+            }
+            fontX = font.getWidth(altText != null ? altText : fullCode) * getFontSizeCoef();
         }
         int len = fCode.length() + 2;
         if (generateChecksum) {
@@ -239,14 +240,17 @@ public class Barcode39 extends Barcode1D {
             bCode = getCode39Ex(code);
         }
         if (font != null) {
-            if (generateChecksum && checksumText)
+            if (generateChecksum && checksumText) {
                 fullCode += getChecksum(bCode);
-            if (startStopText)
+            }
+            if (startStopText) {
                 fullCode = "*" + fullCode + "*";
-            fontX = font.getFontProgram().getWidthPoint(fullCode = altText != null ? altText : fullCode, size);
+            }
+            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode) * getFontSizeCoef();
         }
-        if (generateChecksum)
+        if (generateChecksum) {
             bCode += getChecksum(bCode);
+        }
         int len = bCode.length() + 2;
         float fullWidth = len * (6 * x + 3 * x * n) + (len - 1) * x;
         float barStartX = 0;
@@ -255,37 +259,40 @@ public class Barcode39 extends Barcode1D {
             case ALIGN_LEFT:
                 break;
             case ALIGN_RIGHT:
-                if (fontX > fullWidth)
+                if (fontX > fullWidth) {
                     barStartX = fontX - fullWidth;
-                else
+                } else {
                     textStartX = fullWidth - fontX;
+                }
                 break;
             default:
-                if (fontX > fullWidth)
+                if (fontX > fullWidth) {
                     barStartX = (fontX - fullWidth) / 2;
-                else
+                } else {
                     textStartX = (fullWidth - fontX) / 2;
+                }
                 break;
         }
         float barStartY = 0;
         float textStartY = 0;
         if (font != null) {
-            if (baseline <= 0)
+            if (baseline <= 0) {
                 textStartY = barHeight - baseline;
-            else {
+            } else {
                 textStartY = -getDescender();
                 barStartY = textStartY + baseline;
             }
         }
-        byte bars[] = getBarsCode39(bCode);
+        byte[] bars = getBarsCode39(bCode);
         boolean print = true;
         if (barColor != null) {
             canvas.setFillColor(barColor);
         }
         for (int k = 0; k < bars.length; ++k) {
             float w = (bars[k] == 0 ? x : x * n);
-            if (print)
+            if (print) {
                 canvas.rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
+            }
             print = !print;
             barStartX += w;
         }
@@ -315,34 +322,35 @@ public class Barcode39 extends Barcode1D {
         int f = foreground.getRGB();
         int g = background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();
-
         String bCode = code;
-        if (extended)
+        if (extended) {
             bCode = getCode39Ex(code);
-        if (generateChecksum)
+        }
+        if (generateChecksum) {
             bCode += getChecksum(bCode);
+        }
         int len = bCode.length() + 2;
         int nn = (int)n;
         int fullWidth = len * (6 + 3 * nn) + (len - 1);
-        byte bars[] = getBarsCode39(bCode);
+        byte[] bars = getBarsCode39(bCode);
         boolean print = true;
         int ptr = 0;
         int height = (int)barHeight;
-        int pix[] = new int[fullWidth * height];
+        int[] pix = new int[fullWidth * height];
         for (int k = 0; k < bars.length; ++k) {
             int w = (bars[k] == 0 ? 1 : nn);
             int c = g;
-            if (print)
+            if (print) {
                 c = f;
+            }
             print = !print;
-            for (int j = 0; j < w; ++j)
+            for (int j = 0; j < w; ++j) {
                 pix[ptr++] = c;
+            }
         }
         for (int k = fullWidth; k < pix.length; k += fullWidth) {
             System.arraycopy(pix, 0, pix, k, fullWidth);
         }
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-
-        return img;
+        return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
     }
 }

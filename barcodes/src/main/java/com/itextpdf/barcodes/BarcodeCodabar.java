@@ -23,7 +23,7 @@ public class BarcodeCodabar extends Barcode1D {
     /**
      * The bars to generate the code.
      */
-    private static final byte BARS[][] =
+    private static final byte[][] BARS =
             {
                     {0, 0, 0, 0, 0, 1, 1}, // 0
                     {0, 0, 0, 0, 1, 1, 0}, // 1
@@ -78,17 +78,21 @@ public class BarcodeCodabar extends Barcode1D {
     public static byte[] getBarsCodabar(String text) {
         text = text.toUpperCase();
         int len = text.length();
-        if (len < 2)
+        if (len < 2) {
             throw new IllegalArgumentException(PdfException.CodabarMustHaveAtLeastAStartAndStopCharacter);
-        if (CHARS.indexOf(text.charAt(0)) < START_STOP_IDX || CHARS.indexOf(text.charAt(len - 1)) < START_STOP_IDX)
+        }
+        if (CHARS.indexOf(text.charAt(0)) < START_STOP_IDX || CHARS.indexOf(text.charAt(len - 1)) < START_STOP_IDX) {
             throw new IllegalArgumentException(PdfException.CodabarMustHaveOneAbcdAsStartStopCharacter);
-        byte bars[] = new byte[text.length() * 8 - 1];
+        }
+        byte[] bars= new byte[text.length() * 8 - 1];
         for (int k = 0; k < len; ++k) {
             int idx = CHARS.indexOf(text.charAt(k));
-            if (idx >= START_STOP_IDX && k > 0 && k < len - 1)
+            if (idx >= START_STOP_IDX && k > 0 && k < len - 1) {
                 throw new IllegalArgumentException(PdfException.CodabarStartStopCharacterAreOnlyExtremes);
-            if (idx < 0)
+            }
+            if (idx < 0) {
                 throw new IllegalArgumentException(PdfException.CodabarCharacterOneIsIllegal);
+            }
             System.arraycopy(BARS[idx], 0, bars, k * 8, 7);
         }
         return bars;
@@ -100,8 +104,9 @@ public class BarcodeCodabar extends Barcode1D {
         String text = code.toUpperCase();
         int sum = 0;
         int len = text.length();
-        for (int k = 0; k < len; ++k)
+        for (int k = 0; k < len; ++k) {
             sum += CHARS.indexOf(text.charAt(k));
+        }
         sum = (sum + 15) / 16 * 16 - sum;
         return code.substring(0, len - 1) + CHARS.charAt(sum) + code.substring(len - 1);
     }
@@ -116,22 +121,25 @@ public class BarcodeCodabar extends Barcode1D {
         float fontX = 0;
         float fontY = 0;
         String text = code;
-        if (generateChecksum && checksumText)
+        if (generateChecksum && checksumText) {
             text = calculateChecksum(code);
-        if (!startStopText)
+        }
+        if (!startStopText) {
             text = text.substring(1, text.length() - 1);
+        }
         if (font != null) {
             if (baseline > 0) {
                 fontY = baseline - getDescender();
             } else {
                 fontY = -baseline + size;
             }
-            fontX = font.getFontProgram().getWidthPoint(altText != null ? altText : text, size);
+            fontX = font.getWidth(altText != null ? altText : text) * getFontSizeCoef();
         }
         text = code;
-        if (generateChecksum)
+        if (generateChecksum) {
             text = calculateChecksum(code);
-        byte bars[] = getBarsCodabar(text);
+        }
+        byte[] bars = getBarsCodabar(text);
         int wide = 0;
         for (int k = 0; k < bars.length; ++k) {
             wide += bars[k];
@@ -183,15 +191,17 @@ public class BarcodeCodabar extends Barcode1D {
      */
     public Rectangle placeBarcode(PdfCanvas canvas, Color barColor, Color textColor) {
         String fullCode = code;
-        if (generateChecksum && checksumText)
+        if (generateChecksum && checksumText) {
             fullCode = calculateChecksum(code);
-        if (!startStopText)
+        }
+        if (!startStopText) {
             fullCode = fullCode.substring(1, fullCode.length() - 1);
+        }
         float fontX = 0;
         if (font != null) {
-            fontX = font.getFontProgram().getWidthPoint(fullCode = altText != null ? altText : fullCode, size);
+            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode) * getFontSizeCoef();
         }
-        byte bars[] = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
+        byte[] bars = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
         int wide = 0;
         for (int k = 0; k < bars.length; ++k) {
             wide += bars[k];
@@ -204,42 +214,47 @@ public class BarcodeCodabar extends Barcode1D {
             case ALIGN_LEFT:
                 break;
             case ALIGN_RIGHT:
-                if (fontX > fullWidth)
+                if (fontX > fullWidth) {
                     barStartX = fontX - fullWidth;
-                else
+                } else {
                     textStartX = fullWidth - fontX;
+                }
                 break;
             default:
-                if (fontX > fullWidth)
+                if (fontX > fullWidth) {
                     barStartX = (fontX - fullWidth) / 2;
-                else
+                } else {
                     textStartX = (fullWidth - fontX) / 2;
+                }
                 break;
         }
         float barStartY = 0;
         float textStartY = 0;
         if (font != null) {
-            if (baseline <= 0)
+            if (baseline <= 0) {
                 textStartY = barHeight - baseline;
-            else {
+            } else {
                 textStartY = -getDescender();
                 barStartY = textStartY + baseline;
             }
         }
         boolean print = true;
-        if (barColor != null)
+        if (barColor != null) {
             canvas.setFillColor(barColor);
+        }
         for (int k = 0; k < bars.length; ++k) {
             float w = (bars[k] == 0 ? x : x * n);
-            if (print)
+            if (print) {
                 canvas.rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
+            }
             print = !print;
             barStartX += w;
         }
         canvas.fill();
         if (font != null) {
-            if (textColor != null)
+            if (textColor != null) {
                 canvas.setFillColor(textColor);
+            }
             canvas.beginText();
             canvas.setFontAndSize(font, size);
             canvas.setTextMatrix(textStartX, textStartY);
@@ -265,11 +280,13 @@ public class BarcodeCodabar extends Barcode1D {
         java.awt.Canvas canvas = new java.awt.Canvas();
 
         String fullCode = code;
-        if (generateChecksum && checksumText)
+        if (generateChecksum && checksumText) {
             fullCode = calculateChecksum(code);
-        if (!startStopText)
+        }
+        if (!startStopText) {
             fullCode = fullCode.substring(1, fullCode.length() - 1);
-        byte bars[] = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
+        }
+        byte[] bars = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
         int wide = 0;
         for (int k = 0; k < bars.length; ++k) {
             wide += bars[k];
@@ -279,21 +296,21 @@ public class BarcodeCodabar extends Barcode1D {
         boolean print = true;
         int ptr = 0;
         int height = (int) barHeight;
-        int pix[] = new int[fullWidth * height];
+        int[] pix = new int[fullWidth * height];
         for (int k = 0; k < bars.length; ++k) {
             int w = (bars[k] == 0 ? 1 : (int) n);
             int c = g;
-            if (print)
+            if (print) {
                 c = f;
+            }
             print = !print;
-            for (int j = 0; j < w; ++j)
+            for (int j = 0; j < w; ++j) {
                 pix[ptr++] = c;
+            }
         }
         for (int k = fullWidth; k < pix.length; k += fullWidth) {
             System.arraycopy(pix, 0, pix, k, fullWidth);
         }
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-
-        return img;
+        return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
     }
 }

@@ -33,8 +33,41 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         super(document, pdfDictionary,isCopy);
     }
 
+    @Override
     public T getFontProgram() {
         return fontProgram;
+    }
+
+    /**
+     * Returns the width of a certain character of this font.
+     *
+     * @param ch a certain Unicode character.
+     * @return a width in Text Space.
+     */
+    @Override
+    public float getWidth(int ch) {
+        int total = 0;
+        byte[] bytes = fontProgram.getEncoding().convertToBytes(ch);
+        for (byte b : bytes) {
+            total += getFontProgram().getWidth(0xff & b);
+        }
+        return total;
+    }
+
+    /**
+     * Returns the width of a string of this font.
+     *
+     * @param s a Unicode string content.
+     * @return a width of string in Text Space.
+     */
+    @Override
+    public float getWidth(String s) {
+        int total = 0;
+        byte[] bytes = fontProgram.getEncoding().convertToBytes(s);
+        for (byte b : bytes) {
+            total += getFontProgram().getWidth(0xff & b);
+        }
+        return total;
     }
 
     protected void setFontProgram(T fontProgram) {
@@ -53,7 +86,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         initFontProgram(encodingObj);
         fontProgram.getFontNames().setFontName(baseFont.getValue());
         if (encodingObj == null) {
-
             if (FontConstants.BUILTIN_FONTS_14.contains(baseFont.getValue())) {
                 fillEncoding(baseFont);
             } else {
@@ -62,8 +94,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 if (toUnicode != null) {
                     Map<Integer, Integer> rm = toUnicode.createReverseMapping();
                     for (Map.Entry<Integer, Integer> kv : rm.entrySet()) {
-                        fontProgram.getEncoding().getSpecialMap().put(kv.getKey().intValue(), kv.getValue().intValue());
-                        fontProgram.getEncoding().setUnicodeDifferences(kv.getValue().intValue(), (char)kv.getKey().intValue());
+                        fontProgram.getEncoding().getSpecialMap().put(kv.getKey(), kv.getValue());
+                        fontProgram.getEncoding().setUnicodeDifferences(kv.getValue(), (char)kv.getKey().intValue());
                     }
                 }
             }
@@ -295,22 +327,22 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     private void fillEncoding(PdfName encoding) {
+        String encodingString = encoding != null ? encoding.getValue() : null;
         if (encoding == null && isSymbolic()) {
             for (int k = 0; k < 256; ++k) {
                 fontProgram.getEncoding().getSpecialMap().put(k, k);
                 fontProgram.getEncoding().setUnicodeDifferences(k, (char) k);
-
             }
         } else if (PdfName.MacRomanEncoding.equals(encoding) || PdfName.WinAnsiEncoding.equals(encoding)
-                || FontConstants.SYMBOL.equals(encoding.getValue()) || FontConstants.ZAPFDINGBATS.equals(encoding.getValue())) {
+                || FontConstants.SYMBOL.equals(encodingString) || FontConstants.ZAPFDINGBATS.equals(encodingString)) {
 
-            byte b[] = new byte[256];
+            byte[] b = new byte[256];
             for (int k = 0; k < 256; ++k) {
                 b[k] = (byte) k;
             }
 
             String cv = PdfEncodings.convertToString(b, fontProgram.getEncoding().getBaseEncoding());
-            char arr[] = cv.toCharArray();
+            char[] arr = cv.toCharArray();
             for (int k = 0; k < 256; ++k) {
                 fontProgram.getEncoding().getSpecialMap().put(arr[k], k);
                 fontProgram.getEncoding().setUnicodeDifferences(k, arr[k]);
@@ -331,7 +363,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 if (obj.isNumber())
                     currentNumber = ((PdfNumber) obj).getIntValue();
                 else {
-                    int c[] = AdobeGlyphList.nameToUnicode(((PdfName) obj).getValue());
+                    int[] c = AdobeGlyphList.nameToUnicode(((PdfName) obj).getValue());
                     if (c != null && c.length > 0) {
                         fontProgram.getEncoding().getSpecialMap().put(c[0], currentNumber);
                         fontProgram.getEncoding().setDifferences(currentNumber, ((PdfName) obj).getValue());

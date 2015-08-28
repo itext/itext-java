@@ -547,23 +547,31 @@ public class MetaDo {
         float fontSize = font.getFontSize(state);
         FontProgram fp = font.getFont();
         int align = state.getTextAlign();
-        float textWidth = fp.getWidthPoint(text, fontSize);
+        // NOTE, MetaFont always creates with CP1252 encoding.
+        int normalizedWidth = 0;
+        //TODO encoding and FontProgram will be independent
+        byte bytes[] = fp.getEncoding().convertToBytes(text);
+        for (byte b : bytes) {
+            normalizedWidth += fp.getWidth(0xff & b);
+        }
+        float textWidth = fontSize / FontProgram.UNITS_NORMALIZATION * normalizedWidth;
         float tx = 0;
         float ty = 0;
         float descender = fp.getFontMetrics().getTypoDescender();
         float ury = fp.getFontMetrics().getBbox().getTop();
         cb.saveState();
         cb.concatMatrix(cos, sin, -sin, cos, refX, refY);
-        if ((align & MetaState.TA_CENTER) == MetaState.TA_CENTER)
+        if ((align & MetaState.TA_CENTER) == MetaState.TA_CENTER) {
             tx = -textWidth / 2;
-        else if ((align & MetaState.TA_RIGHT) == MetaState.TA_RIGHT)
+        } else if ((align & MetaState.TA_RIGHT) == MetaState.TA_RIGHT) {
             tx = -textWidth;
-        if ((align & MetaState.TA_BASELINE) == MetaState.TA_BASELINE)
+        } if ((align & MetaState.TA_BASELINE) == MetaState.TA_BASELINE) {
             ty = 0;
-        else if ((align & MetaState.TA_BOTTOM) == MetaState.TA_BOTTOM)
+        } else if ((align & MetaState.TA_BOTTOM) == MetaState.TA_BOTTOM) {
             ty = -descender;
-        else
+        } else {
             ty = -ury;
+        }
         Color textColor;
         if (state.getBackgroundMode() == MetaState.OPAQUE) {
             textColor = state.getCurrentBackgroundColor();

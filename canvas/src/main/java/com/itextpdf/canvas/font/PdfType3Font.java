@@ -116,20 +116,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return glyph;
     }
 
-
-
-
-    @Override
-    public float getWidth(int c) {
-        return getFontProgram().getWidth(c);
-    }
-
-
-    @Override
-    public float getWidth(String text) {
-        return getFontProgram().getWidth(text);
-    }
-
     @Override
     public byte[] convertToBytes(String text) {
         char[] cc = text.toCharArray();
@@ -207,6 +193,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return new Type3Font();
     }
 
+    @Override
     protected void init() {
         Rectangle fontBBoxRec = fontDictionary.getAsArray(PdfName.FontBBox).toRectangle();
         PdfDictionary charProcsDic = fontDictionary.getAsDictionary(PdfName.CharProcs);

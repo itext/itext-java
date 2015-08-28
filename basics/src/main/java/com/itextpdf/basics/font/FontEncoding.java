@@ -30,12 +30,10 @@ public class FontEncoding {
      */
     private char[] unicodeDifferences = new char[256];
     private boolean hasSpecialEncoding = false;
-    private boolean fastWinansi = false;
 
     public FontEncoding(String baseEncoding, boolean fontSpecific) {
         this.baseEncoding = normalizeEncoding(baseEncoding);
         this.fontSpecific = fontSpecific;
-        this.fastWinansi = baseEncoding.equals(PdfEncodings.CP1252);
         if (!this.baseEncoding.startsWith("#")) {
             PdfEncodings.convertToBytes(" ", this.baseEncoding); // check if the encoding exists
         } else {
@@ -153,10 +151,6 @@ public class FontEncoding {
                 return new byte[0];
         }
         return PdfEncodings.convertToBytes((char) ch, baseEncoding);
-    }
-
-    protected boolean isFastWinansi() {
-        return fastWinansi;
     }
 
     /**

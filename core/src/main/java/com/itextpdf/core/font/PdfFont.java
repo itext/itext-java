@@ -55,7 +55,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-
     /**
      * Converts the text into bytes to be placed in the document.
      * The conversion is done according to the font and the encoding and the characters
@@ -71,7 +70,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Returns the width of a certain character of this font.
+     * Returns the width of a certain character of this font in 1000 normalized units.
      *
      * @param ch a certain character.
      * @return a width in Text Space.
@@ -82,7 +81,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Returns the width of a string of this font.
+     * Returns the width of a string of this font in 1000 normalized units.
      *
      * @param s a string content.
      * @return a width of string in Text Space.
@@ -91,6 +90,29 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         // TODO abstract method
         throw new IllegalStateException();
     }
+
+    /**
+     * Gets the width of a {@code String} in points.
+     *
+     * @param text the {@code String} to get the width of
+     * @param fontSize the font size
+     * @return the width in points
+     */
+    public float getWidthPoint(String text, float fontSize) {
+        return getWidth(text) * fontSize / FontProgram.UNITS_NORMALIZATION;
+    }
+
+    /**
+     * Gets the width of a {@code char} in points.
+     *
+     * @param ch the {@code char} to get the width of
+     * @param fontSize the font size
+     * @return the width in points
+     */
+    public float getWidthPoint(int ch, float fontSize) {
+        return getWidth(ch) * fontSize / FontProgram.UNITS_NORMALIZATION;
+    }
+
 
     public boolean hasKernPairs() {
         FontProgram fontProgram = getFontProgram();
@@ -225,8 +247,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
      * otherwise the font is read and output in a PdfStream object.
-     * @return the PdfStream containing the font or {@code null}.
-     * @if there is an error reading the font.
+     * @return the PdfStream containing the font or {@code null}, if there is an error reading the font.
      */
     protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
         if (fontStreamBytes == null) {

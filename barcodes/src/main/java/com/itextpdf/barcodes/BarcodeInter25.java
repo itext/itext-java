@@ -36,7 +36,7 @@ public class BarcodeInter25 extends Barcode1D {
     /**
      * The bars to generate the code.
      */
-    private static final byte BARS[][] =
+    private static final byte[][] BARS =
             {
                     {0, 0, 1, 1, 0},
                     {1, 0, 0, 0, 1},
@@ -52,8 +52,6 @@ public class BarcodeInter25 extends Barcode1D {
 
     /**
      * Creates new BarcodeInter25
-     *
-     * @param document
      */
     public BarcodeInter25(PdfDocument document) {
         super(document);
@@ -79,7 +77,7 @@ public class BarcodeInter25 extends Barcode1D {
      * @return a <CODE>String</CODE> with only numeric characters
      */
     public static String keepNumbers(String text) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int k = 0; k < text.length(); ++k) {
             char c = text.charAt(k);
             if (c >= '0' && c <= '9') {
@@ -117,7 +115,7 @@ public class BarcodeInter25 extends Barcode1D {
         if ((text.length() & 1) != 0) {
             throw new PdfException(PdfException.TextMustBeEven);
         }
-        byte bars[] = new byte[text.length() * 5 + 7];
+        byte[] bars = new byte[text.length() * 5 + 7];
         int pb = 0;
         bars[pb++] = 0;
         bars[pb++] = 0;
@@ -127,8 +125,8 @@ public class BarcodeInter25 extends Barcode1D {
         for (int k = 0; k < len; ++k) {
             int c1 = text.charAt(k * 2) - '0';
             int c2 = text.charAt(k * 2 + 1) - '0';
-            byte b1[] = BARS[c1];
-            byte b2[] = BARS[c2];
+            byte[] b1 = BARS[c1];
+            byte[] b2 = BARS[c2];
             for (int j = 0; j < 5; ++j) {
                 bars[pb++] = b1[j];
                 bars[pb++] = b2[j];
@@ -160,7 +158,7 @@ public class BarcodeInter25 extends Barcode1D {
             if (generateChecksum && checksumText) {
                 fullCode += getChecksum(fullCode);
             }
-            fontX = font.getFontProgram().getWidthPoint(altText != null ? altText : fullCode, size);
+            fontX = font.getWidth(altText != null ? altText : fullCode) * getFontSizeCoef();
         }
         String fullCode = keepNumbers(code);
         int len = fullCode.length();
@@ -218,7 +216,7 @@ public class BarcodeInter25 extends Barcode1D {
         if (font != null) {
             if (generateChecksum && checksumText)
                 fullCode += getChecksum(fullCode);
-            fontX = font.getFontProgram().getWidthPoint(fullCode = altText != null ? altText : fullCode, size);
+            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode) * getFontSizeCoef();
         }
         String bCode = keepNumbers(code);
         if (generateChecksum)
@@ -231,43 +229,47 @@ public class BarcodeInter25 extends Barcode1D {
             case ALIGN_LEFT:
                 break;
             case ALIGN_RIGHT:
-                if (fontX > fullWidth)
+                if (fontX > fullWidth) {
                     barStartX = fontX - fullWidth;
-                else
+                } else {
                     textStartX = fullWidth - fontX;
+                }
                 break;
             default:
-                if (fontX > fullWidth)
+                if (fontX > fullWidth) {
                     barStartX = (fontX - fullWidth) / 2;
-                else
+                } else {
                     textStartX = (fullWidth - fontX) / 2;
+                }
                 break;
         }
         float barStartY = 0;
         float textStartY = 0;
         if (font != null) {
-            if (baseline <= 0)
+            if (baseline <= 0) {
                 textStartY = barHeight - baseline;
-            else {
+            } else {
                 textStartY = -getDescender();
                 barStartY = textStartY + baseline;
             }
         }
-        byte bars[] = getBarsInter25(bCode);
+        byte[] bars = getBarsInter25(bCode);
         boolean print = true;
         if (barColor != null)
             canvas.setFillColor(barColor);
         for (int k = 0; k < bars.length; ++k) {
             float w = (bars[k] == 0 ? x : x * n);
-            if (print)
+            if (print) {
                 canvas.rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
+            }
             print = !print;
             barStartX += w;
         }
         canvas.fill();
         if (font != null) {
-            if (textColor != null)
+            if (textColor != null) {
                 canvas.setFillColor(textColor);
+            }
             canvas.beginText();
             canvas.setFontAndSize(font, size);
             canvas.setTextMatrix(textStartX, textStartY);
@@ -292,32 +294,32 @@ public class BarcodeInter25 extends Barcode1D {
         int f = foreground.getRGB();
         int g = background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();
-
         String bCode = keepNumbers(code);
-        if (generateChecksum)
+        if (generateChecksum) {
             bCode += getChecksum(bCode);
+        }
         int len = bCode.length();
         int nn = (int) n;
         int fullWidth = len * (3 + 2 * nn) + (6 + nn);
-        byte bars[] = getBarsInter25(bCode);
+        byte[] bars = getBarsInter25(bCode);
         boolean print = true;
         int ptr = 0;
         int height = (int) barHeight;
-        int pix[] = new int[fullWidth * height];
+        int[] pix = new int[fullWidth * height];
         for (int k = 0; k < bars.length; ++k) {
             int w = (bars[k] == 0 ? 1 : nn);
             int c = g;
-            if (print)
+            if (print) {
                 c = f;
+            }
             print = !print;
-            for (int j = 0; j < w; ++j)
+            for (int j = 0; j < w; ++j) {
                 pix[ptr++] = c;
+            }
         }
         for (int k = fullWidth; k < pix.length; k += fullWidth) {
             System.arraycopy(pix, 0, pix, k, fullWidth);
         }
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-
-        return img;
+        return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
     }
 }

@@ -13,11 +13,11 @@ public abstract class FontProgram {
     /**
      * Contains the smallest box enclosing the character contours.
      */
-    protected int[][] charBBoxes = new int[256][];
+    protected int[][] charBBoxes;
     /**
      * Table of characters widths for this encoding.
      */
-    protected int[] widths = new int[256];
+    protected int[] widths;
 
     FontNames fontNames = new FontNames();
 
@@ -58,28 +58,6 @@ public abstract class FontProgram {
         return widths;
     }
 
-    /**
-     * Gets the width of a <CODE>String</CODE> in points.     *
-     *
-     * @param text     the <CODE>String</CODE> to get the width of
-     * @param fontSize the font size
-     * @return the width in points
-     */
-    public float getWidthPoint(String text, float fontSize) {
-        return getWidth(text) * 0.001f * fontSize;
-    }
-
-    /**
-     * Gets the width of a <CODE>char</CODE> in points.     *
-     *
-     * @param char1    the <CODE>char</CODE> to get the width of
-     * @param fontSize the font size
-     * @return the width in points
-     */
-    public float getWidthPoint(int char1, float fontSize) {
-        return getWidth(char1) * 0.001f * fontSize;
-    }
-
     public String getRegistry() {
         return registry;
     }
@@ -90,9 +68,12 @@ public abstract class FontProgram {
 
     protected abstract int[] getRawCharBBox(int c, String name);
 
-    public abstract int getWidth(int ch);
-
-    public abstract int getWidth(String text);
+    /**
+     * Get glyph's width.
+     * @param code CID or char code, depends from implementation.
+     * @return Gets width in normalized 1000 units.
+     */
+    public abstract int getWidth(int code);
 
     public boolean hasKernPairs() {
         return false;
@@ -156,6 +137,9 @@ public abstract class FontProgram {
      * Creates the {@code widths} and the {@code differences} arrays.
      */
     protected void createEncoding() {
+        charBBoxes = new int[256][];
+        widths = new int[256];
+
         if (encoding.isFontSpecific()) {
             for (int k = 0; k < 256; ++k) {
                 widths[k] = getRawWidth(k, null);
@@ -192,6 +176,9 @@ public abstract class FontProgram {
      * Encoding starts with '# simple …' or '# full …'.
      */
     protected void createSpecialEncoding() {
+        charBBoxes = new int[256][];
+        widths = new int[256];
+
         StringTokenizer tok = new StringTokenizer(encoding.getBaseEncoding().substring(1), " ,\t\n\r\f");
         if (tok.nextToken().equals("full")) {
             while (tok.hasMoreTokens()) {

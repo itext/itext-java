@@ -44,26 +44,6 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     }
 
     /**
-     * Returns the width of a certain character of this font.
-     *
-     * @param ch a certain character.
-     * @return a width in Text Space.
-     */
-    public float getWidth(int ch) {
-        return getFontProgram().getWidth(ch);
-    }
-
-    /**
-     * Returns the width of a string of this font.
-     *
-     * @param s a string content.
-     * @return a width of string in Text Space.
-     */
-    public float getWidth(String s) {
-        return getFontProgram().getWidth(s);
-    }
-
-    /**
      * Gets the state of the property.
      *
      * @return value of property forceWidthsOutput
@@ -81,10 +61,12 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         this.forceWidthsOutput = forceWidthsOutput;
     }
 
+    @Override
     public boolean isSubset() {
         return subset;
     }
 
+    @Override
     public void setSubset(boolean subset) {
         this.subset = subset;
     }
@@ -229,8 +211,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
 
     private PdfDictionary getFontDescriptor(PdfStream fontStream) {
-        if (getFontProgram().isBuiltInFont())
+        if (getFontProgram().isBuiltInFont()) {
             return null;
+        }
         FontMetrics fontMetrics = fontProgram.getFontMetrics();
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(getDocument());

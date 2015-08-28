@@ -187,65 +187,24 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override
     public float getWidth(int ch) {
-        if (cidFontType == CidFontType0) {
-            int c = ch;
-            if (!cmapEncoding.isDirect())
-                c = cmapEncoding.getCidCode(ch);
-            int v;
-            if (vertical) {
-                v = ((CidFont) fontProgram).getVMetrics().get(c);
-            } else {
-                v = ((CidFont) fontProgram).getHMetrics().get(c);
-            }
-            if (v > 0) {
-                return v;
-            } else {
-                return FontProgram.DEFAULT_WIDTH;
-            }
-        } else if (cidFontType == CidFontType2) {
-            int[] ws = longTag.get(Integer.valueOf(ch));
-            if (ws != null) {
-                return ws[1];
-            } else {
-                return 0;
-            }
-        } else {
-            throw new IllegalStateException("Unsupported CID Font");
-        }
+        int width = fontProgram.getWidth(cmapEncoding.getCidCode(ch));
+        return width > 0 ? width : FontProgram.DEFAULT_WIDTH;
     }
 
+    @Override
     public float getWidth(String text) {
         int total = 0;
-        if (cidFontType == CidFontType0) {
-            if (cmapEncoding.isDirect()) {
-                for (int k = 0; k < text.length(); ++k) {
-                    total += getWidth(text.charAt(k));
-                }
+        for (int k = 0; k < text.length(); ++k) {
+            int ch;
+            if (Utilities.isSurrogatePair(text, k)) {
+                ch = Utilities.convertToUtf32(text, k);
+                k++;
             } else {
-                for (int k = 0; k < text.length(); ++k) {
-                    int val;
-                    if (Utilities.isSurrogatePair(text, k)) {
-                        val = Utilities.convertToUtf32(text, k);
-                        k++;
-                    } else {
-                        val = text.charAt(k);
-                    }
-                    total += getWidth(val);
-                }
+                ch = text.charAt(k);
             }
-            return total;
-        } else if (cidFontType == CidFontType2) {
-            char[] chars = text.toCharArray();
-            int len = chars.length;
-            for (int k = 0; k < len; ++k) {
-                int[] ws = longTag.get(Integer.valueOf(chars[k]));
-                if (ws != null)
-                    total += ws[1];
-            }
-            return total;
-        } else {
-            throw new IllegalStateException("Unsupported CID Font");
+            total += fontProgram.getWidth(cmapEncoding.getCidCode(ch));
         }
+        return total;
     }
 
     public boolean isIdentity() {

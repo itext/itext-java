@@ -56,19 +56,15 @@ public class CidFont extends FontProgram {
 
     @Override
     public int getWidth(int ch) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public int getWidth(String text) {
-        throw new IllegalStateException();
+        return hMetrics.get(ch);
     }
 
     @Override
     public int getKerning(int char1, int char2) {
-        throw new IllegalStateException();
+        return 0;
     }
 
+    @Override
     public int getPdfFontFlags() {
         return pdfFontFlags;
     }
@@ -112,5 +108,4 @@ public class CidFont extends FontProgram {
         fontMetrics.updateBbox(llx, lly, urx, ury);
         registry = (String) fontDesc.get("Registry");
     }
-
 }

@@ -2,6 +2,7 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.io.PdfTokenizer;
@@ -731,11 +732,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             return;
         }
         PdfFont ufont = getFont();
+        // PdfFont gets all width in 1000 normalized units
+        float sizeCoef = (float)fontSize / FontProgram.UNITS_NORMALIZATION;
         canvas.
                 beginText().
                 setFontAndSize(ufont, fontSize).
                 resetFillColorRgb().
-                setTextMatrix((width - ufont.getFontProgram().getWidthPoint(text, fontSize)) / 2, (height - ufont.getFontProgram().getAscent(text) * 0.001f * fontSize) / 2).
+                setTextMatrix((width - ufont.getWidth(text) * sizeCoef) / 2, (height - ufont.getFontProgram().getAscent(text) * sizeCoef) / 2).
                 showText(text).
                 endText();
     }
@@ -829,8 +832,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 } catch (IOException e) {
                     throw new PdfException(e.getLocalizedMessage());
                 }
-            }
-            else if ((ff & PdfButtonFormField.FF_RADIO) != 0) {
+            } else if ((ff & PdfButtonFormField.FF_RADIO) != 0) {
                 PdfArray kids = getKids();
                 for (PdfObject kid : kids) {
                     if (kid.isIndirectReference()) {
@@ -886,10 +888,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     protected static PdfArray processOptions(String options[][]) {
         PdfArray array = new PdfArray();
-        for (String option[] : options) {
-            String subOption[] = option;
-            PdfArray subArray = new PdfArray(new PdfString(subOption[0]));
-            subArray.add(new PdfString(subOption[1]));
+        for (String[] option : options) {
+            PdfArray subArray = new PdfArray(new PdfString(option[0]));
+            subArray.add(new PdfString(option[1]));
             array.add(subArray);
         }
         return array;
@@ -924,7 +925,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 PdfName fontName = new PdfName(dab[0].toString());
                 fontAndSize[0] =  new PdfFont(getDocument(), fontDic.getAsDictionary(fontName));
 //                fontAndSize[0] =  PdfFont.createFont(getDocument(), fontDic.getAsDictionary(fontName));
-                fontAndSize[1] = ((Integer)dab[1]).intValue();
+                fontAndSize[1] = (Integer) dab[1];
             }
         } else {
             fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
@@ -950,36 +951,34 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                             ret[DA_FONT] = stack.get(stack.size() - 2);
                             ret[DA_SIZE] = new Integer(stack.get(stack.size() - 1));
                         }
-                    }
-                    else if (operator.equals("g")) {
+                    } else if (operator.equals("g")) {
                         if (stack.size() >= 1) {
-                            float gray = new Float(stack.get(stack.size() - 1)).floatValue();
+                            float gray = new Float(stack.get(stack.size() - 1));
                             if (gray != 0) {
                                 ret[DA_COLOR] = new DeviceGray(gray);
                             }
                         }
-                    }
-                    else if (operator.equals("rg")) {
+                    } else if (operator.equals("rg")) {
                         if (stack.size() >= 3) {
-                            float red = new Float(stack.get(stack.size() - 3)).floatValue();
-                            float green = new Float(stack.get(stack.size() - 2)).floatValue();
-                            float blue = new Float(stack.get(stack.size() - 1)).floatValue();
+                            float red = new Float(stack.get(stack.size() - 3));
+                            float green = new Float(stack.get(stack.size() - 2));
+                            float blue = new Float(stack.get(stack.size() - 1));
                             ret[DA_COLOR] = new DeviceRgb(red, green, blue);
                         }
-                    }
-                    else if (operator.equals("k")) {
+                    } else if (operator.equals("k")) {
                         if (stack.size() >= 4) {
-                            float cyan = new Float(stack.get(stack.size() - 4)).floatValue();
-                            float magenta = new Float(stack.get(stack.size() - 3)).floatValue();
-                            float yellow = new Float(stack.get(stack.size() - 2)).floatValue();
-                            float black = new Float(stack.get(stack.size() - 1)).floatValue();
+                            float cyan = new Float(stack.get(stack.size() - 4));
+                            float magenta = new Float(stack.get(stack.size() - 3));
+                            float yellow = new Float(stack.get(stack.size() - 2));
+                            float black = new Float(stack.get(stack.size() - 1));
                             ret[DA_COLOR] = new DeviceCmyk(cyan, magenta, yellow, black);
                         }
                     }
                     stack.clear();
                 }
-                else
+                else {
                     stack.add(tk.getStringValue());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

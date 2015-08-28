@@ -47,6 +47,7 @@ public class Type1Font extends FontProgram {
         process(encoding);
     }
 
+    //TODO remove
     public Type1Font(String baseEncoding) throws IOException {
         boolean fontSpecific = true;
         if (encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding")) {
@@ -63,6 +64,7 @@ public class Type1Font extends FontProgram {
         return fontParser.isBuiltInFont();
     }
 
+    @Override
     public int getPdfFontFlags() {
         int flags = 0;
         if (fontMetrics.isFixedPitch()) {
@@ -90,6 +92,7 @@ public class Type1Font extends FontProgram {
      *
      * @return {@code true} if the font has any kerning pairs.
      */
+    @Override
     public boolean hasKernPairs() {
         return !kernPairs.isEmpty();
     }
@@ -103,6 +106,7 @@ public class Type1Font extends FontProgram {
      * @param char2 the second char
      * @return the kerning to be applied
      */
+    @Override
     public int getKerning(int char1, int char2) {
         String first = AdobeGlyphList.unicodeToName(char1);
         if (first == null) {
@@ -170,6 +174,7 @@ public class Type1Font extends FontProgram {
      * @param name the glyph name
      * @return the width of the char
      */
+    @Override
     protected int getRawWidth(int c, String name) {
         Object[] metrics;
         if (name == null) { // font specific
@@ -186,6 +191,7 @@ public class Type1Font extends FontProgram {
         return 0;
     }
 
+    @Override
     protected int[] getRawCharBBox(int c, String name) {
         Object[] metrics;
         if (name == null) { // font specific
@@ -205,52 +211,12 @@ public class Type1Font extends FontProgram {
     /**
      * Gets the width of a {@code char} in normalized 1000 units.
      *
-     * @param ch the unicode {@code char} to get the width of
+     * @param code the char code of glyph
      * @return the width in normalized 1000 units
      */
-    public int getWidth(int ch) {
-        if (encoding.isFastWinansi()) {
-            if (ch < 128 || ch >= 160 && ch <= 255) {
-                return widths[ch];
-            } else {
-                return widths[PdfEncodings.winansi.get(ch)];
-            }
-        } else {
-            int total = 0;
-            byte[] bytes = encoding.convertToBytes(ch);
-            for (byte b : bytes) {
-                total += widths[0xff & b];
-            }
-            return total;
-        }
-    }
-
-    /**
-     * Gets the width of a {@code String} in normalized 1000 units.
-     *
-     * @param text the {@code String} to get the width of
-     * @return the width in normalized 1000 units
-     */
-    public int getWidth(String text) {
-        int total = 0;
-        if (encoding.isFastWinansi()) {
-            int len = text.length();
-            for (int k = 0; k < len; ++k) {
-                char char1 = text.charAt(k);
-                if (char1 < 128 || char1 >= 160 && char1 <= 255) {
-                    total += widths[char1];
-                } else {
-                    total += widths[PdfEncodings.winansi.get(char1)];
-                }
-            }
-            return total;
-        } else {
-            byte bytes[] = encoding.convertToBytes(text);
-            for (byte b : bytes) {
-                total += widths[0xff & b];
-            }
-        }
-        return total;
+    @Override
+    public int getWidth(int code) {
+        return widths[code];
     }
 
     /**
@@ -410,18 +376,24 @@ public class Type1Font extends FontProgram {
                     continue;
                 }
                 ident = tokc.nextToken();
-                if (ident.equals("C")) {
-                    C = Integer.valueOf(tokc.nextToken());
-                } else if (ident.equals("WX")) {
-                    WX = (int) Float.parseFloat(tokc.nextToken());
-                } else if (ident.equals("N")) {
-                    N = tokc.nextToken();
-                } else if (ident.equals("B")) {
-                    B = new int[] {
-                            Integer.parseInt(tokc.nextToken()),
-                            Integer.parseInt(tokc.nextToken()),
-                            Integer.parseInt(tokc.nextToken()),
-                            Integer.parseInt(tokc.nextToken()) };
+                switch (ident) {
+                    case "C":
+                        C = Integer.valueOf(tokc.nextToken());
+                        break;
+                    case "WX":
+                        WX = (int) Float.parseFloat(tokc.nextToken());
+                        break;
+                    case "N":
+                        N = tokc.nextToken();
+                        break;
+                    case "B":
+                        B = new int[] {
+                                Integer.parseInt(tokc.nextToken()),
+                                Integer.parseInt(tokc.nextToken()),
+                                Integer.parseInt(tokc.nextToken()),
+                                Integer.parseInt(tokc.nextToken())
+                        };
+                        break;
                 }
             }
             Object[] metrics = new Object[]{C, WX, N, B};

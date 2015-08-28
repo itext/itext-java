@@ -298,9 +298,11 @@ public class Utilities {
      * @since	2.1.2
      */
     public static boolean isSurrogatePair(final String text, final int idx) {
-        if (idx < 0 || idx > text.length() - 2)
+        if (idx < 0 || idx > text.length() - 2) {
             return false;
-        return isSurrogateHigh(text.charAt(idx)) && isSurrogateLow(text.charAt(idx + 1));
+        } else {
+            return isSurrogateHigh(text.charAt(idx)) && isSurrogateLow(text.charAt(idx + 1));
+        }
     }
 
     /**
@@ -312,9 +314,11 @@ public class Utilities {
      * @return	true if the characters are surrogate pairs
      */
     public static boolean isSurrogatePair(final char[] text, final int idx) {
-        if (idx < 0 || idx > text.length - 2)
+        if (idx < 0 || idx > text.length - 2) {
             return false;
-        return isSurrogateHigh(text[idx]) && isSurrogateLow(text[idx + 1]);
+        } else {
+            return isSurrogateHigh(text[idx]) && isSurrogateLow(text[idx + 1]);
+        }
     }
 
     /**

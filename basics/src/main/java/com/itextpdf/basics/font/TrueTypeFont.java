@@ -15,11 +15,6 @@ public class TrueTypeFont extends FontProgram {
 
     private OpenTypeParser fontParser;
 
-    /**
-     * Contains the smallest box enclosing the character contours.
-     */
-    private int[][] charBBoxes;
-
     private boolean isUnicode;
 
     protected int[][] bBoxes;
@@ -121,7 +116,7 @@ public class TrueTypeFont extends FontProgram {
         }
         String[][] ttfUniqueId = getNames(3);
         if (ttfUniqueId != null) {
-            fontIdentification.setTtfVersion(ttfVersion[0][3]);
+            fontIdentification.setTtfVersion(ttfUniqueId[0][3]);
         }
         fontIdentification.setPanose(os_2.panose);
 
@@ -134,8 +129,6 @@ public class TrueTypeFont extends FontProgram {
         } else {
             isUnicode = false;
             encoding = new FontEncoding(this.baseEncoding, cmaps.fontSpecific);
-            charBBoxes = new int[256][];
-            widths = new int[256];
             if (encoding.hasSpecialEncoding()) {
                 createSpecialEncoding();
             } else {
@@ -205,87 +198,27 @@ public class TrueTypeFont extends FontProgram {
     }
 
     /**
-     * Gets the width of a {@code char} in normalized 1000 units.
-     *
-     * @param ch the unicode {@code char} to get the width of
-     * @return the width in normalized 1000 units
+     * Get glyph's width.
+     * @param code CID in unicode case otherwise, char code.
+     * @return Gets width in normalized 1000 units.
      */
-    public int getWidth(int ch) {
+    @Override
+    public int getWidth(int code) {
         if (isUnicode) {
             if (isVertical) {
-                return 1000;
+                return FontProgram.DEFAULT_WIDTH;
             } else if (fontParser.getCmapTable().fontSpecific) {
-                if ((ch & 0xff00) == 0 || (ch & 0xff00) == 0xf000) {
-                    return getRawWidth(ch & 0xff, null);
+                if ((code & 0xff00) == 0 || (code & 0xff00) == 0xf000) {
+                    return getRawWidth(code & 0xff, null);
                 } else {
                     return 0;
                 }
             } else {
-                return getRawWidth(ch, baseEncoding);
-            }
-        } else if (encoding.isFastWinansi()) {
-            if (ch < 128 || ch >= 160 && ch <= 255) {
-                return widths[ch];
-            } else {
-                return widths[PdfEncodings.winansi.get(ch)];
+                return getRawWidth(code, null);
             }
         } else {
-            int total = 0;
-            byte[] bytes = encoding.convertToBytes(ch);
-            for (byte b : bytes) {
-                total += widths[b & 0xff];
-            }
-            return total;
+            return widths[code];
         }
-    }
-
-    /**
-     * Gets the width of a {@code String} in normalized 1000 units.
-     *
-     * @param text the {@code String} to get the width of
-     * @return the width in normalized 1000 units
-     */
-    public int getWidth(String text) {
-        int total = 0;
-        if (isUnicode) {
-            if (isVertical) {
-                return text.length() * 1000;
-            } else if (fontParser.getCmapTable().fontSpecific) {
-                char[] chars = text.toCharArray();
-                for (char ch : chars) {
-                    if ((ch & 0xff00) == 0 || (ch & 0xff00) == 0xf000) {
-                        total += getRawWidth(ch & 0xff, null);
-                    }
-                }
-            } else {
-                int len = text.length();
-                for (int k = 0; k < len; ++k) {
-                    if (Utilities.isSurrogatePair(text, k)) {
-                        total += getRawWidth(Utilities.convertToUtf32(text, k), baseEncoding);
-                        ++k;
-                    } else {
-                        total += getRawWidth(text.charAt(k), baseEncoding);
-                    }
-                }
-            }
-            return total;
-        } else if (encoding.isFastWinansi()) {
-            for (int k = 0; k < text.length(); ++k) {
-                char ch = text.charAt(k);
-                if (ch < 128 || ch >= 160 && ch <= 255) {
-                    total += widths[ch];
-                } else {
-                    total += widths[PdfEncodings.winansi.get(ch)];
-                }
-            }
-            return total;
-        } else {
-            byte[] bytes = encoding.convertToBytes(text);
-            for (byte b : bytes) {
-                total += widths[b & 0xff];
-            }
-        }
-        return total;
     }
 
     @Override
@@ -314,7 +247,7 @@ public class TrueTypeFont extends FontProgram {
     /**
      * Gets the glyph index and metrics for a character.
      *
-     * @param c the character
+     * @param c the character code
      * @return an {@code int} array with {glyph index, width}
      */
     public int[] getMetrics(int c) {
@@ -398,6 +331,7 @@ public class TrueTypeFont extends FontProgram {
         return fontStreamLengths;
     }
 
+    @Override
     public int getPdfFontFlags() {
         int flags = 0;
         if (fontMetrics.isFixedPitch()) {
@@ -460,6 +394,7 @@ public class TrueTypeFont extends FontProgram {
      * @param name not used in {@code TrueTypeFont}.
      * @return the width of the char
      */
+    @Override
     protected int getRawWidth(int c, String name) {
         int[] metric = getMetrics(c);
         if (metric == null) {
@@ -468,6 +403,7 @@ public class TrueTypeFont extends FontProgram {
         return metric[1];
     }
 
+    @Override
     protected int[] getRawCharBBox(int c, String name) {
         OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
         HashMap<Integer, int[]> map;

@@ -22,7 +22,7 @@ public class Barcode128 extends Barcode1D {
     /**
      * The bars to generate the code.
      */
-    private static final byte BARS[][] =
+    private static final byte[][] BARS =
             {
                     {2, 1, 2, 2, 2, 2},
                     {2, 2, 2, 1, 2, 2},
@@ -135,7 +135,7 @@ public class Barcode128 extends Barcode1D {
     /**
      * The stop bars.
      */
-    private static final byte BARS_STOP[] = {2, 3, 3, 1, 1, 1, 2};
+    private static final byte[] BARS_STOP = {2, 3, 3, 1, 1, 1, 2};
     /**
      * The charset code change.
      */
@@ -181,7 +181,6 @@ public class Barcode128 extends Barcode1D {
 
     /**
      * Creates new Barcode128
-     * @param document
      */
     public Barcode128(PdfDocument document) {
         super(document);
@@ -235,7 +234,7 @@ public class Barcode128 extends Barcode1D {
      */
     public static String removeFNC1(String code) {
         int len = code.length();
-        StringBuffer buf = new StringBuffer(len);
+        StringBuilder buf = new StringBuilder(len);
         for (int k = 0; k < len; ++k) {
             char c = code.charAt(k);
             if (c >= 32 && c <= 126)
@@ -251,7 +250,7 @@ public class Barcode128 extends Barcode1D {
      * @return the human readable text
      */
     public static String getHumanReadableUCCEAN(String code) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         String fnc1 = String.valueOf(FNC1);
         while (true) {
             if (code.startsWith(fnc1)) {
@@ -309,7 +308,7 @@ public class Barcode128 extends Barcode1D {
                 out += FNC1_INDEX;
             return out;
         }
-        int c = 0;
+        int c;
         for (int k = 0; k < tLen; ++k) {
             c = text.charAt(k);
             if (c > 127 && c != FNC1)
@@ -447,7 +446,7 @@ public class Barcode128 extends Barcode1D {
             chk += k * text.charAt(k);
         chk = chk % 103;
         text += (char) chk;
-        byte bars[] = new byte[(text.length() + 1) * 6 + 7];
+        byte[] bars = new byte[(text.length() + 1) * 6 + 7];
         int k;
         for (k = 0; k < text.length(); ++k)
             System.arraycopy(BARS[text.charAt(k)], 0, bars, k * 6, 6);
@@ -484,7 +483,7 @@ public class Barcode128 extends Barcode1D {
             } else {
                 fullCode = removeFNC1(code);
             }
-            fontX = font.getFontProgram().getWidthPoint(altText != null ? altText : fullCode, size);
+            fontX = font.getWidth(altText != null ? altText : fullCode) * getFontSizeCoef();
         }
         if (codeType == CODE128_RAW) {
             int idx = code.indexOf('\uffff');
@@ -546,17 +545,19 @@ public class Barcode128 extends Barcode1D {
         String fullCode;
         if (codeType == CODE128_RAW) {
             int idx = code.indexOf('\uffff');
-            if (idx < 0)
+            if (idx < 0) {
                 fullCode = "";
-            else
+            } else {
                 fullCode = code.substring(idx + 1);
-        } else if (codeType == CODE128_UCC)
+            }
+        } else if (codeType == CODE128_UCC) {
             fullCode = getHumanReadableUCCEAN(code);
-        else
+        } else {
             fullCode = removeFNC1(code);
+        }
         float fontX = 0;
         if (font != null) {
-            fontX = font.getFontProgram().getWidthPoint(fullCode = altText != null ? altText : fullCode, size);
+            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode) * getFontSizeCoef();
         }
         String bCode;
         if (codeType == CODE128_RAW) {
@@ -576,16 +577,18 @@ public class Barcode128 extends Barcode1D {
             case ALIGN_LEFT:
                 break;
             case ALIGN_RIGHT:
-                if (fontX > fullWidth)
+                if (fontX > fullWidth) {
                     barStartX = fontX - fullWidth;
-                else
+                } else {
                     textStartX = fullWidth - fontX;
+                }
                 break;
             default:
-                if (fontX > fullWidth)
+                if (fontX > fullWidth) {
                     barStartX = (fontX - fullWidth) / 2;
-                else
+                } else {
                     textStartX = (fullWidth - fontX) / 2;
+                }
                 break;
         }
         float barStartY = 0;
@@ -598,21 +601,24 @@ public class Barcode128 extends Barcode1D {
                 barStartY = textStartY + baseline;
             }
         }
-        byte bars[] = getBarsCode128Raw(bCode);
+        byte[] bars = getBarsCode128Raw(bCode);
         boolean print = true;
-        if (barColor != null)
+        if (barColor != null) {
             canvas.setFillColor(barColor);
+        }
         for (int k = 0; k < bars.length; ++k) {
             float w = bars[k] * x;
-            if (print)
+            if (print) {
                 canvas.rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
+            }
             print = !print;
             barStartX += w;
         }
         canvas.fill();
         if (font != null) {
-            if (textColor != null)
+            if (textColor != null) {
                 canvas.setFillColor(textColor);
+            }
             canvas.beginText();
             canvas.setFontAndSize(font, size);
             canvas.setTextMatrix(textStartX, textStartY);
@@ -630,36 +636,44 @@ public class Barcode128 extends Barcode1D {
      *
      * @param code the code to generate
      */
+    @Override
     public void setCode(String code) {
         if (getCodeType() == Barcode128.CODE128_UCC && code.startsWith("(")) {
             int idx = 0;
             StringBuilder ret = new StringBuilder("");
             while (idx >= 0) {
                 int end = code.indexOf(')', idx);
-                if (end < 0)
+                if (end < 0) {
                     throw new IllegalArgumentException("Badly formed ucc string");
+                }
                 String sai = code.substring(idx + 1, end);
-                if (sai.length() < 2)
+                if (sai.length() < 2) {
                     throw new IllegalArgumentException("AI is too short");
+                }
                 int ai = Integer.parseInt(sai);
                 int len = ais.get(ai);
-                if (len == 0)
+                if (len == 0) {
                     throw new IllegalArgumentException("AI not found");
+                }
                 sai = String.valueOf(ai);
-                if (sai.length() == 1)
+                if (sai.length() == 1) {
                     sai = "0" + sai;
+                }
                 idx = code.indexOf('(', end);
                 int next = (idx < 0 ? code.length() : idx);
                 ret.append(sai).append(code.substring(end + 1, next));
                 if (len < 0) {
-                    if (idx >= 0)
+                    if (idx >= 0) {
                         ret.append(FNC1);
-                } else if (next - end - 1 + sai.length() != len)
+                    }
+                } else if (next - end - 1 + sai.length() != len) {
                     throw new IllegalArgumentException("Invalid AI length");
+                }
             }
             super.setCode(ret.toString());
-        } else
+        } else {
             super.setCode(code);
+        }
     }
 
     /**
@@ -670,6 +684,7 @@ public class Barcode128 extends Barcode1D {
      * @param background the color of the background
      * @return the image
      */
+    @Override
     public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
@@ -677,36 +692,37 @@ public class Barcode128 extends Barcode1D {
         String bCode;
         if (codeType == CODE128_RAW) {
             int idx = code.indexOf('\uffff');
-            if (idx >= 0)
+            if (idx >= 0) {
                 bCode = code.substring(0, idx);
-            else
+            } else {
                 bCode = code;
+            }
         } else {
             bCode = getRawText(code, codeType == CODE128_UCC);
         }
         int len = bCode.length();
         int fullWidth = (len + 2) * 11 + 2;
-        byte bars[] = getBarsCode128Raw(bCode);
+        byte[] bars = getBarsCode128Raw(bCode);
 
         boolean print = true;
         int ptr = 0;
         int height = (int) barHeight;
-        int pix[] = new int[fullWidth * height];
+        int[] pix = new int[fullWidth * height];
         for (int k = 0; k < bars.length; ++k) {
             int w = bars[k];
             int c = g;
-            if (print)
+            if (print) {
                 c = f;
+            }
             print = !print;
-            for (int j = 0; j < w; ++j)
+            for (int j = 0; j < w; ++j) {
                 pix[ptr++] = c;
+            }
         }
         for (int k = fullWidth; k < pix.length; k += fullWidth) {
             System.arraycopy(pix, 0, pix, k, fullWidth);
         }
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-
-        return img;
+        return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
     }
 
     static {
@@ -729,17 +745,20 @@ public class Barcode128 extends Barcode1D {
         ais.put(251, -1);
         ais.put(252, -1);
         ais.put(30, -1);
-        for (int k = 3100; k < 3700; ++k)
+        for (int k = 3100; k < 3700; ++k) {
             ais.put(k, 10);
+        }
         ais.put(37, -1);
-        for (int k = 3900; k < 3940; ++k)
+        for (int k = 3900; k < 3940; ++k) {
             ais.put(k, -1);
+        }
         ais.put(400, -1);
         ais.put(401, -1);
         ais.put(402, 20);
         ais.put(403, -1);
-        for (int k = 410; k < 416; ++k)
+        for (int k = 410; k < 416; ++k) {
             ais.put(k, 16);
+        }
         ais.put(420, -1);
         ais.put(421, -1);
         ais.put(422, 6);
@@ -749,8 +768,9 @@ public class Barcode128 extends Barcode1D {
         ais.put(426, 6);
         ais.put(7001, 17);
         ais.put(7002, -1);
-        for (int k = 7030; k < 7040; ++k)
+        for (int k = 7030; k < 7040; ++k) {
             ais.put(k, -1);
+        }
         ais.put(8001, 18);
         ais.put(8002, -1);
         ais.put(8003, -1);
@@ -764,8 +784,9 @@ public class Barcode128 extends Barcode1D {
         ais.put(8100, 10);
         ais.put(8101, 14);
         ais.put(8102, 6);
-        for (int k = 90; k < 100; ++k)
+        for (int k = 90; k < 100; ++k) {
             ais.put(k, -1);
+        }
     }
 
     /**
@@ -785,12 +806,14 @@ public class Barcode128 extends Barcode1D {
                 continue;
             }
             int n = Math.min(2, numDigits);
-            if (textIndex + n > len)
+            if (textIndex + n > len) {
                 return false;
+            }
             while (n-- > 0) {
                 char c = text.charAt(textIndex++);
-                if (c < '0' || c > '9')
+                if (c < '0' || c > '9') {
                     return false;
+                }
                 --numDigits;
             }
         }

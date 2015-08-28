@@ -34,16 +34,6 @@ public class Type3Font extends FontProgram {
         throw new IllegalStateException();
     }
 
-    @Override
-    public int getWidth(String text) {
-        char[] c = text.toCharArray();
-        int total = 0;
-        for (int k = 0; k < c.length; ++k)
-            total += getWidth(c[k]);
-        return total;
-    }
-
-
     public double[] getFontMatrix() {
         return fontMatrix;
     }

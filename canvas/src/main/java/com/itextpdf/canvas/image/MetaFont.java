@@ -1,7 +1,7 @@
 package com.itextpdf.canvas.image;
 
-import com.itextpdf.basics.font.FontCache;
 import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.Type1Font;
 
 import java.io.IOException;
@@ -82,7 +82,8 @@ public class MetaFont extends MetaObject {
     public FontProgram getFont() {
         if (font != null)
             return font;
-        FontProgram ff2 = null; // TODO: there were FontCache.getFont method, which always returned null
+        //TODO ff2 = FontFactory.getFont(faceName, BaseFont.CP1252, true, 10, ((italic != 0) ? Font.ITALIC : 0) | ((bold != 0) ? Font.BOLD : 0));
+        FontProgram ff2 = null;
         font = ff2;
         if (font != null)
             return font;
@@ -134,7 +135,7 @@ public class MetaFont extends MetaObject {
             }
         }
         try {
-            font = new Type1Font(fontName, "Cp1252");
+            font = new Type1Font(fontName, PdfEncodings.WINANSI);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -142,7 +143,7 @@ public class MetaFont extends MetaObject {
 
         return font;
     }
-    
+
     public float getAngle() {
         return angle;
     }
