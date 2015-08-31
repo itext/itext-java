@@ -279,13 +279,6 @@ public class BarcodeCodabar extends Barcode1D {
         int g = background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();
 
-        String fullCode = code;
-        if (generateChecksum && checksumText) {
-            fullCode = calculateChecksum(code);
-        }
-        if (!startStopText) {
-            fullCode = fullCode.substring(1, fullCode.length() - 1);
-        }
         byte[] bars = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
         int wide = 0;
         for (int k = 0; k < bars.length; ++k) {

@@ -26,6 +26,9 @@ public class PdfWriter extends PdfOutputStream {
 
     protected Hashtable<Integer, PdfIndirectReference> copiedObjects = new Hashtable<Integer, PdfIndirectReference>();
 
+    //forewarned is forearmed
+    protected boolean isUserWarnedAboutAcroFormCopying;
+
     public PdfWriter(java.io.OutputStream os) {
         super(new BufferedOutputStream(os));
     }

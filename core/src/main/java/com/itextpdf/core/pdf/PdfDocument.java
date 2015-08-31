@@ -91,9 +91,6 @@ public class PdfDocument implements IEventDispatcher {
 
     protected Set<PdfFont> documentFonts = new HashSet<PdfFont>();
 
-    //forewarned is forearmed
-    protected boolean isUserWarned;
-
     /**
      * Open PDF document in reading mode.
      *

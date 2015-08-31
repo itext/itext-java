@@ -828,7 +828,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     int fontSize = (int) fontAndSize[1];
                     PdfFormXObject appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, font, fontSize);
                     appearance.getResources().addFont(font);
+                    apDic = new PdfDictionary();
                     apDic.put(PdfName.N, appearance.getPdfObject());
+                    put(PdfName.AP, apDic);
                 } catch (IOException e) {
                     throw new PdfException(e.getLocalizedMessage());
                 }

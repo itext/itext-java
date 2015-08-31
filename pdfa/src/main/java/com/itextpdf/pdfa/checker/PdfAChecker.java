@@ -1,8 +1,11 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.pdfa.PdfAConformanceLevel;
+
+import java.util.List;
 
 public abstract class PdfAChecker {
     PdfAConformanceLevel conformanceLevel;
@@ -14,10 +17,14 @@ public abstract class PdfAChecker {
     public void checkDocument(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();
 
-        for (int i = 0; i < catalog.getNumOfPages(); i++) {
+        for (int i = 1; i <= catalog.getNumOfPages(); i++) {
             PdfPage p = catalog.getPage(i);
             PdfDictionary pageResources = p.getPdfObject().getAsDictionary(PdfName.Resources);
             checkResources(pageResources);
+            PdfArray annots = p.getPdfObject().getAsArray(PdfName.Annots);
+            if (annots != null) {
+                checkAnnotations(annots);
+            }
         }
 
 
@@ -55,7 +62,7 @@ public abstract class PdfAChecker {
     protected abstract void checkPdfNumber(PdfNumber number);
     protected abstract void checkPdfStream(PdfStream stream);
     protected abstract void checkPdfString(PdfString string);
-
+    protected abstract void checkAnnotations(PdfArray annotations);
 
     protected void checkResources(PdfDictionary resources) {
         if (resources == null)
@@ -101,5 +108,15 @@ public abstract class PdfAChecker {
                 }
             }
         }
+    }
+
+    protected static boolean checkFlag(int flags, int flag) {
+        return (flags & flag) != 0;
+    }
+
+    protected static boolean checkStructure(PdfAConformanceLevel conformanceLevel) {
+        return conformanceLevel == PdfAConformanceLevel.PDF_A_1A
+                || conformanceLevel == PdfAConformanceLevel.PDF_A_2A
+                || conformanceLevel == PdfAConformanceLevel.PDF_A_3A;
     }
 }
