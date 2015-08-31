@@ -477,9 +477,6 @@ public class TextRenderer extends AbstractRenderer {
         if (hScale == null)
             hScale = 1f;
 
-        // TODO get rid of this. This is temporary measure because of limitation of TrueTypeFont
-        font.convertToBytes(Utilities.convertFromUtf32(c));
-
         float resultWidth = font.getWidth(c) * fontSize * hScale;
         if (characterSpacing != null) {
             resultWidth += characterSpacing * hScale * TEXT_SPACE_COEFF;

@@ -25,23 +25,31 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         setProperty(Property.WIDTH, width);
     }
 
-    public Image (PdfImageXObject xObject, float x, float y, float width){
+    public Image(PdfImageXObject xObject, float x, float y, float width) {
         this.xObject = xObject;
         setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.WIDTH, width).setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
-    public Image (PdfImageXObject xObject, float x, float y){
+    public Image(PdfImageXObject xObject, float x, float y) {
         this.xObject = xObject;
         setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
-    public Image (PdfFormXObject xObject, float x, float y){
+    public Image(PdfFormXObject xObject, float x, float y) {
         this.xObject = xObject;
         setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
-    public Image (com.itextpdf.basics.image.Image img) {
-        this.xObject = new PdfImageXObject(img);
+    public Image(com.itextpdf.basics.image.Image img) {
+        this(new PdfImageXObject(img));
+    }
+
+    public Image(com.itextpdf.basics.image.Image img, float x, float y) {
+        this(new PdfImageXObject(img), x, y);
+    }
+
+    public Image(com.itextpdf.basics.image.Image img, float x, float y, float width) {
+        this(new PdfImageXObject(img), x, y, width);
     }
 
     @Override
