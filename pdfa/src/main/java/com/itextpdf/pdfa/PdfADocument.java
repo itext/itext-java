@@ -16,19 +16,19 @@ public class PdfADocument extends PdfDocument {
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(writer);
         addOutputIntent(outputIntent);
-        setChecker(conformanceLevel, outputIntent.getDestOutputProfile());
+        setChecker(conformanceLevel, outputIntent);
     }
 
     public PdfADocument(PdfReader reader, PdfWriter writer, boolean append, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(reader, writer, append);
         addOutputIntent(outputIntent);
-        setChecker(conformanceLevel, outputIntent.getDestOutputProfile());
+        setChecker(conformanceLevel, outputIntent);
     }
 
     public PdfADocument(PdfReader reader, PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(reader, writer);
         addOutputIntent(outputIntent);
-        setChecker(conformanceLevel, outputIntent.getDestOutputProfile());
+        setChecker(conformanceLevel, outputIntent);
     }
 
     @Override
@@ -76,9 +76,10 @@ public class PdfADocument extends PdfDocument {
         }
     }
 
-    private void setChecker(PdfAConformanceLevel conformanceLevel, PdfStream destOutputProfile) {
+    private void setChecker(PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         String pdfAOutputIntentColorSpace = null;
-        if (destOutputProfile.get(PdfName.S).equals(PdfName.GTS_PDFA1)) {
+        if (outputIntent.getPdfObject().get(PdfName.S).equals(PdfName.GTS_PDFA1)) {
+            PdfStream destOutputProfile = outputIntent.getDestOutputProfile();
             pdfAOutputIntentColorSpace = IccProfile.getIccColorSpaceName(destOutputProfile.getBytes());
         }
         switch (conformanceLevel) {
