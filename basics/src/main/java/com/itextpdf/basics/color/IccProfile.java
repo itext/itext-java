@@ -63,32 +63,24 @@ public class IccProfile {
         if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
                 || data[38] != 0x73 || data[39] != 0x70)
             throw new PdfException(PdfException.InvalidIccProfile);
-        try {
-            IccProfile icc = new IccProfile();
-            icc.data = data;
-            Integer cs;
-            cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
-            int nc = cs == null ? 0 : cs;
-            icc.numComponents = nc;
-            // invalid ICC
-            if (nc != numComponents) {
-                throw new PdfException(PdfException.WrongNumberOfComponentsInIccProfile).setMessageParams(nc, numComponents);
-            }
-            return icc;
-        } catch (UnsupportedEncodingException e) {
-            throw new PdfException(PdfException.InvalidIccProfile, e);
+        IccProfile icc = new IccProfile();
+        icc.data = data;
+        Integer cs;
+        cs = getIccNumOfComponents(data);
+        int nc = cs == null ? 0 : cs;
+        icc.numComponents = nc;
+        // invalid ICC
+        if (nc != numComponents) {
+            throw new PdfException(PdfException.WrongNumberOfComponentsInIccProfile).setMessageParams(nc, numComponents);
         }
+        return icc;
     }
 
     public static IccProfile getInstance(byte[] data) {
-        try {
-            Integer cs;
-            cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
-            int numComponents = cs == null ? 0 : cs;
-            return getInstance(data, numComponents);
-        } catch (UnsupportedEncodingException e) {
-            throw new PdfException(PdfException.InvalidIccProfile, e);
-        }
+        Integer cs;
+        cs = getIccNumOfComponents(data);
+        int numComponents = cs == null ? 0 : cs;
+        return getInstance(data, numComponents);
     }
 
     public static IccProfile getInstance(InputStream file) {
@@ -139,6 +131,20 @@ public class IccProfile {
             } catch (Exception x) {
             }
         }
+    }
+
+    public static String getIccColorSpaceName(byte[] data) {
+        String colorSpace;
+        try {
+            colorSpace = new String(data, 16, 4, "US-ASCII");
+        } catch (UnsupportedEncodingException e) {
+            throw new PdfException(PdfException.InvalidIccProfile, e);
+        }
+        return colorSpace;
+    }
+
+    public static Integer getIccNumOfComponents(byte[] data) {
+        return cstags.get(getIccColorSpaceName(data));
     }
 
     public byte[] getData() {

@@ -1,17 +1,20 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.pdfa.PdfAConformanceLevel;
 
-import java.util.List;
-
 public abstract class PdfAChecker {
-    PdfAConformanceLevel conformanceLevel;
+    public static final String ICC_COLOR_SPACE_RGB = "RGB ";
+    public static final String ICC_COLOR_SPACE_CMYK = "CMYK";
+    public static final String ICC_COLOR_SPACE_GRAY = "GRAY";
 
-    public PdfAChecker(PdfAConformanceLevel conformanceLevel) {
+    protected PdfAConformanceLevel conformanceLevel;
+    protected String pdfAOutputIntentColorSpace;
+
+    public PdfAChecker(PdfAConformanceLevel conformanceLevel, String pdfAOutputIntentColorSpace) {
         this.conformanceLevel = conformanceLevel;
+        this.pdfAOutputIntentColorSpace = pdfAOutputIntentColorSpace;
     }
 
     public void checkDocument(PdfCatalog catalog) {

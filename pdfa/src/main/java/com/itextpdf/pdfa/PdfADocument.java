@@ -1,5 +1,6 @@
 package com.itextpdf.pdfa;
 
+import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
@@ -15,19 +16,19 @@ public class PdfADocument extends PdfDocument {
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(writer);
         addOutputIntent(outputIntent);
-        setChecker(conformanceLevel);
+        setChecker(conformanceLevel, outputIntent.getDestOutputProfile());
     }
 
     public PdfADocument(PdfReader reader, PdfWriter writer, boolean append, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(reader, writer, append);
         addOutputIntent(outputIntent);
-        setChecker(conformanceLevel);
+        setChecker(conformanceLevel, outputIntent.getDestOutputProfile());
     }
 
     public PdfADocument(PdfReader reader, PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(reader, writer);
         addOutputIntent(outputIntent);
-        setChecker(conformanceLevel);
+        setChecker(conformanceLevel, outputIntent.getDestOutputProfile());
     }
 
     @Override
@@ -75,21 +76,25 @@ public class PdfADocument extends PdfDocument {
         }
     }
 
-    private void setChecker(PdfAConformanceLevel conformanceLevel) {
+    private void setChecker(PdfAConformanceLevel conformanceLevel, PdfStream destOutputProfile) {
+        String pdfAOutputIntentColorSpace = null;
+        if (destOutputProfile.get(PdfName.S).equals(PdfName.GTS_PDFA1)) {
+            pdfAOutputIntentColorSpace = IccProfile.getIccColorSpaceName(destOutputProfile.getBytes());
+        }
         switch (conformanceLevel) {
             case PDF_A_1A:
             case PDF_A_1B:
-                checker = new PdfA1Checker(conformanceLevel);
+                checker = new PdfA1Checker(conformanceLevel, pdfAOutputIntentColorSpace);
                 break;
             case PDF_A_2A:
             case PDF_A_2B:
             case PDF_A_2U:
-                checker = new PdfA2Checker(conformanceLevel);
+                checker = new PdfA2Checker(conformanceLevel, pdfAOutputIntentColorSpace);
                 break;
             case PDF_A_3A:
             case PDF_A_3B:
             case PDF_A_3U:
-                checker = new PdfA3Checker(conformanceLevel);
+                checker = new PdfA3Checker(conformanceLevel, pdfAOutputIntentColorSpace);
                 break;
         }
     }

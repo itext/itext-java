@@ -1,6 +1,5 @@
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
@@ -9,7 +8,6 @@ import com.itextpdf.pdfa.PdfAConformanceLevel;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 public class PdfA1Checker extends PdfAChecker {
 
@@ -17,8 +15,8 @@ public class PdfA1Checker extends PdfAChecker {
     static public final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.Text,
             PdfName.FreeText, PdfName.Line, PdfName.Square, PdfName.Circle, PdfName.Stamp, PdfName.Ink, PdfName.Popup));
 
-    public PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
-        super(conformanceLevel);
+    public PdfA1Checker(PdfAConformanceLevel conformanceLevel, String outputIntentColorSpace) {
+        super(conformanceLevel, outputIntentColorSpace);
     }
 
     @Override
@@ -78,50 +76,51 @@ public class PdfA1Checker extends PdfAChecker {
             PdfName subtype = annotDic.getAsName(PdfName.Subtype);
 
             if (subtype == null) {
-                throw new PdfAConformanceException("annotation.type.1.is.not.permitted").setMessageParams("null");
+                throw new PdfAConformanceException(PdfAConformanceException.AnnotationType1IsNotPermitted).setMessageParams("null");
             }
             if (forbiddenAnnotations.contains(subtype)) {
-                throw new PdfAConformanceException("annotation.type.1.is.not.permitted").setMessageParams(subtype.getValue());
+                throw new PdfAConformanceException(PdfAConformanceException.AnnotationType1IsNotPermitted).setMessageParams(subtype.getValue());
             }
             PdfNumber ca = annotDic.getAsNumber(PdfName.CA);
             if (ca != null && ca.getFloatValue() != 1.0) {
-                throw new PdfAConformanceException("an.annotation.dictionary.shall.not.contain.the.ca.key.with.a.value.other.than.1");
+                throw new PdfAConformanceException(PdfAConformanceException.AnAnnotationDictionaryShallNotContainTheCaKeyWithAValueOtherThan1);
             }
             if (!annotDic.containsKey(PdfName.F)) {
-                throw new PdfAConformanceException("annotation.shall.contain.key.F");
+                throw new PdfAConformanceException(PdfAConformanceException.AnnotationShallContainKeyF);
             }
 
             int flags = annotDic.getAsInt(PdfName.F);
             if (!checkFlag(flags, PdfAnnotation.Print) || checkFlag(flags, PdfAnnotation.Hidden) || checkFlag(flags, PdfAnnotation.Invisible) ||
                     checkFlag(flags, PdfAnnotation.NoView)) {
-                throw new PdfAConformanceException("the.f.keys.print.flag.bit.shall.be.set.to.1.and.its.hidden.invisible.and.noview.flag.bits.shall.be.set.to.0");
+                throw new PdfAConformanceException(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0);
             }
             if (subtype.equals(PdfName.Text) && (!checkFlag(flags, PdfAnnotation.NoZoom) || !checkFlag(flags, PdfAnnotation.NoRotate))) {
-                throw new PdfAConformanceException("text.annotations.should.set.the.nozoom.and.norotate.flag.bits.of.the.f.key.to.1");
+                throw new PdfAConformanceException(PdfAConformanceException.TextAnnotationsShouldSetTheNozoomAndNorotateFlagBitsOfTheFKeyTo1);
             }
             if (annotDic.containsKey(PdfName.C) || annotDic.containsKey(PdfName.IC)) {
-                //Checks if color space of the DestOutputProfile is RGB
-                //@TODO Postpone this until DEVSIX-254 is implemented.
+                if (!ICC_COLOR_SPACE_RGB.equalsIgnoreCase(pdfAOutputIntentColorSpace)) {
+                    throw new PdfAConformanceException(PdfAConformanceException.DestoutputprofileInThePdfa1OutputintentDictionaryShallBeRgb);
+                }
             }
 
             PdfDictionary ap = annotDic.getAsDictionary(PdfName.AP);
             if (ap != null) {
                 if (ap.containsKey(PdfName.D) || ap.containsKey(PdfName.R)) {
-                    throw new PdfAConformanceException("appearance.dictionary.shall.contain.only.the.n.key.with.stream.value");
+                    throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
                 }
                 PdfStream n = ap.getAsStream(PdfName.N);
                 if (n == null) {
-                    throw new PdfAConformanceException("appearance.dictionary.shall.contain.only.the.n.key.with.stream.value");
+                    throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
                 }
             }
 
             if (PdfName.Widget.equals(subtype) && (annotDic.containsKey(PdfName.AA) || annotDic.containsKey(PdfName.A))) {
-                throw new PdfAConformanceException("widget.annotation.dictionary.or.field.dictionary.shall.not.include.a.or.aa.entry");
+                throw new PdfAConformanceException(PdfAConformanceException.WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry);
             }
 
             if (checkStructure(conformanceLevel)) {
                 if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
-                    throw new PdfAConformanceException("annotation.of.type.1.should.have.contents.key").setMessageParams(subtype);
+                    throw new PdfAConformanceException(PdfAConformanceException.AnnotationOfType1ShouldHaveContentsKey).setMessageParams(subtype);
                 }
             }
         }
