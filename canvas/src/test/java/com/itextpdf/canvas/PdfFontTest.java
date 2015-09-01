@@ -845,5 +845,35 @@ public class PdfFontTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
+    @Test
+    @Ignore
+    public void testType1FontUpdateContent() throws IOException, InterruptedException {
+        String inputFileName1 = sourceFolder + "DocumentWithCMR10Afm.pdf";
+        String filename = destinationFolder + "DocumentWithCMR10Afm_updated.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm_updated.pdf";
 
+        PdfReader reader = new PdfReader(inputFileName1);
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
+        PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfType1Font, 72)
+                .showText("New Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
 }
