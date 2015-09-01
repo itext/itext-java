@@ -23,13 +23,14 @@ public class PdfFormXObject extends PdfXObject {
 
     /**
      * Creates form XObject from page content.
+     * The page shall be from the document, to which FormXObject will be added.
      *
      * @param page
      */
     public PdfFormXObject(PdfPage page) {
         this(page.getCropBox());
         getPdfObject().getOutputStream().writeBytes(page.getContentBytes());
-        resources = new PdfResources((PdfDictionary)page.getResources().getPdfObject().copy(page.getDocument()));
+        resources = new PdfResources((PdfDictionary)page.getResources().getPdfObject().clone());
         getPdfObject().put(PdfName.Resources, resources.getPdfObject());
 
     }
@@ -48,7 +49,7 @@ public class PdfFormXObject extends PdfXObject {
 
     @Override
     public PdfFormXObject copy(PdfDocument document) {
-        return new PdfFormXObject((PdfStream)getPdfObject().copy(document));
+        return new PdfFormXObject((PdfStream)getPdfObject().copyToDocument(document));
     }
 
     @Override

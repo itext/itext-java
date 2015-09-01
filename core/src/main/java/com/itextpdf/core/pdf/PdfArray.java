@@ -296,7 +296,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         super.copyContent(from, document);
         PdfArray array = (PdfArray) from;
         for (PdfObject entry : array) {
-            add(entry.copy(document, false));
+            add(entry.processCopying(document, false));
         }
     }
 

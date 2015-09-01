@@ -189,7 +189,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return copied page.
      */
     public PdfPage copy(PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        PdfDictionary dictionary = getPdfObject().copy(toDocument, Arrays.asList(
+        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, Arrays.asList(
                 PdfName.Parent,
                 PdfName.Annots,
                 PdfName.StructParents,
@@ -199,7 +199,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         ), true);
         PdfPage page = new PdfPage(dictionary, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
-            page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copy(toDocument), toDocument));
+            page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument), toDocument));
         }
         if (toDocument.isTagged()) {
             page.structParents = toDocument.getNextStructParentIndex();

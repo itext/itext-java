@@ -155,8 +155,8 @@ public class PdfWriter extends PdfOutputStream {
                 }
             } else {
                 if (pdfObject.getType() == PdfObject.IndirectReference) {
-                    if (!((PdfIndirectReference) pdfObject).checkState(PdfIndirectReference.Flushed)) {
-                        ((PdfIndirectReference) pdfObject).setState(PdfIndirectReference.MustBeFlushed);
+                    if (!pdfObject.checkState(PdfIndirectReference.Flushed)) {
+                        pdfObject.setState(PdfIndirectReference.MustBeFlushed);
                     }
                 } else if (pdfObject.getType() == PdfObject.Array) {
                     markArrayContentToFlush((PdfArray) pdfObject);
@@ -172,20 +172,15 @@ public class PdfWriter extends PdfOutputStream {
             object = ((PdfIndirectReference) object).getRefersTo();
         PdfIndirectReference indirectReference = object.getIndirectReference();
         PdfIndirectReference copiedIndirectReference;
+
         int copyObjectKey = 0;
         if (!allowDuplicating && indirectReference != null) {
-            if (indirectReference.getDocument().hashCode() == document.hashCode()) {
-                return indirectReference.getRefersTo();
-            } else {
-                copyObjectKey = getCopyObjectKey(object);
-                copiedIndirectReference = copiedObjects.get(copyObjectKey);
-                if (copiedIndirectReference != null)
-                    return copiedIndirectReference.getRefersTo();
-            }
+            copyObjectKey = getCopyObjectKey(object);
+            copiedIndirectReference = copiedObjects.get(copyObjectKey);
+            if (copiedIndirectReference != null)
+                return copiedIndirectReference.getRefersTo();
         }
-        if (!allowDuplicating && indirectReference != null && (copiedIndirectReference = copiedObjects.get(copyObjectKey = getCopyObjectKey(object))) != null) {
-            return copiedIndirectReference.getRefersTo();
-        }
+
         PdfObject newObject = object.newInstance();
         if (indirectReference != null) {
             if (copyObjectKey == 0)

@@ -171,7 +171,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public PdfFont copy(PdfDocument document) {
-        return new PdfFont(document, (PdfDictionary) getPdfObject().copy(document));
+        return new PdfFont(document, (PdfDictionary) getPdfObject().copyToDocument(document));
     }
 
     protected static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType,boolean isException) {

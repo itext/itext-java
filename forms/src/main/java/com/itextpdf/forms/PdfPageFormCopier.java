@@ -30,7 +30,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                 List<PdfName> excludedKeys = new ArrayList<>();
                 excludedKeys.add(PdfName.Fields);
                 excludedKeys.add(PdfName.DR);
-                PdfDictionary dict = formFrom.getPdfObject().copy(documentTo, excludedKeys, false);
+                PdfDictionary dict = formFrom.getPdfObject().copyToDocument(documentTo, excludedKeys, false);
                 formTo.getPdfObject().mergeDifferent(dict);
             }
         }

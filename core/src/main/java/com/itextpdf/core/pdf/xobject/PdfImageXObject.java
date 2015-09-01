@@ -52,7 +52,7 @@ public class PdfImageXObject extends PdfXObject {
 
     @Override
     public PdfImageXObject copy(PdfDocument document) {
-        PdfImageXObject image = new PdfImageXObject((PdfStream) getPdfObject().copy(document));
+        PdfImageXObject image = new PdfImageXObject((PdfStream) getPdfObject().copyToDocument(document));
         image.width = width;
         image.height = height;
         image.mask = mask;

@@ -163,6 +163,26 @@ public class PdfDictionary extends PdfObject {
     }
 
     /**
+     * Creates clones of the dictionary in the current document.
+     * It's possible to pass a list of keys to exclude when cloning.
+     *
+     * @param excludeKeys list of objects to exclude when cloning dictionary.
+     * @return cloned dictionary.
+     * @throws PdfException
+     */
+    public PdfDictionary clone(List<PdfName> excludeKeys) {
+        Map<PdfName, PdfObject> excluded = new TreeMap<PdfName, PdfObject>();
+        for (PdfName key : excludeKeys) {
+            PdfObject obj = map.get(key);
+            if (obj != null)
+                excluded.put(key, map.remove(key));
+        }
+        PdfDictionary dictionary = (PdfDictionary) clone();
+        map.putAll(excluded);
+        return dictionary;
+    }
+
+    /**
      * Copies dictionary to specified document.
      * It's possible to pass a list of keys to exclude when copying.
      *
@@ -172,14 +192,14 @@ public class PdfDictionary extends PdfObject {
      * @return copied dictionary.
      * @throws PdfException
      */
-    public PdfDictionary copy(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) {
+    public PdfDictionary copyToDocument(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) {
         Map<PdfName, PdfObject> excluded = new TreeMap<PdfName, PdfObject>();
         for (PdfName key : excludeKeys) {
             PdfObject obj = map.get(key);
             if (obj != null)
                 excluded.put(key, map.remove(key));
         }
-        PdfDictionary dictionary = copy(document, allowDuplicating);
+        PdfDictionary dictionary = copyToDocument(document, allowDuplicating);
         map.putAll(excluded);
         return dictionary;
     }
@@ -222,7 +242,7 @@ public class PdfDictionary extends PdfObject {
         super.copyContent(from, document);
         PdfDictionary dictionary = (PdfDictionary) from;
         for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
-            map.put(entry.getKey(), entry.getValue().copy(document, false));
+            map.put(entry.getKey(), entry.getValue().processCopying(document, false));
         }
     }
 

@@ -191,45 +191,88 @@ abstract public class PdfObject {
     }
 
     /**
-     * Copies object.
+     * Creates clone of the object which belongs to the same document as original object.
+     * New object shall not be used in other documents.
      *
-     * @return copied object.
+     * @return cloned object.
      */
-    public <T extends PdfObject> T copy() {
-        return copy(getDocument());
+    @Override
+    public Object clone() {
+        PdfObject newObject = newInstance();
+        if (indirectReference != null || checkState(PdfObject.MustBeIndirect)) {
+            newObject.setState(PdfObject.MustBeIndirect);
+        }
+        newObject.copyContent(this, null);
+        return newObject;
     }
 
     /**
-     * Copied object to a specified document.
+     * Copies object to a specified document.
+     * Works only for objects that are read from existing document, otherwise an exception is thrown.
      *
      * @param document document to copy object to.
      * @return copied object.
      */
-    public <T extends PdfObject> T copy(PdfDocument document) {
-        return copy(document, true);
+    public <T extends PdfObject> T copyToDocument(PdfDocument document) {
+        return copyToDocument(document, true);
     }
 
     /**
-     * Copied object to a specified document.
+     * Copies object to a specified document.
+     * Works only for objects that are read from existing document, otherwise an exception is thrown.
      *
      * @param document         document to copy object to.
      * @param allowDuplicating indicates if to allow copy objects which already have been copied.
      *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
-     * @throws PdfException
      */
-    public <T extends PdfObject> T copy(PdfDocument document, boolean allowDuplicating) {
-        PdfWriter writer = null;
+    public  <T extends PdfObject> T copyToDocument(PdfDocument document, boolean allowDuplicating) {
         if (document == null)
-            document = getDocument();
-        if (document != null)
-            writer = document.getWriter();
-        if (writer != null)
+            throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
+
+        if ((indirectReference != null && indirectReference.getWriter() != null) || checkState(PdfObject.MustBeIndirect)) {
+            throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
+        }
+
+        return processCopying(document, allowDuplicating);
+    }
+
+    /**
+     * Processes two cases of object copying:
+     * <ol>
+     * <li>copying to the other document</li>
+     * <li>cloning inside of the current document</li>
+     * </ol>
+     *
+     * This two cases are distinguished by the state of <code>document</code> parameter:
+     * the second case is processed if <code>document</code> is <code>null</code>.
+     *
+     * @param document if not null: document to copy object to; otherwise indicates that object is to be cloned.
+     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
+     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
+     * @return copied object.
+     */
+    protected <T extends PdfObject> T processCopying(PdfDocument document, boolean allowDuplicating) {
+        if (document != null) {
+
+            PdfWriter writer = document.getWriter();
+            if (writer == null)
+                throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
             return (T) writer.copyObject(this, document, allowDuplicating);
-        T newObject = newInstance();
-        newObject.copyContent(this, document);
-        return newObject;
+
+        } else {
+
+            PdfObject obj = this;
+            if (obj.isIndirectReference())
+                obj = ((PdfIndirectReference)this).getRefersTo();
+            boolean isIndirect = obj.getIndirectReference() != null || obj.checkState(PdfObject.MustBeIndirect);
+            if (isIndirect && !allowDuplicating) {
+                return (T) obj;
+            }
+            return (T) obj.clone();
+        }
     }
 
     protected <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {

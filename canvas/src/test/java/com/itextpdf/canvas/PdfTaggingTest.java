@@ -341,7 +341,7 @@ public class PdfTaggingTest {
         document1.close();
         document2.close();
 
-//        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest08.pdf", sourceFolder + "cmp_taggingTest08.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest09.pdf", sourceFolder + "cmp_taggingTest09.pdf", destinationFolder, "diff_"));
 
     }
 

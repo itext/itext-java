@@ -252,7 +252,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
             PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
             if (toUnicode != null) {
                 if (toUnicode instanceof PdfStream) {
-                    PdfStream newStream = ((PdfStream) toUnicode).copy(getDocument());
+                    PdfStream newStream = (PdfStream) toUnicode.clone();
                     getPdfObject().put(PdfName.ToUnicode, newStream);
                     newStream.flush();
                 }

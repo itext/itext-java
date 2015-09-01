@@ -37,6 +37,8 @@ public class PdfException extends RuntimeException {
     public static final String CannotConvertPdfArrayToRectanle = "cannot.convert.pdfarray.to.rectangle";
     public static final String CannotCopyFlushedObject = "cannot.copy.flushed.object";
     public static final String CannotCopyObjectContent = "cannot.copy.object.content";
+    public static final String CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten = "cannot.copy.indirect.object.from.the.document.that.is.being.written";
+    public static final String CannotCopyToDocumentOpenedInReadingMode = "cannot.copy.to.document.opened.in.reading.mode";
     public static final String CannotCreatePdfStreamByInputStreamWithoutPdfDocument = "cannot.create.pdfstream.by.inputstream.without.pdfdocument";
     public static final String CannotGetContentBytes = "cannot.get.content.bytes";
     public static final String CannotGetPdfStreamBytes = "cannot.get.pdfstream.bytes";
@@ -56,6 +58,10 @@ public class PdfException extends RuntimeException {
     public static final String CannotWritePdfStream = "cannot.write.pdf.stream";
     public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
     public static final String CfNotFoundEncryption = "cf.not.found.encryption";
+    public static final String CodabarCharacterOneIsIllegal = "the.character.1.is.illegal.in.codabar";
+    public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "codabar.must.have.at.least.a.start.and.stop.character";
+    public static final String CodabarMustHaveOneAbcdAsStartStopCharacter  = "codabar.must.have.one.of.abcd.as.start.stop.character";
+    public static final String CodabarStartStopCharacterAreOnlyExtremes =  "in.codabar.start.stop.characters.are.only.allowed.at.the.extremes";
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression.1.is.not.supported";
     public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "compression.jpeg.is.only.supported.with.a.single.strip.this.image.has.1.strips";
@@ -63,9 +69,11 @@ public class PdfException extends RuntimeException {
     public static final String DecodeParameterType1IsNotSupported = "decode.parameter.type.1.is.not.supported";
     public static final String DefaultcryptfilterNotFoundEncryption = "defaultcryptfilter.not.found.encryption";
     public static final String DictionaryKey1IsNotAName = "dictionary.key.1.is.not.a.name";
+    public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
     public static final String DocumentHasNoPages = "document.has.no.pages";
     public static final String DocumentHasNoCatalogObject = "document.has.no.catalog.object";
+    public static final String DocumentToCopyToCannotBeNull = "document.to.copy.to.cannot.be.null";
     public static final String ElementCannotFitAnyArea = "element.cannot.fit.any.area";
     public static final String EncryptionCanOnlyBeAddedBeforeOpeningDocument = "encryption.can.only.be.added.before.opening.the.document";
     public static final String EolCodeWordEncounteredInBlackRun = "eol.code.word.encountered.in.black.run";
@@ -103,6 +111,7 @@ public class PdfException extends RuntimeException {
     public static final String IllegalLengthInAscii85decode = "illegal.length.in.ascii85decode";
     public static final String IllegalLengthValue = "illegal.length.value";
     public static final String IllegalPValue = "illegal.p.value";
+    public static final String IllegalResourceTree = "illegal.resources.tree";
     public static final String IllegalRValue = "illegal.r.value";
     public static final String IllegalVValue = "illegal.v.value";
     public static final String Font1With2IsNotRecognized = "font.1.with.2.is.not.recognized";
@@ -177,8 +186,10 @@ public class PdfException extends RuntimeException {
     public static final String StructureElementIsNotLinkedToStructParent = "structure.element.is.not.linked.to.structparent";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String StructureElementShallContainPgKey = "structure.element.shall.contain.pg.key";
-    public static final String TextIsTooBig = "text.is.too.big";
     public static final String TextCannotBeNull = "text.cannot.be.null";
+    public static final String TextIsTooBig = "text.is.too.big";
+    public static final String TextMustBeEven = "the.text.length.must.be.even";
+    public static final String TwoBarcodeMustBeExternally = "the.two.barcodes.must.be.composed.externally";
     public static final String ThereAreIllegalCharactersForBarcode128In1 = "there.are.illegal.characters.for.barcode.128.in.1";
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
@@ -204,14 +215,6 @@ public class PdfException extends RuntimeException {
     public static final String XrefTableDoesntHaveSuitableItemForObject1 = "xref.table.doesn't.have.suitable.item.for.object.1";
     public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
     public static final String YouCannotFlushStructTreeRootManually = "you.cannot.flush.structtreeroot.manually";
-    public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
-    public static final String IllegalResourceTree = "illegal.resources.tree";
-    public static final String TextMustBeEven = "the.text.length.must.be.even";
-    public static final String TwoBarcodeMustBeExternally = "the.two.barcodes.must.be.composed.externally";
-    public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "codabar.must.have.at.least.a.start.and.stop.character";
-    public static final String CodabarMustHaveOneAbcdAsStartStopCharacter  = "codabar.must.have.one.of.abcd.as.start.stop.character";
-    public static final String CodabarStartStopCharacterAreOnlyExtremes =  "in.codabar.start.stop.characters.are.only.allowed.at.the.extremes";
-    public static final String CodabarCharacterOneIsIllegal = "the.character.1.is.illegal.in.codabar";
 
     protected Object object;
     protected String composedMessage;

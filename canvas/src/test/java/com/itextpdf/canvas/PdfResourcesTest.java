@@ -74,7 +74,7 @@ public class PdfResourcesTest {
         PdfObject e2 = egsResources.get(new PdfName("Gs2"));
         n2 = resources.addExtGState(e2);
         Assert.assertEquals("Gs2", n2.getValue());
-        PdfObject e4 = e2.copy(document);
+        PdfObject e4 = (PdfObject) e2.clone();
         PdfName n4 = resources.addExtGState(e4);
         Assert.assertEquals("Gs4", n4.getValue());
         document.close();

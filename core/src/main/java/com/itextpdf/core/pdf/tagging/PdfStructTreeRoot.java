@@ -177,6 +177,18 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @throws PdfException
      */
     public void copyToDocument(PdfDocument toDocument, LinkedHashMap<PdfPage, PdfPage> page2page) {
+        copyToDocument(toDocument, page2page, false);
+    }
+
+    /**
+     * Copies structure to a {@code toDocument}.
+     *
+     * @param toDocument document to cpt structure to.
+     * @param page2page  association between original page and copied page.
+     * @param copyToCurrent indicates if <code>page2page</code> keys and values represent pages from single document
+     * @throws PdfException
+     */
+    public void copyToDocument(PdfDocument toDocument, LinkedHashMap<PdfPage, PdfPage> page2page, boolean copyToCurrent) {
         if (!toDocument.isTagged())
             return;
         Set<PdfDictionary> tops = new LinkedHashSet<PdfDictionary>();
@@ -190,7 +202,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             }
         }
         for (PdfDictionary top : tops) {
-            PdfDictionary copied = copyObject(top, objectsToCopy, toDocument, page2pageDictionaries);
+            PdfDictionary copied = copyObject(top, objectsToCopy, toDocument, page2pageDictionaries, copyToCurrent);
             toDocument.getStructTreeRoot().addKidObject(copied);
         }
     }
@@ -217,7 +229,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             PdfPage page = toDocument.getPage(i);
             page2pageSource.put(page, page);
         }
-        copyToDocument(toDocument, page2pageSource);
+        copyToDocument(toDocument, page2pageSource, true);
 
         copyToDocument(toDocument, page2page);
 
@@ -226,7 +238,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             PdfPage page = toDocument.getPage(i);
             page2pageSource.put(page, page);
         }
-        copyToDocument(toDocument, page2pageSource);
+        copyToDocument(toDocument, page2pageSource, true);
         for (PdfObject k : kids) {
             toDocument.getStructTreeRoot().getKidsObject().remove(k);
         }
@@ -262,8 +274,12 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return elem;
     }
 
-    private PdfDictionary copyObject(PdfDictionary source, Set<PdfDictionary> objectsToCopy, PdfDocument toDocument, Map<PdfDictionary, PdfDictionary> page2page) {
-        PdfDictionary copied = source.copy(toDocument, ignoreKeysForCopy, true);
+    private PdfDictionary copyObject(PdfDictionary source, Set<PdfDictionary> objectsToCopy, PdfDocument toDocument, Map<PdfDictionary, PdfDictionary> page2page, boolean copyToCurrent) {
+        PdfDictionary copied;
+        if (copyToCurrent)
+            copied = source.clone(ignoreKeysForCopy);
+        else
+            copied = source.copyToDocument(toDocument, ignoreKeysForCopy, true);
         PdfDictionary pg = source.getAsDictionary(PdfName.Pg);
         if (pg != null)
             copied.put(PdfName.Pg, page2page.get(pg));
@@ -277,7 +293,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
                     PdfDictionary kDict = (PdfDictionary) k;
                     if (objectsToCopy.contains(kDict)) {
                         boolean hasParent = kDict.containsKey(PdfName.P);
-                        PdfDictionary copiedK = copyObject(kDict, objectsToCopy, kDict.getIndirectReference() == null ? null : toDocument, page2page);
+                        PdfDictionary copiedK = copyObject(kDict, objectsToCopy, toDocument, page2page, copyToCurrent);
                         if (hasParent)
                             copiedK.put(PdfName.P, copied);
                         copied.put(PdfName.K, copiedK);
@@ -296,7 +312,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
                                 PdfDictionary kArrElemDict = (PdfDictionary) kArrElem;
                                 if (objectsToCopy.contains(kArrElemDict)) {
                                     boolean hasParent = kArrElemDict.containsKey(PdfName.P);
-                                    PdfDictionary copiedK = copyObject(kArrElemDict, objectsToCopy, kArrElemDict.getIndirectReference() == null ? null : toDocument, page2page);
+                                    PdfDictionary copiedK = copyObject(kArrElemDict, objectsToCopy, toDocument, page2page, copyToCurrent);
                                     if (hasParent)
                                         copiedK.put(PdfName.P, copied);
                                     newArr.add(copiedK);

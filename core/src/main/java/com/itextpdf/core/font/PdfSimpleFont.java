@@ -147,7 +147,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
         if (toUnicode != null) {
             if (toUnicode instanceof PdfStream) {
-                PdfStream newStream = ((PdfStream) toUnicode).copy(getDocument());
+                PdfStream newStream = (PdfStream) toUnicode.clone();
                 getPdfObject().put(PdfName.ToUnicode, newStream);
                 newStream.flush();
             }
@@ -216,21 +216,21 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
         PdfStream fileStream = fromDescriptorDictionary.getAsStream(PdfName.FontFile);
         if (fileStream != null) {
-            PdfStream newFileStream = fileStream.copy(getDocument());
+            PdfStream newFileStream = (PdfStream) fileStream.clone();
             toDescriptorDictionary.put(PdfName.FontFile, newFileStream);
             newFileStream.flush();
         }
 
         PdfStream fileStream2 = fromDescriptorDictionary.getAsStream(PdfName.FontFile2);
         if (fileStream2 != null) {
-            PdfStream newFileStream = fileStream2.copy(getDocument());
+            PdfStream newFileStream = (PdfStream) fileStream2.clone();
             toDescriptorDictionary.put(PdfName.FontFile2, newFileStream);
             newFileStream.flush();
         }
 
         PdfStream fileStream3 = fromDescriptorDictionary.getAsStream(PdfName.FontFile3);
         if (fileStream3 != null) {
-            PdfStream newFileStream = fileStream3.copy(getDocument());
+            PdfStream newFileStream = (PdfStream) fileStream3.clone();
             toDescriptorDictionary.put(PdfName.FontFile3, newFileStream);
             newFileStream.flush();
         }
