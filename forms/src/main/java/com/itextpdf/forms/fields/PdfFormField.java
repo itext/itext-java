@@ -47,6 +47,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /** A field with the symbol star */
     public static final int TYPE_STAR = 6;
 
+    public static final int FF_READ_ONLY = makeFieldFlag(1);
+    public static final int FF_REQUIRED = makeFieldFlag(2);
+    public static final int FF_NO_EXPORT = makeFieldFlag(3);
+
     protected static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
 
     protected String text;
@@ -300,6 +304,42 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         regenerateField();
         return (T) this;
+    }
+
+    /**
+     * Set text field value with given font and size
+     * @param value text value
+     * @param font
+     * @param fontSize
+     * @return the edited field
+     */
+    public <T extends PdfFormField> T setValue(String value, PdfFont font, int fontSize) {
+        PdfName formType = getFormType();
+        if (!formType.equals(PdfName.Tx) && !formType.equals(PdfName.Ch)) {
+            return setValue(value);
+        }
+        PdfArray bBox = getPdfObject().getAsArray(PdfName.Rect);
+        if (bBox == null) {
+            PdfArray kids = getKids();
+            if (kids == null) {
+                throw new PdfException(PdfException.WrongFormFieldAddAnnotationToTheField);
+            }
+            bBox = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
+        }
+
+
+        PdfFormXObject appearance;
+        if (formType.equals(PdfName.Tx)) {
+            appearance = drawTextAppearance(bBox.toRectangle(), font, fontSize, value);
+        } else {
+            appearance = drawMultiLineTextAppearance(bBox.toRectangle(), font, fontSize, value);
+        }
+
+        appearance.getResources().addFont(font);
+        PdfDictionary ap = new PdfDictionary();
+        ap.put(PdfName.N, appearance.getPdfObject());
+
+        return put(PdfName.AP, ap);
     }
 
     public <T extends PdfFormField> T setParent(PdfFormField parent) {
@@ -788,7 +828,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (bBox == null) {
                     PdfArray kids = getKids();
                     if (kids == null) {
-                        throw new PdfException("Wrong form field to regenerate. Add annotation to the field");
+                        throw new PdfException(PdfException.WrongFormFieldAddAnnotationToTheField);
                     }
                     bBox = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
                 }
@@ -796,6 +836,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Object[] fontAndSize = getFontAndSize(asNormal);
                 PdfFont font = (PdfFont) fontAndSize[0];
                 int fontSize = (int) fontAndSize[1];
+                if (fontSize == 0){
+                    fontSize = DEFAULT_FONT_SIZE;
+                }
 
                 PdfFormXObject appearance;
                 if (PdfName.Tx.equals(type)) {
@@ -857,7 +900,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 setCheckType(checkType);
                 drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
                 PdfWidgetAnnotation widget = getWidgets().get(0);
-                if (value.equals("Yes")) {
+                if (widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
                     widget.setAppearanceState(new PdfName(value));
                 } else {
                     widget.setAppearanceState(new PdfName("Off"));
@@ -873,6 +916,30 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public void setBorderWidth(float borderWidth) {
         this.borderWidth = borderWidth;
+    }
+
+    public <T extends PdfFormField> T setReadOnly(boolean readOnly) {
+        return setFieldFlag(FF_READ_ONLY, readOnly);
+    }
+
+    public boolean isReadOnly() {
+        return getFieldFlag(FF_READ_ONLY);
+    }
+
+    public <T extends PdfFormField> T setRequired(boolean required) {
+        return setFieldFlag(FF_REQUIRED, required);
+    }
+
+    public boolean isRequired() {
+        return getFieldFlag(FF_REQUIRED);
+    }
+
+    public <T extends PdfFormField> T setNoExport(boolean noExport) {
+        return setFieldFlag(FF_NO_EXPORT, noExport);
+    }
+
+    public boolean isNoExport() {
+        return getFieldFlag(FF_NO_EXPORT);
     }
 
     protected Rectangle getRect(PdfDictionary field) {
@@ -926,8 +993,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Object[] dab = splitDAelements(str);
                 PdfName fontName = new PdfName(dab[0].toString());
                 fontAndSize[0] =  new PdfFont(getDocument(), fontDic.getAsDictionary(fontName));
-//                fontAndSize[0] =  PdfFont.createFont(getDocument(), fontDic.getAsDictionary(fontName));
                 fontAndSize[1] = (Integer) dab[1];
+            } else {
+                fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
+                fontAndSize[1] = DEFAULT_FONT_SIZE;
             }
         } else {
             fontAndSize[0] = PdfFont.getDefaultFont(getDocument());

@@ -1,7 +1,10 @@
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 public class PdfTextFormField extends PdfFormField {
 
