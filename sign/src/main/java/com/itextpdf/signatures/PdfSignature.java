@@ -28,12 +28,12 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.ByteRange, array);
     }
 
-    public void setContents(byte contents[]) {
-        put(PdfName.Contents, new PdfString(contents, true));
+    public void setContents(byte[] contents) {
+        put(PdfName.Contents, new PdfString(contents).setHexWriting(true));
     }
 
-    public void setCert(byte cert[]) {
-        put(PdfName.Cert, new PdfString(cert, false));
+    public void setCert(byte[] cert) {
+        put(PdfName.Cert, new PdfString(cert));
     }
 
     public void setName(String name) {

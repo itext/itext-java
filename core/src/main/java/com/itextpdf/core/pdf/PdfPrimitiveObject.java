@@ -21,7 +21,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
         this.content = content;
     }
 
-    final protected byte[] getInternalContent() {
+    protected final byte[] getInternalContent() {
         if (content == null)
             generateContent();
         return content;

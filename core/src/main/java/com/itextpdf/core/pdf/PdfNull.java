@@ -4,11 +4,15 @@ import com.itextpdf.basics.io.OutputStream;
 
 public class PdfNull extends PdfPrimitiveObject {
 
-    public static final PdfNull PdfNull = new PdfNull();
+    public static final PdfNull PdfNull = new PdfNull(true);
     private static final byte[] NullContent = OutputStream.getIsoBytes("null");
 
     public PdfNull() {
         super();
+    }
+
+    private PdfNull(boolean directOnly) {
+        super(directOnly);
     }
 
     @Override

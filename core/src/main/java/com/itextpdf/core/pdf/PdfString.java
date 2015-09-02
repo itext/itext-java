@@ -41,7 +41,23 @@ public class PdfString extends PdfPrimitiveObject {
         this(value, null);
     }
 
-    public PdfString(byte[] content, boolean hexWriting) {
+    public PdfString(byte[] content) {
+        super();
+        if (content != null && content.length > 0) {
+            StringBuilder str = new StringBuilder(content.length);
+            for (byte b: content) {
+                str.append((char)(b & 0xff));
+            }
+            this.value = str.toString();
+        } else {
+            this.value = "";
+        }
+    }
+
+    /**
+     * Only PdfReader could use this method
+     */
+    protected PdfString(byte[] content, boolean hexWriting) {
         super(content);
         this.hexWriting = hexWriting;
     }
