@@ -34,6 +34,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static final int DA_SIZE = 1;
     public static final int DA_COLOR = 2;
 
+    public static final int ALIGN_LEFT = 0;
+    public static final int ALIGN_CENTER = 1;
+    public static final int ALIGN_RIGHT = 2;
+
     /** A field with the symbol check */
     public static final int TYPE_CHECK = 1;
     /** A field with the symbol circle */
@@ -57,6 +61,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected PdfFont font;
     protected int checkType;
     protected float borderWidth = 1;
+    protected int pageNum;
 
     public PdfFormField() {
         this(new PdfDictionary());
@@ -294,6 +299,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.V, new PdfString(value));
         } else if (PdfName.Btn.equals(formType)) {
              if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
+                 setText(value);
                  //@TODO Base64 images support
              } else {
                  put(PdfName.V, new PdfName(value));
@@ -479,6 +485,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfName subType = getPdfObject().getAsName(PdfName.Subtype);
         if (subType != null && subType.equals(PdfName.Widget)) {
+            PdfAnnotation widget = PdfAnnotation.makeAnnotation(getPdfObject(), getDocument());
             widgets.add((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(getPdfObject(), getDocument()));
         }
 
@@ -586,9 +593,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 newPath().
                 beginText().
                 setFontAndSize(font, fontSize).
-                resetFillColorRgb().
-                setTextMatrix(2, height / 2 - fontSize * 0.3f).
-                showText(value).
+                resetFillColorRgb();
+        Integer justification = getJustification();
+        if (justification == null) {
+            justification = 0;
+        }
+        drawTextAligned(canvas, justification, value, 2, height / 2 - fontSize * 0.3f, font, fontSize);
+//                setTextMatrix(2, height / 2 - fontSize * 0.3f).
+        canvas.
+//                showText(value).
                 endText().
                 restoreState().
                 endVariableText();
@@ -721,6 +734,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 //        setDefaultAppearance(setFontAndSize(font, fontSize));
 
         drawButton(canvas, 0, 0, width, height, text, font, fontSize);
+        setDefaultAppearance(setFontAndSize(font, fontSize));
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
@@ -842,7 +856,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 PdfFormXObject appearance;
                 if (PdfName.Tx.equals(type)) {
-                    appearance = drawTextAppearance(bBox.toRectangle(), font, fontSize, value);
+                    if (!((PdfTextFormField)this).isMultiline()) {
+                        appearance = drawTextAppearance(bBox.toRectangle(), font, fontSize, value);
+                    } else {
+                        appearance = drawMultiLineTextAppearance(bBox.toRectangle(), font, fontSize, value);
+                    }
+
                 } else {
                     appearance = drawMultiLineTextAppearance(bBox.toRectangle(), font, fontSize, value);
                 }
@@ -860,6 +879,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             int ff = getFieldFlags();
             if ((ff & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 try {
+                    value = getText();
                     Rectangle rect = getRect(getPdfObject());
                     PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
                     PdfStream asNormal = null;
@@ -942,6 +962,36 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return getFieldFlag(FF_NO_EXPORT);
     }
 
+    public <T extends PdfFormField> T setPage(int pageNum){
+        if (!getWidgets().isEmpty()) {
+            PdfAnnotation annot = getWidgets().get(0);
+            if (annot != null) {
+                annot.setPage(getDocument().getPage(pageNum));
+            }
+        }
+        return (T) this;
+    }
+
+    public PdfPage getPage() {
+        if (pageNum != 0) {
+            return getDocument().getPage(pageNum);
+        }
+        return null;
+    }
+
+    protected void drawTextAligned(PdfCanvas canvas, int alignment, String text, float x, float y, PdfFont font, int fontSize) {
+        switch (alignment) {
+            case ALIGN_CENTER:
+                x -= font.getWidth(text) / 2;
+                break;
+            case ALIGN_RIGHT:
+                x -= font.getWidth(text);
+                break;
+        }
+        canvas.setTextMatrix(x, y);
+        canvas.showText(text);
+    }
+
     protected Rectangle getRect(PdfDictionary field) {
         PdfArray rect = field.getAsArray(PdfName.Rect);
         if (rect == null) {
@@ -992,7 +1042,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 String str = getDefaultAppearance().toUnicodeString();
                 Object[] dab = splitDAelements(str);
                 PdfName fontName = new PdfName(dab[0].toString());
-                fontAndSize[0] =  new PdfFont(getDocument(), fontDic.getAsDictionary(fontName));
+                fontAndSize[0] =  PdfFont.createFont(getDocument(), fontDic.getAsDictionary(fontName));
                 fontAndSize[1] = (Integer) dab[1];
             } else {
                 fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
@@ -1007,7 +1057,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected static Object[] splitDAelements(String da) {
-
         PdfTokenizer tk = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(PdfEncodings.convertToBytes(da, null))));
         ArrayList<String> stack = new ArrayList<String>();
         Object ret[] = new Object[3];

@@ -30,7 +30,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected PdfFont(PdfDocument document, PdfDictionary pdfDictionary, boolean isCopy){
-        super(new PdfDictionary());
+        super(pdfDictionary);
         makeIndirect(document);
         getPdfObject().put(PdfName.Type, PdfName.Font);
         this.fontDictionary = pdfDictionary;

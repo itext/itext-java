@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.font.PdfFont;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -238,7 +239,7 @@ public class PdfPagesTest {
         return -1;
     }
 
-    @Test
+    @Test@Ignore
     public void testInheritedResources() throws IOException {
         String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
         PdfReader reader1 = new PdfReader(inputFileName1);
@@ -258,7 +259,7 @@ public class PdfPagesTest {
         List<PdfFont> list = page.getResources().getFonts(true);
     }
 
-    @Test
+    @Test@Ignore
     public void testInheritedResourcesUpdate() throws IOException {
 
 

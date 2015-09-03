@@ -90,6 +90,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary fieldDic = field.getPdfObject();
         if (kids != null){
+            PdfPage fieldPage = field.getPage();
+            if (field.getPage() != null) {
+                page = field.getPage();
+            }
             processKids(kids, fieldDic, page);
         }
 
@@ -338,11 +342,22 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 parent.remove(PdfName.Kids);
                 dict.remove(PdfName.Parent);
                 parent.mergeDifferent(dict);
-                page.addAnnotation(PdfAnnotation.makeAnnotation(parent, document));
+                PdfAnnotation annot = PdfAnnotation.makeAnnotation(parent, document);
+                PdfDictionary pageDic = annot.getPdfObject().getAsDictionary(PdfName.P);
+                if (pageDic != null) {
+                    PdfArray array = pageDic.getAsArray(PdfName.Annots);
+                    if (array == null) {
+                        array = new PdfArray();
+                        pageDic.put(PdfName.Annots, array);
+                    }
+                    array.add(parent);
+                } else {
+                    page.addAnnotation(annot);
+                }
             } else {
                 PdfArray otherKids = (dict).getAsArray(PdfName.Kids);
                 if (otherKids != null) {
-                    dict = processKids(otherKids, dict, page);
+                    processKids(otherKids, dict, page);
                 }
             }
         } else {

@@ -557,7 +557,7 @@ public class PdfFontTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test
+    @Test@Ignore
     public void testNewType3FontBasedExistingFont() throws IOException, InterruptedException {
 
         final String author = "Dmitry Trusevich";
@@ -603,7 +603,7 @@ public class PdfFontTest {
        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
 
-    @Test
+    @Test@Ignore
     public void testNewType1FontBasedExistingFont() throws IOException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
@@ -643,7 +643,7 @@ public class PdfFontTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test
+    @Test@Ignore
     public void testNewTrueTypeFont1BasedExistingFont() throws IOException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
@@ -725,7 +725,7 @@ public class PdfFontTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test
+    @Test@Ignore
     public void testNewType0FontBasedExistingFont() throws IOException, PdfException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
@@ -765,7 +765,7 @@ public class PdfFontTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test
+    @Test@Ignore
     public void createDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException, PdfException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
@@ -805,7 +805,7 @@ public class PdfFontTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test
+    @Test@Ignore
     public void createDocumentWithType1WithToUnicodeBasedExistingFont() throws IOException, PdfException, InterruptedException {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
