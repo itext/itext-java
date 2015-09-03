@@ -17,7 +17,7 @@ public class PdfA2Checker extends PdfA1Checker{
     }
 
     @Override
-    public void checkAnnotations(PdfArray annotations) {
+    protected void checkAnnotations(PdfArray annotations) {
         for (PdfObject annotation : annotations) {
             PdfDictionary annotDic = (PdfDictionary) annotation;
             PdfName subtype = annotDic.getAsName(PdfName.Subtype);
@@ -89,6 +89,24 @@ public class PdfA2Checker extends PdfA1Checker{
                         !isCorrectRect)
                     throw new PdfAConformanceException(PdfAConformanceException.EveryAnnotationShallHaveAtLeastOneAppearanceDictionary);
             }
+        }
+    }
+
+    @Override
+    protected void checkForm(PdfDictionary form) {
+        PdfBoolean needAppearances = form.getAsBoolean(PdfName.NeedAppearances);
+        if (needAppearances != null && needAppearances.getValue()) {
+            throw new PdfAConformanceException("needappearances.flag.of.the.interactive.form.dictionary.shall.either.not.be.present.or.shall.be.false");
+        }
+        if (checkStructure(conformanceLevel) && form.containsKey(PdfName.XFA)) {
+            throw new PdfAConformanceException("the.interactive.form.dictionary.shall.not.contain.the.xfa.key");
+        }
+    }
+
+    @Override
+    protected void checkCatalog(PdfDictionary catalog) {
+        if (catalog.containsKey(PdfName.NeedsRendering)) {
+            throw new PdfAConformanceException("the.catalog.dictionary.shall.not.contain.the.needsrendering.key");
         }
     }
 }

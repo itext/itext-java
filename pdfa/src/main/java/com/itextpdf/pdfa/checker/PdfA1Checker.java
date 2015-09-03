@@ -125,4 +125,17 @@ public class PdfA1Checker extends PdfAChecker {
             }
         }
     }
+
+    @Override
+    protected void checkForm(PdfDictionary form) {
+        PdfBoolean needAppearances = form.getAsBoolean(PdfName.NeedAppearances);
+        if (needAppearances != null && needAppearances.getValue()) {
+            throw new PdfAConformanceException("needappearances.flag.of.the.interactive.form.dictionary.shall.either.not.be.present.or.shall.be.false");
+        }
+    }
+
+    @Override
+    protected void checkCatalog(PdfDictionary catalog) {
+
+    }
 }

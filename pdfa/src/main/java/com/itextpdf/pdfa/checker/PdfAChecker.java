@@ -20,6 +20,12 @@ public abstract class PdfAChecker {
     public void checkDocument(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();
 
+        checkCatalog(catalogDict);
+
+        if (catalogDict.containsKey(PdfName.AcroForm)){
+            checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
+        }
+
         for (int i = 1; i <= catalog.getNumOfPages(); i++) {
             PdfPage p = catalog.getPage(i);
             PdfDictionary pageResources = p.getPdfObject().getAsDictionary(PdfName.Resources);
@@ -66,6 +72,8 @@ public abstract class PdfAChecker {
     protected abstract void checkPdfStream(PdfStream stream);
     protected abstract void checkPdfString(PdfString string);
     protected abstract void checkAnnotations(PdfArray annotations);
+    protected abstract void checkForm(PdfDictionary form);
+    protected abstract void checkCatalog(PdfDictionary catalog);
 
     protected void checkResources(PdfDictionary resources) {
         if (resources == null)

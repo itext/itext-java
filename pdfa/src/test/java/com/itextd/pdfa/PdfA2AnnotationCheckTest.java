@@ -17,13 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class PdfA2AnnotationCheckTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/PdfAnnotationCheckTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAnnotationCheckTest/";
-
-    @BeforeClass
-    static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
-    }
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
     @Test(expected = PdfAConformanceException.class)
     public void annotationCheckTest01() throws FileNotFoundException {
