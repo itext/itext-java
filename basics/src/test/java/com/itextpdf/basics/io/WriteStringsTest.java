@@ -1,6 +1,5 @@
 package com.itextpdf.basics.io;
 
-import com.itextpdf.basics.io.OutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,6 +24,5 @@ public class WriteStringsTest {
         String str = "Some PdfString";
         byte[] content = OutputStream.getIsoBytes((byte) '(', str, (byte) ')');
         Assert.assertArrayEquals(("(" + str + ")").getBytes(), content);
-
     }
 }

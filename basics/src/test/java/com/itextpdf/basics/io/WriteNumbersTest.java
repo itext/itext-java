@@ -1,6 +1,5 @@
 package com.itextpdf.basics.io;
 
-import com.itextpdf.basics.io.OutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -66,14 +65,5 @@ public class WriteNumbersTest {
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
             Assert.assertArrayEquals(message, expecteds, actuals);
         }
-    }
-
-    @Test
-    public void WriteNumber4Test() {
-
-    }
-
-    public void WriteNumber5Test() {
-
     }
 }
