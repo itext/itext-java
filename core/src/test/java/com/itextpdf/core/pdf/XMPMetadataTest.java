@@ -1,10 +1,12 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.text.pdf.PdfReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@Category(IntegrationTest.class)
 public class XMPMetadataTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/XmpWriterTest/";

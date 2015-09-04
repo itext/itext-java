@@ -2,16 +2,20 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@Category(IntegrationTest.class)
 public class PdfPagesTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfPagesTest/";
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfPagesTest/";

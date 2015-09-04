@@ -2,14 +2,18 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 import java.util.Set;
 
+@Category(IntegrationTest.class)
 public class PdfResourcesTest {
 
 //    static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfResourcesTest/";

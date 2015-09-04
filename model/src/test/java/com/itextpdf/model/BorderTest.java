@@ -4,6 +4,7 @@ import com.itextpdf.canvas.color.*;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.border.*;
 import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.ListItem;
@@ -11,12 +12,14 @@ import com.itextpdf.model.element.Paragraph;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@Category(IntegrationTest.class)
 public class BorderTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/BorderTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/BorderTest/";

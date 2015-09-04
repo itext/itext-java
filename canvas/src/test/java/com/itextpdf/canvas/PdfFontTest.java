@@ -12,6 +12,7 @@ import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.BaseFont;
@@ -22,12 +23,14 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@Category(IntegrationTest.class)
 public class PdfFontTest {
     static final public int PageCount = 1;
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfFontTest/";

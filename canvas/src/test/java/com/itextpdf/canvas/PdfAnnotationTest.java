@@ -13,10 +13,12 @@ import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -26,6 +28,7 @@ import java.util.*;
 
 import java.io.*;
 
+@Category(IntegrationTest.class)
 public class PdfAnnotationTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfAnnotationTest/";

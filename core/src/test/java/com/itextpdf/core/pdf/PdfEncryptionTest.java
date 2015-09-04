@@ -4,6 +4,7 @@ import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.font.PdfType1Font;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfStamper;
@@ -11,12 +12,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Security;
 
+@Category(IntegrationTest.class)
 public class PdfEncryptionTest {
 
     public static byte[] USER = "Hello".getBytes();

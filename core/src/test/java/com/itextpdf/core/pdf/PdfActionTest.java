@@ -1,12 +1,16 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.pdf.action.PdfAction;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
+@Category(IntegrationTest.class)
 public class PdfActionTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfActionTest/";

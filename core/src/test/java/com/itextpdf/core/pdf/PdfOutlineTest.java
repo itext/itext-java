@@ -4,8 +4,10 @@ import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.navigation.PdfStringDestination;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.text.DocumentException;
 import org.junit.*;
+import org.junit.experimental.categories.Category;
 import org.junit.runners.MethodSorters;
 
 import java.io.File;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TreeSet;
 
+@Category(IntegrationTest.class)
 public class PdfOutlineTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfOutlineTest/";

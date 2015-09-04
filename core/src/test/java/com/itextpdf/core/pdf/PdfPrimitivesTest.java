@@ -1,13 +1,17 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
+@Category(IntegrationTest.class)
 public class PdfPrimitivesTest {
 
     static final String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfPrimitivesTest/";

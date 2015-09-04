@@ -10,10 +10,12 @@ import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Category(IntegrationTest.class)
 public class TabsTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/TabTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/TabTest/";

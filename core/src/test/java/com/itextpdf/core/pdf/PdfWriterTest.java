@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PRStream;
@@ -8,6 +9,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -18,6 +20,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TreeMap;
 
+@Category(IntegrationTest.class)
 public class PdfWriterTest {
 
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfWriterTest/";

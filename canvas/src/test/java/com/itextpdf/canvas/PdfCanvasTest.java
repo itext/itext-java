@@ -20,12 +20,14 @@ import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.BarcodePDF417;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.awt.*;
 import java.io.*;
@@ -34,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+@Category(IntegrationTest.class)
 public class PdfCanvasTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfCanvasTest/";

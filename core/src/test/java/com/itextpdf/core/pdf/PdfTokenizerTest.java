@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.text.*;
 
 
@@ -10,9 +11,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
+@Category(IntegrationTest.class)
 public class PdfTokenizerTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfTokeniserTest/";
     @Before

@@ -2,15 +2,18 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import org.junit.*;
+import org.junit.experimental.categories.Category;
 
 import java.io.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+@Category(IntegrationTest.class)
 public class PdfDocumentTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfDocumentTest/";

@@ -3,11 +3,15 @@ package com.itextpdf.core.image;
 import com.itextpdf.basics.image.BmpImageHelper;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.core.testutils.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
+@Category(UnitTest.class)
 public class BmpTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/image/";

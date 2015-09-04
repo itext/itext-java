@@ -5,15 +5,18 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.*;
 
+@Category(IntegrationTest.class)
 public class ImageTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/ImageTest/";

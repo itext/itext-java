@@ -4,17 +4,20 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Link;
 import com.itextpdf.model.element.Paragraph;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@Category(IntegrationTest.class)
 public class LinkTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/LinkTest/";

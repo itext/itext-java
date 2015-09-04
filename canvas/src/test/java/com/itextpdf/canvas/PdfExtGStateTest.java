@@ -7,13 +7,17 @@ import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
+@Category(IntegrationTest.class)
 public class PdfExtGStateTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfExtGStateTest/";

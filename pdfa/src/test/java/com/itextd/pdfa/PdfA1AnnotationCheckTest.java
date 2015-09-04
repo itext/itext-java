@@ -4,18 +4,21 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.*;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.pdfa.PdfAConformanceLevel;
 import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.pdfa.PdfOutputIntent;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+@Category(IntegrationTest.class)
 public class PdfA1AnnotationCheckTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 

@@ -3,10 +3,13 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.basics.io.OutputStream;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+@Category(IntegrationTest.class)
 public class PdfReaderTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfReaderTest/";

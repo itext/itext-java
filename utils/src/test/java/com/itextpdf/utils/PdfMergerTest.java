@@ -4,14 +4,17 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.*;
 import java.util.ArrayList;
 
+@Category(IntegrationTest.class)
 public class PdfMergerTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/utils/PdfMergerTest/";

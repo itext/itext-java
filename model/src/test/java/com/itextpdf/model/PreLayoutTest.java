@@ -9,6 +9,7 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.model.layout.LayoutArea;
@@ -19,6 +20,7 @@ import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Category(IntegrationTest.class)
 public class PreLayoutTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/PreLayoutTest/";
