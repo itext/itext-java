@@ -12,15 +12,15 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     protected PdfXObject xObject;
 
-    public Image(PdfImageXObject xObject){
+    public Image(PdfImageXObject xObject) {
         this.xObject = xObject;
     }
 
-    public Image(PdfFormXObject xObject){
+    public Image(PdfFormXObject xObject) {
         this.xObject = xObject;
     }
 
-    public Image(PdfImageXObject xObject, float width){
+    public Image(PdfImageXObject xObject, float width) {
         this.xObject = xObject;
         setProperty(Property.WIDTH, width);
     }
@@ -66,15 +66,15 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         return xObject;
     }
 
-    public Image setRotationAngle(double angle){
+    public Image setRotationAngle(double angle) {
         return setProperty(Property.ROTATION_ANGLE, angle);
     }
 
-    public Image setTranslationDistance(float xDistance, float yDistance){
+    public Image setTranslationDistance(float xDistance, float yDistance) {
         return setProperty(Property.X_DISTANCE, xDistance).setProperty(Property.Y_DISTANCE, yDistance);
     }
 
-    public Image scale(float horizontalScaling, float verticalScaling){
+    public Image scale(float horizontalScaling, float verticalScaling) {
         return setProperty(Property.HORIZONTAL_SCALING, horizontalScaling).setProperty(Property.VERTICAL_SCALING, verticalScaling);
     }
 
@@ -88,7 +88,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
     }
 
-    public Image setAutoScaling(boolean autoScale){
+    public Image setAutoScale(boolean autoScale) {
         return setProperty(Property.AUTO_SCALE, autoScale);
     }
 
@@ -115,6 +115,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     /**
      * Gets width of the image. If a user didn't set Width property before it returns width of image or form XObject
+     *
      * @return
      */
     @Override
@@ -129,6 +130,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     /**
      * Gets height of the image. If a user didn't set Height property before it returns height of image or form XObject
+     *
      * @return
      */
     @Override

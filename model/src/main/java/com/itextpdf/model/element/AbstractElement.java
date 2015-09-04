@@ -171,9 +171,4 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
     public Type setBorderLeft(Border border) {
         return setProperty(Property.BORDER_LEFT, border);
     }
-
-    @Override
-    public boolean isBreakable() {
-        return true;
-    }
 }

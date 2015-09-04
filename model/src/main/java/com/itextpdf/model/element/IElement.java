@@ -10,7 +10,4 @@ public interface IElement<Type extends IElement> extends IPropertyContainer<Type
     IRenderer makeRenderer();
 
     IRenderer createRendererSubTree();
-
-    boolean isBreakable();
-
 }

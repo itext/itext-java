@@ -2,8 +2,8 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.geom.AffineTransform;
 import com.itextpdf.basics.geom.Point2D;
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
@@ -114,17 +114,6 @@ public class ImageRenderer extends AbstractRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
-    private void getMatrix(AffineTransform t, float imageItselfScaledWidth, float imageItselfScaledHeight) {
-        t.getMatrix(matrix);
-        PdfXObject xObject = ((Image) (getModelElement())).getXObject();
-        if (xObject instanceof PdfImageXObject) {
-            matrix[0] *= imageItselfScaledWidth;
-            matrix[1] *= imageItselfScaledWidth;
-            matrix[2] *= imageItselfScaledHeight;
-            matrix[3] *= imageItselfScaledHeight;
-        }
-    }
-
     @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
         super.draw(document, canvas);
@@ -156,6 +145,17 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         return this;
+    }
+
+    private void getMatrix(AffineTransform t, float imageItselfScaledWidth, float imageItselfScaledHeight) {
+        t.getMatrix(matrix);
+        PdfXObject xObject = ((Image) (getModelElement())).getXObject();
+        if (xObject instanceof PdfImageXObject) {
+            matrix[0] *= imageItselfScaledWidth;
+            matrix[1] *= imageItselfScaledWidth;
+            matrix[2] *= imageItselfScaledHeight;
+            matrix[3] *= imageItselfScaledHeight;
+        }
     }
 
     private float adjustPositionAfterRotation(float angle, float maxWidth, float maxHeight, boolean isScale) {
