@@ -1,20 +1,13 @@
-package com.itextpdf.core.image;
-
-import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.image.TiffImageHelper;
-import com.itextpdf.core.testutils.annotations.type.UnitTest;
+package com.itextpdf.basics.image;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
-@Category(UnitTest.class)
 public class TiffTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/image/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/basics/image/";
 
     @Test
     public void openTiff1() throws IOException {
@@ -69,6 +62,4 @@ public class TiffTest {
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
     }
-
-
 }

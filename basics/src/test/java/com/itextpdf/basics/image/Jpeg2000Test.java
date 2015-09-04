@@ -1,21 +1,15 @@
-package com.itextpdf.core.image;
+package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.image.Jpeg2000ImageHelper;
-import com.itextpdf.core.testutils.annotations.type.UnitTest;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
-@Category(UnitTest.class)
 public class Jpeg2000Test {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/image/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/basics/image/";
 
     @Test
     public void openJpeg2000_1() throws IOException {
@@ -35,6 +29,4 @@ public class Jpeg2000Test {
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
     }
-
-
 }
