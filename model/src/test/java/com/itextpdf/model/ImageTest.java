@@ -190,7 +190,7 @@ public class ImageTest {
         doc.add(new Paragraph(new Text("First Line")));
         Paragraph p = new Paragraph();
         p.add(image);
-        image.setTranslationDistance(100, -100);
+        image.setMarginLeft(100).setMarginTop(100);
         doc.add(p);
         doc.add(new Paragraph(new Text("Second Line")));
 

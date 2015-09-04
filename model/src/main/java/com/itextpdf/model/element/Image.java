@@ -70,8 +70,40 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         return setProperty(Property.ROTATION_ANGLE, angle);
     }
 
-    public Image setTranslationDistance(float xDistance, float yDistance) {
-        return setProperty(Property.X_DISTANCE, xDistance).setProperty(Property.Y_DISTANCE, yDistance);
+    public Float getMarginLeft() {
+        return getProperty(Property.MARGIN_LEFT);
+    }
+
+    public Image setMarginLeft(float value) {
+        return setProperty(Property.MARGIN_LEFT, value);
+    }
+
+    public Float getMarginRight() {
+        return getProperty(Property.MARGIN_RIGHT);
+    }
+
+    public Image setMarginRight(float value) {
+        return setProperty(Property.MARGIN_RIGHT, value);
+    }
+
+    public Float getMarginTop() {
+        return getProperty(Property.MARGIN_TOP);
+    }
+
+    public Image setMarginTop(float value) {
+        return setProperty(Property.MARGIN_TOP, value);
+    }
+
+    public Float getMarginBottom() {
+        return getProperty(Property.MARGIN_BOTTOM);
+    }
+
+    public Image setMarginBottom(float value) {
+        return setProperty(Property.MARGIN_BOTTOM, value);
+    }
+
+    public Image setMargins(float marginTop, float marginRight, float marginBottom, float marginLeft) {
+        return setMarginTop(marginTop).setMarginRight(marginRight).setMarginBottom(marginBottom).setMarginLeft(marginLeft);
     }
 
     public Image scale(float horizontalScaling, float verticalScaling) {

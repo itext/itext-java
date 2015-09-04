@@ -75,9 +75,7 @@ public enum Property {
     WIDTH,
     WORD_SPACING(true),
     X,
-    X_DISTANCE,
-    Y,
-    Y_DISTANCE;
+    Y;
 
 
     private boolean inherited;

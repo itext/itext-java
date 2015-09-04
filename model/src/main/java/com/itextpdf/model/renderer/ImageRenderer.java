@@ -22,6 +22,7 @@ public class ImageRenderer extends AbstractRenderer {
     Float fixedXPosition;
     Float fixedYPosition;
     float pivotY;
+    float deltaX;
     float imageWidth;
     float imageHeight;
 
@@ -33,8 +34,9 @@ public class ImageRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        LayoutArea area = layoutContext.getArea();
+        LayoutArea area = layoutContext.getArea().clone();
         Rectangle layoutBox = area.getBBox();
+        applyMargins(layoutBox, false);
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         width = getPropertyAsFloat(Property.WIDTH);
@@ -85,13 +87,12 @@ public class ImageRenderer extends AbstractRenderer {
         imageItselfScaledHeight *= scaleCoef;
         imageItselfScaledWidth *= scaleCoef;
 
-
         getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
 
-        if (width > layoutBox.getWidth()){
+        if (width > layoutBox.getWidth()) {
             return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
         }
-        if (height > layoutBox.getHeight()){
+        if (height > layoutBox.getHeight()) {
             return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
         }
 
@@ -99,24 +100,22 @@ public class ImageRenderer extends AbstractRenderer {
         occupiedArea.getBBox().setHeight(height);
         occupiedArea.getBBox().setWidth(width);
 
-        Float mx = getProperty(Property.X_DISTANCE);
-        Float my = getProperty(Property.Y_DISTANCE);
-        if (mx != null && my != null) {
-            translateImage(mx, my, t);
+        float leftMargin = getPropertyAsFloat(Property.MARGIN_LEFT);
+        float topMargin = getPropertyAsFloat(Property.MARGIN_TOP);
+        if (leftMargin != 0 || topMargin != 0) {
+            translateImage(leftMargin, topMargin, t);
             getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
         }
 
-        if (fixedXPosition != null && fixedYPosition != null) {
-            occupiedArea.getBBox().setWidth(0);
-            occupiedArea.getBBox().setHeight(0);
-        }
-
+        applyMargins(occupiedArea.getBBox(), true);
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
     @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
         super.draw(document, canvas);
+
+        applyMargins(occupiedArea.getBBox(), false);
 
         int position = getPropertyAsInteger(Property.POSITION);
         if (position == LayoutPosition.RELATIVE) {
@@ -131,11 +130,13 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[1], matrix[2], matrix[3],
-                fixedXPosition, fixedYPosition);
+                fixedXPosition + deltaX, fixedYPosition);
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);
         }
+
+        applyMargins(occupiedArea.getBBox(), true);
     }
 
     protected ImageRenderer autoScale(LayoutArea area) {
@@ -159,8 +160,7 @@ public class ImageRenderer extends AbstractRenderer {
     }
 
     private float adjustPositionAfterRotation(float angle, float maxWidth, float maxHeight, boolean isScale) {
-        double saveMinX = 0;
-        if (0 != angle) {
+        if (angle != 0) {
             AffineTransform t = AffineTransform.getRotateInstance(angle);
             Point2D p00 = t.transform(new Point2D.Float(0, 0), new Point2D.Float());
             Point2D p01 = t.transform(new Point2D.Float(0, height), new Point2D.Float());
@@ -188,7 +188,7 @@ public class ImageRenderer extends AbstractRenderer {
             width = (float) (maxX - minX);
             pivotY = (float) (p00.getY() - minY);
 
-            saveMinX = minX;
+            deltaX = -(float) minX;
         }
         // Rotating image can cause fitting into area problems.
         // So let's find scaling coefficient
@@ -200,7 +200,6 @@ public class ImageRenderer extends AbstractRenderer {
             height *= maxWidth / temp;
             pivotY *= maxWidth / temp;
             scaleCoef *= maxWidth / temp;
-
         }
         if (isScale && height > maxHeight) {
             temp = height;
@@ -209,26 +208,18 @@ public class ImageRenderer extends AbstractRenderer {
             pivotY *= maxHeight / temp;
             scaleCoef *= maxHeight / temp;
         }
-        double minX = saveMinX;
-        if (occupiedArea.getBBox().getX() > minX*scaleCoef) {
-            occupiedArea.getBBox().moveRight((float) -minX * scaleCoef);
-            if (fixedXPosition != null) {
-                fixedXPosition -= (float)minX;
-            }
-        }
+
         return scaleCoef;
     }
 
     private void translateImage(float xDistance, float yDistance, AffineTransform t) {
         t.translate(xDistance, yDistance);
         t.getMatrix(matrix);
-        if (fixedXPosition == null) {
-            fixedXPosition = occupiedArea.getBBox().getX();
+        if (fixedXPosition != null) {
+            fixedXPosition += t.getTranslateX();
         }
-        if (fixedYPosition == null) {
-            fixedYPosition = occupiedArea.getBBox().getY() + height;
+        if (fixedYPosition != null) {
+            fixedYPosition += t.getTranslateY();
         }
-        fixedXPosition += t.getTranslateX();
-        fixedYPosition += t.getTranslateY();
     }
 }

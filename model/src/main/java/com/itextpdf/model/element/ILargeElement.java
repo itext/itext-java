@@ -21,7 +21,7 @@ public interface ILargeElement<Type extends ILargeElement> extends IElement<Type
 
     /**
      * Flushes the content which has just been added to the document.
-     * This is a method for internal usage and is called automatically by the docunent.
+     * This is a method for internal usage and is called automatically by the document.
      */
     void flushContent();
 
