@@ -11,7 +11,6 @@
     </parent>
 
     <artifactId>sign</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <name>iText 6 (Arya) - sign</name>
     <url>http://itextpdf.com/</url>
 
@@ -61,5 +60,27 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <groups>${unittests}</groups>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <groups>${integrationtests}</groups>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

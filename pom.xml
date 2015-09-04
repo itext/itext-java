@@ -15,6 +15,11 @@
         <url>http://itextpdf.com/</url>
     </organization>
 
+    <scm>
+        <connection>scm:git:git@gitlab.itextsupport.com:itext6/itextpdf.git</connection>
+        <url>scm:git:git@gitlab.itextsupport.com:itext6/itextpdf.git</url>
+    </scm>
+
     <modules>
         <module>basics</module>
         <module>core</module>
@@ -25,9 +30,9 @@
         <module>sign</module>
         <module>xmlsign</module>
         <module>parsing</module>
-        
         <module>barcodes</module>
         <module>pdfa</module>
+        
         <module>pdftest</module>
         
     </modules>
@@ -43,7 +48,14 @@
         <pmd.version>3.5</pmd.version>
         <slf4j.version>1.7.12</slf4j.version>
         <surefire.version>2.18.1</surefire.version>
+        <failsafe.version>2.18.1</failsafe.version>
+        <jacoco.version>0.7.5.201505241946</jacoco.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <integrationtests>com.itextpdf.core.testutils.annotations.type.IntegrationTest</integrationtests>
+        <performancetests>com.itextpdf.core.testutils.annotations.type.PerformanceTest</performancetests>
+        <sampletests>com.itextpdf.core.testutils.annotations.type.SampleTest</sampletests>
+        <unittests>com.itextpdf.core.testutils.annotations.type.UnitTest</unittests>
     </properties>
 
     <dependencies>
@@ -81,6 +93,79 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <!-- Run unit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${surefire.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <parallel>methods</parallel>
+                    <threadCount>10</threadCount>
+                </configuration>
+            </plugin>
+            <!-- Run integration tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <argLine>${jacoco.agent.argLine}</argLine>
+<!--                    <parallel>methods</parallel>    -->
+                    <threadCount>1</threadCount>
+                </configuration>
+            </plugin>
+            <!--
+                Compute integration test coverage for Sonar
+                BEWARE: Sonar doesn't run the verify phase, it has to be forced by setting -Dsonar.phase=verify
+            -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <propertyName>jacoco.agent.argLine</propertyName> <!-- default: argLine -->
+                    <includes>
+                        <include>com/itextpdf/**</include>
+                    </includes>
+                    <destFile>${project.build.directory}/jacoco-integration.exec</destFile> <!-- agent -->
+                    <dataFile>${project.build.directory}/jacoco-integration.exec</dataFile> <!-- report -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>site</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -160,6 +245,11 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${surefire.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyle.version}</version>
                 <configuration>
@@ -227,6 +317,16 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>2.5</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-linkcheck-plugin</artifactId>
+                <version>1.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changelog-plugin</artifactId>
+                <version>2.3</version>
             </plugin>
         </plugins>
     </reporting>
