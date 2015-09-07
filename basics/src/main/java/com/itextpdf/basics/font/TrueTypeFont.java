@@ -3,12 +3,11 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.font.otf.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class TrueTypeFont extends FontProgram {
@@ -25,6 +24,13 @@ public class TrueTypeFont extends FontProgram {
 
     //TODO doublicated with PdfType0Font.isVertical.
     protected boolean isVertical;
+
+    private GlyphSubstitutionTableReader gsubTable;
+    private OpenTypeGdefTableReader gdefTable;
+
+    private boolean applyLigatures = false;
+    Map<Integer, Character> glyphToCharacterMap;
+
 
     /**
      * The map containing the kerning information. It represents the content of
@@ -121,11 +127,21 @@ public class TrueTypeFont extends FontProgram {
         fontIdentification.setPanose(os_2.panose);
 
 
+        HashMap<Integer, int[]> cmap31 = getCmap31();
+        glyphToCharacterMap = new HashMap<>(cmap31.size());
+        for (Integer charCode : cmap31.keySet()) {
+            char c = (char) charCode.intValue();
+            int glyphCode = cmap31.get(charCode)[0];
+            glyphToCharacterMap.put(glyphCode, c);
+        }
+
+        readGdefTable();
+        readGsubTable();
+
         this.baseEncoding = baseEncoding;
         if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
             isUnicode = true;
             isVertical = this.baseEncoding.endsWith("V");
-
         } else {
             isUnicode = false;
             encoding = new FontEncoding(this.baseEncoding, cmaps.fontSpecific);
@@ -145,6 +161,14 @@ public class TrueTypeFont extends FontProgram {
         } else {
             this.encoding = new FontEncoding(encoding, true);
         }
+    }
+
+    public boolean isApplyLigatures() {
+        return applyLigatures;
+    }
+
+    public void setApplyLigatures(boolean applyLigatures) {
+        this.applyLigatures = applyLigatures;
     }
 
     /**
@@ -197,6 +221,57 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
+    public GlyphLine applyLigatureFeature(char[] glyphs, Integer length) {
+        if (gsubTable != null) {
+            List<FeatureRecord> features = gsubTable.getFeatureRecords();
+            FeatureRecord liga = null;
+            for (FeatureRecord featureRecord : features) {
+                if (featureRecord.tag.equals("liga")) {
+                    liga = featureRecord;
+                    break;
+                }
+            }
+            if (liga != null) {
+                boolean transformed = false;
+                GlyphLine glyphLine = createGlyphLine(glyphs, length, gsubTable.getGlyphToCharacterMap());
+                if (glyphLine != null) {
+                    List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{liga});
+                    for (OpenTableLookup lookup : lookups) {
+                        if (lookup != null && lookup.transformLine(glyphLine)) {
+                            transformed = true;
+                        }
+                        glyphLine.idx = 0;
+                    }
+                }
+                if (transformed) {
+                    return glyphLine;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    GlyphLine createGlyphLine(char[] glyphs, Integer length, Map<Integer, Character> glyphToCharacterMap) {
+        GlyphLine glyphLine = new GlyphLine();
+        glyphLine.glyphs = new ArrayList<>(length);
+        glyphLine.start = 0;
+        glyphLine.end = length;
+        glyphLine.idx = 0;
+        for (int k = 0; k < length; k++) {
+            //glyphCode, glyphWidth, String.valueOf(c), false
+            int gid = glyphs[k];
+            char ch = glyphToCharacterMap.get(gid);
+            int[] metrics = getCmap31().get((int)ch);
+            if (metrics == null) {
+                return null;
+            }
+            Glyph glyph = new Glyph(glyphs[k], metrics[1], String.valueOf(ch), false);
+            glyphLine.glyphs.add(glyph);
+        }
+        return glyphLine;
+    }
+
     /**
      * Get glyph's width.
      * @param code CID in unicode case otherwise, char code.
@@ -219,6 +294,10 @@ public class TrueTypeFont extends FontProgram {
         } else {
             return widths[code];
         }
+    }
+
+    public Character getUnicodeChar(int code) {
+        return glyphToCharacterMap.get(code);
     }
 
     @Override
@@ -429,6 +508,23 @@ public class TrueTypeFont extends FontProgram {
     protected String[][] getNames(int id) throws IOException {
         List<String[]> names = allNames.get(id);
         return names != null && names.size() > 0 ? listToArray(names) : null;
+    }
+
+    protected void readGdefTable() throws IOException {
+        int[] gdef = fontParser.tables.get("GDEF");
+        if (gdef != null) {
+            gdefTable = new OpenTypeGdefTableReader(fontParser.raf, gdef[0]);
+        } else {
+            gdefTable = new OpenTypeGdefTableReader(fontParser.raf, 0);
+        }
+    }
+
+    protected void readGsubTable() throws IOException {
+        int[] gsub = fontParser.tables.get("GSUB");
+        if (gsub != null) {
+            gsubTable = new GlyphSubstitutionTableReader(fontParser.raf, gsub[0], gdefTable, glyphToCharacterMap,
+                    fontParser.getGlyphWidthsByIndex());
+        }
     }
 
     private String[][] listToArray(List<String[]> list) {
