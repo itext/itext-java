@@ -10,6 +10,9 @@ import java.awt.*;
 
 public class BarcodePostnet extends Barcode1D {
 
+    public static int TYPE_POSTNET = 1;
+    public static int TYPE_PLANET = 2;
+
     /**
      * The bars for each character.
      */
@@ -33,7 +36,7 @@ public class BarcodePostnet extends Barcode1D {
         x = 0.02f * 72f; // bar width
         barHeight = 0.125f * 72f; // height of the tall bars
         size = 0.05f * 72f; // height of the short bars
-        codeType = POSTNET; // type of code
+        codeType = TYPE_POSTNET; // type of code
     }
 
     /** Creates the bars for Postnet.
@@ -64,12 +67,20 @@ public class BarcodePostnet extends Barcode1D {
     }
 
     @Override
+    public void fitWidth(float width) {
+        byte bars[] = getBarsPostnet(code);
+        float currentWidth = getBarcodeSize().getWidth();
+        x *= width / currentWidth;
+        n = (width - x) / (bars.length - 1);
+    }
+
+    @Override
     public Rectangle placeBarcode(PdfCanvas canvas, Color barColor, Color textColor) {
         if (barColor != null)
             canvas.setFillColor(barColor);
         byte bars[] = getBarsPostnet(code);
         byte flip = 1;
-        if (codeType == PLANET) {
+        if (codeType == TYPE_PLANET) {
             flip = 0;
             bars[0] = 0;
             bars[bars.length - 1] = 0;
@@ -104,7 +115,7 @@ public class BarcodePostnet extends Barcode1D {
         int pix[] = new int[width * barTall];
         byte bars[] = getBarsPostnet(code);
         byte flip = 1;
-        if (codeType == PLANET) {
+        if (codeType == TYPE_PLANET) {
             flip = 0;
             bars[0] = 0;
             bars[bars.length - 1] = 0;

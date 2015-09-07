@@ -129,31 +129,30 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     @Override
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground) {
-        return placeBarcode(canvas, foreground, DEFAULT_MODULE_SIZE, DEFAULT_MODULE_SIZE);
+        return placeBarcode(canvas, foreground, DEFAULT_MODULE_SIZE);
     }
 
     @Override
     public PdfFormXObject createFormXObject(Color foreground, PdfDocument document) {
-        return createFormXObject(foreground, DEFAULT_MODULE_SIZE, DEFAULT_MODULE_SIZE, document);
+        return createFormXObject(foreground, DEFAULT_MODULE_SIZE, document);
     }
 
     /**
      * Creates a PdfFormXObject with the barcode with given module width and module height.
      *
      * @param foreground   the color of the pixels. It can be <CODE>null</CODE>
-     * @param moduleWidth  the width of the pixels.
-     * @param moduleHeight the height of the pixels.
+     * @param moduleSide  the side (width and height) of the pixels.
      * @return the XObject.
      */
-    public PdfFormXObject createFormXObject(Color foreground, float moduleWidth, float moduleHeight, PdfDocument document) {
+    public PdfFormXObject createFormXObject(Color foreground, float moduleSide, PdfDocument document) {
         PdfFormXObject xObject = new PdfFormXObject((Rectangle) null);
-        Rectangle rect = placeBarcode(new PdfCanvas(xObject, document), foreground, moduleWidth, moduleHeight);
+        Rectangle rect = placeBarcode(new PdfCanvas(xObject, document), foreground, moduleSide);
         xObject.setBBox(new PdfArray(rect));
 
         return xObject;
     }
 
-    public Rectangle placeBarcode(PdfCanvas canvas, Color foreground, float moduleHeight, float moduleWidth) {
+    public Rectangle placeBarcode(PdfCanvas canvas, Color foreground, float moduleSide) {
         if (image == null) {
             return null;
         }
@@ -172,7 +171,7 @@ public class BarcodeDataMatrix extends Barcode2D {
                 int b = image[p + j / 8] & 0xff;
                 b <<= j % 8;
                 if ((b & 0x80) != 0) {
-                    canvas.rectangle(j * moduleWidth, (h - k - 1) * moduleHeight, moduleWidth, moduleHeight);
+                    canvas.rectangle(j * moduleSide, (h - k - 1) * moduleSide, moduleSide, moduleSide);
                 }
             }
         }
@@ -233,11 +232,15 @@ public class BarcodeDataMatrix extends Barcode2D {
      * <CODE>DM_ERROR_TEXT_TOO_BIG</CODE> - the text is too big for the symbology capabilities.<br>
      * <CODE>DM_ERROR_INVALID_SQUARE</CODE> - the dimensions given for the symbol are illegal.<br>
      * <CODE>DM_ERROR_EXTENSION</CODE> - an error was while parsing an extension.
-     * @throws java.io.UnsupportedEncodingException on error
      */
-    public int generate(String text) throws UnsupportedEncodingException {
-        byte[] t = text.getBytes("iso-8859-1");
-        return generate(t, 0, t.length);
+    public int setCode(String text) {
+        byte[] t;
+        try {
+            t = text.getBytes("iso-8859-1");
+        } catch (UnsupportedEncodingException exc) {
+            throw new IllegalArgumentException("text has to be encoded in iso-8859-1");
+        }
+        return setCode(t, 0, t.length);
     }
 
     /**
@@ -253,7 +256,7 @@ public class BarcodeDataMatrix extends Barcode2D {
      * <CODE>DM_ERROR_INVALID_SQUARE</CODE> - the dimensions given for the symbol are illegal.<br>
      * <CODE>DM_ERROR_EXTENSION</CODE> - an error was while parsing an extension.
      */
-    public int generate(byte[] text, int textOffset, int textSize) {
+    public int setCode(byte[] text, int textOffset, int textSize) {
         int extCount, e, k, full;
         DmParams dm, last;
         byte[] data = new byte[2500];

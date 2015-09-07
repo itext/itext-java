@@ -43,7 +43,7 @@ public class BarcodePostnetTest {
 
         BarcodePostnet codePlanet = new BarcodePostnet(document);
         codePlanet.setCode("01234567890");
-        codePlanet.setCodeType(Barcode1D.PLANET);
+        codePlanet.setCodeType(BarcodePostnet.TYPE_PLANET);
         codePlanet.placeBarcode(canvas, null, null);
         document.close();
 

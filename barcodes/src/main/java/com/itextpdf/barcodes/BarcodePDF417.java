@@ -576,9 +576,9 @@ public class BarcodePDF417 extends Barcode2D {
     private int errorLevel;
 
     /**
-     * Holds value of property text.
+     * Holds value of property code.
      */
-    private byte[] text;
+    private byte[] code;
 
     /**
      * Holds value of property options.
@@ -638,7 +638,7 @@ public class BarcodePDF417 extends Barcode2D {
     public void setDefaultParameters() {
         options = 0;
         outBits = null;
-        text = new byte[0];
+        code = new byte[0];
         yHeight = 3;
         aspectRatio = 0.5f;
     }
@@ -685,9 +685,9 @@ public class BarcodePDF417 extends Barcode2D {
                 throw new PdfException(PdfException.InvalidCodewordSize);
             }
         } else {
-            if (text == null)
+            if (code == null)
                 throw new PdfException(PdfException.TextCannotBeNull);
-            if (text.length > ABSOLUTE_MAX_TEXT_SIZE) {
+            if (code.length > ABSOLUTE_MAX_TEXT_SIZE) {
                 throw new PdfException(PdfException.TextIsTooBig);
             }
             segmentList = new SegmentList();
@@ -962,28 +962,28 @@ public class BarcodePDF417 extends Barcode2D {
      *
      * @return the bytes that form the barcode
      */
-    public byte[] getText() {
-        return this.text;
+    public byte[] getCode() {
+        return this.code;
     }
 
     /**
      * Sets the bytes that form the barcode. This bytes should
      * be interpreted in the codepage Cp437.
      *
-     * @param text the bytes that form the barcode
+     * @param code the bytes that form the barcode
      */
-    public void setText(byte[] text) {
-        this.text = text;
+    public void setCode(byte[] code) {
+        this.code = code;
     }
 
     /**
-     * Sets the text that will form the barcode. This text is converted
+     * Sets the code that will form the barcode. This text is converted
      * to bytes using the encoding Cp437.
      *
-     * @param s the text that will form the barcode
+     * @param text the text that will form the barcode
      */
-    public void setText(String s) {
-        this.text = PdfEncodings.convertToBytes(s, "cp437");
+    public void setCode(String text) {
+        this.code = PdfEncodings.convertToBytes(text, "cp437");
     }
 
     /**
@@ -1146,15 +1146,15 @@ public class BarcodePDF417 extends Barcode2D {
     }
 
     protected void textCompaction(int start, int length) {
-        textCompaction(text, start, length);
+        textCompaction(code, start, length);
     }
 
     protected void basicNumberCompaction(int start, int length) {
-        basicNumberCompaction(text, start, length);
+        basicNumberCompaction(code, start, length);
     }
 
     protected int getTextTypeAndValue(int maxLength, int idx) {
-        return getTextTypeAndValue(text, maxLength, idx);
+        return getTextTypeAndValue(code, maxLength, idx);
     }
 
     protected boolean checkSegmentType(Segment segment, char type) {
@@ -1170,7 +1170,7 @@ public class BarcodePDF417 extends Barcode2D {
     }
 
     protected void numberCompaction(int start, int length) {
-        numberCompaction(text, start, length);
+        numberCompaction(code, start, length);
     }
 
     protected void byteCompaction6(int start) {
@@ -1187,7 +1187,7 @@ public class BarcodePDF417 extends Barcode2D {
             for (k = retLast; k >= 0; --k)
                 codewords[ret + k] *= 256;
             // add the digit
-            codewords[ret + retLast] += text[ni] & 0xff;
+            codewords[ret + retLast] += code[ni] & 0xff;
             // propagate carry
             for (k = retLast; k > 0; --k) {
                 codewords[ret + k - 1] += codewords[ret + k] / 900;
@@ -1245,7 +1245,7 @@ public class BarcodePDF417 extends Barcode2D {
             int len = getSegmentLength(v);
             char c[] = new char[len];
             for (int j = 0; j < len; ++j) {
-                c[j] = (char) (text[v.start + j] & 0xff);
+                c[j] = (char) (code[v.start + j] & 0xff);
                 if (c[j] == '\r')
                     c[j] = '\n';
             }
@@ -1278,7 +1278,7 @@ public class BarcodePDF417 extends Barcode2D {
             size = length - k < 44 ? length - k : 6;
             if (size < 6) {
                 for (j = 0; j < size; ++j)
-                    codewords[cwPtr++] = text[k + j] & 0xff;
+                    codewords[cwPtr++] = code[k + j] & 0xff;
             } else {
                 byteCompaction6(k);
             }
@@ -1286,7 +1286,7 @@ public class BarcodePDF417 extends Barcode2D {
     }
 
     void breakString() {
-        int textLength = text.length;
+        int textLength = code.length;
         int lastP = 0;
         int startN = 0;
         int nd = 0;
@@ -1302,7 +1302,7 @@ public class BarcodePDF417 extends Barcode2D {
             return;
         }
         for (k = 0; k < textLength; ++k) {
-            c = (char) (text[k] & 0xff);
+            c = (char) (code[k] & 0xff);
             if (c >= '0' && c <= '9') {
                 if (nd == 0)
                     startN = k;
@@ -1311,10 +1311,10 @@ public class BarcodePDF417 extends Barcode2D {
             }
             if (nd >= 13) {
                 if (lastP != startN) {
-                    c = (char) (text[lastP] & 0xff);
+                    c = (char) (code[lastP] & 0xff);
                     lastTxt = c >= ' ' && c < 127 || c == '\r' || c == '\n' || c == '\t';
                     for (j = lastP; j < startN; ++j) {
-                        c = (char) (text[j] & 0xff);
+                        c = (char) (code[j] & 0xff);
                         txt = c >= ' ' && c < 127 || c == '\r' || c == '\n' || c == '\t';
                         if (txt != lastTxt) {
                             segmentList.add(lastTxt ? 'T' : 'B', lastP, j);
@@ -1332,10 +1332,10 @@ public class BarcodePDF417 extends Barcode2D {
         if (nd < 13)
             startN = textLength;
         if (lastP != startN) {
-            c = (char) (text[lastP] & 0xff);
+            c = (char) (code[lastP] & 0xff);
             lastTxt = c >= ' ' && c < 127 || c == '\r' || c == '\n' || c == '\t';
             for (j = lastP; j < startN; ++j) {
-                c = (char) (text[j] & 0xff);
+                c = (char) (code[j] & 0xff);
                 txt = c >= ' ' && c < 127 || c == '\r' || c == '\n' || c == '\t';
                 if (txt != lastTxt) {
                     segmentList.add(lastTxt ? 'T' : 'B', lastP, j);
@@ -1415,7 +1415,7 @@ public class BarcodePDF417 extends Barcode2D {
         // check if all numbers
         if (segmentList.size() == 1 && (v = segmentList.get(0)).type == 'T' && getSegmentLength(v) >= 8) {
             for (k = v.start; k < v.end; ++k) {
-                c = (char) (text[k] & 0xff);
+                c = (char) (code[k] & 0xff);
                 if (c < '0' || c > '9')
                     break;
             }

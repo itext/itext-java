@@ -42,7 +42,7 @@ public class BarcodePDF417Test {
         + "a little and see the watery part of the world.";
 
         BarcodePDF417 barcode = new BarcodePDF417();
-        barcode.setText(text);
+        barcode.setCode(text);
         barcode.placeBarcode(canvas, null);
 
         document.close();
@@ -66,7 +66,7 @@ public class BarcodePDF417Test {
                 + "a little and see the watery part of the world.";
 
         BarcodePDF417 barcode = new BarcodePDF417();
-        barcode.setText(text);
+        barcode.setCode(text);
         barcode.placeBarcode(canvas, null);
 
         document.close();

@@ -86,6 +86,9 @@ public class ImageRenderer extends AbstractRenderer {
         float scaleCoef = adjustPositionAfterRotation(angle, layoutBox.getWidth(), layoutBox.getHeight(), getPropertyAsBoolean(Property.AUTO_SCALE));
         imageItselfScaledHeight *= scaleCoef;
         imageItselfScaledWidth *= scaleCoef;
+        if (xObject instanceof PdfFormXObject) {
+            t.scale(scaleCoef, scaleCoef);
+        }
 
         getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
 
@@ -192,24 +195,15 @@ public class ImageRenderer extends AbstractRenderer {
         }
         // Rotating image can cause fitting into area problems.
         // So let's find scaling coefficient
-        float scaleCoef = 1;
-        float temp = 0;
-        if (isScale && width > maxWidth) {
-            temp = width;
-            width *= maxWidth / temp;
-            height *= maxWidth / temp;
-            pivotY *= maxWidth / temp;
-            scaleCoef *= maxWidth / temp;
-        }
-        if (isScale && height > maxHeight) {
-            temp = height;
-            width *= maxHeight / temp;
-            height *= maxHeight / temp;
-            pivotY *= maxHeight / temp;
-            scaleCoef *= maxHeight / temp;
+        float scaleCoeff = 1;
+        if (isScale) {
+            scaleCoeff = Math.min(maxWidth / width, maxHeight / height);
+            height *= scaleCoeff;
+            width *= scaleCoeff;
+            pivotY *= scaleCoeff;
         }
 
-        return scaleCoef;
+        return scaleCoeff;
     }
 
     private void translateImage(float xDistance, float yDistance, AffineTransform t) {

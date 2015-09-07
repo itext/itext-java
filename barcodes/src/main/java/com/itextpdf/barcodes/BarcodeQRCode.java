@@ -18,33 +18,83 @@ import java.util.Map;
  */
 public class BarcodeQRCode extends Barcode2D {
     ByteMatrix bm;
+    /**
+     * modifiers to change the way the barcode is create.
+     **/
+    Map<EncodeHintType, Object> hints;
+    String code;
 
     /**
      * Creates the QR barcode.
-     * @param content the text to be encoded
-     * @param hints modifiers to change the way the barcode is create. They can be EncodeHintType.ERROR_CORRECTION
-     * and EncodeHintType.CHARACTER_SET. For EncodeHintType.ERROR_CORRECTION the values can be ErrorCorrectionLevel.L, M, Q, H.
-     * For EncodeHintType.CHARACTER_SET the values are strings and can be Cp437, Shift_JIS and ISO-8859-1 to ISO-8859-16.
-     * You can also use UTF-8, but correct behaviour is not guaranteed as Unicode is not supported in QRCodes.
-     * The default value is ISO-8859-1.
+     *
+     * @param code  the text to be encoded
+     * @param hints barcode hints. See #setHints for description.
      */
-    public BarcodeQRCode(String content, Map<EncodeHintType,Object> hints) {
-        try {
-            QRCodeWriter qc = new QRCodeWriter();
-            bm = qc.encode(content, 1, 1, hints);
-        }
-        catch (WriterException ex) {
-            throw new IllegalArgumentException(ex.getMessage(),ex.getCause());
-        }
+    public BarcodeQRCode(String code, Map<EncodeHintType, Object> hints) {
+        this.code = code;
+        this.hints = hints;
+        regenerate();
     }
 
     /**
      * Creates the QR barcode with default error correction level (ErrorCorrectionLevel.L)
      * and default character set (ISO-8859-1).
+     *
      * @param content the text to be encoded
      */
     public BarcodeQRCode(String content) {
         this(content, null);
+    }
+
+    public BarcodeQRCode() {
+    }
+
+    /**
+     * Gets the current data.
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Sets the data to be encoded by the barcode. If not specified in hints otherwise, the character set should be ISO-8859-1.
+     */
+    public void setCode(String code) {
+        this.code = code;
+        regenerate();
+    }
+
+    /**
+     * @return modifiers to change the way the barcode is created.
+     */
+    public Map<EncodeHintType, Object> getHints() {
+        return hints;
+    }
+
+    /**
+     * @param hints modifiers to change the way the barcode is created. They can be EncodeHintType.ERROR_CORRECTION
+     *              and EncodeHintType.CHARACTER_SET. For EncodeHintType.ERROR_CORRECTION the values can be ErrorCorrectionLevel.L, M, Q, H.
+     *              For EncodeHintType.CHARACTER_SET the values are strings and can be Cp437, Shift_JIS and ISO-8859-1 to ISO-8859-16.
+     *              You can also use UTF-8, but correct behaviour is not guaranteed as Unicode is not supported in QRCodes.
+     *              The default value is ISO-8859-1.
+     */
+    public void setHints(Map<EncodeHintType, Object> hints) {
+        this.hints = hints;
+        regenerate();
+    }
+
+    /**
+     * Regenerates barcode after changes in hints or code.
+     */
+    public void regenerate() {
+        if (code != null) {
+            try {
+                QRCodeWriter qc = new QRCodeWriter();
+                bm = qc.encode(code, 1, 1, hints);
+            } catch (WriterException ex) {
+                throw new IllegalArgumentException(ex.getMessage(), ex.getCause());
+            }
+        }
     }
 
     /**
@@ -68,10 +118,11 @@ public class BarcodeQRCode extends Barcode2D {
     }
 
     /**
-     ** Places the barcode in a <CODE>PdfCanvas</CODE>. The
+     * * Places the barcode in a <CODE>PdfCanvas</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.
-     * @param canvas the <CODE>PdfCanvas</CODE> where the barcode will be placed
+     *
+     * @param canvas     the <CODE>PdfCanvas</CODE> where the barcode will be placed
      * @param foreground the foreground color. It can be <CODE>null</CODE>
      * @param moduleSide the size of the square grid cell
      * @return the dimensions the barcode occupies
@@ -98,7 +149,9 @@ public class BarcodeQRCode extends Barcode2D {
         return getBarcodeSize(moduleSide);
     }
 
-    /** Creates a PdfFormXObject with the barcode.
+    /**
+     * Creates a PdfFormXObject with the barcode.
+     *
      * @param foreground the color of the pixels. It can be <CODE>null</CODE>
      * @return the XObject.
      */
@@ -109,6 +162,7 @@ public class BarcodeQRCode extends Barcode2D {
 
     /**
      * Creates a PdfFormXObject with the barcode.
+     *
      * @param foreground the color of the pixels. It can be <CODE>null</CODE>
      * @param moduleSize the size of the pixels.
      * @return the XObject.
@@ -121,7 +175,9 @@ public class BarcodeQRCode extends Barcode2D {
         return xObject;
     }
 
-    /** Creates a <CODE>java.awt.Image</CODE>.
+    /**
+     * Creates a <CODE>java.awt.Image</CODE>.
+     *
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
@@ -157,7 +213,7 @@ public class BarcodeQRCode extends Barcode2D {
             for (int x = 0; x < width; ++x) {
                 if (line[x] != 0) {
                     int offset = stride * y + x / 8;
-                    b[offset] |= (byte)(0x80 >> (x % 8));
+                    b[offset] |= (byte) (0x80 >> (x % 8));
                 }
             }
         }

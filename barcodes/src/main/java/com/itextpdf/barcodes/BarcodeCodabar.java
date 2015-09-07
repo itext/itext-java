@@ -63,7 +63,6 @@ public class BarcodeCodabar extends Barcode1D {
             generateChecksum = false;
             checksumText = false;
             startStopText = false;
-            codeType = CODABAR;
         } catch (Exception e) {
             throw new PdfException(e.getMessage(), e.getCause());
         }

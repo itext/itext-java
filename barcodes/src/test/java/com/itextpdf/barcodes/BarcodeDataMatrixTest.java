@@ -30,7 +30,7 @@ public class BarcodeDataMatrixTest {
     static public void beforeClass() {
         File dir = new File(destinationFolder);
         dir.mkdirs();
-        for(File file: dir.listFiles())
+        for (File file : dir.listFiles())
             file.delete();
     }
 
@@ -43,8 +43,8 @@ public class BarcodeDataMatrixTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         BarcodeDataMatrix barcode = new BarcodeDataMatrix();
-        barcode.generate("AAAAAAAAAA;BBBBAAAA3;00028;BBBAA05;AAAA;AAAAAA;1234567;AQWXSZ;JEAN;;;;7894561;AQWXSZ;GEO;;;;1;1;1;1;0;0;1;0;1;0;0;0;1;0;1;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1");
-        barcode.placeBarcode(canvas, Color.GREEN,5,6);
+        barcode.setCode("AAAAAAAAAA;BBBBAAAA3;00028;BBBAA05;AAAA;AAAAAA;1234567;AQWXSZ;JEAN;;;;7894561;AQWXSZ;GEO;;;;1;1;1;1;0;0;1;0;1;0;0;0;1;0;1;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1");
+        barcode.placeBarcode(canvas, Color.GREEN, 5);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
