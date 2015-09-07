@@ -197,6 +197,7 @@ public class PdfException extends RuntimeException {
     public static final String TiffImageException = "tiff.image.exception";
     public static final String TilesAreNotSupported = "tiles.are.not.supported";
     public static final String TrailerNotFound = "trailer.not.found";
+    public static final String TrailerPrevEntryPointsToItsOwnCrossReferenceSection = "trailer.prev.entry.points.to.its.own.cross.reference.section";
     public static final String TransparencyLengthMustBeEqualTo2WithCcittImages = "transparency.length.must.be.equal.to.2.with.ccitt.images";
     public static final String UnbalancedBeginEndMarkedContentOperators = "unbalanced.begin.end.marked.content.operators";
     public static final String UnbalancedLayerOperators = "unbalanced.layer.operators";

@@ -835,7 +835,10 @@ public class PdfReader {
             PdfNumber prev = (PdfNumber) trailer2.get(PdfName.Prev);
             if (prev == null)
                 break;
-            tokens.seek(prev.getLongValue());
+            if (prev.getLongValue() == startxref)
+                throw new PdfException(PdfException.TrailerPrevEntryPointsToItsOwnCrossReferenceSection);
+            startxref = prev.getLongValue();
+            tokens.seek(startxref);
             trailer2 = readXrefSection();
         }
     }
