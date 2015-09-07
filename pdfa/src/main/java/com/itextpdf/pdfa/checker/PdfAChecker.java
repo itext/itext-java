@@ -20,7 +20,11 @@ public abstract class PdfAChecker {
     public void checkDocument(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();
 
+        checkTrailer(catalog.getDocument().getTrailer());
+
         checkCatalog(catalogDict);
+
+        //todo: also need to check file  specification  in the entire document hierarchy
 
         if (catalogDict.containsKey(PdfName.AcroForm)){
             checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
@@ -74,6 +78,7 @@ public abstract class PdfAChecker {
     protected abstract void checkAnnotations(PdfArray annotations);
     protected abstract void checkForm(PdfDictionary form);
     protected abstract void checkCatalog(PdfDictionary catalog);
+    protected abstract void checkTrailer(PdfDictionary trailer);
 
     protected void checkResources(PdfDictionary resources) {
         if (resources == null)

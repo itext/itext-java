@@ -2,6 +2,7 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
+import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.pdfa.PdfAConformanceLevel;
 
@@ -14,6 +15,37 @@ public class PdfA2Checker extends PdfA1Checker{
 
     public PdfA2Checker(PdfAConformanceLevel conformanceLevel, String outputIntentColorSpace) {
         super(conformanceLevel, outputIntentColorSpace);
+    }
+
+    @Override
+    protected double getMaxRealValue(){
+        return Float.MAX_VALUE;
+    }
+
+    @Override
+    protected int getMaxStringLength(){
+        return  32767;
+    }
+
+    @Override
+    public void checkInlineImage(PdfImageXObject inlineImage) {
+        PdfObject filter = inlineImage.getPdfObject().get(PdfName.Filter);
+        if (filter instanceof PdfName) {
+            if (filter.equals(PdfName.LZWDecode))
+                throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+            if (filter.equals(PdfName.Crypt)) {
+                throw new PdfAConformanceException(PdfAConformanceException.CryptFilterIsNotPermitted);
+            }
+        } else if (filter instanceof PdfArray) {
+            for (int i = 0; i < ((PdfArray) filter).size(); i++) {
+                PdfName f = ((PdfArray) filter).getAsName(i);
+                if (f.equals(PdfName.LZWDecode))
+                    throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+                if (f.equals(PdfName.Crypt)) {
+                    throw new PdfAConformanceException(PdfAConformanceException.CryptFilterIsNotPermitted);
+                }
+            }
+        }
     }
 
     @Override
@@ -107,6 +139,71 @@ public class PdfA2Checker extends PdfA1Checker{
     protected void checkCatalog(PdfDictionary catalog) {
         if (catalog.containsKey(PdfName.NeedsRendering)) {
             throw new PdfAConformanceException("the.catalog.dictionary.shall.not.contain.the.needsrendering.key");
+        }
+
+        PdfDictionary permissions = catalog.getAsDictionary(PdfName.Perms);
+        if (permissions != null) {
+            for (PdfName dictKey : permissions.keySet()) {
+                if (PdfName.DocMDP.equals(dictKey)) {
+                    PdfDictionary signatureDict = permissions.getAsDictionary(PdfName.DocMDP);
+                    if (signatureDict != null) {
+                        PdfArray references = signatureDict.getAsArray(PdfName.Reference);
+                        if (references != null) {
+                            for (int i = 0; i < references.size(); i++) {
+                                PdfDictionary referenceDict = references.getAsDictionary(i);
+                                if (referenceDict.containsKey(PdfName.DigestLocation)
+                                        || referenceDict.containsKey(PdfName.DigestMethod)
+                                        || referenceDict.containsKey(PdfName.DigestValue)) {
+                                    throw new PdfAConformanceException(PdfAConformanceException.SigRefDicShallNotContDigestParam);
+                                }
+                            }
+                        }
+                    }
+                } else if (PdfName.UR3.equals(dictKey)){}
+                else {
+                    throw new PdfAConformanceException(PdfAConformanceException.NoKeysOtherUr3andDocMdpShallBePresentInPerDict);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    protected void checkPdfStream(PdfStream stream) {
+
+        if (stream.containsKey(PdfName.F) || stream.containsKey(PdfName.FFilter) || stream.containsKey(PdfName.FDecodeParams)) {
+            throw new PdfAConformanceException(PdfAConformanceException.StreamObjDictShallNotContainForFFilterOrFDecodeParams);
+        }
+
+        PdfObject filter = stream.get(PdfName.Filter);
+        if (filter instanceof PdfName) {
+            if (filter.equals(PdfName.LZWDecode))
+                throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+            if (filter.equals(PdfName.Crypt)) {
+                PdfDictionary decodeParams = stream.getAsDictionary(PdfName.DecodeParms);
+                if (decodeParams != null) {
+                    PdfString cryptFilterName = decodeParams.getAsString(PdfName.Name);
+                    if (cryptFilterName != null && !cryptFilterName.equals(PdfName.Identity)) {
+                        throw new PdfAConformanceException(PdfAConformanceException.NotIdentityCryptFilterIsNotPermitted);
+                    }
+                }
+            }
+        } else if (filter instanceof PdfArray) {
+            for (int i = 0; i < ((PdfArray) filter).size(); i++) {
+                PdfName f = ((PdfArray) filter).getAsName(i);
+                if (f.equals(PdfName.LZWDecode))
+                    throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+                if (f.equals(PdfName.Crypt)) {
+                    PdfArray decodeParams = stream.getAsArray(PdfName.DecodeParms);
+                    if (decodeParams != null && i < decodeParams.size()) {
+                        PdfDictionary decodeParam = decodeParams.getAsDictionary(i);
+                        PdfString cryptFilterName = decodeParam.getAsString(PdfName.Name);
+                        if (cryptFilterName != null && !cryptFilterName.equals(PdfName.Identity)) {
+                            throw new PdfAConformanceException(PdfAConformanceException.NotIdentityCryptFilterIsNotPermitted);
+                        }
+                    }
+                }
+            }
         }
     }
 }

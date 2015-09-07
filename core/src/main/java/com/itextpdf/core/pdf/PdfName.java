@@ -162,6 +162,9 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName DeviceRGBK = createDirectName("DeviceRGBK");
     public static final PdfName Differences = createDirectName("Differences");
     public static final PdfName Div = createDirectName("Div");
+    public static final PdfName DigestLocation = createDirectName("DigestLocation");
+    public static final PdfName DigestMethod = createDirectName("DigestMethod");
+    public static final PdfName DigestValue = createDirectName("DigestValue");
     public static final PdfName DocMDP = createDirectName("DocMDP");
     public static final PdfName DocOpen = createDirectName("DocOpen");
     public static final PdfName Document = createDirectName("Document");
@@ -204,6 +207,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName FileAttachment = createDirectName("FileAttachment");
     public static final PdfName Filespec = createDirectName("Filespec");
     public static final PdfName Filter = createDirectName("Filter");
+    public static final PdfName FFilter = createDirectName("FFilter");
+    public static final PdfName FDecodeParams = createDirectName("FDecodeParams");
     public static final PdfName Final = createDirectName("Final");
     public static final PdfName First = createDirectName("First");
     public static final PdfName FirstChar = createDirectName("FirstChar");
@@ -535,6 +540,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Type3 = createDirectName("Type3");
     public static final PdfName U = createDirectName("U");
     public static final PdfName UCR = createDirectName("UCR");
+    public static final PdfName UR3 = createDirectName("UR3");
     public static final PdfName UCR2 = createDirectName("UCR2");
     public static final PdfName UE = createDirectName("UE");
     public static final PdfName UF = createDirectName("UF");

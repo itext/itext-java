@@ -17,6 +17,17 @@ public class PdfAConformanceException extends PdfException {
     public static final String TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0 = "the.f.keys.print.flag.bit.shall.be.set.to.1.and.its.hidden.invisible.and.noview.flag.bits.shall.be.set.to.0";
     public static final String TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleNoviewAndTogglenoviewFlagBitsShallBeSetTo0 = "the.f.keys.print.flag.bit.shall.be.set.to.1.and.its.hidden.invisible.noview.and.togglenoview.flag.bits.shall.be.set.to.0";
     public static final String WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry = "widget.annotation.dictionary.or.field.dictionary.shall.not.include.a.or.aa.entry";
+    public static final String RealNumberIsOutOfRange = "real.number.is.out.of.range";
+    public static final String PdfStringIsTooLong = "pdf.string.is.too.long";
+    public static final String StreamObjDictShallNotContainForFFilterOrFDecodeParams = "stream.object.dictionary.shall.not.contain.the.f.ffilter.or.fdecodeparams.keys";
+    public static final String LZWDecodeFilterIsNotPermitted = "lzwdecode.filter.is.not.permitted";
+    public static final String NotIdentityCryptFilterIsNotPermitted = "not.identity.crypt.filter.is.not.permitted";
+    public static final String CatalogDictionaryShallNotContainOCPropertiesKey = "the.catalog.dictionary.shall.not.contain.the.ocproperties.key";
+    public static final String CryptFilterIsNotPermitted = "crypt.filter.is.not.permitted.inline.imag";
+    public static final String GraphicStateStackDepthIsGreaterThan28 = "graphics.state.stack.depth.is.greater.than.28";
+    public static final String SigRefDicShallNotContDigestParam ="signature.references.dictionary.shall.not.contain.digestlocation.digestmethod.digestvalue";
+    public static final String NoKeysOtherUr3andDocMdpShallBePresentInPerDict = "no.keys.other.than.UR3.and.DocMDP.shall.be.present.in.a.permissions.dictionary";
+    public static final String EncryptShallNotBeUsedInTrailerDictionary = "keyword.encrypt.shall.not.be.used.in.the.trailer.dictionary";
 
     public PdfAConformanceException(String message) {
         super(message);

@@ -11,6 +11,10 @@ import java.util.HashSet;
 
 public class PdfA1Checker extends PdfAChecker {
 
+
+    static public final int maxGsStackDepth = 28;
+    protected int gsStackDepth = 0;
+
     protected static final HashSet<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName.Sound, PdfName.Movie, PdfName.FileAttachment));
     static public final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.Text,
             PdfName.FreeText, PdfName.Line, PdfName.Square, PdfName.Circle, PdfName.Stamp, PdfName.Ink, PdfName.Popup));
@@ -21,7 +25,12 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     public void checkCanvasStack(char stackOperation) {
-
+        if ('q' == stackOperation) {
+            if (++gsStackDepth > PdfA1Checker.maxGsStackDepth)
+                throw new PdfAConformanceException(PdfAConformanceException.GraphicStateStackDepthIsGreaterThan28);
+        } else if ('Q' == stackOperation) {
+            gsStackDepth--;
+        }
     }
 
     @Override
@@ -56,17 +65,43 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkPdfNumber(PdfNumber number) {
+        if (Math.abs(number.getLongValue()) > getMaxRealValue() && number.toString().contains(".")) {
+            throw new PdfAConformanceException(PdfAConformanceException.RealNumberIsOutOfRange);
+        }
+    }
 
+    protected double getMaxRealValue(){
+        return 32767;
     }
 
     @Override
     protected void checkPdfStream(PdfStream stream) {
 
+        if (stream.containsKey(PdfName.F) || stream.containsKey(PdfName.FFilter) || stream.containsKey(PdfName.FDecodeParams)) {
+            throw new PdfAConformanceException(PdfAConformanceException.StreamObjDictShallNotContainForFFilterOrFDecodeParams);
+        }
+
+        PdfObject filter = stream.get(PdfName.Filter);
+        if (filter instanceof PdfName) {
+            if (filter.equals(PdfName.LZWDecode))
+                throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+        } else if (filter instanceof PdfArray) {
+            for (PdfObject f : ((PdfArray) filter)) {
+                if (f.equals(PdfName.LZWDecode))
+                    throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+            }
+        }
     }
 
     @Override
     protected void checkPdfString(PdfString string) {
+        if (string.getValue().getBytes().length > getMaxStringLength()) {
+            throw new PdfAConformanceException(PdfAConformanceException.PdfStringIsTooLong);
+        }
+    }
 
+    protected int getMaxStringLength(){
+        return  65535;
     }
 
     @Override
@@ -136,6 +171,16 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkCatalog(PdfDictionary catalog) {
-
+        if (catalog.containsKey(PdfName.OCProperties)) {
+            throw new PdfAConformanceException(PdfAConformanceException.CatalogDictionaryShallNotContainOCPropertiesKey);
+        }
     }
+
+    @Override
+    protected void checkTrailer(PdfDictionary trailer){
+        if (trailer.get(PdfName.Encrypt) != null) {
+            throw new PdfAConformanceException(PdfAConformanceException.EncryptShallNotBeUsedInTrailerDictionary);
+        }
+    }
+
 }
