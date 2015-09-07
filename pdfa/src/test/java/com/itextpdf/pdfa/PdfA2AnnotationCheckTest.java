@@ -1,4 +1,4 @@
-package com.itextd.pdfa;
+package com.itextpdf.pdfa;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.io.ByteArrayOutputStream;

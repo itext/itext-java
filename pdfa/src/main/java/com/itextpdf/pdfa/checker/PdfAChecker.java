@@ -2,7 +2,12 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.pdfa.PdfAConformanceLevel;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public abstract class PdfAChecker {
     public static final String ICC_COLOR_SPACE_RGB = "RGB ";
@@ -20,27 +25,12 @@ public abstract class PdfAChecker {
     public void checkDocument(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();
 
+        checkCatalogValidEntries(catalogDict);
         checkTrailer(catalog.getDocument().getTrailer());
-
-        checkCatalog(catalogDict);
-
-        //todo: also need to check file  specification  in the entire document hierarchy
-
-        if (catalogDict.containsKey(PdfName.AcroForm)){
-            checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
-        }
-
-        for (int i = 1; i <= catalog.getNumOfPages(); i++) {
-            PdfPage p = catalog.getPage(i);
-            PdfDictionary pageResources = p.getPdfObject().getAsDictionary(PdfName.Resources);
-            checkResources(pageResources);
-            PdfArray annots = p.getPdfObject().getAsArray(PdfName.Annots);
-            if (annots != null) {
-                checkAnnotations(annots);
-            }
-        }
-
-
+        checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
+        checkOpenAction(catalogDict.get(PdfName.OpenAction));
+        checkOutlines(catalogDict);
+        checkPages(catalog);
     }
 
     public void checkPdfObject(PdfObject obj) {
@@ -67,7 +57,8 @@ public abstract class PdfAChecker {
     public abstract void checkCanvasStack(char stackOperation);
     public abstract void checkInlineImage(PdfImageXObject inlineImage);
 
-    protected abstract void checkAction(PdfDictionary action);
+    protected abstract HashSet<PdfName> getForbiddenActions();
+    protected abstract HashSet<PdfName> getAllowedNamedActions();
     protected abstract void checkExtGState(PdfDictionary extGState);
     protected abstract void checkImageXObject(PdfStream image);
     protected abstract void checkFormXObject(PdfStream form);
@@ -75,9 +66,10 @@ public abstract class PdfAChecker {
     protected abstract void checkPdfNumber(PdfNumber number);
     protected abstract void checkPdfStream(PdfStream stream);
     protected abstract void checkPdfString(PdfString string);
-    protected abstract void checkAnnotations(PdfArray annotations);
+    protected abstract void checkAnnotation(PdfDictionary annotDic);
     protected abstract void checkForm(PdfDictionary form);
-    protected abstract void checkCatalog(PdfDictionary catalog);
+    protected abstract void checkCatalogValidEntries(PdfDictionary catalogDict);
+    protected abstract void checkPage(PdfDictionary pageDict);
     protected abstract void checkTrailer(PdfDictionary trailer);
 
     protected void checkResources(PdfDictionary resources) {
@@ -126,6 +118,22 @@ public abstract class PdfAChecker {
         }
     }
 
+    protected void checkAction(PdfDictionary action) {
+        PdfName s = action.getAsName(PdfName.S);
+        if (getForbiddenActions().contains(s)) {
+            throw new PdfAConformanceException(PdfAConformanceException._1ActionsIsNotAllowed).setMessageParams(s.getValue());
+        }
+        if (s.equals(PdfName.Named)) {
+            PdfName n = action.getAsName(PdfName.N);
+            if (n != null && !getAllowedNamedActions().contains(n)) {
+                throw new PdfAConformanceException(PdfAConformanceException.NamedActionType1IsNotAllowed).setMessageParams(n.getValue());
+            }
+        }
+        if (s.equals(PdfName.SetState) || s.equals(PdfName.NoOp)) {
+            throw new PdfAConformanceException(PdfAConformanceException.DeprecatedSetStateAndNoOpActionsAreNotAllowed);
+        }
+    }
+
     protected static boolean checkFlag(int flags, int flag) {
         return (flags & flag) != 0;
     }
@@ -134,5 +142,76 @@ public abstract class PdfAChecker {
         return conformanceLevel == PdfAConformanceLevel.PDF_A_1A
                 || conformanceLevel == PdfAConformanceLevel.PDF_A_2A
                 || conformanceLevel == PdfAConformanceLevel.PDF_A_3A;
+    }
+
+    private void checkOpenAction(PdfObject openAction) {
+        if (openAction == null)
+            return;
+
+        if (openAction.isDictionary()) {
+            checkAction((PdfDictionary) openAction);
+        } else if (openAction.isArray()) {
+            PdfArray actions = (PdfArray) openAction;
+            for (PdfObject action : actions) {
+                checkAction((PdfDictionary) action);
+            }
+        }
+    }
+
+    private void checkPages(PdfCatalog catalog) {
+        for (int i = 1; i <= catalog.getNumOfPages(); i++) {
+            PdfPage p = catalog.getPage(i);
+            PdfDictionary pageDict = p.getPdfObject();
+            PdfDictionary pageResources = pageDict.getAsDictionary(PdfName.Resources);
+            checkPage(pageDict);
+            checkResources(pageResources);
+            checkAnnotations(pageDict);
+        }
+    }
+
+    private void checkAnnotations(PdfDictionary page) {
+        PdfArray annots = page.getAsArray(PdfName.Annots);
+        if (annots != null) {
+            for (PdfObject annot : annots) {
+                PdfDictionary annotDic = (PdfDictionary) annot;
+                checkAnnotation(annotDic);
+                PdfDictionary action = annotDic.getAsDictionary(PdfName.A);
+                if (action != null) {
+                    checkAction(action);
+                }
+                action = annotDic.getAsDictionary(PdfName.AA);
+                if (action != null) {
+                    checkAction(action);
+                }
+            }
+        }
+    }
+
+    private void checkOutlines(PdfDictionary catalogDict){
+        PdfDictionary outlines = catalogDict.getAsDictionary(PdfName.Outlines);
+        if (outlines != null) {
+            for (PdfDictionary outline : getOutlines(outlines)) {
+                PdfDictionary action = outline.getAsDictionary(PdfName.A);
+                if (action != null) {
+                    checkAction(action);
+                }
+            }
+        }
+    }
+
+    private List<PdfDictionary> getOutlines(PdfDictionary item) {
+        List<PdfDictionary> outlines = new ArrayList<>();
+        outlines.add(item);
+
+        PdfDictionary processItem = item.getAsDictionary(PdfName.First);
+        if (processItem != null){
+            outlines.addAll(getOutlines(processItem));
+        }
+        processItem = item.getAsDictionary(PdfName.Next);
+        if (processItem != null){
+            outlines.addAll(getOutlines(processItem));
+        }
+
+        return outlines;
     }
 }

@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 
 public class PdfAConformanceException extends PdfException {
 
+    public static final String _1ActionsIsNotAllowed = "1.actions.is.not.allowed";
     public static final String AnAnnotationDictionaryShallContainTheFKey = "an.annotation.dictionary.shall.contain.the.f.key";
     public static final String AnAnnotationDictionaryShallNotContainTheCaKeyWithAValueOtherThan1 = "an.annotation.dictionary.shall.not.contain.the.ca.key.with.a.value.other.than.1";
     public static final String AnnotationOfType1ShouldHaveContentsKey = "annotation.of.type.1.should.have.contents.key";
@@ -11,8 +12,13 @@ public class PdfAConformanceException extends PdfException {
     public static final String AnnotationShallContainKeyF = "annotation.shall.contain.key.F";
     public static final String AppearanceDictionaryOfWidgetSubtypeAndBtnFieldTypeShallContainOnlyTheNKeyWithDictionaryValue = "appearance.dictionary.of.widget.subtype.and.btn.field.type.shall.contain.only.the.n.key.with.dictionary.value";
     public static final String AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue = "appearance.dictionary.shall.contain.only.the.n.key.with.stream.value";
+    public static final String CatalogDictionaryShallNotContainAAEntry = "catalog.dictionary.shall.not.contain.aa.entry";
+    public static final String DeprecatedSetStateAndNoOpActionsAreNotAllowed = "deprecated.setstate.and.noop.actions.are.not.allowed";
     public static final String DestoutputprofileInThePdfa1OutputintentDictionaryShallBeRgb = "destoutputprofile.in.the.pdfa1.outputintent.dictionary.shall.be.rgb";
     public static final String EveryAnnotationShallHaveAtLeastOneAppearanceDictionary = "every.annotation.shall.have.at.least.one.appearance.dictionary";
+    public static final String NamedActionType1IsNotAllowed = "named.action.type.1.not.allowed";
+    public static final String NeedAppearancesFlagOfTheInteractiveFormDictionaryShallEitherNotBePresentedOrShallBeFalse = "needappearances.flag.of.the.interactive.form.dictionary.shall.either.not.be.presented.or.shall.be.false";
+    public static final String PageDictionaryShallNotContainAAEntry = "page.dictionary.shall.not.contain.aa.entry";
     public static final String TextAnnotationsShouldSetTheNozoomAndNorotateFlagBitsOfTheFKeyTo1 = "text.annotations.should.set.the.nozoom.and.norotate.flag.bits.of.the.f.key.to.1";
     public static final String TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0 = "the.f.keys.print.flag.bit.shall.be.set.to.1.and.its.hidden.invisible.and.noview.flag.bits.shall.be.set.to.0";
     public static final String TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleNoviewAndTogglenoviewFlagBitsShallBeSetTo0 = "the.f.keys.print.flag.bit.shall.be.set.to.1.and.its.hidden.invisible.noview.and.togglenoview.flag.bits.shall.be.set.to.0";

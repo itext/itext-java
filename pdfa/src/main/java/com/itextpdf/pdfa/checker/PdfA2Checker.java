@@ -12,6 +12,8 @@ import java.util.HashSet;
 public class PdfA2Checker extends PdfA1Checker{
 
     protected static final HashSet<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName._3D, PdfName.Sound, PdfName.Screen, PdfName.Movie));
+    protected static final HashSet<PdfName> forbiddenActions = new HashSet<>(Arrays.asList(PdfName.Launch, PdfName.Sound, PdfName.Movie,
+            PdfName.ResetForm, PdfName.ImportData, PdfName.JavaScript, PdfName.Hide, PdfName.SetOCGState, PdfName.Rendition, PdfName.Trans, PdfName.GoTo3DView));
 
     public PdfA2Checker(PdfAConformanceLevel conformanceLevel, String outputIntentColorSpace) {
         super(conformanceLevel, outputIntentColorSpace);
@@ -47,101 +49,104 @@ public class PdfA2Checker extends PdfA1Checker{
             }
         }
     }
-
+    
     @Override
-    protected void checkAnnotations(PdfArray annotations) {
-        for (PdfObject annotation : annotations) {
-            PdfDictionary annotDic = (PdfDictionary) annotation;
-            PdfName subtype = annotDic.getAsName(PdfName.Subtype);
+    protected void checkAnnotation(PdfDictionary annotDic) {
+        PdfName subtype = annotDic.getAsName(PdfName.Subtype);
 
-            if (subtype == null) {
-                throw new PdfAConformanceException(PdfAConformanceException.AnnotationType1IsNotPermitted).setMessageParams("null");
-            }
-            if (forbiddenAnnotations.contains(subtype)) {
-                throw new PdfAConformanceException(PdfAConformanceException.AnnotationType1IsNotPermitted).setMessageParams(subtype.getValue());
-            }
+        if (subtype == null) {
+            throw new PdfAConformanceException(PdfAConformanceException.AnnotationType1IsNotPermitted).setMessageParams("null");
+        }
+        if (forbiddenAnnotations.contains(subtype)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AnnotationType1IsNotPermitted).setMessageParams(subtype.getValue());
+        }
 
-            if (!subtype.equals(PdfName.Popup)) {
-                PdfNumber f = annotDic.getAsNumber(PdfName.F);
-                if (f == null) {
-                    throw new PdfAConformanceException(PdfAConformanceException.AnAnnotationDictionaryShallContainTheFKey);
-                }
-                int flags = f.getIntValue();
-                if (!checkFlag(flags, PdfAnnotation.Print)
-                        || checkFlag(flags, PdfAnnotation.Hidden)
-                        || checkFlag(flags, PdfAnnotation.Invisible)
-                        || checkFlag(flags, PdfAnnotation.NoView)
-                        || checkFlag(flags, PdfAnnotation.ToggleNoView)) {
-                    throw new PdfAConformanceException(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleNoviewAndTogglenoviewFlagBitsShallBeSetTo0);
-                }
-                if (subtype.equals(PdfName.Text)) {
-                    if (!checkFlag(flags, PdfAnnotation.NoZoom) || !checkFlag(flags, PdfAnnotation.NoRotate)) {
-                        throw new PdfAConformanceException(PdfAConformanceException.TextAnnotationsShouldSetTheNozoomAndNorotateFlagBitsOfTheFKeyTo1);
-                    }
+        if (!subtype.equals(PdfName.Popup)) {
+            PdfNumber f = annotDic.getAsNumber(PdfName.F);
+            if (f == null) {
+                throw new PdfAConformanceException(PdfAConformanceException.AnAnnotationDictionaryShallContainTheFKey);
+            }
+            int flags = f.getIntValue();
+            if (!checkFlag(flags, PdfAnnotation.Print)
+                    || checkFlag(flags, PdfAnnotation.Hidden)
+                    || checkFlag(flags, PdfAnnotation.Invisible)
+                    || checkFlag(flags, PdfAnnotation.NoView)
+                    || checkFlag(flags, PdfAnnotation.ToggleNoView)) {
+                throw new PdfAConformanceException(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleNoviewAndTogglenoviewFlagBitsShallBeSetTo0);
+            }
+            if (subtype.equals(PdfName.Text)) {
+                if (!checkFlag(flags, PdfAnnotation.NoZoom) || !checkFlag(flags, PdfAnnotation.NoRotate)) {
+                    throw new PdfAConformanceException(PdfAConformanceException.TextAnnotationsShouldSetTheNozoomAndNorotateFlagBitsOfTheFKeyTo1);
                 }
             }
+        }
 
-            if (PdfName.Widget.equals(subtype) && (annotDic.containsKey(PdfName.AA) || annotDic.containsKey(PdfName.A))) {
-                throw new PdfAConformanceException(PdfAConformanceException.WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry);
+        if (PdfName.Widget.equals(subtype) && (annotDic.containsKey(PdfName.AA) || annotDic.containsKey(PdfName.A))) {
+            throw new PdfAConformanceException(PdfAConformanceException.WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry);
+        }
+
+        if (checkStructure(conformanceLevel)) {
+            if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
+                throw new PdfAConformanceException(PdfAConformanceException.AnnotationOfType1ShouldHaveContentsKey).setMessageParams(subtype);
             }
+        }
 
-            if (checkStructure(conformanceLevel)) {
-                if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
-                    throw new PdfAConformanceException(PdfAConformanceException.AnnotationOfType1ShouldHaveContentsKey).setMessageParams(subtype);
-                }
+        PdfDictionary ap = annotDic.getAsDictionary(PdfName.AP);
+        if (ap != null) {
+            if (ap.containsKey(PdfName.R) || ap.containsKey(PdfName.D)) {
+                throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
             }
-
-            PdfDictionary ap = annotDic.getAsDictionary(PdfName.AP);
-            if (ap != null) {
-                if (ap.containsKey(PdfName.R) || ap.containsKey(PdfName.D)) {
-                    throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
-                }
-                PdfObject n = ap.get(PdfName.N);
-                if (PdfName.Widget.equals(subtype) && PdfName.Btn.equals(annotDic.getAsName(PdfName.FT))) {
-                    if (n == null || !n.isDictionary())
-                        throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryOfWidgetSubtypeAndBtnFieldTypeShallContainOnlyTheNKeyWithDictionaryValue);
-                } else {
-                    if (n == null || !n.isStream())
-                        throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
-                }
+            PdfObject n = ap.get(PdfName.N);
+            if (PdfName.Widget.equals(subtype) && PdfName.Btn.equals(annotDic.getAsName(PdfName.FT))) {
+                if (n == null || !n.isDictionary())
+                    throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryOfWidgetSubtypeAndBtnFieldTypeShallContainOnlyTheNKeyWithDictionaryValue);
             } else {
-                boolean isCorrectRect = false;
-                PdfArray rect = annotDic.getAsArray(PdfName.Rect);
-                if (rect != null && rect.size() == 4) {
-                    PdfNumber index0 = rect.getAsNumber(0);
-                    PdfNumber index1 = rect.getAsNumber(1);
-                    PdfNumber index2 = rect.getAsNumber(2);
-                    PdfNumber index3 = rect.getAsNumber(3);
-                    if (index0 != null && index1 != null && index2 != null && index3 != null &&
-                            index0.getFloatValue() == index2.getFloatValue() && index1.getFloatValue() == index3.getFloatValue())
-                        isCorrectRect = true;
-                }
-                if (!PdfName.Popup.equals(subtype) &&
-                        !PdfName.Link.equals(subtype) &&
-                        !isCorrectRect)
-                    throw new PdfAConformanceException(PdfAConformanceException.EveryAnnotationShallHaveAtLeastOneAppearanceDictionary);
+                if (n == null || !n.isStream())
+                    throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
             }
+        } else {
+            boolean isCorrectRect = false;
+            PdfArray rect = annotDic.getAsArray(PdfName.Rect);
+            if (rect != null && rect.size() == 4) {
+                PdfNumber index0 = rect.getAsNumber(0);
+                PdfNumber index1 = rect.getAsNumber(1);
+                PdfNumber index2 = rect.getAsNumber(2);
+                PdfNumber index3 = rect.getAsNumber(3);
+                if (index0 != null && index1 != null && index2 != null && index3 != null &&
+                        index0.getFloatValue() == index2.getFloatValue() && index1.getFloatValue() == index3.getFloatValue())
+                    isCorrectRect = true;
+            }
+            if (!PdfName.Popup.equals(subtype) &&
+                    !PdfName.Link.equals(subtype) &&
+                    !isCorrectRect)
+                throw new PdfAConformanceException(PdfAConformanceException.EveryAnnotationShallHaveAtLeastOneAppearanceDictionary);
         }
     }
 
     @Override
     protected void checkForm(PdfDictionary form) {
-        PdfBoolean needAppearances = form.getAsBoolean(PdfName.NeedAppearances);
-        if (needAppearances != null && needAppearances.getValue()) {
-            throw new PdfAConformanceException("needappearances.flag.of.the.interactive.form.dictionary.shall.either.not.be.present.or.shall.be.false");
-        }
-        if (checkStructure(conformanceLevel) && form.containsKey(PdfName.XFA)) {
-            throw new PdfAConformanceException("the.interactive.form.dictionary.shall.not.contain.the.xfa.key");
+        if (form != null) {
+            PdfBoolean needAppearances = form.getAsBoolean(PdfName.NeedAppearances);
+            if (needAppearances != null && needAppearances.getValue()) {
+                throw new PdfAConformanceException("needappearances.flag.of.the.interactive.form.dictionary.shall.either.not.be.present.or.shall.be.false");
+            }
+            if (checkStructure(conformanceLevel) && form.containsKey(PdfName.XFA)) {
+                throw new PdfAConformanceException("the.interactive.form.dictionary.shall.not.contain.the.xfa.key");
+            }
         }
     }
 
     @Override
-    protected void checkCatalog(PdfDictionary catalog) {
-        if (catalog.containsKey(PdfName.NeedsRendering)) {
+    protected void checkCatalogValidEntries(PdfDictionary catalogDict) {
+        if (catalogDict.containsKey(PdfName.NeedsRendering)) {
             throw new PdfAConformanceException("the.catalog.dictionary.shall.not.contain.the.needsrendering.key");
         }
 
-        PdfDictionary permissions = catalog.getAsDictionary(PdfName.Perms);
+        if (catalogDict.containsKey(PdfName.AA)) {
+            throw new PdfAConformanceException(PdfAConformanceException.CatalogDictionaryShallNotContainAAEntry);
+        }
+
+        PdfDictionary permissions = catalogDict.getAsDictionary(PdfName.Perms);
         if (permissions != null) {
             for (PdfName dictKey : permissions.keySet()) {
                 if (PdfName.DocMDP.equals(dictKey)) {
@@ -205,5 +210,40 @@ public class PdfA2Checker extends PdfA1Checker{
                 }
             }
         }
+    }
+
+    @Override
+    protected void checkAction(PdfDictionary action) {
+        PdfName s = action.getAsName(PdfName.S);
+        if (forbiddenActions.contains(s)) {
+            throw new PdfAConformanceException(PdfAConformanceException._1ActionsIsNotAllowed).setMessageParams(s.getValue());
+        }
+        if (s.equals(PdfName.Named)) {
+            PdfName n = action.getAsName(PdfName.N);
+            if (n != null && !allowedNamedActions.contains(n)) {
+                throw new PdfAConformanceException(PdfAConformanceException.NamedActionType1IsNotAllowed).setMessageParams(n.getValue());
+            }
+        }
+        if (s.equals(PdfName.SetState) || s.equals(PdfName.NoOp)) {
+            throw new PdfAConformanceException(PdfAConformanceException.DeprecatedSetStateAndNoOpActionsAreNotAllowed);
+        }
+    }
+
+    @Override
+    protected void checkPage(PdfDictionary pageDict) {
+        PdfDictionary actions = pageDict.getAsDictionary(PdfName.AA);
+        if (actions != null) {
+            throw new PdfAConformanceException(PdfAConformanceException.PageDictionaryShallNotContainAAEntry);
+        }
+    }
+
+    @Override
+    protected HashSet<PdfName> getForbiddenActions() {
+        return forbiddenActions;
+    }
+
+    @Override
+    protected HashSet<PdfName> getAllowedNamedActions() {
+        return allowedNamedActions;
     }
 }
