@@ -34,6 +34,8 @@ public class PdfAConformanceException extends PdfException {
     public static final String SigRefDicShallNotContDigestParam ="signature.references.dictionary.shall.not.contain.digestlocation.digestmethod.digestvalue";
     public static final String NoKeysOtherUr3andDocMdpShallBePresentInPerDict = "no.keys.other.than.UR3.and.DocMDP.shall.be.present.in.a.permissions.dictionary";
     public static final String EncryptShallNotBeUsedInTrailerDictionary = "keyword.encrypt.shall.not.be.used.in.the.trailer.dictionary";
+    public static final String CatalogShallIncludeMarkInfoDictionaryWithMarkedTrueValue = "document.catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true";
+    public static final String CatalogShouldContainLangEntry = "document.catalog.dictionary.should.contain.lang.entry";
 
     public PdfAConformanceException(String message) {
         super(message);
