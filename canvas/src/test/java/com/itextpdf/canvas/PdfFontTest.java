@@ -82,11 +82,11 @@ public class PdfFontTest {
     @Test
     public void createDocumentWithTrueTypeAsType0() throws IOException, PdfException, InterruptedException {
         int pageCount = 1;
-        String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0.pdf";
-        String cmpFilename = sourceFolder + "cmp_DocumentWithWithTrueTypeAsType0.pdf";
+        String filename = destinationFolder + "DocumentWithTrueTypeAsType0.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0.pdf";
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
-        final String title = "Type3 test";
+        final String title = "Type0 test";
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -109,6 +109,54 @@ public class PdfFontTest {
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 500, 100, 100).fill();
+            canvas.release();
+            page.flush();
+        }
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+
+    @Test
+    public void createDocumentWithLigatures() throws IOException, PdfException, InterruptedException {
+        int pageCount = 1;
+        String filename = destinationFolder + "DocumentWithLigatures.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithLigatures.pdf";
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Ligatures test";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "FoglihtenNo07.otf"));
+        TrueTypeFont foglihtenNo07 = new TrueTypeFont("FoglihtenNo07", com.itextpdf.basics.font.PdfEncodings.IDENTITY_H, ttf);
+        foglihtenNo07.setApplyLigatures(true);
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, foglihtenNo07, "Identity-H"), 24)
+                    .showText("The quick brown fox jumps fi ff")
+                    .endText()
+                    .restoreState();
+            foglihtenNo07.setApplyLigatures(false);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 600)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, foglihtenNo07, "Identity-H"), 24)
+                    .showText("The quick brown fox jumps fi ff")
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 400, 100, 100).fill();
             canvas.release();
             page.flush();
         }
@@ -773,9 +821,9 @@ public class PdfFontTest {
         final String author = "Dmitry Trusevich";
         final String creator = "iText 6";
         final String title = "Type0 font iText 6 Document";
-        String inputFileName1 = sourceFolder + "DocumentWithWithTrueTypeAsType0.pdf";
-        String filename = destinationFolder + "DocumentWithWithTrueTypeAsType0_new.pdf";
-        String cmpFilename = sourceFolder + "cmp_DocumentWithWithTrueTypeAsType0_new.pdf";
+        String inputFileName1 = sourceFolder + "DocumentWithTrueTypeAsType0.pdf";
+        String filename = destinationFolder + "DocumentWithTrueTypeAsType0_new.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0_new.pdf";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);

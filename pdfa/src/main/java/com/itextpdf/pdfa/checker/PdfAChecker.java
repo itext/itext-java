@@ -27,6 +27,7 @@ public abstract class PdfAChecker {
 
         checkCatalogValidEntries(catalogDict);
         checkTrailer(catalog.getDocument().getTrailer());
+        checkLogicalStructure(catalogDict);
         checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
         checkOutlines(catalogDict);
@@ -71,6 +72,7 @@ public abstract class PdfAChecker {
     protected abstract void checkCatalogValidEntries(PdfDictionary catalogDict);
     protected abstract void checkPage(PdfDictionary pageDict);
     protected abstract void checkTrailer(PdfDictionary trailer);
+    protected abstract void checkLogicalStructure(PdfDictionary catalog);
 
     protected void checkResources(PdfDictionary resources) {
         if (resources == null)

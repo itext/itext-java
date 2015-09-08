@@ -161,7 +161,8 @@ public class PdfA1AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setTagged();
+        doc.getCatalog().setLang(new PdfName("en"));
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);

@@ -6,6 +6,7 @@ import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.*;
 import com.itextpdf.basics.font.cmap.CMapContentParser;
 import com.itextpdf.basics.font.cmap.CMapObject;
+import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
@@ -172,7 +173,22 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     }
                     glyph[i++] = (char) metrics[0];
                 }
+                if (ttf.isApplyLigatures()) {
+                    GlyphLine glyphLine = ttf.applyLigatureFeature(glyph, i);
+                    if (glyphLine != null) {
+                        glyph = glyphLineToChars(glyphLine);
+                        i = glyph.length;
+                        for (char ch: glyph) {
+                            int code = (int)ch;
+                            if (longTag.get(code) == null) {
+                                Character uniChar = ttf.getUnicodeChar(code);
+                                longTag.put(code, new int[] {code, ttf.getWidth(uniChar), uniChar});
+                            }
+                        }
+                    }
+                }
             }
+
             String s = new String(glyph, 0, i);
             try {
                 return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
@@ -835,6 +851,15 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         cidInfo.put(PdfName.Supplement, new PdfNumber(cmapEncoding.getSupplement()));
         cidFont.put(PdfName.CIDSystemInfo, cidInfo);
         return cidFont;
+    }
+
+    private char[] glyphLineToChars(GlyphLine glyphLine) {
+        int length = glyphLine.end - glyphLine.start;
+        char[] glyphs = new char[length];
+        for (int k = 0; k < length; k++) {
+            glyphs[k] = (char) glyphLine.glyphs.get(glyphLine.start + k).code;
+        }
+        return glyphs;
     }
 
 

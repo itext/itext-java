@@ -175,6 +175,19 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+    * An entry specifying the natural language, and optionally locale. Use this
+    * to specify the Language attribute on a Tagged Pdf element.
+    * For the content usage dictionary, use PdfName.Language
+    */
+    public void setLang(PdfName lang){
+        getPdfObject().put(PdfName.Lang,lang);
+    }
+
+    public PdfName getLang(PdfName lang){
+        return getPdfObject().getAsName(PdfName.Lang);
+    }
+
+    /**
      * True indicates that getOCProperties() was called, may have been modified,
      * and thus its dictionary needs to be reconstructed.
      */

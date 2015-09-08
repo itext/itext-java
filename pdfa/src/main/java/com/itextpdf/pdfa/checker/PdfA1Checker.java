@@ -89,6 +89,19 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    protected void checkLogicalStructure(PdfDictionary catalog) {
+        if (checkStructure(conformanceLevel)) {
+            PdfDictionary markInfo = catalog.getAsDictionary(PdfName.MarkInfo);
+            if (markInfo == null || markInfo.getAsBoolean(PdfName.Marked) == null || !markInfo.getAsBoolean(PdfName.Marked).getValue()) {
+                throw new PdfAConformanceException(PdfAConformanceException.CatalogShallIncludeMarkInfoDictionaryWithMarkedTrueValue);
+            }
+            if (!catalog.containsKey(PdfName.Lang)) {
+                throw new PdfAConformanceException(PdfAConformanceException.CatalogShouldContainLangEntry);
+            }
+        }
+    }
+
+    @Override
     protected void checkPdfNumber(PdfNumber number) {
         if (Math.abs(number.getLongValue()) > getMaxRealValue() && number.toString().contains(".")) {
             throw new PdfAConformanceException(PdfAConformanceException.RealNumberIsOutOfRange);
