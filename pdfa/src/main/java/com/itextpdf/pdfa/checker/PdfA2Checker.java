@@ -6,6 +6,7 @@ import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.pdfa.PdfAConformanceLevel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -146,6 +147,10 @@ public class PdfA2Checker extends PdfA1Checker{
             throw new PdfAConformanceException(PdfAConformanceException.CatalogDictionaryShallNotContainAAEntry);
         }
 
+        if (catalogDict.containsKey(PdfName.Requirements)) {
+            throw new PdfAConformanceException(PdfAConformanceException.CatalogDictionaryShallNotContainRequirementsEntry);
+        }
+
         PdfDictionary permissions = catalogDict.getAsDictionary(PdfName.Perms);
         if (permissions != null) {
             for (PdfName dictKey : permissions.keySet()) {
@@ -171,6 +176,58 @@ public class PdfA2Checker extends PdfA1Checker{
             }
         }
 
+        PdfDictionary namesDictionary = catalogDict.getAsDictionary(PdfName.Names);
+        if (namesDictionary != null && namesDictionary.containsKey(PdfName.AlternatePresentations)) {
+            throw new PdfAConformanceException(PdfAConformanceException.CatalogDictionaryShallNotContainAlternatepresentationsNamesEntry);
+        }
+
+        PdfDictionary oCProperties = catalogDict.getAsDictionary(PdfName.OCProperties);
+        if (oCProperties != null) {
+            ArrayList<PdfDictionary> configList = new ArrayList<>();
+            PdfDictionary d = oCProperties.getAsDictionary(PdfName.D);
+            if (d != null) {
+                configList.add(d);
+            }
+            PdfArray configs = oCProperties.getAsArray(PdfName.Configs);
+            if (configs != null) {
+                for (PdfObject config : configs) {
+                    configList.add((PdfDictionary) config);
+                }
+            }
+
+            HashSet<PdfObject> ocgs = new HashSet<>();
+            PdfArray ocgsArray = oCProperties.getAsArray(PdfName.OCGs);
+            if (ocgsArray != null) {
+                ocgs.addAll(ocgsArray);
+            }
+
+            HashSet<String> names = new HashSet<>();
+            HashSet<PdfObject> order = new HashSet<>();
+            for (PdfDictionary config : configList) {
+                PdfString name = config.getAsString(PdfName.Name);
+                if (name == null) {
+                    throw new PdfAConformanceException(PdfAConformanceException.OptionalContentConfigurationDictionaryShallContainNameEntry);
+                }
+                if (!names.add(name.toUnicodeString())) {
+                    throw new PdfAConformanceException(PdfAConformanceException.ValueOfNameEntryShallBeUniqueAmongAllOptionalContentConfigurationDictionaries);
+                }
+                if (config.containsKey(PdfName.AS)) {
+                    throw new PdfAConformanceException(PdfAConformanceException.TheAsKeyShallNotAppearInAnyOptionalContentConfigurationDictionary);
+                }
+                PdfArray orderArray = config.getAsArray(PdfName.Order);
+                if (orderArray != null) {
+                    fillOrderRecursively(orderArray, order);
+                }
+            }
+
+            if (order.size() != ocgs.size()) {
+                throw new PdfAConformanceException(PdfAConformanceException.OrderArrayShallContainReferencesToAllOcgs);
+            }
+            order.retainAll(ocgs);
+            if (order.size() != ocgs.size()) {
+                throw new PdfAConformanceException(PdfAConformanceException.OrderArrayShallContainReferencesToAllOcgs);
+            }
+        }
     }
 
     @Override
@@ -231,9 +288,12 @@ public class PdfA2Checker extends PdfA1Checker{
 
     @Override
     protected void checkPage(PdfDictionary pageDict) {
-        PdfDictionary actions = pageDict.getAsDictionary(PdfName.AA);
-        if (actions != null) {
+        if (pageDict.containsKey(PdfName.AA)) {
             throw new PdfAConformanceException(PdfAConformanceException.PageDictionaryShallNotContainAAEntry);
+        }
+
+        if (pageDict.containsKey(PdfName.PresSteps)) {
+            throw new PdfAConformanceException(PdfAConformanceException.PageDictionaryShallNotContainPressstepsEntry);
         }
     }
 
@@ -245,5 +305,15 @@ public class PdfA2Checker extends PdfA1Checker{
     @Override
     protected HashSet<PdfName> getAllowedNamedActions() {
         return allowedNamedActions;
+    }
+
+    private void fillOrderRecursively(PdfArray orderArray, HashSet<PdfObject> order) {
+        for (PdfObject orderItem : orderArray) {
+            if (!orderItem.isArray()) {
+                order.add(orderItem);
+            } else {
+                fillOrderRecursively((PdfArray) orderItem, order);
+            }
+        }
     }
 }

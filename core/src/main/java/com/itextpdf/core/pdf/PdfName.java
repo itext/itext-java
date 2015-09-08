@@ -48,6 +48,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName AllOn = createDirectName("AllOn");
     public static final PdfName Alt = createDirectName("Alt");
     public static final PdfName Alternate = createDirectName("Alternate");
+    public static final PdfName AlternatePresentations = createDirectName("AlternatePresentations");
     public static final PdfName AN = createDirectName("AN");
     public static final PdfName And = createDirectName("And");
     public static final PdfName Annot = createDirectName("Annot");
@@ -127,6 +128,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ColorTransform = createDirectName("ColorTransform");
     public static final PdfName Columns = createDirectName("Columns");
     public static final PdfName Confidential = createDirectName("Confidential");
+    public static final PdfName Configs = createDirectName("Configs");
     public static final PdfName Contents = createDirectName("Contents");
     public static final PdfName Coords = createDirectName("Coords");
     public static final PdfName Count = createDirectName("Count");
@@ -422,6 +424,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Predictor = createDirectName("Predictor");
     public static final PdfName Preferred = createDirectName("Preferred");
     public static final PdfName PreserveRB = createDirectName("PreserveRB");
+    public static final PdfName PresSteps = createDirectName("PresSteps");
     public static final PdfName Prev = createDirectName("Prev");
     public static final PdfName PrevPage = createDirectName("PrevPage");
     public static final PdfName Print = createDirectName("Print");
@@ -454,6 +457,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Rendition = createDirectName("Rendition");
     public static final PdfName Repeat = createDirectName("Repeat");
     public static final PdfName ResetForm = createDirectName("ResetForm");
+    public static final PdfName Requirements = createDirectName("Requirements");
     public static final PdfName Resources = createDirectName("Resources");
     public static final PdfName RI = createDirectName("RI");
     public static final PdfName RO = createDirectName("RO");

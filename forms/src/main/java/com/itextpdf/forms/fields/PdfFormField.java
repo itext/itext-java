@@ -299,6 +299,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the field
      */
     public <T extends PdfFormField> T setValue(String value) {
+        return setValue(value, true);
+    }
+
+    /**
+     * Sets a value to the field and generating field appearance if needed.
+     * @param value of the field
+     * @param generateAppearance set this flat to false if you want to keep the appearance of the field generated before
+     * @return the field
+     */
+    public <T extends PdfFormField> T setValue(String value, boolean generateAppearance) {
         PdfName formType = getFormType();
         if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
             put(PdfName.V, new PdfString(value));
@@ -313,7 +323,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.V, new PdfString(value));
         }
 
-        regenerateField();
+        if (formType.equals(PdfName.Btn) && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) == 0) {
+            if (generateAppearance) {
+                regenerateField();
+            }
+        } else {
+            regenerateField();
+        }
         return (T) this;
     }
 
