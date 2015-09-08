@@ -186,6 +186,60 @@ public enum Property {
         }
     }
 
+    public static class UnitValue {
+        public static final int POINT = 1;
+        public static final int PERCENT = 2;
+
+        protected int unitType;
+        protected float value;
+
+        public UnitValue(int unitType, float value) {
+            this.unitType = unitType;
+            this.value = value;
+        }
+
+        public static UnitValue createPointValue(float value) {
+            return new UnitValue(POINT, value);
+        }
+
+        public static UnitValue createPercentValue(float value) {
+            return new UnitValue(PERCENT, value);
+        }
+
+        public int getUnitType() {
+            return unitType;
+        }
+
+        public void setUnitType(int unitType) {
+            this.unitType = unitType;
+        }
+
+        public float getValue() {
+            return value;
+        }
+
+        public void setValue(float value) {
+            this.value = value;
+        }
+
+        public boolean isPointValue() {
+            return unitType == POINT;
+        }
+
+        public boolean isPercentValue() {
+            return unitType == PERCENT;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof UnitValue)) {
+                return false;
+            }
+            UnitValue other = (UnitValue) obj;
+            return Integer.compare(unitType, other.unitType) == 0 && Float.compare(value, other.value) == 0;
+        }
+    }
+
     public enum ListNumberingType {
         DECIMAL,
         ROMAN_LOWER,

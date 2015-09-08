@@ -240,12 +240,6 @@ public class LineRenderer extends AbstractRenderer {
         return new LineRenderer[] {splitRenderer, overflowRenderer};
     }
 
-    protected LayoutRect getElementSize(IRenderer renderer) {
-        Float width = renderer.getProperty(Property.WIDTH);
-        Float height = renderer.getProperty(Property.HEIGHT);
-        return new LayoutRect(width, height);
-    }
-
     protected LineRenderer adjustChildrenYLine() {
         float actualYLine = occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - maxAscent;
         for (IRenderer renderer : childRenderers) {
@@ -312,7 +306,7 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         childRenderer.setProperty(Property.TAB_LEADER, nextTabStop.getTabLeader());
-        childRenderer.setProperty(Property.WIDTH, nextTabStop.getTabPosition() - curWidth);
+        childRenderer.setProperty(Property.WIDTH, Property.UnitValue.createPointValue(nextTabStop.getTabPosition() - curWidth));
         childRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
         if (nextTabStop.getTabAlignment() == Property.TabAlignment.LEFT) {
             return null;
@@ -352,7 +346,7 @@ public class LineRenderer extends AbstractRenderer {
         if (curWidth + tabWidth + childWidth > layoutBox.getWidth())
             tabWidth -= (curWidth + childWidth + tabWidth) - layoutBox.getWidth();
 
-        tabRenderer.setProperty(Property.WIDTH, tabWidth);
+        tabRenderer.setProperty(Property.WIDTH, Property.UnitValue.createPointValue(tabWidth));
         tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
         return tabWidth;
     }
@@ -362,7 +356,7 @@ public class LineRenderer extends AbstractRenderer {
         Float tabWidth = tabDefault - curWidth % tabDefault;
         if (curWidth + tabWidth > lineWidth)
             tabWidth = lineWidth - curWidth;
-        tabRenderer.setProperty(Property.WIDTH, tabWidth);
+        tabRenderer.setProperty(Property.WIDTH, Property.UnitValue.createPointValue(tabWidth));
         tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
     }
 }

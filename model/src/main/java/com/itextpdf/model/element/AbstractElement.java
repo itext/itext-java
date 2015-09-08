@@ -7,8 +7,10 @@ import com.itextpdf.model.border.Border;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractElement<Type extends AbstractElement> implements IElement<Type> {
 
@@ -70,11 +72,19 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         }
     }
 
-    public Float getWidth() {
+    public Property.UnitValue getWidth() {
         return getProperty(Property.WIDTH);
     }
 
     public Type setWidth(float width) {
+        return setProperty(Property.WIDTH, Property.UnitValue.createPointValue(width));
+    }
+
+    public Type setWidthPercent(float widthPercent) {
+        return setProperty(Property.WIDTH, Property.UnitValue.createPercentValue(widthPercent));
+    }
+
+    public Type setWidth(Property.UnitValue width) {
         return setProperty(Property.WIDTH, width);
     }
 
@@ -95,6 +105,10 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
     }
 
     public Type setFixedPosition(float x, float y, float width) {
+        return setFixedPosition(x, y, Property.UnitValue.createPointValue(width));
+    }
+
+    public Type setFixedPosition(float x, float y, Property.UnitValue width) {
         return (Type) setProperty(Property.POSITION, LayoutPosition.FIXED).
             setProperty(Property.X, x).
             setProperty(Property.Y, y).
@@ -104,6 +118,11 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
     public Type setFixedPosition(int pageNumber, float x, float y, float width) {
         return (Type) setFixedPosition(x, y, width).
                setProperty(Property.PAGE_NUMBER, pageNumber);
+    }
+
+    public Type setFixedPosition(int pageNumber, float x, float y, Property.UnitValue width) {
+        return (Type) setFixedPosition(x, y, width).
+                setProperty(Property.PAGE_NUMBER, pageNumber);
     }
 
 //    public Type setAbsolutePosition(float x, float y) {

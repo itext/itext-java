@@ -22,12 +22,12 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     public Image(PdfImageXObject xObject, float width) {
         this.xObject = xObject;
-        setProperty(Property.WIDTH, width);
+        setWidth(width);
     }
 
     public Image(PdfImageXObject xObject, float x, float y, float width) {
         this.xObject = xObject;
-        setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.WIDTH, width).setProperty(Property.POSITION, LayoutPosition.FIXED);
+        setProperty(Property.X, x).setProperty(Property.Y, y).setWidth(width).setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
     public Image(PdfImageXObject xObject, float x, float y) {
@@ -146,32 +146,18 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     /**
-     * Gets width of the image. If a user didn't set Width property before it returns width of image or form XObject
-     *
-     * @return
+     * Gets width of the image. It returns width of image or form XObject,
+     * not the width set by one of the #setWidth methods
      */
-    @Override
-    public Float getWidth() {
-        Float width = super.getWidth();
-        if (width == null) {
-            width = xObject.getWidth();
-        }
-
-        return width;
+    public float getImageWidth() {
+        return xObject.getWidth();
     }
 
     /**
-     * Gets height of the image. If a user didn't set Height property before it returns height of image or form XObject
-     *
-     * @return
+     * Gets height of the image. It returns height of image or form XObject,
+     * not the height set by one of the #setHeight methods
      */
-    @Override
-    public Float getHeight() {
-        Float height = super.getHeight();
-        if (height == null) {
-            height = xObject.getHeight();
-        }
-
-        return height;
+    public float getImageHeight() {
+        return xObject.getHeight();
     }
 }

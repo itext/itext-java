@@ -40,7 +40,7 @@ public class ParagraphRenderer extends BlockRenderer {
             parentBBox.setX(relativeX + x);
         }
 
-        Float blockWidth = getPropertyAsFloat(Property.WIDTH);
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned())) {
             parentBBox.setWidth(blockWidth);
         }

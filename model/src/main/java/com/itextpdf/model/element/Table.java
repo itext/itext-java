@@ -1,6 +1,7 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.model.Document;
+import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.TableRenderer;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         for (int k = 0; k < numColumns; ++k) {
             this.columnWidths[k] = 1;
         }
-        super.setWidth(0);
+        super.setWidth(Property.UnitValue.createPercentValue(100));
         initializeRows();
     }
 
@@ -82,9 +83,9 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param width the full width of the table.
      */
     @Override
-    public Table setWidth(float width) {
-        Float currWidth = getWidth();
-        if (currWidth != width) {
+    public Table setWidth(Property.UnitValue width) {
+        Property.UnitValue currWidth = getWidth();
+        if (!width.equals(currWidth)) {
             super.setWidth(width);
             calculateWidths();
         }
@@ -354,17 +355,14 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     }
 
     protected void calculateWidths() {
-        Float width = getWidth();
-        if (width <= 0) {
-            return;
-        }
+        Property.UnitValue width = getWidth();
         float total = 0;
         int numCols = getNumberOfColumns();
         for (int k = 0; k < numCols; ++k) {
             total += columnWidths[k];
         }
         for (int k = 0; k < numCols; ++k) {
-            columnWidths[k] = width * columnWidths[k] / total;
+            columnWidths[k] = width.getValue() * columnWidths[k] / total;
         }
     }
 

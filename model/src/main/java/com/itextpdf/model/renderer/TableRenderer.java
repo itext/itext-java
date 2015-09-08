@@ -55,7 +55,10 @@ public class TableRenderer extends AbstractRenderer {
         Rectangle layoutBox = area.getBBox().clone();
         Table tableModel = (Table) getModelElement();
 
-        float tableWidth = tableModel.getWidth() != 0 ? tableModel.getWidth() : layoutBox.getWidth();
+        Float tableWidth = retrieveWidth(layoutBox.getWidth());
+        if (tableWidth == null || tableWidth == 0) {
+            tableWidth = layoutBox.getWidth();
+        }
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), tableWidth, 0));
 
@@ -84,7 +87,7 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.moveUp(footerHeight).decreaseHeight(footerHeight);
         }
 
-        float[] columnWidths = calculateScaledColumnWidths(tableModel, layoutBox.getWidth());
+        float[] columnWidths = calculateScaledColumnWidths(tableModel, tableWidth);
         ArrayList<Float> heights = new ArrayList<>();
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
         // This represents the target row index for the overflow renderer to be placed to.
@@ -278,20 +281,17 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    protected float[] calculateScaledColumnWidths(Table tableModel, float layoutWidth) {
+    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth) {
         float[] columnWidths = new float[tableModel.getNumberOfColumns()];
         float widthSum = 0;
         for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
             columnWidths[i] = tableModel.getColumnWidth(i);
             widthSum += columnWidths[i];
         }
-        if (tableModel.getWidth() == 0) {
-            // In this case get available occupiedArea, but don't save to model element.
-            // Also recalculate column widths, and also don't save it to the model element.
-            for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
-                columnWidths[i] *= layoutWidth / widthSum;
-            }
+        for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
+            columnWidths[i] *= tableWidth / widthSum;
         }
+
         return columnWidths;
     }
 

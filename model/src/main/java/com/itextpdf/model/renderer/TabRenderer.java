@@ -19,7 +19,7 @@ public class TabRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
-        Float width = getPropertyAsFloat(Property.WIDTH);
+        Float width = retrieveWidth(area.getBBox().getWidth());
         Float height = getPropertyAsFloat(Property.HEIGHT);
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(), width, height));

@@ -39,7 +39,7 @@ public class ImageRenderer extends AbstractRenderer {
         applyMargins(layoutBox, false);
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
-        width = getPropertyAsFloat(Property.WIDTH);
+        width = retrieveWidth(layoutBox.getWidth());
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
@@ -145,7 +145,7 @@ public class ImageRenderer extends AbstractRenderer {
     protected ImageRenderer autoScale(LayoutArea area) {
         if (width > area.getBBox().getWidth()) {
             setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);
-            setProperty(Property.WIDTH, area.getBBox().getWidth());
+            setProperty(Property.WIDTH, Property.UnitValue.createPointValue(area.getBBox().getWidth()));
         }
 
         return this;

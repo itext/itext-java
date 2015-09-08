@@ -261,6 +261,21 @@ public abstract class AbstractRenderer implements IRenderer {
         return occupiedArea.getBBox().clone();
     }
 
+    protected Float retrieveWidth(float parentBoxWidth) {
+        Property.UnitValue width = getProperty(Property.WIDTH);
+        if (width != null) {
+            if (width.getUnitType() == Property.UnitValue.POINT) {
+                return width.getValue();
+            } else if (width.getUnitType() == Property.UnitValue.PERCENT) {
+                return width.getValue() * parentBoxWidth / 100;
+            } else {
+                throw new IllegalStateException("invalid unit type");
+            }
+        } else {
+            return null;
+        }
+    }
+
     //TODO is behavior of copying all properties in split case common to all renderers?
     protected Map<Property, Object> getOwnProperties() {
         return properties;
