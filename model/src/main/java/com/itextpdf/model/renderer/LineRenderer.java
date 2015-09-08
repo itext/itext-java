@@ -15,11 +15,6 @@ public class LineRenderer extends AbstractRenderer {
     protected float maxAscent;
     protected float maxDescent;
 
-    public void addChildFront(IRenderer child) {
-        childRenderers.add(0, child);
-        child.setParent(this);
-    }
-
     @Override
     public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
