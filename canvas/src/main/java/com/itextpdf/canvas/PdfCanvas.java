@@ -1375,6 +1375,22 @@ public class PdfCanvas {
     }
 
     /**
+     * Creates Image XObject from image and adds it to canvas (as Image XObject).
+     *
+     * @param image    the {@code PdfImageXObject} object
+     * @param a        an element of the transformation matrix
+     * @param b        an element of the transformation matrix
+     * @param c        an element of the transformation matrix
+     * @param d        an element of the transformation matrix
+     * @param e        an element of the transformation matrix
+     * @param f        an element of the transformation matrix
+     * @return created Image XObject.
+     */
+    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f) {
+        return addImage(image, a, b, c, d, e, f, false);
+    }
+
+    /**
      * Creates Image XObject from image and adds it to canvas.
      *
      * @param image    the {@code PdfImageXObject} object
@@ -1386,7 +1402,6 @@ public class PdfCanvas {
      * @param f        an element of the transformation matrix
      * @param asInline true if to add image as in-line.
      * @return created Image XObject or null in case of in-line image (asInline = true).
-     * @on error
      */
     public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) {
         if (image.getOriginalType() == Image.WMF) {

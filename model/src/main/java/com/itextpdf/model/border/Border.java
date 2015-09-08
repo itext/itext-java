@@ -5,6 +5,8 @@ import com.itextpdf.canvas.color.Color;
 
 public abstract class Border {
 
+    public static final Border NO_BORDER = null;
+
     protected Color color;
     protected float width;
 
