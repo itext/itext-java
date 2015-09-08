@@ -49,7 +49,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         int total = 0;
         byte[] bytes = fontProgram.getEncoding().convertToBytes(ch);
         for (byte b : bytes) {
-            total += getFontProgram().getWidth(0xff & b);
+            total += getFontProgram().getWidth(b & 0xff);
         }
         return total;
     }
@@ -65,10 +65,87 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         int total = 0;
         byte[] bytes = fontProgram.getEncoding().convertToBytes(s);
         for (byte b : bytes) {
-            total += getFontProgram().getWidth(0xff & b);
+            total += getFontProgram().getWidth(b & 0xff);
         }
         return total;
     }
+
+    /**
+     * Gets the descent of a {@code String} in normalized 1000 units. The descent will always be
+     * less than or equal to zero even if all the characters have an higher descent.
+     *
+     * @param text the {@code String} to get the descent of
+     * @return the descent in normalized 1000 units
+     */
+    public int getDescent(String text) {
+        int min = 0;
+        byte[] bytes = fontProgram.getEncoding().convertToBytes(text);
+        for (byte b : bytes) {
+            int[] bbox = getFontProgram().getCharBBox(b & 0xff);
+            if (bbox != null && bbox[1] < min) {
+                min = bbox[1];
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Gets the descent of a char code in normalized 1000 units. The descent will always be
+     * less than or equal to zero even if all the characters have an higher descent.
+     *
+     * @param ch the char code to get the descent of
+     * @return the descent in normalized 1000 units
+     */
+    public int getDescent(int ch) {
+        int min = 0;
+        byte[] bytes = fontProgram.getEncoding().convertToBytes(ch);
+        for (byte b : bytes) {
+            int[] bbox = getFontProgram().getCharBBox(b & 0xff);
+            if (bbox != null && bbox[1] < min) {
+                min = bbox[1];
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Gets the ascent of a {@code String} in normalized 1000 units. The ascent will always be
+     * greater than or equal to zero even if all the characters have a lower ascent.
+     *
+     * @param text the {@code String} to get the ascent of
+     * @return the ascent in normalized 1000 units
+     */
+    public int getAscent(String text) {
+        int max = 0;
+        byte[] bytes = fontProgram.getEncoding().convertToBytes(text);
+        for (byte b : bytes) {
+            int[] bbox = getFontProgram().getCharBBox(b & 0xff);
+            if (bbox != null && bbox[3] > max) {
+                max = bbox[3];
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Gets the ascent of a char code in normalized 1000 units. The ascent will always be
+     * greater than or equal to zero even if all the characters have a lower ascent.
+     *
+     * @param ch the char code to get the ascent of
+     * @return the ascent in normalized 1000 units
+     */
+    public int getAscent(int ch) {
+        int max = 0;
+        byte[] bytes = fontProgram.getEncoding().convertToBytes(ch);
+        for (byte b : bytes) {
+            int[] bbox = getFontProgram().getCharBBox(b & 0xff);
+            if (bbox != null && bbox[3] > max) {
+                max = bbox[3];
+            }
+        }
+        return max;
+    }
+
 
     protected void setFontProgram(T fontProgram) {
         this.fontProgram = fontProgram;

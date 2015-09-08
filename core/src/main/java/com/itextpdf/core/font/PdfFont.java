@@ -219,6 +219,56 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return getWidth(ch) * fontSize / FontProgram.UNITS_NORMALIZATION;
     }
 
+    /**
+     * Gets the descent of a {@code String} in normalized 1000 units. The descent will always be
+     * less than or equal to zero even if all the characters have an higher descent.
+     *
+     * @param text the {@code String} to get the descent of
+     * @return the descent in normalized 1000 units
+     */
+    public int getDescent(String text) {
+        // TODO abstract method
+        throw new IllegalStateException();
+    }
+
+    /**
+     * Gets the descent of a char code in normalized 1000 units. The descent will always be
+     * less than or equal to zero even if all the characters have an higher descent.
+     *
+     * @param ch the char code to get the descent of
+     * @return the descent in normalized 1000 units
+     */
+    public int getDescent(int ch) {
+        // TODO abstract method
+        throw new IllegalStateException();
+
+    }
+
+    /**
+     * Gets the ascent of a {@code String} in normalized 1000 units. The ascent will always be
+     * greater than or equal to zero even if all the characters have a lower ascent.
+     *
+     * @param text the {@code String} to get the ascent of
+     * @return the ascent in normalized 1000 units
+     */
+    public int getAscent(String text) {
+        // TODO abstract method
+        throw new IllegalStateException();
+
+    }
+
+    /**
+     * Gets the ascent of a char code in normalized 1000 units. The ascent will always be
+     * greater than or equal to zero even if all the characters have a lower ascent.
+     *
+     * @param ch the char code to get the ascent of
+     * @return the ascent in normalized 1000 units
+     */
+    public int getAscent(int ch) {
+        // TODO abstract method
+        throw new IllegalStateException();
+
+    }
 
     public boolean hasKernPairs() {
         FontProgram fontProgram = getFontProgram();
@@ -270,7 +320,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     //TODO
     public void addSubsetRange(int[] range) {
         if (subsetRanges == null) {
-            subsetRanges = new ArrayList<int[]>();
+            subsetRanges = new ArrayList<>();
         }
         subsetRanges.add(range);
     }
@@ -322,12 +372,12 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected  boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType) {
-        return checkFontDictionary(fontDic,fontType,true);
+        return checkFontDictionary(fontDic, fontType, true);
     }
 
 
     protected  boolean checkTrueTypeFontDictionary(PdfDictionary fontDic) {
-        return  checkTrueTypeFontDictionary(fontDic,true);
+        return checkTrueTypeFontDictionary(fontDic, true);
     }
 
     protected  boolean checkTrueTypeFontDictionary(PdfDictionary fontDic,boolean isException) {
@@ -343,11 +393,13 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected boolean isSymbolic() {
         PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
-        if (fontDescriptor == null)
+        if (fontDescriptor == null) {
             return false;
+        }
         PdfNumber flags = fontDescriptor.getAsNumber(PdfName.Flags);
-        if (flags == null)
+        if (flags == null) {
             return false;
+        }
         return (flags.getIntValue() & 0x04) != 0;
     }
 
@@ -375,8 +427,9 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     protected static String createSubsetPrefix() {
         StringBuilder s = new StringBuilder("");
-        for (int k = 0; k < 6; ++k)
-            s.append((char)(Math.random() * 26 + 'A'));
+        for (int k = 0; k < 6; ++k) {
+            s.append((char) (Math.random() * 26 + 'A'));
+        }
         return s + "+";
     }
 

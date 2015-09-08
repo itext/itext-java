@@ -243,6 +243,16 @@ public class Type1Font extends FontProgram {
     }
 
     /**
+     * Get glyph's bbox.
+     * @param code char code, depends from implementation.
+     * @return Gets bbox in normalized 1000 units.
+     */
+    @Override
+    public int[] getCharBBox(int code) {
+        return charBBoxes[code];
+    }
+
+    /**
      * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
      * to the font's encoding.
      *

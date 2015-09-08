@@ -156,8 +156,8 @@ public class TextRenderer extends AbstractRenderer {
                 }
 
                 nonBreakablePartFullWidth += glyphWidth + kerning;
-                nonBreakablePartMaxAscender = ascender;
-                nonBreakablePartMaxDescender = descender;
+                nonBreakablePartMaxAscender = Math.max(nonBreakablePartMaxAscender, font.getAscent(charCode));
+                nonBreakablePartMaxDescender = Math.min(nonBreakablePartMaxDescender, font.getDescent(charCode));
                 nonBreakablePartMaxHeight = (nonBreakablePartMaxAscender - nonBreakablePartMaxDescender) * fontSize / TEXT_SPACE_COEFF + textRise;
 
                 previousCharPos = ind;

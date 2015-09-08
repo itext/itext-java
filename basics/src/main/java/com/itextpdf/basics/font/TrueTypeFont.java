@@ -180,7 +180,7 @@ public class TrueTypeFont extends FontProgram {
 
     /**
      * Get glyph's width.
-     * @param code CID in unicode case otherwise, char code.
+     * @param code char code.
      * @return Gets width in normalized 1000 units.
      */
     @Override
@@ -202,6 +202,31 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
+    /**
+     * Get glyph's bbox.
+     * @param code char code, depends from implementation.
+     * @return Gets bbox in normalized 1000 units.
+     */
+    @Override
+    public int[] getCharBBox(int code) {
+        if (isUnicode) {
+            if (isVertical) {
+                return null;
+            } else if (fontParser.getCmapTable().fontSpecific) {
+                if ((code & 0xff00) == 0 || (code & 0xff00) == 0xf000) {
+                    return getRawCharBBox(code & 0xff, null);
+                } else {
+                    return null;
+                }
+            } else {
+                return getRawCharBBox(code, null);
+            }
+        } else {
+            return charBBoxes[code];
+        }
+    }
+
+
     public Character getUnicodeChar(int code) {
         return glyphToCharacterMap.get(code);
     }
@@ -218,7 +243,7 @@ public class TrueTypeFont extends FontProgram {
      */
     @Override
     public int getKerning(int char1, int char2) {
-        int metrics[] = getMetrics(char1);
+        int[] metrics = getMetrics(char1);
         if (metrics == null)
             return 0;
         int c1 = metrics[0];

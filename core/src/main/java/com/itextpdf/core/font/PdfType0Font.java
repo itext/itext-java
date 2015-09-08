@@ -223,6 +223,88 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         return total;
     }
 
+    /**
+     * Gets the descent of a {@code String} in normalized 1000 units. The descent will always be
+     * less than or equal to zero even if all the characters have an higher descent.
+     *
+     * @param text the {@code String} to get the descent of
+     * @return the descent in normalized 1000 units
+     */
+    public int getDescent(String text) {
+        int min = 0;
+        for (int k = 0; k < text.length(); ++k) {
+            int ch;
+            if (Utilities.isSurrogatePair(text, k)) {
+                ch = Utilities.convertToUtf32(text, k);
+                k++;
+            } else {
+                ch = text.charAt(k);
+            }
+            int[] bbox = fontProgram.getCharBBox(cmapEncoding.getCidCode(ch));
+            if (bbox != null && bbox[1] < min) {
+                min = bbox[1];
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Gets the descent of a char code in normalized 1000 units. The descent will always be
+     * less than or equal to zero even if all the characters have an higher descent.
+     *
+     * @param ch the char code to get the descent of
+     * @return the descent in normalized 1000 units
+     */
+    public int getDescent(int ch) {
+        int min = 0;
+        int[] bbox = getFontProgram().getCharBBox(cmapEncoding.getCidCode(ch));
+        if (bbox != null && bbox[1] < min) {
+            min = bbox[1];
+        }
+        return min;
+    }
+
+    /**
+     * Gets the ascent of a {@code String} in normalized 1000 units. The ascent will always be
+     * greater than or equal to zero even if all the characters have a lower ascent.
+     *
+     * @param text the {@code String} to get the ascent of
+     * @return the ascent in normalized 1000 units
+     */
+    public int getAscent(String text) {
+        int max = 0;
+        for (int k = 0; k < text.length(); ++k) {
+            int ch;
+            if (Utilities.isSurrogatePair(text, k)) {
+                ch = Utilities.convertToUtf32(text, k);
+                k++;
+            } else {
+                ch = text.charAt(k);
+            }
+            int[] bbox = fontProgram.getCharBBox(cmapEncoding.getCidCode(ch));
+            if (bbox != null && bbox[3] > max) {
+                max = bbox[3];
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Gets the ascent of a char code in normalized 1000 units. The ascent will always be
+     * greater than or equal to zero even if all the characters have a lower ascent.
+     *
+     * @param ch the char code to get the ascent of
+     * @return the ascent in normalized 1000 units
+     */
+    public int getAscent(int ch) {
+        int max = 0;
+        int[] bbox = getFontProgram().getCharBBox(cmapEncoding.getCidCode(ch));
+        if (bbox != null && bbox[3] > max) {
+            max = bbox[3];
+        }
+        return max;
+    }
+
     public boolean isIdentity() {
         return cmapEncoding.isDirect();
     }

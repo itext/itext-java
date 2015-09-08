@@ -30,6 +30,11 @@ public class Type3Font extends FontProgram {
     }
 
     @Override
+    public int[] getCharBBox(int code) {
+        return null;
+    }
+
+    @Override
     public int getKerning(int char1, int char2) {
         throw new IllegalStateException();
     }
