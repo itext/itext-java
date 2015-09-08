@@ -591,6 +591,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         float height = rect.getHeight();
         float width = rect.getWidth();
+        if (((PdfTextFormField)this).isPassword()) {
+            value = obfuscatePassword(value);
+        }
 
         canvas.
                 beginVariableText().
@@ -1108,5 +1111,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    private String obfuscatePassword(String text) {
+        char[] pchar = new char[text.length()];
+        for (int i = 0; i < text.length(); i++)
+            pchar[i] = '*';
+        return new String(pchar);
     }
 }
