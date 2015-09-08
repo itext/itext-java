@@ -293,6 +293,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
+    /**
+     * Sets a value to the field and generating field appearance if needed.
+     * @param value of the field
+     * @return the field
+     */
     public <T extends PdfFormField> T setValue(String value) {
         PdfName formType = getFormType();
         if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
@@ -599,9 +604,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             justification = 0;
         }
         drawTextAligned(canvas, justification, value, 2, height / 2 - fontSize * 0.3f, font, fontSize);
-//                setTextMatrix(2, height / 2 - fontSize * 0.3f).
         canvas.
-//                showText(value).
                 endText().
                 restoreState().
                 endVariableText();
@@ -622,7 +625,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         float width = rect.getWidth();
         float height = rect.getHeight();
 
-        drawBorder(canvas, width, height);
         canvas.
                 beginVariableText().
                 saveState().
@@ -725,13 +727,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getFont());
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
-//        setDefaultAppearance(setFontAndSize(getFont(), DEFAULT_FONT_SIZE));
     }
     
     public PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
-//        setDefaultAppearance(setFontAndSize(font, fontSize));
 
         drawButton(canvas, 0, 0, width, height, text, font, fontSize);
         setDefaultAppearance(setFontAndSize(font, fontSize));
@@ -827,6 +827,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         this.text = text;
     }
 
+    /**
+     * This method regenerates appearance stream of the field. Use it if you changed any field parameters and didn't use setValue method which generates appearance by itself.
+     * @return
+     */
     public boolean regenerateField() {
         PdfName type = getFormType();
         String value = getValueAsString();
@@ -982,10 +986,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected void drawTextAligned(PdfCanvas canvas, int alignment, String text, float x, float y, PdfFont font, int fontSize) {
         switch (alignment) {
             case ALIGN_CENTER:
-                x -= font.getWidth(text) / 2;
+                x = (getRect(getPdfObject()).getWidth() - font.getWidthPoint(text, fontSize)) / 2;
                 break;
             case ALIGN_RIGHT:
-                x -= font.getWidth(text);
+                x = (getRect(getPdfObject()).getWidth() - font.getWidthPoint(text, fontSize));
                 break;
         }
         canvas.setTextMatrix(x, y);
