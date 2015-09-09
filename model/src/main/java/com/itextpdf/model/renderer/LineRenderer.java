@@ -95,7 +95,16 @@ public class LineRenderer extends AbstractRenderer {
             if (childResult.getStatus() != LayoutResult.FULL) {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
-                if (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isWordHasBeenSplit() && bbox.getWidth() < layoutBox.getWidth()) {
+
+                boolean wordWasSplitAndItWillFitOntoNextLine = false;
+                if (childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isWordHasBeenSplit()) {
+                    LayoutResult newLayoutResult = childRenderer.layout(layoutContext);
+                    if (newLayoutResult instanceof TextLayoutResult && !((TextLayoutResult) newLayoutResult).isWordHasBeenSplit()) {
+                        wordWasSplitAndItWillFitOntoNextLine = true;
+                    }
+                }
+
+                if (wordWasSplitAndItWillFitOntoNextLine) {
                     split[1].childRenderers.add(childRenderer);
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                 } else {

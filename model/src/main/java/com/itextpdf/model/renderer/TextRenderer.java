@@ -106,8 +106,9 @@ public class TextRenderer extends AbstractRenderer {
                 if ((nonBreakablePartFullWidth + glyphWidth + kerning) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                 }
-                if (firstCharacterWhichExceedsAllowedWidth == -1)
+                if (firstCharacterWhichExceedsAllowedWidth == -1) {
                     nonBreakablePartWidthWhichDoesNotExceedAllowedWidth += glyphWidth + kerning;
+                }
 
                 nonBreakablePartFullWidth += glyphWidth + kerning;
                 nonBreakablePartMaxAscender = ascender;
@@ -175,7 +176,7 @@ public class TextRenderer extends AbstractRenderer {
                     applyMargins(occupiedArea.getBBox(), true);
                     TextLayoutResult result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
                     if (line.isEmpty()) {
-                        result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
+                        result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
                     }
                     if (split[1].length() > 0 && split[1].charAt(0) == '\n')
                         result.setSplitForcedByNewline(true);
