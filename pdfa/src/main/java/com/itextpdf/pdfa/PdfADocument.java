@@ -3,10 +3,12 @@ package com.itextpdf.pdfa;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.core.xmp.*;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
+import com.itextpdf.pdfa.xmp.PdfAXMPUtil;
 
 import java.io.IOException;
 
@@ -66,6 +68,50 @@ public class PdfADocument extends PdfDocument {
     protected void checkPdfIsoConformance() {
         checker.checkDocument(catalog);
     }
+
+    protected void  addRdfDescription(XMPMeta xmpMeta) throws XMPException {
+        switch (checker.getConformanceLevel()) {
+            case PDF_A_1A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_1B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_2A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_2B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_2U:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
+                break;
+            case PDF_A_3A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_3B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_3U:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
+                break;
+            default:
+                break;
+        }
+        if (this.isTagged()) {
+            XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+            XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+        }
+    }
+
 
     @Override
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {

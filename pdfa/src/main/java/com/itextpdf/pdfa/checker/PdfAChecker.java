@@ -24,7 +24,7 @@ public abstract class PdfAChecker {
 
     public void checkDocument(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();
-
+        checkMetaData(catalogDict);
         checkCatalogValidEntries(catalogDict);
         checkTrailer(catalog.getDocument().getTrailer());
         checkLogicalStructure(catalogDict);
@@ -73,6 +73,9 @@ public abstract class PdfAChecker {
     protected abstract void checkPage(PdfDictionary pageDict);
     protected abstract void checkTrailer(PdfDictionary trailer);
     protected abstract void checkLogicalStructure(PdfDictionary catalog);
+    protected abstract void checkMetaData(PdfDictionary catalog);
+    protected abstract void checkPageSize(PdfDictionary  page);
+
 
     protected void checkResources(PdfDictionary resources) {
         if (resources == null)
@@ -168,6 +171,8 @@ public abstract class PdfAChecker {
             checkPage(pageDict);
             checkResources(pageResources);
             checkAnnotations(pageDict);
+            checkPageSize(pageDict);
+
         }
     }
 

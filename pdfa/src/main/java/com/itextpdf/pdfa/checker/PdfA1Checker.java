@@ -102,6 +102,13 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    protected  void checkMetaData(PdfDictionary catalog){
+        if (!catalog.containsKey(PdfName.Metadata)) {
+            throw new PdfAConformanceException(PdfAConformanceException.CatalogShallContainMetadataEntry);
+        }
+    }
+
+    @Override
     protected void checkPdfNumber(PdfNumber number) {
         if (Math.abs(number.getLongValue()) > getMaxRealValue() && number.toString().contains(".")) {
             throw new PdfAConformanceException(PdfAConformanceException.RealNumberIsOutOfRange);
@@ -139,6 +146,11 @@ public class PdfA1Checker extends PdfAChecker {
 
     protected int getMaxStringLength() {
         return 65535;
+    }
+
+    @Override
+    protected  void checkPageSize(PdfDictionary  page){
+
     }
 
     @Override

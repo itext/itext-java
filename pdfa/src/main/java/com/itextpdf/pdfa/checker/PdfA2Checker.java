@@ -1,5 +1,6 @@
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
@@ -15,6 +16,8 @@ public class PdfA2Checker extends PdfA1Checker{
     protected static final HashSet<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName._3D, PdfName.Sound, PdfName.Screen, PdfName.Movie));
     protected static final HashSet<PdfName> forbiddenActions = new HashSet<>(Arrays.asList(PdfName.Launch, PdfName.Sound, PdfName.Movie,
             PdfName.ResetForm, PdfName.ImportData, PdfName.JavaScript, PdfName.Hide, PdfName.SetOCGState, PdfName.Rendition, PdfName.Trans, PdfName.GoTo3DView));
+    static final int MAX_PAGE_SIZE = 14400;
+    static final int MIN_PAGE_SIZE = 3;
 
     public PdfA2Checker(PdfAConformanceLevel conformanceLevel, String outputIntentColorSpace) {
         super(conformanceLevel, outputIntentColorSpace);
@@ -226,6 +229,20 @@ public class PdfA2Checker extends PdfA1Checker{
             order.retainAll(ocgs);
             if (order.size() != ocgs.size()) {
                 throw new PdfAConformanceException(PdfAConformanceException.OrderArrayShallContainReferencesToAllOcgs);
+            }
+        }
+    }
+
+    @Override
+    protected  void checkPageSize(PdfDictionary  page){
+        PdfName[] boxNames = new PdfName[] {PdfName.MediaBox, PdfName.CropBox, PdfName.TrimBox, PdfName.ArtBox, PdfName.BleedBox};
+        for (PdfName boxName: boxNames) {
+            Rectangle box =  page.getAsRectangle(boxName);
+            if (box !=null ) {
+                float width = box.getWidth();
+                float height = box.getHeight();
+                if (width < MIN_PAGE_SIZE || width > MAX_PAGE_SIZE || height < MIN_PAGE_SIZE || height > MAX_PAGE_SIZE)
+                    throw new PdfAConformanceException(PdfAConformanceException.PageLess3UnitsNoGreater14400InEitherDirection);
             }
         }
     }

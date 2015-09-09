@@ -41,6 +41,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Contents, contentStream);
         getPdfObject().put(PdfName.Type, PdfName.Page);
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
+        //getPdfObject().put(PdfName.TrimBox, new PdfArray(pageSize));
         if (pdfDocument.isTagged()) {
             structParents = pdfDocument.getNextStructParentIndex();
             getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
@@ -166,6 +167,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
+    public void setCropBox(){
+
+    }
+
     public PdfStream getXmpMetadata() throws XMPException {
         return getPdfObject().getAsStream(PdfName.Metadata);
     }
@@ -265,6 +270,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return mediaBox.toRectangle();
     }
 
+    public void setMediaBox(Rectangle rectangle){
+        getPdfObject().put(PdfName.MediaBox, new PdfArray(rectangle));
+    }
+
 
     public Rectangle getCropBox() {
         PdfArray cropBox = getPdfObject().getAsArray(PdfName.CropBox);
@@ -275,6 +284,30 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return cropBox.toRectangle();
+    }
+
+    public void setCropBox(Rectangle rectangle){
+        getPdfObject().put(PdfName.CropBox, new PdfArray(rectangle));
+    }
+
+    public void setArtBox(Rectangle rectangle){
+        if(getPdfObject().getAsRectangle(PdfName.TrimBox) != null)
+            throw new PdfException(PdfException.OnlyOneOfArtboxOrTrimBoxCanExistInThePage);
+        getPdfObject().put(PdfName.ArtBox, new PdfArray(rectangle));
+    }
+
+    public Rectangle getArtBox(){
+        return getPdfObject().getAsRectangle(PdfName.ArtBox);
+    }
+
+    public void setTrimBox(Rectangle rectangle){
+        if(getPdfObject().getAsRectangle(PdfName.ArtBox) != null)
+            throw new PdfException(PdfException.OnlyOneOfArtboxOrTrimBoxCanExistInThePage);
+        getPdfObject().put(PdfName.TrimBox, new PdfArray(rectangle));
+    }
+
+    public Rectangle getTrimBox(){
+        return getPdfObject().getAsRectangle(PdfName.TrimBox);
     }
 
     /**

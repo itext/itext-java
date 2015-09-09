@@ -158,7 +158,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @param xmpMetadata The xmpMetadata to set.
      */
-    public void setXmpMetadata(final byte[] xmpMetadata) {
+    protected void setXmpMetadata(final byte[] xmpMetadata) {
         this.xmpMetadata = xmpMetadata;
     }
 
@@ -216,6 +216,7 @@ public class PdfDocument implements IEventDispatcher {
                 }
             }
         }
+        addRdfDescription(xmpMeta);
         setXmpMetadata(xmpMeta);
     }
 
@@ -877,6 +878,8 @@ public class PdfDocument implements IEventDispatcher {
 
     protected void checkPdfIsoConformance() { }
 
+    protected void  addRdfDescription(XMPMeta xmpMeta) throws XMPException {}
+
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         writer.flushObject(pdfObject, canBeInObjStm);
     }
@@ -911,6 +914,8 @@ public class PdfDocument implements IEventDispatcher {
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this).addCreationDate();
+                    info.addModDate();
+                    info.setProducer(Version.getInstance().getVersion());
                     trailer = new PdfDictionary();
                     trailer.put(PdfName.Root, catalog.getPdfObject());
                     trailer.put(PdfName.Info, info.getPdfObject());

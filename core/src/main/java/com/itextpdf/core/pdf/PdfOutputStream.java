@@ -303,6 +303,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
     }
 
+    private boolean isNotMetadataPdfStream(PdfStream pdfStream){
+        return  pdfStream.getAsName(PdfName.Type) == null ||
+                (pdfStream.getAsName(PdfName.Type)!=null && !pdfStream.getAsName(PdfName.Type).equals(PdfName.Metadata));
+
+    }
+
     protected void write(PdfStream pdfStream) {
         try {
             if (pdfStream.getCompressionLevel() == UNDEFINED_COMPRESSION) {
@@ -316,7 +322,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                     fout = ose = crypto.getEncryptionStream(fout);
                 }
                 Deflater deflater = null;
-                if (checkCompression(pdfStream)) {
+                if (checkCompression(pdfStream) || isNotMetadataPdfStream(pdfStream)) {
                     updateCompressionFilter(pdfStream);
                     deflater = new Deflater(pdfStream.getCompressionLevel());
                     fout = def = new DeflaterOutputStream(fout, deflater, 0x8000);
@@ -353,7 +359,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 assert pdfStream.getOutputStream() != null : "PdfStream lost OutputStream";
                 ByteArrayOutputStream byteArrayStream;
                 try {
-                    if (checkCompression(pdfStream)) { // compress
+                    if (checkCompression(pdfStream) && isNotMetadataPdfStream(pdfStream)) { // compress
                         updateCompressionFilter(pdfStream);
                         byteArrayStream = new ByteArrayOutputStream();
                         Deflater deflater = new Deflater(pdfStream.getCompressionLevel());

@@ -18,6 +18,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String CatalogDictionaryShallNotContainRequirementsEntry = "catalog.dictionary.shall.not.contain.a.requirements.entry";
     public static final String CatalogShallIncludeMarkInfoDictionaryWithMarkedTrueValue = "catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true";
     public static final String CatalogShallContainLangEntry = "catalog.dictionary.shall.contain.lang.entry";
+    public static final String CatalogShallContainMetadataEntry = "catalog.dictionary.shall.contain.metadata.entry";
     public static final String CryptFilterIsNotPermitted = "crypt.filter.is.not.permitted.inline.image";
     public static final String DeprecatedSetStateAndNoOpActionsAreNotAllowed = "deprecated.setstate.and.noop.actions.are.not.allowed";
     public static final String DestoutputprofileInThePdfa1OutputintentDictionaryShallBeRgb = "destoutputprofile.in.the.pdfa1.outputintent.dictionary.shall.be.rgb";
@@ -33,6 +34,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String OrderArrayShallContainReferencesToAllOcgs = "order.array.shall.contain.references.to.all.ocgs";
     public static final String PageDictionaryShallNotContainAAEntry = "page.dictionary.shall.not.contain.aa.entry";
     public static final String PageDictionaryShallNotContainPressstepsEntry = "page.dictionary.shall.not.contain.pressteps.entry";
+    public static final String PageLess3UnitsNoGreater14400InEitherDirection = "the.page.less.3.units.no.greater.14400.in.either.direction";
     public static final String PdfStringIsTooLong = "pdf.string.is.too.long";
     public static final String RealNumberIsOutOfRange = "real.number.is.out.of.range";
     public static final String SigRefDicShallNotContDigestParam ="signature.references.dictionary.shall.not.contain.digestlocation.digestmethod.digestvalue";

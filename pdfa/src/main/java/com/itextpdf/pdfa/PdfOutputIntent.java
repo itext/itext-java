@@ -15,7 +15,7 @@ public class PdfOutputIntent extends PdfObjectWrapper<PdfDictionary> {
     public PdfOutputIntent(String outputConditionIdentifier, String outputCondition, String registryName, String info, InputStream iccStream) {
         super(new PdfDictionary());
         setOutputIntentSubtype(PdfName.GTS_PDFA1);
-
+        getPdfObject().put(PdfName.Type,PdfName.OutputIntents);
         if (outputCondition != null)
             setOutputCondition(outputCondition);
         if (outputConditionIdentifier != null)

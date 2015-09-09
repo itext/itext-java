@@ -4,6 +4,7 @@ import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.core.xmp.XMPException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -16,11 +17,11 @@ public class PdfA2CatalogCheckTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
     @Test(expected = PdfAConformanceException.class)
-    public void catalogCheck01() throws FileNotFoundException {
+    public void catalogCheck01() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
@@ -38,11 +39,11 @@ public class PdfA2CatalogCheckTest {
     }
 
     @Test(expected = PdfAConformanceException.class)
-    public void catalogCheck02() throws FileNotFoundException {
+    public void catalogCheck02() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
@@ -63,11 +64,11 @@ public class PdfA2CatalogCheckTest {
     }
 
     @Test
-    public void catalogCheck03() throws FileNotFoundException {
+    public void catalogCheck03() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
@@ -88,11 +89,11 @@ public class PdfA2CatalogCheckTest {
     }
 
     @Test(expected = PdfAConformanceException.class)
-    public void catalogCheck04() throws FileNotFoundException {
+    public void catalogCheck04() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
@@ -112,11 +113,11 @@ public class PdfA2CatalogCheckTest {
     }
 
     @Test
-    public void catalogCheck05() throws FileNotFoundException {
+    public void catalogCheck05() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
@@ -151,11 +152,11 @@ public class PdfA2CatalogCheckTest {
     }
 
     @Test(expected = PdfAConformanceException.class)
-    public void catalogCheck06() throws FileNotFoundException {
+    public void catalogCheck06() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
@@ -189,11 +190,11 @@ public class PdfA2CatalogCheckTest {
     }
 
     @Test(expected = PdfAConformanceException.class)
-    public void catalogCheck07() throws FileNotFoundException {
+    public void catalogCheck07() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
@@ -227,11 +228,11 @@ public class PdfA2CatalogCheckTest {
     }
 
     @Test(expected = PdfAConformanceException.class)
-    public void catalogCheck08() throws FileNotFoundException {
+    public void catalogCheck08() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();
@@ -270,11 +271,11 @@ public class PdfA2CatalogCheckTest {
     }
 
     @Test(expected = PdfAConformanceException.class)
-    public void catalogCheck09() throws FileNotFoundException {
+    public void catalogCheck09() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
 
         PdfDictionary names = new PdfDictionary();
@@ -286,11 +287,11 @@ public class PdfA2CatalogCheckTest {
     }
 
     @Test(expected = PdfAConformanceException.class)
-    public void catalogCheck10() throws FileNotFoundException {
+    public void catalogCheck10() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-
+        doc.setXmpMetadata();
         doc.addNewPage();
 
         doc.getCatalog().put(PdfName.Requirements, new PdfArray());

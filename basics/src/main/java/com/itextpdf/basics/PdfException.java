@@ -131,7 +131,6 @@ public class PdfException extends RuntimeException {
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData = "invalid.code.encountered.while.decoding.2d.group.3.compressed.data";
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData = "invalid.code.encountered.while.decoding.2d.group.4.compressed.data";
     public static final String InvalidCodewordSize = "invalid.codeword.size";
-
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "invalid.cross.reference.entry.in.this.xref.subsection";
     public static final String InvalidIndirectReference1 = "invalid.indirect.reference.1";
     public static final String InvalidIccProfile = "invalid.icc.profile";
@@ -162,6 +161,7 @@ public class PdfException extends RuntimeException {
     public static final String NoValidEncryptionMode = "no.valid.encryption.mode";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
     public static final String OnlyBmpCanBeWrappedInWmf = "only.bmp.can.be.wrapped.in.wmf";
+    public static final String OnlyOneOfArtboxOrTrimBoxCanExistInThePage ="only.one.of.artbox.or.trimbox.can.exist.in.the.page";
     public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "page.1.cannot.be.added.to.document.2.because.it.belongs.to.document.3";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
     public static final String PdfEncodings = "pdf.encodings";
