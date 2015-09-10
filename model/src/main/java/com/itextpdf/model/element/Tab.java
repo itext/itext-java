@@ -1,6 +1,5 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.TabRenderer;
 

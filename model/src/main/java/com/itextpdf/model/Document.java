@@ -8,6 +8,8 @@ import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.element.*;
+import com.itextpdf.model.hyphenation.DefaultSplitCharacters;
+import com.itextpdf.model.hyphenation.ISplitCharacters;
 import com.itextpdf.model.renderer.AbstractRenderer;
 import com.itextpdf.model.renderer.DocumentRenderer;
 
@@ -22,7 +24,9 @@ public class Document implements IPropertyContainer<Document> {
     protected boolean immediateFlush = true;
     protected List<IElement> childElements = new ArrayList<>();
     protected Map<Property, Object> properties = new EnumMap<>(Property.class);
+
     protected PdfFont defaultFont;
+    protected ISplitCharacters defaultSplitCharacters;
 
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
@@ -230,6 +234,11 @@ public class Document implements IPropertyContainer<Document> {
                         defaultFont = new PdfType1Font(pdfDocument, (Type1Font) FontFactory.createFont(FontConstants.HELVETICA, ""));
                     }
                     return (T) defaultFont;
+                case SPLIT_CHARACTERS:
+                    if (defaultSplitCharacters == null) {
+                        defaultSplitCharacters = new DefaultSplitCharacters();
+                    }
+                    return (T) defaultSplitCharacters;
                 case FONT_SIZE:
                     return (T) new Integer(12);
                 case TEXT_RENDERING_MODE:
@@ -257,6 +266,10 @@ public class Document implements IPropertyContainer<Document> {
     public Document setProperty(Property property, Object value) {
         properties.put(property, value);
         return this;
+    }
+
+    public Document setSplitCharacters(ISplitCharacters splitCharacters) {
+        return setProperty(Property.SPLIT_CHARACTERS, splitCharacters);
     }
 
     private DocumentRenderer ensureDocumentRendererNotNull() {

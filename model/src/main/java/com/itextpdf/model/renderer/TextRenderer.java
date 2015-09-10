@@ -8,6 +8,7 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Text;
+import com.itextpdf.model.hyphenation.ISplitCharacters;
 import com.itextpdf.model.layout.*;
 
 
@@ -56,6 +57,7 @@ public class TextRenderer extends AbstractRenderer {
         PdfFont font = getPropertyAsFont(Property.FONT);
         Float hScale = getProperty(Property.HORIZONTAL_SCALING);
         Property.FontKerning fontKerning = getProperty(Property.FONT_KERNING);
+        ISplitCharacters splitCharacters = getProperty(Property.SPLIT_CHARACTERS);
         float ascender = 800;
         float descender = -200;
 
@@ -123,7 +125,9 @@ public class TextRenderer extends AbstractRenderer {
                     break;
                 }
 
-                if (Character.isWhitespace(charCode) || isLastChar(text, rightPos, ind) || Character.isWhitespace(getNextChar(text, ind))) {
+                if (splitCharacters.isSplitCharacter(charCode, text, ind) || isLastChar(text, rightPos, ind) ||
+                        splitCharacters.isSplitCharacter(getNextChar(text, ind), text, ind) &&
+                                (Character.isWhitespace(getNextChar(text, ind)) || Character.isSpaceChar(getNextChar(text, ind)))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }

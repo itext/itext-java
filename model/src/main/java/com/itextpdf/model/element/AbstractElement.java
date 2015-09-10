@@ -4,6 +4,7 @@ import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
+import com.itextpdf.model.hyphenation.ISplitCharacters;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
@@ -189,5 +190,13 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
 
     public Type setBorderLeft(Border border) {
         return setProperty(Property.BORDER_LEFT, border);
+    }
+
+    public Type setSplitCharacters(ISplitCharacters splitCharacters) {
+        return setProperty(Property.SPLIT_CHARACTERS, splitCharacters);
+    }
+
+    public ISplitCharacters getSplitCharacters() {
+        return getProperty(Property.SPLIT_CHARACTERS);
     }
 }

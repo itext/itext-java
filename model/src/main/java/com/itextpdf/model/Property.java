@@ -57,6 +57,7 @@ public enum Property {
     ROW,
     ROWSPAN,
     SPACING_RATIO(true),
+    SPLIT_CHARACTERS(true),
     STROKE_COLOR,
     STROKE_WIDTH,
     TAB_ANCHOR,
