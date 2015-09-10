@@ -7,7 +7,9 @@ import com.itextpdf.basics.io.RandomAccessSource;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.zip.InflaterInputStream;
 
 public class Utilities {
@@ -28,7 +30,7 @@ public class Utilities {
      * @param size the number of bytes to skip
      * @throws java.io.IOException
      */
-    static public void skip(final InputStream is, int size) throws IOException {
+    static public void skip(InputStream is, int size) throws IOException {
         long n;
         while (size > 0) {
             n = is.skip(size);
@@ -40,16 +42,15 @@ public class Utilities {
 
     /**
      * This method makes a valid URL from a given filename.
-     * <P>
+     * <p/>
      * This method makes the conversion of this library from the JAVA 2 platform
      * to a JDK1.1.x-version easier.
      *
-     * @param filename
-     *            a given filename
+     * @param filename a given filename
      * @return a valid URL
      * @throws java.net.MalformedURLException
      */
-    public static URL toURL(final String filename) throws MalformedURLException {
+    public static URL toURL(String filename) throws MalformedURLException {
         URL url;
         try {
             url = new URL(filename);
@@ -59,7 +60,7 @@ public class Utilities {
         return url;
     }
 
-    public static boolean equalsArray(final byte ar1[], final byte ar2[], final int size) {
+    public static boolean equalsArray(byte ar1[], byte ar2[], int size) {
         for (int k = 0; k < size; ++k) {
             if (ar1[k] != ar2[k])
                 return false;
@@ -73,7 +74,7 @@ public class Utilities {
      * @param bytes the {@code byte} array to escape
      * @return an escaped {@code byte} array
      */
-    public static byte[] createEscapedString(final byte bytes[]) {
+    public static byte[] createEscapedString(byte bytes[]) {
         return createBufferedEscapedString(bytes).toByteArray();
     }
 
@@ -83,13 +84,13 @@ public class Utilities {
      * @param outputStream the {@code OutputStream} an escaped {@code byte} array write to.
      * @param bytes the {@code byte}> array to escape.
      */
-    public static void writeEscapedString(OutputStream outputStream, final byte[] bytes) {
+    public static void writeEscapedString(OutputStream outputStream, byte[] bytes) {
         ByteBuffer buf = createBufferedEscapedString(bytes);
         outputStream.writeBytes(buf.getInternalBuffer(), 0, buf.size());
     }
 
-    public static ByteBuffer createBufferedEscapedString(final byte[] bytes) {
-        ByteBuffer buf = new ByteBuffer(bytes.length*2 + 2);
+    public static ByteBuffer createBufferedEscapedString(byte[] bytes) {
+        ByteBuffer buf = new ByteBuffer(bytes.length * 2 + 2);
         buf.append('(');
         for (byte b : bytes) {
             switch (b) {
@@ -130,12 +131,13 @@ public class Utilities {
 
     /**
      * A helper to FlateDecode.
-     * @param in the input data
+     *
+     * @param in     the input data
      * @param strict <CODE>true</CODE> to read a correct stream. <CODE>false</CODE>
-     * to try to read a corrupted stream
+     *               to try to read a corrupted stream
      * @return the decoded data
      */
-    public static byte[] flateDecode(final byte in[], final boolean strict) {
+    public static byte[] flateDecode(byte in[], boolean strict) {
         ByteArrayInputStream stream = new ByteArrayInputStream(in);
         InflaterInputStream zip = new InflaterInputStream(stream);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -148,8 +150,7 @@ public class Utilities {
             zip.close();
             out.close();
             return out.toByteArray();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (strict)
                 return null;
             return out.toByteArray();
@@ -158,10 +159,11 @@ public class Utilities {
 
     /**
      * Decodes a stream that has the FlateDecode filter.
+     *
      * @param in the input data
      * @return the decoded data
      */
-    public static byte[] flateDecode(final byte in[]) {
+    public static byte[] flateDecode(byte in[]) {
         byte b[] = flateDecode(in, true);
         if (b == null)
             return flateDecode(in, false);
@@ -181,6 +183,7 @@ public class Utilities {
 
     /**
      * Reads the full content of a stream and returns them in a byte array
+     *
      * @param is the stream to read
      * @return a byte array containing all of the bytes from the stream
      * @throws IOException if there is a problem reading from the input stream
@@ -200,10 +203,11 @@ public class Utilities {
 
     /**
      * Copy bytes from the {@code RandomAccessSource} to {@code OutputStream}.
+     *
      * @param source the {@code RandomAccessSource} copy from.
-     * @param start start position of source copy from.
+     * @param start  start position of source copy from.
      * @param length length copy to.
-     * @param outs the {@code OutputStream} copy to.
+     * @param outs   the {@code OutputStream} copy to.
      * @throws IOException on error.
      */
     public static void copyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream outs) throws IOException {
@@ -212,11 +216,11 @@ public class Utilities {
         long idx = start;
         byte[] buf = new byte[8192];
         while (length > 0) {
-            long n = source.get(idx, buf,0, (int)Math.min((long)buf.length, length));
+            long n = source.get(idx, buf, 0, (int) Math.min((long) buf.length, length));
             if (n <= 0) {
                 throw new EOFException();
             }
-            outs.write(buf, 0, (int)n);
+            outs.write(buf, 0, (int) n);
             idx += n;
             length -= n;
         }
@@ -224,6 +228,7 @@ public class Utilities {
 
     /**
      * Gets the resource's inputstream.
+     *
      * @param key the full name of the resource.
      * @return the {@code InputStream} to get the resource or {@code null} if not found.
      */
@@ -233,7 +238,8 @@ public class Utilities {
 
     /**
      * Gets the resource's inputstream.
-     * @param key the full name of the resource.
+     *
+     * @param key    the full name of the resource.
      * @param loader the ClassLoader to load the resource or null to try the ones available.
      * @return the {@code InputStream} to get the resource or {@code null} if not found.
      */
@@ -269,22 +275,24 @@ public class Utilities {
     /**
      * Check if the value of a character belongs to a certain interval
      * that indicates it's the higher part of a surrogate pair.
-     * @param c	the character
-     * @return	true if the character belongs to the interval
-     * @since	2.1.2
+     *
+     * @param c the character
+     * @return true if the character belongs to the interval
+     * @since 2.1.2
      */
-    public static boolean isSurrogateHigh(final char c) {
+    public static boolean isSurrogateHigh(char c) {
         return c >= '\ud800' && c <= '\udbff';
     }
 
     /**
      * Check if the value of a character belongs to a certain interval
      * that indicates it's the lower part of a surrogate pair.
-     * @param c	the character
-     * @return	true if the character belongs to the interval
-     * @since	2.1.2
+     *
+     * @param c the character
+     * @return true if the character belongs to the interval
+     * @since 2.1.2
      */
-    public static boolean isSurrogateLow(final char c) {
+    public static boolean isSurrogateLow(char c) {
         return c >= '\udc00' && c <= '\udfff';
     }
 
@@ -292,12 +300,13 @@ public class Utilities {
      * Checks if two subsequent characters in a String are
      * are the higher and the lower character in a surrogate
      * pair (and therefore eligible for conversion to a UTF 32 character).
-     * @param text	the String with the high and low surrogate characters
-     * @param idx	the index of the 'high' character in the pair
-     * @return	true if the characters are surrogate pairs
-     * @since	2.1.2
+     *
+     * @param text the String with the high and low surrogate characters
+     * @param idx  the index of the 'high' character in the pair
+     * @return true if the characters are surrogate pairs
+     * @since 2.1.2
      */
-    public static boolean isSurrogatePair(final String text, final int idx) {
+    public static boolean isSurrogatePair(String text, int idx) {
         if (idx < 0 || idx > text.length() - 2) {
             return false;
         } else {
@@ -309,11 +318,12 @@ public class Utilities {
      * Checks if two subsequent characters in a character array are
      * are the higher and the lower character in a surrogate
      * pair (and therefore eligible for conversion to a UTF 32 character).
-     * @param text	the character array with the high and low surrogate characters
-     * @param idx	the index of the 'high' character in the pair
-     * @return	true if the characters are surrogate pairs
+     *
+     * @param text the character array with the high and low surrogate characters
+     * @param idx  the index of the 'high' character in the pair
+     * @return true if the characters are surrogate pairs
      */
-    public static boolean isSurrogatePair(final char[] text, final int idx) {
+    public static boolean isSurrogatePair(char[] text, int idx) {
         if (idx < 0 || idx > text.length - 2) {
             return false;
         } else {
@@ -324,45 +334,98 @@ public class Utilities {
     /**
      * Returns the code point of a UTF32 character corresponding with
      * a high and a low surrogate value.
-     * @param highSurrogate	the high surrogate value
-     * @param lowSurrogate	the low surrogate value
-     * @return	a code point value
+     *
+     * @param highSurrogate the high surrogate value
+     * @param lowSurrogate  the low surrogate value
+     * @return a code point value
      */
-    public static int convertToUtf32(final char highSurrogate, final char lowSurrogate) {
+    public static int convertToUtf32(char highSurrogate, char lowSurrogate) {
         return (highSurrogate - 0xd800) * 0x400 + lowSurrogate - 0xdc00 + 0x10000;
     }
 
     /**
      * Converts a unicode character in a character array to a UTF 32 code point value.
-     * @param text	a character array that has the unicode character(s)
-     * @param idx	the index of the 'high' character
-     * @return	the code point value
-     * @since	2.1.2
+     *
+     * @param text a character array that has the unicode character(s)
+     * @param idx  the index of the 'high' character
+     * @return the code point value
+     * @since 2.1.2
      */
-    public static int convertToUtf32(final char[] text, final int idx) {
+    public static int convertToUtf32(char[] text, int idx) {
         return (text[idx] - 0xd800) * 0x400 + text[idx + 1] - 0xdc00 + 0x10000;
     }
 
     /**
      * Converts a unicode character in a String to a UTF32 code point value
-     * @param text	a String that has the unicode character(s)
-     * @param idx	the index of the 'high' character
-     * @return	the codepoint value
+     *
+     * @param text a String that has the unicode character(s)
+     * @param idx  the index of the 'high' character
+     * @return the codepoint value
      */
-    public static int convertToUtf32(final String text, final int idx) {
+    public static int convertToUtf32(String text, int idx) {
         return (text.charAt(idx) - 0xd800) * 0x400 + text.charAt(idx + 1) - 0xdc00 + 0x10000;
+    }
+
+    public static int[] convertToUtf32(String text) {
+        if (text == null) {
+            return null;
+        }
+
+        List<Integer> charCodes = new ArrayList<>(text.length());
+        int pos = 0;
+        while (pos < text.length()) {
+            if (isSurrogatePair(text, pos)) {
+                charCodes.add(convertToUtf32(text, pos));
+                pos += 2;
+            } else {
+                charCodes.add((int) text.charAt(pos));
+                pos++;
+            }
+        }
+        return toArray(charCodes);
     }
 
     /**
      * Converts a UTF32 code point value to a String with the corresponding character(s).
-     * @param codePoint	a Unicode value
-     * @return	the corresponding characters in a String
+     *
+     * @param codePoint a Unicode value
+     * @return the corresponding characters in a String
      */
     public static String convertFromUtf32(int codePoint) {
         if (codePoint < 0x10000)
-            return Character.toString((char)codePoint);
+            return Character.toString((char) codePoint);
         codePoint -= 0x10000;
-        return new String(new char[]{(char)(codePoint / 0x400 + 0xd800), (char)(codePoint % 0x400 + 0xdc00)});
+        return new String(new char[]{(char) (codePoint / 0x400 + 0xd800), (char) (codePoint % 0x400 + 0xdc00)});
+    }
+
+    /**
+     /**
+     * Converts a UTF32 code point sequence to a String with the corresponding character(s).
+     *
+     * @param text a Unicode text sequence
+     * @param startPos start position of text to convert, inclusive
+     * @param endPos end position of txt to convert, exclusive
+     * @return the corresponding characters in a String
+     */
+    public static String convertFromUtf32(int[] text, int startPos, int endPos) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = startPos; i < endPos; i++) {
+            sb.append(convertFromUtf32ToCharArray(text[i]));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Converts a UTF32 code point value to a char array with the corresponding character(s).
+     *
+     * @param codePoint a Unicode value
+     * @return the corresponding characters in a char arrat
+     */
+    public static char[] convertFromUtf32ToCharArray(int codePoint) {
+        if (codePoint < 0x10000)
+            return new char[]{(char) codePoint};
+        codePoint -= 0x10000;
+        return new char[]{(char) (codePoint / 0x400 + 0xd800), (char) (codePoint % 0x400 + 0xdc00)};
     }
 
     public static int[] toArray(Collection<Integer> collection) {

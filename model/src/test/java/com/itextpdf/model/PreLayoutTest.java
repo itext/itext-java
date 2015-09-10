@@ -2,10 +2,9 @@ package com.itextpdf.model;
 
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.Type1Font;
-import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
@@ -56,14 +55,7 @@ public class PreLayoutTest {
             document.add(new Paragraph("This is just junk text"));
             if (i % 10 == 0) {
                 Text pageNumberText = new Text("Page #: {pageNumber}");
-
-                IRenderer renderer = new TextRenderer(pageNumberText, pageNumberText.getText()) {
-                    @Override
-                    public void draw(PdfDocument document, PdfCanvas canvas) {
-                        line = line.replace("{pageNumber}", String.valueOf(occupiedArea.getPageNumber()));
-                        super.draw(document, canvas);
-                    }
-                };
+                IRenderer renderer = new TextRenderer(pageNumberText);
                 pageNumberText.setNextRenderer(renderer);
                 pageNumberRenderers.add(renderer);
 
@@ -74,11 +66,13 @@ public class PreLayoutTest {
         }
 
         for (IRenderer renderer : pageNumberRenderers) {
-            String currentData = ((TextRenderer)renderer).getText().replace("{pageNumber}", String.valueOf(renderer.getOccupiedArea().getPageNumber()));
+            String currentData = renderer.toString().replace("{pageNumber}", String.valueOf(renderer.getOccupiedArea().getPageNumber()));
             ((TextRenderer)renderer).setText(currentData);
+            ((Text)renderer.getModelElement()).setNextRenderer(renderer);
         }
 
-        // No need in relayout. Flush(draw) is done on close.
+        document.relayout();
+
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
