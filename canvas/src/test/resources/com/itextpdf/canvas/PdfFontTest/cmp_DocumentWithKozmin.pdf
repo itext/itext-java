@@ -15,13 +15,13 @@ f
 endstream
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox [0 0 595 842]/Parent 2 0 R/Resources <</Font <</F1 6 0 R>>>>/Type /Page>>
+<</Contents 5 0 R/MediaBox [0 0 595 842]/Parent 2 0 R/Resources <</Font <</F1 6 0 R>>>>/TrimBox [0 0 595 842]/Type /Page>>
 endobj
 1 0 obj
 <</Pages 2 0 R/Type /Catalog>>
 endobj
 3 0 obj
-<</Author (Alexander Chingarev)/CreationDate (D:20150821054108-03'00')/Creator (iText 6)/Title (Type3 test)>>
+<</Author (Alexander Chingarev)/CreationDate (D:20150910094435-03'00')/Creator (iText 6)/ModDate (D:20150910094435-03'00')/Producer (iText® 6.0.0-SNAPSHOT ©2000-2014 iText Group NV \(AGPL-version\))/Title (Type3 test)>>
 endobj
 7 0 obj
 <</Ascent 880/CapHeight 880/Descent -120/Flags 6/FontBBox [-195 -272 1110 1075]/FontName /KozMinPro-Regular/ItalicAngle 0/StemV 93/Style <</Panose (\001\005\002\002\004\000\000\000\000\000\000\000)>>/Type /FontDescriptor>>
@@ -38,16 +38,16 @@ endobj
 xref
 0 9
 0000000000 65535 f 
-0000000290 00000 n 
-0000000933 00000 n 
-0000000336 00000 n 
+0000000312 00000 n 
+0000001065 00000 n 
+0000000358 00000 n 
 0000000174 00000 n 
 0000000015 00000 n 
-0000000986 00000 n 
-0000000461 00000 n 
-0000000699 00000 n 
+0000001118 00000 n 
+0000000593 00000 n 
+0000000831 00000 n 
 trailer
-<</ID [<2c3e6ef3728740ea993bc939895c8eec><2c3e6ef3728740ea993bc939895c8eec>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<986c2f32fdb4a72cd733f5a429e5e0aa><986c2f32fdb4a72cd733f5a429e5e0aa>]/Info 3 0 R/Root 1 0 R/Size 9>>
 startxref
-1122
+1254
 %%EOF

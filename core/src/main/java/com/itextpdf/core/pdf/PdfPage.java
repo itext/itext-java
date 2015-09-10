@@ -41,7 +41,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Contents, contentStream);
         getPdfObject().put(PdfName.Type, PdfName.Page);
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
-        //getPdfObject().put(PdfName.TrimBox, new PdfArray(pageSize));
+        getPdfObject().put(PdfName.TrimBox, new PdfArray(pageSize));
         if (pdfDocument.isTagged()) {
             structParents = pdfDocument.getNextStructParentIndex();
             getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
