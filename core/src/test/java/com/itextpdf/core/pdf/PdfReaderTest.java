@@ -327,7 +327,7 @@ public class PdfReaderTest {
         Assert.assertEquals(PdfObject.Stream, document.getXref().get(5).getRefersTo().getType());
         Assert.assertEquals(PdfObject.Dictionary, document.getXref().get(6).getRefersTo().getType());
         for (int i = 7; i < document.getXref().size(); i++)
-            Assert.assertTrue(document.getXref().get(i).getRefersTo() instanceof PdfNull);
+            Assert.assertNull(document.getXref().get(i).getRefersTo());
 
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
@@ -1444,7 +1444,7 @@ public class PdfReaderTest {
         PdfReader reader = new PdfReader(fis);
         PdfDocument pdfDoc = new PdfDocument(reader);
 
-        Assert.assertTrue(pdfDoc.getPdfObject(8) instanceof PdfNull);
+        Assert.assertNull(pdfDoc.getPdfObject(8));
         //Assert.assertFalse(pdfDoc.getReader().fixedXref);
         Assert.assertFalse(pdfDoc.getReader().rebuiltXref);
 

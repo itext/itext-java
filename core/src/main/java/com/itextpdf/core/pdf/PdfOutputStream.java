@@ -254,7 +254,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     }
 
     protected void write(PdfIndirectReference indirectReference) {
-        if (indirectReference.getGenNumber() == 0) {
+        if (indirectReference.getRefersTo() == null) {
+            write(PdfNull.PdfNull);
+        } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).
                     writeBytes(endIndirectWithZeroGenNr);
         } else {

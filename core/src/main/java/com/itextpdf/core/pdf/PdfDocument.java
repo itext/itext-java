@@ -464,11 +464,10 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Creates next available indirect reference.
      *
-     * @param object an object for which indirect reference should be created.
      * @return created indirect reference.
      */
-    public PdfIndirectReference createNextIndirectReference(PdfObject object) {
-        return xref.createNextIndirectReference(this, object);
+    public PdfIndirectReference createNextIndirectReference() {
+        return xref.createNextIndirectReference(this);
     }
 
     /**

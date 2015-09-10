@@ -114,9 +114,11 @@ abstract public class PdfObject {
             throw new PdfException(PdfException.ThereIsNoAssociatePdfWriterForMakingIndirects);
         }
         if (reference == null) {
-            indirectReference = document.createNextIndirectReference(this);
+            indirectReference = document.createNextIndirectReference();
+            indirectReference.setRefersTo(this);
         } else {
             indirectReference = reference;
+            indirectReference.setRefersTo(this);
         }
         clearState(MustBeIndirect);
         return (T) this;
@@ -256,17 +258,19 @@ abstract public class PdfObject {
      */
     protected <T extends PdfObject> T processCopying(PdfDocument document, boolean allowDuplicating) {
         if (document != null) {
-
+            //copyToDocument case
             PdfWriter writer = document.getWriter();
             if (writer == null)
                 throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
             return (T) writer.copyObject(this, document, allowDuplicating);
 
         } else {
-
+            //clone case
             PdfObject obj = this;
-            if (obj.isIndirectReference())
-                obj = ((PdfIndirectReference)this).getRefersTo();
+            if (obj.isIndirectReference()) {
+                PdfObject refTo = ((PdfIndirectReference) obj).getRefersTo();
+                obj = refTo != null ? refTo : obj;
+            }
             boolean isIndirect = obj.getIndirectReference() != null || obj.checkState(PdfObject.MustBeIndirect);
             if (isIndirect && !allowDuplicating) {
                 return (T) obj;

@@ -35,16 +35,15 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      */
     protected PdfDocument pdfDocument = null;
 
-    protected PdfIndirectReference(PdfDocument doc, int objNr, PdfObject refersTo) {
-        this(doc, objNr, 0, refersTo);
+    protected PdfIndirectReference(PdfDocument doc, int objNr) {
+        this(doc, objNr, 0);
     }
 
-    protected PdfIndirectReference(PdfDocument doc, int objNr, int genNr, PdfObject refersTo) {
+    protected PdfIndirectReference(PdfDocument doc, int objNr, int genNr) {
         super();
         this.pdfDocument = doc;
         this.objNr = objNr;
         this.genNr = genNr;
-        this.refersTo = refersTo;
     }
 
     // NOTE
@@ -78,7 +77,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // this method return 31st reference in chain.
     public PdfObject getRefersTo(boolean recursively) {
         if (!recursively) {
-            if (refersTo == null && !checkState(Flushed) && getReader() != null) {
+            if (refersTo == null && !checkState(Flushed) && !checkState(Modified) && getReader() != null) {
                 refersTo = getReader().readObject(this);
             }
             return refersTo;
@@ -94,7 +93,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         }
     }
 
-    public void setRefersTo(PdfObject refersTo) {
+    protected void setRefersTo(PdfObject refersTo) {
         this.refersTo = refersTo;
     }
 
@@ -214,8 +213,8 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     @Override
-    protected PdfIndirectReference newInstance() {
-        return pdfDocument.createNextIndirectReference(refersTo);
+    protected PdfObject newInstance() {
+        return PdfNull.PdfNull;
     }
 
     @Override

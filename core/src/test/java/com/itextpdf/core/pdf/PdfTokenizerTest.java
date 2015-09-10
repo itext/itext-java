@@ -203,7 +203,7 @@ public class PdfTokenizerTest {
 
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokenizer.TokenType.Ref);
-        PdfIndirectReference ref = new PdfIndirectReference(null, tok.getObjNr(), tok.getGenNr(), null);
+        PdfIndirectReference ref = new PdfIndirectReference(null, tok.getObjNr(), tok.getGenNr());
         Assert.assertEquals("46 0 R", ref.toString());
 
         tok.nextValidToken();
@@ -213,7 +213,7 @@ public class PdfTokenizerTest {
 
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokenizer.TokenType.Ref);
-        ref = new PdfIndirectReference(null, tok.getObjNr(), tok.getGenNr(), null);
+        ref = new PdfIndirectReference(null, tok.getObjNr(), tok.getGenNr());
         Assert.assertEquals("44 0 R", ref.toString());
 
         tok.nextValidToken();

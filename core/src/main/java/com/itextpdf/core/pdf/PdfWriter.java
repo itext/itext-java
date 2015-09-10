@@ -170,6 +170,9 @@ public class PdfWriter extends PdfOutputStream {
     protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) {
         if (object instanceof PdfIndirectReference)
             object = ((PdfIndirectReference) object).getRefersTo();
+        if (object == null) {
+            object = PdfNull.PdfNull;
+        }
         PdfIndirectReference indirectReference = object.getIndirectReference();
         PdfIndirectReference copiedIndirectReference;
 

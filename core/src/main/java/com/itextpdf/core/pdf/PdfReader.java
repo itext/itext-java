@@ -714,6 +714,9 @@ public class PdfReader {
                 PdfXrefTable table = pdfDocument.getXref();
                 PdfIndirectReference reference = table.get(num);
                 if (reference != null) {
+                    if (reference.isFree()) {
+                        return PdfNull.PdfNull;
+                    }
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
@@ -1143,7 +1146,7 @@ public class PdfReader {
                 }
                 return object != null ? object.setIndirectReference(reference) : null;
             } else {
-                return new PdfNull();
+                return null;
             }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotReadPdfObject, e);

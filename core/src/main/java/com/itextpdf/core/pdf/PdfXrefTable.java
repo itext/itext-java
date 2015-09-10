@@ -64,19 +64,17 @@ class PdfXrefTable {
     /**
      * Creates next available indirect reference.
      *
-     * @param object an object for which indirect reference should be created.
      * @return created indirect reference.
      */
-    protected PdfIndirectReference createNextIndirectReference(PdfDocument document, PdfObject object) {
+    protected PdfIndirectReference createNextIndirectReference(PdfDocument document) {
         PdfIndirectReference indirectReference;
         if (freeReferences.size() > 0) {
             indirectReference = xref[freeReferences.pollFirst()];
             assert indirectReference.isFree();
             indirectReference.setOffset(0);
-            indirectReference.setRefersTo(object);
             indirectReference.clearState(PdfIndirectReference.Free);
         } else {
-            indirectReference = new PdfIndirectReference(document, ++count, object);
+            indirectReference = new PdfIndirectReference(document, ++count);
             add(indirectReference);
         }
         return indirectReference.setState(PdfIndirectReference.Modified);
