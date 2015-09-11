@@ -115,6 +115,7 @@ public class PdfException extends RuntimeException {
     public static final String IllegalRValue = "illegal.r.value";
     public static final String IllegalVValue = "illegal.v.value";
     public static final String Font1With2IsNotRecognized = "font.1.with.2.is.not.recognized";
+    public static final String FontIsNotRecognized = "font.is.not.recognized";
 
     public static final String ImageCanNotBeAnImageMask = "image.can.not.be.an.image.mask";
     public static final String ImageMaskCannotContainAnotherImageMask = "image.mask.cannot.contain.another.image.mask";

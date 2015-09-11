@@ -1,9 +1,8 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.core.font.PdfType1Font;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
@@ -44,7 +43,7 @@ public class OverflowTest {
             text.append("This is a waaaaay tooo long text...");
         }
 
-        Paragraph p = new Paragraph(text.toString()).setFont(new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, "")));
+        Paragraph p = new Paragraph(text.toString()).setFont(PdfFont.createStandardFont(pdfDocument, FontConstants.HELVETICA));
         document.add(p);
 
         document.close();

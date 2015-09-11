@@ -6,46 +6,53 @@ import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
 class Type1Parser {
 
-    private String name;
-    private byte[] pfb;
-    private byte[] afm;
+    private static final String AfmHeader = "StartFontMetrics";
+
+    private String afmPath;
+    private String pfbPath;
+    private byte[] pfbData;
+    private byte[] afmData;
     private boolean isBuiltInFont;
 
     private static FontsResourceAnchor resourceAnchor;
+    private RandomAccessSourceFactory sourceFactory = new RandomAccessSourceFactory();
 
     /**
      * Creates a new Type1 font file.
      * @param afm the AFM file if the input is made with a <CODE>byte</CODE> array
      * @param pfb the PFB file if the input is made with a <CODE>byte</CODE> array
-     * @param name the name of one of the 14 built-in fonts or the location of an AFM file. The file must end in '.afm'
+     * @param metricsPath the name of one of the 14 built-in fonts or the location of an AFM file. The file must end in '.afm'
      * @the AFM file is invalid
      * @throws IOException the AFM file could not be read
      */
-    public Type1Parser(String name, byte[] afm, byte[] pfb) throws IOException {
-        this.afm = afm;
-        this.pfb = pfb;
-        this.name = name;
+    public Type1Parser(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws IOException {
+        this.afmData = afm;
+        this.pfbData = pfb;
+        this.afmPath = metricsPath;
+        this.pfbPath = binaryPath;
     }
 
     public RandomAccessFileOrArray getMetricsFile() throws IOException {
-        RandomAccessFileOrArray rf;
         InputStream is = null;
         isBuiltInFont = false;
-        RandomAccessSourceFactory sourceFactory = new RandomAccessSourceFactory();
-        if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
+
+        if (FontConstants.BUILTIN_FONTS_14.contains(afmPath)) {
             isBuiltInFont = true;
-            byte buf[] = new byte[1024];
+            byte[] buf = new byte[1024];
             try {
-                if (resourceAnchor == null)
+                if (resourceAnchor == null) {
                     resourceAnchor = new FontsResourceAnchor();
-                is = Utilities.getResourceStream(FontConstants.RESOURCE_PATH + "afm/" + name + ".afm", resourceAnchor.getClass().getClassLoader());
+                }
+                String resourcePath = FontConstants.RESOURCE_PATH + "afm/" + afmPath + ".afm";
+                is = Utilities.getResourceStream(resourcePath, resourceAnchor.getClass().getClassLoader());
                 if (is == null) {
-                    throw new PdfException("1.not.found.as.resource").setMessageParams(name);
+                    throw new PdfException("1.not.found.as.resource").setMessageParams(resourcePath);
                 }
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 int read;
@@ -61,55 +68,68 @@ class Type1Parser {
                 }
             }
             return new RandomAccessFileOrArray(sourceFactory.createSource(buf));
-        } else if (name.toLowerCase().endsWith(".afm")) {
-            if (afm == null) {
-                rf = new RandomAccessFileOrArray(sourceFactory.createBestSource(name));
+        } else if (afmPath != null) {
+            if (afmPath.toLowerCase().endsWith(".afm")) {
+                return new RandomAccessFileOrArray(sourceFactory.createBestSource(afmPath));
+            } else if (afmPath.toLowerCase().endsWith(".pfm")) {
+                ByteArrayOutputStream ba = new ByteArrayOutputStream();
+                RandomAccessFileOrArray rf = new RandomAccessFileOrArray(sourceFactory.createBestSource(afmPath));
+                Pfm2afm.convert(rf, ba);
+                rf.close();
+                return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             } else {
-                rf = new RandomAccessFileOrArray(sourceFactory.createSource(afm));
+                throw new PdfException("1.is.not.an.afm.or.pfm.font.file").setMessageParams(afmPath);
             }
-            return rf;
-        } else if (name.toLowerCase().endsWith(".pfm")) {
-            ByteArrayOutputStream ba = new ByteArrayOutputStream();
-            if (afm == null) {
-                rf = new RandomAccessFileOrArray(sourceFactory.createBestSource(name));
+        } else if (afmData != null) {
+            RandomAccessFileOrArray rf = new RandomAccessFileOrArray(sourceFactory.createSource(afmData));
+            if (isAfmFile(rf)) {
+                return rf;
             } else {
-                rf = new RandomAccessFileOrArray(sourceFactory.createSource(afm));
+                ByteArrayOutputStream ba = new ByteArrayOutputStream();
+                try {
+                    Pfm2afm.convert(rf, ba);
+                } catch (Exception ignored) {
+                    throw new PdfException("invalid.afm.or.pfm.font.file");
+                } finally {
+                    rf.close();
+                }
+                return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             }
-            Pfm2afm.convert(rf, ba);
-            rf.close();
-            rf = new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
-            return rf;
-        }
-        else {
-            throw new PdfException("1.is.not.an.afm.or.pfm.font.file").setMessageParams(name);
+        } else {
+            throw new PdfException("invalid.afm.or.pfm.font.file");
         }
     }
 
     public RandomAccessFileOrArray getPostscriptBinary() throws IOException {
-        String filePfb = getPfbName();
-        RandomAccessSourceFactory sourceFactory = new RandomAccessSourceFactory();
-        RandomAccessFileOrArray raf;
-        if (pfb == null) {
-            raf = new RandomAccessFileOrArray(sourceFactory.createBestSource(filePfb));
+        if (pfbData != null) {
+            return new RandomAccessFileOrArray(sourceFactory.createSource(pfbData));
+        } else if (pfbPath != null && pfbPath.toLowerCase().endsWith(".pfb")) {
+            return new RandomAccessFileOrArray(sourceFactory.createBestSource(pfbPath));
         } else {
-            raf = new RandomAccessFileOrArray(sourceFactory.createSource(pfb));
+            pfbPath = afmPath.substring(0, afmPath.length() - 3) + "pfb";
+            return new RandomAccessFileOrArray(sourceFactory.createBestSource(pfbPath));
         }
-        return raf;
     }
 
     public boolean isBuiltInFont() {
         return isBuiltInFont;
     }
 
-    public String getName() {
-        return name;
+    public String getAfmPath() {
+        return afmPath;
     }
 
-    public String getPfbName() {
-        return name.substring(0, name.length() - 3) + "pfb";
-    }
-
-    public byte[] getAfm() {
-        return afm;
+    private boolean isAfmFile(RandomAccessFileOrArray raf) throws IOException {
+        StringBuilder builder = new StringBuilder(AfmHeader.length());
+        for (int i = 0; i < AfmHeader.length(); i++) {
+            try {
+                builder.append((char)raf.readByte());
+            } catch (EOFException e) {
+                raf.seek(0);
+                return false;
+            }
+        }
+        raf.seek(0);
+        return AfmHeader.equals(builder.toString());
     }
 }

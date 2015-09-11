@@ -161,7 +161,7 @@ public class FontEncoding {
      * @return the normalized encoding
      */
     protected static String normalizeEncoding(String enc) {
-        if (enc.toLowerCase().equals("winansi") || enc.equals("")) {
+        if (enc == null || enc.toLowerCase().equals("winansi") || enc.equals("")) {
             return PdfEncodings.WINANSI;
         } else if (enc.toLowerCase().equals("macroman")) {
             return PdfEncodings.MACROMAN;

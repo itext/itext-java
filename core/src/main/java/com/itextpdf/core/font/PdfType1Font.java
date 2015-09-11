@@ -34,9 +34,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     }
 
     public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, boolean embedded) {
-        super(pdfDocument,new PdfDictionary());
+        super(pdfDocument, new PdfDictionary());
         setFontProgram(type1Font);
-        this.embedded = embedded;
+        this.embedded = embedded && !type1Font.isBuiltInFont();
     }
 
     public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font) {
@@ -117,7 +117,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     protected Type1Font initializeTypeFont(String fontName, String encodingName) throws IOException{
-        return new Type1Font(fontName, encodingName);
+        return Type1Font.createFont(fontName, encodingName);
     }
 
     private void flushCopyFontData() {
@@ -194,7 +194,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
             }
             getPdfObject().put(PdfName.Widths, wd);
         }
-        PdfDictionary fontDescriptor = getFontDescriptor(getFullFontStream());
+        PdfDictionary fontDescriptor = getFontDescriptor(embedded ? getFullFontStream() : null);
         if (!getFontProgram().isBuiltInFont() && fontDescriptor != null) {
             getPdfObject().put(PdfName.FontDescriptor, fontDescriptor);
             fontDescriptor.flush();

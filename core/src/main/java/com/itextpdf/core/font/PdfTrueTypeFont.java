@@ -30,7 +30,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     private byte[] shortTag = new byte[256];
 
     public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf, boolean embedded) {
-        super(pdfDocument,new PdfDictionary());
+        super(pdfDocument, new PdfDictionary());
         setFontProgram(ttf);
         this.embedded = embedded;
         FontNames fontNames = ttf.getFontNames();
@@ -318,6 +318,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     @Override
     protected TrueTypeFont initializeTypeFont(String fontName, String encodingName) throws IOException {
-        return new TrueTypeFont(fontName, encodingName, null);
+        return new TrueTypeFont(fontName, encodingName);
     }
 }

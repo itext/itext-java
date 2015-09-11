@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 public class MetaFont extends MetaObject {
-    static final String fontNames[] = {
+    static final String[] fontNames = {
         "Courier", "Courier-Bold", "Courier-Oblique", "Courier-BoldOblique",
         "Helvetica", "Helvetica-Bold", "Helvetica-Oblique", "Helvetica-BoldOblique",
         "Times-Roman", "Times-Bold", "Times-Italic", "Times-BoldItalic",
@@ -135,7 +135,7 @@ public class MetaFont extends MetaObject {
             }
         }
         try {
-            font = new Type1Font(fontName, PdfEncodings.WINANSI);
+            font = Type1Font.createStandardFont(fontName, PdfEncodings.WINANSI);
         }
         catch (Exception e) {
             throw new RuntimeException(e);

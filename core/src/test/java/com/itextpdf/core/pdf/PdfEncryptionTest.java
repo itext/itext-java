@@ -1,9 +1,8 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.core.font.PdfType1Font;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.text.DocumentException;
@@ -108,7 +107,7 @@ public class PdfEncryptionTest {
                 "0 0 Td\n" +
                 "ET\n" +
                 "Q ").getBytes());
-        page.getResources().addFont(new PdfType1Font(document, new Type1Font(FontConstants.HELVETICA, "")));
+        page.getResources().addFont(PdfFont.createStandardFont(document, FontConstants.HELVETICA));
 
         page.flush();
         document.close();

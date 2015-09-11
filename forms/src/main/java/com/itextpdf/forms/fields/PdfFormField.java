@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
@@ -15,8 +15,6 @@ import com.itextpdf.canvas.color.DeviceCmyk;
 import com.itextpdf.canvas.color.DeviceGray;
 import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.font.PdfType1Font;
-import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
@@ -24,7 +22,9 @@ import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 
 public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
@@ -835,7 +835,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         this.checkType = checkType;
         setText(typeChars[checkType - 1]);
         try {
-            setFont(new PdfType1Font(getDocument(), new Type1Font(FontConstants.ZAPFDINGBATS, PdfEncodings.WINANSI)));
+            setFont(PdfFont.createStandardFont(getDocument(), FontConstants.ZAPFDINGBATS, PdfEncodings.WINANSI));
         }
         catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
@@ -848,7 +848,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method regenerates appearance stream of the field. Use it if you changed any field parameters and didn't use setValue method which generates appearance by itself.
-     * @return
      */
     public boolean regenerateField() {
         PdfName type = getFormType();

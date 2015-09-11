@@ -229,6 +229,9 @@ public abstract class FontProgram {
      * @return the name without the modifiers Bold, Italic or BoldItalic
      */
     protected static String getBaseName(String name) {
+        if (name == null) {
+            return null;
+        }
         if (name.endsWith(",Bold")) {
             return name.substring(0, name.length() - 5);
         } else if (name.endsWith(",Italic")) {

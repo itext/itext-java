@@ -156,7 +156,7 @@ class OpenTypeParser {
     /** The file in use. */
     protected RandomAccessFileOrArray raf;
     /** The index for the TTC font. It is an empty {@code String} for a TTF file. */
-    protected String ttcIndex;
+    protected String ttcIndex = "";
     /** The offset from the start of the file to the table directory.
      * It is 0 for TTF and may vary for TTC depending on the chosen font. */
     protected int directoryOffset;
@@ -164,8 +164,6 @@ class OpenTypeParser {
     protected String fontName;
     /** All the names of the Names-Table. */
     protected HashMap<Integer, List<String[]>> allNameEntries;
-    /** The style modifier. */
-    protected String style = "";
 
     /** Indicate, that the font contains 'CFF ' table. */
     protected boolean cff = false;
@@ -188,22 +186,19 @@ class OpenTypeParser {
      * of the table. */
     protected HashMap<String, int[]> tables;
 
-    public OpenTypeParser(String name, byte[] ttf) throws IOException {
-        String nameBase = FontProgram.getBaseName(name);
-        String ttcName = getTTCName(nameBase); // TODO: NullPointerException
-        if (nameBase.length() < name.length()) {
-            style = name.substring(nameBase.length());
-        }
-        this.fileName = ttcName;
-        this.ttcIndex = "";
-        if (ttcName.length() < nameBase.length())
-            ttcIndex = nameBase.substring(ttcName.length() + 1);
+    public OpenTypeParser(byte[] ttf) throws IOException {
+        raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttf));
+        process();
+    }
 
-        if (ttf == null) {
-            raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fileName));
-        } else {
-            raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttf));
+    public OpenTypeParser(String name) throws IOException {
+        String nameBase = FontProgram.getBaseName(name);
+        String ttcName = getTTCName(nameBase);
+        this.fileName = ttcName;
+        if (ttcName.length() < nameBase.length()) {
+            ttcIndex = nameBase.substring(ttcName.length() + 1);
         }
+        raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fileName));
         process();
     }
 
@@ -225,10 +220,6 @@ class OpenTypeParser {
 
     public HashMap<Integer, List<String[]>> getAllNameEntries() {
         return allNameEntries;
-    }
-
-    public String getStyle() {
-        return style;
     }
 
     public PostTable getPostTable() {
@@ -311,21 +302,34 @@ class OpenTypeParser {
 
     /** Reads the font data. */
     protected void process() throws IOException {
-        tables = new HashMap<String, int[]>();
+        tables = new HashMap<>();
         if (ttcIndex.length() > 0) {
             int dirIdx = Integer.parseInt(ttcIndex);
             if (dirIdx < 0) {
-                throw new PdfException("the.font.index.for.1.must.be.positive").setMessageParams(fileName);
+                if (fileName != null) {
+                    throw new PdfException("the.font.index.for.1.must.be.positive").setMessageParams(fileName);
+                } else {
+                    throw new PdfException("the.font.index.must.be.positive");
+                }
             }
             String mainTag = readStandardString(4);
             if (!mainTag.equals("ttcf")) {
-                throw new PdfException("1.is.not.a.valid.ttc.file").setMessageParams(fileName);
+                if (fileName != null) {
+                    throw new PdfException("1.is.not.a.valid.ttc.file").setMessageParams(fileName);
+                } else {
+                    throw new PdfException("not.a.valid.ttc.file");
+                }
             }
             raf.skipBytes(4);
             int dirCount = raf.readInt();
             if (dirIdx >= dirCount) {
-                throw new PdfException("the.font.index.for.1.must.be.between.0.and.2.it.was.3")
-                        .setMessageParams(fileName, String.valueOf(dirCount - 1), String.valueOf(dirIdx));
+                if (fileName != null) {
+                    throw new PdfException("the.font.index.for.1.must.be.between.0.and.2.it.was.3")
+                            .setMessageParams(fileName, String.valueOf(dirCount - 1), String.valueOf(dirIdx));
+                } else {
+                    throw new PdfException("the.font.index.must.be.between.0.and.1.it.was.2")
+                            .setMessageParams(String.valueOf(dirCount - 1), String.valueOf(dirIdx));
+                }
             }
             raf.skipBytes(dirIdx * 4);
             directoryOffset = raf.readInt();
@@ -333,7 +337,11 @@ class OpenTypeParser {
         raf.seek(directoryOffset);
         int ttId = raf.readInt();
         if (ttId != 0x00010000 && ttId != 0x4F54544F) {
-            throw new PdfException("1.is.not.a.valid.ttf.or.otf.file").setMessageParams(fileName);
+            if (fileName != null) {
+                throw new PdfException("1.is.not.a.valid.ttf.or.otf.file").setMessageParams(fileName);
+            } else {
+                throw new PdfException("not.a.valid.ttf.or.otf.file");
+            }
         }
         int num_tables = raf.readUnsignedShort();
         raf.skipBytes(6);
@@ -363,6 +371,9 @@ class OpenTypeParser {
      * @return the simple file name
      */
     protected static String getTTCName(String name) {
+        if (name == null) {
+            return null;
+        }
         int idx = name.toLowerCase().indexOf(".ttc,");
         if (idx < 0)
             return name;
@@ -393,7 +404,11 @@ class OpenTypeParser {
         int table_location[];
         table_location = tables.get("hmtx");
         if (table_location == null) {
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("hmtx", fileName + style);
+            if (fileName != null) {
+                throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("hmtx", fileName);
+            } else {
+                throw new PdfException("table.1.does.not.exist").setMessageParams("hmtx");
+            }
         }
         raf.seek(table_location[0]);
         glyphWidthsByIndex = new int[numberOfHMetrics];
@@ -449,7 +464,11 @@ class OpenTypeParser {
         int tableLocation[];
         tableLocation = tables.get("head");
         if (tableLocation == null) {
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("head", fileName + style);
+            if (fileName != null) {
+                throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("head", fileName);
+            } else {
+                throw new PdfException("table.1.does.not.exist").setMessageParams("head");
+            }
         }
         raf.seek(tableLocation[0] + FontConstants.HEAD_LOCA_FORMAT_OFFSET);
         boolean locaShortTable = raf.readUnsignedShort() == 0;
@@ -475,7 +494,11 @@ class OpenTypeParser {
 
         tableLocation = tables.get("glyf");
         if (tableLocation == null) {
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName + style);
+            if (fileName != null) {
+                throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
+            } else {
+                throw new PdfException("table.1.does.not.exist").setMessageParams("glyf");
+            }
         }
         int tableGlyphOffset = tableLocation[0];
         int[][] bboxes = new int[locaTable.length - 1][];
@@ -513,7 +536,11 @@ class OpenTypeParser {
         int table_location[];
         table_location = tables.get("name");
         if (table_location == null) {
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("name", fileName + style);
+            if (fileName != null) {
+                throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("name", fileName);
+            } else {
+                throw new PdfException("table.1.does.not.exist").setMessageParams("name");
+            }
         }
         allNameEntries = new HashMap<>();
         raf.seek(table_location[0] + 2);
@@ -559,7 +586,11 @@ class OpenTypeParser {
         int table_location[];
         table_location = tables.get("hhea");
         if (table_location == null) {
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("hhea", fileName + style);
+            if (fileName != null) {
+                throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("hhea", fileName);
+            } else {
+                throw new PdfException("table.1.does.not.exist").setMessageParams("hhea");
+            }
         }
         raf.seek(table_location[0] + 4);
         hhea = new HorizontalHeader();
@@ -585,7 +616,11 @@ class OpenTypeParser {
         int table_location[];
         table_location = tables.get("head");
         if (table_location == null) {
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("head", fileName + style);
+            if (fileName != null) {
+                throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("head", fileName);
+            } else {
+                throw new PdfException("table.1.does.not.exist").setMessageParams("head");
+            }
         }
         raf.seek(table_location[0] + 16);
         head = new HeaderTable();
@@ -609,7 +644,11 @@ class OpenTypeParser {
         int table_location[];
         table_location = tables.get("OS/2");
         if (table_location == null) {
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("OS/2", fileName + style);
+            if (fileName != null) {
+                throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("os/2", fileName);
+            } else {
+                throw new PdfException("table.1.does.not.exist").setMessageParams("os/2");
+            }
         }
         os_2 = new WindowsMetrics();
         raf.seek(table_location[0]);
@@ -686,8 +725,13 @@ class OpenTypeParser {
     private void readCmapTable() throws IOException {
         int table_location[];
         table_location = tables.get("cmap");
-        if (table_location == null)
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("cmap", fileName + style);
+        if (table_location == null) {
+            if (fileName != null) {
+                throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("cmap", fileName);
+            } else {
+                throw new PdfException("table.1.does.not.exist").setMessageParams("cmap");
+            }
+        }
         raf.seek(table_location[0]);
         raf.skipBytes(2);
         int num_tables = raf.readUnsignedShort();

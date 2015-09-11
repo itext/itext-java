@@ -3,11 +3,10 @@ package com.itextpdf.barcodes;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.core.font.PdfType1Font;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 
 import java.awt.*;
@@ -171,7 +170,7 @@ public class BarcodeEAN extends Barcode1D {
         super(document);
         try {
             x = 0.8f;
-            font = new PdfType1Font(document, new Type1Font(FontConstants.HELVETICA, PdfEncodings.WINANSI));
+            font = PdfFont.createStandardFont(document, FontConstants.HELVETICA, PdfEncodings.WINANSI);
             size = 8;
             baseline = size;
             barHeight = size * 3;

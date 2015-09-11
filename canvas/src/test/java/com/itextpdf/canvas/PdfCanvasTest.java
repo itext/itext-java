@@ -4,7 +4,6 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.RawImage;
@@ -13,7 +12,6 @@ import com.itextpdf.canvas.color.*;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.image.WmfImage;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
@@ -187,7 +185,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 16)
+                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 16)
                 .showText("Hello Helvetica!")
                 .endText()
                 .restoreState();
@@ -196,7 +194,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 700)
-                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA_BOLDOBLIQUE, "")), 16)
+                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA_BOLDOBLIQUE), 16)
                 .showText("Hello Helvetica Bold Oblique!")
                 .endText()
                 .restoreState();
@@ -205,7 +203,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 650)
-                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.COURIER, "")), 16)
+                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.COURIER), 16)
                 .showText("Hello Courier!")
                 .endText()
                 .restoreState();
@@ -214,7 +212,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 600)
-                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.TIMES_ITALIC, "")), 16)
+                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.TIMES_ITALIC), 16)
                 .showText("Hello Times Italic!")
                 .endText()
                 .restoreState();
@@ -223,7 +221,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 550)
-                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.SYMBOL, "")), 16)
+                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.SYMBOL), 16)
                 .showText("Hello Ellada!")
                 .endText()
                 .restoreState();
@@ -232,7 +230,7 @@ public class PdfCanvasTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 500)
-                .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.ZAPFDINGBATS, "")), 16)
+                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.ZAPFDINGBATS), 16)
                 .showText("Hello ZapfDingbats!")
                 .endText()
                 .restoreState();
@@ -370,7 +368,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -416,7 +414,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -462,7 +460,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -507,7 +505,7 @@ public class PdfCanvasTest {
             canvas.saveState()
                     .beginText()
                     .moveText(36, 650)
-                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.COURIER, "")), 16)
+                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.COURIER), 16)
                     .showText("Page " + (i + 1))
                     .endText();
 
@@ -554,7 +552,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -601,7 +599,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -648,7 +646,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -695,7 +693,7 @@ public class PdfCanvasTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -732,7 +730,7 @@ public class PdfCanvasTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
+        canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
@@ -776,7 +774,7 @@ public class PdfCanvasTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
+            canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
@@ -830,7 +828,7 @@ public class PdfCanvasTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
+        canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!!!");
         canvas.endText();
@@ -884,7 +882,7 @@ public class PdfCanvasTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
+            canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
@@ -937,7 +935,7 @@ public class PdfCanvasTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
+            canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
@@ -995,7 +993,7 @@ public class PdfCanvasTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(new PdfType1Font(pdfDoc1, new Type1Font(FontConstants.COURIER, "")), 12);
+        canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
@@ -1508,7 +1506,7 @@ public class PdfCanvasTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         String kernableText = "AVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAV";
-        PdfFont font = new PdfType1Font(document, new Type1Font(FontConstants.HELVETICA, ""));
+        PdfFont font = PdfFont.createStandardFont(document, FontConstants.HELVETICA);
         canvas.beginText().moveText(50, 600).setFontAndSize(font, 12).showText("Kerning:-" + kernableText).endText();
         canvas.beginText().moveText(50, 650).setFontAndSize(font, 12).showTextKerned("Kerning:+" + kernableText).endText();
 

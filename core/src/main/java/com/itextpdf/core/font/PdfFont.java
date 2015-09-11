@@ -1,10 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.font.*;
 import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
@@ -19,9 +16,120 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
 
     /** true if the font is to be embedded in the PDF. */
+    //TODO mark as final
     protected boolean embedded = false;
     protected boolean subset = true;
     protected ArrayList<int[]> subsetRanges;
+
+    public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws IOException {
+        return createStandardFont(pdfDocument, FontConstants.HELVETICA, PdfEncodings.WINANSI);
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
+        if (checkFontDictionary(fontDictionary, PdfName.Type1, false)) {
+            return new PdfType1Font(pdfDocument, fontDictionary);
+        } else if (checkFontDictionary(fontDictionary, PdfName.Type0, false)) {
+            return new PdfType0Font(pdfDocument, fontDictionary);
+        } else if (checkFontDictionary(fontDictionary, PdfName.TrueType, false)) {
+            return new PdfTrueTypeFont(pdfDocument, fontDictionary);
+        } else {
+            throw new PdfException(PdfException.DictionaryNotContainFontData);
+        }
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, String path, String encoding) throws IOException {
+        return createFont(pdfDocument, path, encoding, false);
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, String path, String encoding, boolean embedded) throws IOException {
+        FontProgram fontProgram = FontFactory.createFont(path, encoding);
+        if (fontProgram == null) {
+            return null;
+        } else if (fontProgram instanceof Type1Font) {
+            return new PdfType1Font(pdfDocument, (Type1Font)fontProgram, embedded);
+        } else if (fontProgram instanceof TrueTypeFont) {
+            if (PdfEncodings.IDENTITY_H.equals(encoding) || PdfEncodings.IDENTITY_V.equals(encoding)) {
+                return new PdfType0Font(pdfDocument, (TrueTypeFont)fontProgram, encoding);
+            } else {
+                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont)fontProgram, embedded);
+            }
+        } else if (fontProgram instanceof CidFont) {
+            return new PdfType0Font(pdfDocument, (CidFont)fontProgram, encoding);
+        } else {
+            return null;
+        }
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, byte[] font, String encoding) throws IOException {
+        return createFont(pdfDocument, font, encoding, false);
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, byte[] font, String encoding, boolean embedded) throws IOException {
+        FontProgram fontProgram = FontFactory.createFont(null, encoding, false, font, null, true);
+        if (fontProgram == null) {
+            return null;
+        } else if (fontProgram instanceof Type1Font) {
+            return new PdfType1Font(pdfDocument, (Type1Font)fontProgram, embedded);
+        } else if (fontProgram instanceof TrueTypeFont) {
+            if (PdfEncodings.IDENTITY_H.equals(encoding) || PdfEncodings.IDENTITY_V.equals(encoding)) {
+                return new PdfType0Font(pdfDocument, (TrueTypeFont)fontProgram, encoding);
+            } else {
+                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont)fontProgram, embedded);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static PdfFont createStandardFont(PdfDocument pdfDocument, String name) throws IOException {
+        return createStandardFont(pdfDocument, name, PdfEncodings.WINANSI);
+    }
+
+    public static PdfFont createStandardFont(PdfDocument pdfDocument, String name, String encoding) throws IOException {
+        return new PdfType1Font(pdfDocument, Type1Font.createStandardFont(name, encoding));
+    }
+
+    public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics) throws IOException {
+        return createType1Font(pdfDocument, metrics, null, PdfEncodings.WINANSI, false);
+    }
+
+    public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics, String encoding) throws IOException {
+        return createType1Font(pdfDocument, metrics, null, encoding, false);
+    }
+
+    public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics, String binary, String encoding) throws IOException {
+        return createType1Font(pdfDocument, metrics, binary, encoding, false);
+    }
+
+    /**
+     * Create {@see PdfType1Font}.
+     * @param metrics path to .afm or .pfm metrics file.
+     * @param binary .pfb binary file
+     */
+    public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics, String binary, String encoding, boolean embedded) throws IOException {
+        return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary, encoding), embedded);
+    }
+
+    public static PdfFont createType1Font(PdfDocument pdfDocument, byte[] metrics) throws IOException {
+        return createType1Font(pdfDocument, metrics, null, PdfEncodings.WINANSI, false);
+    }
+
+    public static PdfFont createType1Font(PdfDocument pdfDocument, byte[] metrics, String encoding) throws IOException {
+        return createType1Font(pdfDocument, metrics, null, encoding, false);
+    }
+
+    public static PdfFont createType1Font(PdfDocument pdfDocument, byte[] metrics, byte[] binary, String encoding) throws IOException {
+        return createType1Font(pdfDocument, metrics, binary, encoding, false);
+    }
+
+    /**
+     * Create {@see PdfType1Font}.
+     * @param metrics .afm or .pfm metrics file.
+     * @param binary .pfb binary file
+     */
+    public static PdfFont createType1Font(PdfDocument pdfDocument, byte[] metrics, byte[] binary, String encoding, boolean embedded) throws IOException {
+        return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary, encoding), embedded);
+    }
 
     public PdfFont(PdfDocument pdfDocument, PdfDictionary pdfObject) {
         super(pdfObject);
@@ -35,24 +143,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Type, PdfName.Font);
         this.fontDictionary = pdfDictionary;
         this.isCopy = isCopy;
-    }
-
-
-
-    public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws IOException {
-        return new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, ""));
-    }
-
-    public static PdfFont createFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        if (checkFontDictionary(fontDictionary, PdfName.Type1, false)) {
-            return new PdfType1Font(pdfDocument, fontDictionary);
-        } else if (checkFontDictionary(fontDictionary, PdfName.Type0, false)) {
-            return new PdfType0Font(pdfDocument, fontDictionary);
-        } else if (checkFontDictionary(fontDictionary, PdfName.TrueType, false)) {
-            return new PdfTrueTypeFont(pdfDocument, fontDictionary);
-        } else {
-            throw new PdfException(PdfException.DictionaryNotContainFontData);
-        }
     }
 
     /**

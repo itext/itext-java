@@ -47,110 +47,16 @@ public class TrueTypeFont extends FontProgram {
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
 
-    // TODO remove 'name' parameter
-    public TrueTypeFont(String name, String baseEncoding, byte[] ttf) throws IOException {
-        fontParser = new OpenTypeParser(name, ttf);
-
-        // initialize sfnt tables
-        OpenTypeParser.HeaderTable head = fontParser.getHeadTable();
-        OpenTypeParser.HorizontalHeader hhea = fontParser.getHheaTable();
-        OpenTypeParser.WindowsMetrics os_2 = fontParser.getOs_2Table();
-        OpenTypeParser.PostTable post = fontParser.getPostTable();
-        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
-        kerning = fontParser.readKerning(head.unitsPerEm);
-        bBoxes = fontParser.readBbox(head.unitsPerEm);
-        allNames = fontParser.getAllNameEntries();
-
-        // font names group
-        fontNames.setFontName(fontParser.getPsFontName());
-        fontNames.setFullName(getNames(4));
-        String[][] otfFamilyName = getNames(16);
-        if (otfFamilyName != null) {
-            fontNames.setFamilyName(otfFamilyName);
-        } else {
-            fontNames.setFamilyName(getNames(1));
-        }
-        String[][] subfamily = getNames(2);
-        if (subfamily != null) {
-            fontNames.setStyle(subfamily[0][3]);
-        }
-        String[][] otfSubFamily = getNames(17);
-        if (otfFamilyName != null) {
-            fontNames.setSubfamily(otfSubFamily);
-        } else {
-            fontNames.setSubfamily(subfamily);
-        }
-        String[][] cidName = getNames(20);
-        if (cidName != null) {
-            fontNames.setCidFontName(cidName[0][3]);
-        }
-        fontNames.setWeight(os_2.usWeightClass);
-        fontNames.setWidth(os_2.usWidthClass);
-        fontNames.setMacStyle(head.macStyle);
-        fontNames.setAllowEmbedding(os_2.fsType != 2);
-
-        // font metrics group
-        fontMetrics.setUnitsPerEm(head.unitsPerEm);
-        fontMetrics.updateBbox(head.xMin, head.yMin, head.xMax, head.yMax);
-        fontMetrics.setMaxGlyphId(fontParser.readMaxGlyphId());
-        fontMetrics.setGlyphWidths(fontParser.getGlyphWidthsByIndex());
-        fontMetrics.setTypoAscender(os_2.sTypoAscender);
-        fontMetrics.setTypoDescender(os_2.sTypoDescender);
-        fontMetrics.setCapHeight(os_2.sCapHeight);
-        fontMetrics.setXHeight(os_2.sxHeight);
-        fontMetrics.setItalicAngle(post.italicAngle);
-        fontMetrics.setAscender(hhea.Ascender);
-        fontMetrics.setDescender(hhea.Descender);
-        fontMetrics.setLineGap(hhea.LineGap);
-        fontMetrics.setWinAscender(os_2.usWinAscent);
-        fontMetrics.setWinDescender(os_2.usWinDescent);
-        fontMetrics.setAdvanceWidthMax(hhea.advanceWidthMax);
-        fontMetrics.setUnderlinePosition((post.underlinePosition - post.underlineThickness) / 2);
-        fontMetrics.setUnderlineThickness(post.underlineThickness);
-        fontMetrics.setStrikeoutPosition(os_2.yStrikeoutPosition);
-        fontMetrics.setStrikeoutSize(os_2.yStrikeoutSize);
-        fontMetrics.setSubscriptOffset(-os_2.ySubscriptYOffset);
-        fontMetrics.setSubscriptSize(os_2.ySubscriptYSize);
-        fontMetrics.setSuperscriptOffset(os_2.ySuperscriptYOffset);
-        fontMetrics.setSuperscriptSize(os_2.ySuperscriptYSize);
-        fontMetrics.setIsFixedPitch(post.isFixedPitch);
-
-        // font identification group
-        String[][] ttfVersion = getNames(5);
-        if (ttfVersion != null) {
-            fontIdentification.setTtfVersion(ttfVersion[0][3]);
-        }
-        String[][] ttfUniqueId = getNames(3);
-        if (ttfUniqueId != null) {
-            fontIdentification.setTtfVersion(ttfUniqueId[0][3]);
-        }
-        fontIdentification.setPanose(os_2.panose);
-
-
-        HashMap<Integer, int[]> cmap31 = getCmap31();
-        glyphToCharacterMap = new HashMap<>(cmap31.size());
-        for (Integer charCode : cmap31.keySet()) {
-            char c = (char) charCode.intValue();
-            int glyphCode = cmap31.get(charCode)[0];
-            glyphToCharacterMap.put(glyphCode, c);
-        }
-
-        readGdefTable();
-        readGsubTable();
-
+    public TrueTypeFont(String path, String baseEncoding) throws IOException {
+        fontParser = new OpenTypeParser(path);
         this.baseEncoding = baseEncoding;
-        if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
-            isUnicode = true;
-            isVertical = this.baseEncoding.endsWith("V");
-        } else {
-            isUnicode = false;
-            encoding = new FontEncoding(this.baseEncoding, cmaps.fontSpecific);
-            if (encoding.hasSpecialEncoding()) {
-                createSpecialEncoding();
-            } else {
-                createEncoding();
-            }
-        }
+        initializeFontProperties();
+    }
+
+    public TrueTypeFont(byte[] ttf, String baseEncoding) throws IOException {
+        fontParser = new OpenTypeParser(ttf);
+        this.baseEncoding = baseEncoding;
+        initializeFontProperties();
     }
 
     public TrueTypeFont(String encoding) {
@@ -524,6 +430,110 @@ public class TrueTypeFont extends FontProgram {
         if (gsub != null) {
             gsubTable = new GlyphSubstitutionTableReader(fontParser.raf, gsub[0], gdefTable, glyphToCharacterMap,
                     fontParser.getGlyphWidthsByIndex());
+        }
+    }
+
+    private void initializeFontProperties() throws IOException {
+
+        // initialize sfnt tables
+        OpenTypeParser.HeaderTable head = fontParser.getHeadTable();
+        OpenTypeParser.HorizontalHeader hhea = fontParser.getHheaTable();
+        OpenTypeParser.WindowsMetrics os_2 = fontParser.getOs_2Table();
+        OpenTypeParser.PostTable post = fontParser.getPostTable();
+        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
+        kerning = fontParser.readKerning(head.unitsPerEm);
+        bBoxes = fontParser.readBbox(head.unitsPerEm);
+        allNames = fontParser.getAllNameEntries();
+
+        // font names group
+        fontNames.setFontName(fontParser.getPsFontName());
+        fontNames.setFullName(getNames(4));
+        String[][] otfFamilyName = getNames(16);
+        if (otfFamilyName != null) {
+            fontNames.setFamilyName(otfFamilyName);
+        } else {
+            fontNames.setFamilyName(getNames(1));
+        }
+        String[][] subfamily = getNames(2);
+        if (subfamily != null) {
+            fontNames.setStyle(subfamily[0][3]);
+        }
+        String[][] otfSubFamily = getNames(17);
+        if (otfFamilyName != null) {
+            fontNames.setSubfamily(otfSubFamily);
+        } else {
+            fontNames.setSubfamily(subfamily);
+        }
+        String[][] cidName = getNames(20);
+        if (cidName != null) {
+            fontNames.setCidFontName(cidName[0][3]);
+        }
+        fontNames.setWeight(os_2.usWeightClass);
+        fontNames.setWidth(os_2.usWidthClass);
+        fontNames.setMacStyle(head.macStyle);
+        fontNames.setAllowEmbedding(os_2.fsType != 2);
+
+        // font metrics group
+        fontMetrics.setUnitsPerEm(head.unitsPerEm);
+        fontMetrics.updateBbox(head.xMin, head.yMin, head.xMax, head.yMax);
+        fontMetrics.setMaxGlyphId(fontParser.readMaxGlyphId());
+        fontMetrics.setGlyphWidths(fontParser.getGlyphWidthsByIndex());
+        fontMetrics.setTypoAscender(os_2.sTypoAscender);
+        fontMetrics.setTypoDescender(os_2.sTypoDescender);
+        fontMetrics.setCapHeight(os_2.sCapHeight);
+        fontMetrics.setXHeight(os_2.sxHeight);
+        fontMetrics.setItalicAngle(post.italicAngle);
+        fontMetrics.setAscender(hhea.Ascender);
+        fontMetrics.setDescender(hhea.Descender);
+        fontMetrics.setLineGap(hhea.LineGap);
+        fontMetrics.setWinAscender(os_2.usWinAscent);
+        fontMetrics.setWinDescender(os_2.usWinDescent);
+        fontMetrics.setAdvanceWidthMax(hhea.advanceWidthMax);
+        fontMetrics.setUnderlinePosition((post.underlinePosition - post.underlineThickness) / 2);
+        fontMetrics.setUnderlineThickness(post.underlineThickness);
+        fontMetrics.setStrikeoutPosition(os_2.yStrikeoutPosition);
+        fontMetrics.setStrikeoutSize(os_2.yStrikeoutSize);
+        fontMetrics.setSubscriptOffset(-os_2.ySubscriptYOffset);
+        fontMetrics.setSubscriptSize(os_2.ySubscriptYSize);
+        fontMetrics.setSuperscriptOffset(os_2.ySuperscriptYOffset);
+        fontMetrics.setSuperscriptSize(os_2.ySuperscriptYSize);
+        fontMetrics.setIsFixedPitch(post.isFixedPitch);
+
+        // font identification group
+        String[][] ttfVersion = getNames(5);
+        if (ttfVersion != null) {
+            fontIdentification.setTtfVersion(ttfVersion[0][3]);
+        }
+        String[][] ttfUniqueId = getNames(3);
+        if (ttfUniqueId != null) {
+            fontIdentification.setTtfVersion(ttfUniqueId[0][3]);
+        }
+        fontIdentification.setPanose(os_2.panose);
+
+
+        HashMap<Integer, int[]> cmap31 = getCmap31();
+        glyphToCharacterMap = new HashMap<>(cmap31.size());
+        for (Integer charCode : cmap31.keySet()) {
+            char c = (char) charCode.intValue();
+            int glyphCode = cmap31.get(charCode)[0];
+            glyphToCharacterMap.put(glyphCode, c);
+        }
+
+        readGdefTable();
+        readGsubTable();
+
+        this.baseEncoding = baseEncoding;
+        if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
+            isUnicode = true;
+            isVertical = this.baseEncoding.endsWith("V");
+        } else {
+            isUnicode = false;
+            encoding = new FontEncoding(this.baseEncoding, cmaps.fontSpecific);
+            if (encoding.hasSpecialEncoding()) {
+                createSpecialEncoding();
+            } else {
+                createEncoding();
+            }
         }
     }
 

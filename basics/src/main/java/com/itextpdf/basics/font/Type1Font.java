@@ -2,6 +2,8 @@ package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,11 +44,6 @@ public class Type1Font extends FontProgram {
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
 
-    public Type1Font(String name, String encoding, byte[] afm, byte[] pfb) throws IOException {
-        fontParser = new Type1Parser(name, afm, pfb);
-        process(encoding);
-    }
-
     //TODO remove
     public Type1Font(String baseEncoding) throws IOException {
         boolean fontSpecific = true;
@@ -56,8 +53,33 @@ public class Type1Font extends FontProgram {
         this.encoding = new FontEncoding(baseEncoding, fontSpecific);
     }
 
-    public Type1Font(String name, String encoding) throws IOException {
-        this(name, encoding, null, null);
+    public static Type1Font createStandardFont(String name, String encoding) throws IOException {
+        if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
+            return createFont(name, encoding);
+        } else {
+            throw new PdfException("1.is.not.a.standard.type1.font").setMessageParams(name);
+        }
+    }
+
+    public static Type1Font createFont(String metricsPath, String encoding) throws IOException {
+        return new Type1Font(metricsPath, null, null, null, encoding);
+    }
+
+    public static Type1Font createFont(String metricsPath, String binaryPath, String encoding) throws IOException {
+        return new Type1Font(metricsPath, binaryPath, null, null, encoding);
+    }
+
+    public static Type1Font createFont(byte[] metricsData, String encoding) throws IOException {
+        return new Type1Font(null, null, metricsData, null, encoding);
+    }
+
+    public static Type1Font createFont(byte[] metricsData, byte[] binaryData, String encoding) throws IOException {
+        return new Type1Font(null, null, metricsData, binaryData, encoding);
+    }
+
+    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb, String encoding) throws IOException {
+        fontParser = new Type1Parser(metricsPath, binaryPath, afm, pfb);
+        process(encoding);
     }
 
     public boolean isBuiltInFont() {
@@ -244,10 +266,15 @@ public class Type1Font extends FontProgram {
             int bytePtr = 0;
             for (int k = 0; k < 3; ++k) {
                 if (raf.read() != 0x80) {
-                    throw new PdfException("start.marker.missing.in.1").setMessageParams(fontParser.getPfbName());
+                    Logger logger = LoggerFactory.getLogger(Type1Font.class);
+                    logger.error("start.marker.missing.in.pfb.file");
+                    return null;
                 }
-                if (raf.read() != PFB_TYPES[k])
-                    throw new PdfException("incorrect.segment.type.in.1").setMessageParams(fontParser.getPfbName());
+                if (raf.read() != PFB_TYPES[k]) {
+                    Logger logger = LoggerFactory.getLogger(Type1Font.class);
+                    logger.error("incorrect.segment.type.in.pfb.file");
+                    return null;
+                }
                 int size = raf.read();
                 size += raf.read() << 8;
                 size += raf.read() << 16;
@@ -256,7 +283,9 @@ public class Type1Font extends FontProgram {
                 while (size != 0) {
                     int got = raf.read(fontStreamBytes, bytePtr, size);
                     if (got < 0) {
-                        throw new PdfException("premature.end.in.1").setMessageParams(fontParser.getPfbName());
+                        Logger logger = LoggerFactory.getLogger(Type1Font.class);
+                        logger.error("premature.end.in.pfb.file");
+                        return null;
                     }
                     bytePtr += got;
                     size -= got;
@@ -264,7 +293,9 @@ public class Type1Font extends FontProgram {
             }
             return fontStreamBytes;
         } catch (Exception e) {
-            throw new PdfException("type1.font.file.exception", e);
+            Logger logger = LoggerFactory.getLogger(Type1Font.class);
+            logger.error("type1.font.file.exception");
+            return null;
         } finally {
             if (raf != null) {
                 try {
@@ -299,7 +330,7 @@ public class Type1Font extends FontProgram {
                     break;
                 case "FamilyName":
                     String familyName = tok.nextToken("\u00ff").substring(1);
-                    fontNames.setFamilyName(new String[][] {new String[]{"","","", familyName }});
+                    fontNames.setFamilyName(new String[][]{new String[]{"", "", "", familyName}});
                     break;
                 case "Weight":
                     fontNames.setWeight(FontNames.convertFontWeight(tok.nextToken("\u00ff").substring(1)));
@@ -353,7 +384,12 @@ public class Type1Font extends FontProgram {
             }
         }
         if (!startKernPairs) {
-            throw new PdfException("missing.startcharmetrics.in.1").setMessageParams(fontParser.getName());
+            String metricsPath = fontParser.getAfmPath();
+            if (metricsPath != null) {
+                throw new PdfException("missing.startcharmetrics.in.1").setMessageParams(metricsPath);
+            } else {
+                throw new PdfException("missing.startcharmetrics.in.the.metrics.file");
+            }
         }
         while ((line = raf.readLine()) != null) {
             StringTokenizer tok = new StringTokenizer(line);
@@ -387,7 +423,7 @@ public class Type1Font extends FontProgram {
                         N = tokc.nextToken();
                         break;
                     case "B":
-                        B = new int[] {
+                        B = new int[]{
                                 Integer.parseInt(tokc.nextToken()),
                                 Integer.parseInt(tokc.nextToken()),
                                 Integer.parseInt(tokc.nextToken()),
@@ -403,7 +439,12 @@ public class Type1Font extends FontProgram {
             charMetrics.put(N, metrics);
         }
         if (startKernPairs) {
-            throw new PdfException("missing.endcharmetrics.in.1").setMessageParams(fontParser.getName());
+            String metricsPath = fontParser.getAfmPath();
+            if (metricsPath != null) {
+                throw new PdfException("missing.endcharmetrics.in.1").setMessageParams(metricsPath);
+            } else {
+                throw new PdfException("missing.endcharmetrics.in.the.metrics.file");
+            }
         }
         if (!charMetrics.containsKey("nonbreakingspace")) {
             Object[] space = charMetrics.get("space");
@@ -453,11 +494,21 @@ public class Type1Font extends FontProgram {
                 }
             }
         } else if (!endOfMetrics) {
-            throw new PdfException("missing.endfontmetrics.in.1").setMessageParams(fontParser.getName());
+            String metricsPath = fontParser.getAfmPath();
+            if (metricsPath != null) {
+                throw new PdfException("missing.endfontmetrics.in.1").setMessageParams(metricsPath);
+            } else {
+                throw new PdfException("missing.endfontmetrics.in.the.metrics.file");
+            }
         }
 
         if (startKernPairs) {
-            throw new PdfException("missing.endkernpairs.in.1").setMessageParams(fontParser.getName());
+            String metricsPath = fontParser.getAfmPath();
+            if (metricsPath != null) {
+                throw new PdfException("missing.endkernpairs.in.1").setMessageParams(metricsPath);
+            } else {
+                throw new PdfException("missing.endkernpairs.in.the.metrics.file");
+            }
         }
         raf.close();
 

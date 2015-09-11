@@ -173,21 +173,6 @@ public final class Pfm2afm {
         p.out.flush();
     }
     
-    /*
-    public static void main(String[] args) {
-        try {
-            RandomAccessFileOrArray in = new RandomAccessFileOrArray(args[0]);
-            OutputStream out = new FileOutputStream(args[1]);
-            convert(in, out);
-            in.close();
-            out.close();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    */
-    
     private String readString(int n) throws IOException {
         byte b[] = new byte[n];
         in.readFully(b);
@@ -268,8 +253,9 @@ public final class Pfm2afm {
         kernpairs = in.readIntLE();
         res2 = in.readIntLE();
         fontname = in.readIntLE();
-        if (h_len != in.length() || extlen != 30 || fontname < 75 || fontname > 512)
+        if (h_len != in.length() || extlen != 30 || fontname < 75 || fontname > 512) {
             throw new IOException("not.a.valid.pfm.file");
+        }
         in.seek(psext + 14);
         capheight = in.readShortLE();
         xheight = in.readShortLE();
@@ -286,10 +272,11 @@ public final class Pfm2afm {
         String fname = readString();
         out.print(fname);
         out.print("\nEncodingScheme ");
-        if (charset != 0)
+        if (charset != 0) {
             out.print("FontSpecific\n");
-        else
+        } else {
             out.print("AdobeStandardEncoding\n");
+        }
         /*
          * The .pfm is missing full name, so construct from font name by
          * changing the hyphen to a space.  This actually works in a lot
@@ -302,22 +289,24 @@ public final class Pfm2afm {
         }
 
         out.print("\nWeight ");
-        if (weight > 475 || fname.toLowerCase().contains("bold"))
-           out.print("Bold");
-        else if ((weight < 325 && weight != 0) || fname.toLowerCase().contains("light"))
+        if (weight > 475 || fname.toLowerCase().contains("bold")) {
+            out.print("Bold");
+        } else if ((weight < 325 && weight != 0) || fname.toLowerCase().contains("light")) {
             out.print("Light");
-        else if (fname.toLowerCase().contains("black"))
+        } else if (fname.toLowerCase().contains("black")) {
             out.print("Black");
-        else 
+        } else {
             out.print("Medium");
+        }
 
         out.print("\nItalicAngle ");
-        if (italic != 0 || fname.toLowerCase().contains("italic"))
+        if (italic != 0 || fname.toLowerCase().contains("italic")) {
             out.print("-12.00");
             /* this is a typical value; something else may work better for a
                specific font */
-        else
+        } else {
             out.print("0");
+        }
 
         /*
          *  The mono flag in the pfm actually indicates whether there is a
@@ -340,10 +329,11 @@ public final class Pfm2afm {
          * the .afm, but is not used by the PM font installer.
          */
         out.print("\nFontBBox");
-        if (isMono)
+        if (isMono) {
             outval(-20);      /* Just guess at left bounds */
-        else 
+        } else {
             outval(-100);
+        }
         outval(-(descender+5));  /* Descender is given as positive value */
         outval(maxwidth+10);
         outval(ascent+5);
@@ -366,13 +356,15 @@ public final class Pfm2afm {
         int count = lastchar - firstchar + 1;
         int ctabs[] = new int[count];
         in.seek(chartab);
-        for (int k = 0; k < count; ++k)
+        for (int k = 0; k < count; ++k) {
             ctabs[k] = in.readUnsignedShortLE();
+        }
         int back[] = new int[256];
         if (charset == 0) {
             for (int i = firstchar; i <= lastchar; ++i) {
-                if (Win2PSStd[i] != 0)
+                if (Win2PSStd[i] != 0) {
                     back[Win2PSStd[i]] = i;
+                }
             }
         }
         /* Put out the header */
@@ -391,8 +383,7 @@ public final class Pfm2afm {
                     outchar(i, ctabs[i - firstchar], null);
                 }
             }
-        }
-        else {
+        } else {
             for (int i = 0; i < 256; i++) {
                 int j = back[i];
                 if (j != 0) {
@@ -413,8 +404,9 @@ public final class Pfm2afm {
     }
     
     private void putkerntab() throws IOException {
-        if (kernpairs == 0)
+        if (kernpairs == 0) {
             return;
+        }
         in.seek(kernpairs);
         int count = in.readUnsignedShortLE();
         int nzero = 0;
@@ -422,8 +414,9 @@ public final class Pfm2afm {
         for (int k = 0; k < kerns.length;) {
             kerns[k++] = in.read();
             kerns[k++] = in.read();
-            if ((kerns[k++] = in.readShortLE()) != 0)
+            if ((kerns[k++] = in.readShortLE()) != 0) {
                 ++nzero;
+            }
         }
         if (nzero == 0)
             return;
@@ -450,8 +443,8 @@ public final class Pfm2afm {
     }
 
     private short  vers;
-    private int   h_len;             /* Total length of .pfm file */
-    private String   copyright;   /* Copyright string [60]*/
+    private int    h_len;             /* Total length of .pfm file */
+    private String copyright;   /* Copyright string [60]*/
     private short  type;
     private short  points;
     private short  verres;
@@ -469,22 +462,22 @@ public final class Pfm2afm {
     private byte   kind;            /* Lower bit off in mono */
     private short  avgwidth;        /* Mono if avg=max width */
     private short  maxwidth;        /* Use to compute bounding box */
-    private int   firstchar;       /* First char in table */
-    private int   lastchar;        /* Last char in table */
+    private int    firstchar;       /* First char in table */
+    private int    lastchar;        /* Last char in table */
     private byte   defchar;
     private byte   brkchar;
     private short  widthby;
-    private int   device;
-    private int   face;            /* Face name */
-    private int   bits;
-    private int   bitoff;
+    private int    device;
+    private int    face;            /* Face name */
+    private int    bits;
+    private int    bitoff;
     private short  extlen;
-    private int   psext;           /* PostScript extension */
-    private int   chartab;         /* Character width tables */
-    private int   res1;
-    private int   kernpairs;       /* Kerning pairs */
-    private int   res2;
-    private int   fontname;        /* Font name */
+    private int    psext;           /* PostScript extension */
+    private int    chartab;         /* Character width tables */
+    private int    res1;
+    private int    kernpairs;       /* Kerning pairs */
+    private int    res2;
+    private int    fontname;        /* Font name */
 
 /*
  *  Some metrics from the PostScript extension

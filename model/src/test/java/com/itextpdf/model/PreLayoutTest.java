@@ -1,10 +1,9 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.font.PdfType1Font;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
@@ -49,7 +48,7 @@ public class PreLayoutTest {
         List<Text> pageNumberTexts = new ArrayList<>();
         List<IRenderer> pageNumberRenderers = new ArrayList<>();
 
-        document.setProperty(Property.FONT, new PdfType1Font(pdfDocument, new Type1Font(FontConstants.HELVETICA, "")));
+        document.setProperty(Property.FONT, PdfFont.createStandardFont(pdfDocument, FontConstants.HELVETICA));
 
         for (int i = 0; i < 200; i++) {
             document.add(new Paragraph("This is just junk text"));
@@ -135,7 +134,7 @@ public class PreLayoutTest {
         Paragraph twoColumnParagraph = new Paragraph();
         twoColumnParagraph.setNextRenderer(new TwoColumnParagraphRenderer(twoColumnParagraph));
         Text textElement = new Text(text.toString());
-        twoColumnParagraph.add(textElement).setFont(new PdfType1Font(pdfDoc, new Type1Font(FontConstants.HELVETICA, "")));
+        twoColumnParagraph.add(textElement).setFont(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA));
         document.add(twoColumnParagraph);
 
         document.add(new Paragraph("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));

@@ -1,9 +1,8 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.font.PdfType1Font;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.BlockElement;
@@ -102,13 +101,13 @@ public class ListRenderer extends BlockRenderer {
                     @Override
                     public void draw(PdfDocument document, PdfCanvas canvas) {
                         try {
-                            setProperty(Property.FONT, new PdfType1Font(document, new Type1Font(FontConstants.SYMBOL, "")));
+                            setProperty(Property.FONT, PdfFont.createStandardFont(document, FontConstants.SYMBOL));
                         } catch (IOException exc) {}
                         super.draw(document, canvas);
                     }
                 }.setParent(this);
                 try {
-                    textRenderer.setProperty(Property.FONT, new PdfType1Font(null, new Type1Font(FontConstants.SYMBOL, "")));
+                    textRenderer.setProperty(Property.FONT, PdfFont.createStandardFont(null, FontConstants.SYMBOL));
                 } catch (IOException exc) {}
             } else {
                 textRenderer = new TextRenderer(textElement).setParent(this);
