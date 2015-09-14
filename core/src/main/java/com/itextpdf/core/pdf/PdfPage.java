@@ -17,9 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
@@ -231,11 +229,24 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param toDocument a document to copy to.
      * @return resultant XObject.
      */
-    public PdfFormXObject copyAsFormXObject(PdfDocument toDocument) {
-        // TODO
-        throw new IllegalStateException("not implemented");
-//        PdfFormXObject xObject = new PdfFormXObject(toDocument, getMediaBox());
-//        getResources().getPdfObject().copy(toDocument);
+    public PdfFormXObject copyAsFormXObject(PdfDocument toDocument) throws IOException {
+        PdfFormXObject xObject = new PdfFormXObject(getCropBox());
+        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, Arrays.asList(
+                PdfName.Parent,
+                PdfName.Annots,
+                PdfName.StructParents,
+                PdfName.MediaBox,
+                PdfName.CropBox,
+                PdfName.Contents,
+                // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
+                // See DEVSIX-191
+                PdfName.B
+        ), true);
+
+        xObject.getPdfObject().getOutputStream().write(getContentBytes());
+        xObject.getPdfObject().mergeDifferent(dictionary);
+
+        return xObject;
     }
 
     @Override
