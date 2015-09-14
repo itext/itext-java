@@ -1,5 +1,6 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.Property;
@@ -8,10 +9,8 @@ import com.itextpdf.model.hyphenation.ISplitCharacters;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractElement<Type extends AbstractElement> implements IElement<Type> {
 
@@ -192,11 +191,134 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         return setProperty(Property.BORDER_LEFT, border);
     }
 
+    /**
+     * Sets a rule for splitting strings when they don't fit into one line.
+     * The default implementation is {@link com.itextpdf.model.hyphenation.DefaultSplitCharacters}
+     */
     public Type setSplitCharacters(ISplitCharacters splitCharacters) {
         return setProperty(Property.SPLIT_CHARACTERS, splitCharacters);
     }
 
+    /**
+     * Gets a rule for splitting strings when they don't fit into one line.
+     */
     public ISplitCharacters getSplitCharacters() {
         return getProperty(Property.SPLIT_CHARACTERS);
+    }
+
+    public Integer getTextRenderingMode() {
+        return getProperty(Property.TEXT_RENDERING_MODE);
+    }
+
+    public Type setTextRenderingMode(int textRenderingMode) {
+        return setProperty(Property.TEXT_RENDERING_MODE, textRenderingMode);
+    }
+
+    public Color getStrokeColor() {
+        return getProperty(Property.STROKE_COLOR);
+    }
+
+    public Type setStrokeColor(Color strokeColor) {
+        return setProperty(Property.STROKE_COLOR, strokeColor);
+    }
+
+    public Float getStrokeWidth() {
+        return getProperty(Property.STROKE_WIDTH);
+    }
+
+    public Type setStrokeWidth(float strokeWidth) {
+        return setProperty(Property.STROKE_WIDTH, strokeWidth);
+    }
+
+    /**
+     * Switch on the simulation of bold style for a font.
+     * Be aware that using correct bold font is highly preferred over this option.
+     *
+     * @return this element
+     */
+    public Type setBold() {
+        return setProperty(Property.BOLD_SIMULATION, true);
+    }
+
+    /**
+     * Switch on the simulation of italic style for a font.
+     * Be aware that using correct italic (oblique) font is highly preferred over this option.
+     *
+     * @return this element
+     */
+    public Type setItalic() {
+        return setProperty(Property.ITALIC_SIMULATION, true);
+    }
+
+    /**
+     * Sets default line-through attributes for text.
+     * See {@link #setUnderline(Color, float, float, float, float, int)} for more fine tuning.
+     *
+     * @return this element
+     */
+    public Type setLineThrough() {
+        return setUnderline(null, .75f, 0, 0, 1/4f, PdfCanvasConstants.LineCapStyle.BUTT);
+    }
+
+    /**
+     * Sets default underline attributes for text.
+     * See other overloads for more fine tuning.
+     *
+     * @return this element
+     */
+    public Type setUnderline() {
+        return setUnderline(null, .75f, 0, 0, -1/8f, PdfCanvasConstants.LineCapStyle.BUTT);
+    }
+
+    /**
+     * Sets an horizontal line that can be an underline or a strikethrough.
+     * Actually, the line can be anywhere vertically and has always the text width.
+     * Multiple call to this method will produce multiple lines.
+     *
+     * @param thickness
+     *            the absolute thickness of the line
+     * @param yPosition
+     *            the absolute y position relative to the baseline
+     * @return this element
+     */
+    public Type setUnderline(float thickness, float yPosition) {
+        return setUnderline(null, thickness, 0, yPosition, 0, PdfCanvasConstants.LineCapStyle.BUTT);
+    }
+
+    /**
+     * Sets an horizontal line that can be an underline or a strikethrough.
+     * Actually, the line can be anywhere vertically due to position parameter.
+     * Multiple call to this method will produce multiple lines.
+     *
+     * The thickness of the line will be {@code thickness + thicknessMul * fontSize}.
+     * The position of the line will be {@code baseLine + yPosition + yPositionMul * fontSize}.
+     *
+     * @param color
+     *            the color of the line or <CODE>null</CODE> to follow the
+     *            text color
+     * @param thickness
+     *            the absolute thickness of the line
+     * @param thicknessMul
+     *            the thickness multiplication factor with the font size
+     * @param yPosition
+     *            the absolute y position relative to the baseline
+     * @param yPositionMul
+     *            the position multiplication factor with the font size
+     * @param lineCapStyle
+     *            the end line cap style. Allowed values are enumerated in
+     *            {@link com.itextpdf.canvas.PdfCanvasConstants.LineCapStyle}
+     * @return this element
+     */
+    public Type setUnderline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
+        Property.Underline newUnderline = new Property.Underline(color, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
+        Object currentProperty = getProperty(Property.UNDERLINE);
+        if (currentProperty instanceof List) {
+            ((List) currentProperty).add(newUnderline);
+        } else if (currentProperty instanceof Property.Underline) {
+            setProperty(Property.UNDERLINE, Arrays.asList((Property.Underline)currentProperty, newUnderline));
+        } else {
+            setProperty(Property.UNDERLINE, newUnderline);
+        }
+        return (Type) this;
     }
 }

@@ -209,4 +209,25 @@ public class TextWritingTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void fontStyleSimulationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fontStyleSimulationTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_fontStyleSimulationTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph("I'm underlined").setUnderline());
+        document.add(new Paragraph("I'm strikethrough").setLineThrough());
+        document.add(new Paragraph(new Text("I'm a bold simulation font").setBackgroundColor(Color.GREEN)).setBold());
+        document.add(new Paragraph(new Text("I'm an italic simulation font").setBackgroundColor(Color.GREEN)).setItalic());
+        document.add(new Paragraph(new Text("I'm a super bold italic underlined linethrough piece of text and no one can be better than me, even if " +
+                "such a long description will cause me to occupy two lines").setBackgroundColor(Color.GREEN))
+                .setItalic().setBold().setUnderline().setLineThrough());
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }

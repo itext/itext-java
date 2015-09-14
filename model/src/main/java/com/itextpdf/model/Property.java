@@ -7,6 +7,7 @@ public enum Property {
     AUTO_SCALE,
     BACKGROUND,
     BASE_DIRECTION,
+    BOLD_SIMULATION(true),
     BORDER,
     BORDER_BOTTOM,
     BORDER_LEFT,
@@ -15,7 +16,6 @@ public enum Property {
     BOTTOM,
     CHARACTER_SPACING(true),
     COLSPAN,
-    COLUMN_WIDTHS,
     FIRST_LINE_INDENT(true),
     FONT(true),
     FONT_COLOR(true),
@@ -27,6 +27,7 @@ public enum Property {
      * Value of 1 is equivalent to no scaling
      **/
     HORIZONTAL_SCALING,
+    ITALIC_SIMULATION(true),
     KEEP_TOGETHER(true),
     LEADING,
     LEFT,
@@ -43,7 +44,6 @@ public enum Property {
     PAGE_NUMBER,
     POSITION,
     RIGHT,
-    ROTATION_ALIGNMENT,
     ROTATION_ANGLE,
     /**
      * The vertical shift of the element content, which is the result of the height changes on rotation layout
@@ -54,12 +54,11 @@ public enum Property {
      */
     ROTATION_POINT_X,
     ROTATION_POINT_Y,
-    ROW,
     ROWSPAN,
     SPACING_RATIO(true),
     SPLIT_CHARACTERS(true),
-    STROKE_COLOR,
-    STROKE_WIDTH,
+    STROKE_COLOR(true),
+    STROKE_WIDTH(true),
     TAB_ANCHOR,
     TAB_DEFAULT,
     TAB_LEADER,
@@ -67,7 +66,7 @@ public enum Property {
     TEXT_RENDERING_MODE(true),
     TEXT_RISE(true),
     TOP,
-    TRANSFORMATION_MATRIX,
+    UNDERLINE(true),
     /**
      * Value of 1 is equivalent to no scaling
      **/
@@ -184,6 +183,40 @@ public enum Property {
 
         public float getValue() {
             return value;
+        }
+    }
+
+    public static class Underline {
+        protected Color color;
+        protected float thickness;
+        protected float thicknessMul;
+        protected float yPosition;
+        protected float yPositionMul;
+        protected int lineCapStyle;
+
+        public Underline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
+            this.color = color;
+            this.thickness = thickness;
+            this.thicknessMul = thicknessMul;
+            this.yPosition = yPosition;
+            this.yPositionMul = yPositionMul;
+            this.lineCapStyle = lineCapStyle;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public float getThickness(float fontSize) {
+            return thickness + thicknessMul * fontSize;
+        }
+
+        public float getYPosition(float fontSize) {
+            return yPosition + yPositionMul * fontSize;
+        }
+
+        public float getyPositionMul() {
+            return yPositionMul;
         }
     }
 

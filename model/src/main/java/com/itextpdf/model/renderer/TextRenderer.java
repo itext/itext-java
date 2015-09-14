@@ -11,12 +11,17 @@ import com.itextpdf.model.element.Text;
 import com.itextpdf.model.hyphenation.ISplitCharacters;
 import com.itextpdf.model.layout.*;
 
+import java.util.List;
+
 
 public class TextRenderer extends AbstractRenderer {
 
     // TODO More accurate ascender, descender computation
 
     protected static final float TEXT_SPACE_COEFF = 1000;
+    private static final float ITALIC_ANGLE = 0.21256f;
+    private static final float BOLD_SIMULATION_STROKE_COEFF = 1/30f;
+
     // Unicode character numbers of the text.
     protected int[] text;
     // Left pos of the part of the {@see text} which belongs to this renderer, inclusive
@@ -59,6 +64,8 @@ public class TextRenderer extends AbstractRenderer {
         Float hScale = getProperty(Property.HORIZONTAL_SCALING);
         Property.FontKerning fontKerning = getProperty(Property.FONT_KERNING);
         ISplitCharacters splitCharacters = getProperty(Property.SPLIT_CHARACTERS);
+        float italicSkewAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
+        float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
         float ascender = 800;
         float descender = -200;
 
@@ -106,7 +113,7 @@ public class TextRenderer extends AbstractRenderer {
                 float glyphWidth = getCharWidth(charCode, font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
                 float kerning = fontKerning == Property.FontKerning.YES && previousCharPos != -1 ?
                         getKerning(text[previousCharPos], charCode, font, fontSize, hScale) / TEXT_SPACE_COEFF : 0;
-                if ((nonBreakablePartFullWidth + glyphWidth + kerning) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
+                if ((nonBreakablePartFullWidth + glyphWidth + kerning + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                 }
                 if (firstCharacterWhichExceedsAllowedWidth == -1) {
@@ -120,7 +127,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 previousCharPos = ind;
 
-                if (nonBreakablePartFullWidth > layoutBox.getWidth()) {
+                if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()) {
                     // we have extracted all the information we wanted and we do not want to continue.
                     // we will have to split the word anyway.
                     break;
@@ -183,9 +190,12 @@ public class TextRenderer extends AbstractRenderer {
                     TextRenderer[] split = split(currentTextPos);
                     applyBorderBox(occupiedArea.getBBox(), true);
                     applyMargins(occupiedArea.getBBox(), true);
-                    TextLayoutResult result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
+                    TextLayoutResult result;
                     if (lineRightPos <= 0) {
                         result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
+                    } else {
+                        result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
+                        occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
                     }
                     if (split[1].length() > 0 && split[1].charAt(0) == '\n')
                         result.setSplitForcedByNewline(true);
@@ -209,6 +219,7 @@ public class TextRenderer extends AbstractRenderer {
             layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
         }
 
+        occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
         applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
         return new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
@@ -228,31 +239,48 @@ public class TextRenderer extends AbstractRenderer {
         if (lineRightPos > lineLeftPos) {
             PdfFont font = getPropertyAsFont(Property.FONT);
             float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
-            Color textColor = getPropertyAsColor(Property.FONT_COLOR);
-            int textRenderingMode = (int) getProperty(Property.TEXT_RENDERING_MODE) & 3;
+            Color fontColor = getPropertyAsColor(Property.FONT_COLOR);
+            Integer textRenderingMode = getProperty(Property.TEXT_RENDERING_MODE);
             Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
             Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
             Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
             Property.FontKerning fontKerning = getProperty(Property.FONT_KERNING);
             Float horizontalScaling = getProperty(Property.HORIZONTAL_SCALING);
+            boolean italicSimulation = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION));
+            boolean boldSimulation = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION));
+            Float strokeWidth = null;
 
-            canvas.saveState().beginText().setFontAndSize(font, fontSize).moveText(leftBBoxX, getYLine());
+            if (boldSimulation) {
+                textRenderingMode = Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE;
+                strokeWidth = fontSize / 30;
+            }
+
+            canvas.saveState().beginText().setFontAndSize(font, fontSize);
+
+            if (italicSimulation) {
+                canvas.setTextMatrix(1, 0, ITALIC_ANGLE, 1, leftBBoxX, getYLine());
+            } else {
+                canvas.moveText(leftBBoxX, getYLine());
+            }
+
             if (textRenderingMode != Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL) {
                 canvas.setTextRenderingMode(textRenderingMode);
             }
             if (textRenderingMode == Property.TextRenderingMode.TEXT_RENDERING_MODE_STROKE || textRenderingMode == Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE) {
-                Float strokeWidth = getPropertyAsFloat(Property.STROKE_WIDTH);
+                if (strokeWidth == null) {
+                    strokeWidth = getPropertyAsFloat(Property.STROKE_WIDTH);
+                }
                 if (strokeWidth != null && strokeWidth != 1f) {
                     canvas.setLineWidth(strokeWidth);
                 }
                 Color strokeColor = getPropertyAsColor(Property.STROKE_COLOR);
                 if (strokeColor == null)
-                    strokeColor = textColor;
+                    strokeColor = fontColor;
                 if (strokeColor != null)
                     canvas.setStrokeColor(strokeColor);
             }
-            if (textColor != null)
-                canvas.setFillColor(textColor);
+            if (fontColor != null)
+                canvas.setFillColor(fontColor);
             if (textRise != null && textRise != 0)
                 canvas.setTextRise(textRise);
             if (characterSpacing != null && characterSpacing != 0)
@@ -267,6 +295,17 @@ public class TextRenderer extends AbstractRenderer {
                 canvas.showText(Utilities.convertFromUtf32(text, lineLeftPos, lineRightPos));
             }
             canvas.endText().restoreState();
+
+            Object underlines = getProperty(Property.UNDERLINE);
+            if (underlines instanceof List) {
+                for (Object underline : (List)underlines) {
+                    if (underline instanceof Property.Underline) {
+                        drawSingleUnderline((Property.Underline) underline, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
+                    }
+                }
+            } else if (underlines instanceof Property.Underline) {
+                drawSingleUnderline((Property.Underline) underlines, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
+            }
         }
 
         if (position == LayoutPosition.RELATIVE) {
@@ -443,6 +482,27 @@ public class TextRenderer extends AbstractRenderer {
         overflowRenderer.parent = parent;
 
         return new TextRenderer[] {splitRenderer, overflowRenderer};
+    }
+
+    protected void drawSingleUnderline(Property.Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
+        Color underlineColor = underline.getColor() != null ? underline.getColor() : fontStrokeColor;
+        canvas.saveState();
+
+        if (underlineColor != null) {
+            canvas.setStrokeColor(underlineColor);
+        }
+        float underlineThickness = underline.getThickness(fontSize);
+        if (underlineThickness != 0) {
+            canvas.setLineWidth(underlineThickness);
+            float yLine = getYLine();
+            float underlineYPosition = underline.getYPosition(fontSize) + yLine;
+            float italicWidthSubstraction = .5f * fontSize * italicAngleTan;
+            canvas.moveTo(occupiedArea.getBBox().getX(), underlineYPosition).
+                    lineTo(occupiedArea.getBBox().getX() + occupiedArea.getBBox().getWidth() - italicWidthSubstraction, underlineYPosition).
+                    stroke();
+        }
+
+        canvas.restoreState();
     }
 
     private static boolean noPrint(int c) {
