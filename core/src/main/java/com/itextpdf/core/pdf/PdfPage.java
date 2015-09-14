@@ -25,6 +25,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private Integer mcid = null;
     private Integer structParents = null;
     PdfPages parentPages;
+    private List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(
+            PdfName.Parent,
+            PdfName.Annots,
+            PdfName.StructParents,
+            // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
+            // See DEVSIX-191
+            PdfName.B));
 
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject);
@@ -192,14 +199,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return copied page.
      */
     public PdfPage copy(PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, Arrays.asList(
-                PdfName.Parent,
-                PdfName.Annots,
-                PdfName.StructParents,
-                // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
-                // See DEVSIX-191
-                PdfName.B
-        ), true);
+        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, excludedKeys, true);
         PdfPage page = new PdfPage(dictionary, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
             page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument), toDocument));
@@ -231,17 +231,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfFormXObject copyAsFormXObject(PdfDocument toDocument) throws IOException {
         PdfFormXObject xObject = new PdfFormXObject(getCropBox());
-        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, Arrays.asList(
-                PdfName.Parent,
-                PdfName.Annots,
-                PdfName.StructParents,
-                PdfName.MediaBox,
+        List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(PdfName.MediaBox,
                 PdfName.CropBox,
-                PdfName.Contents,
-                // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
-                // See DEVSIX-191
-                PdfName.B
-        ), true);
+                PdfName.Contents));
+        excludedKeys.addAll(this.excludedKeys);
+        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, excludedKeys, true);
 
         xObject.getPdfObject().getOutputStream().write(getContentBytes());
         xObject.getPdfObject().mergeDifferent(dictionary);
