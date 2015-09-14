@@ -51,6 +51,10 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         return setProperty(Property.MARGIN_BOTTOM, value);
     }
 
+    public T setMargin(float commonMargin) {
+        return setMargins(commonMargin, commonMargin, commonMargin, commonMargin);
+    }
+
     public T setMargins(float marginTop, float marginRight, float marginBottom, float marginLeft) {
         return (T) setMarginTop(marginTop).setMarginRight(marginRight).setMarginBottom(marginBottom).setMarginLeft(marginLeft);
     }

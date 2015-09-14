@@ -257,7 +257,8 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
      * @return this element
      */
     public Type setLineThrough() {
-        return setUnderline(null, .75f, 0, 0, 1/4f, PdfCanvasConstants.LineCapStyle.BUTT);
+        // 7/24 is the average between default browser behavior(1/4) and iText5 behavior(1/3)
+        return setUnderline(null, .75f, 0, 0, 7/24f, PdfCanvasConstants.LineCapStyle.BUTT);
     }
 
     /**
