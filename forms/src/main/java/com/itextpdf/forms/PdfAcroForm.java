@@ -5,6 +5,7 @@ import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
+import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
@@ -91,8 +92,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary fieldDic = field.getPdfObject();
         if (kids != null){
             PdfPage fieldPage = field.getPage();
-            if (field.getPage() != null) {
-                page = field.getPage();
+            if (fieldPage != null) {
+                page = fieldPage;
             }
             processKids(kids, fieldDic, page);
         }
@@ -107,6 +108,40 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
             if (defaultResources.size() != 0) {
                 put(PdfName.DR, defaultResources);
+            }
+        }
+    }
+
+    /**
+     * This method merges field with its annotation and place it on the given page. This method won't work if the field
+     * has no or more than one widget annotations.
+     * @param field to be placed.
+     * @param page where the field will be placed.
+     */
+    public void addFieldAppearanceToPage(PdfFormField field, PdfPage page) {
+        PdfDictionary fieldDict = field.getPdfObject();
+        PdfArray kids = field.getKids();
+        if (kids == null || kids.size() > 1) {
+            return;
+        }
+
+        PdfDictionary kidDict = (PdfDictionary) kids.get(0);
+        PdfName type = kidDict.getAsName(PdfName.Subtype);
+        if (type != null && type.equals(PdfName.Widget)) {
+            fieldDict.remove(PdfName.Kids);
+            kidDict.remove(PdfName.Parent);
+            fieldDict.mergeDifferent(kidDict);
+            PdfAnnotation annot = PdfAnnotation.makeAnnotation(fieldDict, document);
+            PdfDictionary pageDic = annot.getPdfObject().getAsDictionary(PdfName.P);
+            if (pageDic != null) {
+                PdfArray array = pageDic.getAsArray(PdfName.Annots);
+                if (array == null) {
+                    array = new PdfArray();
+                    pageDic.put(PdfName.Annots, array);
+                }
+                array.add(fieldDict);
+            } else {
+                page.addAnnotation(annot);
             }
         }
     }
@@ -345,6 +380,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 PdfAnnotation annot = PdfAnnotation.makeAnnotation(parent, document);
                 PdfDictionary pageDic = annot.getPdfObject().getAsDictionary(PdfName.P);
                 if (pageDic != null) {
+                    if (pageDic.isFlushed()) {
+                        throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead);
+                    }
                     PdfArray array = pageDic.getAsArray(PdfName.Annots);
                     if (array == null) {
                         array = new PdfArray();
