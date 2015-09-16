@@ -97,6 +97,9 @@ public abstract class FontProgram {
                 min = bbox[1];
             }
         }
+        if (min == 0) {
+            return (int) fontMetrics.getBbox().getBottom();
+        }
         return min;
     }
 
@@ -116,6 +119,10 @@ public abstract class FontProgram {
                 max = bbox[3];
             }
         }
+        if (max == 0) {
+            return (int) fontMetrics.getBbox().getTop();
+        }
+
         return max;
     }
 
