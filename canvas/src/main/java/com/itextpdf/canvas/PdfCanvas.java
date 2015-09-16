@@ -1684,7 +1684,7 @@ public class PdfCanvas {
      * @param s the {@code String}
      * @return current canvas.
      */
-    public PdfCanvas setLiteral(final String s) {
+    public PdfCanvas writeLiteral(final String s) {
         contentStream.getOutputStream().writeString(s);
         return this;
     }
@@ -1695,7 +1695,7 @@ public class PdfCanvas {
      * @param c the {@code char}
      * @return current canvas.
      */
-    public PdfCanvas setLiteral(final char c) {
+    public PdfCanvas writeLiteral(final char c) {
         contentStream.getOutputStream().writeInteger((int) c);
         return this;
     }
@@ -1706,7 +1706,7 @@ public class PdfCanvas {
      * @param n the {@code float}
      * @return current canvas.
      */
-    public PdfCanvas setLiteral(final float n) {
+    public PdfCanvas writeLiteral(final float n) {
         contentStream.getOutputStream().writeFloat(n);
         return this;
     }

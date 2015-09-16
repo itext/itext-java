@@ -121,10 +121,10 @@ public class MetaState {
                             cb.setLineDash(18, 6, 0);
                             break;
                         case MetaPen.PS_DASHDOT:
-                            cb.setLiteral("[9 6 3 6]0 d\n");
+                            cb.writeLiteral("[9 6 3 6]0 d\n");
                             break;
                         case MetaPen.PS_DASHDOTDOT:
-                            cb.setLiteral("[9 3 3 3 3 3]0 d\n");
+                            cb.writeLiteral("[9 3 3 3 3 3]0 d\n");
                             break;
                         case MetaPen.PS_DOT:
                             cb.setLineDash(3, 0);
