@@ -70,7 +70,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (llx == null || lly == null || urx == null || ury == null) {
             throw new IllegalArgumentException("MediaBox");
         }
-        return new Rectangle(llx, lly, urx - llx, ury - lly);
+        return new Rectangle(Math.min(llx, urx), Math.min(lly, ury), Math.abs(urx - llx), Math.abs(ury - lly));
     }
 
     public PdfStream getContentStream(int index) {
