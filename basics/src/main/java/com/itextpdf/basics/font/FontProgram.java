@@ -98,7 +98,7 @@ public abstract class FontProgram {
             }
         }
         if (min == 0) {
-            return (int) fontMetrics.getBbox().getBottom();
+            return fontMetrics.getTypoDescender();
         }
         return min;
     }
@@ -120,7 +120,7 @@ public abstract class FontProgram {
             }
         }
         if (max == 0) {
-            return (int) fontMetrics.getBbox().getTop();
+            return fontMetrics.getTypoAscender();
         }
 
         return max;
