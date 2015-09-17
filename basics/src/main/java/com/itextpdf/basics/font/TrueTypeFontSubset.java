@@ -294,7 +294,9 @@ class TrueTypeFontSubset {
             glyphsInList.add(glyph0);
         }
         tableGlyphOffset = tableLocation[TABLE_OFFSET];
-        for (Integer glyph : glyphsInList) {
+        // Do not replace with foreach. ConcurrentModificationException will arise.
+        for (int k = 0; k < glyphsInList.size(); ++k) {
+            int glyph = glyphsInList.get(k);
             checkGlyphComposite(glyph);
         }
     }
