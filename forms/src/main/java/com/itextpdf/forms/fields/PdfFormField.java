@@ -29,6 +29,8 @@ import java.util.StringTokenizer;
 
 public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
+    public static final int FF_MULTILINE = makeFieldFlag(13);
+    public static final int FF_PASSWORD = makeFieldFlag(14);
     public static final int DEFAULT_FONT_SIZE = 12;
     public static final int DA_FONT = 0;
     public static final int DA_SIZE = 1;
@@ -59,9 +61,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     protected String text;
     protected PdfFont font;
+    protected Color color;
     protected int checkType;
     protected float borderWidth = 1;
-    protected int pageNum;
+
+    private int kidIndex = 1;
 
     public PdfFormField() {
         this(new PdfDictionary());
@@ -74,7 +78,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.FT, getFormType());
     }
 
-    protected PdfFormField(PdfDictionary pdfObject) {
+    public PdfFormField(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
@@ -290,7 +294,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfName getFormType() {
-        return null;
+        return getTypeFromParent(getPdfObject());
     }
 
     /**
@@ -299,6 +303,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the field
      */
     public <T extends PdfFormField> T setValue(String value) {
+        PdfName ft = getFormType();
+        if (ft == null || !ft.equals(PdfName.Btn)) {
+            PdfArray kids = getKids();
+            if (kids != null) {
+                for (PdfObject kid : kids) {
+                    if (kid.isIndirectReference()) {
+                        kid = ((PdfIndirectReference) kid).getRefersTo();
+                    }
+                    PdfFormField field = new PdfFormField((PdfDictionary) kid);
+                    field.setValue(value);
+                }
+            }
+        }
+
         return setValue(value, true);
     }
 
@@ -314,7 +332,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.V, new PdfString(value));
         } else if (PdfName.Btn.equals(formType)) {
              if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
-                 setText(value);
+                 text = value;
                  //@TODO Base64 images support
              } else {
                  put(PdfName.V, new PdfName(value));
@@ -388,6 +406,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             kids = new PdfArray();
         }
         kids.add(kid.getPdfObject());
+        PdfString kidName = kid.getFieldName();
+        if (kidName != null) {
+            kid.setFieldName(getFieldName().toUnicodeString() + "." + kidName.toUnicodeString());
+        } else {
+            kid.setFieldName(getFieldName().toUnicodeString() + "." + kidIndex);
+            kid.setFieldName(getFieldName().toUnicodeString() + "." + kidIndex);
+            kidIndex++;
+        }
+
         return put(PdfName.Kids, kids);
     }
 
@@ -445,16 +472,37 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return setFieldFlags(flags);
     }
 
+    /**
+     * If true, the field can contain multiple lines of text; if false, the field’s text is restricted to a single line.
+     */
+    public boolean isMultiline() {
+        return getFieldFlag(FF_MULTILINE);
+    }
+
+    /**
+     * If true, the field is intended for entering a secure password that should not be echoed visibly to the screen.
+     * Characters typed from the keyboard should instead be echoed in some unreadable form, such as asterisks or bullet characters.
+     */
+    public boolean isPassword() {
+        return getFieldFlag(FF_PASSWORD);
+    }
+
     public <T extends PdfFormField> T setFieldFlags(int flags) {
         return put(PdfName.Ff, new PdfNumber(flags));
     }
 
     public int getFieldFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.Ff);
-        if (f != null)
+        if (f != null) {
             return f.getIntValue();
-        else
-            return 0;
+        } else {
+            PdfDictionary parent = getParent();
+            if (parent != null) {
+                return new PdfFormField(parent).getFieldFlags();
+            } else {
+                return 0;
+            }
+        }
     }
 
     public PdfObject getValue() {
@@ -607,7 +655,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         float height = rect.getHeight();
         float width = rect.getWidth();
-        if (((PdfTextFormField)this).isPassword()) {
+        if (isPassword()) {
             value = obfuscatePassword(value);
         }
 
@@ -616,8 +664,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 saveState().
                 newPath().
                 beginText().
-                setFontAndSize(font, fontSize).
-                resetFillColorRgb();
+                setFontAndSize(font, fontSize);
+        if (color != null) {
+            canvas.setFillColor(color);
+        } else {
+            canvas.resetFillColorRgb();
+        }
         Integer justification = getJustification();
         if (justification == null) {
             justification = 0;
@@ -644,6 +696,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         float width = rect.getWidth();
         float height = rect.getHeight();
 
+        List<String> strings = font.splitString(value, fontSize, width - 6);
+
+        value = "";
+        for (String str : strings) {
+            value += str + '\n';
+        }
+        value = value.substring(0, value.length() - 1);
+
         canvas.
                 beginVariableText().
                 saveState().
@@ -651,9 +711,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 clip().
                 newPath().
                 beginText().
-                setFontAndSize(font, fontSize).
-                resetFillColorRgb().
-                setTextMatrix(4, 5);
+                setFontAndSize(font, fontSize);
+        if (color != null) {
+            canvas.setFillColor(color);
+        } else {
+            canvas.resetFillColorRgb();
+        }
+
+        canvas.setTextMatrix(4, 5);
         StringTokenizer tokenizer = new StringTokenizer(value, "\n");
         while (tokenizer.hasMoreTokens()) {
             height -= fontSize * 1.2;
@@ -824,26 +889,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         this.font = font;
     }
 
-    public String getText() {
-        return text;
-    }
-
     public void setCheckType(int checkType) {
         if (checkType < TYPE_CHECK || checkType > TYPE_STAR) {
             checkType = TYPE_CROSS;
         }
         this.checkType = checkType;
-        setText(typeChars[checkType - 1]);
+        text = typeChars[checkType - 1];
         try {
             setFont(PdfFont.createStandardFont(getDocument(), FontConstants.ZAPFDINGBATS, PdfEncodings.WINANSI));
         }
         catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     /**
@@ -878,7 +935,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 PdfFormXObject appearance;
                 if (PdfName.Tx.equals(type)) {
-                    if (!((PdfTextFormField)this).isMultiline()) {
+                    if (!isMultiline()) {
                         appearance = drawTextAppearance(bBox.toRectangle(), font, fontSize, value);
                     } else {
                         appearance = drawMultiLineTextAppearance(bBox.toRectangle(), font, fontSize, value);
@@ -901,7 +958,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             int ff = getFieldFlags();
             if ((ff & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 try {
-                    value = getText();
+                    value = text;
                     Rectangle rect = getRect(getPdfObject());
                     PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
                     PdfStream asNormal = null;
@@ -994,13 +1051,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
-    public PdfPage getPage() {
-        if (pageNum != 0) {
-            return getDocument().getPage(pageNum);
-        }
-        return null;
-    }
-
     protected void drawTextAligned(PdfCanvas canvas, int alignment, String text, float x, float y, PdfFont font, int fontSize) {
         switch (alignment) {
             case ALIGN_CENTER:
@@ -1063,9 +1113,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (fontDic != null) {
                 String str = getDefaultAppearance().toUnicodeString();
                 Object[] dab = splitDAelements(str);
-                PdfName fontName = new PdfName(dab[0].toString());
+                PdfName fontName = new PdfName(dab[DA_FONT].toString());
                 fontAndSize[0] =  PdfFont.createFont(getDocument(), fontDic.getAsDictionary(fontName));
-                fontAndSize[1] = (Integer) dab[1];
+                fontAndSize[1] = dab[DA_SIZE];
+                color = (Color) dab[DA_COLOR];
             } else {
                 fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
                 fontAndSize[1] = DEFAULT_FONT_SIZE;
@@ -1126,6 +1177,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    private PdfName getTypeFromParent(PdfDictionary field) {
+        PdfDictionary parent = field.getAsDictionary(PdfName.Parent);
+        PdfName formType = null;
+        if (parent != null) {
+            formType = parent.getAsName(PdfName.FT);
+            if (formType == null) {
+                formType = getTypeFromParent(parent);
+            }
+        }
+        return formType;
     }
 
     private String obfuscatePassword(String text) {
