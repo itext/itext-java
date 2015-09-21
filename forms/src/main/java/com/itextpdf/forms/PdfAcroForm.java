@@ -25,6 +25,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     private static PdfName resourceNames[] = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
     private PdfDictionary defaultResources;
+    private LinkedHashSet<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
 
     public PdfAcroForm(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -91,10 +92,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary fieldDic = field.getPdfObject();
         if (kids != null){
-            PdfPage fieldPage = field.getPage();
-            if (fieldPage != null) {
-                page = fieldPage;
-            }
             processKids(kids, fieldDic, page);
         }
 
@@ -243,17 +240,22 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (document.isAppendMode()) {
             throw new PdfException(PdfException.FieldFlatteningIsNotSupportedInAppendMode);
         }
-        Map<String, PdfFormField> fields = getFormFields();
-        PdfPage page = null;
-        for (Map.Entry<String, PdfFormField> entry : fields.entrySet()) {
-            PdfFormField field = entry.getValue();
+        LinkedHashSet<PdfFormField> fields;
+        if (fieldsForFlattening.isEmpty()) {
+            fields = new LinkedHashSet<>(getFormFields().values());
+        } else {
+            fields = new LinkedHashSet<>();
+            for (PdfFormField field : fieldsForFlattening) {
+                fields.addAll(prepareFieldsForFlattening(field));
+            }
+        }
 
-            PdfDictionary pageDic = field.getPdfObject().getAsDictionary(PdfName.P);
-            if (pageDic == null) {
+        PdfPage page;
+        for (PdfFormField field : fields) {
+            page = getFieldPage(field.getPdfObject());
+            if (page == null) {
                 continue;
             }
-
-            page = getPage(pageDic);
 
             PdfDictionary appDic = field.getPdfObject().getAsDictionary(PdfName.AP);
             PdfObject asNormal = null;
@@ -287,6 +289,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     fFields.remove(field.getPdfObject().getIndirectReference());
                     PdfArray annots = page.getPdfObject().getAsArray(PdfName.Annots);
                     annots.remove(field.getPdfObject().getIndirectReference());
+                    if (annots.isEmpty()) {
+                        page.getPdfObject().remove(PdfName.Annots);
+                    }
                     PdfDictionary parent = field.getPdfObject().getAsDictionary(PdfName.Parent);
                     if (parent != null) {
                         PdfArray kids = parent.getAsArray(PdfName.Kids);
@@ -299,11 +304,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
 
-        if (page != null && page.getPdfObject().getAsArray(PdfName.Annots).isEmpty()) {
-            page.getPdfObject().remove(PdfName.Annots);
-        }
-
         getPdfObject().remove(PdfName.NeedAppearances);
+        if (fieldsForFlattening.isEmpty()) {
+            getFields().clear();
+        }
         if (getFields().isEmpty()) {
             document.getCatalog().getPdfObject().remove(PdfName.AcroForm);
         }
@@ -315,16 +319,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             return false;
         }
 
-        PdfDictionary pageDic = field.getPdfObject().getAsDictionary(PdfName.P);
+        PdfPage page = getFieldPage(field.getPdfObject());
 
-        if (pageDic != null) {
-            PdfPage page = getPage(pageDic);
-
-            if (page != null) {
-                PdfArray annots = page.getPdfObject().getAsArray(PdfName.Annots);
-                if (annots != null) {
-                    annots.remove(field.getPdfObject().getIndirectReference());
-                }
+        if (page != null) {
+            PdfArray annots = page.getPdfObject().getAsArray(PdfName.Annots);
+            if (annots != null) {
+                annots.remove(field.getPdfObject().getIndirectReference());
             }
         }
 
@@ -340,6 +340,26 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             return true;
         }
         return false;
+    }
+
+    public void partialFormFlattening(String fieldName) {
+        PdfFormField field = getFormFields().get(fieldName);
+        if (field != null) {
+            fieldsForFlattening.add(field);
+        }
+    }
+
+    public void renameField(String oldName, String newName) {
+        LinkedHashMap<String, PdfFormField> fields = getFormFields();
+        if (fields.containsKey(newName)) {
+            return;
+        }
+        PdfFormField field = fields.get(oldName);
+        if (field != null) {
+            field.setFieldName(newName);
+            fields.remove(oldName);
+            fields.put(newName, field);
+        }
     }
 
     protected PdfArray getFields() {
@@ -471,5 +491,42 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return null;
+    }
+
+    private PdfPage getFieldPage(PdfDictionary annotation) {
+        PdfDictionary pageDic = annotation.getAsDictionary(PdfName.P);
+        if (pageDic != null) {
+            return getPage(pageDic);
+        }
+        for (int i = 1; i <= document.getNumOfPages(); i++) {
+            PdfPage page = document.getPage(i);
+            PdfArray annotations = page.getPdfObject().getAsArray(PdfName.Annots);
+            if (annotations != null && annotations.contains(annotation.getIndirectReference())){
+                return page;
+            }
+        }
+        return null;
+    }
+
+    private LinkedHashSet<PdfFormField> prepareFieldsForFlattening(PdfFormField field) {
+        LinkedHashSet<PdfFormField> preparedFields = new LinkedHashSet<>();
+        preparedFields.add(field);
+        PdfArray kids = field.getKids();
+        if (kids != null) {
+            for (PdfObject kid : kids) {
+                PdfDictionary fieldDict;
+                if (kid.isIndirectReference()) {
+                    fieldDict = (PdfDictionary) ((PdfIndirectReference)kid).getRefersTo();
+                } else {
+                    fieldDict = (PdfDictionary) kid;
+                }
+                PdfFormField kidField = new PdfFormField(fieldDict);
+                preparedFields.add(kidField);
+                if (kidField.getKids() != null) {
+                    preparedFields.addAll(prepareFieldsForFlattening(kidField));
+                }
+            }
+        }
+        return preparedFields;
     }
 }

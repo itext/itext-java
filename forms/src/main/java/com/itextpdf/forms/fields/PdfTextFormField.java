@@ -8,8 +8,6 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 public class PdfTextFormField extends PdfFormField {
 
-    public static final int FF_MULTILINE = makeFieldFlag(13);
-    public static final int FF_PASSWORD = makeFieldFlag(14);
     public static final int FF_FILE_SELECT = makeFieldFlag(21);
     public static final int FF_DO_NOT_SPELL_CHECK = makeFieldFlag(23);
     public static final int FF_DO_NOT_SCROLL = makeFieldFlag(24);
@@ -36,23 +34,8 @@ public class PdfTextFormField extends PdfFormField {
     /**
      * If true, the field can contain multiple lines of text; if false, the field’s text is restricted to a single line.
      */
-    public boolean isMultiline() {
-        return getFieldFlag(FF_MULTILINE);
-    }
-
-    /**
-     * If true, the field can contain multiple lines of text; if false, the field’s text is restricted to a single line.
-     */
     public PdfTextFormField setMultiline(boolean multiline) {
         return setFieldFlag(FF_MULTILINE, multiline);
-    }
-
-    /**
-     * If true, the field is intended for entering a secure password that should not be echoed visibly to the screen.
-     * Characters typed from the keyboard should instead be echoed in some unreadable form, such as asterisks or bullet characters.
-     */
-    public boolean isPassword() {
-        return getFieldFlag(FF_PASSWORD);
     }
 
     /**
