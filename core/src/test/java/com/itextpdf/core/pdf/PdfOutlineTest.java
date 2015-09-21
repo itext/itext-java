@@ -1,10 +1,13 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.navigation.PdfStringDestination;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
@@ -18,14 +21,14 @@ import java.util.List;
 import java.util.TreeSet;
 
 @Category(IntegrationTest.class)
-public class PdfOutlineTest {
+public class PdfOutlineTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfOutlineTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfOutlineTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -217,6 +220,7 @@ public class PdfOutlineTest {
 
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
     public void copyPagesWithOutlines() throws IOException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder+"copyPagesWithOutlines01.pdf"));

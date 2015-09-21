@@ -15,6 +15,7 @@ import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.model.element.Paragraph;
 
 
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,14 +26,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class XMPWriterTest {
+public class XMPWriterTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/XMPWriterTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/XMPWriterTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

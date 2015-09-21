@@ -11,6 +11,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -22,14 +23,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class TextWritingTest {
+public class TextWritingTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/TextWritingTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/TextWritingTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+       createDestinationFolder(destinationFolder);
     }
 
     @Test

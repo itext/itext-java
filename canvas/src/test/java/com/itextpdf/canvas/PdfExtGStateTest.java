@@ -6,6 +6,7 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,14 +16,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 @Category(IntegrationTest.class)
-public class PdfExtGStateTest {
+public class PdfExtGStateTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfExtGStateTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/canvas/PdfExtGStateTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

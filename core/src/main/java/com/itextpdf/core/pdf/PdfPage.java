@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.basics.geom.PageSize;
@@ -214,8 +215,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else {
             if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().getCatalog().getPdfObject().containsKey(PdfName.AcroForm)) {
                 Logger logger = LoggerFactory.getLogger(PdfPage.class);
-                logger.warn("Source document has AcroForm dictionary. The pages you're going to copy may have FormFields, but they won't be copied, " +
-                        "because you haven't used any IPdfPageExtraCopier.");
+                logger.warn(LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
                 toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;
             }
         }

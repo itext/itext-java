@@ -1,5 +1,6 @@
 package com.itextpdf.canvas;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.*;
 import com.itextpdf.canvas.font.PdfType3Font;
@@ -11,6 +12,8 @@ import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.BaseFont;
@@ -29,14 +32,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class PdfFontTest {
+public class PdfFontTest extends ExtendedITextTest{
     static final public int PageCount = 1;
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfFontTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/canvas/PdfFontTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+       createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -1010,6 +1013,7 @@ public class PdfFontTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.START_MARKER_MISSING_IN_PDB_FILE})
     public void createWrongPfb() throws IOException, InterruptedException {
         byte[] afm = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.afm"));
         PdfFont font = PdfFont.createType1Font(null, afm, afm, null);

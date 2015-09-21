@@ -18,14 +18,6 @@ import java.io.IOException;
 @Category(IntegrationTest.class)
 public class PdfTokenizerTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfTokeniserTest/";
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     private void checkTokenTypes(String data, PdfTokenizer.TokenType... expectedTypes) throws Exception {
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();

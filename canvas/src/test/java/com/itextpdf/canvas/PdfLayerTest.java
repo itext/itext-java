@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.layer.PdfLayer;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -21,14 +22,14 @@ import java.io.IOException;
 import java.util.List;
 
 @Category(IntegrationTest.class)
-public class PdfLayerTest {
+public class PdfLayerTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfLayerTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/canvas/PdfLayerTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

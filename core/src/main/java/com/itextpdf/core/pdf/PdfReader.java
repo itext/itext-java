@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.ByteBuffer;
@@ -720,7 +721,7 @@ public class PdfReader {
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                            logger.warn(String.format("Invalid indirect reference %d %d R", tokens.getObjNr(), tokens.getGenNr()));
+                            logger.warn(String.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE + " %d %d R", tokens.getObjNr(), tokens.getGenNr()));
                             return new PdfNull();
                         } else {
                             throw new PdfException(PdfException.InvalidIndirectReference1);
@@ -915,29 +916,23 @@ public class PdfReader {
 
     protected boolean readXrefStream(final long ptr) throws IOException {
         tokens.seek(ptr);
-        if (!tokens.nextToken()) {
+        if (!tokens.nextToken())
             return false;
-        }
-        if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
+        if (tokens.getTokenType() != PdfTokenizer.TokenType.Number)
             return false;
-        }
-        if (!tokens.nextToken() || tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
+        if (!tokens.nextToken() || tokens.getTokenType() != PdfTokenizer.TokenType.Number)
             return false;
-        }
-        if (!tokens.nextToken() || !tokens.tokenValueEqualsTo(PdfTokenizer.Obj)) {
+        if (!tokens.nextToken() || !tokens.tokenValueEqualsTo(PdfTokenizer.Obj))
             return false;
-        }
         PdfXrefTable xref = pdfDocument.getXref();
         PdfObject object = readObject(false);
         PdfStream xrefStream;
         if (object.getType() == PdfObject.Stream) {
             xrefStream = (PdfStream) object;
-            if (!PdfName.XRef.equals(xrefStream.get(PdfName.Type))) {
+            if (!PdfName.XRef.equals(xrefStream.get(PdfName.Type)))
                 return false;
-            }
-        } else {
+        } else
             return false;
-        }
         if (trailer == null) {
             trailer = new PdfDictionary();
             trailer.putAll(xrefStream);
@@ -950,22 +945,19 @@ public class PdfReader {
             index = new PdfArray();
             index.add(new PdfNumber(0));
             index.add(new PdfNumber(size));
-        } else {
+        } else
             index = (PdfArray) obj;
-        }
         PdfArray w = xrefStream.getAsArray(PdfName.W);
         long prev = -1;
         obj = xrefStream.get(PdfName.Prev);
-        if (obj != null) {
+        if (obj != null)
             prev = ((PdfNumber) obj).getLongValue();
-        }
         xref.setCapacity(size);
-        byte[] b = readStreamBytes(xrefStream, true);
+        byte b[] = readStreamBytes(xrefStream, true);
         int bptr = 0;
-        int[] wc = new int[3];
-        for (int k = 0; k < 3; ++k) {
+        int wc[] = new int[3];
+        for (int k = 0; k < 3; ++k)
             wc[k] = w.getAsNumber(k).getIntValue();
-        }
         for (int idx = 0; idx < index.size(); idx += 2) {
             int start = index.getAsNumber(idx).getIntValue();
             int length = index.getAsNumber(idx + 1).getIntValue();
@@ -974,18 +966,15 @@ public class PdfReader {
                 int type = 1;
                 if (wc[0] > 0) {
                     type = 0;
-                    for (int k = 0; k < wc[0]; ++k) {
+                    for (int k = 0; k < wc[0]; ++k)
                         type = (type << 8) + (b[bptr++] & 0xff);
-                    }
                 }
                 long field2 = 0;
-                for (int k = 0; k < wc[1]; ++k) {
+                for (int k = 0; k < wc[1]; ++k)
                     field2 = (field2 << 8) + (b[bptr++] & 0xff);
-                }
                 int field3 = 0;
-                for (int k = 0; k < wc[2]; ++k) {
+                for (int k = 0; k < wc[2]; ++k)
                     field3 = (field3 << 8) + (b[bptr++] & 0xff);
-                }
                 int base = start;
                 PdfIndirectReference newReference;
                 switch (type) {
@@ -1017,7 +1006,6 @@ public class PdfReader {
                     PdfIndirectReference reference = xref.get(base);
                     reference.setOffset(newReference.getOffset());
                     reference.setObjStreamNumber(newReference.getObjStreamNumber());
-                    reference.clearState(PdfIndirectReference.Reading);
                 }
                 ++start;
             }

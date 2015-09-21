@@ -1,11 +1,14 @@
 package com.itextpdf.utils;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -21,17 +24,18 @@ import java.util.Arrays;
 import java.util.List;
 
 @Category(IntegrationTest.class)
-public class PdfSplitterTest {
+public class PdfSplitterTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/utils/PdfSplitterTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/utils/PdfSplitterTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
     public void splitDocumentTest01() throws IOException, InterruptedException, DocumentException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
@@ -61,6 +65,7 @@ public class PdfSplitterTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
     public void splitDocumentTest02() throws IOException, InterruptedException, DocumentException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
@@ -98,6 +103,7 @@ public class PdfSplitterTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
     public void splitDocumentTest03() throws IOException, InterruptedException, DocumentException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
@@ -129,6 +135,7 @@ public class PdfSplitterTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
     public void splitDocumentByOutlineTest() throws IOException, InterruptedException, DocumentException {
 
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";

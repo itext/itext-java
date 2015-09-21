@@ -1,9 +1,12 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import org.junit.*;
@@ -14,14 +17,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 @Category(IntegrationTest.class)
-public class PdfDocumentTest {
+public class PdfDocumentTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfDocumentTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfDocumentTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -1332,6 +1335,7 @@ public class PdfDocumentTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
     public void copyDocumentsWithFormFieldsTest() throws IOException, InterruptedException {
         String filename = sourceFolder + "fieldsOn2-sPage.pdf";
 

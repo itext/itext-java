@@ -12,6 +12,8 @@ import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.testutils.ITextTest;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -23,17 +25,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class PositioningTest {
+public class PositioningTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/PositioningTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/PositioningTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        File dir = new File(destinationFolder);
-        dir.mkdirs();
-        for(File file: dir.listFiles())
-            file.delete();
+       createDestinationFolder(destinationFolder);
     }
 
     @Test

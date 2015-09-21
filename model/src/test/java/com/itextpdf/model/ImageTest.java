@@ -9,6 +9,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,14 +18,14 @@ import org.junit.experimental.categories.Category;
 import java.io.*;
 
 @Category(IntegrationTest.class)
-public class ImageTest {
+public class ImageTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/ImageTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/ImageTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

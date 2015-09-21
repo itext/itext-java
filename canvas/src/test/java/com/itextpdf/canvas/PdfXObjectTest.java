@@ -1,5 +1,6 @@
 package com.itextpdf.canvas;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.geom.PageSize;
@@ -12,6 +13,8 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -23,7 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class PdfXObjectTest {
+public class PdfXObjectTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfXObjectTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/canvas/PdfXObjectTest/";
@@ -36,7 +39,7 @@ public class PdfXObjectTest {
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -73,6 +76,7 @@ public class PdfXObjectTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB})
     public void createDocumentFromImages2() throws IOException, DocumentException, InterruptedException {
         final String destinationDocument = destinationFolder + "documentFromImages2.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);

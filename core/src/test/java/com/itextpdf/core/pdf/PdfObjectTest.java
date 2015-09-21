@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

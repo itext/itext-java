@@ -9,6 +9,7 @@ import com.itextpdf.model.border.*;
 import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.ListItem;
 import com.itextpdf.model.element.Paragraph;
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,7 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class BorderTest {
+public class BorderTest extends ExtendedITextTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/BorderTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/BorderTest/";
     static final public String cmpPrefix = "cmp_";
@@ -31,10 +32,7 @@ public class BorderTest {
 
     @BeforeClass
     static public void beforeClass() {
-        File dir = new File(destinationFolder);
-        dir.mkdirs();
-        for(File file: dir.listFiles())
-            file.delete();
+       createDestinationFolder(destinationFolder);
     }
 
     @Test

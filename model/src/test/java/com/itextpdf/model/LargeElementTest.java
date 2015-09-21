@@ -8,6 +8,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Table;
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,21 +19,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class LargeElementTest {
+public class LargeElementTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/LargeElementTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/LargeElementTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        File dest = new File(destinationFolder);
-        dest.mkdirs();
-        File[] files = dest.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                file.delete();
-            }
-        }
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

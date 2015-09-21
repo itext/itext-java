@@ -4,6 +4,7 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -16,13 +17,6 @@ import java.util.Set;
 @Category(IntegrationTest.class)
 public class PdfResourcesTest {
 
-//    static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfResourcesTest/";
-//    static final public String destinationFolder = "./target/test/com/itextpdf/canvas/PdfResourcesTest/";
-
-//    @BeforeClass
-//    static public void beforeClass() {
-//        new File(destinationFolder).mkdirs();
-//    }
 
     @Test
     public void resourcesTest1() throws Exception {

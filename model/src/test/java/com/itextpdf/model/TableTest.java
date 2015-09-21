@@ -13,6 +13,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.*;
 import com.itextpdf.model.renderer.DocumentRenderer;
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,20 +24,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class TableTest {
+public class TableTest extends ExtendedITextTest{
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/TableTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/TableTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        File dest = new File(destinationFolder);
-        dest.mkdirs();
-        File[] files = dest.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                file.delete();
-            }
-        }
+       createDestinationFolder(destinationFolder);
     }
 
     @Test

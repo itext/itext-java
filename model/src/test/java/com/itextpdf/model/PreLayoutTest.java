@@ -14,6 +14,7 @@ import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ParagraphRenderer;
 import com.itextpdf.model.renderer.TextRenderer;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -27,14 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Category(IntegrationTest.class)
-public class PreLayoutTest {
+public class PreLayoutTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/PreLayoutTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/PreLayoutTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

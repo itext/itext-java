@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -11,14 +12,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 @Category(IntegrationTest.class)
-public class PdfActionTest {
+public class PdfActionTest  extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfActionTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfActionTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

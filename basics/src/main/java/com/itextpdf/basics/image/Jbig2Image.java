@@ -1,5 +1,6 @@
 package com.itextpdf.basics.image;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.codec.Jbig2SegmentReader;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
@@ -56,7 +57,7 @@ public class Jbig2Image extends Image {
     @Override
     public boolean canImageBeInline() {
         Logger logger = LoggerFactory.getLogger(Image.class);
-        logger.warn("Image cannot be inline if it has JBIG2Decode filter. It will be added as an ImageXObject");
+        logger.warn(LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER);
         return false;
     }
 }

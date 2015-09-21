@@ -1,10 +1,13 @@
 package com.itextpdf.utils;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -15,14 +18,14 @@ import java.io.*;
 import java.util.ArrayList;
 
 @Category(IntegrationTest.class)
-public class PdfMergerTest {
+public class PdfMergerTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/utils/PdfMergerTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/utils/PdfMergerTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -97,6 +100,7 @@ public class PdfMergerTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
     public void mergeDocumentTest03() throws IOException, InterruptedException, DocumentException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";
@@ -128,6 +132,7 @@ public class PdfMergerTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
     public void mergeDocumentTest04() throws IOException, InterruptedException, DocumentException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";

@@ -1,5 +1,6 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import org.slf4j.Logger;
@@ -267,7 +268,7 @@ public class Type1Font extends FontProgram {
             for (int k = 0; k < 3; ++k) {
                 if (raf.read() != 0x80) {
                     Logger logger = LoggerFactory.getLogger(Type1Font.class);
-                    logger.error("start.marker.missing.in.pfb.file");
+                    logger.error(LogMessageConstant.START_MARKER_MISSING_IN_PDB_FILE);
                     return null;
                 }
                 if (raf.read() != PFB_TYPES[k]) {
