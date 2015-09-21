@@ -23,21 +23,19 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private static final String P = "P";
     private static final String Sh = "Sh";
 
-
     private Map<PdfObject, PdfName> resourceToName = new HashMap<PdfObject, PdfName>();
     private Map<PdfName, Map<PdfName, PdfObject>> nameToResource = new HashMap<PdfName, Map<PdfName, PdfObject>>();
     private Map<PdfIndirectReference, PdfFont> fontsMap = new HashMap<PdfIndirectReference, PdfFont>();
-    /**
-     * The font value counter for the fonts in the document.
-     */
-    private ResourceNumber fontNumber = new ResourceNumber();
-    private ResourceNumber imageNumber = new ResourceNumber();
-    private ResourceNumber formNumber = new ResourceNumber();
-    private ResourceNumber egsNumber = new ResourceNumber();
-    private ResourceNumber propNumber = new ResourceNumber();
-    private ResourceNumber csNumber = new ResourceNumber();
-    private ResourceNumber patternNumber = new ResourceNumber();
-    private ResourceNumber shadingNumber = new ResourceNumber();
+
+    private ResourceNameGenerator fontNamesGen = new ResourceNameGenerator(PdfName.Font, F);
+    private ResourceNameGenerator imageNamesGen = new ResourceNameGenerator(PdfName.XObject, Im);
+    private ResourceNameGenerator formNamesGen = new ResourceNameGenerator(PdfName.XObject, Fm);
+    private ResourceNameGenerator egsNamesGen = new ResourceNameGenerator(PdfName.ExtGState, Gs);
+    private ResourceNameGenerator propNamesGen = new ResourceNameGenerator(PdfName.Properties, Pr);
+    private ResourceNameGenerator csNamesGen = new ResourceNameGenerator(PdfName.ColorSpace, Cs);
+    private ResourceNameGenerator patternNamesGen = new ResourceNameGenerator(PdfName.Pattern, P);
+    private ResourceNameGenerator shadingNamesGen = new ResourceNameGenerator(PdfName.Shading, Sh);
+
     private boolean readOnly = false;
     private boolean isModified = false;
 
@@ -54,59 +52,75 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     public PdfName addFont(PdfFont font) {
         font.getDocument().getDocumentFonts().add(font);
         fontsMap.put(font.getPdfObject().getIndirectReference(), font);
-        return addResource(font, PdfName.Font, F, fontNumber);
+        return addResource(font, fontNamesGen);
     }
 
     public PdfName addImage(PdfImageXObject image) {
-        return addResource(image, PdfName.XObject, Im, imageNumber);
+        return addResource(image, imageNamesGen);
     }
 
     public PdfName addImage(PdfObject image) {
-        return addResource(image, PdfName.XObject, Im, imageNumber);
+        return addResource(image, imageNamesGen);
     }
 
     public PdfName addForm(PdfFormXObject form) {
-        return addResource(form, PdfName.XObject, Fm, formNumber);
+        return addResource(form, formNamesGen);
     }
 
     public PdfName addForm(PdfObject form) {
-        return addResource(form, PdfName.XObject, Fm, formNumber);
+        return addResource(form, formNamesGen);
+    }
+
+    /**
+     * Adds the given Form XObject to the current instance of {@link PdfResources}.
+     * @param form Form XObject.
+     * @param name Preferred name for the given Form XObject.
+     * @return TODO: finish comment
+     */
+    public PdfName addForm(PdfFormXObject form, PdfName name) {
+        if (getResourceNames(PdfName.XObject).contains(name)) {
+           name = addResource(form, formNamesGen);
+        } else {
+           addResource(form.getPdfObject(), PdfName.XObject, name);
+        }
+
+        return name;
     }
 
     public PdfName addExtGState(PdfExtGState extGState) {
-        return addResource(extGState, PdfName.ExtGState, Gs, egsNumber);
+        return addResource(extGState, egsNamesGen);
     }
 
     public PdfName addExtGState(PdfObject extGState) {
-        return addResource(extGState, PdfName.ExtGState, Gs, egsNumber);
+        return addResource(extGState, egsNamesGen);
     }
 
     public PdfName addProperties(PdfObject properties) {
-        return addResource(properties, PdfName.Properties, Pr, propNumber);
+        return addResource(properties, propNamesGen);
     }
 
     public PdfName addColorSpace(PdfColorSpace cs) {
-        return addResource(cs, PdfName.ColorSpace, Cs, csNumber);
+        return addResource(cs, csNamesGen);
     }
 
     public PdfName addColorSpace(PdfObject colorSpace) {
-        return addResource(colorSpace, PdfName.ColorSpace, Cs, csNumber);
+        return addResource(colorSpace, csNamesGen);
     }
 
     public PdfName addPattern(PdfPattern pattern) {
-        return addResource(pattern, PdfName.Pattern, P, patternNumber);
+        return addResource(pattern, patternNamesGen);
     }
 
     public PdfName addPattern(PdfObject pattern) {
-        return addResource(pattern, PdfName.Pattern, P, patternNumber);
+        return addResource(pattern, patternNamesGen);
     }
 
     public PdfName addShading(PdfShading shading) {
-        return addResource(shading, PdfName.Shading, Sh, shadingNumber);
+        return addResource(shading, shadingNamesGen);
     }
 
     public PdfName addShading(PdfObject shading) {
-        return addResource(shading, PdfName.Shading, Sh, shadingNumber);
+        return addResource(shading, shadingNamesGen);
     }
 
     protected boolean isReadOnly() {
@@ -160,7 +174,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Set<PdfName> getResourceNames() {
-        Set<PdfName> names = new TreeSet<PdfName>();
+        Set<PdfName> names = new TreeSet<PdfName>(); // TODO: isn't it better to use HashSet? Do we really need certain order?
         for (PdfName resType : nameToResource.keySet()) {
             names.addAll(getResourceNames(resType));
         }
@@ -177,7 +191,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public Set<PdfName> getResourceNames(PdfName resType) {
         Map<PdfName, PdfObject> resourceCategory = nameToResource.get(resType);
-        return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet();
+        return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet(); // TODO: TreeSet...
     }
 
     public Map<PdfName, PdfObject> getResource(PdfName pdfName) {
@@ -201,8 +215,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
 
-    protected PdfName addResource(PdfObjectWrapper resource, PdfName resType, String resPrefix, ResourceNumber resNumber) {
-        return addResource(resource.getPdfObject(), resType, resPrefix, resNumber);
+    protected PdfName addResource(PdfObjectWrapper resource, ResourceNameGenerator nameGen) {
+        return addResource(resource.getPdfObject(), nameGen);
     }
 
     protected void addResource(PdfObject resource, PdfName resType, PdfName resName) {
@@ -227,12 +241,14 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         resDictionary.put(resName, resource);
     }
 
-    protected PdfName addResource(PdfObject resource, PdfName resType, String resPrefix, ResourceNumber resNumber) {
+    protected PdfName addResource(PdfObject resource, ResourceNameGenerator nameGen) {
         PdfName resName = getResourceName(resource);
+
         if (resName == null) {
-            resName = new PdfName(resPrefix + resNumber.increment());
-            addResource(resource, resType, resName);
+            resName = nameGen.generate();
+            addResource(resource, nameGen.getResourceType(), resName);
         }
+
         return resName;
     }
 
@@ -241,22 +257,19 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             if (nameToResource.get(resourceType) == null) {
                 nameToResource.put(resourceType, new HashMap<PdfName, PdfObject>());
             }
+
             PdfDictionary resources = dictionary.getAsDictionary(resourceType);
-            if (resources == null)
+
+            if (resources == null) {
                 continue;
+            }
+
             for (PdfName resourceName : resources.keySet()) {
                 PdfObject resource = resources.get(resourceName, false);
                 resourceToName.put(resource, resourceName);
                 nameToResource.get(resourceType).put(resourceName, resource);
             }
         }
-        Set<PdfName> names = getResourceNames();
-        fontNumber = getAvailableNumber(names, F);
-        imageNumber = getAvailableNumber(names, Im);
-        formNumber = getAvailableNumber(names, Fm);
-        egsNumber = getAvailableNumber(names, Gs);
-        propNumber = getAvailableNumber(names, Pr);
-        csNumber = getAvailableNumber(names, Cs);
     }
 
     private void addFont(Set<Map.Entry<PdfName, PdfObject>> entrySet) throws IOException {
@@ -302,45 +315,57 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private ResourceNumber getAvailableNumber(Set<PdfName> names, final String resPrefix) {
-        int resNumber = 0;
-        for (PdfName name : names) {
-            String nameStr = name.getValue();
-            if (nameStr.startsWith(resPrefix)) {
-                nameStr = nameStr.replace(resPrefix, "");
-                try {
-                    int number = Integer.parseInt(nameStr);
-                    if (number > resNumber)
-                        resNumber = number;
-                } catch (NumberFormatException e) {
+    /**
+     * Represents a resource name generator. The generator takes into account
+     * the names of already existing resources thus providing us a unique name.
+     * The name consists of the following parts: prefix (literal) and number.
+     */
+    private class ResourceNameGenerator {
 
+        private PdfName resourceType;
+        private int counter;
+        private String prefix;
+
+        /**
+         * Constructs an instance of {@link ResourceNameGenerator} class.
+         * @param resourceType Type of resource ({@link PdfName#XObject}, {@link PdfName#Font} etc).
+         * @param prefix Prefix used for generating names.
+         * @param seed Seed for the value which is appended to the number each time
+         *             new name is generated.
+         */
+        public ResourceNameGenerator(PdfName resourceType, String prefix, int seed) {
+            this.prefix = prefix;
+            this.resourceType = resourceType;
+            this.counter = seed;
+        }
+
+        /**
+         * Constructs an instance of {@link ResourceNameGenerator} class.
+         * @param resourceType Type of resource ({@link PdfName#XObject}, {@link PdfName#Font} etc).
+         * @param prefix Prefix used for generating names.
+         */
+        public ResourceNameGenerator(PdfName resourceType, String prefix) {
+            this(resourceType, prefix, 1);
+        }
+
+        public PdfName getResourceType() {
+            return resourceType;
+        }
+
+        /**
+         * Generates new (unique) resource name.
+         * @return New (unique) resource name.
+         */
+        public PdfName generate() {
+            PdfName newName = new PdfName(prefix + counter++);
+
+            if (nameToResource.containsKey(resourceType)) {
+                while (nameToResource.get(resourceType).containsKey(newName)) {
+                    newName = new PdfName(prefix + counter++);
                 }
             }
-        }
-        return new ResourceNumber(resNumber);
-    }
 
-    static private class ResourceNumber {
-        private int value;
-
-        public ResourceNumber(int value) {
-            this.value = value;
-        }
-
-        public ResourceNumber() {
-            this(0);
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public void setValue(int value) {
-            this.value = value;
-        }
-
-        public int increment() {
-            return ++value;
+            return newName;
         }
     }
 }
