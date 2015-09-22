@@ -116,6 +116,13 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         return scale(Math.min(horizontalScaling, verticalScaling), Math.min(horizontalScaling, verticalScaling));
     }
 
+    public Image scaleAbsolute(float fitWidth, float fitHeight) {
+        float horizontalScaling = fitWidth / xObject.getWidth();
+        float verticalScaling = fitHeight / xObject.getHeight();
+        return scale(horizontalScaling, verticalScaling);
+    }
+
+
     public Image setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
         return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
     }
@@ -160,4 +167,23 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     public float getImageHeight() {
         return xObject.getHeight();
     }
+
+    /**
+     * Gets scaled width of the image.
+     */
+    public float getImageScaledWidth() {
+        return null == getProperty(Property.HORIZONTAL_SCALING) ?
+                xObject.getWidth() :
+                xObject.getWidth() * (Float) getProperty(Property.HORIZONTAL_SCALING);
+    }
+
+    /**
+     * Gets scaled height of the image.
+     */
+    public float getImageScaledHeight() {
+        return null == getProperty(Property.VERTICAL_SCALING) ?
+                xObject.getHeight() :
+                xObject.getHeight() * (Float) getProperty(Property.VERTICAL_SCALING);
+    }
+
 }
