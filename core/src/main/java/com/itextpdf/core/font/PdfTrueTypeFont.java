@@ -1,9 +1,20 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.font.AdobeGlyphList;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontMetrics;
+import com.itextpdf.basics.font.FontNames;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +31,8 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
      * Forces the output of the width array. Only matters for the 14 built-in fonts.
      */
     protected boolean forceWidthsOutput = false;
-    /**
-     * Indicates if all the glyphs and widths for that particular encoding should be included in the document.
-     */
-    private boolean subset = false;
+
+
     /**
      * The array used with single byte encodings.
      */

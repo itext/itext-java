@@ -607,7 +607,7 @@ public class PdfFontTest extends ExtendedITextTest{
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareVisually(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
