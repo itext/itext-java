@@ -26,7 +26,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1013,7 +1012,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.START_MARKER_MISSING_IN_PDB_FILE})
+    @LogMessage(messages = {LogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE})
     public void createWrongPfb() throws IOException, InterruptedException {
         byte[] afm = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.afm"));
         PdfFont font = PdfFont.createType1Font(null, afm, afm, null);

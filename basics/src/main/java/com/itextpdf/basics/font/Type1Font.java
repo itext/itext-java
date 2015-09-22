@@ -268,7 +268,7 @@ public class Type1Font extends FontProgram {
             for (int k = 0; k < 3; ++k) {
                 if (raf.read() != 0x80) {
                     Logger logger = LoggerFactory.getLogger(Type1Font.class);
-                    logger.error(LogMessageConstant.START_MARKER_MISSING_IN_PDB_FILE);
+                    logger.error(LogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE);
                     return null;
                 }
                 if (raf.read() != PFB_TYPES[k]) {
