@@ -9,8 +9,8 @@ import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.bidi.BidiBracketMap;
-import com.itextpdf.model.bidi.BidiCharMap;
-import com.itextpdf.model.bidi.BidiReference;
+import com.itextpdf.model.bidi.BidiCharacterMap;
+import com.itextpdf.model.bidi.BidiAlgorithm;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.model.hyphenation.ISplitCharacters;
 import com.itextpdf.model.layout.*;
@@ -74,10 +74,10 @@ public class TextRenderer extends AbstractRenderer {
                     break;
             }
 
-            byte[] types = BidiCharMap.getCharacterTypes(text, leftPos, rightPos);
+            byte[] types = BidiCharacterMap.getCharacterTypes(text, leftPos, rightPos);
             byte[] pairTypes = BidiBracketMap.getBracketTypes(text, leftPos, rightPos);
             int[] pairValues = BidiBracketMap.getBracketValues(text, leftPos, rightPos);
-            BidiReference bidiReorder = new BidiReference(types, pairTypes, pairValues, direction);
+            BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
             levels = bidiReorder.getLevels(new int[] {rightPos - leftPos});
             levelsOffset = leftPos;
         }
@@ -258,7 +258,7 @@ public class TextRenderer extends AbstractRenderer {
         if (baseDirection != Property.BaseDirection.NO_BIDI) {
             byte[] lineLevels = new byte[lineRightPos - lineLeftPos];
             System.arraycopy(levels, lineLeftPos - levelsOffset, lineLevels, 0, lineRightPos - lineLeftPos);
-            int[] reorder = BidiReference.computeReordering(lineLevels);
+            int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
             line = new int[lineRightPos - lineLeftPos];
             for (int i = 0; i < lineRightPos - lineLeftPos; i++) {
                 line[i] = text[lineLeftPos + reorder[i]];
