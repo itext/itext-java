@@ -6,7 +6,7 @@ public enum Property {
 
     AUTO_SCALE,
     BACKGROUND,
-    BASE_DIRECTION,
+    BASE_DIRECTION(true),
     BOLD_SIMULATION(true),
     BORDER,
     BORDER_BOTTOM,
@@ -90,12 +90,6 @@ public enum Property {
 
     public boolean isInherited() {
         return inherited;
-    }
-
-
-    public enum BaseDirection {
-        LTR,
-        RTL
     }
 
     public enum HorizontalAlignment {
@@ -295,6 +289,13 @@ public enum Property {
     public enum FontKerning {
         YES,
         NO
+    }
+
+    public enum BaseDirection {
+        NO_BIDI,
+        DEFAULT_BIDI,
+        LEFT_TO_RIGHT,
+        RIGHT_TO_LEFT
     }
 
 }

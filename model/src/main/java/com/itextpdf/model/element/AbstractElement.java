@@ -322,4 +322,15 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         }
         return (Type) this;
     }
+
+    /**
+     * This attribute specifies the base direction of directionally neutral text
+     * (i.e., text that doesn't have inherent directionality as defined in Unicode)
+     * in an element's content and attribute values.
+     * @param baseDirection base direction
+     * @return this element
+     */
+    public Type setBaseDirection(Property.BaseDirection baseDirection) {
+        return setProperty(Property.BASE_DIRECTION, baseDirection);
+    }
 }
