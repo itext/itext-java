@@ -1,12 +1,16 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.bidi.BidiBracketMap;
+import com.itextpdf.model.bidi.BidiCharMap;
+import com.itextpdf.model.bidi.BidiReference;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.model.hyphenation.ISplitCharacters;
 import com.itextpdf.model.layout.*;
@@ -18,7 +22,7 @@ public class TextRenderer extends AbstractRenderer {
 
     // TODO More accurate ascender, descender computation
 
-    protected static final float TEXT_SPACE_COEFF = 1000;
+    protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
     private static final float ITALIC_ANGLE = 0.21256f;
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1/30f;
 
@@ -29,8 +33,12 @@ public class TextRenderer extends AbstractRenderer {
     // Right pos of the part of the {@see text} which belongs to this renderer, exclusive
     protected int rightPos;
     // Processed line bounds which are the result of the layout function. They are then used on {@see draw()}
-    protected int lineLeftPos, lineRightPos;
+    protected int[] line;
+    protected int lineLeftPos;
+    protected int lineRightPos;
     protected float yLineOffset;
+    protected byte[] levels;
+    protected int levelsOffset;
 
     protected float tabAnchorCharacterPosition = -1;
 
@@ -47,6 +55,33 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public TextLayoutResult layout(LayoutContext layoutContext) {
+        line = text;
+        lineLeftPos = lineRightPos = -1;
+
+        Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
+        if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
+            byte direction;
+            switch (baseDirection) {
+                case LEFT_TO_RIGHT:
+                    direction = 0;
+                    break;
+                case RIGHT_TO_LEFT:
+                    direction = 1;
+                    break;
+                case DEFAULT_BIDI:
+                default:
+                    direction = 2;
+                    break;
+            }
+
+            byte[] types = BidiCharMap.getCharacterTypes(text, leftPos, rightPos);
+            byte[] pairTypes = BidiBracketMap.getBracketTypes(text, leftPos, rightPos);
+            int[] pairValues = BidiBracketMap.getBracketValues(text, leftPos, rightPos);
+            BidiReference bidiReorder = new BidiReference(types, pairTypes, pairValues, direction);
+            levels = bidiReorder.getLevels(new int[] {rightPos - leftPos});
+            levelsOffset = leftPos;
+        }
+
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = applyMargins(area.getBBox().clone(), false);
         applyBorderBox(layoutBox, false);
@@ -69,8 +104,6 @@ public class TextRenderer extends AbstractRenderer {
         float ascender = 800;
         float descender = -200;
 
-        lineLeftPos = lineRightPos = -1;
-
         float currentLineAscender = 0;
         float currentLineDescender = 0;
         float currentLineHeight = 0;
@@ -79,6 +112,8 @@ public class TextRenderer extends AbstractRenderer {
         int previousCharPos = -1;
 
         Character tabAnchorCharacter = getProperty(Property.TAB_ANCHOR);
+
+        TextLayoutResult result = null;
 
         while (currentTextPos < rightPos) {
             int currentCharCode = text[currentTextPos];
@@ -155,8 +190,6 @@ public class TextRenderer extends AbstractRenderer {
                 currentLineWidth += nonBreakablePartFullWidth;
                 anythingPlaced = true;
             } else {
-                // must split the word
-
                 // check if line height exceeds the allowed height
                 if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight()) {
                     // the line does not fit because of height - full overflow
@@ -180,35 +213,24 @@ public class TextRenderer extends AbstractRenderer {
                         currentTextPos = firstCharacterWhichExceedsAllowedWidth;
                     }
 
-                    yLineOffset = currentLineAscender * fontSize / TEXT_SPACE_COEFF;
-
-                    occupiedArea.getBBox().moveDown(currentLineHeight);
-                    occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);
-                    occupiedArea.getBBox().setWidth(Math.max(occupiedArea.getBBox().getWidth(), currentLineWidth));
-                    layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
-
-                    TextRenderer[] split = split(currentTextPos);
-                    applyBorderBox(occupiedArea.getBBox(), true);
-                    applyMargins(occupiedArea.getBBox(), true);
-                    TextLayoutResult result;
                     if (lineRightPos <= 0) {
-                        result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
+                        result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                     } else {
-                        result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setWordHasBeenSplit(wordSplit);
-                        occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
+                        result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null).setWordHasBeenSplit(wordSplit);
                     }
-                    if (split[1].length() > 0 && split[1].charAt(0) == '\n')
-                        result.setSplitForcedByNewline(true);
-                    return result;
+
+                    break;
                 }
             }
         }
 
-        if (lineRightPos > 0) {
+        if (result != null && result.getStatus() == LayoutResult.NOTHING) {
+            return result;
+        } else {
             if (currentLineHeight > layoutBox.getHeight()) {
-                applyBorderBox(occupiedArea.getBBox(), true);
-                applyMargins(occupiedArea.getBBox(), true);
-                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                    applyBorderBox(occupiedArea.getBBox(), true);
+                    applyMargins(occupiedArea.getBBox(), true);
+                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
             }
 
             yLineOffset = currentLineAscender * fontSize / TEXT_SPACE_COEFF;
@@ -217,12 +239,46 @@ public class TextRenderer extends AbstractRenderer {
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);
             occupiedArea.getBBox().setWidth(Math.max(occupiedArea.getBBox().getWidth(), currentLineWidth));
             layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
+
+            occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
+            applyBorderBox(occupiedArea.getBBox(), true);
+            applyMargins(occupiedArea.getBBox(), true);
+
+            if (result != null) {
+                TextRenderer[] split = split(currentTextPos);
+                if (split[1].length() > 0 && split[1].charAt(0) == '\n')
+                    result.setSplitForcedByNewline(true);
+                result.setSplitRenderer(split[0]);
+                result.setOverflowRenderer(split[1]);
+            } else {
+                result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+            }
         }
 
-        occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
-        applyBorderBox(occupiedArea.getBBox(), true);
-        applyMargins(occupiedArea.getBBox(), true);
-        return new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        if (baseDirection != Property.BaseDirection.NO_BIDI) {
+            byte[] lineLevels = new byte[lineRightPos - lineLeftPos];
+            System.arraycopy(levels, lineLeftPos - levelsOffset, lineLevels, 0, lineRightPos - lineLeftPos);
+            int[] reorder = BidiReference.computeReordering(lineLevels);
+            line = new int[lineRightPos - lineLeftPos];
+            for (int i = 0; i < lineRightPos - lineLeftPos; i++) {
+                line[i] = text[lineLeftPos + reorder[i]];
+
+                // Mirror RTL glyphs
+                if (levels[lineLeftPos - levelsOffset + reorder[i]] % 2 == 1) {
+                    int mirror = BidiBracketMap.getPairedBracket(line[i]);
+                    line[i] = mirror;
+                }
+            }
+            lineRightPos -= lineLeftPos;
+            lineLeftPos = 0;
+
+            // Don't forget to update the line for the split renderer
+            if (result.getStatus() == LayoutResult.PARTIAL) {
+                ((TextRenderer)result.getSplitRenderer()).setLine(line, lineLeftPos, lineRightPos);
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -290,9 +346,9 @@ public class TextRenderer extends AbstractRenderer {
             if (horizontalScaling != null && horizontalScaling != 1)
                 canvas.setHorizontalScaling(horizontalScaling * 100);
             if (fontKerning == Property.FontKerning.YES) {
-                canvas.showTextKerned(Utilities.convertFromUtf32(text, lineLeftPos, lineRightPos));
+                canvas.showTextKerned(Utilities.convertFromUtf32(line, lineLeftPos, lineRightPos));
             } else {
-                canvas.showText(Utilities.convertFromUtf32(text, lineLeftPos, lineRightPos));
+                canvas.showText(Utilities.convertFromUtf32(line, lineLeftPos, lineRightPos));
             }
             canvas.endText().restoreState();
 
@@ -361,12 +417,12 @@ public class TextRenderer extends AbstractRenderer {
 
         int firstNonSpaceCharIndex = lineRightPos - 1;
         while (firstNonSpaceCharIndex >= 0) {
-            if (!Character.isWhitespace(text[firstNonSpaceCharIndex])) {
+            if (!Character.isWhitespace(line[firstNonSpaceCharIndex])) {
                 break;
             }
 
-            float currentCharWidth = getCharWidth(text[firstNonSpaceCharIndex], font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-            float kerning = (firstNonSpaceCharIndex != 0 ? getKerning(text[firstNonSpaceCharIndex], text[firstNonSpaceCharIndex], font, fontSize, hScale) : 0) / TEXT_SPACE_COEFF;
+            float currentCharWidth = getCharWidth(line[firstNonSpaceCharIndex], font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+            float kerning = (firstNonSpaceCharIndex != 0 ? getKerning(line[firstNonSpaceCharIndex], line[firstNonSpaceCharIndex], font, fontSize, hScale) : 0) / TEXT_SPACE_COEFF;
             trimmedSpace += currentCharWidth - kerning;
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
 
@@ -448,6 +504,12 @@ public class TextRenderer extends AbstractRenderer {
         return lineRightPos > 0 ? lineRightPos - lineLeftPos: 0;
     }
 
+    protected void setLine(int[] line, int lineLeftPos, int lineRightPos) {
+        this.line = line;
+        this.lineLeftPos = lineLeftPos;
+        this.lineRightPos = lineRightPos;
+    }
+
     protected int getNumberOfSpaces() {
         if (lineRightPos <= 0)
             return 0;
@@ -471,14 +533,17 @@ public class TextRenderer extends AbstractRenderer {
     protected TextRenderer[] split(int initialOverflowTextPos) {
         TextRenderer splitRenderer = createSplitRenderer();
         splitRenderer.setText(text, leftPos, initialOverflowTextPos);
+        splitRenderer.setLine(line, lineLeftPos, lineRightPos);
         splitRenderer.occupiedArea = occupiedArea.clone();
         splitRenderer.parent = parent;
-        splitRenderer.lineLeftPos = lineLeftPos;
-        splitRenderer.lineRightPos = lineRightPos;
         splitRenderer.yLineOffset = yLineOffset;
+        splitRenderer.levels = levels;
+        splitRenderer.levelsOffset = levelsOffset;
 
         TextRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.setText(text, initialOverflowTextPos, rightPos);
+        overflowRenderer.levels = levels;
+        overflowRenderer.levelsOffset = levelsOffset;
         overflowRenderer.parent = parent;
 
         return new TextRenderer[] {splitRenderer, overflowRenderer};

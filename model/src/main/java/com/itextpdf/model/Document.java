@@ -249,6 +249,8 @@ public class Document implements IPropertyContainer<Document> {
                     return (T) new Float(0.75f);
                 case FONT_KERNING:
                     return (T) Property.FontKerning.NO;
+                case BASE_DIRECTION:
+                    return (T) Property.BaseDirection.NO_BIDI;
                 default:
                     return null;
             }
