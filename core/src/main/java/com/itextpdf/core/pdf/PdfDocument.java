@@ -471,17 +471,6 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Sets PDF version.
-     *
-     * @param pdfVersion PDF version to set.
-     * @return self.
-     */
-    public PdfDocument setVersion(PdfVersion pdfVersion) {
-        this.pdfVersion = pdfVersion;
-        return this;
-    }
-
-    /**
      * Gets PDF version.
      *
      * @return PDF version.
