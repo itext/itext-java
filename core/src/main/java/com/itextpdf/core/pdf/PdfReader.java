@@ -936,6 +936,10 @@ public class PdfReader {
         if (trailer == null) {
             trailer = new PdfDictionary();
             trailer.putAll(xrefStream);
+            trailer.remove(PdfName.DecodeParms);
+            trailer.remove(PdfName.Filter);
+            trailer.remove(PdfName.Prev);
+            trailer.remove(PdfName.Length);
         }
 
         int size = ((PdfNumber) xrefStream.get(PdfName.Size)).getIntValue();
