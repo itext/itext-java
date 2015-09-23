@@ -44,14 +44,18 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.RASInputStream;
 import com.itextpdf.basics.io.RandomAccessSource;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.Version;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigLockDictionary;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -59,6 +63,8 @@ import com.itextpdf.forms.fields.PdfSignatureFormField;
 
 import java.io.*;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -79,6 +85,12 @@ public class PdfSignatureAppearance {
     /** Author signature, form filling and annotations allowed. */
     public static final int CERTIFIED_FORM_FILLING_AND_ANNOTATIONS = 3;
 
+    /** extra space at the top. */
+    private static final float TOP_SECTION = 0.3f;
+
+    /** margin for the content inside the signature rectangle. */
+    private static final float MARGIN = 2;
+
     /** The certification level. */
     private int certificationLevel = NOT_CERTIFIED;
 
@@ -98,7 +110,7 @@ public class PdfSignatureAppearance {
     private String signatureCreator = "";
 
     /** The contact name of the signer. */
-    private String contact = ""; // TODO: if it's null then I get NullPointerException
+    private String contact = "";
 
     /** Holds value of property signDate. */
     private Calendar signDate;
@@ -115,7 +127,7 @@ public class PdfSignatureAppearance {
     private PdfDocument document;
 
     /** The crypto dictionary */
-    private PdfSignature cryptoDictionary; // TODO: rename
+    private PdfSignature cryptoDictionary;
 
     /** The signing certificate */
     private Certificate signCertificate;
@@ -130,7 +142,7 @@ public class PdfSignatureAppearance {
      * The coordinates of the rectangle for a visible signature,
      * or a zero-width, zero-height rectangle for an invisible signature.
      */
-    private Rectangle rect; // TODO: is it really need?
+    private Rectangle rect;
 
     /** rectangle that represent the position and dimension of the signature in the page. */
     private Rectangle pageRect;
@@ -143,13 +155,492 @@ public class PdfSignatureAppearance {
     /** Name and content of keys that can only be added in the close() method. */
     private HashMap<PdfName, PdfLiteral> exclusionLocations;
 
+    /** The rendering mode chosen for visible signatures */
+    private RenderingMode renderingMode = RenderingMode.DESCRIPTION;
+
+    /** The image that needs to be used for a visible signature */
+    private Image signatureGraphic = null;
+
+    /** Layers for a visible signature. */
+    private PdfFormXObject n0;
+
+    private PdfFormXObject n2;
+
+    /** Indicates if we need to reuse the existing appearance as layer 0. */
+    private boolean reuseAppearance = false;
+
+    /** A background image for the text in layer 2. */
+    private Image image;
+
+    /** the scaling to be applied to the background image.t  */
+    private float imageScale;
+
+    /** The text that goes in Layer 2 of the signature appearance. */
+    private String layer2Text;
+
+    private float layer2FontSize = 12;
+
+    /** Font for the text in Layer 2. */
+    private PdfFont layer2Font;
+
+    /** Template containing all layers drawn on top of each other. */
+    private PdfFormXObject frm;
+
+    /** Length of the output. */
+    private int boutLen;
+
+    /** Indicates if the stamper has already been pre-closed. */
+    private boolean preClosed = false;
+
+    /** Signature field lock dictionary */
+    private PdfSigLockDictionary fieldLock;
+
+    /**
+     * Gets the rendering mode for this signature.
+     * @return the rendering mode for this signature
+     * @since 5.0.1
+     */
+    public RenderingMode getRenderingMode() {
+        return renderingMode;
+    }
+
+    /**
+     * Sets the rendering mode for this signature.
+     * @param renderingMode the rendering mode
+     * @since 5.0.1
+     */
+    public void setRenderingMode(RenderingMode renderingMode) {
+        this.renderingMode = renderingMode;
+    }
+
+    /**
+     * Gets the Image object to render.
+     * @return the image
+     */
+    public Image getSignatureGraphic() {
+        return signatureGraphic;
+    }
+
+    /**
+     * Sets the Image object to render when Render is set to <CODE>RenderingMode.GRAPHIC</CODE>
+     * or <CODE>RenderingMode.GRAPHIC_AND_DESCRIPTION</CODE>.
+     * @param signatureGraphic image rendered. If <CODE>null</CODE> the mode is defaulted
+     * to <CODE>RenderingMode.DESCRIPTION</CODE>
+     */
+    public void setSignatureGraphic(Image signatureGraphic) {
+        this.signatureGraphic = signatureGraphic;
+    }
+
+    public PdfFormXObject getLayer0() {
+        if (n0 == null) {
+            n0 = new PdfFormXObject(rect);
+            n0.makeIndirect(document);
+        }
+
+        return n0;
+    }
+
+    public PdfFormXObject getLayer2() {
+        if (n2 == null) {
+            n2 = new PdfFormXObject(rect);
+            n2.makeIndirect(document);
+        }
+
+        return n2;
+    }
+
+    /**
+     * Indicates that the existing appearances needs to be reused as layer 0.
+     */
+    public void setReuseAppearance(boolean reuseAppearance) {
+        this.reuseAppearance = reuseAppearance;
+    }
+
+    // layer 2
+
+    /**
+     * Gets the background image for the layer 2.
+     * @return the background image for the layer 2
+     */
+    public Image getImage() {
+        return this.image;
+    }
+
+    /**
+     * Sets the background image for the layer 2.
+     * @param image the background image for the layer 2
+     */
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    /**
+     * Gets the scaling to be applied to the background image.
+     * @return the scaling to be applied to the background image
+     */
+    public float getImageScale() {
+        return this.imageScale;
+    }
+
+    /**
+     * Sets the scaling to be applied to the background image. If it's zero the image
+     * will fully fill the rectangle. If it's less than zero the image will fill the rectangle but
+     * will keep the proportions. If it's greater than zero that scaling will be applied.
+     * In any of the cases the image will always be centered. It's zero by default.
+     * @param imageScale the scaling to be applied to the background image
+     */
+    public void setImageScale(float imageScale) {
+        this.imageScale = imageScale;
+    }
+
+    /**
+     * Sets the signature text identifying the signer.
+     * @param text the signature text identifying the signer. If <CODE>null</CODE> or not set
+     * a standard description will be used
+     */
+    public void setLayer2Text(String text) {
+        layer2Text = text;
+    }
+
+    /**
+     * Gets the signature text identifying the signer if set by setLayer2Text().
+     * @return the signature text identifying the signer
+     */
+    public String getLayer2Text() {
+        return layer2Text;
+    }
+
+    /**
+     * Gets the n2 and n4 layer font.
+     * @return the n2 and n4 layer font
+     */
+    public PdfFont getLayer2Font() {
+        return this.layer2Font;
+    }
+
+    /**
+     * Sets the n2 and n4 layer font. If the font size is zero, auto-fit will be used.
+     * @param layer2Font the n2 and n4 font
+     */
+    public void setLayer2Font(PdfFont layer2Font) {
+        this.layer2Font = layer2Font;
+    }
+
+    public void setLayer2FontSize(float fontSize) {
+        this.layer2FontSize = fontSize;
+    }
+
+    /**
+     * Gets the template that aggregates all appearance layers. This corresponds to the /FRM resource.
+     * <p>
+     * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
+     * for further details.
+     * @return the template that aggregates all appearance layers
+     */
+    public PdfFormXObject getTopLayer() {
+        if (frm == null) {
+            frm = new PdfFormXObject(rect);
+            frm.makeIndirect(document);
+        }
+
+        return frm;
+    }
+
+    /**
+     * Constructs appearance (top-level) for a signature.
+     * <p>
+     * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
+     * for further details.
+     * @return a top-level signature appearance
+     */
+    public PdfFormXObject getAppearance() throws IOException {
+        if (isInvisible()) {
+            PdfFormXObject appearance = new PdfFormXObject(new Rectangle(0, 0));
+            appearance.makeIndirect(document);
+            return appearance;
+        }
+
+        if (n0 == null && !reuseAppearance) {
+            createBlankN0();
+        }
+
+        if (n2 == null) {
+            n2 = new PdfFormXObject(rect);
+            n2.makeIndirect(document);
+
+            String text;
+
+            if (layer2Text == null) {
+                StringBuilder buf = new StringBuilder();
+                buf.append("Digitally signed by ");
+                String name = null;
+                CertificateInfo.X500Name x500name = CertificateInfo.getSubjectFields((X509Certificate)signCertificate);
+                if (x500name != null) {
+                    name = x500name.getField("CN");
+                    if (name == null)
+                        name = x500name.getField("E");
+                }
+                if (name == null)
+                    name = "";
+                buf.append(name).append('\n');
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
+                buf.append("Date: ").append(sd.format(signDate.getTime()));
+                if (reason != null)
+                    buf.append('\n').append(reasonCaption).append(reason);
+                if (location != null)
+                    buf.append('\n').append(locationCaption).append(location);
+                text = buf.toString();
+            } else {
+                text = layer2Text;
+            }
+
+            if (image != null) {
+                if (imageScale == 0) {
+                    PdfCanvas canvas = new PdfCanvas(n2, document);
+                    canvas.addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), 0, 0);
+                } else {
+                    float usableScale = imageScale;
+
+                    if (imageScale < 0) {
+                        usableScale = Math.min(rect.getWidth() / image.getWidth(), rect.getHeight() / image.getHeight());
+                    }
+
+                    float w = image.getWidth() * usableScale;
+                    float h = image.getHeight() * usableScale;
+                    float x = (rect.getWidth() - w) / 2;
+                    float y = (rect.getHeight() - h) / 2;
+
+                    PdfCanvas canvas = new PdfCanvas(n2, document);
+                    canvas.addImage(image, w, 0, 0, h, x, y);
+                }
+            }
+
+            PdfFont font;
+
+            if (layer2Font == null) {
+                font = PdfFont.getDefaultFont(document);
+            } else {
+                font = layer2Font;
+            }
+
+            float size = layer2FontSize;
+
+            Rectangle dataRect = null;
+            Rectangle signatureRect = null;
+
+            if (renderingMode == RenderingMode.NAME_AND_DESCRIPTION ||
+                renderingMode == RenderingMode.GRAPHIC_AND_DESCRIPTION && this.signatureGraphic != null) {
+                if (rect.getHeight() > rect.getWidth()) {
+                    signatureRect = new Rectangle(
+                            MARGIN,
+                            rect.getHeight() / 2,
+                            rect.getWidth() - 2 * MARGIN,
+                            rect.getHeight() / 2);
+                    dataRect = new Rectangle(
+                            MARGIN,
+                            MARGIN,
+                            rect.getWidth() - 2 * MARGIN,
+                            rect.getHeight() / 2 - 2 * MARGIN);
+                } else {
+                    // origin is the bottom-left
+                    signatureRect = new Rectangle(
+                            MARGIN,
+                            MARGIN,
+                            rect.getWidth() / 2 - 2 * MARGIN,
+                            rect.getHeight() - 2 * MARGIN);
+                    dataRect = new Rectangle(
+                            rect.getWidth() / 2 + MARGIN / 2,
+                            MARGIN,
+                            rect.getWidth() / 2 - MARGIN,
+                            rect.getHeight() - 2 * MARGIN);
+                }
+            } else if (renderingMode == RenderingMode.GRAPHIC) {
+                if (signatureGraphic == null) {
+                    throw new IllegalStateException(/*MessageLocalization.getComposedMessage("a.signature.image.should.be.present.when.rendering.mode.is.graphic.only")*/);
+                }
+
+                signatureRect = new Rectangle(
+                        MARGIN,
+                        MARGIN,
+                        rect.getWidth() - 2 * MARGIN, // take all space available
+                        rect.getHeight() - 2 * MARGIN);
+            } else {
+                dataRect = new Rectangle(
+                        MARGIN,
+                        MARGIN,
+                        rect.getWidth() - 2 * MARGIN,
+                        rect.getHeight() * (1 - TOP_SECTION) - 2 * MARGIN);
+            }
+
+            switch (renderingMode) {
+                case NAME_AND_DESCRIPTION:
+                    String signedBy = CertificateInfo.getSubjectFields((X509Certificate) signCertificate).getField("CN");
+
+                    if (signedBy == null) {
+                        signedBy = CertificateInfo.getSubjectFields((X509Certificate) signCertificate).getField("E");
+                    }
+
+                    if (signedBy == null) {
+                        signedBy = "";
+                    }
+
+                    List<String> splittedText = font.splitString(signedBy, (int) layer2FontSize, signatureRect.getWidth());
+                    PdfCanvas canvas = new PdfCanvas(n2, document);
+
+                    canvas.setFontAndSize(font, layer2FontSize);
+                    canvas.beginText();
+                    canvas.setTextMatrix(signatureRect.getLeft(), signatureRect.getTop() - layer2FontSize);
+
+                    for (String str : splittedText) {
+                        canvas.newlineText();
+                        canvas.showText(str);
+                    }
+
+                    canvas.endText();
+                    break;
+                case GRAPHIC_AND_DESCRIPTION: {
+                    if (signatureGraphic == null) {
+                        throw new IllegalStateException(/*MessageLocalization.getComposedMessage("a.signature.image.should.be.present.when.rendering.mode.is.graphic.and.description")*/);
+                    }
+
+                    float imgWidth = signatureGraphic.getWidth();
+
+                    if (imgWidth == 0) {
+                        imgWidth = signatureRect.getWidth();
+                    }
+
+                    float imgHeight = signatureGraphic.getHeight();
+
+                    if (imgHeight == 0) {
+                        imgHeight = signatureRect.getHeight();
+                    }
+
+                    float multiplierH = signatureRect.getWidth() / signatureGraphic.getWidth();
+                    float multiplierW = signatureRect.getHeight() / signatureGraphic.getHeight();
+                    float multiplier = Math.min(multiplierH, multiplierW);
+                    imgWidth *= multiplier;
+                    imgHeight *= multiplier;
+
+                    float x = signatureRect.getRight() - imgWidth;
+                    float y = signatureRect.getBottom() + (signatureRect.getHeight() - imgHeight) / 2;
+
+                    canvas = new PdfCanvas(n2, document);
+                    canvas.addImage(signatureGraphic, imgWidth, 0, 0, imgHeight, x, y);
+                    break;
+                }
+                case GRAPHIC:
+                    float imgWidth = signatureGraphic.getWidth();
+
+                    if (imgWidth == 0) {
+                        imgWidth = signatureRect.getWidth();
+                    }
+
+                    float imgHeight = signatureGraphic.getHeight();
+
+                    if (imgHeight == 0) {
+                        imgHeight = signatureRect.getHeight();
+                    }
+
+                    float multiplierH = signatureRect.getWidth() / signatureGraphic.getWidth();
+                    float multiplierW = signatureRect.getHeight() / signatureGraphic.getHeight();
+                    float multiplier = Math.min(multiplierH, multiplierW);
+                    imgWidth *= multiplier;
+                    imgHeight *= multiplier;
+
+                    float x = signatureRect.getLeft() + (signatureRect.getWidth() - imgWidth) / 2;
+                    float y = signatureRect.getBottom() + (signatureRect.getHeight() - imgHeight) / 2;
+
+                    canvas = new PdfCanvas(n2, document);
+                    canvas.addImage(signatureGraphic, imgWidth, 0, 0, imgHeight, x, y);
+                    break;
+            }
+
+            if(renderingMode != RenderingMode.GRAPHIC) {
+                List<String> splittedText = font.splitString(text, (int) layer2FontSize, dataRect.getWidth());
+                PdfCanvas canvas = new PdfCanvas(n2, document);
+
+                canvas.setFontAndSize(font, layer2FontSize);
+                canvas.beginText();
+                canvas.setTextMatrix(dataRect.getLeft(), dataRect.getTop() - layer2FontSize);
+
+                for (String str : splittedText) {
+                    canvas.newlineText();
+                    canvas.showText(str);
+                }
+
+                canvas.endText();
+            }
+        }
+
+        int rotation = document.getPage(page).getRotation();
+        Rectangle rotated = new Rectangle(rect);
+
+        if (frm == null) {
+            frm = new PdfFormXObject(rotated);
+            frm.makeIndirect(document);
+
+            float scale = Math.min(rect.getWidth(), rect.getHeight()) * 0.9f;
+            float x = (rect.getWidth() - scale) / 2;
+            float y = (rect.getHeight() - scale) / 2;
+            scale /= 100;
+
+            PdfCanvas canvas = new PdfCanvas(frm, document);
+
+            if (rotation == 90) {
+                canvas.concatMatrix(0, 1, -1, 0, rect.getHeight(), 0);
+            } else if (rotation == 180) {
+                canvas.concatMatrix(-1, 0, 0, -1, rect.getWidth(), rect.getHeight());
+            } else if (rotation == 270) {
+                canvas.concatMatrix(0, -1, 1, 0, 0, rect.getWidth());
+            }
+
+            if (reuseAppearance) {
+                PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
+                PdfFormField field = acroForm.getField(getFieldName());
+                PdfStream stream = field.getWidgets().get(0).getAppearanceDictionary().getAsStream(PdfName.N);
+                PdfFormXObject xobj = new PdfFormXObject(stream);
+
+                if (stream != null) {
+                    frm.getResources().addForm(xobj, new PdfName("n0"));
+                    PdfCanvas canvas1 = new PdfCanvas(frm, document);
+                    canvas1.addXObject(xobj, 1, 0, 0, 1, 0, 0);
+                } else {
+                    reuseAppearance = false;
+
+                    if (n0 == null) {
+                        createBlankN0();
+                    }
+                }
+            }
+
+            if (!reuseAppearance) {
+                frm.getResources().addForm(n0, new PdfName("n0"));
+                PdfCanvas canvas1 = new PdfCanvas(frm, document);
+                canvas1.addXObject(n0, 1, 0, 0, 1, 0, 0);
+            }
+
+            frm.getResources().addForm(n2, new PdfName("n2"));
+            PdfCanvas canvas1 = new PdfCanvas(frm, document);
+            canvas1.addXObject(n2, 1, 0, 0, 1, 0, 0);
+        }
+
+        PdfFormXObject napp = new PdfFormXObject(rotated);
+        napp.makeIndirect(document);
+        napp.getResources().addForm(frm, new PdfName("FRM"));
+
+        PdfCanvas canvas = new PdfCanvas(napp, document);
+        canvas.addXObject(frm, 0, 0);
+
+        return napp;
+    }
+
     // TODO: remove this constructor!
     public PdfSignatureAppearance(PdfReader reader, PdfWriter writer) {
         temporaryOS = new ByteArrayOutputStream();
         document = new PdfDocument(reader, new PdfWriter(temporaryOS), false);
 
         signDate = new GregorianCalendar();
-        fieldName = getNewSigFieldName(); // TODO: Do I really need to init this field? I could do a simple check in the pre-close method in case if there are no other usages of this field requiring this field to be initialized.
+        fieldName = getNewSigFieldName();
         signatureCreator = Version.getInstance().getVersion();
         originalOS = writer.getOutputStream();
     }
@@ -161,7 +652,7 @@ public class PdfSignatureAppearance {
     public PdfSignatureAppearance(PdfDocument document) {
         this.document = document;
         signDate = new GregorianCalendar();
-        fieldName = getNewSigFieldName(); // TODO: Do I really need to init this field? I could do a simple check in the pre-close method in case if there are no other usages of this field requiring this field to be initialized.
+        fieldName = getNewSigFieldName();
         signatureCreator = Version.getInstance().getVersion();
     }
 
@@ -304,16 +795,6 @@ public class PdfSignatureAppearance {
     }
 
     /**
-     * Returns the underlying source.
-     * @return The underlying source.
-     * @throws IOException
-     */
-    private RandomAccessSource getUnderlyingSource() throws IOException {
-        RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
-        return fac.createSource(bout);
-    }
-
-    /**
      * Returns the user made signature dictionary. This is the dictionary at the /V key
      * of the signature field.
      * @return The user made signature dictionary.
@@ -370,7 +851,7 @@ public class PdfSignatureAppearance {
         int step = 1;
 
         while (acroForm.getField(name + step) != null) {
-            ++step; // TODO: see the corresponding method from iText 5. There was also one more check (name with ".")
+            ++step;
         }
 
         return name + step;
@@ -380,7 +861,7 @@ public class PdfSignatureAppearance {
      * Gets the page number of the field.
      * @return the page number of the field
      */
-    public int getPage() {
+    public int getPageNumber() {
         return page;
     }
 
@@ -465,15 +946,6 @@ public class PdfSignatureAppearance {
         this.originalOS = originalOS;
     }
 
-    /** Length of the output. */
-    private int boutLen;
-
-    /** Indicates if the stamper has already been pre-closed. */
-    private boolean preClosed = false;
-
-    /** Signature field lock dictionary */
-    private PdfSigLockDictionary fieldLock;
-
     /**
      * Getter for the field lock dictionary.
      * @return Field lock dictionary.
@@ -491,6 +963,10 @@ public class PdfSignatureAppearance {
      */
     public void setFieldLockDict(PdfSigLockDictionary fieldLock) {
         this.fieldLock = fieldLock;
+    }
+
+    public void addDeveloperExtension(PdfDeveloperExtension extension) {
+        document.getCatalog().addDeveloperExtension(extension);
     }
 
     /**
@@ -541,7 +1017,20 @@ public class PdfSignatureAppearance {
                 fieldLock = this.fieldLock;
             }
 
-            // TODO: add processing for widget annotation (lock it)
+            sigField.put(PdfName.P, document.getPage(getPageNumber()));
+            sigField.put(PdfName.V, cryptoDictionary);
+            PdfObject obj = sigField.getPdfObject().get(PdfName.F);
+            int flags = 0;
+
+            if (obj != null && obj.isNumber()) {
+                flags = ((PdfNumber) obj).getIntValue();
+            }
+
+            flags |= PdfAnnotation.Locked;
+            sigField.put(PdfName.F, new PdfNumber(flags));
+            PdfDictionary ap = new PdfDictionary();
+            ap.put(PdfName.N, getAppearance().getPdfObject());
+            sigField.put(PdfName.AP, ap);
         } else {
             PdfWidgetAnnotation widget = new PdfWidgetAnnotation(document, !isInvisible() ? getPageRect() : new Rectangle(0, 0));
             widget.setFlags(PdfAnnotation.Print | PdfAnnotation.Locked);
@@ -557,8 +1046,16 @@ public class PdfSignatureAppearance {
                 fieldLock = this.fieldLock;
             }
 
-            int pagen = getPage();
+            int pagen = getPageNumber();
+            widget.setPage(document.getPage(pagen));
+            PdfDictionary ap = widget.getAppearanceDictionary();
 
+            if (ap == null) {
+                ap = new PdfDictionary();
+                widget.put(PdfName.AP, ap);
+            }
+
+            ap.put(PdfName.N, getAppearance().getPdfObject());
             acroForm.addField(sigField, document.getPage(pagen));
         }
 
@@ -616,7 +1113,66 @@ public class PdfSignatureAppearance {
                 os.writeLong(range[k]).write(' ');
             os.write(']');
             System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, bos.size());
-/*        }*/
+    }
+
+    /**
+     * This is the last method to be called when using external signatures. The general sequence is:
+     * preClose(), getDocumentBytes() and close().
+     * <p>
+     * <CODE>update</CODE> is a <CODE>PdfDictionary</CODE> that must have exactly the
+     * same keys as the ones provided in {@link #preClose(HashMap)}.
+     * @param update a <CODE>PdfDictionary</CODE> with the key/value that will fill the holes defined
+     * in {@link #preClose(HashMap)}
+     * @throws IOException on error
+     */
+    public void close(PdfDictionary update) throws IOException {
+        try {
+            if (!preClosed)
+                throw new RuntimeException("Document must be preclosed"); // TODO: correct the message
+            ByteArrayOutputStream bous = new ByteArrayOutputStream();
+            PdfOutputStream os = new PdfOutputStream(bous);
+
+            for (PdfName key: update.keySet()) {
+                PdfObject obj = update.get(key);
+                PdfLiteral lit = exclusionLocations.get(key);
+                if (lit == null)
+                    throw new IllegalArgumentException("the.key.1.didn.t.reserve.space.in.preclose");
+                bous.reset();
+                os.write(obj);
+                if (bous.size() > lit.getBytesCount())
+                    throw new IllegalArgumentException("the.key.1.is.too.big.is.2.reserved.3");
+/*                if (tempFile == null)*/
+                    System.arraycopy(bous.toByteArray(), 0, bout, (int)lit.getPosition(), bous.size());
+            }
+            if (update.size() != exclusionLocations.size())
+                throw new IllegalArgumentException("the.update.dictionary.has.less.keys.than.required");
+/*            if (tempFile == null) {*/
+                originalOS.write(bout, 0, bout.length);
+/*            }*/
+        }
+        finally {
+            if (originalOS != null)
+                try{
+                    originalOS.close();}catch(Exception e){}
+        }
+    }
+
+    private void createBlankN0() {
+        n0 = new PdfFormXObject(new Rectangle(100, 100));
+        n0.makeIndirect(document);
+
+        PdfCanvas canvas = new PdfCanvas(n0, document);
+        canvas.writeLiteral("% DSBlank\n");
+    }
+
+    /**
+     * Returns the underlying source.
+     * @return The underlying source.
+     * @throws IOException
+     */
+    private RandomAccessSource getUnderlyingSource() throws IOException {
+        RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
+        return fac.createSource(bout);
     }
 
     /**
@@ -678,48 +1234,6 @@ public class PdfSignatureAppearance {
     }
 
     /**
-     * This is the last method to be called when using external signatures. The general sequence is:
-     * preClose(), getDocumentBytes() and close().
-     * <p>
-     * <CODE>update</CODE> is a <CODE>PdfDictionary</CODE> that must have exactly the
-     * same keys as the ones provided in {@link #preClose(HashMap)}.
-     * @param update a <CODE>PdfDictionary</CODE> with the key/value that will fill the holes defined
-     * in {@link #preClose(HashMap)}
-     * @throws IOException on error
-     */
-    public void close(PdfDictionary update) throws IOException {
-        try {
-            if (!preClosed)
-                throw new RuntimeException("Document must be preclosed alalaololo");
-            ByteArrayOutputStream bous = new ByteArrayOutputStream();
-            PdfOutputStream os = new PdfOutputStream(bous);
-
-            for (PdfName key: update.keySet()) {
-                PdfObject obj = update.get(key);
-                PdfLiteral lit = exclusionLocations.get(key);
-                if (lit == null)
-                    throw new IllegalArgumentException("the.key.1.didn.t.reserve.space.in.preclose");
-                bous.reset();
-                os.write(obj);
-                if (bous.size() > lit.getBytesCount())
-                    throw new IllegalArgumentException("the.key.1.is.too.big.is.2.reserved.3");
-/*                if (tempFile == null)*/
-                    System.arraycopy(bous.toByteArray(), 0, bout, (int)lit.getPosition(), bous.size());
-            }
-            if (update.size() != exclusionLocations.size())
-                throw new IllegalArgumentException("the.update.dictionary.has.less.keys.than.required");
-/*            if (tempFile == null) {*/
-                originalOS.write(bout, 0, bout.length);
-/*            }*/
-        }
-        finally {
-            if (originalOS != null)
-                try{
-                    originalOS.close();}catch(Exception e){}
-        }
-    }
-
-    /**
      * An interface to retrieve the signature dictionary for modification.
      */
     public interface SignatureEvent {
@@ -729,5 +1243,28 @@ public class PdfSignatureAppearance {
          * @param sig The signature dictionary.
          */
         void getSignatureDictionary(PdfSignature sig);
+    }
+
+    /**
+     * Signature rendering modes
+     * @since 5.0.1
+     */
+    public enum RenderingMode {
+        /**
+         * The rendering mode is just the description.
+         */
+        DESCRIPTION,
+        /**
+         * The rendering mode is the name of the signer and the description.
+         */
+        NAME_AND_DESCRIPTION,
+        /**
+         * The rendering mode is an image and the description.
+         */
+        GRAPHIC_AND_DESCRIPTION,
+        /**
+         * The rendering mode is just an image.
+         */
+        GRAPHIC
     }
 }

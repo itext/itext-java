@@ -8,8 +8,6 @@ import java.security.MessageDigest;
  * <p>
  * Interface used by the PdfPKCS7 digital signature builder to call
  * Time Stamp Authority providing RFC 3161 compliant time stamp token.
- * @author Martin Brunecky, 07/17/2007
- * @since 2.1.6
  */
 public interface TSAClient { // TODO: refactor docs
 

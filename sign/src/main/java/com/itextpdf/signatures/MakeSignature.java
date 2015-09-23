@@ -1,10 +1,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.core.pdf.PdfDate;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,9 +66,9 @@ public class MakeSignature {
                 estimatedSize += 4192;
         }
         sap.setCertificate(chain[0]);
-/*        if (sigtype == CryptoStandard.CADES) {
+        if (sigtype == CryptoStandard.CADES) {
             sap.addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
-        }*/
+        }
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, sigtype == CryptoStandard.CADES ? PdfName.ETSI_CAdES_DETACHED : PdfName.Adbe_pkcs7_detached);
         dic.setReason(sap.getReason());
         dic.setLocation(sap.getLocation());

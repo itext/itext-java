@@ -47,8 +47,9 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @param fullCompression true if to use full compression, false otherwise.
      */
-    public void setFullCompression(boolean fullCompression) {
+    public PdfWriter setFullCompression(boolean fullCompression) {
         this.fullCompression = fullCompression;
+        return this;
     }
 
     /**

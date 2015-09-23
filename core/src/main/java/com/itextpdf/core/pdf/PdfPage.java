@@ -73,6 +73,18 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return new Rectangle(Math.min(llx, urx), Math.min(lly, ury), Math.abs(urx - llx), Math.abs(ury - lly));
     }
 
+    public int getRotation() {
+        PdfNumber rotate = getPdfObject().getAsNumber(PdfName.Rotate);
+
+        if (rotate == null) {
+            return 0;
+        } else {
+            int n = rotate.getIntValue();
+            n %= 360;
+            return n < 0 ? n + 360 : n;
+        }
+    }
+
     public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
         if (index >= count)

@@ -187,6 +187,28 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsString(PdfName.Lang);
     }
 
+    public void addDeveloperExtension(PdfDeveloperExtension extension) {
+        PdfDictionary extensions = getPdfObject().getAsDictionary(PdfName.Extensions);
+
+        if (extensions == null) {
+            extensions = new PdfDictionary();
+            put(PdfName.Extensions, extensions);
+        } else {
+            PdfDictionary existingExtensionDict = extensions.getAsDictionary(extension.getPrefix());
+
+            if (extension != null) { // TODO: refactor
+                int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
+                if (diff < 0)
+                    return;
+                diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).getIntValue();
+                if (diff <= 0)
+                    return;
+            }
+        }
+
+        extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
+    }
+
     /**
      * True indicates that getOCProperties() was called, may have been modified,
      * and thus its dictionary needs to be reconstructed.
