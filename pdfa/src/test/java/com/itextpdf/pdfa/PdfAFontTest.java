@@ -1,0 +1,174 @@
+package com.itextpdf.pdfa;
+
+import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.canvas.color.DeviceRgb;
+import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.core.xmp.XMPException;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import java.io.*;
+
+@Category(IntegrationTest.class)
+public class PdfAFontTest {
+
+    static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    static final String outputDir = "./target/test/PdfA2/";
+
+    @BeforeClass
+    static public void beforeClass() {
+        new File(outputDir).mkdirs();
+    }
+
+    @Test
+    public void fontCheckPdfA1_01() throws IOException, XMPException {
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA1_01.pdf"));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "WinAnsi", true);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.GREEN)
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 36)
+                .showText("Hello World! Pdf/A-1B")
+                .endText()
+                .restoreState();
+        doc.close();
+    }
+
+    @Test(expected = PdfAConformanceException.class)
+    public void fontCheckPdfA1_02() throws IOException, XMPException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "WinAnsi");
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.GREEN)
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 36)
+                .showText("Hello World! Pdf/A-1B")
+                .endText()
+                .restoreState();
+        doc.close();
+    }
+
+    @Test
+    public void fontCheckPdfA1_03() throws IOException, XMPException {
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA1_03.pdf"));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "Identity-H", false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.GREEN)
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 36)
+                .showText("Hello World! Pdf/A-1B")
+                .endText()
+                .restoreState();
+        doc.close();
+    }
+
+    @Test(expected = PdfAConformanceException.class)
+    public void fontCheckPdfA1_04() throws IOException, XMPException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        PdfFont font = PdfFont.createFont(doc, "Helvetica", "WinAnsi", true);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.GREEN)
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 36)
+                .showText("Hello World! Pdf/A-1B")
+                .endText()
+                .restoreState();
+        doc.close();
+    }
+
+    @Test
+    @Ignore
+    public void fontCheckPdfA1_05() throws IOException, XMPException {
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA1_05.pdf"));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.GREEN)
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 36)
+                .showText("Hello World! Pdf/A-1B")
+                .endText()
+                .restoreState();
+
+        doc.close();
+    }
+
+    @Test
+    public void fontCheckPdfA2_01() throws IOException, XMPException {
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA2_01.pdf"));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "Identity-H", false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.GREEN)
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 36)
+                .showText("Hello World! Pdf/A-2B")
+                .endText()
+                .restoreState();
+
+        doc.close();
+    }
+
+    @Test
+    public void fontCheckPdfA3_01() throws IOException, XMPException {
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA3_01.pdf"));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "Identity-H", false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.GREEN)
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 36)
+                .showText("Hello World! Pdf/A-3B")
+                .endText()
+                .restoreState();
+
+        doc.close();
+    }
+}

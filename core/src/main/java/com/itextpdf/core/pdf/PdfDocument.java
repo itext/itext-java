@@ -552,11 +552,7 @@ public class PdfDocument implements IEventDispatcher {
                     if (info.getPdfObject().isModified()) {
                         info.flush();
                     }
-                    for (PdfFont font : documentFonts) {
-                        if (font.getPdfObject().getIndirectReference().checkState(PdfIndirectReference.Modified)) {
-                            font.flush();
-                        }
-                    }
+                    flushFonts();
 
                     writer.flushModifiedWaitingObjects();
                     if (writer.crypto != null) {
@@ -588,9 +584,7 @@ public class PdfDocument implements IEventDispatcher {
 
                     catalog.getPdfObject().flush(false);
                     info.flush();
-                    for (PdfFont font : documentFonts) {
-                        font.flush();
-                    }
+                    flushFonts();
                     writer.flushWaitingObjects();
                 }
 
@@ -950,6 +944,20 @@ public class PdfDocument implements IEventDispatcher {
         return documentFonts;
     }
 
+    protected void flushFonts() {
+        if (appendMode) {
+            for (PdfFont font : getDocumentFonts()) {
+                if (font.getPdfObject().getIndirectReference().checkState(PdfIndirectReference.Modified)) {
+                    font.flush();
+                }
+            }
+        } else {
+            for (PdfFont font : getDocumentFonts()) {
+                font.flush();
+            }
+        }
+    }
+
     /**
      * Replaces form fields with by simple content and removes them from the document
      */
@@ -1031,4 +1039,5 @@ public class PdfDocument implements IEventDispatcher {
             }
         }
     }
+
 }

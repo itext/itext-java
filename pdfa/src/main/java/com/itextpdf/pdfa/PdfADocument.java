@@ -1,6 +1,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.basics.color.IccProfile;
+import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.xmp.*;
@@ -28,9 +29,7 @@ public class PdfADocument extends PdfDocument {
     }
 
     public PdfADocument(PdfReader reader, PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
-        super(reader, writer);
-        addOutputIntent(outputIntent);
-        setChecker(conformanceLevel, outputIntent);
+        this(reader, writer, false, conformanceLevel, outputIntent);
     }
 
     @Override
@@ -112,7 +111,6 @@ public class PdfADocument extends PdfDocument {
         }
     }
 
-
     @Override
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         if (isClosing) {
@@ -120,6 +118,17 @@ public class PdfADocument extends PdfDocument {
         } else {
             //suppress the call
         }
+    }
+
+    @Override
+    protected void flushFonts() {
+        for (PdfFont pdfFont: getDocumentFonts()) {
+            if (!pdfFont.isEmbedded()) {
+                throw new PdfAConformanceException(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1)
+                        .setMessageParams(pdfFont.getFontProgram().getFontNames().getFontName());
+            }
+        }
+        super.flushFonts();
     }
 
     private void setChecker(PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {

@@ -5,6 +5,7 @@ import com.itextpdf.basics.PdfException;
 public class PdfAConformanceException extends PdfException {
 
     public static final String _1ActionsIsNotAllowed = "1.actions.is.not.allowed";
+    public static final String AllFontsMustBeEmbeddedThisOneIsnt1 = "all.the.fonts.must.be.embedded.this.one.isn.t.1";
     public static final String AnAnnotationDictionaryShallContainTheFKey = "an.annotation.dictionary.shall.contain.the.f.key";
     public static final String AnAnnotationDictionaryShallNotContainTheCaKeyWithAValueOtherThan1 = "an.annotation.dictionary.shall.not.contain.the.ca.key.with.a.value.other.than.1";
     public static final String AnnotationOfType1ShouldHaveContentsKey = "annotation.of.type.1.should.have.contents.key";

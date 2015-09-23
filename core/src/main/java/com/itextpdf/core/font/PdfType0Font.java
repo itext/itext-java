@@ -19,6 +19,7 @@ import java.util.*;
 public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     private static final int[] Empty = {};
+    private static final byte[] rotbits = {(byte)0x80,(byte)0x40,(byte)0x20,(byte)0x10,(byte)0x08,(byte)0x04,(byte)0x02,(byte)0x01};
 
     private static final int First = 0;
     private static final int Bracket = 1;
@@ -33,7 +34,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     protected HashMap<Integer, int[]> longTag;
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
-
 
     public PdfType0Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
         super(pdfDocument,fontDictionary,true);
@@ -240,7 +240,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         getPdfObject().flush();
     }
 
-
     private void flushFontData() {
         if (cidFontType == CidFontType0) {
             getPdfObject().put(PdfName.Type, PdfName.Font);
@@ -263,6 +262,19 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             addRangeUni(ttf, longTag, true);
             int[][] metrics = longTag.values().toArray(new int[0][]);
             Arrays.sort(metrics, new MetricComparator());
+            PdfStream cidSet;
+            if (metrics.length == 0) {
+                cidSet = new PdfStream(new byte[]{(byte)0x80});
+            } else {
+                int top = metrics[metrics.length - 1][0];
+                byte[] bt = new byte[top / 8 + 1];
+                for (int[] metric : metrics) {
+                    int v = metric[0];
+                    bt[v / 8] |= rotbits[v % 8];
+                }
+                cidSet = new PdfStream(bt);
+            }
+
             PdfStream fontStream;
             // sivan: cff
             if (ttf.isCff()) {
@@ -287,6 +299,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 subsetPrefix = createSubsetPrefix();
             }
             PdfDictionary fontDescriptor = PdfTrueTypeFont.getFontDescriptor(getDocument(), ttf, fontStream, subsetPrefix);
+            fontDescriptor.put(PdfName.CIDSet, cidSet);
+
             PdfDictionary cidFont = getCidFontType2(ttf, fontDescriptor, subsetPrefix, metrics);
 
             getPdfObject().put(PdfName.Type, PdfName.Font);
@@ -312,7 +326,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             throw new IllegalStateException("Unsupported CID Font");
         }
     }
-
 
 
     /** Generates the CIDFontTyte2 dictionary.
@@ -861,7 +874,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
         return glyphs;
     }
-
 
     private static class MetricComparator implements Comparator<int[]> {
         /**
