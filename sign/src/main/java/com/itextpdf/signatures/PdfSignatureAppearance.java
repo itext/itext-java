@@ -118,6 +118,9 @@ public class PdfSignatureAppearance {
     /** The name of the field. */
     private String fieldName;
 
+    /** The file right before the signature is added (can be null). */
+    private RandomAccessFile raf;
+
     /** The bytes of the file right before the signature is added (if raf is null) */
     private byte[] bout;
 
@@ -151,6 +154,8 @@ public class PdfSignatureAppearance {
     private OutputStream originalOS;
 
     private ByteArrayOutputStream temporaryOS;
+
+    private File tempFile;
 
     /** Name and content of keys that can only be added in the close() method. */
     private HashMap<PdfName, PdfLiteral> exclusionLocations;
@@ -186,14 +191,35 @@ public class PdfSignatureAppearance {
     /** Template containing all layers drawn on top of each other. */
     private PdfFormXObject frm;
 
-    /** Length of the output. */
-    private int boutLen;
-
     /** Indicates if the stamper has already been pre-closed. */
     private boolean preClosed = false;
 
     /** Signature field lock dictionary */
     private PdfSigLockDictionary fieldLock;
+
+    public PdfSignatureAppearance(PdfReader reader, PdfWriter writer, File tempFile) throws IOException {
+        if (tempFile == null) {
+            temporaryOS = new ByteArrayOutputStream();
+            document = new PdfDocument(reader, new PdfWriter(temporaryOS), false);
+        } else {
+            if (tempFile.isDirectory()) {
+                tempFile = File.createTempFile("pdf", null, tempFile);
+            }
+
+            OutputStream os = new FileOutputStream(tempFile);
+            this.tempFile = tempFile;
+            document = new PdfDocument(reader, new PdfWriter(os), false);
+        }
+
+        originalOS = writer == null ? null : writer.getOutputStream();
+        signDate = new GregorianCalendar();
+        fieldName = getNewSigFieldName();
+        signatureCreator = Version.getInstance().getVersion();
+    }
+
+    public PdfSignatureAppearance(PdfReader reader, PdfWriter writer) throws IOException {
+        this(reader, writer, null);
+    }
 
     /**
      * Gets the rendering mode for this signature.
@@ -632,17 +658,6 @@ public class PdfSignatureAppearance {
         canvas.addXObject(frm, 0, 0);
 
         return napp;
-    }
-
-    // TODO: remove this constructor!
-    public PdfSignatureAppearance(PdfReader reader, PdfWriter writer) {
-        temporaryOS = new ByteArrayOutputStream();
-        document = new PdfDocument(reader, new PdfWriter(temporaryOS), false);
-
-        signDate = new GregorianCalendar();
-        fieldName = getNewSigFieldName();
-        signatureCreator = Version.getInstance().getVersion();
-        originalOS = writer.getOutputStream();
     }
 
     /**
@@ -1102,8 +1117,8 @@ public class PdfSignatureAppearance {
         Arrays.sort(range, 1, range.length - 1);
         for (int k = 3; k < range.length - 2; k += 2)
             range[k] -= range[k - 1];
-/*
-        if (tempFile == null) {*/
+
+        if (tempFile == null) {
             bout = temporaryOS.toByteArray();
             range[range.length - 1] = bout.length - range[range.length - 2];
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -1113,6 +1128,26 @@ public class PdfSignatureAppearance {
                 os.writeLong(range[k]).write(' ');
             os.write(']');
             System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, bos.size());
+        } else {
+            try {
+                raf = new RandomAccessFile(tempFile, "rw");
+                long len = raf.length();
+                range[range.length - 1] = len - range[range.length - 2];
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                PdfOutputStream os = new PdfOutputStream(bos);
+                os.write('[');
+                for (int k = 0; k < range.length; ++k)
+                    os.writeLong(range[k]).write(' ');
+                os.write(']');
+                raf.seek(byteRangePosition);
+                raf.write(bos.toByteArray(), 0, bos.size());
+            }
+            catch (IOException e) {
+                try{raf.close();}catch(Exception ee){}
+                try{tempFile.delete();}catch(Exception ee){}
+                throw e;
+            }
+        }
     }
 
     /**
@@ -1141,19 +1176,48 @@ public class PdfSignatureAppearance {
                 os.write(obj);
                 if (bous.size() > lit.getBytesCount())
                     throw new IllegalArgumentException("the.key.1.is.too.big.is.2.reserved.3");
-/*                if (tempFile == null)*/
-                    System.arraycopy(bous.toByteArray(), 0, bout, (int)lit.getPosition(), bous.size());
+                if (tempFile == null) {
+                    System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), bous.size());
+                } else {
+                    raf.seek(lit.getPosition());
+                    raf.write(bous.toByteArray(), 0, bous.size());
+                }
             }
             if (update.size() != exclusionLocations.size())
                 throw new IllegalArgumentException("the.update.dictionary.has.less.keys.than.required");
-/*            if (tempFile == null) {*/
+            if (tempFile == null) {
                 originalOS.write(bout, 0, bout.length);
-/*            }*/
+            } else {
+                if (originalOS != null) {
+                    raf.seek(0);
+                    long length = raf.length();
+                    byte buf[] = new byte[8192];
+                    while (length > 0) {
+                        int r = raf.read(buf, 0, (int)Math.min((long)buf.length, length));
+                        if (r < 0)
+                            throw new EOFException("unexpected.eof");
+                        originalOS.write(buf, 0, r);
+                        length -= r;
+                    }
+                }
+            }
         }
         finally {
-            if (originalOS != null)
-                try{
-                    originalOS.close();}catch(Exception e){}
+            // TODO: should I close reader?
+            if (tempFile != null) {
+                raf.close();
+
+                if (originalOS != null) {
+                    tempFile.delete();
+                }
+            }
+
+            if (originalOS != null) {
+                try {
+                    originalOS.close();
+                } catch (Exception e) {
+                }
+            }
         }
     }
 
@@ -1172,7 +1236,7 @@ public class PdfSignatureAppearance {
      */
     private RandomAccessSource getUnderlyingSource() throws IOException {
         RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
-        return fac.createSource(bout);
+        return raf == null ? fac.createSource(bout) : fac.createSource(raf);
     }
 
     /**
