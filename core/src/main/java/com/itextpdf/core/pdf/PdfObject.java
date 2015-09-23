@@ -82,7 +82,7 @@ abstract public class PdfObject {
         try {
             PdfDocument document = getDocument();
             if (document != null) {
-                document.checkPdfIsoConformance(this, IsoKey.PDF_OBJECT);
+                document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
                 document.flushObject(this, canBeInObjStm && getType() != Stream
                         && getType() != IndirectReference && getIndirectReference().getGenNumber() == 0);
             }

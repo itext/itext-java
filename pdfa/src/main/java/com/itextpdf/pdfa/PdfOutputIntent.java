@@ -15,7 +15,7 @@ public class PdfOutputIntent extends PdfObjectWrapper<PdfDictionary> {
     public PdfOutputIntent(String outputConditionIdentifier, String outputCondition, String registryName, String info, InputStream iccStream) {
         super(new PdfDictionary());
         setOutputIntentSubtype(PdfName.GTS_PDFA1);
-        getPdfObject().put(PdfName.Type,PdfName.OutputIntents);
+        getPdfObject().put(PdfName.Type, PdfName.OutputIntents);
         if (outputCondition != null)
             setOutputCondition(outputCondition);
         if (outputConditionIdentifier != null)
@@ -27,6 +27,10 @@ public class PdfOutputIntent extends PdfObjectWrapper<PdfDictionary> {
         if (iccStream != null) {
             setDestOutputProfile(iccStream);
         }
+    }
+
+    public PdfOutputIntent(PdfDictionary outputIntentDict) {
+        super(outputIntentDict);
     }
 
     public PdfStream getDestOutputProfile() {
@@ -62,16 +66,16 @@ public class PdfOutputIntent extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.OutputConditionIdentifier, new PdfString(outputConditionIdentifier));
     }
 
-    public void getOutputCondition() {
-        getPdfObject().getAsString(PdfName.OutputCondition);
+    public PdfString getOutputCondition() {
+        return getPdfObject().getAsString(PdfName.OutputCondition);
     }
 
     public void setOutputCondition(String outputCondition) {
         getPdfObject().put(PdfName.OutputCondition, new PdfString(outputCondition));
     }
 
-    public void getOutputIntentSubtype() {
-        getPdfObject().getAsName(PdfName.S);
+    public PdfName getOutputIntentSubtype() {
+        return getPdfObject().getAsName(PdfName.S);
     }
 
     public void setOutputIntentSubtype(PdfName subtype) {

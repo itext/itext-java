@@ -32,6 +32,7 @@ public class PdfGraphicsState {
     private PdfObject transferFunction;
     private PdfObject transferFunction2;
     private PdfObject halftone;
+    private PdfObject htp;
     private Float flatnessTolerance;
     private Float smoothnessTolerance;
     private Boolean automaticStrokeAdjustment;
@@ -135,6 +136,9 @@ public class PdfGraphicsState {
         PdfObject ht = extGState.get(PdfName.HT);
         if (ht != null)
             halftone = ht;
+        PdfObject htp = extGState.get(PdfName.HTP);
+        if (htp != null)
+            this.htp = htp;
         Float fl = extGState.getAsFloat(PdfName.FL);
         if (fl != null)
             flatnessTolerance = fl;
@@ -286,5 +290,81 @@ public class PdfGraphicsState {
 
     public void setHorizontalScaling(Float scale) {
         this.scale = scale;
+    }
+
+    public Boolean getStrokeOverprint() {
+        return strokeOverprint;
+    }
+
+    public Boolean getFillOverprint() {
+        return fillOverprint;
+    }
+
+    public Integer getOverprintMode() {
+        return overprintMode;
+    }
+
+    public PdfObject getBlackGenerationFunction() {
+        return blackGenerationFunction;
+    }
+
+    public PdfObject getBlackGenerationFunction2() {
+        return blackGenerationFunction2;
+    }
+
+    public PdfObject getUnderColorRemovalFunction() {
+        return underColorRemovalFunction;
+    }
+
+    public PdfObject getUnderColorRemovalFunction2() {
+        return underColorRemovalFunction2;
+    }
+
+    public PdfObject getTransferFunction() {
+        return transferFunction;
+    }
+
+    public PdfObject getTransferFunction2() {
+        return transferFunction2;
+    }
+
+    public PdfObject getHalftone() {
+        return halftone;
+    }
+
+    public Float getSmoothnessTolerance() {
+        return smoothnessTolerance;
+    }
+
+    public Boolean getAutomaticStrokeAdjustment() {
+        return automaticStrokeAdjustment;
+    }
+
+    public PdfObject getBlendMode() {
+        return blendMode;
+    }
+
+    public PdfObject getSoftMask() {
+        return softMask;
+    }
+
+    public Float getStrokeAlpha() {
+        return strokeAlpha;
+    }
+
+    public Float getFillAlpha() {
+        return fillAlpha;
+    }
+
+    public Boolean getAlphaIsShape() {
+        return alphaIsShape;
+    }
+
+    public Boolean getTextKnockout() {
+        return textKnockout;
+    }
+
+    public PdfObject getHTP() {
+        return htp;
     }
 }

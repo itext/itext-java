@@ -135,6 +135,8 @@ public class PdfObjectWrapper<T extends PdfObject> {
     }
 
     protected void mustBeIndirect() {
-        pdfObject.setState(PdfObject.MustBeIndirect);
+        if (pdfObject.getIndirectReference() == null) {
+            pdfObject.setState(PdfObject.MustBeIndirect);
+        }
     }
 }

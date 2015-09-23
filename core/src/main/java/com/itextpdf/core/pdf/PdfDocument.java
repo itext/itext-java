@@ -220,7 +220,7 @@ public class PdfDocument implements IEventDispatcher {
         setXmpMetadata(xmpMeta);
     }
 
-    public PdfStream getXmpMetadata() throws XMPException {
+    public PdfStream getXmpMetadata() {
         return getCatalog().getPdfObject().getAsStream(PdfName.Metadata);
     }
 
@@ -520,7 +520,7 @@ public class PdfDocument implements IEventDispatcher {
                     }
                     catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
-                checkPdfIsoConformance();
+                checkIsoConformance();
                 PdfObject crypto = null;
                 if (appendMode) {
                     if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
@@ -856,9 +856,10 @@ public class PdfDocument implements IEventDispatcher {
         return trailer;
     }
 
-    public void checkPdfIsoConformance(Object obj, IsoKey key) { }
-
-    protected void checkPdfIsoConformance() { }
+    public void checkIsoConformance(Object obj, IsoKey key) { }
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) { }
+    public void checkShowTextIsoConformance(Object gState, PdfResources resources) { }
+    protected void checkIsoConformance() { }
 
     protected void  addRdfDescription(XMPMeta xmpMeta) throws XMPException {}
 

@@ -1,8 +1,12 @@
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.canvas.PdfGraphicsState;
+import com.itextpdf.canvas.color.*;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.pdfa.PdfAConformanceLevel;
 
@@ -11,9 +15,6 @@ import java.util.HashSet;
 
 public class PdfA1Checker extends PdfAChecker {
 
-    static public final int maxGsStackDepth = 28;
-    protected int gsStackDepth = 0;
-
     protected static final HashSet<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName.Sound, PdfName.Movie, PdfName.FileAttachment));
     protected static final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.Text,
             PdfName.FreeText, PdfName.Line, PdfName.Square, PdfName.Circle, PdfName.Stamp, PdfName.Ink, PdfName.Popup));
@@ -21,19 +22,11 @@ public class PdfA1Checker extends PdfAChecker {
             PdfName.ResetForm, PdfName.ImportData, PdfName.JavaScript, PdfName.Hide));
     protected static final HashSet<PdfName> allowedNamedActions = new HashSet<>(Arrays.asList(PdfName.NextPage,
             PdfName.PrevPage, PdfName.FirstPage, PdfName.LastPage));
+    protected static final HashSet<PdfName> allowedRenderingIntents = new HashSet<>(Arrays.asList(PdfName.RelativeColorimetric,
+            PdfName.AbsoluteColorimetric, PdfName.Perceptual, PdfName.Saturation));
 
-    public PdfA1Checker(PdfAConformanceLevel conformanceLevel, String outputIntentColorSpace) {
-        super(conformanceLevel, outputIntentColorSpace);
-    }
-
-    @Override
-    protected HashSet<PdfName> getForbiddenActions() {
-        return forbiddenActions;
-    }
-
-    @Override
-    protected HashSet<PdfName> getAllowedNamedActions() {
-        return allowedNamedActions;
+    public PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
+        super(conformanceLevel);
     }
 
     @Override
@@ -47,40 +40,153 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    public void checkInlineImage(PdfImageXObject inlineImage) {
-
+    public void checkInlineImage(PdfStream inlineImage, PdfDictionary currentColorSpaces) {
+        checkImage(inlineImage, currentColorSpaces);
     }
 
     @Override
-    protected void checkAction(PdfDictionary action) {
-        PdfName s = action.getAsName(PdfName.S);
-        if (forbiddenActions.contains(s)) {
-            throw new PdfAConformanceException(PdfAConformanceException._1ActionsIsNotAllowed).setMessageParams(s.getValue());
+    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill) {
+        checkColorSpace(color.getColorSpace(), currentColorSpaces, true, fill);
+    }
+
+    @Override
+    public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill) {
+        if (colorSpace instanceof PdfSpecialCs.Separation) {
+            colorSpace = ((PdfSpecialCs.Separation) colorSpace).getBaseCs();
+        } else if (colorSpace instanceof PdfSpecialCs.DeviceN) {
+            colorSpace = ((PdfSpecialCs.DeviceN) colorSpace).getBaseCs();
         }
-        if (s.equals(PdfName.Named)) {
-            PdfName n = action.getAsName(PdfName.N);
-            if (n != null && !allowedNamedActions.contains(n)) {
-                throw new PdfAConformanceException(PdfAConformanceException.NamedActionType1IsNotAllowed).setMessageParams(n.getValue());
+
+        if (colorSpace instanceof PdfDeviceCs.Rgb) {
+            if (cmykIsUsed) {
+                throw new PdfAConformanceException(PdfAConformanceException.DevicergbAndDevicecmykColorspacesCannotBeUsedBothInOneFile);
+            }
+            rgbIsUsed = true;
+        } else if (colorSpace instanceof PdfDeviceCs.Cmyk) {
+            if (rgbIsUsed) {
+                throw new PdfAConformanceException(PdfAConformanceException.DevicergbAndDevicecmykColorspacesCannotBeUsedBothInOneFile);
+            }
+            cmykIsUsed = true;
+        } else if (colorSpace instanceof PdfDeviceCs.Gray) {
+            grayIsUsed = true;
+        }
+    }
+
+    @Override
+    protected HashSet<PdfName> getForbiddenActions() {
+        return forbiddenActions;
+    }
+
+    @Override
+    protected HashSet<PdfName> getAllowedNamedActions() {
+        return allowedNamedActions;
+    }
+
+    @Override
+    protected void checkColorsUsages() {
+        if ((rgbIsUsed || cmykIsUsed || grayIsUsed) && pdfAOutputIntentColorSpace == null) {
+            throw new PdfAConformanceException(PdfAConformanceException.IfDeviceRgbCmykGrayUsedInFileThatFileShallContainPdfaOutputIntent);
+        }
+
+        if (rgbIsUsed) {
+            if (!ICC_COLOR_SPACE_RGB.equals(pdfAOutputIntentColorSpace)) {
+                throw new PdfAConformanceException(PdfAConformanceException.DevicergbMayBeUsedOnlyIfTheFileHasARgbPdfAOutputIntent);
             }
         }
-        if (s.equals(PdfName.SetState) || s.equals(PdfName.NoOp)) {
-            throw new PdfAConformanceException(PdfAConformanceException.DeprecatedSetStateAndNoOpActionsAreNotAllowed);
+        if (cmykIsUsed) {
+            if (!ICC_COLOR_SPACE_CMYK.equals(pdfAOutputIntentColorSpace)) {
+                throw new PdfAConformanceException(PdfAConformanceException.DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntent);
+            }
         }
     }
 
     @Override
-    protected void checkExtGState(PdfDictionary extGState) {
+    public void checkExtGState(PdfGraphicsState extGState) {
+        if (extGState.getTransferFunction() != null) {
+            throw new PdfAConformanceException(PdfAConformanceException.AnExtgstateDictionaryShallNotContainTheTrKey);
+        }
+        PdfObject transferFunction2 = extGState.getTransferFunction2();
+        if (transferFunction2 != null && !PdfName.Default.equals(transferFunction2)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AnExtgstateDictionaryShallNotContainTheTR2KeyWithAValueOtherThanDefault);
+        }
 
+        checkRenderingIntent(extGState.getRenderingIntent());
+
+        PdfObject softMask = extGState.getSoftMask();
+        if (softMask != null && !PdfName.None.equals(softMask)) {
+            throw new PdfAConformanceException(PdfAConformanceException.TheSmaskKeyIsNotAllowedInExtgstate);
+        }
+
+        PdfObject bm = extGState.getBlendMode();
+        if (bm != null && !PdfName.Normal.equals(bm) && !PdfName.Compatible.equals(bm)) {
+            throw new PdfAConformanceException(PdfAConformanceException.BlendModeShallHhaveValueNormalOrCompatible);
+        }
+
+        Float ca = extGState.getStrokeAlpha();
+        if (ca != null && ca != 1) {
+            throw new PdfAConformanceException(PdfAConformanceException.TransparencyIsNotAllowedCAShallBeEqualTo1);
+        }
+
+        ca = extGState.getFillAlpha();
+        if (ca != null && ca != 1) {
+            throw new PdfAConformanceException(PdfAConformanceException.TransparencyIsNotAllowedCaShallBeEqualTo1);
+        }
     }
 
     @Override
-    protected void checkImageXObject(PdfStream image) {
+    public void checkRenderingIntent(PdfName intent) {
+        if (intent == null)
+            return;
 
+        if (!allowedRenderingIntents.contains(intent)) {
+            throw new PdfAConformanceException(PdfAConformanceException.IfSpecifiedRenderingShallBeOneOfTheFollowingRelativecolorimetricAbsolutecolorimetricPerceptualOrSaturation);
+        }
+    }
+
+    @Override
+    protected void checkImage(PdfStream image, PdfDictionary currentColorSpaces) {
+        if (image.containsKey(PdfName.Alternates)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainAlternatesKey);
+        }
+        if (image.containsKey(PdfName.OPI)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainOpiKey);
+        }
+
+        if (image.containsKey(PdfName.Interpolate) && image.getAsBool(PdfName.Interpolate)) {
+            throw new PdfAConformanceException(PdfAConformanceException.TheValueOfInterpolateKeyShallNotBeTrue);
+        }
+
+        checkRenderingIntent(image.getAsName(PdfName.Intent));
+
+        if (image.containsKey(PdfName.SMask) && !PdfName.None.equals(image.getAsName(PdfName.SMask))) {
+            throw new PdfAConformanceException(PdfAConformanceException.TheSmaskKeyIsNotAllowedInXobjects);
+        }
+
+        PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
+        if (colorSpaceObj != null) {
+            checkColorSpace(PdfColorSpace.makeColorSpace(colorSpaceObj, null), currentColorSpaces, true, null);
+        }
     }
 
     @Override
     protected void checkFormXObject(PdfStream form) {
+        if (form.containsKey(PdfName.OPI)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AFormXobjectDictionaryShallNotContainOpiKey);
+        }
+        if (form.containsKey(PdfName.PS)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AFormXobjectDictionaryShallNotContainPSKey);
+        }
+        if (PdfName.PS.equals(form.getAsName(PdfName.Subtype2))) {
+            throw new PdfAConformanceException(PdfAConformanceException.AFormXobjectDictionaryShallNotContainSubtype2KeyWithAValueOfPS);
+        }
 
+        if (form.containsKey(PdfName.SMask)) {
+            throw new PdfAConformanceException(PdfAConformanceException.TheSmaskKeyIsNotAllowedInXobjects);
+        }
+
+        if (form.containsKey(PdfName.Group) && PdfName.Transparency.equals(form.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
+            throw new PdfAConformanceException(PdfAConformanceException.AGroupObjectWithAnSKeyWithAValueOfTransparencyShallNotBeIncludedInAFormXobject);
+        }
     }
 
     @Override
@@ -106,6 +212,26 @@ public class PdfA1Checker extends PdfAChecker {
         if (!catalog.containsKey(PdfName.Metadata)) {
             throw new PdfAConformanceException(PdfAConformanceException.CatalogShallContainMetadataEntry);
         }
+    }
+
+    @Override
+    protected void checkOutputIntents(PdfDictionary catalog) {
+        PdfArray outputIntents = catalog.getAsArray(PdfName.OutputIntents);
+        if (outputIntents == null)
+            return;
+
+        int i;
+        PdfObject destOutputProfile = null;
+        for (i = 0; i < outputIntents.size() && destOutputProfile == null; ++i) {
+            destOutputProfile = outputIntents.getAsDictionary(i).get(PdfName.DestOutputProfile);
+        }
+        for (; i < outputIntents.size(); ++i) {
+            PdfObject otherDestOutputProfile = outputIntents.getAsDictionary(i).get(PdfName.DestOutputProfile);
+            if (otherDestOutputProfile != null && destOutputProfile != otherDestOutputProfile) {
+                throw new PdfAConformanceException(PdfAConformanceException.IfOutputintentsArrayHasMoreThanOneEntryWithDestoutputprofileKeyTheSameIndirectObjectShallBeUsedAsTheValueOfThatObject);
+            }
+        }
+
     }
 
     @Override
@@ -180,7 +306,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.TextAnnotationsShouldSetTheNozoomAndNorotateFlagBitsOfTheFKeyTo1);
         }
         if (annotDic.containsKey(PdfName.C) || annotDic.containsKey(PdfName.IC)) {
-            if (!ICC_COLOR_SPACE_RGB.equalsIgnoreCase(pdfAOutputIntentColorSpace)) {
+            if (!ICC_COLOR_SPACE_RGB.equals(pdfAOutputIntentColorSpace)) {
                 throw new PdfAConformanceException(PdfAConformanceException.DestoutputprofileInThePdfa1OutputintentDictionaryShallBeRgb);
             }
         }
@@ -240,13 +366,17 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    protected void checkPage(PdfDictionary pageDict) {
+    protected void checkPage(PdfPage page) {
+        PdfDictionary pageDict = page.getPdfObject();
         PdfDictionary actions = pageDict.getAsDictionary(PdfName.AA);
         if (actions != null) {
             for (PdfName key : actions.keySet()) {
                 PdfDictionary action = actions.getAsDictionary(key);
                 checkAction(action);
             }
+        }
+        if (pageDict.containsKey(PdfName.Group) && PdfName.Transparency.equals(pageDict.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
+            throw new PdfAConformanceException(PdfAConformanceException.AGroupObjectWithAnSKeyWithAValueOfTransparencyShallNotBeIncludedInAPageObject);
         }
     }
 

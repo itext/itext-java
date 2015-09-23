@@ -146,7 +146,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * @param layer the new layer
      */
     protected void registerLayer(final PdfLayer layer) {
-        //TODO PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, layer);
         if (layer == null)
             throw new IllegalArgumentException("layer argument is null");
         layers.add(layer);

@@ -1,7 +1,10 @@
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.basics.color.IccProfile;
+import com.itextpdf.canvas.PdfGraphicsState;
+import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.pdfa.PdfAConformanceLevel;
 
@@ -14,16 +17,28 @@ public abstract class PdfAChecker {
     public static final String ICC_COLOR_SPACE_CMYK = "CMYK";
     public static final String ICC_COLOR_SPACE_GRAY = "GRAY";
 
+    public static final String ICC_DEVICE_CLASS_OUTPUT_PROFILE = "prtr";
+    public static final String ICC_DEVICE_CLASS_MONITOR_PROFILE = "mntr";
+
+    static public final int maxGsStackDepth = 28;
+
     protected PdfAConformanceLevel conformanceLevel;
     protected String pdfAOutputIntentColorSpace;
 
-    public PdfAChecker(PdfAConformanceLevel conformanceLevel, String pdfAOutputIntentColorSpace) {
+    protected int gsStackDepth = 0;
+    protected boolean rgbIsUsed = false;
+    protected boolean cmykIsUsed = false;
+    protected boolean grayIsUsed = false;
+
+    public PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
-        this.pdfAOutputIntentColorSpace = pdfAOutputIntentColorSpace;
     }
 
     public void checkDocument(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();
+        setPdfAOutputIntentColorSpace(catalogDict);
+
+        checkOutputIntents(catalogDict);
         checkMetaData(catalogDict);
         checkCatalogValidEntries(catalogDict);
         checkTrailer(catalog.getDocument().getTrailer());
@@ -32,6 +47,7 @@ public abstract class PdfAChecker {
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
         checkOutlines(catalogDict);
         checkPages(catalog);
+        checkColorsUsages();
     }
 
     public void checkPdfObject(PdfObject obj) {
@@ -56,12 +72,16 @@ public abstract class PdfAChecker {
     }
 
     public abstract void checkCanvasStack(char stackOperation);
-    public abstract void checkInlineImage(PdfImageXObject inlineImage);
+    public abstract void checkInlineImage(PdfStream inlineImage, PdfDictionary currentColorSpaces);
+    public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill);
+    public abstract void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill);
+    public abstract void checkRenderingIntent(PdfName intent);
+    public abstract void checkExtGState(PdfGraphicsState extGState);
 
     protected abstract HashSet<PdfName> getForbiddenActions();
     protected abstract HashSet<PdfName> getAllowedNamedActions();
-    protected abstract void checkExtGState(PdfDictionary extGState);
-    protected abstract void checkImageXObject(PdfStream image);
+    protected abstract void checkColorsUsages();
+    protected abstract void checkImage(PdfStream image, PdfDictionary currentColorSpaces);
     protected abstract void checkFormXObject(PdfStream form);
     protected abstract void checkFont(PdfDictionary font);
     protected abstract void checkPdfNumber(PdfNumber number);
@@ -70,55 +90,45 @@ public abstract class PdfAChecker {
     protected abstract void checkAnnotation(PdfDictionary annotDic);
     protected abstract void checkForm(PdfDictionary form);
     protected abstract void checkCatalogValidEntries(PdfDictionary catalogDict);
-    protected abstract void checkPage(PdfDictionary pageDict);
+    protected abstract void checkPage(PdfPage page);
     protected abstract void checkTrailer(PdfDictionary trailer);
     protected abstract void checkLogicalStructure(PdfDictionary catalog);
     protected abstract void checkMetaData(PdfDictionary catalog);
-    protected abstract void checkPageSize(PdfDictionary  page);
+    protected abstract void checkOutputIntents(PdfDictionary catalog);
+    protected abstract void checkPageSize(PdfDictionary page);
 
 
     protected void checkResources(PdfDictionary resources) {
         if (resources == null)
             return;
 
-        PdfDictionary extGStates = resources.getAsDictionary(PdfName.ExtGState);
-        PdfDictionary patterns = resources.getAsDictionary(PdfName.Pattern);
         PdfDictionary fonts = resources.getAsDictionary(PdfName.Font);
         PdfDictionary xObjects = resources.getAsDictionary(PdfName.XObject);
-
-        if (extGStates != null) {
-            for (PdfName name : extGStates.keySet()) {
-                PdfDictionary extGStateDict = extGStates.getAsDictionary(name);
-                checkExtGState(extGStateDict);
-            }
-        }
-
-        if (patterns != null) {
-            int shadingPatternType = 2;
-            for (PdfName name : patterns.keySet()) {
-                PdfDictionary patternDict = patterns.getAsDictionary(name);
-                if (patternDict.getAsInt(PdfName.PatternType) == shadingPatternType) {
-                    checkExtGState(patternDict.getAsDictionary(PdfName.ExtGState));
-                }
-            }
-        }
+        PdfDictionary shadings = resources.getAsDictionary(PdfName.Shading);
 
         if (fonts != null) {
-            for (PdfName name : fonts.keySet()) {
-                PdfDictionary fontDict = fonts.getAsDictionary(name);
+            for (PdfObject font : fonts.values()) {
+                PdfDictionary fontDict = (PdfDictionary) font;
                 checkFont(fontDict);
             }
         }
 
         if (xObjects != null) {
-            for (PdfName name : xObjects.keySet()) {
-                PdfStream xObjStream = xObjects.getAsStream(name);
+            for (PdfObject xObject : xObjects.values()) {
+                PdfStream xObjStream = (PdfStream) xObject;
                 PdfObject subtype = xObjStream.get(PdfName.Subtype);
                 if (PdfName.Image.equals(subtype)) {
-                    checkImageXObject(xObjStream);
+                    checkImage(xObjStream, resources.getAsDictionary(PdfName.ColorSpace));
                 } else if (PdfName.Form.equals(subtype)) {
                     checkFormXObject(xObjStream);
                 }
+            }
+        }
+
+        if (shadings != null) {
+            for (PdfObject shading : shadings.values()) {
+                PdfDictionary shadingDict = (PdfDictionary) shading;
+                checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace), null), resources.getAsDictionary(PdfName.ColorSpace), true, null);
             }
         }
     }
@@ -166,9 +176,9 @@ public abstract class PdfAChecker {
     private void checkPages(PdfCatalog catalog) {
         for (int i = 1; i <= catalog.getNumOfPages(); i++) {
             PdfPage p = catalog.getPage(i);
+            checkPage(p);
             PdfDictionary pageDict = p.getPdfObject();
-            PdfDictionary pageResources = pageDict.getAsDictionary(PdfName.Resources);
-            checkPage(pageDict);
+            PdfDictionary pageResources = p.getResources().getPdfObject();
             checkResources(pageResources);
             checkAnnotations(pageDict);
             checkPageSize(pageDict);
@@ -220,5 +230,35 @@ public abstract class PdfAChecker {
         }
 
         return outlines;
+    }
+
+    private void setPdfAOutputIntentColorSpace(PdfDictionary catalog) {
+        PdfArray outputIntents = catalog.getAsArray(PdfName.OutputIntents);
+        if (outputIntents == null)
+            return;
+
+        PdfDictionary pdfAOutputIntent = getPdfAOutputIntent(outputIntents);
+        setCheckerOutputIntent(pdfAOutputIntent);
+    }
+
+    private PdfDictionary getPdfAOutputIntent(PdfArray outputIntents) {
+        for (int i = 0; i < outputIntents.size(); ++i) {
+            PdfName outputIntentSubtype = outputIntents.getAsDictionary(i).getAsName(PdfName.S);
+            if (PdfName.GTS_PDFA1.equals(outputIntentSubtype)) {
+                return outputIntents.getAsDictionary(i);
+            }
+        }
+
+        return null;
+    }
+
+    private void setCheckerOutputIntent(PdfDictionary outputIntent) {
+        if (outputIntent != null) {
+            PdfStream destOutputProfile = outputIntent.getAsStream(PdfName.DestOutputProfile);
+            if (destOutputProfile != null) {
+                String intentCS = IccProfile.getIccColorSpaceName(destOutputProfile.getBytes());
+                this.pdfAOutputIntentColorSpace = intentCS;
+            }
+        }
     }
 }

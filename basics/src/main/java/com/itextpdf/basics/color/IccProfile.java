@@ -143,6 +143,16 @@ public class IccProfile {
         return colorSpace;
     }
 
+    public static String getIccDeviceClass(byte[] data) {
+        String deviceClass;
+        try {
+            deviceClass = new String(data, 12, 4, "US-ASCII");
+        } catch (UnsupportedEncodingException e) {
+            throw new PdfException(PdfException.InvalidIccProfile, e);
+        }
+        return deviceClass;
+    }
+
     public static Integer getIccNumOfComponents(byte[] data) {
         return cstags.get(getIccColorSpaceName(data));
     }
