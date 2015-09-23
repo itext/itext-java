@@ -1,5 +1,6 @@
 package com.itextpdf.canvas;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
@@ -19,6 +20,8 @@ import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.BarcodePDF417;
 import org.junit.Assert;
@@ -35,12 +38,14 @@ import java.util.HashMap;
 import java.util.List;
 
 @Category(IntegrationTest.class)
-public class PdfCanvasTest {
+public class PdfCanvasTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfCanvasTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/canvas/PdfCanvasTest/";
 
-    /** Paths to images. */
+    /**
+     * Paths to images.
+     */
     public static final String[] RESOURCES = {
             "Desert.jpg",
             "bulb.gif",
@@ -51,7 +56,7 @@ public class PdfCanvasTest {
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -1436,7 +1441,7 @@ public class PdfCanvasTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(sourceFolder+"2-frames.gif");
+        InputStream is = new FileInputStream(sourceFolder + "2-frames.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -1460,7 +1465,7 @@ public class PdfCanvasTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(sourceFolder+"2-frames.gif");
+        InputStream is = new FileInputStream(sourceFolder + "2-frames.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -1484,7 +1489,7 @@ public class PdfCanvasTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(sourceFolder+"2-frames.gif");
+        InputStream is = new FileInputStream(sourceFolder + "2-frames.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -1544,6 +1549,10 @@ public class PdfCanvasTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER,
+            LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER,
+            LogMessageConstant.IMAGE_HAS_MASK,
+            LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB})
     public void inlineImagesTest01() throws IOException, InterruptedException {
         String filename = "inlineImages01.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
@@ -1566,6 +1575,10 @@ public class PdfCanvasTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER,
+            LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER,
+            LogMessageConstant.IMAGE_HAS_MASK,
+            LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB})
     public void inlineImagesTest02() throws IOException, InterruptedException {
         String filename = "inlineImages02.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));

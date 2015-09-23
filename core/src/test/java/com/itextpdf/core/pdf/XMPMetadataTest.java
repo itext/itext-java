@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.pdf.PdfReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -16,14 +17,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class XMPMetadataTest {
+public class XMPMetadataTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/XmpWriterTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/XmpWriterTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -71,15 +72,5 @@ public class XMPMetadataTest {
 
     }
 
-    private byte[] readFile(String filename) throws IOException {
-        FileInputStream input = new FileInputStream(filename);
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buffer = new byte[8192];
-        int read;
-        while ((read = input.read(buffer)) != -1) {
-            output.write(buffer, 0, read);
-        }
-        input.close();
-        return output.toByteArray();
-    }
+
 }

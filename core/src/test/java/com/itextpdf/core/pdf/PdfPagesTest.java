@@ -4,10 +4,8 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import com.itextpdf.test.ExtendedITextTest;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
 
 import java.io.*;
@@ -16,15 +14,15 @@ import java.util.List;
 import java.util.Random;
 
 @Category(IntegrationTest.class)
-public class PdfPagesTest {
+public class PdfPagesTest extends ExtendedITextTest{
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfPagesTest/";
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfPagesTest/";
     static final PdfName PageNum = new PdfName("PageNum");
     static final com.itextpdf.text.pdf.PdfName PageNum5 = new com.itextpdf.text.pdf.PdfName("PageNum");
 
-    @Before
-    public void setup() {
-        new File(destinationFolder).mkdirs();
+    @BeforeClass
+    public static void setup() {
+       createDestinationFolder(destinationFolder);
     }
 
     @Test

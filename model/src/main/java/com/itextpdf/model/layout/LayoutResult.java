@@ -34,8 +34,16 @@ public class LayoutResult {
         return splitRenderer;
     }
 
+    public void setSplitRenderer(IRenderer splitRenderer) {
+        this.splitRenderer = splitRenderer;
+    }
+
     public IRenderer getOverflowRenderer() {
         return overflowRenderer;
+    }
+
+    public void setOverflowRenderer(IRenderer overflowRenderer) {
+        this.overflowRenderer = overflowRenderer;
     }
 
     public PageSize getNewPageSize() {

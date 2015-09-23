@@ -5,6 +5,7 @@ import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.forms.fields.*;
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,14 +17,14 @@ import java.io.IOException;
 import java.util.Map;
 
 @Category(IntegrationTest.class)
-public class PdfFormFieldTest {
+public class PdfFormFieldTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

@@ -594,7 +594,7 @@ public class CompareTool {
         for (PdfName key : mergedKeys) {
             if (key.equals(PdfName.Parent) || key.equals(PdfName.P)) continue;
             if (outDict.isStream() && cmpDict.isStream() && (key.equals(PdfName.Filter) || key.equals(PdfName.Length))) continue;
-            if (key.equals(PdfName.BaseFont) || key.equals(PdfName.Font)) {
+            if (key.equals(PdfName.BaseFont) || key.equals(PdfName.FontName)) {
                 PdfObject cmpObj = cmpDict.get(key);
                 if (cmpObj.isName() && cmpObj.toString().indexOf('+') > 0) {
                     PdfObject outObj = outDict.get(key);

@@ -1,13 +1,15 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.test.ITextTest;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class PdfNameTest {
+public class PdfNameTest extends ITextTest {
 
     @Test
     public void specialCharactersTest(){
@@ -19,15 +21,4 @@ public class PdfNameTest {
         Assert.assertEquals(str2, createStringByEscaped(name2.getInternalContent()));
     }
 
-    String createStringByEscaped(byte[] bytes) {
-        //sample "/PdfName"
-        String[] chars = (new String(bytes)).substring(1).split("#");
-        StringBuilder buf = new StringBuilder(chars.length);
-        for (String ch : chars) {
-            if (ch.length() == 0) continue;
-            Integer b = Integer.parseInt(ch, 16);
-            buf.append((char)b.intValue());
-        }
-        return buf.toString();
-    }
 }

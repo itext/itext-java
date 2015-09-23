@@ -1,17 +1,18 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 @Category(IntegrationTest.class)
-public class PdfReaderTest {
+public class PdfReaderTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfReaderTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfReaderTest/";
@@ -32,7 +33,7 @@ public class PdfReaderTest {
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -762,6 +763,7 @@ public class PdfReaderTest {
         Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
+
         int pageCount = document.getNumOfPages();
         Assert.assertEquals(10, pageCount);
 
@@ -986,6 +988,7 @@ public class PdfReaderTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.INVALID_INDIRECT_REFERENCE})
     public void fixPdfTest13() throws IOException {
         String filename = sourceFolder + "XRefWithInvalidGenerations1.pdf";
 
@@ -1033,6 +1036,7 @@ public class PdfReaderTest {
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.INVALID_INDIRECT_REFERENCE})
     public void fixPdfTest14() throws IOException {
         String filename = sourceFolder + "XRefWithInvalidGenerations2.pdf";
 

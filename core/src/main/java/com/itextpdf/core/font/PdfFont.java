@@ -1,8 +1,20 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.*;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.basics.font.CidFont;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontFactory;
+import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.TrueTypeFont;
+import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
+import com.itextpdf.core.pdf.PdfStream;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +31,9 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /** true if the font is to be embedded in the PDF. */
     //TODO mark as final
     protected boolean embedded = false;
+    /**
+     * Indicates if all the glyphs and widths for that particular encoding should be included in the document.
+     */
     protected boolean subset = true;
     protected ArrayList<int[]> subsetRanges;
 

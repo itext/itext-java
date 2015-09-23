@@ -283,6 +283,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
                 if (xObject != null) {
                     Rectangle box = field.getPdfObject().getAsRectangle(PdfName.Rect);
+                    if (page.isFlushed()) {
+                        throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead);
+                    }
                     PdfCanvas canvas = new PdfCanvas(page);
                     canvas.addXObject(xObject, box.getX(), box.getY());
                     PdfArray fFields = getFields();
@@ -500,9 +503,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
         for (int i = 1; i <= document.getNumOfPages(); i++) {
             PdfPage page = document.getPage(i);
-            PdfArray annotations = page.getPdfObject().getAsArray(PdfName.Annots);
-            if (annotations != null && annotations.contains(annotation.getIndirectReference())){
-                return page;
+            if (!page.isFlushed()) {
+                PdfArray annotations = page.getPdfObject().getAsArray(PdfName.Annots);
+                if (annotations != null && annotations.contains(annotation.getIndirectReference())){
+                    return page;
+                }
             }
         }
         return null;

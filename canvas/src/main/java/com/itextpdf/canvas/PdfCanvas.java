@@ -1932,7 +1932,7 @@ public class PdfCanvas {
 
     private static PdfStream getPageStream(PdfPage page) {
         PdfStream stream = page.getContentStream(page.getContentStreamCount() - 1);
-        return stream.getOutputStream() == null ? page.newContentStreamAfter() : stream;
+        return stream == null || stream.getOutputStream() == null ? page.newContentStreamAfter() : stream;
     }
 
     /**

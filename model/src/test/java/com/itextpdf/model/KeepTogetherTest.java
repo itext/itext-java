@@ -1,5 +1,7 @@
 package com.itextpdf.model;
 
+
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -10,25 +12,35 @@ import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.renderer.DocumentRenderer;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+
 
 @Category(IntegrationTest.class)
-public class KeepTogetherTest {
+public class KeepTogetherTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/KeepTogetherTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/KeepTogetherTest/";
 
+
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
+
+    @AfterClass
+    static public void afterClass() {
+        deleteDirectory(destinationFolder);
+    }
+
+
 
     @Test
     public void keepTogetherParagraphTest01() throws IOException, InterruptedException {
@@ -51,13 +63,14 @@ public class KeepTogetherTest {
         Paragraph p1 = new Paragraph(str);
         p1.setKeepTogether(true);
         doc.add(p1);
-
         doc.close();
-
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
 
+
+
     @Test
+    @LogMessage(messages = {LogMessageConstant.ELEMENT_DOESNOT_FIT_AREA})
     public void keepTogetherParagraphTest02() throws IOException, InterruptedException {
 
         String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest02.pdf";
@@ -83,7 +96,6 @@ public class KeepTogetherTest {
         doc.add(p1);
 
         doc.close();
-
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -105,9 +117,7 @@ public class KeepTogetherTest {
         List list = new List();
         list.add("firstItem").add("secondItem").add("thirdItem").setKeepTogether(true).setListSymbol(Property.ListNumberingType.DECIMAL);
         doc.add(list);
-
         doc.close();
-
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -136,12 +146,13 @@ public class KeepTogetherTest {
 
         doc.add(div);
         doc.close();
-
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
+    @LogMessage(messages = {LogMessageConstant.ELEMENT_DOESNOT_FIT_AREA})
     public void keepTogetherDivTest02() throws IOException, InterruptedException {
+
 
         String cmpFileName = sourceFolder + "cmp_keepTogetherDivTest02.pdf";
         String outFile  = destinationFolder + "keepTogetherDivTest02.pdf";
@@ -176,7 +187,8 @@ public class KeepTogetherTest {
 
         doc.add(div);
         doc.close();
-
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
+
+
 }

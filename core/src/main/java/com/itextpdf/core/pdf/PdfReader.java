@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.io.ByteBuffer;
@@ -720,7 +721,7 @@ public class PdfReader {
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                            logger.warn(String.format("Invalid indirect reference %d %d R", tokens.getObjNr(), tokens.getGenNr()));
+                            logger.warn(String.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE + " %d %d R", tokens.getObjNr(), tokens.getGenNr()));
                             return new PdfNull();
                         } else {
                             throw new PdfException(PdfException.InvalidIndirectReference1);
@@ -941,6 +942,10 @@ public class PdfReader {
         if (trailer == null) {
             trailer = new PdfDictionary();
             trailer.putAll(xrefStream);
+            trailer.remove(PdfName.DecodeParms);
+            trailer.remove(PdfName.Filter);
+            trailer.remove(PdfName.Prev);
+            trailer.remove(PdfName.Length);
         }
 
         int size = ((PdfNumber) xrefStream.get(PdfName.Size)).getIntValue();
@@ -956,9 +961,8 @@ public class PdfReader {
         PdfArray w = xrefStream.getAsArray(PdfName.W);
         long prev = -1;
         obj = xrefStream.get(PdfName.Prev);
-        if (obj != null) {
+        if (obj != null)
             prev = ((PdfNumber) obj).getLongValue();
-        }
         xref.setCapacity(size);
         byte[] b = readStreamBytes(xrefStream, true);
         int bptr = 0;

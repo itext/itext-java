@@ -1,8 +1,18 @@
 package com.itextpdf.core.font;
 
 
-import com.itextpdf.basics.font.*;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontEncoding;
+import com.itextpdf.basics.font.FontMetrics;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfStream;
 
 import java.io.IOException;
 
@@ -13,10 +23,6 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
      * Forces the output of the width array. Only matters for the 14 built-in fonts.
      */
     protected boolean forceWidthsOutput = false;
-    /**
-     * Indicates if all the glyphs and widths for that particular encoding should be included in the document.
-     */
-    private boolean subset = false;
     /**
      * The array used with single byte encodings.
      */

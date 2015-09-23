@@ -1,5 +1,6 @@
 package com.itextpdf.basics.image;
 
+import com.itextpdf.basics.LogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ public class Jpeg2000Image extends Image {
     @Override
     public boolean canImageBeInline() {
         Logger logger = LoggerFactory.getLogger(Image.class);
-        logger.warn("Image cannot be inline if it has JPXDecode filter. It will be added as an ImageXObject");
+        logger.warn(LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER);
         return false;
     }
 }

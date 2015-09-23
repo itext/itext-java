@@ -1,5 +1,6 @@
 package com.itextpdf.basics.image;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.color.IccProfile;
 import org.slf4j.Logger;
@@ -279,11 +280,11 @@ public abstract class Image {
     public boolean canImageBeInline() {
         Logger logger = LoggerFactory.getLogger(Image.class);
         if (imageSize > 4096) {
-            logger.warn("Inline image size cannot be more than 4KB. It will be added as an ImageXObject");
+            logger.warn(LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB);
             return false;
         }
         if (imageMask != null) {
-            logger.warn("Image cannot be inline if it has a Mask");
+            logger.warn(LogMessageConstant.IMAGE_HAS_MASK);
             return false;
         }
 

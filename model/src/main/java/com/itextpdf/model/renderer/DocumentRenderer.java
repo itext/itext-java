@@ -1,5 +1,6 @@
 package com.itextpdf.model.renderer;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.geom.PageSize;
@@ -72,7 +73,7 @@ public class DocumentRenderer extends AbstractRenderer {
                             if (Boolean.valueOf(true).equals(result.getOverflowRenderer().getModelElement().getProperty(Property.KEEP_TOGETHER))) {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
-                                logger.warn("Element doesn't fit current area. KeepTogether property will be ignored.");
+                                logger.warn(LogMessageConstant.ELEMENT_DOESNOT_FIT_AREA);
                             } else {
                                 throw new PdfException(PdfException.ElementCannotFitAnyArea);
                             }

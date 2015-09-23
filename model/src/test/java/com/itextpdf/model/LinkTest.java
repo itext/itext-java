@@ -8,6 +8,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Link;
 import com.itextpdf.model.element.Paragraph;
+import com.itextpdf.test.ExtendedITextTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,14 +19,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class LinkTest {
+public class LinkTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/LinkTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/LinkTest/";
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

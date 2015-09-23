@@ -5,6 +5,7 @@ import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfStamper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -19,7 +20,7 @@ import java.io.IOException;
 import java.security.Security;
 
 @Category(IntegrationTest.class)
-public class PdfEncryptionTest {
+public class PdfEncryptionTest extends ExtendedITextTest{
 
     public static byte[] USER = "Hello".getBytes();
     /** Owner password. */
@@ -30,7 +31,7 @@ public class PdfEncryptionTest {
 
     @BeforeClass
     static public void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
         Security.addProvider(new BouncyCastleProvider());
     }
 

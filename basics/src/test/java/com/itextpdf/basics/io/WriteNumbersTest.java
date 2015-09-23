@@ -1,5 +1,6 @@
 package com.itextpdf.basics.io;
 
+import com.itextpdf.basics.test.ITextTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,6 +23,7 @@ public class WriteNumbersTest {
 
     @Test
     public void WriteNumber1Test() {
+
         Random rnd = new Random();
         DecimalFormat dn = new DecimalFormat("0.##", dfs);
         for (int i = 0; i < 100000; i++) {
