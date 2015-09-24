@@ -18,10 +18,7 @@ import com.itextpdf.model.layout.*;
 
 import java.util.List;
 
-
 public class TextRenderer extends AbstractRenderer {
-
-    // TODO More accurate ascender, descender computation
 
     protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
     private static final float ITALIC_ANGLE = 0.21256f;

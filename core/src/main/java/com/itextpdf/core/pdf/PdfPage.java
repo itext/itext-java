@@ -37,7 +37,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject);
         makeIndirect(pdfDocument);
-        pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
+        pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, this));
     }
 
     protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
@@ -52,7 +52,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             structParents = pdfDocument.getNextStructParentIndex();
             getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
         }
-        pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.StartPage, this));
+        pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, this));
     }
 
     protected PdfPage(PdfDocument pdfDocument) {
@@ -262,7 +262,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (n != null)
                 structParents = n.getIntValue();
         }
-        getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.EndPage, this));
+        getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
             getContentStream(i).flush(false);
