@@ -84,11 +84,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             int[] bbox = getFontProgram().getCharBBox(b & 0xff);
             if (bbox != null && bbox[1] < min) {
                 min = bbox[1];
+            } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
+                min = fontProgram.getFontMetrics().getTypoDescender();
             }
-        }
-
-        if (min == 0) {
-            return fontProgram.getFontMetrics().getTypoDescender();
         }
 
         return min;
@@ -108,11 +106,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             int[] bbox = getFontProgram().getCharBBox(b & 0xff);
             if (bbox != null && bbox[1] < min) {
                 min = bbox[1];
+            } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
+                min = fontProgram.getFontMetrics().getTypoDescender();
             }
-        }
-
-        if (min == 0) {
-            return fontProgram.getFontMetrics().getTypoDescender();
         }
 
         return min;
@@ -132,11 +128,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             int[] bbox = getFontProgram().getCharBBox(b & 0xff);
             if (bbox != null && bbox[3] > max) {
                 max = bbox[3];
+            } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
+                max = fontProgram.getFontMetrics().getTypoAscender();
             }
-        }
-
-        if (max == 0) {
-            return fontProgram.getFontMetrics().getTypoAscender();
         }
 
         return max;
@@ -156,11 +150,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             int[] bbox = getFontProgram().getCharBBox(b & 0xff);
             if (bbox != null && bbox[3] > max) {
                 max = bbox[3];
+            } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
+                max = fontProgram.getFontMetrics().getTypoAscender();
             }
-        }
-
-        if (max == 0) {
-            return fontProgram.getFontMetrics().getTypoAscender();
         }
 
         return max;
