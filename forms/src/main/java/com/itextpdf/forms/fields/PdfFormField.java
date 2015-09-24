@@ -876,7 +876,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 beginText().
                 setFontAndSize(ufont, fontSize).
                 resetFillColorRgb().
-                setTextMatrix((width - ufont.getWidth(text) * sizeCoef) / 2, (height - ufont.getFontProgram().getAscent(text) * sizeCoef) / 2).
+                setTextMatrix((width - ufont.getWidth(text) * sizeCoef) / 2, (height - ufont.getAscent(text) * sizeCoef) / 2).
                 showText(text).
                 endText();
     }

@@ -1,6 +1,7 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.font.FontMetrics;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
@@ -25,6 +26,7 @@ public class TextRenderer extends AbstractRenderer {
     protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
     private static final float ITALIC_ANGLE = 0.21256f;
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1/30f;
+    private static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
 
     // Unicode character numbers of the text.
     protected int[] text;
@@ -101,8 +103,18 @@ public class TextRenderer extends AbstractRenderer {
         ISplitCharacters splitCharacters = getProperty(Property.SPLIT_CHARACTERS);
         float italicSkewAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
         float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
-        float ascender = 800;
-        float descender = -200;
+
+        FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
+        float ascender;
+        float descender;
+        if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
+                fontMetrics.getTypoAscender() == fontMetrics.getWinAscender() && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
+            ascender = fontMetrics.getTypoAscender() * TYPO_ASCENDER_SCALE_COEFF;
+            descender = fontMetrics.getTypoDescender() * TYPO_ASCENDER_SCALE_COEFF;
+        } else {
+            ascender = fontMetrics.getWinAscender();
+            descender = fontMetrics.getWinDescender();
+        }
 
         float currentLineAscender = 0;
         float currentLineDescender = 0;
@@ -156,8 +168,8 @@ public class TextRenderer extends AbstractRenderer {
                 }
 
                 nonBreakablePartFullWidth += glyphWidth + kerning;
-                nonBreakablePartMaxAscender = Math.max(nonBreakablePartMaxAscender, font.getAscent(charCode));
-                nonBreakablePartMaxDescender = Math.min(nonBreakablePartMaxDescender, font.getDescent(charCode));
+                nonBreakablePartMaxAscender = Math.max(nonBreakablePartMaxAscender, ascender);
+                nonBreakablePartMaxDescender = Math.min(nonBreakablePartMaxDescender, descender);
                 nonBreakablePartMaxHeight = (nonBreakablePartMaxAscender - nonBreakablePartMaxDescender) * fontSize / TEXT_SPACE_COEFF + textRise;
 
                 previousCharPos = ind;

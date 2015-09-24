@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.*;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.DocumentException;
@@ -21,7 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class AlignmentTest extends ExtendedITextTest{
+public class AlignmentTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/AlignmentTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/AlignmentTest/";
@@ -62,6 +63,46 @@ public class AlignmentTest extends ExtendedITextTest{
 
         Paragraph paragraph = new Paragraph().setHorizontalAlignment(Property.HorizontalAlignment.JUSTIFIED);
         paragraph.add(new Text("Hello World!")).add(new Text(" ")).add(new Text("Hello People! ")).add("End");
+        document.add(paragraph);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void justifyAlignmentTest03() throws IOException, DocumentException, InterruptedException {
+        String outFileName = destinationFolder + "justifyAlignmentTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph paragraph = new Paragraph().setHorizontalAlignment(Property.HorizontalAlignment.JUSTIFIED);
+        for (int i = 0; i < 21; i++) {
+            paragraph.add(new Text("Hello World! Hello People! " +
+                    "Hello Sky! Hello Sun! Hello Moon! Hello Stars!").setBorder(new SolidBorder(Color.GREEN, 0.1f))).setMultipliedLeading(1);
+        }
+        document.add(paragraph);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void justifyAlignmentTest04() throws IOException, DocumentException, InterruptedException {
+        String outFileName = destinationFolder + "justifyAlignmentTest04.pdf";
+        String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph paragraph = new Paragraph().setHorizontalAlignment(Property.HorizontalAlignment.JUSTIFIED);
+        for (int i = 0; i < 21; i++) {
+            paragraph.add(new Text("Hello World! Hello People! " +
+                    "Hello Sky! Hello Sun! Hello Moon! Hello Stars!")).setFixedLeading(24);
+        }
         document.add(paragraph);
 
         document.close();

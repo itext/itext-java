@@ -86,6 +86,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 min = bbox[1];
             }
         }
+
+        if (min == 0) {
+            return fontProgram.getFontMetrics().getTypoDescender();
+        }
+
         return min;
     }
 
@@ -105,6 +110,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 min = bbox[1];
             }
         }
+
+        if (min == 0) {
+            return fontProgram.getFontMetrics().getTypoDescender();
+        }
+
         return min;
     }
 
@@ -124,6 +134,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 max = bbox[3];
             }
         }
+
+        if (max == 0) {
+            return fontProgram.getFontMetrics().getTypoAscender();
+        }
+
         return max;
     }
 
@@ -143,6 +158,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 max = bbox[3];
             }
         }
+
+        if (max == 0) {
+            return fontProgram.getFontMetrics().getTypoAscender();
+        }
+
         return max;
     }
 

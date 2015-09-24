@@ -245,6 +245,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 min = bbox[1];
             }
         }
+
+        if (min == 0) {
+            return fontProgram.getFontMetrics().getTypoDescender();
+        }
+
         return min;
     }
 
@@ -261,6 +266,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         if (bbox != null && bbox[1] < min) {
             min = bbox[1];
         }
+
+        if (min == 0) {
+            return fontProgram.getFontMetrics().getTypoDescender();
+        }
+
         return min;
     }
 
@@ -286,6 +296,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 max = bbox[3];
             }
         }
+
+        if (max == 0) {
+            return fontProgram.getFontMetrics().getTypoAscender();
+        }
+
         return max;
     }
 
@@ -302,6 +317,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         if (bbox != null && bbox[3] > max) {
             max = bbox[3];
         }
+
+        if (max == 0) {
+            return fontProgram.getFontMetrics().getTypoAscender();
+        }
+
         return max;
     }
 
