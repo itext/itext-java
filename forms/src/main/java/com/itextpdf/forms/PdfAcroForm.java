@@ -52,6 +52,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             if (createIfNotExist) {
                 acroForm = new PdfAcroForm(new PdfArray()).makeIndirect(document);
                 document.getCatalog().put(PdfName.AcroForm, acroForm);
+                document.getCatalog().setModified();
                 acroForm.setDefaultAppearance("/Helv 0 Tf 0 g ");
             }
         } else {
