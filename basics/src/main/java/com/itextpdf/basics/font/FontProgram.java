@@ -4,7 +4,7 @@ import java.util.StringTokenizer;
 
 public abstract class FontProgram {
 
-    public static int DEFAULT_WIDTH = 1000;
+    public static final int DEFAULT_WIDTH = 1000;
     public static final int UNITS_NORMALIZATION = 1000;
     /**
      * Font encoding.
@@ -32,7 +32,6 @@ public abstract class FontProgram {
     protected String encodingScheme = "FontSpecific";
 
     protected String registry;
-
 
     public FontEncoding getEncoding() {
         return encoding;
@@ -70,70 +69,23 @@ public abstract class FontProgram {
 
     /**
      * Get glyph's width.
-     * @param code CID or char code, depends from implementation.
+     * @param code char code, depends from implementation.
      * @return Gets width in normalized 1000 units.
      */
     public abstract int getWidth(int code);
+
+    /**
+     * Get glyph's bbox.
+     * @param code char code, depends from implementation.
+     * @return Gets bbox in normalized 1000 units.
+     */
+    public abstract int[] getCharBBox(int code);
 
     public boolean hasKernPairs() {
         return false;
     }
 
     public abstract int getKerning(int char1, int char2);
-
-    /**
-     * Gets the descent of a <CODE>String</CODE> in normalized 1000 units. The descent will always be
-     * less than or equal to zero even if all the characters have an higher descent.
-     *
-     * @param text the <CODE>String</CODE> to get the descent of
-     * @return the descent in normalized 1000 units
-     */
-    public int getDescent(String text) {
-        int min = 0;
-        char[] chars = text.toCharArray();
-        for (char ch : chars) {
-            int[] bbox = getCharBBox(ch);
-            if (bbox != null && bbox[1] < min) {
-                min = bbox[1];
-            }
-        }
-        if (min == 0) {
-            return fontMetrics.getTypoDescender();
-        }
-        return min;
-    }
-
-    /**
-     * Gets the ascent of a <CODE>String</CODE> in normalized 1000 units. The ascent will always be
-     * greater than or equal to zero even if all the characters have a lower ascent.
-     *
-     * @param text the <CODE>String</CODE> to get the ascent of
-     * @return the ascent in normalized 1000 units
-     */
-    public int getAscent(String text) {
-        int max = 0;
-        char[] chars = text.toCharArray();
-        for (char ch : chars) {
-            int[] bbox = getCharBBox(ch);
-            if (bbox != null && bbox[3] > max) {
-                max = bbox[3];
-            }
-        }
-        if (max == 0) {
-            return fontMetrics.getTypoAscender();
-        }
-
-        return max;
-    }
-
-    public int[] getCharBBox(char ch) {
-        byte[] b = encoding.convertToBytes(ch);
-        if (b.length == 0) {
-            return null;
-        } else {
-            return charBBoxes[b[0] & 0xff];
-        }
-    }
 
     //TODO change to protected!
     public void setRegistry(String registry) {

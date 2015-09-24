@@ -60,6 +60,11 @@ public class CidFont extends FontProgram {
     }
 
     @Override
+    public int[] getCharBBox(int code) {
+        return null;
+    }
+
+    @Override
     public int getKerning(int char1, int char2) {
         return 0;
     }
@@ -76,7 +81,7 @@ public class CidFont extends FontProgram {
 
     @Override
     protected int[] getRawCharBBox(int c, String name) {
-        throw new IllegalStateException();
+        return null;
     }
 
     private void initializeCidFontNameAndStyle(String fontName) {

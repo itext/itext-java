@@ -14,14 +14,13 @@ import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.*;
-
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class KeepTogetherTest extends ExtendedITextTest{
@@ -29,18 +28,10 @@ public class KeepTogetherTest extends ExtendedITextTest{
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/KeepTogetherTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/KeepTogetherTest/";
 
-
     @BeforeClass
     static public void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
-
-    @AfterClass
-    static public void afterClass() {
-        deleteDirectory(destinationFolder);
-    }
-
-
 
     @Test
     public void keepTogetherParagraphTest01() throws IOException, InterruptedException {

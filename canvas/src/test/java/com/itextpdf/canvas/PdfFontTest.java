@@ -3,6 +3,7 @@ package com.itextpdf.canvas;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.*;
+import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.canvas.font.PdfType3Font;
 import com.itextpdf.canvas.font.Type3Glyph;
 import com.itextpdf.core.font.PdfFont;
@@ -987,8 +988,107 @@ public class PdfFontTest extends ExtendedITextTest{
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
+@Test
+    public void stringAscentDescent() throws IOException, PdfException, InterruptedException {
+        int pageCount = 1;
+        String filename = destinationFolder + "stringAscentDescent.pdf";
+        String cmpFilename = sourceFolder + "cmp_stringAscentDescent.pdf";
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Type0 test";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "abserif4_5.ttf"));
+        PdfFont font = PdfFont.createFont(pdfDoc, ttf, "Identity-H");
+        ((TrueTypeFont)font.getFontProgram()).setApplyLigatures(true);
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            String[] lines = new String[] {
+                    "aaaa", "bbbb", "yyyy", "gggg", "ffff", "abcd", "abyghfl", "ABCD", "XIJY"
+            };
+            int fontsize = 48;
+            int lineOffset = 700;
+            for (String line: lines) {
+                int ascent = font.getAscent(line) * fontsize / 1000;
+                int descent = font.getDescent(line) * fontsize / 1000;
+                canvas.saveState();
+                canvas.rectangle(36, lineOffset + descent, 200, ascent - descent).fill();
+                canvas.setFillColor(DeviceRgb.WHITE);
+                canvas.saveState()
+                        .beginText()
+                        .moveText(36, lineOffset)
+                        .setFontAndSize(font, fontsize)
+                        .showText(line)
+                        .endText()
+                        .restoreState();
+                canvas.restoreState();
+                lineOffset -= 60;
+            }
+            canvas.release();
+            page.flush();
+        }
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(filename, cmpFilename, destinationFolder, "diff_"));
+    }
 
     @Test
+    public void stringAscentDescentLine() throws IOException, PdfException, InterruptedException {
+        int pageCount = 1;
+        String filename = destinationFolder + "stringAscentDescentLine.pdf";
+        String cmpFilename = sourceFolder + "cmp_stringAscentDescentLine.pdf";
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Type0 test";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "abserif4_5.ttf"));
+        PdfFont font = PdfFont.createFont(pdfDoc, ttf, "Identity-H");
+        ((TrueTypeFont)font.getFontProgram()).setApplyLigatures(true);
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            int fontsize = 12;
+            int lineOffset = 700;
+            String line = "work, and Mrs. Dursley gossiped away happily as she wrestled a screaming Dudley into his high";
+            int ascent = font.getAscent(line) * fontsize / 1000;
+            int descent = font.getDescent(line) * fontsize / 1000;
+            canvas.saveState();
+            canvas.setFillColor(DeviceRgb.BLUE);
+            canvas.rectangle(36, lineOffset + descent, 520, ascent - descent).fill();
+            canvas.setFillColor(DeviceRgb.WHITE);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, lineOffset)
+                    .setFontAndSize(font, fontsize)
+                    .showText(line)
+                    .endText()
+                    .restoreState();
+            canvas.restoreState();
+            canvas.release();
+            page.flush();
+        }
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+@Test
     public void createWrongAfm1() throws IOException, InterruptedException {
         String message = "";
         try {
@@ -1053,4 +1153,6 @@ public class PdfFontTest extends ExtendedITextTest{
         byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.pfb"));
         Assert.assertTrue("TrueType (TTF) expected", FontFactory.createFont(ttf, pfb, "WinAnsi") instanceof TrueTypeFont);
     }
+
+
 }

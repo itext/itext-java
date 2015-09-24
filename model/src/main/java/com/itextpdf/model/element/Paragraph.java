@@ -69,10 +69,7 @@ public class Paragraph extends BlockElement<Paragraph> {
     public <T> T getDefaultProperty(Property property) {
         switch (property) {
             case LEADING:
-                if (childElements.size() == 1 && childElements.get(0) instanceof Image)
-                    return (T) new Property.Leading(Property.Leading.MULTIPLIED, 1f);
-                else
-                    return (T) new Property.Leading(Property.Leading.MULTIPLIED, 1.5f);
+                return (T) new Property.Leading(Property.Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
             case FIRST_LINE_INDENT:
                 return (T) Float.valueOf(0);
             case MARGIN_TOP:
