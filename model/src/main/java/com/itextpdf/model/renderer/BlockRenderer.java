@@ -12,10 +12,7 @@ import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.layout.LayoutResult;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class BlockRenderer extends AbstractRenderer {
 
@@ -162,7 +159,7 @@ public class BlockRenderer extends AbstractRenderer {
         applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
         if (getProperty(Property.ROTATION_ANGLE) != null) {
-            applyRotationLayout();
+            applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingHeight(layoutContext.getArea())) {
                 if (!layoutContext.getArea().isEmptyArea()) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
@@ -214,8 +211,8 @@ public class BlockRenderer extends AbstractRenderer {
         Rectangle bBox = occupiedArea.getBBox().clone();
         Float rotationAngle = getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
-            bBox.setWidth(getWidthBeforeRotation(rotationAngle));
-            bBox.setHeight(getHeightBeforeRotation());
+            bBox.setWidth(getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
+            bBox.setHeight(getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
         }
         return bBox;
     }
@@ -239,9 +236,7 @@ public class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    protected void applyRotationLayout() {
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
-
+    protected void applyRotationLayout(Rectangle layoutBox) {
         Float rotationPointX = getPropertyAsFloat(Property.ROTATION_POINT_X);
         Float rotationPointY = getPropertyAsFloat(Property.ROTATION_POINT_Y);
 
@@ -256,54 +251,85 @@ public class BlockRenderer extends AbstractRenderer {
         float height = occupiedArea.getBBox().getHeight();
         float width = occupiedArea.getBBox().getWidth();
 
-        double cos = Math.abs(Math.cos(angle));
-        double sin = Math.abs(Math.sin(angle));
-        float newHeight = (float) (height*cos + width*sin);
-        float newWidth = (float) (height*sin + width*cos);
+        setProperty(Property.ROTATION_INITIAL_WIDTH, width);
+        setProperty(Property.ROTATION_INITIAL_HEIGHT, height);
 
-        occupiedArea.getBBox().setWidth(newWidth);
-        occupiedArea.getBBox().setHeight(newHeight);
 
-        float heightDiff = height - newHeight;
-        move(0, heightDiff);
-        setProperty(Property.ROTATION_LAYOUT_SHIFT, heightDiff);
+        if (!isPositioned()) {
+            List<Point2D.Float> rotatedPoints = new ArrayList<>();
+            getLayoutShiftAndRotatedPoints(rotatedPoints, rotationPointX, rotationPointY);
+
+            Point2D clipLineBeg = new Point2D.Float(layoutBox.getRight(), layoutBox.getTop());
+            Point2D clipLineEnd = new Point2D.Float(layoutBox.getRight(), layoutBox.getBottom());
+            List<Point2D> newOccupiedBox = clipBBox(rotatedPoints, clipLineBeg, clipLineEnd);
+
+            double maxX = -Double.MAX_VALUE;
+            double minY = Double.MAX_VALUE;
+            for (Point2D point : newOccupiedBox) {
+                if (point.getX() > maxX)  maxX = point.getX();
+                if (point.getY() < minY)  minY = point.getY();
+            }
+
+            float newHeight = (float) (occupiedArea.getBBox().getTop() - minY);
+            float newWidth = (float) (maxX - occupiedArea.getBBox().getLeft());
+
+            occupiedArea.getBBox().setWidth(newWidth);
+            occupiedArea.getBBox().setHeight(newHeight);
+
+            move(0, height - newHeight);
+        }
     }
 
     protected float[] applyRotation() {
+        float dx = 0, dy = 0;
+        if (!isPositioned()) {
+            Point2D shift = getLayoutShiftAndRotatedPoints(new ArrayList<Point2D.Float>(), 0, 0);
+
+            dy = (float) shift.getY();
+            dx = (float) shift.getX();
+        }
+
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         AffineTransform transform = new AffineTransform();
         transform.rotate(angle);
-
-        float dx = 0, dy = 0;
-        if (!isPositioned()) {
-            float x = occupiedArea.getBBox().getX();
-            float y = occupiedArea.getBBox().getY();
-            float actualWidth = getWidthBeforeRotation(angle);
-            float actualHeight = getHeightBeforeRotation();
-
-            Point2D p00 = transform.transform(new Point2D.Float(x, y), new Point2D.Float());
-            Point2D p01 = transform.transform(new Point2D.Float(x + actualWidth, y), new Point2D.Float());
-            Point2D p10 = transform.transform(new Point2D.Float(x + actualWidth, y + actualHeight), new Point2D.Float());
-            Point2D p11 = transform.transform(new Point2D.Float(x, y + actualHeight), new Point2D.Float());
-
-            List<Double> xValues = Arrays.asList(p00.getX(), p01.getX(), p10.getX(), p11.getX());
-            List<Double> yValues = Arrays.asList(p00.getY(), p01.getY(), p10.getY(), p11.getY());
-
-            double minX = Collections.min(xValues);
-            double maxY = Collections.max(yValues);
-
-            dy = (float) ((y + actualHeight) - maxY);
-            dx = (float) (x - minX);
-        }
-
-        float rotationPointX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-        float rotationPointY = getPropertyAsFloat(Property.ROTATION_POINT_Y);
-
         float[] ctm = new float[6];
         transform.getMatrix(ctm);
-        ctm[4] = rotationPointX + dx;
-        ctm[5] = rotationPointY + dy;
+
+        ctm[4] = getPropertyAsFloat(Property.ROTATION_POINT_X) + dx;
+        ctm[5] = getPropertyAsFloat(Property.ROTATION_POINT_Y) + dy;
         return ctm;
+    }
+
+    private Point2D.Float getLayoutShiftAndRotatedPoints(List<Point2D.Float> rotatedPoints, float shiftX, float shiftY) {
+        float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        float width = getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
+        float height = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
+
+        float left = occupiedArea.getBBox().getX() - shiftX;
+        float bottom = occupiedArea.getBBox().getY() - shiftY;
+        float right = left + width;
+        float top = bottom + height;
+
+        AffineTransform rotateTransform = new AffineTransform();
+        rotateTransform.rotate(angle);
+
+        transformBBox(left, bottom, right, top, rotateTransform, rotatedPoints);
+
+        double minX = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        for (Point2D point : rotatedPoints) {
+            if (point.getX() < minX)  minX = point.getX();
+            if (point.getY() > maxY)  maxY = point.getY();
+        }
+
+        float dx = (float) (left - minX);
+        float dy = (float) (top - maxY);
+
+        for (Point2D point : rotatedPoints) {
+            point.setLocation(point.getX() + dx + shiftX, point.getY() + dy + shiftY);
+        }
+
+        return new Point2D.Float(dx, dy);
     }
 
 
@@ -311,13 +337,10 @@ public class BlockRenderer extends AbstractRenderer {
     private void beginRotationIfApplied(PdfCanvas canvas) {
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
+            float heightDiff = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
 
-            float rotationPointX = getProperty(Property.ROTATION_POINT_X);
-            float rotationPointY = getProperty(Property.ROTATION_POINT_Y);
-
-            float shiftX = rotationPointX;
-            float shiftY = rotationPointY + heightDiff;
+            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
+            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
 
             move(-shiftX, -shiftY);
             float[] ctm = applyRotation();
@@ -328,7 +351,7 @@ public class BlockRenderer extends AbstractRenderer {
     private void endRotationIfApplied(PdfCanvas canvas) {
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
+            float heightDiff = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
 
             float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
             float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
@@ -338,29 +361,71 @@ public class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    private float getWidthBeforeRotation(float angle) {
-        float rotatedWidth = occupiedArea.getBBox().getWidth();
-        float rotatedHeight = occupiedArea.getBBox().getHeight();
+    private List<Point2D.Float> transformBBox(float left, float bottom, float right, float top, AffineTransform transform, List<Point2D.Float> bBoxPoints) {
+        bBoxPoints.addAll(Arrays.asList(new Point2D.Float(left, bottom), new Point2D.Float(right, bottom),
+                new Point2D.Float(right, top), new Point2D.Float(left, top)));
 
-        float pi4 = (float) (Math.PI / 4);
-        float pi2 = (float) (Math.PI / 2);
-        if (checkIfMultiple(angle, pi4) && !checkIfMultiple(angle, pi2))
-            return (float) (rotatedWidth*Math.sqrt(2) - getHeightBeforeRotation());
+        for (Point2D.Float point : bBoxPoints) {
+            transform.transform(point, point);
+        }
 
-        double cos = Math.abs(Math.cos(angle));
-        double sin = Math.abs(Math.sin(angle));
-
-        return (float) ((rotatedHeight*sin - rotatedWidth*cos)/(sin*sin - cos*cos));
+        return bBoxPoints;
     }
 
-    private float getHeightBeforeRotation() {
-        float rotatedHeight = occupiedArea.getBBox().getHeight();
-        float heightDiff = getProperty(Property.ROTATION_LAYOUT_SHIFT);
-        return rotatedHeight + heightDiff;
+    private List<Point2D> clipBBox(List<Point2D.Float> points, Point2D clipLineBeg, Point2D clipLineEnd) {
+        List<Point2D> filteredPoints = new ArrayList<>();
+
+        boolean prevOnRightSide = false;
+        Point2D filteringPoint = points.get(0);
+        if (checkPointSide(filteringPoint, clipLineBeg, clipLineEnd) >= 0) {
+            filteredPoints.add(filteringPoint);
+            prevOnRightSide = true;
+        }
+
+        Point2D prevPoint = filteringPoint;
+        for (int i = 1; i < points.size() + 1; ++i) {
+            filteringPoint = points.get(i % points.size());
+            if (checkPointSide(filteringPoint, clipLineBeg, clipLineEnd) >= 0) {
+                if (!prevOnRightSide) {
+                    filteredPoints.add(getIntersectionPoint(prevPoint, filteringPoint, clipLineBeg, clipLineEnd));
+                }
+                filteredPoints.add(filteringPoint);
+                prevOnRightSide = true;
+            } else if (prevOnRightSide) {
+                filteredPoints.add(getIntersectionPoint(prevPoint, filteringPoint, clipLineBeg, clipLineEnd));
+            }
+
+            prevPoint = filteringPoint;
+        }
+
+        return filteredPoints;
     }
 
-    private boolean checkIfMultiple(float multipleOfNumber, float number) {
-        float remainder = Math.abs(multipleOfNumber % number);
-        return remainder < EPS || number - remainder < EPS;
+    private int checkPointSide(Point2D filteredPoint, Point2D clipLineBeg, Point2D clipLineEnd) {
+        double x1, x2, y1, y2;
+        x1 = filteredPoint.getX() - clipLineBeg.getX();
+        y2 = clipLineEnd.getY() - clipLineBeg.getY();
+
+        x2 = clipLineEnd.getX() - clipLineBeg.getX();
+        y1 = filteredPoint.getY() - clipLineBeg.getY();
+
+        double sgn = x1*y2 - x2*y1;
+
+        if (Math.abs(sgn) < 0.001) return 0;
+        if (sgn > 0) return 1;
+        if (sgn < 0) return -1;
+
+        return 0;
+    }
+
+    private Point2D getIntersectionPoint(Point2D lineBeg, Point2D lineEnd, Point2D clipLineBeg, Point2D clipLineEnd) {
+        double A1 = lineBeg.getY() - lineEnd.getY(), A2 = clipLineBeg.getY() - clipLineEnd.getY();
+        double B1 = lineEnd.getX() - lineBeg.getX(), B2 = clipLineEnd.getX() - clipLineBeg.getX();
+        double C1 = lineBeg.getX() * lineEnd.getY() - lineBeg.getY() * lineEnd.getX();
+        double C2 = clipLineBeg.getX() * clipLineEnd.getY() - clipLineBeg.getY() * clipLineEnd.getX();
+
+        double M = B1 * A2 - B2 * A1;
+
+        return new Point2D.Double((B2 * C1 - B1 * C2) / M, (C2 * A1 - C1 * A2) / M);
     }
 }
