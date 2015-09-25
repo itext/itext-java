@@ -126,7 +126,7 @@ public class PdfException extends RuntimeException {
 
     public static final String InfiniteIndirectReferenceChain = "infinite.indirect.reference.chain";
     public static final String InlineLevelOrIllustrationElementCannotContainKids = "inline.level.or.illustration.element.cannot.contain.kids";
-
+    public static final String InvalidTTCFile = "1.is.not.a.valid.ttc.file";
     public static final String InvalidBmpFileCompression = "invalid.bmp.file.compression";
     public static final String InvalidCodeEncountered = "invalid.code.encountered";
     public static final String InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData = "invalid.code.encountered.while.decoding.2d.group.3.compressed.data";
@@ -197,6 +197,7 @@ public class PdfException extends RuntimeException {
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
     public static final String TiffFillOrderTagMustBeEither1Or2 = "tiff.fill.order.tag.must.be.either.1.or.2";
     public static final String TiffImageException = "tiff.image.exception";
+    public static final String TTCIndexDoesNotExistInFile = "ttc.index.doesn't.exist.in.ttc.file";
     public static final String TilesAreNotSupported = "tiles.are.not.supported";
     public static final String TrailerNotFound = "trailer.not.found";
     public static final String TrailerPrevEntryPointsToItsOwnCrossReferenceSection = "trailer.prev.entry.points.to.its.own.cross.reference.section";

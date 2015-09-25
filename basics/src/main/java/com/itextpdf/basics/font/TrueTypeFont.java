@@ -4,6 +4,7 @@ import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.otf.*;
+import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -49,6 +50,20 @@ public class TrueTypeFont extends FontProgram {
 
     public TrueTypeFont(String path, String baseEncoding) throws IOException {
         fontParser = new OpenTypeParser(path);
+        this.baseEncoding = baseEncoding;
+        initializeFontProperties();
+    }
+
+
+
+    TrueTypeFont(String ttcPath, String baseEncoding, int ttcIndex) throws IOException {
+        fontParser = new OpenTypeParser(ttcPath, ttcIndex);
+        this.baseEncoding = baseEncoding;
+        initializeFontProperties();
+    }
+
+    TrueTypeFont(byte[] ttc, String baseEncoding, int ttcIndex) throws IOException {
+        fontParser = new OpenTypeParser(ttc, ttcIndex);
         this.baseEncoding = baseEncoding;
         initializeFontProperties();
     }
@@ -168,7 +183,7 @@ public class TrueTypeFont extends FontProgram {
             //glyphCode, glyphWidth, String.valueOf(c), false
             int gid = glyphs[k];
             char ch = glyphToCharacterMap.get(gid);
-            int[] metrics = getCmap31().get((int)ch);
+            int[] metrics = getCmap31().get((int) ch);
             if (metrics == null) {
                 return null;
             }
@@ -180,6 +195,7 @@ public class TrueTypeFont extends FontProgram {
 
     /**
      * Get glyph's width.
+     *
      * @param code char code.
      * @return Gets width in normalized 1000 units.
      */
@@ -204,6 +220,7 @@ public class TrueTypeFont extends FontProgram {
 
     /**
      * Get glyph's bbox.
+     *
      * @param code char code, depends from implementation.
      * @return Gets bbox in normalized 1000 units.
      */
@@ -236,7 +253,9 @@ public class TrueTypeFont extends FontProgram {
         return kerning.size() > 0;
     }
 
-    /** Gets the kerning between two Unicode chars.
+    /**
+     * Gets the kerning between two Unicode chars.
+     *
      * @param char1 the first char
      * @param char2 the second char
      * @return the kerning to be applied
@@ -432,7 +451,9 @@ public class TrueTypeFont extends FontProgram {
         return bBoxes[metric[0]];
     }
 
-    /** Extracts the names of the font in all the languages available.
+    /**
+     * Extracts the names of the font in all the languages available.
+     *
      * @param id the name id to retrieve
      * @return not empty {@code String[][]} if any names exists, otherwise {@code null}.
      */
