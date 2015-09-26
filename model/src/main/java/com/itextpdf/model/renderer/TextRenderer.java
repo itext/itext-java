@@ -13,7 +13,7 @@ import com.itextpdf.model.bidi.BidiBracketMap;
 import com.itextpdf.model.bidi.BidiCharacterMap;
 import com.itextpdf.model.bidi.BidiAlgorithm;
 import com.itextpdf.model.element.Text;
-import com.itextpdf.model.hyphenation.ISplitCharacters;
+import com.itextpdf.model.splitting.ISplitCharacters;
 import com.itextpdf.model.layout.*;
 
 import java.util.List;

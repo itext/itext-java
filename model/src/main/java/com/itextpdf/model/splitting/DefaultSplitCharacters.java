@@ -1,4 +1,4 @@
-package com.itextpdf.model.hyphenation;
+package com.itextpdf.model.splitting;
 
 /**
  * The default implementation of {@see ISplitCharacters interface}.

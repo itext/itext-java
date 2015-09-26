@@ -5,7 +5,7 @@ import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
-import com.itextpdf.model.hyphenation.ISplitCharacters;
+import com.itextpdf.model.splitting.ISplitCharacters;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 
@@ -193,7 +193,7 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
 
     /**
      * Sets a rule for splitting strings when they don't fit into one line.
-     * The default implementation is {@link com.itextpdf.model.hyphenation.DefaultSplitCharacters}
+     * The default implementation is {@link com.itextpdf.model.splitting.DefaultSplitCharacters}
      */
     public Type setSplitCharacters(ISplitCharacters splitCharacters) {
         return setProperty(Property.SPLIT_CHARACTERS, splitCharacters);

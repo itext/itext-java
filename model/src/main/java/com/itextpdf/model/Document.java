@@ -8,8 +8,8 @@ import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.element.*;
-import com.itextpdf.model.hyphenation.DefaultSplitCharacters;
-import com.itextpdf.model.hyphenation.ISplitCharacters;
+import com.itextpdf.model.splitting.DefaultSplitCharacters;
+import com.itextpdf.model.splitting.ISplitCharacters;
 import com.itextpdf.model.renderer.AbstractRenderer;
 import com.itextpdf.model.renderer.DocumentRenderer;
 

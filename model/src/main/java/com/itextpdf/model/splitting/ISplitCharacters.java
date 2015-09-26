@@ -1,4 +1,4 @@
-package com.itextpdf.model.hyphenation;
+package com.itextpdf.model.splitting;
 
 /**
  * Interface for customizing the split character.
