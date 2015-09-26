@@ -61,7 +61,7 @@ public class KeepTogetherTest extends ExtendedITextTest{
 
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.ELEMENT_DOESNOT_FIT_AREA})
+    @LogMessage(messages = {LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA})
     public void keepTogetherParagraphTest02() throws IOException, InterruptedException {
 
         String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest02.pdf";
@@ -141,7 +141,7 @@ public class KeepTogetherTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.ELEMENT_DOESNOT_FIT_AREA})
+    @LogMessage(messages = {LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA})
     public void keepTogetherDivTest02() throws IOException, InterruptedException {
 
 

@@ -73,7 +73,7 @@ public class DocumentRenderer extends AbstractRenderer {
                             if (Boolean.valueOf(true).equals(result.getOverflowRenderer().getModelElement().getProperty(Property.KEEP_TOGETHER))) {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
-                                logger.warn(LogMessageConstant.ELEMENT_DOESNOT_FIT_AREA);
+                                logger.warn(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA);
                             } else {
                                 throw new PdfException(PdfException.ElementCannotFitAnyArea);
                             }
