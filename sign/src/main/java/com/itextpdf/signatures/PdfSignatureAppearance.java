@@ -197,10 +197,14 @@ public class PdfSignatureAppearance {
     /** Signature field lock dictionary */
     private PdfSigLockDictionary fieldLock;
 
-    public PdfSignatureAppearance(PdfReader reader, PdfWriter writer, File tempFile) throws IOException {
+    public PdfSignatureAppearance(PdfReader reader, PdfWriter writer, boolean append) throws IOException {
+        this(reader, writer, null, append);
+    }
+
+    public PdfSignatureAppearance(PdfReader reader, PdfWriter writer, File tempFile, boolean append) throws IOException {
         if (tempFile == null) {
             temporaryOS = new ByteArrayOutputStream();
-            document = new PdfDocument(reader, new PdfWriter(temporaryOS), false);
+            document = new PdfDocument(reader, new PdfWriter(temporaryOS), append);
         } else {
             if (tempFile.isDirectory()) {
                 tempFile = File.createTempFile("pdf", null, tempFile);
@@ -208,17 +212,13 @@ public class PdfSignatureAppearance {
 
             OutputStream os = new FileOutputStream(tempFile);
             this.tempFile = tempFile;
-            document = new PdfDocument(reader, new PdfWriter(os), false);
+            document = new PdfDocument(reader, new PdfWriter(os), append);
         }
 
         originalOS = writer == null ? null : writer.getOutputStream();
         signDate = new GregorianCalendar();
         fieldName = getNewSigFieldName();
         signatureCreator = Version.getInstance().getVersion();
-    }
-
-    public PdfSignatureAppearance(PdfReader reader, PdfWriter writer) throws IOException {
-        this(reader, writer, null);
     }
 
     /**
