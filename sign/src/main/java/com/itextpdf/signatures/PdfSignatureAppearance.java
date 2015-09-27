@@ -57,7 +57,7 @@ import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.PdfSigLockDictionary;
+import com.itextpdf.forms.PdfSigFieldLockDictionary;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 
@@ -195,7 +195,7 @@ public class PdfSignatureAppearance {
     private boolean preClosed = false;
 
     /** Signature field lock dictionary */
-    private PdfSigLockDictionary fieldLock;
+    private PdfSigFieldLockDictionary fieldLock;
 
     public PdfSignatureAppearance(PdfReader reader, PdfWriter writer, boolean append) throws IOException {
         this(reader, writer, null, append);
@@ -965,7 +965,7 @@ public class PdfSignatureAppearance {
      * Getter for the field lock dictionary.
      * @return Field lock dictionary.
      */
-    public PdfSigLockDictionary getFieldLockDict() {
+    public PdfSigFieldLockDictionary getFieldLockDict() {
         return fieldLock;
     }
 
@@ -976,7 +976,7 @@ public class PdfSignatureAppearance {
      *
      * @param fieldLock Field lock dictionary.
      */
-    public void setFieldLockDict(PdfSigLockDictionary fieldLock) {
+    public void setFieldLockDict(PdfSigFieldLockDictionary fieldLock) {
         this.fieldLock = fieldLock;
     }
 
@@ -1018,7 +1018,7 @@ public class PdfSignatureAppearance {
         String name = getFieldName();
         boolean fieldExist = acroForm.getField(fieldName) != null;
         acroForm.setSignatureFlags(PdfAcroForm.SIGNATURE_EXIST | PdfAcroForm.APPEND_ONLY);
-        PdfSigLockDictionary fieldLock = null;
+        PdfSigFieldLockDictionary fieldLock = null;
 
         cryptoDictionary.getPdfObject().makeIndirect(document);
 
@@ -1028,7 +1028,7 @@ public class PdfSignatureAppearance {
 
             if (sigField.getSigFieldLockDictionary() == null && this.fieldLock != null) {
                 this.fieldLock.getPdfObject().makeIndirect(document);
-                sigField.put(PdfName.Lock, fieldLock);
+                sigField.put(PdfName.Lock, this.fieldLock);
                 fieldLock = this.fieldLock;
             }
 
@@ -1046,6 +1046,7 @@ public class PdfSignatureAppearance {
             PdfDictionary ap = new PdfDictionary();
             ap.put(PdfName.N, getAppearance().getPdfObject());
             sigField.put(PdfName.AP, ap);
+            sigField.setModified();
         } else {
             PdfWidgetAnnotation widget = new PdfWidgetAnnotation(document, !isInvisible() ? getPageRect() : new Rectangle(0, 0));
             widget.setFlags(PdfAnnotation.Print | PdfAnnotation.Locked);
@@ -1057,7 +1058,7 @@ public class PdfSignatureAppearance {
 
             if (this.fieldLock != null) {
                 this.fieldLock.getPdfObject().makeIndirect(document);
-                sigField.put(PdfName.Lock, fieldLock);
+                sigField.put(PdfName.Lock, this.fieldLock);
                 fieldLock = this.fieldLock;
             }
 
@@ -1099,8 +1100,8 @@ public class PdfSignatureAppearance {
         if (certificationLevel > 0) {
             // add DocMDP entry to root
             PdfDictionary docmdp = new PdfDictionary();
-            docmdp.put(new PdfName("DocMDP"), cryptoDictionary.getPdfObject());
-            document.getCatalog().put(new PdfName("Perms"), docmdp);
+            docmdp.put(PdfName.DocMDP, cryptoDictionary.getPdfObject());
+            document.getCatalog().put(PdfName.Perms, docmdp);
         }
 
         document.close();
@@ -1274,7 +1275,7 @@ public class PdfSignatureAppearance {
      * This method is only used for signatures that lock fields.
      * @param crypto the signature dictionary
      */
-    private void addFieldMDP(PdfSignature crypto, PdfSigLockDictionary fieldLock) {
+    private void addFieldMDP(PdfSignature crypto, PdfSigFieldLockDictionary fieldLock) {
         PdfDictionary reference = new PdfDictionary();
         PdfDictionary transformParams = new PdfDictionary();
         transformParams.putAll(fieldLock.getPdfObject());

@@ -45,6 +45,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName AHx = createDirectName("AHx");
     public static final PdfName AIS = createDirectName("AIS");
     public static final PdfName Alaw = createDirectName("ALaw");
+    public static final PdfName All = createDirectName("All");
     public static final PdfName AllOff = createDirectName("AllOff");
     public static final PdfName AllOn = createDirectName("AllOn");
     public static final PdfName Alt = createDirectName("Alt");
@@ -207,6 +208,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ETSI_CAdES_DETACHED = createDirectName("ETSI.CAdES.detached");
     public static final PdfName ETSI_RFC3161 = createDirectName("ETSI.RFC3161");
     public static final PdfName Event = createDirectName("Event");
+    public static final PdfName Exclude = createDirectName("Exclude");
     public static final PdfName Exclusion = createDirectName("Exclusion");
     public static final PdfName ExData = createDirectName("ExData");
     public static final PdfName Experimental = createDirectName("Experimental");
@@ -302,6 +304,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Image = createDirectName("Image");
     public static final PdfName ImageMask = createDirectName("ImageMask");
     public static final PdfName ImportData = createDirectName("ImportData");
+    public static final PdfName Include = createDirectName("Include");
     public static final PdfName Index = createDirectName("Index");
     public static final PdfName Indexed = createDirectName("Indexed");
     public static final PdfName Info = createDirectName("Info");
@@ -519,6 +522,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName SetOCGState = createDirectName("SetOCGState");
     public static final PdfName SetState = createDirectName("SetState");
     public static final PdfName Sig = createDirectName("Sig");
+    public static final PdfName SigFieldLock = createDirectName("SigFieldLock");
     public static final PdfName SigFlags = createDirectName("SigFlags");
     public static final PdfName Signed = createDirectName("Signed");
     public static final PdfName SigRef = createDirectName("SigRef");

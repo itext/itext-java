@@ -2,7 +2,7 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.forms.PdfSigLockDictionary;
+import com.itextpdf.forms.PdfSigFieldLockDictionary;
 
 public class PdfSignatureFormField extends PdfFormField {
 
@@ -27,8 +27,8 @@ public class PdfSignatureFormField extends PdfFormField {
         return put(PdfName.V, value);
     }
 
-    public PdfSigLockDictionary getSigFieldLockDictionary() {
+    public PdfSigFieldLockDictionary getSigFieldLockDictionary() {
         PdfDictionary sigLockDict = (PdfDictionary) getPdfObject().get(PdfName.Lock);
-        return sigLockDict == null? null : new PdfSigLockDictionary(sigLockDict);
+        return sigLockDict == null? null : new PdfSigFieldLockDictionary(sigLockDict);
     }
 }
