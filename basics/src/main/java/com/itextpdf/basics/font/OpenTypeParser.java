@@ -15,120 +15,222 @@ import java.util.Set;
 //TODO see TtfUnicodeWriter
 class OpenTypeParser {
 
-    /** The components of table 'head'. */
+    /**
+     * The components of table 'head'.
+     */
     protected static class HeaderTable {
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int flags;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int unitsPerEm;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short xMin;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short yMin;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short xMax;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short yMax;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int macStyle;
     }
 
-    /** The components of table 'hhea'. */
+    /**
+     * The components of table 'hhea'.
+     */
     protected static class HorizontalHeader {
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short Ascender;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short Descender;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short LineGap;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int advanceWidthMax;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short minLeftSideBearing;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short minRightSideBearing;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short xMaxExtent;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short caretSlopeRise;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short caretSlopeRun;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int numberOfHMetrics;
     }
 
-    /** The components of table 'OS/2'. */
+    /**
+     * The components of table 'OS/2'.
+     */
     protected static class WindowsMetrics {
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short xAvgCharWidth;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usWeightClass;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usWidthClass;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short fsType;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySubscriptXSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySubscriptYSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySubscriptXOffset;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySubscriptYOffset;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySuperscriptXSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySuperscriptYSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySuperscriptXOffset;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short ySuperscriptYOffset;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short yStrikeoutSize;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short yStrikeoutPosition;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short sFamilyClass;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         byte[] panose = new byte[10];
-        /** A variable. */
+        /**
+         * A variable.
+         */
         byte[] achVendID = new byte[4];
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int fsSelection;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usFirstCharIndex;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usLastCharIndex;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short sTypoAscender;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short sTypoDescender;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         short sTypoLineGap;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usWinAscent;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int usWinDescent;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int ulCodePageRange1;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int ulCodePageRange2;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int sxHeight;
-        /** A variable. */
+        /**
+         * A variable.
+         */
         int sCapHeight;
     }
 
     protected static class PostTable {
-        /** The italic angle. It is usually extracted from the 'post' table or in it's
+        /**
+         * The italic angle. It is usually extracted from the 'post' table or in it's
          * absence with the code:
          * <PRE>
          * {@code -Math.atan2(hhea.caretSlopeRun, hhea.caretSlopeRise) * 180 / Math.PI}
-         * </PRE> */
+         * </PRE>
+         */
         float italicAngle;
         int underlinePosition;
         int underlineThickness;
-        /** <CODE>true</CODE> if all the glyphs have the same width. */
+        /**
+         * <CODE>true</CODE> if all the glyphs have the same width.
+         */
         boolean isFixedPitch;
     }
 
@@ -151,25 +253,43 @@ class OpenTypeParser {
         boolean fontSpecific = false;
     }
 
-    /** The file name. */
+    /**
+     * The file name.
+     */
     protected String fileName;
-    /** The file in use. */
+    /**
+     * The file in use.
+     */
     protected RandomAccessFileOrArray raf;
-    /** The index for the TTC font. It is an empty {@code String} for a TTF file. */
-    protected String ttcIndex = "";
-    /** The offset from the start of the file to the table directory.
-     * It is 0 for TTF and may vary for TTC depending on the chosen font. */
+    /**
+     * The index for the TTC font. It is -1 {@code int} for a TTF file.
+     */
+    protected int ttcIndex = -1;
+    /**
+     * The offset from the start of the file to the table directory.
+     * It is 0 for TTF and may vary for TTC depending on the chosen font.
+     */
     protected int directoryOffset;
-    /** The font name. This name is usually extracted from the table 'name' with the 'Name ID' 6. */
+    /**
+     * The font name. This name is usually extracted from the table 'name' with the 'Name ID' 6.
+     */
     protected String fontName;
-    /** All the names of the Names-Table. */
+    /**
+     * All the names of the Names-Table.
+     */
     protected HashMap<Integer, List<String[]>> allNameEntries;
 
-    /** Indicate, that the font contains 'CFF ' table. */
+    /**
+     * Indicate, that the font contains 'CFF ' table.
+     */
     protected boolean cff = false;
-    /** Offset to 'CFF ' table. */
+    /**
+     * Offset to 'CFF ' table.
+     */
     protected int cffOffset;
-    /** Length of 'CFF ' table. */
+    /**
+     * Length of 'CFF ' table.
+     */
     protected int cffLength;
 
     private int[] glyphWidthsByIndex;
@@ -180,14 +300,28 @@ class OpenTypeParser {
     protected PostTable post;
     protected CmapTable cmaps;
 
-    /**Contains the location of the several tables. The key is the name of
+    /**
+     * Contains the location of the several tables. The key is the name of
      * the table and the value is an <CODE>int[2]</CODE> where position 0
      * is the offset from the start of the file and position 1 is the length
-     * of the table. */
+     * of the table.
+     */
     protected HashMap<String, int[]> tables;
 
     public OpenTypeParser(byte[] ttf) throws IOException {
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttf));
+        process();
+    }
+
+    public OpenTypeParser(byte[] ttc, int ttcIndex) throws IOException {
+        this.ttcIndex = ttcIndex;
+        raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttc));
+        process();
+    }
+
+    public OpenTypeParser(String ttcPath, int ttcIndex) throws IOException {
+        this.ttcIndex = ttcIndex;
+        raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(ttcPath));
         process();
     }
 
@@ -196,7 +330,7 @@ class OpenTypeParser {
         String ttcName = getTTCName(nameBase);
         this.fileName = ttcName;
         if (ttcName.length() < nameBase.length()) {
-            ttcIndex = nameBase.substring(ttcName.length() + 1);
+            ttcIndex = Integer.parseInt(nameBase.substring(ttcName.length() + 1));
         }
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(fileName));
         process();
@@ -254,16 +388,16 @@ class OpenTypeParser {
         RandomAccessFileOrArray rf2 = null;
         try {
             rf2 = raf.createView();
-            byte[] b = new byte[(int)rf2.length()];
+            byte[] b = new byte[(int) rf2.length()];
             rf2.readFully(b);
             return b;
-        }
-        finally {
+        } finally {
             try {
                 if (rf2 != null) {
                     rf2.close();
                 }
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -271,7 +405,8 @@ class OpenTypeParser {
      * If this font file is using the Compact Font File Format, then this method
      * will return the raw bytes needed for the font stream. If this method is
      * ever made public: make sure to add a test if (cff == true).
-     * @return	a byte array
+     *
+     * @return a byte array
      */
     public byte[] readCffFont() throws IOException {
         if (!isCff()) {
@@ -284,13 +419,13 @@ class OpenTypeParser {
             byte[] cff = new byte[cffLength];
             rf2.readFully(cff);
             return cff;
-        }
-        finally {
+        } finally {
             try {
                 if (rf2 != null) {
                     rf2.close();
                 }
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -300,11 +435,13 @@ class OpenTypeParser {
         return sb.process();
     }
 
-    /** Reads the font data. */
+    /**
+     * Reads the font data.
+     */
     protected void process() throws IOException {
         tables = new HashMap<>();
-        if (ttcIndex.length() > 0) {
-            int dirIdx = Integer.parseInt(ttcIndex);
+        if (ttcIndex >= 0) {
+            int dirIdx = ttcIndex;
             if (dirIdx < 0) {
                 if (fileName != null) {
                     throw new PdfException("the.font.index.for.1.must.be.positive").setMessageParams(fileName);
@@ -367,6 +504,7 @@ class OpenTypeParser {
      * Gets the name from a composed TTC file name.
      * If I have for input "myfont.ttc,2" the return will
      * be "myfont.ttc".
+     *
      * @param name the full name
      * @return the simple file name
      */
@@ -396,6 +534,7 @@ class OpenTypeParser {
      * The glyphs are normalized to 1000 units (TrueTypeFont.UNITS_NORMALIZATION).
      * Depends from {@code hhea.numberOfHMetrics} property, {@see HorizontalHeader} and
      * {@code head.unitsPerEm} property, {@see HeaderTable}.
+     *
      * @throws IOException the font file could not be read.
      */
     protected void readGlyphWidths() throws IOException {
@@ -421,6 +560,7 @@ class OpenTypeParser {
 
     /**
      * Reads the kerning information from the 'kern' table.
+     *
      * @param unitsPerEm {@code head.unitsPerEm} property, {@see HeaderTable}.
      * @throws IOException the font file could not be read
      */
@@ -456,9 +596,10 @@ class OpenTypeParser {
 
     /**
      * Read the glyf bboxes from 'glyf' table.
+     *
      * @param unitsPerEm {@code head.unitsPerEm} property, {@see HeaderTable}.
      * @throws PdfException the font is invalid.
-     * @throws IOException the font file could not be read.
+     * @throws IOException  the font file could not be read.
      */
     protected int[][] readBbox(int unitsPerEm) throws IOException {
         int tableLocation[];
@@ -506,7 +647,7 @@ class OpenTypeParser {
             int start = locaTable[glyph];
             if (start != locaTable[glyph + 1]) {
                 raf.seek(tableGlyphOffset + start + 2);
-                bboxes[glyph] = new int[] {
+                bboxes[glyph] = new int[]{
                         raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm,
                         raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm,
                         raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm,
@@ -529,8 +670,9 @@ class OpenTypeParser {
 
     /**
      * Extracts the names of the font in all the languages available.
+     *
      * @throws PdfException on error
-     * @throws IOException on error
+     * @throws IOException  on error
      */
     private void readNameTable() throws IOException {
         int table_location[];
@@ -559,15 +701,15 @@ class OpenTypeParser {
             } else {
                 allNameEntries.put(nameID, names = new ArrayList<>());
             }
-            int pos = (int)raf.getPosition();
+            int pos = (int) raf.getPosition();
             raf.seek(table_location[0] + startOfStorage + offset);
             String name;
-            if (platformID == 0 || platformID == 3 || platformID == 2 && platformEncodingID == 1){
+            if (platformID == 0 || platformID == 3 || platformID == 2 && platformEncodingID == 1) {
                 name = readUnicodeString(length);
             } else {
                 name = readStandardString(length);
             }
-            names.add(new String[] {
+            names.add(new String[]{
                     String.valueOf(platformID),
                     String.valueOf(platformEncodingID),
                     String.valueOf(languageID),
@@ -579,8 +721,9 @@ class OpenTypeParser {
 
     /**
      * Read horizontal header, table 'hhea'.
+     *
      * @throws PdfException the font is invalid.
-     * @throws IOException the font file could not be read.
+     * @throws IOException  the font file could not be read.
      */
     private void readHheaTable() throws IOException {
         int table_location[];
@@ -609,8 +752,9 @@ class OpenTypeParser {
 
     /**
      * Read font header, table 'head'.
+     *
      * @throws PdfException the font is invalid.
-     * @throws IOException the font file could not be read.
+     * @throws IOException  the font file could not be read.
      */
     private void readHeadTable() throws IOException {
         int table_location[];
@@ -637,8 +781,9 @@ class OpenTypeParser {
     /**
      * Reads the windows metrics table. The metrics are extracted from the table 'OS/2'.
      * Depends from {@code head.unitsPerEm} property, {@see HeaderTable}.
+     *
      * @throws PdfException the font is invalid.
-     * @throws IOException the font file could not be read.
+     * @throws IOException  the font file could not be read.
      */
     private void readOs_2Table() throws IOException {
         int table_location[];
@@ -717,9 +862,11 @@ class OpenTypeParser {
         }
     }
 
-    /** Reads the several maps from the table 'cmap'. The maps of interest are 1.0 for symbolic
-     *  fonts and 3.1 for all others. A symbolic font is defined as having the map 3.0.
-     *  Depends from {@code readGlyphWidths()}.
+    /**
+     * Reads the several maps from the table 'cmap'. The maps of interest are 1.0 for symbolic
+     * fonts and 3.1 for all others. A symbolic font is defined as having the map 3.0.
+     * Depends from {@code readGlyphWidths()}.
+     *
      * @throws IOException the font file could not be read
      */
     private void readCmapTable() throws IOException {
@@ -804,8 +951,10 @@ class OpenTypeParser {
         }
     }
 
-    /** Reads a <CODE>String</CODE> from the font file as bytes using the Cp1252
-     *  encoding.
+    /**
+     * Reads a <CODE>String</CODE> from the font file as bytes using the Cp1252
+     * encoding.
+     *
      * @param length the length of bytes to read
      * @return the <CODE>String</CODE> read
      * @throws IOException the font file could not be read
@@ -816,6 +965,7 @@ class OpenTypeParser {
 
     /**
      * Reads a Unicode <CODE>String</CODE> from the font file. Each character is represented by two bytes.
+     *
      * @param length the length of bytes to read. The <CODE>String</CODE> will have <CODE>length</CODE>/2 characters.
      * @return the <CODE>String</CODE> read.
      * @throws IOException the font file could not be read.
@@ -829,7 +979,9 @@ class OpenTypeParser {
         return buf.toString();
     }
 
-    /** Gets a glyph width.
+    /**
+     * Gets a glyph width.
+     *
      * @param glyph the glyph to get the width of
      * @return the width of the glyph in normalized 1000 units (TrueTypeFont.UNITS_NORMALIZATION)
      */
@@ -839,8 +991,10 @@ class OpenTypeParser {
         return glyphWidthsByIndex[glyph];
     }
 
-    /** The information in the maps of the table 'cmap' is coded in several formats.
-     *  Format 0 is the Apple standard character to glyph index mapping table.
+    /**
+     * The information in the maps of the table 'cmap' is coded in several formats.
+     * Format 0 is the Apple standard character to glyph index mapping table.
+     *
      * @return a <CODE>HashMap</CODE> representing this map
      * @throws IOException the font file could not be read
      */
@@ -856,8 +1010,10 @@ class OpenTypeParser {
         return h;
     }
 
-    /** The information in the maps of the table 'cmap' is coded in several formats.
-     *  Format 4 is the Microsoft standard character to glyph index mapping table.
+    /**
+     * The information in the maps of the table 'cmap' is coded in several formats.
+     * Format 4 is the Microsoft standard character to glyph index mapping table.
+     *
      * @return a <CODE>HashMap</CODE> representing this map
      * @throws IOException the font file could not be read
      */
@@ -893,8 +1049,7 @@ class OpenTypeParser {
             for (int j = startCount[k]; j <= endCount[k] && j != 0xFFFF; ++j) {
                 if (idRO[k] == 0) {
                     glyph = j + idDelta[k] & 0xFFFF;
-                }
-                else {
+                } else {
                     int idx = k + idRO[k] / 2 - segCount + j - startCount[k];
                     if (idx >= glyphId.length)
                         continue;
@@ -909,9 +1064,11 @@ class OpenTypeParser {
         return h;
     }
 
-    /** The information in the maps of the table 'cmap' is coded in several formats.
-     *  Format 6 is a trimmed table mapping. It is similar to format 0 but can have
-     *  less than 256 entries.
+    /**
+     * The information in the maps of the table 'cmap' is coded in several formats.
+     * Format 6 is a trimmed table mapping. It is similar to format 0 but can have
+     * less than 256 entries.
+     *
      * @return a <CODE>HashMap</CODE> representing this map
      * @throws IOException the font file could not be read
      */

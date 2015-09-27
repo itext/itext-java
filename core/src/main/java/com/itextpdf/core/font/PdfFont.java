@@ -1,13 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.CidFont;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontFactory;
-import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.TrueTypeFont;
-import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.font.*;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -28,7 +22,9 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected boolean isCopy = false;
 
 
-    /** true if the font is to be embedded in the PDF. */
+    /**
+     * true if the font is to be embedded in the PDF.
+     */
     //TODO mark as final
     protected boolean embedded = false;
     /**
@@ -57,20 +53,40 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return createFont(pdfDocument, path, encoding, false);
     }
 
+    public static PdfFont createFont(PdfDocument pdfDocument, byte[] ttc, int ttcIndex, String encoding) throws IOException {
+       return createFont(pdfDocument,ttc,ttcIndex,encoding,false);
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, byte[] ttc, int ttcIndex, String encoding, boolean embedded) throws IOException {
+        TrueTypeCollection collection = new TrueTypeCollection(ttc,encoding);
+        FontProgram program = collection.getFontByTCCIndex(ttcIndex);
+        return new PdfTrueTypeFont(pdfDocument,  (TrueTypeFont)program, embedded);
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, String ttcPath, int ttcIndex, String encoding) throws IOException {
+       return createFont(pdfDocument,ttcPath,ttcIndex,encoding,false);
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, String ttcPath, int ttcIndex, String encoding, boolean embedded) throws IOException {
+        TrueTypeCollection collection = new TrueTypeCollection(ttcPath,encoding);
+        FontProgram program = collection.getFontByTCCIndex(ttcIndex);
+        return new PdfTrueTypeFont(pdfDocument,  (TrueTypeFont)program, embedded);
+    }
+
     public static PdfFont createFont(PdfDocument pdfDocument, String path, String encoding, boolean embedded) throws IOException {
         FontProgram fontProgram = FontFactory.createFont(path, encoding);
         if (fontProgram == null) {
             return null;
         } else if (fontProgram instanceof Type1Font) {
-            return new PdfType1Font(pdfDocument, (Type1Font)fontProgram, embedded);
+            return new PdfType1Font(pdfDocument, (Type1Font) fontProgram, embedded);
         } else if (fontProgram instanceof TrueTypeFont) {
             if (PdfEncodings.IDENTITY_H.equals(encoding) || PdfEncodings.IDENTITY_V.equals(encoding)) {
-                return new PdfType0Font(pdfDocument, (TrueTypeFont)fontProgram, encoding);
+                return new PdfType0Font(pdfDocument, (TrueTypeFont) fontProgram, encoding);
             } else {
-                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont)fontProgram, embedded);
+                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) fontProgram, embedded);
             }
         } else if (fontProgram instanceof CidFont) {
-            return new PdfType0Font(pdfDocument, (CidFont)fontProgram, encoding);
+            return new PdfType0Font(pdfDocument, (CidFont) fontProgram, encoding);
         } else {
             return null;
         }
@@ -85,12 +101,12 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         if (fontProgram == null) {
             return null;
         } else if (fontProgram instanceof Type1Font) {
-            return new PdfType1Font(pdfDocument, (Type1Font)fontProgram, embedded);
+            return new PdfType1Font(pdfDocument, (Type1Font) fontProgram, embedded);
         } else if (fontProgram instanceof TrueTypeFont) {
             if (PdfEncodings.IDENTITY_H.equals(encoding) || PdfEncodings.IDENTITY_V.equals(encoding)) {
-                return new PdfType0Font(pdfDocument, (TrueTypeFont)fontProgram, encoding);
+                return new PdfType0Font(pdfDocument, (TrueTypeFont) fontProgram, encoding);
             } else {
-                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont)fontProgram, embedded);
+                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) fontProgram, embedded);
             }
         } else {
             return null;
@@ -119,8 +135,9 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Create {@see PdfType1Font}.
+     *
      * @param metrics path to .afm or .pfm metrics file.
-     * @param binary .pfb binary file
+     * @param binary  .pfb binary file
      */
     public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics, String binary, String encoding, boolean embedded) throws IOException {
         return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary, encoding), embedded);
@@ -140,8 +157,9 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Create {@see PdfType1Font}.
+     *
      * @param metrics .afm or .pfm metrics file.
-     * @param binary .pfb binary file
+     * @param binary  .pfb binary file
      */
     public static PdfFont createType1Font(PdfDocument pdfDocument, byte[] metrics, byte[] binary, String encoding, boolean embedded) throws IOException {
         return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary, encoding), embedded);
@@ -153,7 +171,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
-    protected PdfFont(PdfDocument document, PdfDictionary pdfDictionary, boolean isCopy){
+    protected PdfFont(PdfDocument document, PdfDictionary pdfDictionary, boolean isCopy) {
         super(pdfDictionary);
         makeIndirect(document);
         getPdfObject().put(PdfName.Type, PdfName.Font);
@@ -200,7 +218,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the width of a {@code String} in points.
      *
-     * @param text the {@code String} to get the width of
+     * @param text     the {@code String} to get the width of
      * @param fontSize the font size
      * @return the width in points
      */
@@ -211,7 +229,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the width of a {@code char} in points.
      *
-     * @param ch the {@code char} to get the width of
+     * @param ch       the {@code char} to get the width of
      * @param fontSize the font size
      * @return the width in points
      */
@@ -292,19 +310,23 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return embedded;
     }
 
-    /** Indicates if all the glyphs and widths for that particular
+    /**
+     * Indicates if all the glyphs and widths for that particular
      * encoding should be included in the document.
+     *
      * @return <CODE>false</CODE> to include all the glyphs and widths.
      */
     public boolean isSubset() {
         return subset;
     }
 
-    /** Indicates if all the glyphs and widths for that particular
+    /**
+     * Indicates if all the glyphs and widths for that particular
      * encoding should be included in the document. When set to <CODE>true</CODE>
      * only the glyphs used will be included in the font. When set to <CODE>false</CODE>
      * and {@link #addSubsetRange(int[])} was not called the full font will be included
      * otherwise just the characters ranges will be included.
+     *
      * @param subset new value of property subset
      */
     public void setSubset(boolean subset) {
@@ -315,6 +337,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Adds a character range when subsetting. The range is an <CODE>int</CODE> array
      * where the first element is the start range inclusive and the second element is the
      * end range inclusive. Several ranges are allowed in the same array.
+     *
      * @param range the character range
      */
     //TODO
@@ -360,10 +383,10 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return resultString;
     }
 
-    protected static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType,boolean isException) {
+    protected static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !fontDic.get(PdfName.Subtype).equals(fontType)) {
-            if(isException) {
+            if (isException) {
                 throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(fontType.getValue());
             }
             return false;
@@ -371,19 +394,19 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
-    protected  boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType) {
+    protected boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType) {
         return checkFontDictionary(fontDic, fontType, true);
     }
 
 
-    protected  boolean checkTrueTypeFontDictionary(PdfDictionary fontDic) {
+    protected boolean checkTrueTypeFontDictionary(PdfDictionary fontDic) {
         return checkTrueTypeFontDictionary(fontDic, true);
     }
 
-    protected  boolean checkTrueTypeFontDictionary(PdfDictionary fontDic,boolean isException) {
+    protected boolean checkTrueTypeFontDictionary(PdfDictionary fontDic, boolean isException) {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !(fontDic.get(PdfName.Subtype).equals(PdfName.TrueType) || fontDic.get(PdfName.Subtype).equals(PdfName.Type1))) {
-            if(isException) {
+            if (isException) {
                 throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
             }
             return false;
@@ -422,7 +445,9 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     }
 
-    /** Creates a unique subset prefix to be added to the font name when the font is embedded and subset.
+    /**
+     * Creates a unique subset prefix to be added to the font name when the font is embedded and subset.
+     *
      * @return the subset prefix
      */
     protected static String createSubsetPrefix() {
@@ -436,6 +461,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
      * otherwise the font is read and output in a PdfStream object.
+     *
      * @return the PdfStream containing the font or {@code null}, if there is an error reading the font.
      */
     protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {

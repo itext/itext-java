@@ -19,6 +19,13 @@ public abstract class ITextTest {
         fpath.mkdirs();
     }
 
+    public static void createOrClearDestinationFolder(String path) {
+        File fpath = new File(path);
+        fpath.mkdirs();
+        for (File file : fpath.listFiles())
+            file.delete();
+    }
+
     public static void deleteDirectory(String path) {
 
         File fpath = new File(path);

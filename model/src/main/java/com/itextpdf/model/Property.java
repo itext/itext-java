@@ -45,13 +45,8 @@ public enum Property {
     POSITION,
     RIGHT,
     ROTATION_ANGLE,
-    /**
-     * The vertical shift of the element content, which is the result of the height changes on rotation layout
-     */
-    ROTATION_LAYOUT_SHIFT,
-    /**
-     *  If defined, determines the specific point of rotation
-     */
+    ROTATION_INITIAL_HEIGHT,
+    ROTATION_INITIAL_WIDTH,
     ROTATION_POINT_X,
     ROTATION_POINT_Y,
     ROWSPAN,

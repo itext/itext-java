@@ -39,7 +39,7 @@ public class RotationTest extends ExtendedITextTest{
 
     @BeforeClass
     static public void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -448,10 +448,40 @@ public class RotationTest extends ExtendedITextTest{
                 setBackgroundColor(Color.GREEN).
                 setHeight(300).setWidth(300).
                 add(new Div().
-                                setBackgroundColor(Color.RED).
-                                setHeight(100).
-                                setWidth(100).
-                                setRotationAngle(Math.PI / 4)).
+                        setBackgroundColor(Color.RED).
+                        setHeight(100).
+                        setWidth(100).
+                        setRotationAngle(Math.PI / 4)).
+                setRotationAngle(Math.PI / 8)
+        );
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void innerRotationTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "innerRotationTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "innerRotationTest02.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        String longText = para1Text + para2Text + para3Text;
+        String extremeLongText = longText + longText + longText;
+        doc.add(new Div().
+                setBackgroundColor(Color.GREEN).
+                setHeight(300).setWidth(300).
+                add(new Div().
+                        setBackgroundColor(Color.RED).
+                        setWidth(30).
+                        setRotationAngle(5 * Math.PI / 16).
+                        add(new Paragraph(extremeLongText))).
+                add(new Paragraph("smaaaaaaaaaaaaaaaaaaaall taaaaaaaaaaaaaaaaaaalk")).
+                add(new Paragraph("smaaaaaaaaaaaaaaaaaaaall taaaaaaaaaaaaaaaaaaalk")).
                 setRotationAngle(Math.PI / 8)
         );
 
