@@ -1154,5 +1154,70 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertTrue("TrueType (TTF) expected", FontFactory.createFont(ttf, pfb, "WinAnsi") instanceof TrueTypeFont);
     }
 
+    @Test
+    public void testWriteTTC() throws IOException, InterruptedException {
+
+        String filename = destinationFolder + "DocumentWithTTC.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
+
+        final String author = "Trusevich Dzmitry";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        String font = sourceFolder + "uming.ttc";
+
+        PdfFont pdfTrueTypeFont = PdfFont.createFont(pdfDoc, font,  0, "WinAnsi", true);
+
+        pdfTrueTypeFont.setSubset(true);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+
+        byte[] ttc = Utilities.inputStreamToArray(new FileInputStream(font));
+        pdfTrueTypeFont = PdfFont.createFont(pdfDoc, ttc, 1, "WinAnsi", true);
+        pdfTrueTypeFont.setSubset(true);
+        page = pdfDoc.addNewPage();
+        canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void testCheckTTCSize() throws IOException {
+        TrueTypeCollection collection = new TrueTypeCollection(sourceFolder + "uming.ttc","WinAnsi");
+        Assert.assertTrue(collection.getTTCSize() == 4);
+    }
+
 
 }
