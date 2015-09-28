@@ -424,6 +424,25 @@ public class PdfA2Checker extends PdfA1Checker{
     }
 
     @Override
+    protected void checkFileSpec(PdfDictionary fileSpec) {
+        if (fileSpec.containsKey(PdfName.EF)) {
+            if (!fileSpec.containsKey(PdfName.F) || !fileSpec.containsKey(PdfName.UF) || !fileSpec.containsKey(PdfName.Desc)) {
+                throw new PdfAConformanceException(PdfAConformanceException.FileSpecificationDictionaryShallContainFKeyUFKeyAndDescKey);
+            }
+
+            PdfDictionary ef = fileSpec.getAsDictionary(PdfName.EF);
+            PdfStream embeddedFile = ef.getAsStream(PdfName.F);
+            if (embeddedFile == null) {
+                throw new PdfAConformanceException(PdfAConformanceException.EFKeyOfFileSpecificationDictionaryShallContainDictionaryWithValidFKey);
+            }
+            PdfName subtype = embeddedFile.getAsName(PdfName.Subtype);
+            if (!PdfName.ApplicationPdf.equals(subtype)) {
+                throw new PdfAConformanceException(PdfAConformanceException.EmbeddedFileShallBeOfPdfMimeType);
+            }
+        }
+    }
+
+    @Override
     protected void checkPdfStream(PdfStream stream) {
 
         if (stream.containsKey(PdfName.F) || stream.containsKey(PdfName.FFilter) || stream.containsKey(PdfName.FDecodeParams)) {

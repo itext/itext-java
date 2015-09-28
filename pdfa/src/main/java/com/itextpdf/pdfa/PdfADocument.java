@@ -1,6 +1,5 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.PdfGraphicsState;

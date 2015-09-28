@@ -190,11 +190,6 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    protected void checkFont(PdfDictionary font) {
-
-    }
-
-    @Override
     protected void checkLogicalStructure(PdfDictionary catalog) {
         if (checkStructure(conformanceLevel)) {
             PdfDictionary markInfo = catalog.getAsDictionary(PdfName.MarkInfo);
@@ -280,6 +275,13 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    protected void checkFileSpec(PdfDictionary fileSpec) {
+        if (fileSpec.containsKey(PdfName.EF)) {
+            throw new PdfAConformanceException(PdfAConformanceException.FileSpecificationDictionaryShallNotContainTheEFKey);
+        }
+    }
+
+    @Override
     protected void checkAnnotation(PdfDictionary annotDic) {
         PdfName subtype = annotDic.getAsName(PdfName.Subtype);
 
@@ -362,6 +364,11 @@ public class PdfA1Checker extends PdfAChecker {
         }
         if (catalogDict.containsKey(PdfName.OCProperties)) {
             throw new PdfAConformanceException(PdfAConformanceException.CatalogDictionaryShallNotContainOCPropertiesKey);
+        }
+        if (catalogDict.containsKey(PdfName.Names)) {
+            if (catalogDict.getAsDictionary(PdfName.Names).containsKey(PdfName.EmbeddedFiles)) {
+                throw new PdfAConformanceException(PdfAConformanceException.NameDictionaryShallNotContainTheEmbeddedFilesKey);
+            }
         }
     }
 

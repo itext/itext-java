@@ -64,6 +64,13 @@ public abstract class PdfAChecker {
             case PdfObject.String:
                 checkPdfString((PdfString) obj);
                 break;
+            case PdfObject.Dictionary:
+                PdfDictionary dict = (PdfDictionary) obj;
+                PdfName type = dict.getAsName(PdfName.Type);
+                if (PdfName.Filespec.equals(type)) {
+                    checkFileSpec(dict);
+                }
+                break;
         }
     }
 
@@ -83,7 +90,6 @@ public abstract class PdfAChecker {
     protected abstract void checkColorsUsages();
     protected abstract void checkImage(PdfStream image, PdfDictionary currentColorSpaces);
     protected abstract void checkFormXObject(PdfStream form);
-    protected abstract void checkFont(PdfDictionary font);
     protected abstract void checkPdfNumber(PdfNumber number);
     protected abstract void checkPdfStream(PdfStream stream);
     protected abstract void checkPdfString(PdfString string);
@@ -96,22 +102,15 @@ public abstract class PdfAChecker {
     protected abstract void checkMetaData(PdfDictionary catalog);
     protected abstract void checkOutputIntents(PdfDictionary catalog);
     protected abstract void checkPageSize(PdfDictionary page);
+    protected abstract void checkFileSpec(PdfDictionary fileSpec);
 
 
     protected void checkResources(PdfDictionary resources) {
         if (resources == null)
             return;
 
-        PdfDictionary fonts = resources.getAsDictionary(PdfName.Font);
         PdfDictionary xObjects = resources.getAsDictionary(PdfName.XObject);
         PdfDictionary shadings = resources.getAsDictionary(PdfName.Shading);
-
-        if (fonts != null) {
-            for (PdfObject font : fonts.values()) {
-                PdfDictionary fontDict = (PdfDictionary) font;
-                checkFont(fontDict);
-            }
-        }
 
         if (xObjects != null) {
             for (PdfObject xObject : xObjects.values()) {
