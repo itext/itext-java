@@ -541,8 +541,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private Integer getMcid(List<IPdfTag> tags) {
         Integer maxMcid = null;
         for (IPdfTag tag : tags) {
-            if (maxMcid == null || tag.getMcid() > maxMcid)
-                maxMcid = tag.getMcid();
+            Integer mcid = tag.getMcid();
+            if (maxMcid == null || (mcid != null && mcid > maxMcid))
+                maxMcid = mcid;
         }
         return maxMcid == null ? 0 : maxMcid + 1;
     }

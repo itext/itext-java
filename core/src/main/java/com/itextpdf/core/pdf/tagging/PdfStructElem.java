@@ -109,24 +109,25 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     /**
-     * Gets attributes dictionary.
+     * Gets attributes object.
      *
-     * @param createNewIfNull sometimes attributes dictionary may not exist.
+     * @param createNewIfNull sometimes attributes object may not exist.
      *                        Pass {@code true} if you want to create empty dictionary in such case.
-     *                        The attributes dictionary wil be stored inside element.
+     *                        The attributes dictionary will be stored inside element.
      * @return attributes dictionary.
      * @throws PdfException
      */
-    public PdfDictionary getAttributes(boolean createNewIfNull) {
-        PdfDictionary attributes = getPdfObject().getAsDictionary(PdfName.A);
+    public PdfObject getAttributes(boolean createNewIfNull) {
+        PdfObject attributes = getPdfObject().get(PdfName.A);
         if (attributes == null && createNewIfNull) {
             attributes = new PdfDictionary();
             setAttributes(attributes);
         }
+
         return attributes;
     }
 
-    public void setAttributes(PdfDictionary attributes) {
+    public void setAttributes(PdfObject attributes) {
         getPdfObject().put(PdfName.A, attributes);
     }
 

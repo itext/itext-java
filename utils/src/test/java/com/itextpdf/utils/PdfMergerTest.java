@@ -13,7 +13,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -101,7 +103,7 @@ public class PdfMergerTest extends ExtendedITextTest{
 
     @Test
     @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
-    public void mergeDocumentTest03() throws IOException, InterruptedException, DocumentException {
+    public void mergeDocumentTest03() throws IOException, InterruptedException, DocumentException, ParserConfigurationException, SAXException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";
         String resultFile = destinationFolder+"mergedResult03.pdf";
@@ -125,15 +127,20 @@ public class PdfMergerTest extends ExtendedITextTest{
         merger.merge();
         pdfDoc3.close();
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult03.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
+        String errorMessage = "";
+        String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult03.pdf", destinationFolder, "diff_");
+        String tagStructErrorMessage = compareTool.compareTagStructures(resultFile, sourceFolder + "cmp_mergedResult03.pdf");
+
+        errorMessage += tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
+        errorMessage += contentErrorMessage == null ? "" : contentErrorMessage;
+        if (!errorMessage.isEmpty()) {
             Assert.fail(errorMessage);
         }
     }
 
     @Test
     @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
-    public void mergeDocumentTest04() throws IOException, InterruptedException, DocumentException {
+    public void mergeDocumentTest04() throws IOException, InterruptedException, DocumentException, ParserConfigurationException, SAXException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";
         String resultFile = destinationFolder+"mergedResult04.pdf";
@@ -167,8 +174,13 @@ public class PdfMergerTest extends ExtendedITextTest{
         merger.merge();
         pdfDoc3.close();
         CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult04.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
+        String errorMessage = "";
+        String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult04.pdf", destinationFolder, "diff_");
+        String tagStructErrorMessage = compareTool.compareTagStructures(resultFile, sourceFolder + "cmp_mergedResult04.pdf");
+
+        errorMessage += tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
+        errorMessage += contentErrorMessage == null ? "" : contentErrorMessage;
+        if (!errorMessage.isEmpty()) {
             Assert.fail(errorMessage);
         }
     }

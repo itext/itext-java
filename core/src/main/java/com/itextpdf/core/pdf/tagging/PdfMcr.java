@@ -61,6 +61,4 @@ abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper imple
 //        return structParentIndex;
 //    }
 
-    protected abstract PdfDictionary getPageObject();
-
 }

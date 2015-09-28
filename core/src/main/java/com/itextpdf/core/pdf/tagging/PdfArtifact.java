@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf.tagging;
 
+import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 
 import java.util.List;
@@ -19,6 +20,11 @@ public class PdfArtifact implements IPdfTag {
 
     @Override
     public Integer getMcid() {
+        return null;
+    }
+
+    @Override
+    public PdfDictionary getPageObject() {
         return null;
     }
 

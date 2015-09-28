@@ -71,6 +71,7 @@ public class PdfException extends RuntimeException {
     public static final String DictionaryKey1IsNotAName = "dictionary.key.1.is.not.a.name";
     public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
+    public static final String DocumentDoesntContainStructTreeRoot = "document.doesn't.contain.structtreeroot";
     public static final String DocumentHasNoPages = "document.has.no.pages";
     public static final String DocumentHasNoCatalogObject = "document.has.no.catalog.object";
     public static final String DocumentToCopyToCannotBeNull = "document.to.copy.to.cannot.be.null";

@@ -24,7 +24,7 @@ public class PdfMcrDictionary extends PdfMcr<PdfDictionary> {
     }
 
     @Override
-    protected PdfDictionary getPageObject() {
+    public PdfDictionary getPageObject() {
         PdfDictionary page = ((PdfDictionary)getPdfObject()).getAsDictionary(PdfName.Pg);
         if (page == null)
             page = parent.getPdfObject().getAsDictionary(PdfName.Pg);

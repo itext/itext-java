@@ -235,27 +235,32 @@ public class CompareTool {
         return message;
     }
 
-    /*TODO: this method should be implemented after implementing of TaggedPdfReaderTool
-    public String compareTagStructures(String outPdf, String cmpPdf) throws IOException, ParserConfigurationException, SAXException, PdfException {
+
+    public String compareTagStructures(String outPdf, String cmpPdf) throws IOException, ParserConfigurationException, SAXException {
         System.out.print("[itext] INFO  Comparing tag structures......");
 
-        String outXml = outPdf.replace(".pdf", ".xml");
-        String cmpXml = outPdf.replace(".pdf", ".cmp.xml");
+        String outXmlPath = outPdf.replace(".pdf", ".xml");
+        String cmpXmlPath = outPdf.replace(".pdf", ".cmp.xml");
 
         String message = null;
-        PdfReader reader = new PdfReader(outPdf);
-        FileOutputStream xmlOut1 = new FileOutputStream(outXml);
-        new CmpTaggedPdfReaderTool().convertToXml(reader, xmlOut1);
-        reader.close();
-        reader = new PdfReader(cmpPdf);
-        FileOutputStream xmlOut2 = new FileOutputStream(cmpXml);
-        new CmpTaggedPdfReaderTool().convertToXml(reader, xmlOut2);
-        reader.close();
-        if (!compareXmls(outXml, cmpXml)) {
+
+        PdfReader readerOut = new PdfReader(outPdf);
+        PdfDocument docOut = new PdfDocument(readerOut);
+        FileOutputStream xmlOut = new FileOutputStream(outXmlPath);
+        new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
+        docOut.close();
+        xmlOut.close();
+
+        PdfReader readerCmp = new PdfReader(cmpPdf);
+        PdfDocument docCmp = new PdfDocument(readerCmp);
+        FileOutputStream xmlCmp = new FileOutputStream(cmpXmlPath);
+        new TaggedPdfReaderTool(docCmp).setRootTag("root").convertToXml(xmlCmp);
+        docCmp.close();
+        xmlCmp.close();
+
+        if (!compareXmls(outXmlPath, cmpXmlPath)) {
             message = "The tag structures are different.";
         }
-        xmlOut1.close();
-        xmlOut2.close();
         if (message == null)
             System.out.println("OK");
         else
@@ -263,7 +268,6 @@ public class CompareTool {
         System.out.flush();
         return message;
     }
-    */
 
     private void init(String outPdf, String cmpPdf) {
         this.outPdf = outPdf;

@@ -19,12 +19,14 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
 
     @Override
     public Integer getMcid() {
-        return 0;
+        return null;
     }
 
     @Override
-    protected PdfDictionary getPageObject() {
-        PdfDictionary page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
+    public PdfDictionary getPageObject() {
+        PdfDictionary page = ((PdfDictionary)getPdfObject()).getAsDictionary(PdfName.Pg);
+        if (page == null)
+            page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
         return page;
     }
 
