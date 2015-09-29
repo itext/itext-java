@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hyphenation-info>
+
+<!-- Malayalam Hyphenation Patterns -->
+
+<!-- (more info about the licence to be added later) -->
+
+<!-- These patterns originate from -->
+<!-- http://git.savannah.gnu.org/cgit/smc.git/tree/hyphenation) -->
+<!-- and have been adapted for hyph-utf8 (for use in TeX). -->
+
+<!-- Hyphenation for Malayalam -->
+<!-- Copyright (C) 2008-2010 Santhosh Thottingal <santhosh.thottingal@gmail.com> -->
+
+<!-- This library is free software; you can redistribute it and/or -->
+<!-- modify it under the terms of the GNU Lesser General Public -->
+<!-- License as published by the Free Software Foundation; -->
+<!-- version 3 or later version of the License. -->
+
+<!-- This library is distributed in the hope that it will be useful, -->
+<!-- but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU -->
+<!-- Lesser General Public License for more details. -->
+
+<!-- You should have received a copy of the GNU Lesser General Public -->
+<!-- License along with this library; if not, write to the Free Software -->
+<!-- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA -->
+
+
+<hyphen-min before="1" after="1"/>
+
+<exceptions>
+</exceptions>
+
+<patterns>
+2‍2
+1‌1
+1അ1
+1ആ1
+1ഇ1
+1ഈ1
+1ഉ1
+1ഊ1
+1ഋ1
+1ൠ1
+1ഌ1
+1ൡ1
+1എ1
+1ഏ1
+1ഐ1
+1ഒ1
+1ഓ1
+1ഔ1
+ാ1
+ി1
+ീ1
+ു1
+ൂ1
+ൃ1
+െ1
+േ1
+ൈ1
+ൊ1
+ോ1
+ൌ1
+ൗ1
+1ക
+1ഖ
+1ഗ
+1ഘ
+1ങ
+1ച
+1ഛ
+1ജ
+1ഝ
+1ഞ
+1ട
+1ഠ
+1ഡ
+1ഢ
+1ണ
+1ത
+1ഥ
+1ദ
+1ധ
+1ന
+1പ
+1ഫ
+1ബ
+1ഭ
+1മ
+1യ
+1ര
+1റ
+1ല
+1ള
+1ഴ
+1വ
+1ശ
+1ഷ
+1സ
+1ഹ
+2ഃ1
+2ം1
+2്2
+ന്2
+ര്2
+ള്2
+ല്2
+ക്2
+ണ്2
+2ന്‍
+2ല്‍
+2ള്‍
+2ണ്‍
+2ര്‍
+2ക്‍
+2ൺ
+2ൻ
+2ർ
+2ൽ
+2ൾ
+2ൿ
+</patterns>
+
+</hyphenation-info>
