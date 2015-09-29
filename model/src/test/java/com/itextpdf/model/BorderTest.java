@@ -1,6 +1,9 @@
 package com.itextpdf.model;
 
-import com.itextpdf.canvas.color.*;
+import com.itextpdf.canvas.color.Color;
+import com.itextpdf.canvas.color.DeviceCmyk;
+import com.itextpdf.canvas.color.DeviceGray;
+import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
@@ -15,7 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -214,7 +216,7 @@ public class BorderTest extends ExtendedITextTest {
                 "stretching and thinning of the crust's interior plates, e.g., in the East African Rift and the Wells Gray-Clearwater volcanic field and " +
                 "Rio Grande Rift in North America. This type of volcanism falls under the umbrella of \"plate hypothesis\" volcanism. Volcanism away " +
                 "from plate boundaries has also been explained as mantle plumes. These so-called \"hotspots\", for example Hawaii, are postulated to arise " +
-                "from upwelling diapirs with magma from the core–mantle boundary, 3,000 km deep in the Earth. Volcanoes are usually not created where two " +
+                "from upwelling diapirs with magma from the core-mantle boundary, 3,000 km deep in the Earth. Volcanoes are usually not created where two " +
                 "tectonic plates slide past one another.";
 
         String textAfter = "Subduction zones are places where two plates, usually an oceanic plate and a continental plate, collide. In this case, the oceanic " +
