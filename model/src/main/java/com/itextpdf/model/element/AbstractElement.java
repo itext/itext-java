@@ -5,6 +5,7 @@ import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
+import com.itextpdf.model.hyphenation.HyphenationConfig;
 import com.itextpdf.model.splitting.ISplitCharacters;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
@@ -333,4 +334,14 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
     public Type setBaseDirection(Property.BaseDirection baseDirection) {
         return setProperty(Property.BASE_DIRECTION, baseDirection);
     }
+
+    /**
+     * Sets a custom hyphenation configuration which will hyphenate words automatically accordingly to the
+     * language and country.
+     * @return this element
+     */
+    public Type setHyphenation(HyphenationConfig hyphenationConfig) {
+        return setProperty(Property.HYPHENATION, hyphenationConfig);
+    }
+
 }

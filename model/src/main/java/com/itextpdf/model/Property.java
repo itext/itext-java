@@ -27,6 +27,7 @@ public enum Property {
      * Value of 1 is equivalent to no scaling
      **/
     HORIZONTAL_SCALING,
+    HYPHENATION(true),
     ITALIC_SIMULATION(true),
     KEEP_TOGETHER(true),
     LEADING,
