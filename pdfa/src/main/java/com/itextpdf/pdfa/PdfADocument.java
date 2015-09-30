@@ -15,6 +15,7 @@ import java.io.IOException;
 
 public class PdfADocument extends PdfDocument {
     private PdfAChecker checker;
+    private int gStateIndex = -1;
 
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(writer);
@@ -38,11 +39,11 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     public void checkIsoConformance(Object obj, IsoKey key) {
-        checkIsoConformance(obj, key, null);
+        checkIsoConformance(obj, key, null, 0);
     }
 
     @Override
-    public void checkShowTextIsoConformance(Object obj, PdfResources resources) {
+    public void checkShowTextIsoConformance(Object obj, PdfResources resources, int gStateIndex) {
         PdfGraphicsState gState = (PdfGraphicsState) obj;
         boolean fill = false;
         boolean stroke = false;
@@ -77,12 +78,12 @@ public class PdfADocument extends PdfDocument {
         }
 
         if (fill || stroke) {
-            checkIsoConformance(gState, drawMode, resources);
+            checkIsoConformance(gState, drawMode, resources, gStateIndex);
         }
     }
 
     @Override
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) {
         PdfGraphicsState gState;
         PdfDictionary currentColorSpaces = null;
         if (resources != null) {
@@ -102,25 +103,39 @@ public class PdfADocument extends PdfDocument {
                 checker.checkInlineImage((PdfStream) obj, currentColorSpaces);
                 break;
             case GRAPHIC_STATE_ONLY:
-                gState = (PdfGraphicsState) obj;
-                checker.checkExtGState(gState);
+                if (this.gStateIndex != gStateIndex) {
+                    gState = (PdfGraphicsState) obj;
+                    checker.checkExtGState(gState);
+                    this.gStateIndex = gStateIndex;
+                }
                 break;
             case DRAWMODE_FILL:
-                gState = (PdfGraphicsState) obj;
-                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                checker.checkExtGState(gState);
+                if (this.gStateIndex != gStateIndex) {
+                    gState = (PdfGraphicsState) obj;
+                    checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
+                    checker.checkExtGState(gState);
+                    this.gStateIndex = gStateIndex;
+                }
                 break;
             case DRAWMODE_STROKE:
-                gState = (PdfGraphicsState) obj;
-                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                checker.checkExtGState(gState);
+                if (this.gStateIndex != gStateIndex) {
+                    gState = (PdfGraphicsState) obj;
+                    checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
+                    checker.checkExtGState(gState);
+                    this.gStateIndex = gStateIndex;
+                }
                 break;
             case DRAWMODE_FILL_STROKE:
-                gState = (PdfGraphicsState) obj;
-                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                checker.checkExtGState(gState);
+                if (this.gStateIndex != gStateIndex) {
+                    gState = (PdfGraphicsState) obj;
+                    checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
+                    checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
+                    checker.checkExtGState(gState);
+                    this.gStateIndex = gStateIndex;
+                }
                 break;
+            case PAGE:
+                checker.checkSinglePage((PdfPage)obj);
         }
     }
 
@@ -190,10 +205,11 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
-        if (isClosing) {
+        if (isClosing || checker.objectIsChecked(pdfObject)) {
             super.flushObject(pdfObject, canBeInObjStm);
         } else {
             //suppress the call
+            //TODO log unsuccessful call
         }
     }
 

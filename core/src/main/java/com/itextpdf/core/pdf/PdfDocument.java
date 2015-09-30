@@ -857,8 +857,8 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public void checkIsoConformance(Object obj, IsoKey key) { }
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) { }
-    public void checkShowTextIsoConformance(Object gState, PdfResources resources) { }
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) { }
+    public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) { }
     protected void checkIsoConformance() { }
 
     protected void  addRdfDescription(XMPMeta xmpMeta) throws XMPException {}

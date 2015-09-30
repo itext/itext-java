@@ -245,6 +245,7 @@ public class PdfStream extends PdfDictionary {
      * Release content of PdfStream.
      */
     protected void releaseContent() {
+        super.releaseContent();
         try {
             if (outputStream != null) {
                 outputStream.close();

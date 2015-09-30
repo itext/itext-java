@@ -414,7 +414,7 @@ public class PdfA2Checker extends PdfA1Checker{
         PdfName[] boxNames = new PdfName[] {PdfName.MediaBox, PdfName.CropBox, PdfName.TrimBox, PdfName.ArtBox, PdfName.BleedBox};
         for (PdfName boxName: boxNames) {
             Rectangle box =  page.getAsRectangle(boxName);
-            if (box !=null ) {
+            if (box != null) {
                 float width = box.getWidth();
                 float height = box.getHeight();
                 if (width < MIN_PAGE_SIZE || width > MAX_PAGE_SIZE || height < MIN_PAGE_SIZE || height > MAX_PAGE_SIZE)
@@ -482,9 +482,7 @@ public class PdfA2Checker extends PdfA1Checker{
     }
 
     @Override
-    protected void checkPage(PdfPage page) {
-        PdfDictionary pageDict = page.getPdfObject();
-
+    protected void checkPageObject(PdfDictionary pageDict, PdfDictionary pageResources) {
         if (pageDict.containsKey(PdfName.AA)) {
             throw new PdfAConformanceException(PdfAConformanceException.PageDictionaryShallNotContainAAEntry);
         }
@@ -497,7 +495,7 @@ public class PdfA2Checker extends PdfA1Checker{
             transparencyIsUsed = true;
             PdfObject cs = pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS);
             if (cs != null) {
-                PdfDictionary currentColorSpaces = page.getResources().getPdfObject().getAsDictionary(PdfName.ColorSpace);
+                PdfDictionary currentColorSpaces = pageResources.getAsDictionary(PdfName.ColorSpace);
                 checkColorSpace(PdfColorSpace.makeColorSpace(cs, null), currentColorSpaces, true, null);
             }
         }
@@ -568,6 +566,20 @@ public class PdfA2Checker extends PdfA1Checker{
 
     @Override
     protected void checkImage(PdfStream image, PdfDictionary currentColorSpaces) {
+        PdfColorSpace colorSpace = null;
+        if (isAlreadyChecked(image)) {
+            colorSpace = checkedObjectsColorspace.get(image);
+            checkColorSpace(colorSpace, currentColorSpaces, true, null);
+            return;
+        }
+
+        PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
+        if (colorSpaceObj != null) {
+            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj, null);
+            checkColorSpace(colorSpace, currentColorSpaces, true, null);
+            checkedObjectsColorspace.put(image, colorSpace);
+        }
+
         if (image.containsKey(PdfName.Alternates)) {
             throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainAlternatesKey);
         }
@@ -579,11 +591,6 @@ public class PdfA2Checker extends PdfA1Checker{
             throw new PdfAConformanceException(PdfAConformanceException.TheValueOfInterpolateKeyShallNotBeTrue);
         }
         checkRenderingIntent(image.getAsName(PdfName.Intent));
-
-        PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
-        if (colorSpaceObj != null) {
-            checkColorSpace(PdfColorSpace.makeColorSpace(colorSpaceObj, null), currentColorSpaces, true, null);
-        }
 
         if (image.getAsStream(PdfName.SMask) != null) {
             transparencyIsUsed = true;
@@ -635,13 +642,19 @@ public class PdfA2Checker extends PdfA1Checker{
                         if (image.get(PdfName.ColorSpace) == null) {
                             switch(colorSpecBox.getEnumCs()) {
                                 case 1:
-                                    checkColorSpace(new PdfDeviceCs.Gray(), currentColorSpaces, true, null);
+                                    PdfDeviceCs.Gray deviceGrayCs = new PdfDeviceCs.Gray();
+                                    checkColorSpace(deviceGrayCs, currentColorSpaces, true, null);
+                                    checkedObjectsColorspace.put(image, deviceGrayCs);
                                     break;
                                 case 3:
-                                    checkColorSpace(new PdfDeviceCs.Rgb(), currentColorSpaces, true, null);
+                                    PdfDeviceCs.Rgb deviceRgbCs = new PdfDeviceCs.Rgb();
+                                    checkColorSpace(deviceRgbCs, currentColorSpaces, true, null);
+                                    checkedObjectsColorspace.put(image, deviceRgbCs);
                                     break;
                                 case 12:
-                                    checkColorSpace(new PdfDeviceCs.Cmyk(), currentColorSpaces, true, null);
+                                    PdfDeviceCs.Cmyk deviceCmykCs = new PdfDeviceCs.Cmyk();
+                                    checkColorSpace(deviceCmykCs, currentColorSpaces, true, null);
+                                    checkedObjectsColorspace.put(image, deviceCmykCs);
                                     break;
                             }
                         }
@@ -670,6 +683,8 @@ public class PdfA2Checker extends PdfA1Checker{
 
     @Override
      protected void checkFormXObject(PdfStream form) {
+        if (isAlreadyChecked(form)) return;
+
         if (form.containsKey(PdfName.OPI)) {
             throw new PdfAConformanceException(PdfAConformanceException.AFormXobjectDictionaryShallNotContainOpiKey);
         }

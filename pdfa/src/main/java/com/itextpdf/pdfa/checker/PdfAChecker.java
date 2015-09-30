@@ -8,9 +8,7 @@ import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.pdfa.PdfAConformanceLevel;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public abstract class PdfAChecker {
     public static final String ICC_COLOR_SPACE_RGB = "RGB ";
@@ -30,6 +28,18 @@ public abstract class PdfAChecker {
     protected boolean cmykIsUsed = false;
     protected boolean grayIsUsed = false;
 
+    /**
+     * Contains some objects that are already checked.
+     * NOTE: Not all objects that were checked are stored in that set. This set is used for avoiding double checks for
+     * actions, xObjects and page objects; and for letting those objects to be manually flushed.
+     *
+     * Use this mechanism carefully: objects that are able to be changed (or at least if object's properties
+     * that shall be checked are able to be changed) shouldn't be marked as checked if they are not to be
+     * flushed immediately.
+     */
+    protected HashSet<PdfObject> checkedObjects = new HashSet<>();
+    protected Map<PdfObject, PdfColorSpace> checkedObjectsColorspace = new HashMap<>();
+
     public PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
     }
@@ -44,11 +54,16 @@ public abstract class PdfAChecker {
         checkTrailer(catalog.getDocument().getTrailer());
         checkLogicalStructure(catalogDict);
         checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
-        checkOpenAction(catalogDict.get(PdfName.OpenAction));
         checkOutlines(catalogDict);
         checkPages(catalog);
+        checkOpenAction(catalogDict.get(PdfName.OpenAction));
         checkColorsUsages();
     }
+
+    public void checkSinglePage(PdfPage page) {
+        checkPage(page);
+    }
+
 
     public void checkPdfObject(PdfObject obj) {
         switch (obj.getType()) {
@@ -78,6 +93,10 @@ public abstract class PdfAChecker {
         return conformanceLevel;
     }
 
+    public boolean objectIsChecked(PdfObject object) {
+        return checkedObjects.contains(object);
+    }
+
     public abstract void checkCanvasStack(char stackOperation);
     public abstract void checkInlineImage(PdfStream inlineImage, PdfDictionary currentColorSpaces);
     public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill);
@@ -87,22 +106,24 @@ public abstract class PdfAChecker {
 
     protected abstract HashSet<PdfName> getForbiddenActions();
     protected abstract HashSet<PdfName> getAllowedNamedActions();
+    protected abstract void checkAction(PdfDictionary action);
+    protected abstract void checkAnnotation(PdfDictionary annotDic);
+    protected abstract void checkCatalogValidEntries(PdfDictionary catalogDict);
     protected abstract void checkColorsUsages();
     protected abstract void checkImage(PdfStream image, PdfDictionary currentColorSpaces);
-    protected abstract void checkFormXObject(PdfStream form);
-    protected abstract void checkPdfNumber(PdfNumber number);
-    protected abstract void checkPdfStream(PdfStream stream);
-    protected abstract void checkPdfString(PdfString string);
-    protected abstract void checkAnnotation(PdfDictionary annotDic);
+    protected abstract void checkFileSpec(PdfDictionary fileSpec);
     protected abstract void checkForm(PdfDictionary form);
-    protected abstract void checkCatalogValidEntries(PdfDictionary catalogDict);
-    protected abstract void checkPage(PdfPage page);
-    protected abstract void checkTrailer(PdfDictionary trailer);
+    protected abstract void checkFormXObject(PdfStream form);
     protected abstract void checkLogicalStructure(PdfDictionary catalog);
     protected abstract void checkMetaData(PdfDictionary catalog);
     protected abstract void checkOutputIntents(PdfDictionary catalog);
+    protected abstract void checkPageObject(PdfDictionary page, PdfDictionary pageResources);
     protected abstract void checkPageSize(PdfDictionary page);
-    protected abstract void checkFileSpec(PdfDictionary fileSpec);
+    protected abstract void checkPdfNumber(PdfNumber number);
+    protected abstract void checkPdfStream(PdfStream stream);
+    protected abstract void checkPdfString(PdfString string);
+    protected abstract void checkTrailer(PdfDictionary trailer);
+
 
 
     protected void checkResources(PdfDictionary resources) {
@@ -132,22 +153,6 @@ public abstract class PdfAChecker {
         }
     }
 
-    protected void checkAction(PdfDictionary action) {
-        PdfName s = action.getAsName(PdfName.S);
-        if (getForbiddenActions().contains(s)) {
-            throw new PdfAConformanceException(PdfAConformanceException._1ActionsIsNotAllowed).setMessageParams(s.getValue());
-        }
-        if (s.equals(PdfName.Named)) {
-            PdfName n = action.getAsName(PdfName.N);
-            if (n != null && !getAllowedNamedActions().contains(n)) {
-                throw new PdfAConformanceException(PdfAConformanceException.NamedActionType1IsNotAllowed).setMessageParams(n.getValue());
-            }
-        }
-        if (s.equals(PdfName.SetState) || s.equals(PdfName.NoOp)) {
-            throw new PdfAConformanceException(PdfAConformanceException.DeprecatedSetStateAndNoOpActionsAreNotAllowed);
-        }
-    }
-
     protected static boolean checkFlag(int flags, int flag) {
         return (flags & flag) != 0;
     }
@@ -156,6 +161,38 @@ public abstract class PdfAChecker {
         return conformanceLevel == PdfAConformanceLevel.PDF_A_1A
                 || conformanceLevel == PdfAConformanceLevel.PDF_A_2A
                 || conformanceLevel == PdfAConformanceLevel.PDF_A_3A;
+    }
+
+    protected boolean isAlreadyChecked(PdfDictionary dictionary) {
+        if (checkedObjects.contains(dictionary)) {
+            return true;
+        }
+        checkedObjects.add(dictionary);
+        return false;
+    }
+
+    private void checkPages(PdfCatalog catalog) {
+        for (int i = 1; i <= catalog.getNumOfPages(); i++) {
+            checkPage(catalog.getPage(i));
+        }
+    }
+
+    private void checkPage(PdfPage page) {
+        PdfDictionary pageDict = page.getPdfObject();
+
+        if (isAlreadyChecked(pageDict)) return;
+
+        checkPageObject(pageDict, page.getResources().getPdfObject());
+        PdfDictionary pageResources = page.getResources().getPdfObject();
+        checkResources(pageResources);
+        checkAnnotations(pageDict);
+        checkPageSize(pageDict);
+
+
+        int contentStreamCount = page.getContentStreamCount();
+        for (int j = 0; j < contentStreamCount; ++j) {
+            checkedObjects.add(page.getContentStream(j));
+        }
     }
 
     private void checkOpenAction(PdfObject openAction) {
@@ -169,19 +206,6 @@ public abstract class PdfAChecker {
             for (PdfObject action : actions) {
                 checkAction((PdfDictionary) action);
             }
-        }
-    }
-
-    private void checkPages(PdfCatalog catalog) {
-        for (int i = 1; i <= catalog.getNumOfPages(); i++) {
-            PdfPage p = catalog.getPage(i);
-            checkPage(p);
-            PdfDictionary pageDict = p.getPdfObject();
-            PdfDictionary pageResources = p.getResources().getPdfObject();
-            checkResources(pageResources);
-            checkAnnotations(pageDict);
-            checkPageSize(pageDict);
-
         }
     }
 

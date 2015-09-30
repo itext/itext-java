@@ -145,6 +145,19 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkImage(PdfStream image, PdfDictionary currentColorSpaces) {
+        PdfColorSpace colorSpace = null;
+        if (isAlreadyChecked(image)) {
+            colorSpace = checkedObjectsColorspace.get(image);
+            checkColorSpace(colorSpace, currentColorSpaces, true, null);
+            return;
+        }
+        PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
+        if (colorSpaceObj != null) {
+            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj, null);
+            checkColorSpace(colorSpace, currentColorSpaces, true, null);
+            checkedObjectsColorspace.put(image, colorSpace);
+        }
+
         if (image.containsKey(PdfName.Alternates)) {
             throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainAlternatesKey);
         }
@@ -161,15 +174,12 @@ public class PdfA1Checker extends PdfAChecker {
         if (image.containsKey(PdfName.SMask) && !PdfName.None.equals(image.getAsName(PdfName.SMask))) {
             throw new PdfAConformanceException(PdfAConformanceException.TheSmaskKeyIsNotAllowedInXobjects);
         }
-
-        PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
-        if (colorSpaceObj != null) {
-            checkColorSpace(PdfColorSpace.makeColorSpace(colorSpaceObj, null), currentColorSpaces, true, null);
-        }
     }
 
     @Override
     protected void checkFormXObject(PdfStream form) {
+        if (isAlreadyChecked(form)) return;
+
         if (form.containsKey(PdfName.OPI)) {
             throw new PdfAConformanceException(PdfAConformanceException.AFormXobjectDictionaryShallNotContainOpiKey);
         }
@@ -357,6 +367,24 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    protected void checkAction(PdfDictionary action) {
+        if (isAlreadyChecked(action)) return;
+
+        PdfName s = action.getAsName(PdfName.S);
+        if (getForbiddenActions().contains(s)) {
+            throw new PdfAConformanceException(PdfAConformanceException._1ActionsIsNotAllowed).setMessageParams(s.getValue());
+        }
+        if (s.equals(PdfName.Named)) {
+            PdfName n = action.getAsName(PdfName.N);
+            if (n != null && !getAllowedNamedActions().contains(n)) {
+                throw new PdfAConformanceException(PdfAConformanceException.NamedActionType1IsNotAllowed).setMessageParams(n.getValue());
+            }
+        }
+        if (s.equals(PdfName.SetState) || s.equals(PdfName.NoOp)) {
+            throw new PdfAConformanceException(PdfAConformanceException.DeprecatedSetStateAndNoOpActionsAreNotAllowed);
+        }
+    }
+
     @Override
     protected void checkCatalogValidEntries(PdfDictionary catalogDict) {
         if (catalogDict.containsKey(PdfName.AA)) {
@@ -373,8 +401,7 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    protected void checkPage(PdfPage page) {
-        PdfDictionary pageDict = page.getPdfObject();
+    protected void checkPageObject(PdfDictionary pageDict, PdfDictionary pageResources) {
         PdfDictionary actions = pageDict.getAsDictionary(PdfName.AA);
         if (actions != null) {
             for (PdfName key : actions.keySet()) {
@@ -389,7 +416,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkTrailer(PdfDictionary trailer) {
-        if (trailer.get(PdfName.Encrypt) != null) {
+        if (trailer.containsKey(PdfName.Encrypt)) {
             throw new PdfAConformanceException(PdfAConformanceException.EncryptShallNotBeUsedInTrailerDictionary);
         }
     }
