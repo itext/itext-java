@@ -222,7 +222,7 @@ public class PdfFontTest extends ExtendedITextTest{
         tilde.lineTo(5, 5);
         tilde.stroke();
 
-        Type3Glyph symbol233 = type3.createGlyph('é', 600, 0, 0, 600, 700);
+        Type3Glyph symbol233 = type3.createGlyph('\u00E9', 600, 0, 0, 600, 700);
         symbol233.setLineWidth(100);
         symbol233.moveTo(540, 5);
         symbol233.lineTo(5, 340);
@@ -693,7 +693,7 @@ public class PdfFontTest extends ExtendedITextTest{
 
         PdfType3Font pdfType3Font = new PdfType3Font(outputPdfDoc, (PdfDictionary) inputPdfDoc.getPdfObject(4));
 
-        Type3Glyph newGlyph = pdfType3Font.createGlyph('ö', 600, 0, 0, 600, 700);
+        Type3Glyph newGlyph = pdfType3Font.createGlyph('\u00F6', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
         newGlyph.moveTo(540, 5);
         newGlyph.lineTo(5, 840);
