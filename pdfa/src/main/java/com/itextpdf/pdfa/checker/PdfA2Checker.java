@@ -12,7 +12,7 @@ import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.colorspace.*;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.pdfa.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
 
 import java.util.*;
 

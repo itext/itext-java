@@ -4,7 +4,7 @@ import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.pdfa.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
 
 import java.util.Arrays;
 import java.util.HashSet;

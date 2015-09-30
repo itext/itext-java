@@ -5,8 +5,7 @@ import com.itextpdf.canvas.PdfGraphicsState;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.pdfa.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
 
 import java.util.*;
 

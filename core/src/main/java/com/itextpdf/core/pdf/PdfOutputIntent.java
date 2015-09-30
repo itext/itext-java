@@ -1,7 +1,6 @@
-package com.itextpdf.pdfa;
+package com.itextpdf.core.pdf;
 
-import com.itextpdf.canvas.color.IccBased;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 
 import java.io.InputStream;
 
@@ -38,7 +37,7 @@ public class PdfOutputIntent extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public void setDestOutputProfile(InputStream iccStream) {
-        PdfStream stream = IccBased.getIccProfileStream(iccStream);
+        PdfStream stream = PdfCieBasedCs.IccBased.getIccProfileStream(iccStream);
         getPdfObject().put(PdfName.DestOutputProfile, stream);
     }
 

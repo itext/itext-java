@@ -42,7 +42,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.pdfa.xmp;
+package com.itextpdf.core.xmp;
 
 
 

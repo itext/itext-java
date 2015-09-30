@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.NotImplementedException;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.core.Version;
@@ -173,6 +174,10 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public void setXmpMetadata() throws XMPException {
+        setXmpMetadata((PdfAConformanceLevel) null);
+    }
+
+    public void setXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
         XMPMeta xmpMeta = XMPMetaFactory.create();
         xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
         xmpMeta.setObjectName("");
@@ -216,7 +221,9 @@ public class PdfDocument implements IEventDispatcher {
                 }
             }
         }
-        addRdfDescription(xmpMeta);
+        if (conformanceLevel != null) {
+            addRdfDescription(xmpMeta, conformanceLevel);
+        }
         setXmpMetadata(xmpMeta);
     }
 
@@ -856,12 +863,65 @@ public class PdfDocument implements IEventDispatcher {
         return trailer;
     }
 
+    public void addOutputIntent(PdfOutputIntent outputIntent) {
+        if (outputIntent == null)
+            return;
+
+        PdfArray outputIntents = catalog.getPdfObject().getAsArray(PdfName.OutputIntents);
+        if (outputIntents == null) {
+            outputIntents = new PdfArray();
+            catalog.put(PdfName.OutputIntents, outputIntents);
+        }
+        outputIntents.add(outputIntent.getPdfObject());
+    }
+
     public void checkIsoConformance(Object obj, IsoKey key) { }
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) { }
     public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) { }
     protected void checkIsoConformance() { }
 
-    protected void  addRdfDescription(XMPMeta xmpMeta) throws XMPException {}
+    protected void addRdfDescription(XMPMeta xmpMeta, PdfAConformanceLevel conformanceLevel) throws XMPException {
+        switch (conformanceLevel) {
+            case PDF_A_1A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_1B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_2A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_2B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_2U:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
+                break;
+            case PDF_A_3A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_3B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_3U:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
+                break;
+            default:
+                break;
+        }
+        if (this.isTagged()) {
+            XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+            XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+        }
+    }
 
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         writer.flushObject(pdfObject, canBeInObjStm);

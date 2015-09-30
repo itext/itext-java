@@ -4,10 +4,7 @@ import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
-import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.pdfa.PdfAConformanceLevel;
-import com.itextpdf.pdfa.PdfADocument;
-import com.itextpdf.pdfa.PdfOutputIntent;
+import com.itextpdf.core.pdf.PdfOutputIntent;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

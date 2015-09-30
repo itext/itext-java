@@ -1,4 +1,4 @@
-package com.itextpdf.pdfa;
+package com.itextpdf.core.pdf;
 
 /**
  * Enumeration of all the PDF/A conformance levels.
