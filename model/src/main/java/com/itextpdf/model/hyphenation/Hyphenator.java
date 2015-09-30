@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -190,9 +189,9 @@ public final class Hyphenator {
 
         if (hTree == null) {
             // get from the default directory
-            URL defaultHyphenationResource = ClassLoader.getSystemResource(HYPHENATION_DEFAULT_RESOURCE);
-            if (defaultHyphenationResource != null) {
-                hTree = getHyphenationTree(new File(defaultHyphenationResource.getPath()), key);
+            InputStream defaultHyphenationResourceStream = ClassLoader.getSystemResourceAsStream(HYPHENATION_DEFAULT_RESOURCE + key + ".xml");
+            if (defaultHyphenationResourceStream != null) {
+                hTree = getHyphenationTree(defaultHyphenationResourceStream, key);
             }
         }
 
@@ -208,34 +207,49 @@ public final class Hyphenator {
      * Load tree from xml file using configuration settings
      * @param searchDirectory the directory to search the file into
      * @param key language key for the requested hyphenation file
-     * @return the requested HypenationTree or null if it is not available
+     * @return the requested HyphenationTree or null if it is not available
      */
     public static HyphenationTree getHyphenationTree(File searchDirectory, String key) {
-        HyphenationTree hTree;
         // try the raw XML file
         String name = key + ".xml";
-        hTree = new HyphenationTree();
         try {
-            InputStream in = new BufferedInputStream(new FileInputStream(new File(searchDirectory, name)));
-            try {
-                InputSource src = new InputSource(in);
-                src.setSystemId(name);
-                hTree.loadPatterns(src);
-            } finally {
-                try {
-                    in.close();
-                } catch (Exception ignored) {}
-            }
-            return hTree;
-        } catch (HyphenationException ex) {
-            log.error("Can't load user patterns from XML file " + name + ": " + ex.getMessage());
-            return null;
+            InputStream fis = new FileInputStream(new File(searchDirectory, name));
+            return getHyphenationTree(fis, name);
         } catch (IOException ioe) {
             if (log.isDebugEnabled()) {
                 log.debug("I/O problem while trying to load " + name, ioe);
             }
             return null;
         }
+    }
+
+    /**
+     * Load tree from the stream
+     * @param in the input stream to load the tree from
+     * @param name unique key representing country-language combination
+     * @return the requested HyphenationTree or null if it is not available
+     */
+    public static HyphenationTree getHyphenationTree(InputStream in, String name) {
+        if (in == null) {
+            return null;
+        }
+        HyphenationTree hTree;
+        try {
+            InputSource src = new InputSource(new BufferedInputStream(in));
+            src.setSystemId(name);
+            hTree = new HyphenationTree();
+            hTree.loadPatterns(src);
+        }
+        catch (HyphenationException ex) {
+            log.error("Can't load user patterns from XML file " + name + ": " + ex.getMessage());
+            return null;
+        }
+        finally {
+            try {
+                in.close();
+            } catch (Exception ignored) {}
+        }
+        return hTree;
     }
 
     /**
@@ -270,7 +284,7 @@ public final class Hyphenator {
             if (leftInd <= rightInd) {
                 int[] hyphenationPoints = new int[rightInd - leftInd + 1];
                 for (int i = leftInd; i <= rightInd; i++) {
-                    hyphenationPoints[i] = softHyphens.get(i);
+                    hyphenationPoints[i - leftInd] = softHyphens.get(i);
                 }
                 return new Hyphenation(word, hyphenationPoints);
             } else {

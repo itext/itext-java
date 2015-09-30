@@ -41,6 +41,10 @@ public class HyphenationTreeCache {
     public HyphenationTree getHyphenationTree(String lang, String country) {
         String key = constructLlccKey(lang, country);
 
+        if (key == null) {
+            return null;
+        }
+
         // first try to find it in the cache
         if (hyphenTrees.containsKey(key)) {
             return (HyphenationTree)hyphenTrees.get(key);

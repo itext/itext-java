@@ -403,10 +403,19 @@ public class TextRenderer extends AbstractRenderer {
                 canvas.setWordSpacing(wordSpacing);
             if (horizontalScaling != null && horizontalScaling != 1)
                 canvas.setHorizontalScaling(horizontalScaling * 100);
+
+            // convert to printable array
+            StringBuilder sb = new StringBuilder();
+            for (int i = lineLeftPos; i < lineRightPos; i++) {
+                if (!noPrint(line[i])) {
+                    sb.append(Utilities.convertFromUtf32(line[i]));
+                }
+            }
+
             if (fontKerning == Property.FontKerning.YES) {
-                canvas.showTextKerned(Utilities.convertFromUtf32(line, lineLeftPos, lineRightPos));
+                canvas.showTextKerned(sb.toString());
             } else {
-                canvas.showText(Utilities.convertFromUtf32(line, lineLeftPos, lineRightPos));
+                canvas.showText(sb.toString());
             }
             canvas.endText().restoreState();
 
@@ -629,7 +638,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private static boolean noPrint(int c) {
-        return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e;
+        return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e || c == '\u00AD';
     }
 
     private float getCharWidth(int c, PdfFont font, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
@@ -689,6 +698,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isCharPartOfWordForHyphenation(int c) {
-        return Character.isLetter(c) || Character.isDigit(c);
+        return Character.isLetter(c) || Character.isDigit(c) ||
+                c == '\u00ad'; // soft hyphen
     }
 }
