@@ -122,12 +122,12 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.BlendModeShallHhaveValueNormalOrCompatible);
         }
 
-        Float ca = extGState.getStrokeAlpha();
+        Float ca = extGState.getStrokeOpacity();
         if (ca != null && ca != 1) {
             throw new PdfAConformanceException(PdfAConformanceException.TransparencyIsNotAllowedCAShallBeEqualTo1);
         }
 
-        ca = extGState.getFillAlpha();
+        ca = extGState.getFillOpacity();
         if (ca != null && ca != 1) {
             throw new PdfAConformanceException(PdfAConformanceException.TransparencyIsNotAllowedCaShallBeEqualTo1);
         }

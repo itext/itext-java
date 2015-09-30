@@ -239,15 +239,6 @@ public class PdfCanvas {
     }
 
     /**
-     * Gets current graphics state.
-     *
-     * @return current graphics state.
-     */
-    public PdfGraphicsState currentState() {
-        return currentGs;
-    }
-
-    /**
      * Begins text block (PDF BT operator).
      *
      * @return current canvas.

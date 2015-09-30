@@ -51,11 +51,15 @@ public class PdfGraphicsState {
     private Float scale = 100f;
     private Float leading;
 
-    public PdfGraphicsState() {
+    public PdfGraphicsState(PdfExtGState extGStateToUpdateFrom) {
+        updateFromExtGState(extGStateToUpdateFrom);
+    }
+
+    protected PdfGraphicsState() {
 
     }
 
-    public PdfGraphicsState(final PdfGraphicsState source) {
+    protected PdfGraphicsState(final PdfGraphicsState source) {
 
     }
 
@@ -75,35 +79,35 @@ public class PdfGraphicsState {
         this.strokeColor = strokeColor;
     }
 
-    public void updateFromExtGState(PdfDictionary extGState) {
-        Float lw = extGState.getAsFloat(PdfName.LW);
+    public void updateFromExtGState(PdfExtGState extGState) {
+        Float lw = extGState.getLineWidth();
         if (lw != null)
             lineWidth = lw;
-        Integer lc = extGState.getAsInt(PdfName.LC);
+        Integer lc = extGState.getLineCapStyle();
         if (lc != null)
             lineCapStyle = lc;
-        Integer lj = extGState.getAsInt(PdfName.LJ);
+        Integer lj = extGState.getLineJoinStyle();
         if (lj != null)
             lineJoinStyle = lj;
-        Float ml = extGState.getAsFloat(PdfName.ML);
+        Float ml = extGState.getMiterLimit();
         if (ml != null)
             miterLimit = ml;
-        PdfArray d = extGState.getAsArray(PdfName.D);
+        PdfArray d = extGState.getDashPattern();
         if (d != null)
             dashPattern = d;
-        PdfName ri = extGState.getAsName(PdfName.RI);
+        PdfName ri = extGState.getRenderingIntent();
         if (ri != null)
             renderingIntent = ri;
-        Boolean op = extGState.getAsBool(PdfName.OP);
+        Boolean op = extGState.getStrokeOverprintFlag();
         if (op != null)
             strokeOverprint = op;
-        op = extGState.getAsBool(PdfName.op);
+        op = extGState.getFillOverprintFlag();
         if (op != null)
             fillOverprint = op;
-        Integer opm = extGState.getAsInt(PdfName.OPM);
+        Integer opm = extGState.getOverprintMode();
         if (opm != null)
             overprintMode = opm;
-        PdfArray font = extGState.getAsArray(PdfName.Font);
+        PdfArray font = extGState.getFont();
         if (font != null) {
             PdfDictionary fontDictionary = font.getAsDictionary(0);
             if (this.font != null && this.font.getPdfObject() == fontDictionary) {
@@ -115,61 +119,61 @@ public class PdfGraphicsState {
             if (fontSize != null)
                 this.fontSize = fontSize;
         }
-        PdfObject bg = extGState.get(PdfName.BG);
+        PdfObject bg = extGState.getBlackGenerationFunction();
         if (bg != null)
             blackGenerationFunction = bg;
-        PdfObject bg2 = extGState.get(PdfName.BG2);
+        PdfObject bg2 = extGState.getBlackGenerationFunction2();
         if (bg2 != null)
             blackGenerationFunction2 = bg2;
-        PdfObject ucr = extGState.get(PdfName.UCR);
+        PdfObject ucr = extGState.getUndercolorRemovalFunction();
         if (ucr != null)
             underColorRemovalFunction = ucr;
-        PdfObject ucr2 = extGState.get(PdfName.UCR2);
+        PdfObject ucr2 = extGState.getUndercolorRemovalFunction2();
         if (ucr2 != null)
             underColorRemovalFunction2 = ucr2;
-        PdfObject tr = extGState.get(PdfName.TR);
+        PdfObject tr = extGState.getTransferFunction();
         if (tr != null)
             transferFunction = tr;
-        PdfObject tr2 = extGState.get(PdfName.TR2);
+        PdfObject tr2 = extGState.getTransferFunction2();
         if (tr2 != null)
             transferFunction2 = tr2;
-        PdfObject ht = extGState.get(PdfName.HT);
+        PdfObject ht = extGState.getHalftone();
         if (ht != null)
             halftone = ht;
-        PdfObject htp = extGState.get(PdfName.HTP);
+        PdfObject htp = extGState.getHTP();
         if (htp != null)
             this.htp = htp;
-        Float fl = extGState.getAsFloat(PdfName.FL);
+        Float fl = extGState.getFlatnessTolerance();
         if (fl != null)
             flatnessTolerance = fl;
-        Float sm = extGState.getAsFloat(PdfName.SM);
+        Float sm = extGState.getSmothnessTolerance();
         if (sm != null)
             smoothnessTolerance = sm;
-        Boolean sa = extGState.getAsBool(PdfName.SA);
+        Boolean sa = extGState.getAutomaticStrokeAdjustmentFlag();
         if (sa != null)
             automaticStrokeAdjustment = sa;
-        PdfObject bm = extGState.get(PdfName.BM);
+        PdfObject bm = extGState.getBlendMode();
         if (bm != null)
             blendMode = bm;
-        PdfObject sMask = extGState.get(PdfName.SMask);
+        PdfObject sMask = extGState.getSoftMask();
         if (sMask != null)
             softMask = sMask;
-        Float ca = extGState.getAsFloat(PdfName.CA);
+        Float ca = extGState.getStrokeOpacity();
         if (ca != null)
             strokeAlpha = ca;
-        ca = extGState.getAsFloat(PdfName.ca);
+        ca = extGState.getFillOpacity();
         if (ca != null)
             fillAlpha = ca;
-        Boolean ais = extGState.getAsBool(PdfName.AIS);
+        Boolean ais = extGState.getAlphaSourceFlag();
         if (ais != null)
             alphaIsShape = ais;
-        Boolean tk = extGState.getAsBool(PdfName.TK);
+        Boolean tk = extGState.getTextKnockoutFlag();
         if (tk != null)
             textKnockout = tk;
     }
 
-    public void updateFromExtGState(PdfExtGState extGState) {
-        updateFromExtGState(extGState.getPdfObject());
+    public void updateFromExtGState(PdfDictionary extGState) {
+        updateFromExtGState(new PdfExtGState(extGState));
     }
 
     public Float getLineWidth() {
@@ -348,11 +352,11 @@ public class PdfGraphicsState {
         return softMask;
     }
 
-    public Float getStrokeAlpha() {
+    public Float getStrokeOpacity() {
         return strokeAlpha;
     }
 
-    public Float getFillAlpha() {
+    public Float getFillOpacity() {
         return fillAlpha;
     }
 

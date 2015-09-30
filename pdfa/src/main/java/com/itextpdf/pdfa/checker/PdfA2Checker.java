@@ -6,7 +6,6 @@ import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.Jpeg2000Image;
 import com.itextpdf.canvas.PdfGraphicsState;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.canvas.color.PatternColor;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
@@ -73,9 +72,8 @@ public class PdfA2Checker extends PdfA1Checker{
                 PdfDictionary shadingDictionary = ((PdfPattern.Shading) pattern).getShading();
                 PdfObject colorSpace = shadingDictionary.get(PdfName.ColorSpace);
                 checkColorSpace(PdfColorSpace.makeColorSpace(colorSpace, null), currentColorSpaces, true, true);
-                PdfGraphicsState gState = new PdfGraphicsState();
                 PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
-                gState.updateFromExtGState(new PdfExtGState(extGStateDict));
+                PdfGraphicsState gState = new PdfGraphicsState(new PdfExtGState(extGStateDict));
                 checkExtGState(gState);
             }
         }
@@ -193,10 +191,10 @@ public class PdfA2Checker extends PdfA1Checker{
         if (extGState.getSoftMask() != null && extGState.getSoftMask() instanceof PdfDictionary) {
             transparencyIsUsed = true;
         }
-        if (extGState.getStrokeAlpha() != null && extGState.getStrokeAlpha() < 1) {
+        if (extGState.getStrokeOpacity() != null && extGState.getStrokeOpacity() < 1) {
             transparencyIsUsed = true;
         }
-        if (extGState.getFillAlpha() != null && extGState.getFillAlpha() < 1) {
+        if (extGState.getFillOpacity() != null && extGState.getFillOpacity() < 1) {
             transparencyIsUsed = true;
         }
 
