@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -189,7 +190,10 @@ public final class Hyphenator {
 
         if (hTree == null) {
             // get from the default directory
-            hTree = getHyphenationTree(new File(ClassLoader.getSystemResource(HYPHENATION_DEFAULT_RESOURCE).getPath()), key);
+            URL defaultHyphenationResource = ClassLoader.getSystemResource(HYPHENATION_DEFAULT_RESOURCE);
+            if (defaultHyphenationResource != null) {
+                hTree = getHyphenationTree(new File(defaultHyphenationResource.getPath()), key);
+            }
         }
 
         // put it into the pattern cache

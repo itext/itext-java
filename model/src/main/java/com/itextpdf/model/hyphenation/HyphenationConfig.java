@@ -45,7 +45,7 @@ public class HyphenationConfig {
      * or {@code null} if no hyphenation points are found.
      */
     public Hyphenation hyphenate(String word) {
-        return hyphenator.hyphenate(word);
+        return hyphenator != null ? hyphenator.hyphenate(word) : null;
     }
 
     public char getHyphenSymbol() {
