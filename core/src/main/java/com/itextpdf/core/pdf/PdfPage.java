@@ -255,53 +255,44 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return xObject;
     }
 
+
+
+    /**
+     * Flushes page and it's content stream.
+     */
     @Override
     public void flush() {
-        if (getDocument().isTagged() && structParents == null) {
-            PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
-            if (n != null)
-                structParents = n.getIntValue();
-        }
-        getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
-        int contentStreamCount = getContentStreamCount();
-        for (int i = 0; i < contentStreamCount; i++) {
-            getContentStream(i).flush(false);
-        }
-
-
-        if (resources != null) {
-            if (resources.isReadOnly() && !resources.isModified()) {
-                getPdfObject().remove(PdfName.Resources);
-            }
-        }
-
-        resources = null;
-        super.flush();
+        flush(false);
     }
 
     /**
-     * Flushes page, it's content streams and also images and formXObjects,
-     * associated with this page.
+     * Flushes page and it's content stream. If <code>flushXObjects</code> is true the images and FormXObjects
+     * associated with this page will also be flushed.
+     * <br>
+     * <br>
+     * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushXObjects</code> is true.
+     * @param flushXObjects if true the images and FormXObjects associated with this page will also be flushed.
      */
-    public void flushPageAndItsResources() {
+    public void flush(boolean flushXObjects) {
         if (getDocument().isTagged() && structParents == null) {
             PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
             if (n != null)
                 structParents = n.getIntValue();
         }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
-        getDocument().checkIsoConformance(this, IsoKey.PAGE);
+        if (flushXObjects) {
+            getDocument().checkIsoConformance(this, IsoKey.PAGE);
+        }
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
             getContentStream(i).flush(false);
         }
-
 
         Collection<PdfObject> xObjects = null;
         if (resources != null) {
             if (resources.isReadOnly() && !resources.isModified()) {
                 getPdfObject().remove(PdfName.Resources);
-            } else {
+            } else if (flushXObjects) {
                 PdfDictionary xObjectsDict = getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.XObject);
                 xObjects = xObjectsDict != null ? xObjectsDict.values() : null;
             }
@@ -310,7 +301,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         resources = null;
         super.flush();
 
-        if (xObjects != null) {
+        if (flushXObjects && xObjects != null) {
             flushXObjects(xObjects);
         }
     }
