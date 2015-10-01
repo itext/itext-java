@@ -22,7 +22,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected boolean isCopy = false;
 
-
     /**
      * true if the font is to be embedded in the PDF.
      */
@@ -60,7 +59,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfFont createFont(PdfDocument pdfDocument, byte[] ttc, int ttcIndex, String encoding, boolean embedded) throws IOException {
         TrueTypeCollection collection = new TrueTypeCollection(ttc, encoding);
-        FontProgram program = collection.getFontByTCCIndex(ttcIndex);
+        FontProgram program = collection.getFontByTccIndex(ttcIndex);
         return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) program, embedded);
     }
 
@@ -70,8 +69,8 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfFont createFont(PdfDocument pdfDocument, String ttcPath, int ttcIndex, String encoding, boolean embedded) throws IOException {
         TrueTypeCollection collection = new TrueTypeCollection(ttcPath, encoding);
-        FontProgram program = collection.getFontByTCCIndex(ttcIndex);
-        return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) program, embedded);
+        FontProgram fontProgram = collection.getFontByTccIndex(ttcIndex);
+        return createFont(pdfDocument, fontProgram, encoding, embedded);
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, String path, String encoding, boolean embedded) throws IOException {

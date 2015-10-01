@@ -7,7 +7,6 @@ import com.itextpdf.basics.io.RandomAccessSourceFactory;
 
 import java.io.IOException;
 
-
 /**
  * Use this class for working with true type collection font (*.ttc)
  */
@@ -25,7 +24,6 @@ public class TrueTypeCollection {
         this.ttc = ttc;
         this.encoding = encoding;
         initFontSize();
-
     }
 
     public TrueTypeCollection(String ttcPath, String encoding) throws IOException {
@@ -33,7 +31,6 @@ public class TrueTypeCollection {
         this.ttcPath = ttcPath;
         this.encoding = encoding;
         initFontSize();
-
     }
 
     /**
@@ -42,7 +39,7 @@ public class TrueTypeCollection {
      * @param ttcIndex the index for the TTC font
      * @return TrueTypeFont
      */
-    public FontProgram getFontByTCCIndex(int ttcIndex) throws IOException {
+    public FontProgram getFontByTccIndex(int ttcIndex) throws IOException {
         if (ttcIndex > TTCSize - 1) {
             throw new PdfException(PdfException.TTCIndexDoesNotExistInFile);
         }
@@ -79,6 +76,4 @@ public class TrueTypeCollection {
         raf.skipBytes(4);
         TTCSize = raf.readInt();
     }
-
-
 }
