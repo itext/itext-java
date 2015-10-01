@@ -151,12 +151,12 @@ public class Rectangle implements Cloneable {
         return this;
     }
 
-    public Rectangle applyMargins(float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
+    public <T extends Rectangle> T applyMargins(float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
         x += leftIndent * (reverse ? -1 : 1);
         width -= (leftIndent + rightIndent) * (reverse ? -1 : 1);
         y += bottomIndent * (reverse ? -1 : 1);
         height -= (topIndent + bottomIndent) * (reverse ? -1 : 1);
-        return this;
+        return (T) this;
     }
 
     @Override

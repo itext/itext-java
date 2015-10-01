@@ -137,11 +137,12 @@ public class DocumentRenderer extends AbstractRenderer {
     }
 
     public LayoutArea getNextArea() {
-
         moveToNextPage();
         PageSize lastPageSize = ensureDocumentHasNPages(currentPageNumber);
         if (lastPageSize == null) {
-            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getPageSize());
+            PageSize defaultPageSize = document.getPdfDocument().getDefaultPageSize();
+            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getPageSize()).
+                    setMargins(defaultPageSize.getTopMargin(), defaultPageSize.getRightMargin(), defaultPageSize.getBottomMargin(), defaultPageSize.getLeftMargin());
         }
         return (currentArea = new LayoutArea(currentPageNumber, lastPageSize.getEffectiveArea()));
     }

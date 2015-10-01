@@ -22,7 +22,7 @@ public class PageSize extends Rectangle {
         this(width, height, 36, 36, 36, 36);
     }
 
-    public PageSize(float width, float height, float leftMargin, float rightMargin, float topMargin, float bottomMargin) {
+    public PageSize(float width, float height, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
         super(0, 0, width, height);
         this.leftMargin = leftMargin;
         this.rightMargin = rightMargin;
@@ -34,7 +34,7 @@ public class PageSize extends Rectangle {
         this(box, 0, 0, 0, 0);
     }
 
-    public PageSize(Rectangle box, float leftMargin, float rightMargin, float topMargin, float bottomMargin) {
+    public PageSize(Rectangle box, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
         super(box.getX(), box.getY(), box.getWidth(), box.getHeight());
         this.leftMargin = leftMargin;
         this.rightMargin = rightMargin;
@@ -78,7 +78,7 @@ public class PageSize extends Rectangle {
         return this;
     }
 
-    public PageSize setMargins(float leftMargin, float rightMargin, float topMargin, float bottomMargin) {
+    public PageSize setMargins(float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
         return setLeftMargin(leftMargin).setRightMargin(rightMargin).
                 setTopMargin(topMargin).setBottomMargin(bottomMargin);
     }
@@ -91,11 +91,11 @@ public class PageSize extends Rectangle {
      * Rotates PageSize clockwise with all the margins, i.e. the margins are rotated as well.
      */
     public PageSize rotate() {
-        return new PageSize(height, width, bottomMargin, topMargin, leftMargin, rightMargin);
+        return new PageSize(height, width, leftMargin, topMargin, rightMargin, bottomMargin);
     }
 
     @Override
     public PageSize clone() {
-        return new PageSize(width, height, leftMargin, rightMargin, topMargin, bottomMargin);
+        return new PageSize(width, height, topMargin, rightMargin, bottomMargin, leftMargin);
     }
 }
