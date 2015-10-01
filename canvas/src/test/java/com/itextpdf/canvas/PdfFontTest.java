@@ -3,6 +3,7 @@ package com.itextpdf.canvas;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.canvas.font.PdfType3Font;
 import com.itextpdf.canvas.font.Type3Glyph;
@@ -1217,6 +1218,36 @@ public class PdfFontTest extends ExtendedITextTest{
     public void testCheckTTCSize() throws IOException {
         TrueTypeCollection collection = new TrueTypeCollection(sourceFolder + "uming.ttc","WinAnsi");
         Assert.assertTrue(collection.getTTCSize() == 4);
+    }
+
+    @Test
+    @LogMessage(messages = {LogMessageConstant.REGISTERING_DIRECTORY})
+    public void testFontDirectoryRegister() throws IOException {
+        PdfFont.registerDirectory(sourceFolder);
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        for(String name : PdfFont.getRegisteredFonts()){
+            PdfFont pdfFont = PdfFont.createRegisteredFont(pdfDoc,name);
+            if(pdfFont == null)
+                Assert.assertTrue("Font {"+name+"} can't be empty",false);
+        }
+
+        pdfDoc.addNewPage();
+
+        pdfDoc.close();
+    }
+
+    @Test
+    public void testFontRegister() throws IOException {
+        FontFactory.register(sourceFolder + "Aller_Rg.ttf", "aller");
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfFont pdfFont= PdfFont.createRegisteredFont(pdfDoc, "aller");
+        Assert.assertTrue(pdfFont instanceof  PdfTrueTypeFont);
+        pdfDoc.addNewPage();
+        pdfDoc.close();
     }
 
 

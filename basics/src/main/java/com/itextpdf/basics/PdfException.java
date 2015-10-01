@@ -229,6 +229,10 @@ public class PdfException extends RuntimeException {
         super(message);
     }
 
+    public PdfException(Throwable cause) {
+        super(cause);
+    }
+
     public PdfException(String message, Object object) {
         this(message);
         this.object = object;
