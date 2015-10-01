@@ -1085,6 +1085,8 @@ public class PdfCanvas {
      * @param phase the value of the phase
      */
     public PdfCanvas setLineDash(final float phase) {
+        ++gStateIndex;
+        currentGs.setDashPattern(getDashPatternArray(phase));
         contentStream.getOutputStream().writeByte((byte) '[').writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
@@ -1103,6 +1105,8 @@ public class PdfCanvas {
      * @param unitsOn the number of units that must be 'on' (equals the number of units that must be 'off').
      */
     public PdfCanvas setLineDash(final float unitsOn, final float phase) {
+        ++gStateIndex;
+        currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn}, phase));
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
@@ -1123,6 +1127,8 @@ public class PdfCanvas {
      * @param unitsOff the number of units that must be 'off'
      */
     public PdfCanvas setLineDash(final float unitsOn, final float unitsOff, final float phase) {
+        ++gStateIndex;
+        currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn, unitsOff}, phase));
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeSpace()
                 .writeFloat(unitsOff).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1142,6 +1148,8 @@ public class PdfCanvas {
      * @param phase the value of the phase
      */
     public final PdfCanvas setLineDash(final float[] array, final float phase) {
+        ++gStateIndex;
+        currentGs.setDashPattern(getDashPatternArray(array, phase));
         PdfOutputStream out = contentStream.getOutputStream();
         out.writeByte((byte) '[');
         for (int i = 0; i < array.length; i++) {
@@ -1985,5 +1993,22 @@ public class PdfCanvas {
             return new PatternColor(pattern);
         }
         return new Color(colorSpace, colorValue);
+    }
+
+    private PdfArray getDashPatternArray(float phase) {
+        return getDashPatternArray(null, phase);
+    }
+
+    private PdfArray getDashPatternArray(float[] dashArray, float phase) {
+        PdfArray dashPatternArray = new PdfArray();
+        PdfArray dArray = new PdfArray();
+        if (dashArray != null) {
+            for (float f : dashArray) {
+                dArray.add(new PdfNumber(f));
+            }
+        }
+        dashPatternArray.add(dArray);
+        dashPatternArray.add(new PdfNumber(phase));
+        return dashPatternArray;
     }
 }
