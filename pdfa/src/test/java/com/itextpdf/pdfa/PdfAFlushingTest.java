@@ -77,7 +77,7 @@ public class PdfAFlushingTest {
         canvas.addXObject(imageXObject, new Rectangle(30, 300, 300, 300));
 
         PdfPage lastPage = doc.getLastPage();
-        lastPage.flushPageAndItsResources();
+        lastPage.flush(true);
         if (!imageXObject.isFlushed()) {
             Assert.fail("When flushing the page along with it's resources, page check should be performed also page and all resources should be flushed.");
         }
