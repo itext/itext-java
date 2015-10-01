@@ -228,7 +228,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
 
     public PdfObject getSoftMask() {
-        return getPdfObject().get(PdfName.SM);
+        return getPdfObject().get(PdfName.SMask);
     }
 
     public PdfExtGState setSoftMask(PdfObject sMask) {
