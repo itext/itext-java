@@ -173,11 +173,11 @@ public class TextRenderer extends AbstractRenderer {
 
                 previousCharPos = ind;
 
-//                if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()) {
-//                    // we have extracted all the information we wanted and we do not want to continue.
-//                    // we will have to split the word anyway.
-//                    break;
-//                }
+                if (nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()) {
+                    // we have extracted all the information we wanted and we do not want to continue.
+                    // we will have to split the word anyway.
+                    break;
+                }
 
                 if (splitCharacters.isSplitCharacter(charCode, text, ind) || ind + 1 == rightPos ||
                         splitCharacters.isSplitCharacter(text[ind + 1], text, ind) &&
