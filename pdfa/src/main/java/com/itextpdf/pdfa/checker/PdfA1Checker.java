@@ -1,6 +1,6 @@
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.canvas.PdfGraphicsState;
+import com.itextpdf.canvas.CanvasGraphicsState;
 import com.itextpdf.canvas.color.*;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
@@ -101,7 +101,7 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    public void checkExtGState(PdfGraphicsState extGState) {
+    public void checkExtGState(CanvasGraphicsState extGState) {
         if (extGState.getTransferFunction() != null) {
             throw new PdfAConformanceException(PdfAConformanceException.AnExtgstateDictionaryShallNotContainTheTrKey);
         }

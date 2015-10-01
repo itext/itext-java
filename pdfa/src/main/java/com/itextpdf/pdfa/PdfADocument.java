@@ -2,7 +2,7 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.canvas.PdfCanvasConstants;
-import com.itextpdf.canvas.PdfGraphicsState;
+import com.itextpdf.canvas.CanvasGraphicsState;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.xmp.*;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
@@ -43,7 +43,7 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     public void checkShowTextIsoConformance(Object obj, PdfResources resources, int gStateIndex) {
-        PdfGraphicsState gState = (PdfGraphicsState) obj;
+        CanvasGraphicsState gState = (CanvasGraphicsState) obj;
         boolean fill = false;
         boolean stroke = false;
 
@@ -83,7 +83,7 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) {
-        PdfGraphicsState gState;
+        CanvasGraphicsState gState;
         PdfDictionary currentColorSpaces = null;
         if (resources != null) {
             currentColorSpaces = resources.getPdfObject().getAsDictionary(PdfName.ColorSpace);
@@ -103,14 +103,14 @@ public class PdfADocument extends PdfDocument {
                 break;
             case GRAPHIC_STATE_ONLY:
                 if (this.gStateIndex != gStateIndex) {
-                    gState = (PdfGraphicsState) obj;
+                    gState = (CanvasGraphicsState) obj;
                     checker.checkExtGState(gState);
                     this.gStateIndex = gStateIndex;
                 }
                 break;
             case DRAWMODE_FILL:
                 if (this.gStateIndex != gStateIndex) {
-                    gState = (PdfGraphicsState) obj;
+                    gState = (CanvasGraphicsState) obj;
                     checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
                     checker.checkExtGState(gState);
                     this.gStateIndex = gStateIndex;
@@ -118,7 +118,7 @@ public class PdfADocument extends PdfDocument {
                 break;
             case DRAWMODE_STROKE:
                 if (this.gStateIndex != gStateIndex) {
-                    gState = (PdfGraphicsState) obj;
+                    gState = (CanvasGraphicsState) obj;
                     checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
                     checker.checkExtGState(gState);
                     this.gStateIndex = gStateIndex;
@@ -126,7 +126,7 @@ public class PdfADocument extends PdfDocument {
                 break;
             case DRAWMODE_FILL_STROKE:
                 if (this.gStateIndex != gStateIndex) {
-                    gState = (PdfGraphicsState) obj;
+                    gState = (CanvasGraphicsState) obj;
                     checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
                     checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
                     checker.checkExtGState(gState);

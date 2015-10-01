@@ -98,8 +98,8 @@ public class PdfCanvas {
     static private final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
     static private final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
 
-    protected Stack<PdfGraphicsState> gsStack = new Stack<PdfGraphicsState>();
-    protected PdfGraphicsState currentGs = new PdfGraphicsState();
+    protected Stack<CanvasGraphicsState> gsStack = new Stack<CanvasGraphicsState>();
+    protected CanvasGraphicsState currentGs = new CanvasGraphicsState();
     protected PdfStream contentStream;
     protected PdfResources resources;
     protected PdfDocument document;
@@ -187,7 +187,7 @@ public class PdfCanvas {
         this.contentStream = contentStream;
     }
 
-    public PdfGraphicsState getGraphicsState() {
+    public CanvasGraphicsState getGraphicsState() {
         return currentGs;
     }
 
@@ -210,7 +210,7 @@ public class PdfCanvas {
     public PdfCanvas saveState() {
         document.checkIsoConformance('q', IsoKey.CANVAS_STACK);
         gsStack.push(currentGs);
-        currentGs = new PdfGraphicsState(currentGs);
+        currentGs = new CanvasGraphicsState(currentGs);
         contentStream.getOutputStream().writeBytes(q);
         return this;
     }

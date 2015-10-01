@@ -1,7 +1,7 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.basics.color.IccProfile;
-import com.itextpdf.canvas.PdfGraphicsState;
+import com.itextpdf.canvas.CanvasGraphicsState;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
@@ -101,7 +101,7 @@ public abstract class PdfAChecker {
     public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill);
     public abstract void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill);
     public abstract void checkRenderingIntent(PdfName intent);
-    public abstract void checkExtGState(PdfGraphicsState extGState);
+    public abstract void checkExtGState(CanvasGraphicsState extGState);
 
     protected abstract HashSet<PdfName> getForbiddenActions();
     protected abstract HashSet<PdfName> getAllowedNamedActions();

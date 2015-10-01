@@ -4,7 +4,7 @@ import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.Jpeg2000Image;
-import com.itextpdf.canvas.PdfGraphicsState;
+import com.itextpdf.canvas.CanvasGraphicsState;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.PatternColor;
 import com.itextpdf.core.pdf.*;
@@ -73,7 +73,7 @@ public class PdfA2Checker extends PdfA1Checker{
                 PdfObject colorSpace = shadingDictionary.get(PdfName.ColorSpace);
                 checkColorSpace(PdfColorSpace.makeColorSpace(colorSpace, null), currentColorSpaces, true, true);
                 PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
-                PdfGraphicsState gState = new PdfGraphicsState(new PdfExtGState(extGStateDict));
+                CanvasGraphicsState gState = new CanvasGraphicsState(new PdfExtGState(extGStateDict));
                 checkExtGState(gState);
             }
         }
@@ -152,7 +152,7 @@ public class PdfA2Checker extends PdfA1Checker{
     }
 
     @Override
-    public void checkExtGState(PdfGraphicsState extGState) {
+    public void checkExtGState(CanvasGraphicsState extGState) {
         if (Integer.valueOf(1).equals(extGState.getOverprintMode())) {
             if (extGState.getFillOverprint() && currentFillCsIsIccBasedCMYK) {
                 throw new PdfAConformanceException(PdfAConformanceException.OverprintModeShallNotBeOneWhenAnICCBasedCMYKColourSpaceIsUsedAndWhenOverprintingIsSetToTrue);

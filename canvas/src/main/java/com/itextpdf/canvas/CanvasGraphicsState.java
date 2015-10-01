@@ -9,7 +9,11 @@ import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 
-public class PdfGraphicsState {
+/**
+ * This class is designed for internal usage. <br>
+ * Use <code>PdfExtGState</code> class and <code>PdfCanvas#setExtGState()</code> method for setting extended graphics properties.
+ */
+public class CanvasGraphicsState {
 
     /**
      * ExtGState parameters.
@@ -51,15 +55,15 @@ public class PdfGraphicsState {
     private Float scale = 100f;
     private Float leading;
 
-    public PdfGraphicsState(PdfExtGState extGStateToUpdateFrom) {
+    public CanvasGraphicsState(PdfExtGState extGStateToUpdateFrom) {
         updateFromExtGState(extGStateToUpdateFrom);
     }
 
-    protected PdfGraphicsState() {
+    protected CanvasGraphicsState() {
 
     }
 
-    protected PdfGraphicsState(final PdfGraphicsState source) {
+    protected CanvasGraphicsState(final CanvasGraphicsState source) {
 
     }
 
