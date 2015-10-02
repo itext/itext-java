@@ -2,18 +2,23 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.FileOutputStream;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.FileOutputStream;
 
 @Category(IntegrationTest.class)
 public class PdfExtGStateTest extends ExtendedITextTest{

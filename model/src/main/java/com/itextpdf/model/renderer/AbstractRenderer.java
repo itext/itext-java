@@ -1,9 +1,9 @@
 package com.itextpdf.model.renderer;
 
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
@@ -11,7 +11,11 @@ import com.itextpdf.model.border.Border;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutPosition;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractRenderer implements IRenderer {
 

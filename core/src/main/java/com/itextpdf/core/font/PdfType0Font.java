@@ -3,18 +3,40 @@ package com.itextpdf.core.font;
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.font.CFFFontSubset;
+import com.itextpdf.basics.font.CMapEncoding;
+import com.itextpdf.basics.font.CidFont;
+import com.itextpdf.basics.font.CidFontProperties;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontMetrics;
+import com.itextpdf.basics.font.FontNames;
+import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.cmap.CMapContentParser;
 import com.itextpdf.basics.font.cmap.CMapObject;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfLiteral;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 

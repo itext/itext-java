@@ -1,15 +1,16 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.Recipient;
-import org.bouncycastle.cms.RecipientInformation;
-import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 
 import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.HashMap;
+
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.Recipient;
+import org.bouncycastle.cms.RecipientInformation;
+import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 
 /**
  * This class takes any PDF and returns exactly the same but

@@ -15,13 +15,14 @@ import com.itextpdf.core.pdf.PdfIndirectReference;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Note. For TrueType FontNames.getStyle() is the same to Subfamily(). So, we shouldn't add style to /BaseFont.

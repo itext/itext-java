@@ -2,23 +2,31 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.tagging.*;
+import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
+import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
+import com.itextpdf.core.pdf.tagging.PdfObjRef;
+import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;
 import com.itextpdf.core.xmp.XMPMetaFactory;
 import com.itextpdf.core.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 

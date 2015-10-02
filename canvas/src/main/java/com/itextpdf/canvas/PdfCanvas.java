@@ -9,8 +9,23 @@ import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.PatternColor;
 import com.itextpdf.canvas.image.WmfImageHelper;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.colorspace.*;
+import com.itextpdf.core.pdf.IsoKey;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfOutputStream;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfResources;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfTextArray;
+import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.core.pdf.colorspace.PdfPattern;
+import com.itextpdf.core.pdf.colorspace.PdfShading;
+import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.layer.PdfLayer;
 import com.itextpdf.core.pdf.layer.PdfLayerMembership;
@@ -20,7 +35,10 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * PdfCanvas class represents algorithm for writing data into content stream.

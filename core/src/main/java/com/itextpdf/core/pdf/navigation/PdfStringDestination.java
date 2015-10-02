@@ -1,6 +1,8 @@
 package com.itextpdf.core.pdf.navigation;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfString;
 
 import java.util.HashMap;
 

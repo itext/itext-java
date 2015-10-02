@@ -44,15 +44,28 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.RASInputStream;
 import com.itextpdf.basics.io.RandomAccessSource;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.Version;
-import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDeveloperExtension;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfLiteral;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfOutputStream;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.PdfVersion;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
@@ -61,11 +74,23 @@ import com.itextpdf.forms.PdfSigFieldLockDictionary;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Takes care of the cryptographic options and appearances

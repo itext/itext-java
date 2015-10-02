@@ -8,19 +8,28 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.model.border.*;
+import com.itextpdf.model.border.DashedBorder;
+import com.itextpdf.model.border.DottedBorder;
+import com.itextpdf.model.border.DoubleBorder;
+import com.itextpdf.model.border.GrooveBorder;
+import com.itextpdf.model.border.InsetBorder;
+import com.itextpdf.model.border.OutsetBorder;
+import com.itextpdf.model.border.RidgeBorder;
+import com.itextpdf.model.border.RoundDotsBorder;
+import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.ListItem;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class BorderTest extends ExtendedITextTest {

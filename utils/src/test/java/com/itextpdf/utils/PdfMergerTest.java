@@ -9,15 +9,19 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.util.ArrayList;
 
 @Category(IntegrationTest.class)
 public class PdfMergerTest extends ExtendedITextTest{

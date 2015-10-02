@@ -3,11 +3,12 @@ package com.itextpdf.basics.image;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.color.IccProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Image {
 

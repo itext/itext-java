@@ -1,17 +1,20 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfOutputIntent;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfA2EmbeddedFilesCheckTest {

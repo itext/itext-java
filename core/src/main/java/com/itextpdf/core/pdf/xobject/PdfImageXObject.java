@@ -1,8 +1,19 @@
 package com.itextpdf.core.pdf.xobject;
 
-import com.itextpdf.basics.image.*;
+import com.itextpdf.basics.image.Image;
+import com.itextpdf.basics.image.RawImage;
+import com.itextpdf.basics.image.RawImageHelper;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfLiteral;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfOutputStream;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 
 import java.util.Map;
 

@@ -2,8 +2,8 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.geom.AffineTransform;
 import com.itextpdf.basics.geom.Point2D;
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.BlockElement;
@@ -12,7 +12,10 @@ import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.layout.LayoutResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class BlockRenderer extends AbstractRenderer {
 

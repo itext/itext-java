@@ -1,10 +1,22 @@
 package com.itextpdf.core.pdf.tagging;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 

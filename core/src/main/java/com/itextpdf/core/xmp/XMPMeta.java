@@ -1,11 +1,11 @@
 package com.itextpdf.core.xmp;
 
-import java.util.Calendar;
-
 import com.itextpdf.core.xmp.options.IteratorOptions;
 import com.itextpdf.core.xmp.options.ParseOptions;
 import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.core.xmp.properties.XMPProperty;
+
+import java.util.Calendar;
 
 
 /**

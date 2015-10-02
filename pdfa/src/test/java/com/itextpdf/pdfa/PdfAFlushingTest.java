@@ -11,14 +11,15 @@ import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfAFlushingTest {

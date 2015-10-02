@@ -1,21 +1,20 @@
 package com.itextpdf.test;
 
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.read.ListAppender;
-
-
 import com.itextpdf.test.annotations.LogMessage;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.LoggerFactory;
 
-
-import java.lang.annotation.Annotation;
-import java.util.List;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 
 
 public class LogListener extends TestWatcher {

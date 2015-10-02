@@ -1,7 +1,12 @@
 package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.codec.*;
+import com.itextpdf.basics.codec.CCITTG4Encoder;
+import com.itextpdf.basics.codec.TIFFConstants;
+import com.itextpdf.basics.codec.TIFFDirectory;
+import com.itextpdf.basics.codec.TIFFFaxDecoder;
+import com.itextpdf.basics.codec.TIFFField;
+import com.itextpdf.basics.codec.TIFFLZWDecoder;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.io.ByteArrayOutputStream;

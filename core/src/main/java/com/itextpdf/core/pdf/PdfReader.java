@@ -13,11 +13,6 @@ import com.itextpdf.core.crypto.BadPasswordException;
 import com.itextpdf.core.pdf.filters.FilterHandler;
 import com.itextpdf.core.pdf.filters.FilterHandlers;
 import com.itextpdf.core.security.ExternalDecryptionProcess;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,6 +23,12 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.RecipientInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfReader {
 

@@ -5,9 +5,37 @@ import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfOutputStream;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.action.PdfAction;
-import com.itextpdf.core.pdf.annot.*;
+import com.itextpdf.core.pdf.annot.PdfAnnotation;
+import com.itextpdf.core.pdf.annot.PdfCaretAnnotation;
+import com.itextpdf.core.pdf.annot.PdfCircleAnnotation;
+import com.itextpdf.core.pdf.annot.PdfFileAttachmentAnnotation;
+import com.itextpdf.core.pdf.annot.PdfFixedPrint;
+import com.itextpdf.core.pdf.annot.PdfFreeTextAnnotation;
+import com.itextpdf.core.pdf.annot.PdfInkAnnotation;
+import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.core.pdf.annot.PdfPopupAnnotation;
+import com.itextpdf.core.pdf.annot.PdfPrinterMarkAnnotation;
+import com.itextpdf.core.pdf.annot.PdfRedactAnnotation;
+import com.itextpdf.core.pdf.annot.PdfScreenAnnotation;
+import com.itextpdf.core.pdf.annot.PdfSoundAnnotation;
+import com.itextpdf.core.pdf.annot.PdfSquareAnnotation;
+import com.itextpdf.core.pdf.annot.PdfStampAnnotation;
+import com.itextpdf.core.pdf.annot.PdfTextAnnotation;
+import com.itextpdf.core.pdf.annot.PdfTextMarkupAnnotation;
+import com.itextpdf.core.pdf.annot.PdfTrapNetworkAnnotation;
+import com.itextpdf.core.pdf.annot.PdfWatermarkAnnotation;
 import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
@@ -15,14 +43,20 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.DocumentException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.*;
-import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfAnnotationTest extends ExtendedITextTest {

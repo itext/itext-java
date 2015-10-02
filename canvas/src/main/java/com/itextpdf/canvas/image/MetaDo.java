@@ -2,12 +2,12 @@ package com.itextpdf.canvas.image;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
 import java.io.ByteArrayOutputStream;

@@ -3,7 +3,11 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.geom.Rectangle;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class PdfArray extends PdfObject implements Collection<PdfObject> {
 

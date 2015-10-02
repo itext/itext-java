@@ -4,23 +4,38 @@ import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.core.pdf.tagging.*;
+import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
+import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
+import com.itextpdf.core.pdf.tagging.PdfObjRef;
+import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.TreeSet;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.util.List;
-import java.util.TreeSet;
 
 @Category(IntegrationTest.class)
 public class PdfTaggingTest extends ExtendedITextTest {

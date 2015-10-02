@@ -2,9 +2,20 @@ package com.itextpdf.core.pdf.layer;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
+import com.itextpdf.core.pdf.PdfString;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This class represents /OCProperties entry if pdf catalog and manages

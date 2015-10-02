@@ -1,6 +1,8 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
 
 import java.util.List;
 

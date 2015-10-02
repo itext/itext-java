@@ -2,19 +2,22 @@ package com.itextpdf.barcodes;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class BarcodePDF417Test {

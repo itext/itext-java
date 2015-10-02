@@ -2,7 +2,6 @@ package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.PdfException;
 
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;

@@ -2,7 +2,12 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.font.CidFont;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontFactory;
+import com.itextpdf.basics.font.TrueTypeCollection;
+import com.itextpdf.basics.font.TrueTypeFont;
+import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.canvas.font.PdfType3Font;
@@ -11,7 +16,12 @@ import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfTrueTypeFont;
 import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.font.PdfType1Font;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfOutputStream;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
@@ -22,15 +32,16 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfEncodings;
 import com.itextpdf.text.pdf.PdfException;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class PdfFontTest extends ExtendedITextTest{

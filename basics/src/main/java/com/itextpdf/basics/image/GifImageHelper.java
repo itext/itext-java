@@ -4,7 +4,11 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 

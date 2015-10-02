@@ -3,11 +3,23 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.canvas.CanvasGraphicsState;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfCatalog;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public abstract class PdfAChecker {
     public static final String ICC_COLOR_SPACE_RGB = "RGB ";

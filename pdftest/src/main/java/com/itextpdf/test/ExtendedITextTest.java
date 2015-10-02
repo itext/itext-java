@@ -2,6 +2,7 @@ package com.itextpdf.test;
 
 
 import com.itextpdf.basics.test.ITextTest;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

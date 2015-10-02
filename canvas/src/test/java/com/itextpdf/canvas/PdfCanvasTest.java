@@ -9,11 +9,28 @@ import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.RawImage;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.canvas.color.*;
+import com.itextpdf.canvas.color.CalGray;
+import com.itextpdf.canvas.color.CalRgb;
 import com.itextpdf.canvas.color.Color;
+import com.itextpdf.canvas.color.DeviceCmyk;
+import com.itextpdf.canvas.color.DeviceN;
+import com.itextpdf.canvas.color.DeviceRgb;
+import com.itextpdf.canvas.color.IccBased;
+import com.itextpdf.canvas.color.Indexed;
+import com.itextpdf.canvas.color.Lab;
+import com.itextpdf.canvas.color.Separation;
 import com.itextpdf.canvas.image.WmfImage;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfResources;
+import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
@@ -24,18 +41,23 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.BarcodePDF417;
+
+import java.awt.Toolkit;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.awt.*;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasTest extends ExtendedITextTest {

@@ -4,11 +4,13 @@ import com.itextpdf.model.Document;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.TableRenderer;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.List;
 
 public class Table extends BlockElement<Table> implements ILargeElement<Table> {
 

@@ -1,8 +1,15 @@
 package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.pdf.*;
-import java.io.*;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfStream;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class PdfSoundAnnotation extends PdfMarkupAnnotation {
 

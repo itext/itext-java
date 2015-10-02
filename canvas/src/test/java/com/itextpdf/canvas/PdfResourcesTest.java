@@ -1,18 +1,24 @@
 package com.itextpdf.canvas;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfResources;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-
-import com.itextpdf.test.ExtendedITextTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 import java.util.Set;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfResourcesTest {

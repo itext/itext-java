@@ -2,7 +2,11 @@ package com.itextpdf.canvas.color;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.color.IccProfile;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 
 import java.io.InputStream;

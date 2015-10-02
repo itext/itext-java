@@ -17,8 +17,6 @@
 
 package com.itextpdf.model.hyphenation;
 
-import org.xml.sax.InputSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -27,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import org.xml.sax.InputSource;
 
 /**
  * <p>This tree structure stores the hyphenation patterns in an efficient

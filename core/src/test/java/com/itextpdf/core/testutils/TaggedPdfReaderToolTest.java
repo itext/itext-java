@@ -3,14 +3,18 @@ package com.itextpdf.core.testutils;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
 
 @Category(IntegrationTest.class)
 public class TaggedPdfReaderToolTest {

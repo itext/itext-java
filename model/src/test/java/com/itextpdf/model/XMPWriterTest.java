@@ -7,23 +7,19 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPConst;
 import com.itextpdf.core.xmp.XMPException;
-
-
 import com.itextpdf.core.xmp.XMPMeta;
 import com.itextpdf.core.xmp.XMPMetaFactory;
 import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.model.element.Paragraph;
-
-
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class XMPWriterTest extends ExtendedITextTest{

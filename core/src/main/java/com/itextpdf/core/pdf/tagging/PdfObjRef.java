@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 
 public class PdfObjRef extends PdfMcr<PdfDictionary> {

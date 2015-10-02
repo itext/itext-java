@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.NotImplementedException;
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.core.Version;
 import com.itextpdf.core.events.EventDispatcher;
@@ -9,15 +9,27 @@ import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
-import com.itextpdf.core.xmp.*;
+import com.itextpdf.core.xmp.PdfAXMPUtil;
+import com.itextpdf.core.xmp.PdfConst;
+import com.itextpdf.core.xmp.XMPConst;
+import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.core.xmp.XMPMeta;
+import com.itextpdf.core.xmp.XMPMetaFactory;
+import com.itextpdf.core.xmp.XMPUtils;
 import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PdfDocument implements IEventDispatcher {
 

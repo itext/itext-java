@@ -2,9 +2,19 @@ package com.itextpdf.utils;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfOutline;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfWriter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

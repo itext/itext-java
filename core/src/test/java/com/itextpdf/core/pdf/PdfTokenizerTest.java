@@ -4,16 +4,13 @@ import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.text.*;
-
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import com.itextpdf.text.DocumentException;
 
 import java.io.IOException;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfTokenizerTest {

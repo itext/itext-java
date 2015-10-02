@@ -3,19 +3,27 @@ package com.itextpdf.model;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontFactory;
 import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType1Font;
-import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.model.element.*;
-import com.itextpdf.model.splitting.DefaultSplitCharacters;
-import com.itextpdf.model.splitting.ISplitCharacters;
+import com.itextpdf.model.element.AreaBreak;
+import com.itextpdf.model.element.BlockElement;
+import com.itextpdf.model.element.Div;
+import com.itextpdf.model.element.IElement;
+import com.itextpdf.model.element.ILargeElement;
+import com.itextpdf.model.element.Image;
+import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.renderer.AbstractRenderer;
 import com.itextpdf.model.renderer.DocumentRenderer;
+import com.itextpdf.model.splitting.DefaultSplitCharacters;
+import com.itextpdf.model.splitting.ISplitCharacters;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class Document implements IPropertyContainer<Document> {
 

@@ -1,6 +1,12 @@
 package com.itextpdf.core.pdf.extgstate;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
 
 public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 

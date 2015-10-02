@@ -8,16 +8,16 @@ import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfStamper;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.Security;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.Security;
 
 @Category(IntegrationTest.class)
 public class PdfEncryptionTest extends ExtendedITextTest{

@@ -15,16 +15,17 @@ import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Tab;
 import com.itextpdf.model.element.TabStop;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class TabsTest extends ExtendedITextTest{

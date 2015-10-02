@@ -9,17 +9,22 @@ import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.border.SolidBorder;
-import com.itextpdf.model.element.*;
+import com.itextpdf.model.element.Div;
+import com.itextpdf.model.element.Image;
+import com.itextpdf.model.element.List;
+import com.itextpdf.model.element.Paragraph;
+import com.itextpdf.model.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.DocumentException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class AlignmentTest extends ExtendedITextTest {

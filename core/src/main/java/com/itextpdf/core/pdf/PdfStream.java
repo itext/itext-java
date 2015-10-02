@@ -2,10 +2,11 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.slf4j.LoggerFactory;
 
 public class PdfStream extends PdfDictionary {
 

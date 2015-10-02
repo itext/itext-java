@@ -3,12 +3,20 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.otf.*;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
+import com.itextpdf.basics.font.otf.FeatureRecord;
+import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.basics.font.otf.GlyphLine;
+import com.itextpdf.basics.font.otf.GlyphSubstitutionTableReader;
+import com.itextpdf.basics.font.otf.OpenTableLookup;
+import com.itextpdf.basics.font.otf.OpenTypeGdefTableReader;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class TrueTypeFont extends FontProgram {

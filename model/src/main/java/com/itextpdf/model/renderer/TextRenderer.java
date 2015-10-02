@@ -15,7 +15,11 @@ import com.itextpdf.model.bidi.BidiCharacterMap;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.model.hyphenation.Hyphenation;
 import com.itextpdf.model.hyphenation.HyphenationConfig;
-import com.itextpdf.model.layout.*;
+import com.itextpdf.model.layout.LayoutArea;
+import com.itextpdf.model.layout.LayoutContext;
+import com.itextpdf.model.layout.LayoutPosition;
+import com.itextpdf.model.layout.LayoutResult;
+import com.itextpdf.model.layout.TextLayoutResult;
 import com.itextpdf.model.splitting.ISplitCharacters;
 
 import java.util.List;

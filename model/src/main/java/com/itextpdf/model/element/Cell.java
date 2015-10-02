@@ -5,11 +5,12 @@ import com.itextpdf.model.border.Border;
 import com.itextpdf.model.border.SolidBorder;
 import com.itextpdf.model.renderer.CellRenderer;
 import com.itextpdf.model.renderer.IRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Cell extends BlockElement<Cell> {
 

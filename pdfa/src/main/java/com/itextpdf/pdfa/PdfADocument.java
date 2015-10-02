@@ -1,10 +1,21 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.canvas.PdfCanvasConstants;
 import com.itextpdf.canvas.CanvasGraphicsState;
-import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.xmp.*;
+import com.itextpdf.canvas.PdfCanvasConstants;
+import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.pdf.IsoKey;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfOutputIntent;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfResources;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;

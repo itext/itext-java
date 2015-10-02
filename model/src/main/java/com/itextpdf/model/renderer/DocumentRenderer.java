@@ -2,19 +2,20 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.geom.PageSize;
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentRenderer extends AbstractRenderer {
 

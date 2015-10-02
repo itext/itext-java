@@ -1,6 +1,13 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
+import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.function.PdfFunction;
 
 public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapper<T> {

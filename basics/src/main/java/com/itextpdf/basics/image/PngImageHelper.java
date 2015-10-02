@@ -4,10 +4,13 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.io.*;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.io.ByteBuffer;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;

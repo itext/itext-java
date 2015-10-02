@@ -1,8 +1,8 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.io.ByteBuffer;
 
 import java.nio.charset.Charset;
 

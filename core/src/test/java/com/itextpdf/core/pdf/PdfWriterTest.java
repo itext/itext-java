@@ -7,19 +7,19 @@ import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfReader;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TreeMap;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfWriterTest extends ExtendedITextTest {

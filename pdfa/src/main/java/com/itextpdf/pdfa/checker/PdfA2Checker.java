@@ -7,14 +7,30 @@ import com.itextpdf.basics.image.Jpeg2000Image;
 import com.itextpdf.canvas.CanvasGraphicsState;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.color.PatternColor;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.colorspace.*;
+import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.core.pdf.colorspace.PdfPattern;
+import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.pdfa.PdfAConformanceException;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class PdfA2Checker extends PdfA1Checker{
 

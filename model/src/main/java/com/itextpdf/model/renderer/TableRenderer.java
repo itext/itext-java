@@ -1,7 +1,7 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Cell;
@@ -9,13 +9,14 @@ import com.itextpdf.model.element.Table;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TableRenderer extends AbstractRenderer {
 

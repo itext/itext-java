@@ -1,14 +1,21 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.canvas.CanvasGraphicsState;
-import com.itextpdf.canvas.color.*;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.core.pdf.PdfAConformanceLevel;
 
 import java.util.Arrays;
 import java.util.HashSet;

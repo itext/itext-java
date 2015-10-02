@@ -4,7 +4,10 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 
 public final class BmpImageHelper {

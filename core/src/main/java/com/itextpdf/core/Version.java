@@ -1,7 +1,5 @@
 package com.itextpdf.core;
 
-import java.lang.reflect.Method;
-
 /**
  * This class contains version information about iText.
  * DO NOT CHANGE THE VERSION INFORMATION WITHOUT PERMISSION OF THE COPYRIGHT HOLDERS OF ITEXT.

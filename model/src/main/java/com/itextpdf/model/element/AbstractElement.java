@@ -6,12 +6,15 @@ import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
 import com.itextpdf.model.hyphenation.HyphenationConfig;
-import com.itextpdf.model.splitting.ISplitCharacters;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
+import com.itextpdf.model.splitting.ISplitCharacters;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractElement<Type extends AbstractElement> implements IElement<Type> {
 

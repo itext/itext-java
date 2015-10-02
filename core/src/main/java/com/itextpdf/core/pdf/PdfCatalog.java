@@ -5,7 +5,11 @@ import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.layer.PdfOCProperties;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
