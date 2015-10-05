@@ -45,7 +45,7 @@ public abstract class OpenTableLookup {
         indexer.idx++;
         while (indexer.idx < indexer.line.end) {
             Glyph g = indexer.line.glyphs.get(indexer.idx);
-            if (!openReader.IsSkip(g.code, lookupFlag)) {
+            if (!openReader.IsSkip(g.index, lookupFlag)) {
                 indexer.glyph = g;
                 break;
             }
@@ -57,7 +57,7 @@ public abstract class OpenTableLookup {
         indexer.idx--;
         while (indexer.idx >= indexer.line.start) {
             Glyph g = indexer.line.glyphs.get(indexer.idx);
-            if (!openReader.IsSkip(g.code, lookupFlag)) {
+            if (!openReader.IsSkip(g.index, lookupFlag)) {
                 indexer.glyph = g;
                 break;
             }

@@ -34,16 +34,16 @@ public class GsubLookupFormat4 extends OpenTableLookup {
         boolean changed = false;
         Glyph g = line.glyphs.get(line.idx);
         boolean match = false;
-        if (ligatures.containsKey(g.code) && !openReader.IsSkip(g.code, lookupFlag)) {
+        if (ligatures.containsKey(g.index) && !openReader.IsSkip(g.index, lookupFlag)) {
             GlyphIndexer gidx = new GlyphIndexer();
             gidx.line = line;
-            List<int[]> ligs = ligatures.get(g.code);
+            List<int[]> ligs = ligatures.get(g.index);
             for (int[] lig : ligs) {
                 match = true;
                 gidx.idx = line.idx;
                 for (int j = 1; j < lig.length; ++j) {
                     NextGlyph(gidx);
-                    if (gidx.glyph == null || gidx.glyph.code != lig[j]) {
+                    if (gidx.glyph == null || gidx.glyph.index != lig[j]) {
                         match = false;
                         break;
                     }
@@ -58,8 +58,8 @@ public class GsubLookupFormat4 extends OpenTableLookup {
                         isMark &= gidx.glyph.IsMark;
                         line.glyphs.remove(gidx.idx--);
                     }
-                    Character c = openReader.GetGlyphToCharacter(lig[0]);
-                    Glyph glyph = new Glyph(lig[0], openReader.GetGlyphWidth(lig[0]), c == null ? composed : c.toString(), isMark);
+                    Integer c = openReader.getGlyphToCharacter(lig[0]);
+                    Glyph glyph = new Glyph(lig[0], openReader.getGlyphWidth(lig[0]), 0, c == null ? composed : String.valueOf((char) (int) c), isMark);
                     line.glyphs.set(line.idx, glyph);
                     line.end -= lig.length - 1;
                     break;

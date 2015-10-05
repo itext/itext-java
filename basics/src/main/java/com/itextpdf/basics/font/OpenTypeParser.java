@@ -12,40 +12,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-//TODO see TtfUnicodeWriter
 class OpenTypeParser {
 
     /**
      * The components of table 'head'.
      */
     protected static class HeaderTable {
-        /**
-         * A variable.
-         */
         int flags;
-        /**
-         * A variable.
-         */
         int unitsPerEm;
-        /**
-         * A variable.
-         */
         short xMin;
-        /**
-         * A variable.
-         */
         short yMin;
-        /**
-         * A variable.
-         */
         short xMax;
-        /**
-         * A variable.
-         */
         short yMax;
-        /**
-         * A variable.
-         */
         int macStyle;
     }
 
@@ -53,45 +31,15 @@ class OpenTypeParser {
      * The components of table 'hhea'.
      */
     protected static class HorizontalHeader {
-        /**
-         * A variable.
-         */
         short Ascender;
-        /**
-         * A variable.
-         */
         short Descender;
-        /**
-         * A variable.
-         */
         short LineGap;
-        /**
-         * A variable.
-         */
         int advanceWidthMax;
-        /**
-         * A variable.
-         */
         short minLeftSideBearing;
-        /**
-         * A variable.
-         */
         short minRightSideBearing;
-        /**
-         * A variable.
-         */
         short xMaxExtent;
-        /**
-         * A variable.
-         */
         short caretSlopeRise;
-        /**
-         * A variable.
-         */
         short caretSlopeRun;
-        /**
-         * A variable.
-         */
         int numberOfHMetrics;
     }
 
@@ -99,121 +47,34 @@ class OpenTypeParser {
      * The components of table 'OS/2'.
      */
     protected static class WindowsMetrics {
-        /**
-         * A variable.
-         */
         short xAvgCharWidth;
-        /**
-         * A variable.
-         */
         int usWeightClass;
-        /**
-         * A variable.
-         */
         int usWidthClass;
-        /**
-         * A variable.
-         */
         short fsType;
-        /**
-         * A variable.
-         */
         short ySubscriptXSize;
-        /**
-         * A variable.
-         */
         short ySubscriptYSize;
-        /**
-         * A variable.
-         */
         short ySubscriptXOffset;
-        /**
-         * A variable.
-         */
         short ySubscriptYOffset;
-        /**
-         * A variable.
-         */
         short ySuperscriptXSize;
-        /**
-         * A variable.
-         */
         short ySuperscriptYSize;
-        /**
-         * A variable.
-         */
         short ySuperscriptXOffset;
-        /**
-         * A variable.
-         */
         short ySuperscriptYOffset;
-        /**
-         * A variable.
-         */
         short yStrikeoutSize;
-        /**
-         * A variable.
-         */
         short yStrikeoutPosition;
-        /**
-         * A variable.
-         */
         short sFamilyClass;
-        /**
-         * A variable.
-         */
         byte[] panose = new byte[10];
-        /**
-         * A variable.
-         */
         byte[] achVendID = new byte[4];
-        /**
-         * A variable.
-         */
         int fsSelection;
-        /**
-         * A variable.
-         */
         int usFirstCharIndex;
-        /**
-         * A variable.
-         */
         int usLastCharIndex;
-        /**
-         * A variable.
-         */
         short sTypoAscender;
-        /**
-         * A variable.
-         */
         short sTypoDescender;
-        /**
-         * A variable.
-         */
         short sTypoLineGap;
-        /**
-         * A variable.
-         */
         int usWinAscent;
-        /**
-         * A variable.
-         */
         int usWinDescent;
-        /**
-         * A variable.
-         */
         int ulCodePageRange1;
-        /**
-         * A variable.
-         */
         int ulCodePageRange2;
-        /**
-         * A variable.
-         */
         int sxHeight;
-        /**
-         * A variable.
-         */
         int sCapHeight;
     }
 
@@ -253,9 +114,7 @@ class OpenTypeParser {
         boolean fontSpecific = false;
     }
 
-    /**
-     * The file name.
-     */
+    /** The file name. */
     protected String fileName;
     /**
      * The file in use.
@@ -491,9 +350,9 @@ class OpenTypeParser {
             tables.put(tag, table_location);
         }
         checkCff();
+        readHheaTable();
         readNameTable();
         readHeadTable();
-        readHheaTable();
         readOs_2Table();
         readPostTable();
         readGlyphWidths();
@@ -910,7 +769,7 @@ class OpenTypeParser {
                     cmaps.cmap10 = readFormat0();
                     break;
                 case 4:
-                    cmaps.cmap10 = readFormat4(cmaps.fontSpecific);
+                    cmaps.cmap10 = readFormat4(false);
                     break;
                 case 6:
                     cmaps.cmap10 = readFormat6();
@@ -921,7 +780,7 @@ class OpenTypeParser {
             raf.seek(table_location[0] + map31);
             int format = raf.readUnsignedShort();
             if (format == 4) {
-                cmaps.cmap31 = readFormat4(cmaps.fontSpecific);
+                cmaps.cmap31 = readFormat4(false);
             }
         }
         if (map30 > 0) {
@@ -929,6 +788,8 @@ class OpenTypeParser {
             int format = raf.readUnsignedShort();
             if (format == 4) {
                 cmaps.cmap10 = readFormat4(cmaps.fontSpecific);
+            } else {
+                cmaps.fontSpecific = false;
             }
         }
         if (mapExt > 0) {
@@ -939,7 +800,7 @@ class OpenTypeParser {
                     cmaps.cmapExt = readFormat0();
                     break;
                 case 4:
-                    cmaps.cmapExt = readFormat4(cmaps.fontSpecific);
+                    cmaps.cmapExt = readFormat4(false);
                     break;
                 case 6:
                     cmaps.cmapExt = readFormat6();
@@ -999,7 +860,7 @@ class OpenTypeParser {
      * @throws IOException the font file could not be read
      */
     private HashMap<Integer, int[]> readFormat0() throws IOException {
-        HashMap<Integer, int[]> h = new HashMap<Integer, int[]>();
+        HashMap<Integer, int[]> h = new HashMap<>();
         raf.skipBytes(4);
         for (int k = 0; k < 256; ++k) {
             int[] r = new int[2];
@@ -1018,7 +879,7 @@ class OpenTypeParser {
      * @throws IOException the font file could not be read
      */
     private HashMap<Integer, int[]> readFormat4(boolean fontSpecific) throws IOException {
-        HashMap<Integer, int[]> h = new HashMap<Integer, int[]>();
+        HashMap<Integer, int[]> h = new HashMap<>();
         int table_lenght = raf.readUnsignedShort();
         raf.skipBytes(2);
         int segCount = raf.readUnsignedShort() / 2;
@@ -1058,7 +919,14 @@ class OpenTypeParser {
                 int[] r = new int[2];
                 r[0] = glyph;
                 r[1] = getGlyphWidth(r[0]);
-                h.put(fontSpecific ? ((j & 0xff00) == 0xf000 ? j & 0xff : j) : j, r);
+
+                // (j & 0xff00) == 0xf000) means, that it is private area of unicode
+                // So, in case symbol font (cmap 3/0) we add both char codes:
+                // j & 0xff and j. It will simplify unicode conversion in TrueTypeFont
+                if (fontSpecific && ((j & 0xff00) == 0xf000)) {
+                    h.put(j & 0xff, r);
+                }
+                h.put(j, r);
             }
         }
         return h;
@@ -1073,7 +941,7 @@ class OpenTypeParser {
      * @throws IOException the font file could not be read
      */
     private HashMap<Integer, int[]> readFormat6() throws IOException {
-        HashMap<Integer, int[]> h = new HashMap<Integer, int[]>();
+        HashMap<Integer, int[]> h = new HashMap<>();
         raf.skipBytes(4);
         int start_code = raf.readUnsignedShort();
         int code_count = raf.readUnsignedShort();
@@ -1087,7 +955,7 @@ class OpenTypeParser {
     }
 
     private HashMap<Integer, int[]> readFormat12() throws IOException {
-        HashMap<Integer, int[]> h = new HashMap<Integer, int[]>();
+        HashMap<Integer, int[]> h = new HashMap<>();
         raf.skipBytes(2);
         @SuppressWarnings("unused")
         int table_length = raf.readInt();

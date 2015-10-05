@@ -44,75 +44,60 @@
  */
 package com.itextpdf.basics.font.otf;
 
-/**
- *  
- * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
- */
 public class Glyph {
     
-    /**
-     * The <i>code</i> or <i>id</i> by which this is represented in the Font File
-     */
-    public final int code;
-    
-    /**
-     * The normalized width of this Glyph.
-     */
+    /** The <i>code</i> or <i>id</i> by which this is represented in the Font File. */
+    public final int index;
+    /** The normalized width of this Glyph. */
     public final int width;
-    
-    /**
-     * The Unicode text represented by this Glyph
-     */
-    public final String chars;
-    
+    /** utf-32 representation of glyph if appears. Zer*/
+    public final Integer unicode;
+    /** The Unicode text represented by this Glyph */
+    public String chars;
     public final int XPlacement;
     public final int YPlacement;
     public final int XAdvance;
     public final int YAdvance;
-    public final GposAnchorEntryExit entryExit;
     public final boolean IsMark;
-    public final int relativeAnchorIndex;
 
-    public Glyph(int code, int width, String chars, boolean IsMark) {
-        this.code = code;
+    public Glyph(int index, int width, Integer unicode) {
+        this(index, width, unicode, null, false);
+    }
+
+    public Glyph(int index, int width, Integer unicode, String chars, boolean IsMark) {
+        this.index = index;
         this.width = width;
         this.chars = chars;
+        this.unicode = unicode;
         this.XPlacement = 0;
         this.YPlacement = 0;
         this.XAdvance = 0;
         this.YAdvance = 0;
-        this.entryExit = null;
         this.IsMark = IsMark;
-        this.relativeAnchorIndex = 0;
     }
 
-    public Glyph(Glyph glyph, int XPlacement, int YPlacement, int XAdvance, int YAdvance, int relativeAnchorIndex) {
-        this.code = glyph.code;
+    public Glyph(Glyph glyph, int XPlacement, int YPlacement, int XAdvance, int YAdvance) {
+        this.index = glyph.index;
         this.width = glyph.width;
         this.chars = glyph.chars;
+        this.unicode = glyph.unicode;
         this.XPlacement = glyph.XPlacement + XPlacement;
         this.YPlacement = glyph.YPlacement + YPlacement;
         this.XAdvance = glyph.XAdvance + XAdvance;
         this.YAdvance = glyph.YAdvance + YAdvance;
-        this.entryExit = glyph.entryExit;
         this.IsMark = glyph.IsMark;
-        if (relativeAnchorIndex != 0)
-            this.relativeAnchorIndex = relativeAnchorIndex;
-        else
-            this.relativeAnchorIndex = glyph.relativeAnchorIndex;
     }
     
-    public Glyph(Glyph glyph, GposAnchorEntryExit entryExit) {
-        this.code = glyph.code;
+    public Glyph(Glyph glyph) {
+        this.index = glyph.index;
         this.width = glyph.width;
         this.chars = glyph.chars;
+        this.unicode = glyph.unicode;
         this.XPlacement = glyph.XPlacement;
         this.YPlacement = glyph.YPlacement;
         this.XAdvance = glyph.XAdvance;
         this.YAdvance = glyph.YAdvance;
-        this.entryExit = entryExit;
         this.IsMark = glyph.IsMark;
-        this.relativeAnchorIndex = glyph.relativeAnchorIndex;
     }
    
     @Override
@@ -120,7 +105,7 @@ public class Glyph {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((chars == null) ? 0 : chars.hashCode());
-        result = prime * result + code;
+        result = prime * result + index;
         result = prime * result + width;
         return result;
     }
@@ -144,18 +129,11 @@ public class Glyph {
         } else if (!chars.equals(other.chars)) {
             return false;
         }
-        if (code != other.code) {
-            return false;
-        }
-        if (width != other.width) {
-            return false;
-        }
-        return true;
+        return index == other.index && width == other.width;
     }
 
     @Override
     public String toString() {
-        return Glyph.class.getSimpleName() + " [id=" + code + ", width=" + width + ", chars=" + chars + "]";
+        return Glyph.class.getSimpleName() + " [id=" + index + ", width=" + width + ", chars=" + chars + "]";
     }
-    
 }

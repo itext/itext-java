@@ -74,11 +74,13 @@ public class LogListener extends TestWatcher {
         Annotation annotation = description.getAnnotation(LogMessage.class);
         if (annotation != null) {
             LogMessage logMessage = (LogMessage) annotation;
-            for (String message : logMessage.messages()) {
-                Assert.assertTrue(description.getClassName()
-                        + "."
-                        + description.getMethodName()
-                        + ": " + "Some log messages are not found in test execution", contains(message));
+            if (!logMessage.ignore()) {
+                for (String message : logMessage.messages()) {
+                    Assert.assertTrue(description.getClassName()
+                            + "."
+                            + description.getMethodName()
+                            + ": " + "Some log messages are not found in test execution", contains(message));
+                }
             }
         } else {
             if (getSize() > 0) {

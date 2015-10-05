@@ -15,7 +15,7 @@ public abstract class FontProgram {
      */
     protected int[][] charBBoxes;
     /**
-     * Table of characters widths for this encoding.
+     * Table of characters widths for this simple font encoding.
      */
     protected int[] widths;
 

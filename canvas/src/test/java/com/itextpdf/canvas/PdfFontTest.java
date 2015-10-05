@@ -145,10 +145,10 @@ public class PdfFontTest extends ExtendedITextTest{
 
 
     @Test
-    public void createDocumentWithLigatures() throws IOException, PdfException, InterruptedException {
+    public void createDocumentWithLigatures1() throws IOException, PdfException, InterruptedException {
         int pageCount = 1;
-        String filename = destinationFolder + "DocumentWithLigatures.pdf";
-        String cmpFilename = sourceFolder + "cmp_DocumentWithLigatures.pdf";
+        String filename = destinationFolder + "DocumentWithLigatures1.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithLigatures1.pdf";
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Ligatures test";
@@ -180,6 +180,53 @@ public class PdfFontTest extends ExtendedITextTest{
                     .moveText(36, 600)
                     .setFontAndSize(new PdfType0Font(pdfDoc, foglihtenNo07, "Identity-H"), 24)
                     .showText("The quick brown fox jumps fi ff")
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 400, 100, 100).fill();
+            canvas.release();
+            page.flush();
+        }
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithLigatures2() throws IOException, PdfException, InterruptedException {
+        int pageCount = 1;
+        String filename = destinationFolder + "DocumentWithLigatures2.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithLigatures2.pdf";
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Ligatures test";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "LobsterTwo-Regular.ttf"));
+        TrueTypeFont foglihtenNo07 = new TrueTypeFont(ttf, com.itextpdf.basics.font.PdfEncodings.IDENTITY_H);
+        foglihtenNo07.setApplyLigatures(true);
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, foglihtenNo07, "Identity-H"), 24)
+                    .showText("f i fi ff ffl ffi osx sx yp ux rz")
+                    .endText()
+                    .restoreState();
+            foglihtenNo07.setApplyLigatures(false);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 600)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, foglihtenNo07, "Identity-H"), 24)
+                    .showText("f i fi ff ffl ffi osx sx yp ux rz")
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 400, 100, 100).fill();
@@ -1167,6 +1214,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessage(messages = {}, ignore = true)
     public void testWriteTTC() throws IOException, InterruptedException {
 
         String filename = destinationFolder + "DocumentWithTTC.pdf";

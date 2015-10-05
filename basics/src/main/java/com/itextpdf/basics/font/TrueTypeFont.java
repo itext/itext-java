@@ -9,6 +9,8 @@ import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.basics.font.otf.OpenTableLookup;
 import com.itextpdf.basics.font.otf.OpenTypeGdefTableReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -24,12 +26,11 @@ public class TrueTypeFont extends FontProgram {
     private OpenTypeParser fontParser;
 
     private boolean isUnicode;
+    private boolean isSymbol;
 
     protected int[][] bBoxes;
 
     protected HashMap<Integer, List<String[]>> allNames;
-
-    protected int maxGlyphId;
 
     //TODO doublicated with PdfType0Font.isVertical.
     protected boolean isVertical;
@@ -38,7 +39,9 @@ public class TrueTypeFont extends FontProgram {
     private OpenTypeGdefTableReader gdefTable;
 
     private boolean applyLigatures = false;
-    Map<Integer, Character> glyphToCharacterMap;
+
+    Map<Integer, Glyph> indexGlyphMap;
+    Map<Integer, Glyph> codeGlyphMap;
 
 
     /**
@@ -54,15 +57,12 @@ public class TrueTypeFont extends FontProgram {
     protected String baseEncoding;
 
     private byte[] fontStreamBytes;
-    private int[] fontStreamLengths;
 
     public TrueTypeFont(String path, String baseEncoding) throws IOException {
         fontParser = new OpenTypeParser(path);
         this.baseEncoding = baseEncoding;
         initializeFontProperties();
     }
-
-
 
     TrueTypeFont(String ttcPath, String baseEncoding, int ttcIndex) throws IOException {
         fontParser = new OpenTypeParser(ttcPath, ttcIndex);
@@ -109,21 +109,21 @@ public class TrueTypeFont extends FontProgram {
      */
     public byte[] convertToBytes(String text) {
         if (isUnicode) {
-            char[] glyph;
-            int[] metrics;
+            char[] glyphs;
+            Glyph glyph;
             int i = 0;
-            if (fontParser.getCmapTable().fontSpecific) {
+            if (isFontSpecific()) {
                 byte[] b = PdfEncodings.convertToBytes(text, "symboltt");
-                glyph = new char[b.length];
+                glyphs = new char[b.length];
                 for (int k = 0; k < b.length; ++k) {
-                    metrics = getMetrics(b[k] & 0xff);
-                    if (metrics == null) {
+                    glyph = getMetrics(b[k] & 0xff);
+                    if (glyph == null) {
                         continue;
                     }
-                    glyph[i++] = (char) metrics[0];
+                    glyphs[i++] = (char) glyph.index;
                 }
             } else {
-                glyph = new char[text.length()];
+                glyphs = new char[text.length()];
                 for (int k = 0; k < text.length(); ++k) {
                     int val;
                     if (Utilities.isSurrogatePair(text, k)) {
@@ -132,14 +132,14 @@ public class TrueTypeFont extends FontProgram {
                     } else {
                         val = text.charAt(k);
                     }
-                    metrics = getMetrics(val);
-                    if (metrics == null) {
+                    glyph = getMetrics(val);
+                    if (glyph == null) {
                         continue;
                     }
-                    glyph[i++] = (char) metrics[0];
+                    glyphs[i++] = (char) glyph.index;
                 }
             }
-            String s = new String(glyph, 0, i);
+            String s = new String(glyphs, 0, i);
             try {
                 return s.getBytes("UnicodeBigUnmarked");
             } catch (UnsupportedEncodingException e) {
@@ -162,7 +162,7 @@ public class TrueTypeFont extends FontProgram {
             }
             if (liga != null) {
                 boolean transformed = false;
-                GlyphLine glyphLine = createGlyphLine(glyphs, length, gsubTable.getGlyphToCharacterMap());
+                GlyphLine glyphLine = createGlyphLine(glyphs, length);
                 if (glyphLine != null) {
                     List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{liga});
                     for (OpenTableLookup lookup : lookups) {
@@ -181,7 +181,7 @@ public class TrueTypeFont extends FontProgram {
         return null;
     }
 
-    GlyphLine createGlyphLine(char[] glyphs, Integer length, Map<Integer, Character> glyphToCharacterMap) {
+    GlyphLine createGlyphLine(char[] glyphs, Integer length) {
         GlyphLine glyphLine = new GlyphLine();
         glyphLine.glyphs = new ArrayList<>(length);
         glyphLine.start = 0;
@@ -189,13 +189,10 @@ public class TrueTypeFont extends FontProgram {
         glyphLine.idx = 0;
         for (int k = 0; k < length; k++) {
             //glyphCode, glyphWidth, String.valueOf(c), false
-            int gid = glyphs[k];
-            char ch = glyphToCharacterMap.get(gid);
-            int[] metrics = getCmap31().get((int) ch);
-            if (metrics == null) {
-                return null;
-            }
-            Glyph glyph = new Glyph(glyphs[k], metrics[1], String.valueOf(ch), false);
+            int index = glyphs[k];
+            Integer ch = gsubTable.getGlyphToCharacter(index);
+            Glyph glyph = getGlyph(index);
+            glyph.chars = String.valueOf((char) (int) ch);
             glyphLine.glyphs.add(glyph);
         }
         return glyphLine;
@@ -212,18 +209,24 @@ public class TrueTypeFont extends FontProgram {
         if (isUnicode) {
             if (isVertical) {
                 return FontProgram.DEFAULT_WIDTH;
-            } else if (fontParser.getCmapTable().fontSpecific) {
-                if ((code & 0xff00) == 0 || (code & 0xff00) == 0xf000) {
-                    return getRawWidth(code & 0xff, null);
-                } else {
-                    return 0;
-                }
+// TODO I guess, this code is redundant, because font parser save both code code & 0xff values,
+// TODO while parsing cmap and in case symbol cmap
+//            } else if (isFontSpecific()) {
+//                if ((code & 0xff00) == 0 || (code & 0xff00) == 0xf000) {
+//                    return getRawWidth(code & 0xff, null);
+//                } else {
+//                    return 0;
+//                }
             } else {
                 return getRawWidth(code, null);
             }
         } else {
             return widths[code];
         }
+    }
+
+    public Glyph getGlyph(int index) {
+        return indexGlyphMap.get(index);
     }
 
     /**
@@ -237,12 +240,14 @@ public class TrueTypeFont extends FontProgram {
         if (isUnicode) {
             if (isVertical) {
                 return null;
-            } else if (fontParser.getCmapTable().fontSpecific) {
-                if ((code & 0xff00) == 0 || (code & 0xff00) == 0xf000) {
-                    return getRawCharBBox(code & 0xff, null);
-                } else {
-                    return null;
-                }
+// TODO I guess, this code is redundant, because font parser save both code code & 0xff values,
+// TODO while parsing cmapand in case symbol cmap
+//            } else if (isFontSpecific()) {
+//                if ((code & 0xff00) == 0 || (code & 0xff00) == 0xf000) {
+//                    return getRawCharBBox(code & 0xff, null);
+//                } else {
+//                    return null;
+//                }
             } else {
                 return getRawCharBBox(code, null);
             }
@@ -252,8 +257,8 @@ public class TrueTypeFont extends FontProgram {
     }
 
 
-    public Character getUnicodeChar(int code) {
-        return glyphToCharacterMap.get(code);
+    public Integer getUnicodeChar(int index) {
+        return indexGlyphMap.get(index).unicode;
     }
 
     @Override
@@ -270,60 +275,35 @@ public class TrueTypeFont extends FontProgram {
      */
     @Override
     public int getKerning(int char1, int char2) {
-        int[] metrics = getMetrics(char1);
-        if (metrics == null)
+        Glyph glyph = getMetrics(char1);
+        if (glyph == null)
             return 0;
-        int c1 = metrics[0];
-        metrics = getMetrics(char2);
-        if (metrics == null)
+        int c1 = glyph.index;
+        glyph = getMetrics(char2);
+        if (glyph == null)
             return 0;
-        int c2 = metrics[0];
+        int c2 = glyph.index;
         return kerning.get((c1 << 16) + c2);
     }
 
     /**
      * Gets the glyph index and metrics for a character.
      *
-     * @param c the character code
+     * @param ch the character code
      * @return an {@code int} array with {glyph index, width}
      */
-    public int[] getMetrics(int c) {
-        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
-        if (isUnicode) {
-            if (cmaps.cmapExt != null) {
-                return cmaps.cmapExt.get(Integer.valueOf(c));
-            }
-            HashMap<Integer, int[]> map;
-            if (cmaps.fontSpecific) {
-                map = cmaps.cmap10;
-            } else {
-                map = cmaps.cmap31;
-            }
-            if (map == null) {
-                return null;
-            } else if (cmaps.fontSpecific) {
-                if ((c & 0xffffff00) == 0 || (c & 0xffffff00) == 0xf000) {
-                    return map.get(Integer.valueOf(c & 0xff));
-                } else {
-                    return null;
-                }
-            } else {
-                return map.get(Integer.valueOf(c));
-            }
-        } else {
-            if (cmaps.cmapExt != null) {
-                return cmaps.cmapExt.get(Integer.valueOf(c));
-            } else if (!cmaps.fontSpecific && cmaps.cmap31 != null) {
-                return cmaps.cmap31.get(Integer.valueOf(c));
-            } else if (cmaps.fontSpecific && cmaps.cmap10 != null) {
-                return cmaps.cmap10.get(Integer.valueOf(c));
-            } else if (cmaps.cmap31 != null) {
-                return cmaps.cmap31.get(Integer.valueOf(c));
-            } else if (cmaps.cmap10 != null) {
-                return cmaps.cmap10.get(Integer.valueOf(c));
-            }
-            return null;
-        }
+    public Glyph getMetrics(int ch) {
+// TODO I guess, this code is redundant, because font parser save both code code & 0xff values,
+// TODO while parsing cmapand in case symbol cmap
+// if fontSpecific is true with cmap(3,0)
+//        if (isFontSpecific()) {
+//            if ((ch & 0xffffff00) == 0 || (ch & 0xffffff00) == 0xf000) {
+//                return codeGlyphMap.get(ch & 0xff);
+//            } else {
+//                return null;
+//            }
+//        }
+        return codeGlyphMap.get(ch);
     }
 
     public boolean isCff() {
@@ -336,7 +316,9 @@ public class TrueTypeFont extends FontProgram {
 
     public HashMap<Integer, int[]> getActiveCmap() {
         OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
-        if (!cmaps.fontSpecific && cmaps.cmap31 != null) {
+        if (cmaps.cmapExt != null) {
+            return cmaps.cmapExt;
+        } else if (!cmaps.fontSpecific && cmaps.cmap31 != null) {
             return cmaps.cmap31;
         } else if (cmaps.fontSpecific && cmaps.cmap10 != null) {
             return cmaps.cmap10;
@@ -356,16 +338,11 @@ public class TrueTypeFont extends FontProgram {
             } else {
                 fontStreamBytes = fontParser.getFullFont();
             }
-            fontStreamLengths = new int[]{fontStreamBytes.length};
         } catch (IOException e) {
             fontStreamBytes = null;
             throw new PdfException(PdfException.IoException, e);
         }
         return fontStreamBytes;
-    }
-
-    public int[] getFontStreamLengths() {
-        return fontStreamLengths;
     }
 
     @Override
@@ -385,19 +362,7 @@ public class TrueTypeFont extends FontProgram {
     }
 
     public boolean isFontSpecific() {
-        return fontParser.getCmapTable().fontSpecific;
-    }
-
-    public HashMap<Integer, int[]> getCmap10() {
-        return fontParser.getCmapTable() != null
-                ? fontParser.getCmapTable().cmap10
-                : null;
-    }
-
-    public HashMap<Integer, int[]> getCmap31() {
-        return fontParser.getCmapTable() != null
-                ? fontParser.getCmapTable().cmap31
-                : null;
+        return isSymbol;
     }
 
     /**
@@ -433,30 +398,20 @@ public class TrueTypeFont extends FontProgram {
      */
     @Override
     protected int getRawWidth(int c, String name) {
-        int[] metric = getMetrics(c);
-        if (metric == null) {
+        Glyph glyph = getMetrics(c);
+        if (glyph == null) {
             return 0;
         }
-        return metric[1];
+        return glyph.width;
     }
 
     @Override
-    protected int[] getRawCharBBox(int c, String name) {
-        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
-        HashMap<Integer, int[]> map;
-        if (name == null || cmaps.cmap31 == null) {
-            map = cmaps.cmap10;
-        } else {
-            map = cmaps.cmap31;
-        }
-        if (map == null) {
+    protected int[] getRawCharBBox(int ch, String name) {
+        Glyph glyph = codeGlyphMap.get(ch);
+        if (glyph == null || bBoxes == null) {
             return null;
         }
-        int[] metric = map.get(Integer.valueOf(c));
-        if (metric == null || bBoxes == null) {
-            return null;
-        }
-        return bBoxes[metric[0]];
+        return bBoxes[glyph.index];
     }
 
     /**
@@ -482,8 +437,7 @@ public class TrueTypeFont extends FontProgram {
     protected void readGsubTable() throws IOException {
         int[] gsub = fontParser.tables.get("GSUB");
         if (gsub != null) {
-            gsubTable = new GlyphSubstitutionTableReader(fontParser.raf, gsub[0], gdefTable, glyphToCharacterMap,
-                    fontParser.getGlyphWidthsByIndex());
+            gsubTable = new GlyphSubstitutionTableReader(fontParser.raf, gsub[0], gdefTable, indexGlyphMap);
         }
     }
 
@@ -494,7 +448,7 @@ public class TrueTypeFont extends FontProgram {
         OpenTypeParser.HorizontalHeader hhea = fontParser.getHheaTable();
         OpenTypeParser.WindowsMetrics os_2 = fontParser.getOs_2Table();
         OpenTypeParser.PostTable post = fontParser.getPostTable();
-        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
+        isSymbol = fontParser.getCmapTable().fontSpecific;
         kerning = fontParser.readKerning(head.unitsPerEm);
         bBoxes = fontParser.readBbox(head.unitsPerEm);
         allNames = fontParser.getAllNameEntries();
@@ -564,25 +518,39 @@ public class TrueTypeFont extends FontProgram {
         }
         fontIdentification.setPanose(os_2.panose);
 
+        HashMap<Integer, int[]> cmap = getActiveCmap();
+        int[] glyphWidths = fontParser.getGlyphWidthsByIndex();
+        codeGlyphMap = new HashMap<>(cmap.size());
+        indexGlyphMap = new HashMap<>(glyphWidths.length);
+        for (Integer charCode : cmap.keySet()) {
+            int index = cmap.get(charCode)[0];
+            if (index >= glyphWidths.length) {
+                Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);
+                LOGGER.warn(String.format(String.format("Font %s has invalid glyph: %%d", getFontNames().getFontName()), index));
+                continue;
+            }
+            Glyph glyph = new Glyph(index, glyphWidths[index], charCode);
+            codeGlyphMap.put(charCode, glyph);
+            indexGlyphMap.put(index, glyph);
+        }
 
-        HashMap<Integer, int[]> cmap31 = getCmap31();
-        glyphToCharacterMap = new HashMap<>(cmap31.size());
-        for (Integer charCode : cmap31.keySet()) {
-            char c = (char) charCode.intValue();
-            int glyphCode = cmap31.get(charCode)[0];
-            glyphToCharacterMap.put(glyphCode, c);
+        for (int index = 0; index < glyphWidths.length; index++) {
+            if (indexGlyphMap.containsKey(index)) {
+                continue;
+            }
+            Glyph glyph = new Glyph(index, glyphWidths[index], null);
+            indexGlyphMap.put(index, glyph);
         }
 
         readGdefTable();
         readGsubTable();
 
-        this.baseEncoding = baseEncoding;
         if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
             isUnicode = true;
             isVertical = this.baseEncoding.endsWith("V");
         } else {
             isUnicode = false;
-            encoding = new FontEncoding(this.baseEncoding, cmaps.fontSpecific);
+            encoding = new FontEncoding(this.baseEncoding, isSymbol);
             if (encoding.hasSpecialEncoding()) {
                 createSpecialEncoding();
             } else {
