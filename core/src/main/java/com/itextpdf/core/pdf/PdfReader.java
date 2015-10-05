@@ -36,7 +36,7 @@ public class PdfReader {
 
     protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
-    protected char pdfVersion;
+    protected PdfVersion pdfVersion;
     protected long lastXref;
     protected long eofPos;
     protected PdfDictionary trailer;
@@ -374,6 +374,12 @@ public class PdfReader {
      * Parses the entire PDF
      */
     protected void readPdf() throws IOException {
+        String version = tokens.checkPdfHeader();
+        try {
+            this.pdfVersion = PdfVersion.fromString(version);
+        } catch (IllegalArgumentException exc) {
+            throw new PdfException(PdfException.PdfVersionNotValid, version);
+        }
         try {
             readXref();
         } catch (Exception ex) {

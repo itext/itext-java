@@ -9,11 +9,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -1156,6 +1152,61 @@ public class PdfDocumentTest extends ExtendedITextTest{
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
+    }
+
+    @Test
+    public void stampingVersionTest01() throws IOException {
+        // By default the version of the output file should be the same as the original one
+        String in = sourceFolder + "hello.pdf";
+        String out = destinationFolder + "hello_stamped01.pdf";
+
+        FileInputStream fis = new FileInputStream(in);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(out));
+
+        Assert.assertEquals(PdfVersion.PDF_1_4, pdfDoc.getPdfVersion());
+
+        pdfDoc.close();
+
+        PdfDocument assertPdfDoc = new PdfDocument(new PdfReader(out));
+        Assert.assertEquals(PdfVersion.PDF_1_4, assertPdfDoc.getPdfVersion());
+        assertPdfDoc.close();
+    }
+
+    @Test
+    public void stampingVersionTest02() throws IOException {
+        // There is a possibility to override version in stamping mode
+        String in = sourceFolder + "hello.pdf";
+        String out = destinationFolder + "hello_stamped02.pdf";
+
+        FileInputStream fis = new FileInputStream(in);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(out), PdfVersion.PDF_2_0);
+
+        Assert.assertEquals(PdfVersion.PDF_2_0, pdfDoc.getPdfVersion());
+
+        pdfDoc.close();
+
+        PdfDocument assertPdfDoc = new PdfDocument(new PdfReader(out));
+        Assert.assertEquals(PdfVersion.PDF_2_0, assertPdfDoc.getPdfVersion());
+        assertPdfDoc.close();
+    }
+
+    @Test
+    public void writingVersionTest01() throws IOException {
+        // There is a possibility to override version in stamping mode
+        String out = destinationFolder + "writing_pdf_version.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(out), PdfVersion.PDF_2_0);
+
+        Assert.assertEquals(PdfVersion.PDF_2_0, pdfDoc.getPdfVersion());
+
+        pdfDoc.addNewPage();
+        pdfDoc.close();
+
+        PdfDocument assertPdfDoc = new PdfDocument(new PdfReader(out));
+        Assert.assertEquals(PdfVersion.PDF_2_0, assertPdfDoc.getPdfVersion());
+        assertPdfDoc.close();
     }
 
     @Test

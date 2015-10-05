@@ -22,4 +22,13 @@ public enum PdfVersion {
     public String toString() {
         return value;
     }
+
+    public static PdfVersion fromString(String value) {
+        for (PdfVersion version : PdfVersion.values()) {
+            if (version.value.equals(value)) {
+                return version;
+            }
+        }
+        throw new IllegalArgumentException("The provided pdf version was not found.");
+    }
 }

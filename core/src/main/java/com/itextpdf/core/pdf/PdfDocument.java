@@ -115,7 +115,7 @@ public class PdfDocument implements IEventDispatcher {
         }
         this.reader = reader;
         this.appendMode = false;
-        open();
+        open(null);
     }
 
     /**
@@ -125,12 +125,24 @@ public class PdfDocument implements IEventDispatcher {
      * @param writer PDF writer
      */
     public PdfDocument(PdfWriter writer) {
+        this(writer, PdfVersion.PDF_1_7);
+    }
+
+    /**
+     * Open PDF document in writing mode.
+     * Document has no pages when initialized.
+     *
+     * @param writer PDF writer
+     * @param pdfVersion pdf version of the resultant document
+     */
+    public PdfDocument(PdfWriter writer, PdfVersion pdfVersion) {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
         this.writer = writer;
         this.appendMode = false;
-        open();
+        this.pdfVersion = pdfVersion;
+        open(pdfVersion);
     }
 
     /**
@@ -141,16 +153,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param append if true, incremental updates will
      */
     public PdfDocument(PdfReader reader, PdfWriter writer, boolean append) {
-        if (reader == null) {
-            throw new NullPointerException("reader");
-        }
-        if (writer == null) {
-            throw new NullPointerException("writer");
-        }
-        this.reader = reader;
-        this.writer = writer;
-        this.appendMode = append;
-        open();
+        this(reader, writer, append, null);
     }
 
     /**
@@ -165,6 +168,43 @@ public class PdfDocument implements IEventDispatcher {
         this(reader, writer, false);
     }
 
+    /**
+     * Opens PDF document in the stamping mode.
+     * <br/>
+     * Note: to enable append mode use {@link #PdfDocument(PdfReader, PdfWriter, boolean)} instead.
+     *
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     * @param newPdfVersion the pdf version of the resultant file.
+     */
+    public PdfDocument(PdfReader reader, PdfWriter writer, PdfVersion newPdfVersion) {
+        this(reader, writer, false, newPdfVersion);
+    }
+
+    /**
+     * Open PDF document in stamping mode.
+     *
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     * @param append if true, incremental updates will
+     * @param newPdfVersion the pdf version of the resultant file, or null to leave it as is.
+     */
+    protected PdfDocument(PdfReader reader, PdfWriter writer, boolean append, PdfVersion newPdfVersion) {
+        if (reader == null) {
+            throw new NullPointerException("reader");
+        }
+        if (writer == null) {
+            throw new NullPointerException("writer");
+        }
+        if (append && newPdfVersion != null) {
+            // pdf version cannot be altered in append mode
+            newPdfVersion = null;
+        }
+        this.reader = reader;
+        this.writer = writer;
+        this.appendMode = append;
+        open(newPdfVersion);
+    }
 
     /**
      * Use this method to set the XMP Metadata.
@@ -941,14 +981,17 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Initializes document.
+     * @param newPdfVersion new pdf version of the resultant file if stamper is used and the version needs to be changed,
+     *                   or {@code null} otherwise
      *
      * @throws PdfException
      */
-    protected void open() {
+    protected void open(PdfVersion newPdfVersion) {
         try {
             if (reader != null) {
                 reader.pdfDocument = this;
                 reader.readPdf();
+                pdfVersion = reader.pdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true), this);
 
@@ -991,6 +1034,9 @@ public class PdfDocument implements IEventDispatcher {
                 //TODO log if full compression differs
                 writer.setFullCompression(reader.hasXrefStm());
             } else if (writer != null) {
+                if (newPdfVersion != null) {
+                    pdfVersion = newPdfVersion;
+                }
                 writer.writeHeader();
             }
         } catch (IOException e) {

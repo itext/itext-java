@@ -3,6 +3,8 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 
 import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 
@@ -31,6 +33,10 @@ public class PdfWriter extends PdfOutputStream {
 
     public PdfWriter(java.io.OutputStream os) {
         super(new BufferedOutputStream(os));
+    }
+
+    public PdfWriter(String filename) throws FileNotFoundException {
+        this(new FileOutputStream(filename));
     }
 
     /**

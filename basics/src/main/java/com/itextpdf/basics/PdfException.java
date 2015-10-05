@@ -178,6 +178,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfStartxrefIsNotFollowedByANumber = "pdf.startxref.is.not.followed.by.a.number";
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";
     public static final String PdfStringHasNoContentOrHasAlreadyDecrypted = "pdf.string.has.no.content.or.has.already.decrypted";
+    public static final String PdfVersionNotValid = "pdf.version.not.valid";
     public static final String Photometric1IsNotSupported = "photometric.1.is.not.supported";
     public static final String PlanarImagesAreNotSupported = "planar.images.are.not.supported";
     public static final String PngFilterUnknown = "png.filter.unknown";

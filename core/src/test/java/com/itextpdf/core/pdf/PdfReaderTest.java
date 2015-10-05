@@ -8,10 +8,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -1454,7 +1451,19 @@ public class PdfReaderTest extends ExtendedITextTest{
         Assert.assertFalse(pdfDoc.getReader().rebuiltXref);
 
         pdfDoc.close();
+    }
 
+    @Test
+    public void pdfVersionTest() throws IOException {
+        String filename = sourceFolder + "hello.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+        Assert.assertEquals(PdfVersion.PDF_1_4, pdfDoc.getPdfVersion());
+
+        pdfDoc.close();
     }
 
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) {
