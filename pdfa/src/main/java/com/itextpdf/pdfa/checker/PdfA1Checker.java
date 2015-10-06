@@ -48,6 +48,20 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     public void checkInlineImage(PdfStream inlineImage, PdfDictionary currentColorSpaces) {
+        PdfObject filter = inlineImage.get(PdfName.Filter);
+        if (filter instanceof PdfName) {
+            if (filter.equals(PdfName.LZWDecode)) {
+                throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+            }
+        } else if (filter instanceof PdfArray) {
+            for (int i = 0; i < ((PdfArray) filter).size(); i++) {
+                PdfName f = ((PdfArray) filter).getAsName(i);
+                if (f.equals(PdfName.LZWDecode)) {
+                    throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+                }
+            }
+        }
+
         checkImage(inlineImage, currentColorSpaces);
     }
 
