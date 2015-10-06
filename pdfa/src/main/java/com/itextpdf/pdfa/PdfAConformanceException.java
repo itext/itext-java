@@ -43,6 +43,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String DevicergbMayBeUsedOnlyIfTheFileHasARgbPdfAOutputIntentOrDefaultRgbInUsageContext = "devicergb.may.be.used.only.if.the.file.has.a.rgb.pdfa.outputIntent.or.defaultrgb.in.usage.context";
     public static final String DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntent = "devicecmyk.may.be.used.only.if.the.file.has.a.cmyk.pdfa.outputIntent";
     public static final String DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntentOrDefaultCmykInUsageContext = "devicecmyk.may.be.used.only.if.the.file.has.a.cmyk.pdfa.outputIntent.or.defaultcmyk.in.usage.context";
+    public static final String DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata = "document.to.read.from.shall.be.a.pdfa.conformant.file.with.valid.xmp.metadata";
     public static final String EFKeyOfFileSpecificationDictionaryShallContainDictionaryWithValidFKey = "ef.key.of.file.specification.dictionary.shall.contain.dictionary.with.valid.f.key";
     public static final String EmbeddedFileShallBeOfPdfMimeType = "embedded.file.shall.be.of.pdf.mime.type";
     public static final String EmbeddedFileShallContainParamsKeyWithDictionaryAsValue = "embedded.file.shall.contain.params.key.with.dictionary.as.value";

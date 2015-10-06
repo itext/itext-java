@@ -12,5 +12,4 @@ public enum PdfAConformanceLevel {
     PDF_A_3A,
     PDF_A_3B,
     PDF_A_3U
-
 }

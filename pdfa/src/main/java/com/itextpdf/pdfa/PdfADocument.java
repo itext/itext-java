@@ -15,7 +15,12 @@ import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfResources;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.xmp.PdfAXMPUtil;
+import com.itextpdf.core.xmp.XMPConst;
 import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.core.xmp.XMPMeta;
+import com.itextpdf.core.xmp.XMPMetaFactory;
+import com.itextpdf.core.xmp.properties.XMPProperty;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
@@ -33,16 +38,25 @@ public class PdfADocument extends PdfDocument {
         addOutputIntent(outputIntent);
     }
 
-    public PdfADocument(PdfReader reader, PdfWriter writer, PdfAConformanceLevel conformanceLevel) {
-        this(reader, writer, false, conformanceLevel);
+    public PdfADocument(PdfReader reader, PdfWriter writer) throws XMPException {
+        this(reader, writer, false);
     }
-    public PdfADocument(PdfReader reader, PdfWriter writer, boolean append, PdfAConformanceLevel conformanceLevel) {
+    public PdfADocument(PdfReader reader, PdfWriter writer, boolean append) throws XMPException {
         super(reader, writer, append);
 
-        //todo check document conformance level compatibility with one passed to constructor
-//        XMPMeta meta = XMPMetaFactory.parseFromBuffer(getXmpMetadata().getBytes());
-//        meta.getProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART).getValue();
-//        String prop = meta.getProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE).getValue();
+        PdfStream existingXmpMetadata = getXmpMetadata();
+        if (existingXmpMetadata == null) {
+            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+        }
+        XMPMeta meta = XMPMetaFactory.parseFromBuffer(existingXmpMetadata.getBytes());
+        XMPProperty conformanceXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE);
+        XMPProperty partXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART);
+        if (conformanceXmpProperty == null || partXmpProperty == null) {
+            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+        }
+        String conformance = conformanceXmpProperty.getValue();
+        String part = partXmpProperty.getValue();
+        PdfAConformanceLevel conformanceLevel = getConformanceLevel(conformance, part);
 
         setChecker(conformanceLevel);
     }
@@ -201,5 +215,34 @@ public class PdfADocument extends PdfDocument {
                 checker = new PdfA3Checker(conformanceLevel);
                 break;
         }
+    }
+
+    private PdfAConformanceLevel getConformanceLevel(String conformance, String part) {
+        String lowLetter = part.toUpperCase();
+        boolean aLevel = lowLetter.equals("A");
+        boolean bLevel = lowLetter.equals("B");
+        boolean uLevel = lowLetter.equals("U");
+
+        if (conformance.equals("1")) {
+            if (aLevel)
+                return PdfAConformanceLevel.PDF_A_1A;
+            if (bLevel)
+                return PdfAConformanceLevel.PDF_A_1B;
+        } else if (conformance.equals("2")) {
+            if (aLevel)
+                return PdfAConformanceLevel.PDF_A_2A;
+            if (bLevel)
+                return PdfAConformanceLevel.PDF_A_2B;
+            if (uLevel)
+                return PdfAConformanceLevel.PDF_A_2U;
+        } else if (conformance.equals("3")) {
+            if (aLevel)
+                return PdfAConformanceLevel.PDF_A_3A;
+            if (bLevel)
+                return PdfAConformanceLevel.PDF_A_3B;
+            if (uLevel)
+                return PdfAConformanceLevel.PDF_A_3U;
+        }
+        return null;
     }
 }
