@@ -393,4 +393,23 @@ public abstract class AbstractRenderer implements IRenderer {
 
         return borders;
     }
+
+    protected AbstractRenderer setBorders(Border border, int borderNumber) {
+        switch (borderNumber) {
+            case 0 :
+                setProperty(Property.BORDER_TOP, border);
+                break;
+            case 1 :
+                setProperty(Property.BORDER_RIGHT, border);
+                break;
+            case 2 :
+                setProperty(Property.BORDER_BOTTOM, border);
+                break;
+            case 3 :
+                setProperty(Property.BORDER_LEFT, border);
+                break;
+        }
+
+        return this;
+    }
 }
