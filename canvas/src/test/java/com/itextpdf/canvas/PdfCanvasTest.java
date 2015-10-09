@@ -78,7 +78,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @BeforeClass
     static public void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test

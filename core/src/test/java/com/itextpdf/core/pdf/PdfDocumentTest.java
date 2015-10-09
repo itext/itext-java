@@ -19,6 +19,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
@@ -78,7 +79,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
         long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
         String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
-        Assert.assertTrue(message, diff < 5000);
+        assertTrue(message, diff < 5000);
         reader.close();
     }
 
@@ -541,7 +542,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
         int newPageCount = 10;
         for (int i = pageCount; i > newPageCount; i--) {
-            Assert.assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
+            assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
         }
         pdfDoc2.close();
 
@@ -589,7 +590,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
 
         for (int i = pageCount; i > 1; i--) {
-            Assert.assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
+            assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
         }
         pdfDoc2.removePage(1);
         for (int i = 1; i <= pageCount; i++ ) {
@@ -631,7 +632,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
 
         for (int i = pdfDoc2.getNumOfPages(); i > 3; i--) {
-            Assert.assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
+            assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
         }
 
         pdfDoc2.close();
@@ -641,7 +642,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         for (int i = 1; i <= pdfDoc3.getNumOfPages(); i++) {
             pdfDoc3.getPage(i);
         }
-        Assert.assertTrue("Xref size is " + pdfDoc3.getXref().size(), pdfDoc3.getXref().size() < 20);
+        assertTrue("Xref size is " + pdfDoc3.getXref().size(), pdfDoc3.getXref().size() < 20);
         assertEquals("Number of pages", 3, pdfDoc3.getNumOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
@@ -655,6 +656,102 @@ public class PdfDocumentTest extends ExtendedITextTest{
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
+    }
+
+    @Test
+    public void test() throws IOException {
+        PdfWriter writer = new PdfWriter(sourceFolder + "stampingStreamsCompression02.pdf");
+
+        writer.setCompressionLevel(PdfOutputStream.BEST_SPEED);
+
+        PdfDocument doc = new PdfDocument(writer);
+        doc.addNewPage();
+
+        FileInputStream image = new FileInputStream(sourceFolder + "WP_20140410_001.bmp");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        int nRead;
+        byte[] data = new byte[16384];
+
+        while ((nRead = image.read(data, 0, data.length)) != -1) {
+            baos.write(data, 0, nRead);
+        }
+        byte[] bytes = baos.toByteArray();
+        doc.getCatalog().getPdfObject().put(new PdfName("test"), new PdfStream(bytes));
+
+        doc.close();
+    }
+
+    @Test
+    public void stampingStreamsCompression01() throws IOException {
+        // by default, old streams should not be recompressed
+
+        String filenameIn =  sourceFolder + "stampingStreamsCompression.pdf";
+        String filenameOut =  destinationFolder + "stampingStreamsCompression01.pdf";
+
+        PdfReader reader = new PdfReader(filenameIn);
+        PdfWriter writer = new PdfWriter(filenameOut);
+        writer.setCompressionLevel(PdfOutputStream.BEST_COMPRESSION);
+        PdfDocument doc = new PdfDocument(reader, writer);
+        PdfStream stream = (PdfStream) doc.getPdfObject(6);
+        int lengthBefore = stream.getLength();
+        doc.close();
+
+        doc = new PdfDocument(new PdfReader(filenameOut));
+        stream = (PdfStream) doc.getPdfObject(6);
+        int lengthAfter = stream.getLength();
+
+        assertTrue(lengthBefore == lengthAfter);
+        assertEquals(5731884, lengthBefore);
+        assertEquals(5731884, lengthAfter);
+    }
+
+    @Test
+    public void stampingStreamsCompression02() throws IOException {
+        // if user specified, stream may be uncompressed
+
+        String filenameIn =  sourceFolder + "stampingStreamsCompression.pdf";
+        String filenameOut =  destinationFolder + "stampingStreamsCompression02.pdf";
+
+        PdfReader reader = new PdfReader(filenameIn);
+        PdfWriter writer = new PdfWriter(filenameOut);
+        PdfDocument doc = new PdfDocument(reader, writer);
+        PdfStream stream = (PdfStream) doc.getPdfObject(6);
+        int lengthBefore = stream.getLength();
+        stream.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        doc.close();
+
+        doc = new PdfDocument(new PdfReader(filenameOut));
+        stream = (PdfStream) doc.getPdfObject(6);
+        int lengthAfter = stream.getLength();
+
+        assertTrue(lengthBefore < lengthAfter);
+        assertEquals(5731884, lengthBefore);
+        assertEquals(11321910, lengthAfter);
+    }
+
+    @Test
+    public void stampingStreamsCompression03() throws IOException {
+        // if user specified, stream may be recompressed
+
+        String filenameIn =  sourceFolder + "stampingStreamsCompression.pdf";
+        String filenameOut =  destinationFolder + "stampingStreamsCompression03.pdf";
+
+        PdfReader reader = new PdfReader(filenameIn);
+        PdfWriter writer = new PdfWriter(filenameOut);
+        PdfDocument doc = new PdfDocument(reader, writer);
+        PdfStream stream = (PdfStream) doc.getPdfObject(6);
+        int lengthBefore = stream.getLength();
+        stream.setCompressionLevel(PdfOutputStream.BEST_COMPRESSION);
+        doc.close();
+
+        doc = new PdfDocument(new PdfReader(filenameOut));
+        stream = (PdfStream) doc.getPdfObject(6);
+        int lengthAfter = stream.getLength();
+
+        assertTrue(lengthBefore > lengthAfter);
+        assertEquals(5731884, lengthBefore);
+        assertEquals(5729270, lengthAfter);
     }
 
     @Test
@@ -687,7 +784,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        Assert.assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
+        assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
         assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
@@ -734,7 +831,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        Assert.assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
+        assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
         assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
@@ -797,7 +894,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
         long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
         String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
-        Assert.assertTrue(message, diff < 5000);
+        assertTrue(message, diff < 5000);
         reader.close();
     }
 
@@ -1164,12 +1261,12 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfReader reader = new PdfReader(fis);
         PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(out));
 
-        Assert.assertEquals(PdfVersion.PDF_1_4, pdfDoc.getPdfVersion());
+        assertEquals(PdfVersion.PDF_1_4, pdfDoc.getPdfVersion());
 
         pdfDoc.close();
 
         PdfDocument assertPdfDoc = new PdfDocument(new PdfReader(out));
-        Assert.assertEquals(PdfVersion.PDF_1_4, assertPdfDoc.getPdfVersion());
+        assertEquals(PdfVersion.PDF_1_4, assertPdfDoc.getPdfVersion());
         assertPdfDoc.close();
     }
 
@@ -1183,12 +1280,12 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfReader reader = new PdfReader(fis);
         PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(out), PdfVersion.PDF_2_0);
 
-        Assert.assertEquals(PdfVersion.PDF_2_0, pdfDoc.getPdfVersion());
+        assertEquals(PdfVersion.PDF_2_0, pdfDoc.getPdfVersion());
 
         pdfDoc.close();
 
         PdfDocument assertPdfDoc = new PdfDocument(new PdfReader(out));
-        Assert.assertEquals(PdfVersion.PDF_2_0, assertPdfDoc.getPdfVersion());
+        assertEquals(PdfVersion.PDF_2_0, assertPdfDoc.getPdfVersion());
         assertPdfDoc.close();
     }
 
@@ -1199,13 +1296,13 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(out), PdfVersion.PDF_2_0);
 
-        Assert.assertEquals(PdfVersion.PDF_2_0, pdfDoc.getPdfVersion());
+        assertEquals(PdfVersion.PDF_2_0, pdfDoc.getPdfVersion());
 
         pdfDoc.addNewPage();
         pdfDoc.close();
 
         PdfDocument assertPdfDoc = new PdfDocument(new PdfReader(out));
-        Assert.assertEquals(PdfVersion.PDF_2_0, assertPdfDoc.getPdfVersion());
+        assertEquals(PdfVersion.PDF_2_0, assertPdfDoc.getPdfVersion());
         assertPdfDoc.close();
     }
 
@@ -1379,7 +1476,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         thirdOutline.addDestination(PdfDestination.makeDestination(new PdfString("test3")));
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_outlinesWithNamedDestinations01.pdf", destinationFolder, "diff_"));
+        assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_outlinesWithNamedDestinations01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -1410,7 +1507,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "copyDocumentsWithFormFields.pdf", sourceFolder + "cmp_copyDocumentsWithFormFields.pdf", destinationFolder, "diff_"));
+        assertNull(new CompareTool().compareByContent(destinationFolder + "copyDocumentsWithFormFields.pdf", sourceFolder + "cmp_copyDocumentsWithFormFields.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -1418,7 +1515,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "styledLineArts_Redacted.pdf"), new PdfWriter(new ByteArrayOutputStream()), true);
         PdfDictionary dict = new PdfDictionary();
         dict.makeIndirect(document);
-        Assert.assertTrue(dict.getIndirectReference().getObjNumber() > 0);
+        assertTrue(dict.getIndirectReference().getObjNumber() > 0);
     }
 
     @Test
@@ -1487,7 +1584,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         if (!pages.containsKey(PdfName.Kids)) return;
         PdfNumber count = pages.getAsNumber(PdfName.Count);
         if (count != null) {
-            Assert.assertTrue("PdfPages with zero count", count.getIntValue() > 0);
+            assertTrue("PdfPages with zero count", count.getIntValue() > 0);
         }
         PdfObject kids = pages.get(PdfName.Kids);
         if (kids.getType() == PdfObject.Array) {

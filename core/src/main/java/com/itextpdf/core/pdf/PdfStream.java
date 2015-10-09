@@ -87,9 +87,7 @@ public class PdfStream extends PdfDictionary {
      * @throws PdfException on error.
      */
     public PdfStream(PdfDocument doc, InputStream inputStream) {
-        this(doc, inputStream, doc != null
-                ? doc.getWriter().getCompressionLevel()
-                : PdfWriter.DEFAULT_COMPRESSION);
+        this(doc, inputStream, PdfWriter.UNDEFINED_COMPRESSION);
     }
 
     /**
@@ -109,12 +107,7 @@ public class PdfStream extends PdfDictionary {
     //NOTE This constructor only for PdfReader.
     PdfStream(long offset, PdfDictionary keys) {
         super();
-        //TODO review
-//        if (keys.get(PdfName.Filter) != null) {
-//            setCompressionLevel(PdfOutputStream.DEFAULT_COMPRESSION);
-//        } else {
-//            setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
-//        }
+        this.compressionLevel = PdfOutputStream.UNDEFINED_COMPRESSION;
         this.offset = offset;
         putAll(keys);
         PdfNumber length = getAsNumber(PdfName.Length);

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -152,6 +153,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
     }
 
     @Test
+    @Ignore
     public void splitDocumentBySize() throws IOException, InterruptedException {
         String inputFileName = sourceFolder + "splitBySize.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));

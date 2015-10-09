@@ -16,6 +16,7 @@ import com.itextpdf.core.pdf.PdfOutputStream;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.filters.DoNothingFilter;
 import com.itextpdf.core.pdf.filters.FilterHandler;
 import com.itextpdf.core.pdf.filters.FilterHandlers;
 
@@ -26,17 +27,6 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 public class PdfImageXObject extends PdfXObject {
-
-    /**
-     * A filter that does nothing
-     */
-    private static class StubFilter implements FilterHandler{
-
-        @Override
-        public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-            return b;
-        }
-    }
 
     private float width;
     private float height;
@@ -104,7 +94,7 @@ public class PdfImageXObject extends PdfXObject {
         bytes = getPdfObject().getBytes(false);
         if (decoded) {
             Map<PdfName, FilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
-            StubFilter stubfilter = new StubFilter();
+            DoNothingFilter stubfilter = new DoNothingFilter();
             filters.put(PdfName.DCTDecode, stubfilter);
             filters.put(PdfName.JBIG2Decode, stubfilter);
             filters.put(PdfName.JPXDecode, stubfilter);

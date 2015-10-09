@@ -186,7 +186,7 @@ public class PdfException extends RuntimeException {
     public static final String PrematureEofWhileReadingJpg = "premature.eof.while.reading.jpg";
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
-    public static final String StreamCouldNotBeCompressedFilterIsNotANameOrArray = "stream.could.not.be.compressed.filter.is.not.a.name.or.array";
+    public static final String FilterIsNotANameOrArray = "filter.is.not.a.name.or.array";
     public static final String StructureElementIsNotLinkedToStructParent = "structure.element.is.not.linked.to.structparent";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String StructureElementShallContainPgKey = "structure.element.shall.contain.pg.key";

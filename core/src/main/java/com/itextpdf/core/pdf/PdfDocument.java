@@ -906,6 +906,17 @@ public class PdfDocument implements IEventDispatcher {
         catalog.addNewDestinationName(key, value);
     }
 
+    public List<PdfIndirectReference> listIndirectReferences() {
+        List<PdfIndirectReference> indRefs = new ArrayList<>(xref.size());
+        for (int i = 0; i < xref.size(); ++i) {
+            PdfIndirectReference indref = xref.get(i);
+            if (indref != null) {
+                indRefs.add(indref);
+            }
+        }
+        return indRefs;
+    }
+
     /**
      * Gets document trailer.
      *
