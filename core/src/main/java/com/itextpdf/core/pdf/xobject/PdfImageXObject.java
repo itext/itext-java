@@ -11,13 +11,32 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfLiteral;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfOutputStream;
+import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.filters.FilterHandler;
+import com.itextpdf.core.pdf.filters.FilterHandlers;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 
 public class PdfImageXObject extends PdfXObject {
+
+    /**
+     * A filter that does nothing
+     */
+    private static class StubFilter implements FilterHandler{
+
+        @Override
+        public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
+            return b;
+        }
+    }
 
     private float width;
     private float height;
@@ -69,6 +88,29 @@ public class PdfImageXObject extends PdfXObject {
         image.mask = mask;
         image.softMask = softMask;
         return image;
+    }
+
+    public java.awt.image.BufferedImage getBufferedImage() throws IOException {
+        byte[] img = getImageBytes();
+        return ImageIO.read(new ByteArrayInputStream(img));
+    }
+
+    public byte[] getImageBytes() {
+        return getImageBytes(true);
+    }
+
+    public byte[] getImageBytes(boolean decoded) {
+        byte[] bytes;
+        bytes = getPdfObject().getBytes(false);
+        if (decoded) {
+            Map<PdfName, FilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
+            StubFilter stubfilter = new StubFilter();
+            filters.put(PdfName.DCTDecode, stubfilter);
+            filters.put(PdfName.JBIG2Decode, stubfilter);
+            filters.put(PdfName.JPXDecode, stubfilter);
+            bytes = PdfReader.decodeBytes(bytes, getPdfObject(), filters);
+        }
+        return bytes;
     }
 
     protected static PdfStream createPdfStream(Image image, PdfImageXObject imageMask) {
