@@ -659,30 +659,6 @@ public class PdfDocumentTest extends ExtendedITextTest{
     }
 
     @Test
-    public void test() throws IOException {
-        PdfWriter writer = new PdfWriter(sourceFolder + "stampingStreamsCompression02.pdf");
-
-        writer.setCompressionLevel(PdfOutputStream.BEST_SPEED);
-
-        PdfDocument doc = new PdfDocument(writer);
-        doc.addNewPage();
-
-        FileInputStream image = new FileInputStream(sourceFolder + "WP_20140410_001.bmp");
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        int nRead;
-        byte[] data = new byte[16384];
-
-        while ((nRead = image.read(data, 0, data.length)) != -1) {
-            baos.write(data, 0, nRead);
-        }
-        byte[] bytes = baos.toByteArray();
-        doc.getCatalog().getPdfObject().put(new PdfName("test"), new PdfStream(bytes));
-
-        doc.close();
-    }
-
-    @Test
     public void stampingStreamsCompression01() throws IOException {
         // by default, old streams should not be recompressed
 
