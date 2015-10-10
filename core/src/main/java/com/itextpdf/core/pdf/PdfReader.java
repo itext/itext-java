@@ -101,8 +101,8 @@ public class PdfReader {
     /**
      * Reads and parses a PDF document.
      *
-     * @param is the {@code InputStream} containing the document. The stream is read to the
-     *           end but is not closed
+     * @param is the {@code InputStream} containing the document. Stream is closed automatically, when document is closed,
+     *           if user doesn't want to close stream, he should set closeStream=false;
      * @throws IOException                      on error
      * @throws PdfException on error
      */
