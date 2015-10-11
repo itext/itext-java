@@ -13,11 +13,6 @@ import com.itextpdf.core.crypto.BadPasswordException;
 import com.itextpdf.core.pdf.filters.FilterHandler;
 import com.itextpdf.core.pdf.filters.FilterHandlers;
 import com.itextpdf.core.security.ExternalDecryptionProcess;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,13 +24,19 @@ import java.security.cert.Certificate;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.RecipientInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PdfReader {
 
     protected static boolean correctStreamLength = true;
 
     protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
-    protected char pdfVersion;
+    protected PdfVersion pdfVersion;
     protected long lastXref;
     protected long eofPos;
     protected PdfDictionary trailer;
@@ -100,8 +101,8 @@ public class PdfReader {
     /**
      * Reads and parses a PDF document.
      *
-     * @param is the {@code InputStream} containing the document. The stream is read to the
-     *           end but is not closed
+     * @param is the {@code InputStream} containing the document. Stream is closed automatically, when document is closed,
+     *           if user doesn't want to close stream, he should set closeStream=false;
      * @throws IOException                      on error
      * @throws PdfException on error
      */
@@ -390,6 +391,12 @@ public class PdfReader {
      * Parses the entire PDF
      */
     protected void readPdf() throws IOException {
+        String version = tokens.checkPdfHeader();
+        try {
+            this.pdfVersion = PdfVersion.fromString(version);
+        } catch (IllegalArgumentException exc) {
+            throw new PdfException(PdfException.PdfVersionNotValid, version);
+        }
         try {
             readXref();
         } catch (Exception ex) {

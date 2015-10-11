@@ -1,9 +1,11 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.core.pdf.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.core.pdf.PdfDate;
+import com.itextpdf.core.pdf.PdfDeveloperExtension;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +16,9 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that signs your PDF.

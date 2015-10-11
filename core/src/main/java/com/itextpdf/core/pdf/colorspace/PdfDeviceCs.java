@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 
 abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {

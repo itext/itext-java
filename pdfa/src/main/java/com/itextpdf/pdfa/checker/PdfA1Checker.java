@@ -1,14 +1,21 @@
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.canvas.PdfGraphicsState;
-import com.itextpdf.canvas.color.*;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.canvas.CanvasGraphicsState;
+import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.pdfa.PdfAConformanceLevel;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -41,6 +48,20 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     public void checkInlineImage(PdfStream inlineImage, PdfDictionary currentColorSpaces) {
+        PdfObject filter = inlineImage.get(PdfName.Filter);
+        if (filter instanceof PdfName) {
+            if (filter.equals(PdfName.LZWDecode)) {
+                throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+            }
+        } else if (filter instanceof PdfArray) {
+            for (int i = 0; i < ((PdfArray) filter).size(); i++) {
+                PdfName f = ((PdfArray) filter).getAsName(i);
+                if (f.equals(PdfName.LZWDecode)) {
+                    throw new PdfAConformanceException(PdfAConformanceException.LZWDecodeFilterIsNotPermitted);
+                }
+            }
+        }
+
         checkImage(inlineImage, currentColorSpaces);
     }
 
@@ -101,7 +122,7 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    public void checkExtGState(PdfGraphicsState extGState) {
+    public void checkExtGState(CanvasGraphicsState extGState) {
         if (extGState.getTransferFunction() != null) {
             throw new PdfAConformanceException(PdfAConformanceException.AnExtgstateDictionaryShallNotContainTheTrKey);
         }
@@ -122,12 +143,12 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.BlendModeShallHhaveValueNormalOrCompatible);
         }
 
-        Float ca = extGState.getStrokeAlpha();
+        Float ca = extGState.getStrokeOpacity();
         if (ca != null && ca != 1) {
             throw new PdfAConformanceException(PdfAConformanceException.TransparencyIsNotAllowedCAShallBeEqualTo1);
         }
 
-        ca = extGState.getFillAlpha();
+        ca = extGState.getFillOpacity();
         if (ca != null && ca != 1) {
             throw new PdfAConformanceException(PdfAConformanceException.TransparencyIsNotAllowedCaShallBeEqualTo1);
         }
@@ -145,6 +166,19 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkImage(PdfStream image, PdfDictionary currentColorSpaces) {
+        PdfColorSpace colorSpace = null;
+        if (isAlreadyChecked(image)) {
+            colorSpace = checkedObjectsColorspace.get(image);
+            checkColorSpace(colorSpace, currentColorSpaces, true, null);
+            return;
+        }
+        PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
+        if (colorSpaceObj != null) {
+            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj, null);
+            checkColorSpace(colorSpace, currentColorSpaces, true, null);
+            checkedObjectsColorspace.put(image, colorSpace);
+        }
+
         if (image.containsKey(PdfName.Alternates)) {
             throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainAlternatesKey);
         }
@@ -161,15 +195,12 @@ public class PdfA1Checker extends PdfAChecker {
         if (image.containsKey(PdfName.SMask) && !PdfName.None.equals(image.getAsName(PdfName.SMask))) {
             throw new PdfAConformanceException(PdfAConformanceException.TheSmaskKeyIsNotAllowedInXobjects);
         }
-
-        PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
-        if (colorSpaceObj != null) {
-            checkColorSpace(PdfColorSpace.makeColorSpace(colorSpaceObj, null), currentColorSpaces, true, null);
-        }
     }
 
     @Override
     protected void checkFormXObject(PdfStream form) {
+        if (isAlreadyChecked(form)) return;
+
         if (form.containsKey(PdfName.OPI)) {
             throw new PdfAConformanceException(PdfAConformanceException.AFormXobjectDictionaryShallNotContainOpiKey);
         }
@@ -187,11 +218,6 @@ public class PdfA1Checker extends PdfAChecker {
         if (form.containsKey(PdfName.Group) && PdfName.Transparency.equals(form.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
             throw new PdfAConformanceException(PdfAConformanceException.AGroupObjectWithAnSKeyWithAValueOfTransparencyShallNotBeIncludedInAFormXobject);
         }
-    }
-
-    @Override
-    protected void checkFont(PdfDictionary font) {
-
     }
 
     @Override
@@ -280,6 +306,13 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    protected void checkFileSpec(PdfDictionary fileSpec) {
+        if (fileSpec.containsKey(PdfName.EF)) {
+            throw new PdfAConformanceException(PdfAConformanceException.FileSpecificationDictionaryShallNotContainTheEFKey);
+        }
+    }
+
+    @Override
     protected void checkAnnotation(PdfDictionary annotDic) {
         PdfName subtype = annotDic.getAsName(PdfName.Subtype);
 
@@ -355,6 +388,24 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    protected void checkAction(PdfDictionary action) {
+        if (isAlreadyChecked(action)) return;
+
+        PdfName s = action.getAsName(PdfName.S);
+        if (getForbiddenActions().contains(s)) {
+            throw new PdfAConformanceException(PdfAConformanceException._1ActionsIsNotAllowed).setMessageParams(s.getValue());
+        }
+        if (s.equals(PdfName.Named)) {
+            PdfName n = action.getAsName(PdfName.N);
+            if (n != null && !getAllowedNamedActions().contains(n)) {
+                throw new PdfAConformanceException(PdfAConformanceException.NamedActionType1IsNotAllowed).setMessageParams(n.getValue());
+            }
+        }
+        if (s.equals(PdfName.SetState) || s.equals(PdfName.NoOp)) {
+            throw new PdfAConformanceException(PdfAConformanceException.DeprecatedSetStateAndNoOpActionsAreNotAllowed);
+        }
+    }
+
     @Override
     protected void checkCatalogValidEntries(PdfDictionary catalogDict) {
         if (catalogDict.containsKey(PdfName.AA)) {
@@ -363,11 +414,15 @@ public class PdfA1Checker extends PdfAChecker {
         if (catalogDict.containsKey(PdfName.OCProperties)) {
             throw new PdfAConformanceException(PdfAConformanceException.CatalogDictionaryShallNotContainOCPropertiesKey);
         }
+        if (catalogDict.containsKey(PdfName.Names)) {
+            if (catalogDict.getAsDictionary(PdfName.Names).containsKey(PdfName.EmbeddedFiles)) {
+                throw new PdfAConformanceException(PdfAConformanceException.NameDictionaryShallNotContainTheEmbeddedFilesKey);
+            }
+        }
     }
 
     @Override
-    protected void checkPage(PdfPage page) {
-        PdfDictionary pageDict = page.getPdfObject();
+    protected void checkPageObject(PdfDictionary pageDict, PdfDictionary pageResources) {
         PdfDictionary actions = pageDict.getAsDictionary(PdfName.AA);
         if (actions != null) {
             for (PdfName key : actions.keySet()) {
@@ -382,7 +437,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkTrailer(PdfDictionary trailer) {
-        if (trailer.get(PdfName.Encrypt) != null) {
+        if (trailer.containsKey(PdfName.Encrypt)) {
             throw new PdfAConformanceException(PdfAConformanceException.EncryptShallNotBeUsedInTrailerDictionary);
         }
     }

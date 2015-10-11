@@ -1,22 +1,20 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfOutputStream;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class FormFieldFlatteningTest extends ExtendedITextTest {

@@ -1,8 +1,8 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.basics.geom.PageSize;
-import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.AreaBreakRenderer;
+import com.itextpdf.model.renderer.IRenderer;
 
 public class AreaBreak extends AbstractElement {
 

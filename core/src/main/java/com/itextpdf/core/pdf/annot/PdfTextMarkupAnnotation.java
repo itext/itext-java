@@ -1,7 +1,10 @@
 package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
 
 public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
 

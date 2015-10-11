@@ -77,6 +77,7 @@ abstract public class PdfObject {
     final public void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null) {
             //TODO log meaningless call of flush: object is direct or released
+            //TODO also if object is mustBeIndirect log that flush call is premature
             return;
         }
         try {

@@ -1,10 +1,22 @@
 package com.itextpdf.core.pdf.tagging;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
@@ -109,24 +121,25 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     /**
-     * Gets attributes dictionary.
+     * Gets attributes object.
      *
-     * @param createNewIfNull sometimes attributes dictionary may not exist.
+     * @param createNewIfNull sometimes attributes object may not exist.
      *                        Pass {@code true} if you want to create empty dictionary in such case.
-     *                        The attributes dictionary wil be stored inside element.
+     *                        The attributes dictionary will be stored inside element.
      * @return attributes dictionary.
      * @throws PdfException
      */
-    public PdfDictionary getAttributes(boolean createNewIfNull) {
-        PdfDictionary attributes = getPdfObject().getAsDictionary(PdfName.A);
+    public PdfObject getAttributes(boolean createNewIfNull) {
+        PdfObject attributes = getPdfObject().get(PdfName.A);
         if (attributes == null && createNewIfNull) {
             attributes = new PdfDictionary();
             setAttributes(attributes);
         }
+
         return attributes;
     }
 
-    public void setAttributes(PdfDictionary attributes) {
+    public void setAttributes(PdfObject attributes) {
         getPdfObject().put(PdfName.A, attributes);
     }
 

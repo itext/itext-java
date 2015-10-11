@@ -2,16 +2,21 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
 import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfOutputIntent;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
-
-import java.io.*;
 
 @Category(IntegrationTest.class)
 public class PdfA2CanvasCheckTest {

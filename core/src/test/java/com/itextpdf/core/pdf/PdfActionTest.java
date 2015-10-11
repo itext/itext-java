@@ -2,14 +2,13 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.FileOutputStream;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.FileOutputStream;
 
 @Category(IntegrationTest.class)
 public class PdfActionTest  extends ExtendedITextTest {

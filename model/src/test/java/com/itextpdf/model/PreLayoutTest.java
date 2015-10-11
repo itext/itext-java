@@ -16,16 +16,16 @@ import com.itextpdf.model.renderer.ParagraphRenderer;
 import com.itextpdf.model.renderer.TextRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.text.DocumentException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PreLayoutTest extends ExtendedITextTest{

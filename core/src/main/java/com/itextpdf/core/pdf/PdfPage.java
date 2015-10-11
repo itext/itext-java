@@ -2,23 +2,31 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.tagging.*;
+import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
+import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
+import com.itextpdf.core.pdf.tagging.PdfObjRef;
+import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;
 import com.itextpdf.core.xmp.XMPMetaFactory;
 import com.itextpdf.core.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
@@ -255,28 +263,55 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return xObject;
     }
 
+
+
+    /**
+     * Flushes page and it's content stream.
+     */
     @Override
     public void flush() {
+        flush(false);
+    }
+
+    /**
+     * Flushes page and it's content stream. If <code>flushXObjects</code> is true the images and FormXObjects
+     * associated with this page will also be flushed.
+     * <br>
+     * <br>
+     * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushXObjects</code> is true.
+     * @param flushXObjects if true the images and FormXObjects associated with this page will also be flushed.
+     */
+    public void flush(boolean flushXObjects) {
         if (getDocument().isTagged() && structParents == null) {
             PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
             if (n != null)
                 structParents = n.getIntValue();
         }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
+        if (flushXObjects) {
+            getDocument().checkIsoConformance(this, IsoKey.PAGE);
+        }
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
             getContentStream(i).flush(false);
         }
 
-
+        Collection<PdfObject> xObjects = null;
         if (resources != null) {
             if (resources.isReadOnly() && !resources.isModified()) {
                 getPdfObject().remove(PdfName.Resources);
+            } else if (flushXObjects) {
+                PdfDictionary xObjectsDict = getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.XObject);
+                xObjects = xObjectsDict != null ? xObjectsDict.values() : null;
             }
         }
 
         resources = null;
         super.flush();
+
+        if (flushXObjects && xObjects != null) {
+            flushXObjects(xObjects);
+        }
     }
 
     public Rectangle getMediaBox() {
@@ -541,11 +576,28 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private Integer getMcid(List<IPdfTag> tags) {
         Integer maxMcid = null;
         for (IPdfTag tag : tags) {
-            if (maxMcid == null || tag.getMcid() > maxMcid)
-                maxMcid = tag.getMcid();
+            Integer mcid = tag.getMcid();
+            if (maxMcid == null || (mcid != null && mcid > maxMcid))
+                maxMcid = mcid;
         }
         return maxMcid == null ? 0 : maxMcid + 1;
     }
 
+    private void flushXObjects(Collection<PdfObject> xObjects) {
+        for (PdfObject obj : xObjects) {
+            PdfStream xObject = (PdfStream) obj;
 
+            PdfDictionary innerResources = xObject.getAsDictionary(PdfName.Resources);
+            Collection<PdfObject> innerXObjects = null;
+            if (innerResources != null) {
+                PdfDictionary innerXObjectsDict = innerResources.getAsDictionary(PdfName.XObject);
+                innerXObjects = innerXObjectsDict != null ? innerXObjectsDict.values() : null;
+            }
+
+            obj.flush();
+            if (innerXObjects != null) {
+                flushXObjects(innerXObjects);
+            }
+        }
+    }
 }

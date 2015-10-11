@@ -7,17 +7,22 @@ import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.model.element.*;
+import com.itextpdf.model.element.AreaBreak;
+import com.itextpdf.model.element.Div;
+import com.itextpdf.model.element.Image;
+import com.itextpdf.model.element.List;
+import com.itextpdf.model.element.ListItem;
+import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 
 @Category(IntegrationTest.class)
 public class ListTest extends ExtendedITextTest{

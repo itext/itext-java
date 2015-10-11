@@ -1,7 +1,14 @@
 package com.itextpdf.core.pdf.colorspace;
 
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
+import com.itextpdf.core.pdf.PdfResources;
+import com.itextpdf.core.pdf.PdfStream;
 
 abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapper<T> {
 

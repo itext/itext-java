@@ -10,7 +10,7 @@ import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 
-import java.awt.*;
+import java.awt.Image;
 
 
 /**

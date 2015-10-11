@@ -21,7 +21,7 @@ public class PdfMcrNumber extends PdfMcr<PdfNumber> {
     }
 
     @Override
-    protected PdfDictionary getPageObject() {
+    public PdfDictionary getPageObject() {
         PdfDictionary page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
         return page;
     }

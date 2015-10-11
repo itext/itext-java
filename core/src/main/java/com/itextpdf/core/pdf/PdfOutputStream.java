@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.core.crypto.OutputStreamEncryption;
+import com.itextpdf.core.pdf.filters.FlateDecodeFilter;
 
 import java.io.IOException;
 import java.security.cert.Certificate;
@@ -307,15 +308,19 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private boolean isNotMetadataPdfStream(PdfStream pdfStream){
         return  pdfStream.getAsName(PdfName.Type) == null ||
-                (pdfStream.getAsName(PdfName.Type)!=null && !pdfStream.getAsName(PdfName.Type).equals(PdfName.Metadata));
+                (pdfStream.getAsName(PdfName.Type) != null && !pdfStream.getAsName(PdfName.Type).equals(PdfName.Metadata));
 
     }
 
     protected void write(PdfStream pdfStream) {
         try {
-            if (pdfStream.getCompressionLevel() == UNDEFINED_COMPRESSION) {
+            boolean userDefinedCompression = pdfStream.getCompressionLevel() != UNDEFINED_COMPRESSION;
+            if (!userDefinedCompression) {
                pdfStream.setCompressionLevel(document.getWriter().getCompressionLevel());
             }
+            boolean toCompress = pdfStream.getCompressionLevel() != NO_COMPRESSION;
+            boolean allowCompression = !pdfStream.containsKey(PdfName.Filter) && isNotMetadataPdfStream(pdfStream);
+
             if (pdfStream.getInputStream() != null) {
                 java.io.OutputStream fout = this;
                 DeflaterOutputStream def = null;
@@ -324,7 +329,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                     fout = ose = crypto.getEncryptionStream(fout);
                 }
                 Deflater deflater = null;
-                if (checkCompression(pdfStream) || isNotMetadataPdfStream(pdfStream)) {
+                if (toCompress && (allowCompression || userDefinedCompression)) {
                     updateCompressionFilter(pdfStream);
                     deflater = new Deflater(pdfStream.getCompressionLevel());
                     fout = def = new DeflaterOutputStream(fout, deflater, 0x8000);
@@ -354,14 +359,19 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 //When document is opened in stamping mode the output stream can be uninitialized.
                 //We have to initialize it and write all data from streams input to streams output.
                 if (pdfStream.getOutputStream() == null && pdfStream.getReader() != null) {
-                    byte[] bytes = pdfStream.getBytes(false);
+                    // If new specific compression is set for stream,
+                    // then compressed stream should be decoded and written with new compression settings
+                    byte[] bytes = pdfStream.getReader().readStreamBytes(pdfStream, false);
+                    if (userDefinedCompression) {
+                        bytes = decodeFlateBytes(pdfStream, bytes);
+                    }
                     pdfStream.initOutputStream(new ByteArrayOutputStream(bytes.length));
                     pdfStream.getOutputStream().write(bytes);
                 }
                 assert pdfStream.getOutputStream() != null : "PdfStream lost OutputStream";
                 ByteArrayOutputStream byteArrayStream;
                 try {
-                    if (checkCompression(pdfStream) && isNotMetadataPdfStream(pdfStream)) { // compress
+                    if (toCompress && !containsFlateFilter(pdfStream) && (allowCompression || userDefinedCompression)) { // compress
                         updateCompressionFilter(pdfStream);
                         byteArrayStream = new ByteArrayOutputStream();
                         Deflater deflater = new Deflater(pdfStream.getCompressionLevel());
@@ -371,12 +381,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                             ((ByteArrayOutputStream) objectStream.getIndexStream().getOutputStream()).writeTo(zip);
                             ((ByteArrayOutputStream) objectStream.getOutputStream().getOutputStream()).writeTo(zip);
                         } else {
-                            if (pdfStream.getOutputStream() == null && pdfStream.getReader() != null) {
-                                zip.write(pdfStream.getBytes(false));
-                            } else {
-                                assert pdfStream.getOutputStream() != null : "Error in outputStream";
-                                ((ByteArrayOutputStream) pdfStream.getOutputStream().getOutputStream()).writeTo(zip);
-                            }
+                            assert pdfStream.getOutputStream() != null : "Error in outputStream";
+                            ((ByteArrayOutputStream) pdfStream.getOutputStream().getOutputStream()).writeTo(zip);
                         }
 
                         zip.close();
@@ -388,14 +394,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                             ((ByteArrayOutputStream) objectStream.getIndexStream().getOutputStream()).writeTo(byteArrayStream);
                             ((ByteArrayOutputStream) objectStream.getOutputStream().getOutputStream()).writeTo(byteArrayStream);
                         } else {
-                            if (pdfStream.getOutputStream() == null && pdfStream.getReader() != null) {
-                                byte[] bytes = pdfStream.getBytes(false);
-                                byteArrayStream = new ByteArrayOutputStream();
-                                byteArrayStream.write(bytes);
-                            } else {
-                                assert pdfStream.getOutputStream() != null : "Error in outputStream";
-                                byteArrayStream = (ByteArrayOutputStream) pdfStream.getOutputStream().getOutputStream();
-                            }
+                            assert pdfStream.getOutputStream() != null : "Error in outputStream";
+                            byteArrayStream = (ByteArrayOutputStream) pdfStream.getOutputStream().getOutputStream();
                         }
                     }
                     if (checkEncryption(pdfStream)) {
@@ -439,25 +439,21 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
     }
 
-    protected boolean checkCompression(PdfStream pdfStream) {
-        if (pdfStream.getCompressionLevel() == NO_COMPRESSION) {
-            return false;
-        }
-        // check if a filter already exists
+    protected boolean containsFlateFilter(PdfStream pdfStream) {
         PdfObject filter = pdfStream.get(PdfName.Filter);
         if (filter != null) {
             if (filter.getType() == PdfObject.Name) {
                 if (PdfName.FlateDecode.equals(filter)) {
-                    return false;
+                    return true;
                 }
             } else if (filter.getType() == PdfObject.Array) {
                 if (((PdfArray) filter).contains(PdfName.FlateDecode))
-                    return false;
+                    return true;
             } else {
-                throw new PdfException(PdfException.StreamCouldNotBeCompressedFilterIsNotANameOrArray);
+                throw new PdfException(PdfException.FilterIsNotANameOrArray);
             }
         }
-        return true;
+        return false;
     }
 
     protected void updateCompressionFilter(PdfStream pdfStream) {
@@ -467,7 +463,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         } else {
             PdfArray filters = new PdfArray();
             filters.add(PdfName.FlateDecode);
-            filters.add(filter);
+            if (filter instanceof PdfArray) {
+                filters.addAll((PdfArray)filter);
+            } else {
+                filters.add(filter);
+            }
             PdfObject decodeParms = pdfStream.get(PdfName.DecodeParms);
             if (decodeParms != null) {
                 if (decodeParms instanceof PdfDictionary) {
@@ -477,10 +477,88 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                     pdfStream.put(PdfName.DecodeParms, array);
                 } else if (decodeParms instanceof PdfArray) {
                     ((PdfArray) decodeParms).add(0, new PdfNull());
+                } else {
+                    throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(decodeParms.getClass().toString());
                 }
-
             }
             pdfStream.put(PdfName.Filter, filters);
         }
+    }
+
+    protected byte[] decodeFlateBytes(PdfStream stream, byte[] bytes) {
+        PdfObject filterObject = stream.get(PdfName.Filter);
+        if (filterObject == null)
+            return bytes;
+
+        // check if flateDecode filter is on top
+        PdfName filterName;
+        PdfArray filtersArray = null;
+        if (filterObject instanceof PdfName) {
+            filterName = (PdfName) filterObject;
+        } else if (filterObject instanceof PdfArray) {
+            filtersArray = (PdfArray) filterObject;
+            filterName = filtersArray.getAsName(0);
+        } else {
+            throw new PdfException(PdfException.FilterIsNotANameOrArray);
+        }
+
+        if (!PdfName.FlateDecode.equals(filterName)) {
+            return bytes;
+        }
+
+        // get decode params if present
+        PdfDictionary decodeParams;
+        PdfArray decodeParamsArray = null;
+        PdfObject decodeParamsObject = stream.get(PdfName.DecodeParms);
+        if (decodeParamsObject == null) {
+            decodeParams = null;
+        } else if (decodeParamsObject.getType() == PdfObject.Dictionary) {
+            decodeParams = (PdfDictionary) decodeParamsObject;
+        } else if (decodeParamsObject.getType() == PdfObject.Array) {
+            decodeParamsArray = (PdfArray) decodeParamsObject;
+            decodeParams = decodeParamsArray.getAsDictionary(0);
+        } else {
+            throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(decodeParamsObject.getClass().toString());
+        }
+
+        // decode
+        byte[] res = FlateDecodeFilter.flateDecode(bytes, true);
+        if (res == null)
+            res = FlateDecodeFilter.flateDecode(bytes, false);
+        bytes = FlateDecodeFilter.decodePredictor(res, decodeParams);
+
+
+        //remove filter and decode params
+        filterObject = null;
+        if (filtersArray != null) {
+            filtersArray.remove(0);
+            if (filtersArray.size() == 1) {
+                filterObject = filtersArray.get(0);
+            } else if (!filtersArray.isEmpty()) {
+                filterObject = filtersArray;
+            }
+        }
+
+        decodeParamsObject = null;
+        if (decodeParamsArray != null) {
+            decodeParamsArray.remove(0);
+            if (decodeParamsArray.size() == 1 && decodeParamsArray.get(0).getType() != PdfObject.Null) {
+                decodeParamsObject = decodeParamsArray.get(0);
+            } else if (!decodeParamsArray.isEmpty()) {
+                decodeParamsObject = decodeParamsArray;
+            }
+        }
+
+        if (filterObject == null)
+            stream.remove(PdfName.Filter);
+        else
+            stream.put(PdfName.Filter, filterObject);
+
+        if (decodeParamsObject == null)
+            stream.remove(PdfName.DecodeParms);
+        else
+            stream.put(PdfName.DecodeParms, decodeParamsObject);
+
+        return bytes;
     }
 }

@@ -2,10 +2,10 @@ package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
 
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.IOException;
 
 public class Jpeg2000Test {
 

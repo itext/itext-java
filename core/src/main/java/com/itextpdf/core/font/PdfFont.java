@@ -1,7 +1,14 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.font.CidFont;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontFactory;
+import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.TrueTypeCollection;
+import com.itextpdf.basics.font.TrueTypeFont;
+import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -13,6 +20,7 @@ import com.itextpdf.core.pdf.PdfStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
@@ -20,7 +28,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected PdfDictionary fontDictionary;
 
     protected boolean isCopy = false;
-
 
     /**
      * true if the font is to be embedded in the PDF.
@@ -54,27 +61,31 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, byte[] ttc, int ttcIndex, String encoding) throws IOException {
-       return createFont(pdfDocument,ttc,ttcIndex,encoding,false);
+        return createFont(pdfDocument, ttc, ttcIndex, encoding, false);
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, byte[] ttc, int ttcIndex, String encoding, boolean embedded) throws IOException {
-        TrueTypeCollection collection = new TrueTypeCollection(ttc,encoding);
-        FontProgram program = collection.getFontByTCCIndex(ttcIndex);
-        return new PdfTrueTypeFont(pdfDocument,  (TrueTypeFont)program, embedded);
+        TrueTypeCollection collection = new TrueTypeCollection(ttc, encoding);
+        FontProgram program = collection.getFontByTccIndex(ttcIndex);
+        return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) program, embedded);
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, String ttcPath, int ttcIndex, String encoding) throws IOException {
-       return createFont(pdfDocument,ttcPath,ttcIndex,encoding,false);
+        return createFont(pdfDocument, ttcPath, ttcIndex, encoding, false);
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, String ttcPath, int ttcIndex, String encoding, boolean embedded) throws IOException {
-        TrueTypeCollection collection = new TrueTypeCollection(ttcPath,encoding);
-        FontProgram program = collection.getFontByTCCIndex(ttcIndex);
-        return new PdfTrueTypeFont(pdfDocument,  (TrueTypeFont)program, embedded);
+        TrueTypeCollection collection = new TrueTypeCollection(ttcPath, encoding);
+        FontProgram fontProgram = collection.getFontByTccIndex(ttcIndex);
+        return createFont(pdfDocument, fontProgram, encoding, embedded);
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, String path, String encoding, boolean embedded) throws IOException {
         FontProgram fontProgram = FontFactory.createFont(path, encoding);
+        return createFont(pdfDocument, fontProgram, encoding, embedded);
+    }
+
+    public static PdfFont createFont(PdfDocument pdfDocument, FontProgram fontProgram, String encoding, boolean embedded) throws IOException {
         if (fontProgram == null) {
             return null;
         } else if (fontProgram instanceof Type1Font) {
@@ -91,6 +102,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             return null;
         }
     }
+
 
     public static PdfFont createFont(PdfDocument pdfDocument, byte[] font, String encoding) throws IOException {
         return createFont(pdfDocument, font, encoding, false);
@@ -131,6 +143,117 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics, String binary, String encoding) throws IOException {
         return createType1Font(pdfDocument, metrics, binary, encoding, false);
+    }
+
+    public static PdfFont createRegisteredFont(PdfDocument pdfDocument, String fontName, final String encoding, boolean embedded, int style, boolean cached) throws IOException {
+        FontProgram fontProgram = FontFactory.createRegisteredFont(fontName, encoding, style, cached);
+        return createFont(pdfDocument, fontProgram, encoding, embedded);
+    }
+
+    public static PdfFont createRegisteredFont(PdfDocument pdfDocument, String fontName, final String encoding,boolean embedded, int style) throws IOException {
+        return createRegisteredFont(pdfDocument, fontName, encoding, embedded, style, false);
+    }
+
+    public static PdfFont createRegisteredFont(PdfDocument pdfDocument, String fontName, final String encoding) throws IOException {
+        return createRegisteredFont(pdfDocument, fontName, encoding, false, FontConstants.UNDEFINED, false);
+    }
+
+    public static PdfFont createRegisteredFont(PdfDocument pdfDocument, String fontName) throws IOException {
+        return createRegisteredFont(pdfDocument, fontName, PdfEncodings.WINANSI, false, FontConstants.UNDEFINED, false);
+    }
+
+    /**
+     * Register a font by giving explicitly the font family and name.
+     *
+     * @param familyName the font family
+     * @param fullName   the font name
+     * @param path       the font path
+     */
+    public static void registerFamily(final String familyName, final String fullName, final String path) {
+        FontFactory.registerFamily(familyName, fullName, path);
+    }
+
+    /**
+     * Register a ttf- or a ttc-file.
+     *
+     * @param path the path to a ttf- or ttc-file
+     */
+
+    public static void register(final String path) {
+        register(path, null);
+    }
+
+    /**
+     * Register a font file and use an alias for the font contained in it.
+     *
+     * @param path  the path to a font file
+     * @param alias the alias you want to use for the font
+     */
+
+    public static void register(final String path, final String alias) {
+        FontFactory.register(path, alias);
+    }
+
+    /**
+     * Register all the fonts in a directory.
+     *
+     * @param dir the directory
+     * @return the number of fonts registered
+     */
+    public static int registerDirectory(final String dir) {
+        return FontFactory.registerDirectory(dir);
+    }
+
+    /**
+     * Register fonts in some probable directories. It usually works in Windows,
+     * Linux and Solaris.
+     *
+     * @return the number of fonts registered
+     */
+    public static int registerSystemDirectories() {
+        return FontFactory.registerSystemDirectories();
+    }
+
+    /**
+     * Gets a set of registered font names.
+     *
+     * @return a set of registered fonts
+     */
+
+    public static Set<String> getRegisteredFonts() {
+        return FontFactory.getRegisteredFonts();
+    }
+
+    /**
+     * Gets a set of registered font names.
+     *
+     * @return a set of registered font families
+     */
+
+    public static Set<String> getRegisteredFamilies() {
+        return FontFactory.getRegisteredFamilies();
+    }
+
+    /**
+     * Gets a set of registered font names.
+     *
+     * @param fontname of a font that may or may not be registered
+     * @return true if a given font is registered
+     */
+
+    public static boolean contains(final String fontname) {
+        return FontFactory.isRegistered(fontname);
+    }
+
+    /**
+     * Checks if a certain font is registered.
+     *
+     * @param fontname the name of the font that has to be checked.
+     * @return true if the font is found
+     */
+
+    public static boolean isRegistered(final String fontname) {
+        return FontFactory.isRegistered(fontname);
     }
 
     /**

@@ -176,13 +176,13 @@ public class PdfTokenizer {
         return idx;
     }
 
-    public char checkPdfHeader() throws IOException {
+    public String checkPdfHeader() throws IOException {
         file.seek(0);
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx != 0)
             throw new PdfException(PdfException.PdfHeaderNotFound, this);
-        return str.charAt(7);
+        return str.substring(idx + 1, idx + 8);
     }
 
     public void checkFdfHeader() throws IOException {

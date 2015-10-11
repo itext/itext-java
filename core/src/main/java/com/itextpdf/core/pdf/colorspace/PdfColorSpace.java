@@ -1,6 +1,11 @@
 package com.itextpdf.core.pdf.colorspace;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
 
 abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrapper<T> {
 

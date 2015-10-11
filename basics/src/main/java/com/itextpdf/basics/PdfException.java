@@ -71,6 +71,7 @@ public class PdfException extends RuntimeException {
     public static final String DictionaryKey1IsNotAName = "dictionary.key.1.is.not.a.name";
     public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
+    public static final String DocumentDoesntContainStructTreeRoot = "document.doesn't.contain.structtreeroot";
     public static final String DocumentHasNoPages = "document.has.no.pages";
     public static final String DocumentHasNoCatalogObject = "document.has.no.catalog.object";
     public static final String DocumentToCopyToCannotBeNull = "document.to.copy.to.cannot.be.null";
@@ -177,6 +178,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfStartxrefIsNotFollowedByANumber = "pdf.startxref.is.not.followed.by.a.number";
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";
     public static final String PdfStringHasNoContentOrHasAlreadyDecrypted = "pdf.string.has.no.content.or.has.already.decrypted";
+    public static final String PdfVersionNotValid = "pdf.version.not.valid";
     public static final String Photometric1IsNotSupported = "photometric.1.is.not.supported";
     public static final String PlanarImagesAreNotSupported = "planar.images.are.not.supported";
     public static final String PngFilterUnknown = "png.filter.unknown";
@@ -184,7 +186,7 @@ public class PdfException extends RuntimeException {
     public static final String PrematureEofWhileReadingJpg = "premature.eof.while.reading.jpg";
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
-    public static final String StreamCouldNotBeCompressedFilterIsNotANameOrArray = "stream.could.not.be.compressed.filter.is.not.a.name.or.array";
+    public static final String FilterIsNotANameOrArray = "filter.is.not.a.name.or.array";
     public static final String StructureElementIsNotLinkedToStructParent = "structure.element.is.not.linked.to.structparent";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String StructureElementShallContainPgKey = "structure.element.shall.contain.pg.key";
@@ -226,6 +228,10 @@ public class PdfException extends RuntimeException {
 
     public PdfException(String message) {
         super(message);
+    }
+
+    public PdfException(Throwable cause) {
+        super(cause);
     }
 
     public PdfException(String message, Object object) {

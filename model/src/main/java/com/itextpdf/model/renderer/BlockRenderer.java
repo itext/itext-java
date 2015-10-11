@@ -2,17 +2,21 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.geom.AffineTransform;
 import com.itextpdf.basics.geom.Point2D;
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.BlockElement;
+import com.itextpdf.model.element.Table;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.layout.LayoutResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class BlockRenderer extends AbstractRenderer {
 
@@ -194,7 +198,9 @@ public class BlockRenderer extends AbstractRenderer {
         beginRotationIfApplied(canvas);
 
         drawBackground(document, canvas);
-        drawBorder(document, canvas);
+        if (!(parent.getModelElement() instanceof Table)) {
+            drawBorder(document, canvas);
+        }
         drawChildren(document, canvas);
 
         endRotationIfApplied(canvas);

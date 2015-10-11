@@ -43,9 +43,17 @@ public class PdfAConformanceException extends PdfException {
     public static final String DevicergbMayBeUsedOnlyIfTheFileHasARgbPdfAOutputIntentOrDefaultRgbInUsageContext = "devicergb.may.be.used.only.if.the.file.has.a.rgb.pdfa.outputIntent.or.defaultrgb.in.usage.context";
     public static final String DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntent = "devicecmyk.may.be.used.only.if.the.file.has.a.cmyk.pdfa.outputIntent";
     public static final String DevicecmykMayBeUsedOnlyIfTheFileHasACmykPdfAOutputIntentOrDefaultCmykInUsageContext = "devicecmyk.may.be.used.only.if.the.file.has.a.cmyk.pdfa.outputIntent.or.defaultcmyk.in.usage.context";
+    public static final String DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata = "document.to.read.from.shall.be.a.pdfa.conformant.file.with.valid.xmp.metadata";
+    public static final String EFKeyOfFileSpecificationDictionaryShallContainDictionaryWithValidFKey = "ef.key.of.file.specification.dictionary.shall.contain.dictionary.with.valid.f.key";
+    public static final String EmbeddedFileShallBeOfPdfMimeType = "embedded.file.shall.be.of.pdf.mime.type";
+    public static final String EmbeddedFileShallContainParamsKeyWithDictionaryAsValue = "embedded.file.shall.contain.params.key.with.dictionary.as.value";
+    public static final String EmbeddedFileShallContainParamsKeyWithValidModdateKey = "embedded.file.shall.contain.params.key.with.valid.moddate.key";
     public static final String EncryptShallNotBeUsedInTrailerDictionary = "keyword.encrypt.shall.not.be.used.in.the.trailer.dictionary";
     public static final String EveryAnnotationShallHaveAtLeastOneAppearanceDictionary = "every.annotation.shall.have.at.least.one.appearance.dictionary";
     public static final String ExactlyOneColourSpaceSpecificationShallHaveTheValue0x01InTheApproxField = "exactly.one.colour.space.specification.shall.have.the.value.0x01.in.the.approx.field";
+    public static final String FileSpecificationDictionaryShallContainFKeyUFKeyAndDescKey = "file.specification.dictionary.shall.contain.f.key.uf.key.and.desc.key";
+    public static final String FileSpecificationDictionaryShallContainOneOfThePredefinedAFRelationshipKeys = "file.specification.dictionary.shall.contain.one.of.the.predefined.afrelationship.keys";
+    public static final String FileSpecificationDictionaryShallNotContainTheEFKey = "file.specification.dictionary.shall.not.contain.the.EF.key";
     public static final String GraphicStateStackDepthIsGreaterThan28 = "graphics.state.stack.depth.is.greater.than.28";
     public static final String HalftonesShallNotContainHalftonename = "halftones.shall.not.contain.halftonename";
     public static final String IfDeviceRgbCmykGrayUsedInFileThatFileShallContainPdfaOutputIntent = "if.device.rgb.cmyk.gray.used.in.file.that.file.shall.contain.pdfa.outputintent";
@@ -56,6 +64,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String Jpeg2000EnumeratedColourSpace19CIEJabShallNotBeUsed = "jpeg2000.enumerated.colour.space.19.(CIEJab).shall.not.be.used";
     public static final String LZWDecodeFilterIsNotPermitted = "lzwdecode.filter.is.not.permitted";
     public static final String NamedActionType1IsNotAllowed = "named.action.type.1.not.allowed";
+    public static final String NameDictionaryShallNotContainTheEmbeddedFilesKey = "name.dictionary.shall.not.contain.the.EmbeddedFiles.key";
     public static final String NeedAppearancesFlagOfTheInteractiveFormDictionaryShallEitherNotBePresentedOrShallBeFalse = "needappearances.flag.of.the.interactive.form.dictionary.shall.either.not.be.presented.or.shall.be.false";
     public static final String NoKeysOtherUr3andDocMdpShallBePresentInPerDict = "no.keys.other.than.UR3.and.DocMDP.shall.be.present.in.a.permissions.dictionary";
     public static final String NotIdentityCryptFilterIsNotPermitted = "not.identity.crypt.filter.is.not.permitted";

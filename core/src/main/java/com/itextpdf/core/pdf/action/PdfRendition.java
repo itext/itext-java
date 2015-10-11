@@ -1,6 +1,10 @@
 package com.itextpdf.core.pdf.action;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 
 public class PdfRendition extends PdfObjectWrapper<PdfDictionary> {

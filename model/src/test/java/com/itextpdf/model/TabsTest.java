@@ -1,47 +1,49 @@
 package com.itextpdf.model;
 
+import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.canvas.draw.DashedLine;
 import com.itextpdf.canvas.draw.DottedLine;
 import com.itextpdf.canvas.draw.Drawable;
 import com.itextpdf.canvas.draw.SolidLine;
-import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.model.element.*;
+import com.itextpdf.model.element.Paragraph;
+import com.itextpdf.model.element.Tab;
+import com.itextpdf.model.element.TabStop;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 @Category(IntegrationTest.class)
 public class TabsTest extends ExtendedITextTest{
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/TabTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/TabTest/";
 
-    static final private String text0 = "The Požega Valley is a geographic microregion\tof Croatia, located in central" +
+    static final private String text0 = "The Po\u017Eega Valley is a geographic microregion\tof Croatia, located in central" +
             " Slavonia, enveloped by the Slavonian mountains. It consists of\tsouthern slopes of 984-metre (3,228 ft)" +
             " Psunj, 953-metre (3,127 ft) Papuk, and 792-metre (2,598 ft) The Krndija\tmountains, the northern slopes of " +
-            "618-metre (2,028 ft) Požeška Gora and 461-metre\t(1,512 ft) the Dilj hills,\tand\tlowland is surrounded  by the " +
-            "mountains and\thills, and occupying the eastern paaart\tof the Požega-Slavonia County.";
+            "618-metre (2,028 ft) Po\u017Ee\u0161ka Gora and 461-metre\t(1,512 ft) the Dilj hills,\tand\tlowland is surrounded  by the " +
+            "mountains and\thills, and occupying the eastern paaart\tof the Po\u017Eega-Slavonia County.";
 
-    static final private String text1 = "Sarehole Mill, Hall Green, Birmingham\t\"Inspired\" 1896–1900 (i. e. lived nearby)\t15 August 2002\tBirmingham Civic Society and The Tolkien Society\n" +
-            "1 Duchess Place, Ladywood, Birmingham\tLived near here 1902–1910\tUnknown\tBirmingham Civic Society\n" +
-            "4 Highfield Road, Edgbaston, Birmingham\tLived here 1910–1911\tUnknown\tBirmingham Civic Society and The Tolkien Society\n" +
+    static final private String text1 = "Sarehole Mill, Hall Green, Birmingham\t\"Inspired\" 1896\u20131900 (i. e. lived nearby)\t15 August 2002\tBirmingham Civic Society and The Tolkien Society\n" +
+            "1 Duchess Place, Ladywood, Birmingham\tLived near here 1902\u20131910\tUnknown\tBirmingham Civic Society\n" +
+            "4 Highfield Road, Edgbaston, Birmingham\tLived here 1910\u20131911\tUnknown\tBirmingham Civic Society and The Tolkien Society\n" +
             "Plough and Harrow, Hagley Road, Birmingham\tStayed here June 1916\tJune 1997\tThe Tolkien Society\n" +
             "2 Darnley Road, West Park, Leeds\tFirst academic appointment, Leeds\t1 October 2012\tThe Tolkien Society and the Leeds Civic Trust\n" +
-            "20 Northmoor Road, North Oxford\tLived here 1930–1947\t3 December 2002\tOxfordshire Blue Plaques Board\n" +
+            "20 Northmoor Road, North Oxford\tLived here 1930\u20131947\t3 December 2002\tOxfordshire Blue Plaques Board\n" +
             "Hotel Miramar, East Overcliff Drive, Bournemouth\tStayed here regularly from the 1950s until 1972\t10 June 1992 by Priscilla Tolkien\tBorough of Bournemouth";
 
     static final private String text2 = "space anchor:\t222222222222222222222222222222222222222222222222 03\tslash anchor:\t2024\\12\tdot anchor:\t20421.32\n" +

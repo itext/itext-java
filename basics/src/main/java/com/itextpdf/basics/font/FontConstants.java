@@ -30,7 +30,7 @@ public class FontConstants {
     public static final String RESOURCE_PATH = "com/itextpdf/basics/font/";
 
     //-Font styles------------------------------------------------------------------------------------------------------
-
+    public static final int UNDEFINED = -1;
     /**
      * this is a possible style.
      */
@@ -154,6 +154,8 @@ public class FontConstants {
      * This is a possible value of a base 14 type 1 font
      */
     public static final String ZAPFDINGBATS = "ZapfDingbats";
+
+    public static final String TIMES = "Times";
 
     public static final String V_SYMBOL = "V";
 

@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.core.Version;
 import com.itextpdf.core.events.EventDispatcher;
@@ -8,15 +9,27 @@ import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
-import com.itextpdf.core.xmp.*;
+import com.itextpdf.core.xmp.PdfAXMPUtil;
+import com.itextpdf.core.xmp.PdfConst;
+import com.itextpdf.core.xmp.XMPConst;
+import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.core.xmp.XMPMeta;
+import com.itextpdf.core.xmp.XMPMetaFactory;
+import com.itextpdf.core.xmp.XMPUtils;
 import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PdfDocument implements IEventDispatcher {
 
@@ -102,7 +115,7 @@ public class PdfDocument implements IEventDispatcher {
         }
         this.reader = reader;
         this.appendMode = false;
-        open();
+        open(null);
     }
 
     /**
@@ -112,12 +125,24 @@ public class PdfDocument implements IEventDispatcher {
      * @param writer PDF writer
      */
     public PdfDocument(PdfWriter writer) {
+        this(writer, PdfVersion.PDF_1_7);
+    }
+
+    /**
+     * Open PDF document in writing mode.
+     * Document has no pages when initialized.
+     *
+     * @param writer PDF writer
+     * @param pdfVersion pdf version of the resultant document
+     */
+    public PdfDocument(PdfWriter writer, PdfVersion pdfVersion) {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
         this.writer = writer;
         this.appendMode = false;
-        open();
+        this.pdfVersion = pdfVersion;
+        open(pdfVersion);
     }
 
     /**
@@ -128,16 +153,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param append if true, incremental updates will
      */
     public PdfDocument(PdfReader reader, PdfWriter writer, boolean append) {
-        if (reader == null) {
-            throw new NullPointerException("reader");
-        }
-        if (writer == null) {
-            throw new NullPointerException("writer");
-        }
-        this.reader = reader;
-        this.writer = writer;
-        this.appendMode = append;
-        open();
+        this(reader, writer, append, null);
     }
 
     /**
@@ -152,6 +168,43 @@ public class PdfDocument implements IEventDispatcher {
         this(reader, writer, false);
     }
 
+    /**
+     * Opens PDF document in the stamping mode.
+     * <br/>
+     * Note: to enable append mode use {@link #PdfDocument(PdfReader, PdfWriter, boolean)} instead.
+     *
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     * @param newPdfVersion the pdf version of the resultant file.
+     */
+    public PdfDocument(PdfReader reader, PdfWriter writer, PdfVersion newPdfVersion) {
+        this(reader, writer, false, newPdfVersion);
+    }
+
+    /**
+     * Open PDF document in stamping mode.
+     *
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     * @param append if true, incremental updates will
+     * @param newPdfVersion the pdf version of the resultant file, or null to leave it as is.
+     */
+    protected PdfDocument(PdfReader reader, PdfWriter writer, boolean append, PdfVersion newPdfVersion) {
+        if (reader == null) {
+            throw new NullPointerException("reader");
+        }
+        if (writer == null) {
+            throw new NullPointerException("writer");
+        }
+        if (append && newPdfVersion != null) {
+            // pdf version cannot be altered in append mode
+            newPdfVersion = null;
+        }
+        this.reader = reader;
+        this.writer = writer;
+        this.appendMode = append;
+        open(newPdfVersion);
+    }
 
     /**
      * Use this method to set the XMP Metadata.
@@ -173,6 +226,10 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public void setXmpMetadata() throws XMPException {
+        setXmpMetadata((PdfAConformanceLevel) null);
+    }
+
+    public void setXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
         XMPMeta xmpMeta = XMPMetaFactory.create();
         xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
         xmpMeta.setObjectName("");
@@ -216,7 +273,9 @@ public class PdfDocument implements IEventDispatcher {
                 }
             }
         }
-        addRdfDescription(xmpMeta);
+        if (conformanceLevel != null) {
+            addRdfDescription(xmpMeta, conformanceLevel);
+        }
         setXmpMetadata(xmpMeta);
     }
 
@@ -847,6 +906,17 @@ public class PdfDocument implements IEventDispatcher {
         catalog.addNewDestinationName(key, value);
     }
 
+    public List<PdfIndirectReference> listIndirectReferences() {
+        List<PdfIndirectReference> indRefs = new ArrayList<>(xref.size());
+        for (int i = 0; i < xref.size(); ++i) {
+            PdfIndirectReference indref = xref.get(i);
+            if (indref != null) {
+                indRefs.add(indref);
+            }
+        }
+        return indRefs;
+    }
+
     /**
      * Gets document trailer.
      *
@@ -856,12 +926,65 @@ public class PdfDocument implements IEventDispatcher {
         return trailer;
     }
 
+    public void addOutputIntent(PdfOutputIntent outputIntent) {
+        if (outputIntent == null)
+            return;
+
+        PdfArray outputIntents = catalog.getPdfObject().getAsArray(PdfName.OutputIntents);
+        if (outputIntents == null) {
+            outputIntents = new PdfArray();
+            catalog.put(PdfName.OutputIntents, outputIntents);
+        }
+        outputIntents.add(outputIntent.getPdfObject());
+    }
+
     public void checkIsoConformance(Object obj, IsoKey key) { }
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) { }
-    public void checkShowTextIsoConformance(Object gState, PdfResources resources) { }
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) { }
+    public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) { }
     protected void checkIsoConformance() { }
 
-    protected void  addRdfDescription(XMPMeta xmpMeta) throws XMPException {}
+    protected void addRdfDescription(XMPMeta xmpMeta, PdfAConformanceLevel conformanceLevel) throws XMPException {
+        switch (conformanceLevel) {
+            case PDF_A_1A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_1B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_2A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_2B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_2U:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
+                break;
+            case PDF_A_3A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_3B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_3U:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
+                break;
+            default:
+                break;
+        }
+        if (this.isTagged()) {
+            XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+            XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+        }
+    }
 
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         writer.flushObject(pdfObject, canBeInObjStm);
@@ -869,14 +992,17 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Initializes document.
+     * @param newPdfVersion new pdf version of the resultant file if stamper is used and the version needs to be changed,
+     *                   or {@code null} otherwise
      *
      * @throws PdfException
      */
-    protected void open() {
+    protected void open(PdfVersion newPdfVersion) {
         try {
             if (reader != null) {
                 reader.pdfDocument = this;
                 reader.readPdf();
+                pdfVersion = reader.pdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true), this);
 
@@ -919,6 +1045,9 @@ public class PdfDocument implements IEventDispatcher {
                 //TODO log if full compression differs
                 writer.setFullCompression(reader.hasXrefStm());
             } else if (writer != null) {
+                if (newPdfVersion != null) {
+                    pdfVersion = newPdfVersion;
+                }
                 writer.writeHeader();
             }
         } catch (IOException e) {

@@ -1,9 +1,18 @@
 package com.itextpdf.core.pdf.extgstate;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
 
 public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
+    /**
+     * Blend mode constants
+     */
     public static PdfName BM_NORMAL = PdfName.Normal;
     public static PdfName BM_MULTIPLY = PdfName.Multiply;
     public static PdfName BM_SCREEN = PdfName.Screen;
@@ -67,11 +76,11 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
 
-    public PdfArray getDashPatter() {
+    public PdfArray getDashPattern() {
         return getPdfObject().getAsArray(PdfName.D);
     }
 
-    public PdfExtGState setDashPatter(PdfArray dashPattern) {
+    public PdfExtGState setDashPattern(PdfArray dashPattern) {
         return put(PdfName.D, dashPattern);
     }
 
@@ -140,7 +149,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().get(PdfName.UCR);
     }
 
-    public PdfExtGState SetUndercolorRemovalFunction(PdfObject undercolorRemovalFunction) {
+    public PdfExtGState setUndercolorRemovalFunction(PdfObject undercolorRemovalFunction) {
         return put(PdfName.UCR, undercolorRemovalFunction);
     }
 
@@ -148,7 +157,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().get(PdfName.UCR2);
     }
 
-    public PdfExtGState SetUndercolorRemovalFunction2(PdfObject undercolorRemovalFunction2) {
+    public PdfExtGState setUndercolorRemovalFunction2(PdfObject undercolorRemovalFunction2) {
         return put(PdfName.UCR2, undercolorRemovalFunction2);
     }
 
@@ -189,29 +198,29 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
 
-    public Integer getFlatnessTolerance() {
-        return getPdfObject().getAsInt(PdfName.FT);
+    public Float getFlatnessTolerance() {
+        return getPdfObject().getAsFloat(PdfName.FT);
     }
 
-    public PdfExtGState setFlatnessTolerance(Integer flatnessTolerance) {
+    public PdfExtGState setFlatnessTolerance(float flatnessTolerance) {
         return put(PdfName.FT, new PdfNumber(flatnessTolerance));
     }
 
 
-    public Integer getSmothnessTolerance() {
-        return getPdfObject().getAsInt(PdfName.SM);
+    public Float getSmothnessTolerance() {
+        return getPdfObject().getAsFloat(PdfName.SM);
     }
 
-    public PdfExtGState setSmoothnessTolerance(Integer smoothnessTolerance) {
+    public PdfExtGState setSmoothnessTolerance(float smoothnessTolerance) {
         return put(PdfName.SM, new PdfNumber(smoothnessTolerance));
     }
 
 
-    public Boolean getStrokeAdjustment() {
+    public Boolean getAutomaticStrokeAdjustmentFlag() {
         return getPdfObject().getAsBool(PdfName.SA);
     }
 
-    public PdfExtGState setStrokeAdjustment(boolean strokeAdjustment) {
+    public PdfExtGState setAutomaticStrokeAdjustmentFlag(boolean strokeAdjustment) {
         return put(PdfName.SA, new PdfBoolean(strokeAdjustment));
     }
 
@@ -225,7 +234,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
 
     public PdfObject getSoftMask() {
-        return getPdfObject().get(PdfName.SM);
+        return getPdfObject().get(PdfName.SMask);
     }
 
     public PdfExtGState setSoftMask(PdfObject sMask) {
@@ -233,20 +242,20 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
 
-    public Integer getStrokingAlphaConstant() {
-        return getPdfObject().getAsInt(PdfName.CA);
+    public Float getStrokeOpacity() {
+        return getPdfObject().getAsFloat(PdfName.CA);
     }
 
-    public PdfExtGState setStrokingAlphaConstant(Integer strokingAlphaConstant) {
+    public PdfExtGState setStrokeOpacity(float strokingAlphaConstant) {
         return put(PdfName.CA, new PdfNumber(strokingAlphaConstant));
     }
 
 
-    public Integer getFillingAlphaConstant() {
-        return getPdfObject().getAsInt(PdfName.ca);
+    public Float getFillOpacity() {
+        return getPdfObject().getAsFloat(PdfName.ca);
     }
 
-    public PdfExtGState setFillintAlphaConstant(Integer fillingAlphaConstant) {
+    public PdfExtGState setFillOpacity(float fillingAlphaConstant) {
         return put(PdfName.ca, new PdfNumber(fillingAlphaConstant));
     }
 

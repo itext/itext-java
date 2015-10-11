@@ -48,7 +48,11 @@ import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -62,29 +66,33 @@ public abstract class OpenTypeFontTableReader {
     protected List<OpenTableLookup> lookupList;
     protected OpenTypeScript scriptsType;
     protected OpenTypeFeature featuresType;
-    private final int[] glyphWidthsByIndex;
-    private final Map<Integer, Character> glyphToCharacterMap;
+    private final Map<Integer, Glyph> indexGlyphMap;
     private final OpenTypeGdefTableReader gdef;
 
-	public OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation,
-        OpenTypeGdefTableReader gdef,
-        Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthsByIndex) throws IOException {
+	public OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation, OpenTypeGdefTableReader gdef,
+                                   Map<Integer, Glyph> indexGlyphMap) throws IOException {
 		this.rf = rf;
 		this.tableLocation = tableLocation;
-        this.glyphWidthsByIndex = glyphWidthsByIndex;
-        this.glyphToCharacterMap = glyphToCharacterMap;
+        this.indexGlyphMap = indexGlyphMap;
         this.gdef = gdef;
 	}
 	
-    protected int GetGlyphWidth(int code) {
-        if (code < 0 || code >= glyphWidthsByIndex.length)
+    protected int getGlyphWidth(int index) {
+        Glyph glyph = indexGlyphMap.get(index);
+        if (glyph == null) {
             return 0;
-        else
-            return glyphWidthsByIndex[code];
+        } else {
+            return glyph.width;
+        }
     }
     
-    protected Character GetGlyphToCharacter(int code) {
-        return glyphToCharacterMap.get(code);
+    public Integer getGlyphToCharacter(int index) {
+        Glyph glyph = indexGlyphMap.get(index);
+        if (glyph == null) {
+            return null;
+        } else {
+            return glyph.unicode;
+        }
     }
         
 	/**

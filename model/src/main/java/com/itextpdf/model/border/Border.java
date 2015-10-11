@@ -9,6 +9,7 @@ public abstract class Border {
 
     protected Color color;
     protected float width;
+    private int hash;
 
     public Border(float width) {
         this(Color.BLACK, width);
@@ -53,11 +54,48 @@ public abstract class Border {
         return width;
     }
 
+    @Override
+    public boolean equals(Object anObject) {
+        if (this == anObject) {
+            return true;
+        }
+        if (anObject instanceof Border) {
+            Border anotherBorder = (Border) anObject;
+            if (anotherBorder.getColor() != this.getColor() || anotherBorder.getWidth() != this.getWidth()) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = hash;
+
+        if (h == 0) {
+            h = (int) getWidth() * 31 + getColor().hashCode();
+            hash = h;
+        }
+
+        return h;
+    }
+
     protected Side getBorderSide(float x1, float y1, float x2, float y2) {
-        boolean isTop = x2 - x1 > 0;
-        boolean isRight = y2 - y1 < 0;
-        boolean isBottom = x2 - x1 < 0;
-        boolean isLeft = y2 - y1 > 0;
+        boolean isLeft = false;
+        boolean isRight = false;
+        if (Math.abs(y2 - y1) > 0.0005f) {
+            isLeft = y2 - y1 > 0;
+            isRight = y2 - y1 < 0;
+        }
+
+        boolean isTop = false;
+        boolean isBottom = false;
+        if (Math.abs(x2-x1) > 0.0005f) {
+            isTop = x2 - x1 > 0;
+            isBottom = x2 - x1 < 0;
+        }
 
         if (isTop) {
             return Side.TOP;

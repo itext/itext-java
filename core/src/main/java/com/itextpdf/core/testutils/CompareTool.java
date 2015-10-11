@@ -2,15 +2,51 @@ package com.itextpdf.core.testutils;
 
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfDocumentInfo;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.core.xmp.*;
+import com.itextpdf.core.xmp.PdfConst;
+import com.itextpdf.core.xmp.XMPConst;
+import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.core.xmp.XMPMeta;
+import com.itextpdf.core.xmp.XMPMetaFactory;
+import com.itextpdf.core.xmp.XMPUtils;
 import com.itextpdf.core.xmp.options.SerializeOptions;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,8 +57,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
-import java.util.*;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 public class CompareTool {
     private static final String cannotOpenOutputDirectory = "Cannot open output directory for <filename>.";
@@ -235,27 +274,32 @@ public class CompareTool {
         return message;
     }
 
-    /*TODO: this method should be implemented after implementing of TaggedPdfReaderTool
-    public String compareTagStructures(String outPdf, String cmpPdf) throws IOException, ParserConfigurationException, SAXException, PdfException {
+
+    public String compareTagStructures(String outPdf, String cmpPdf) throws IOException, ParserConfigurationException, SAXException {
         System.out.print("[itext] INFO  Comparing tag structures......");
 
-        String outXml = outPdf.replace(".pdf", ".xml");
-        String cmpXml = outPdf.replace(".pdf", ".cmp.xml");
+        String outXmlPath = outPdf.replace(".pdf", ".xml");
+        String cmpXmlPath = outPdf.replace(".pdf", ".cmp.xml");
 
         String message = null;
-        PdfReader reader = new PdfReader(outPdf);
-        FileOutputStream xmlOut1 = new FileOutputStream(outXml);
-        new CmpTaggedPdfReaderTool().convertToXml(reader, xmlOut1);
-        reader.close();
-        reader = new PdfReader(cmpPdf);
-        FileOutputStream xmlOut2 = new FileOutputStream(cmpXml);
-        new CmpTaggedPdfReaderTool().convertToXml(reader, xmlOut2);
-        reader.close();
-        if (!compareXmls(outXml, cmpXml)) {
+
+        PdfReader readerOut = new PdfReader(outPdf);
+        PdfDocument docOut = new PdfDocument(readerOut);
+        FileOutputStream xmlOut = new FileOutputStream(outXmlPath);
+        new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
+        docOut.close();
+        xmlOut.close();
+
+        PdfReader readerCmp = new PdfReader(cmpPdf);
+        PdfDocument docCmp = new PdfDocument(readerCmp);
+        FileOutputStream xmlCmp = new FileOutputStream(cmpXmlPath);
+        new TaggedPdfReaderTool(docCmp).setRootTag("root").convertToXml(xmlCmp);
+        docCmp.close();
+        xmlCmp.close();
+
+        if (!compareXmls(outXmlPath, cmpXmlPath)) {
             message = "The tag structures are different.";
         }
-        xmlOut1.close();
-        xmlOut2.close();
         if (message == null)
             System.out.println("OK");
         else
@@ -263,7 +307,6 @@ public class CompareTool {
         System.out.flush();
         return message;
     }
-    */
 
     private void init(String outPdf, String cmpPdf) {
         this.outPdf = outPdf;

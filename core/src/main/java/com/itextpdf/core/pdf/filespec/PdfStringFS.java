@@ -1,6 +1,5 @@
 package com.itextpdf.core.pdf.filespec;
 
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfString;
 
 public class PdfStringFS extends PdfFileSpec<PdfString> {

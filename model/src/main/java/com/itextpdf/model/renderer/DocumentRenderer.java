@@ -2,19 +2,20 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.basics.geom.PageSize;
+import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentRenderer extends AbstractRenderer {
 
@@ -73,7 +74,7 @@ public class DocumentRenderer extends AbstractRenderer {
                             if (Boolean.valueOf(true).equals(result.getOverflowRenderer().getModelElement().getProperty(Property.KEEP_TOGETHER))) {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
-                                logger.warn(LogMessageConstant.ELEMENT_DOESNOT_FIT_AREA);
+                                logger.warn(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA);
                             } else {
                                 throw new PdfException(PdfException.ElementCannotFitAnyArea);
                             }
@@ -137,11 +138,12 @@ public class DocumentRenderer extends AbstractRenderer {
     }
 
     public LayoutArea getNextArea() {
-
         moveToNextPage();
         PageSize lastPageSize = ensureDocumentHasNPages(currentPageNumber);
         if (lastPageSize == null) {
-            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getPageSize());
+            PageSize defaultPageSize = document.getPdfDocument().getDefaultPageSize();
+            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getPageSize()).
+                    setMargins(defaultPageSize.getTopMargin(), defaultPageSize.getRightMargin(), defaultPageSize.getBottomMargin(), defaultPageSize.getLeftMargin());
         }
         return (currentArea = new LayoutArea(currentPageNumber, lastPageSize.getEffectiveArea()));
     }

@@ -1,8 +1,16 @@
 package com.itextpdf.core.pdf.colorspace;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.basics.color.IccProfile;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
@@ -112,16 +120,50 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
             super(pdfObject, document);
         }
 
-        public IccBased(PdfDocument document, final PdfStream stream) {
+        public IccBased(PdfDocument document, final InputStream iccStream) {
             this(new PdfArray(new ArrayList<PdfObject>() {{
                 add(PdfName.ICCBased);
-                add(stream);
+                add(getIccProfileStream(iccStream));
+            }}), document);
+        }
+
+        public IccBased(PdfDocument document, final InputStream iccStream, final float[] range) {
+            this(new PdfArray(new ArrayList<PdfObject>() {{
+                add(PdfName.ICCBased);
+                add(getIccProfileStream(iccStream, range));
             }}), document);
         }
 
         @Override
         public int getNumOfComponents() {
             return ((PdfArray) getPdfObject()).getAsStream(1).getAsInt(PdfName.Action.N).intValue();
+        }
+
+
+        static public PdfStream getIccProfileStream(InputStream iccStream) {
+            IccProfile iccProfile = IccProfile.getInstance(iccStream);
+            PdfStream stream = new PdfStream(iccProfile.getData());
+            stream.put(PdfName.N, new PdfNumber(iccProfile.getNumComponents()));
+            switch (iccProfile.getNumComponents()) {
+                case 1:
+                    stream.put(PdfName.Alternate, PdfName.DeviceGray);
+                    break;
+                case 3:
+                    stream.put(PdfName.Alternate, PdfName.DeviceRGB);
+                    break;
+                case 4:
+                    stream.put(PdfName.Alternate, PdfName.DeviceCMYK);
+                    break;
+                default:
+                    break;
+            }
+            return stream;
+        }
+
+        static public PdfStream getIccProfileStream(InputStream iccStream, float[] range) {
+            PdfStream stream = getIccProfileStream(iccStream);
+            stream.put(PdfName.Range, new PdfArray(range));
+            return stream;
         }
     }
 

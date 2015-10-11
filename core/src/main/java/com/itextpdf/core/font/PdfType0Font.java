@@ -3,23 +3,46 @@ package com.itextpdf.core.font;
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.font.CFFFontSubset;
+import com.itextpdf.basics.font.CMapEncoding;
+import com.itextpdf.basics.font.CidFont;
+import com.itextpdf.basics.font.CidFontProperties;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontMetrics;
+import com.itextpdf.basics.font.FontNames;
+import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.cmap.CMapContentParser;
 import com.itextpdf.basics.font.cmap.CMapObject;
+import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfLiteral;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     private static final int[] Empty = {};
-    private static final byte[] rotbits = {(byte)0x80,(byte)0x40,(byte)0x20,(byte)0x10,(byte)0x08,(byte)0x04,(byte)0x02,(byte)0x01};
+    private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
 
     private static final int First = 0;
     private static final int Bracket = 1;
@@ -36,8 +59,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     protected char[] specificUnicodeDifferences;
 
     public PdfType0Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        super(pdfDocument,fontDictionary,true);
-        checkFontDictionary(fontDictionary,PdfName.Type0);
+        super(pdfDocument, fontDictionary, true);
+        checkFontDictionary(fontDictionary, PdfName.Type0);
         init();
     }
 
@@ -140,7 +163,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 actualMetrics = ttf.getActiveCmap();
             }
             int len = text.length();
-            char glyph[] = new char[len];
+            char glyphs[] = new char[len];
             int i = 0;
             if (!isCopy && ttf.isFontSpecific()) {
                 byte[] b = PdfEncodings.convertToBytes(text, "symboltt");
@@ -153,7 +176,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     } else if (!longTag.containsKey(metrics[0])) {
                         longTag.put(metrics[0], new int[]{metrics[0], metrics[1], specificUnicodeDifferences[b[k] & 0xff]});
                     }
-                    glyph[i++] = (char) metrics[0];
+                    glyphs[i++] = (char) metrics[0];
                 }
             } else {
                 for (int k = 0; k < len; ++k) {
@@ -171,25 +194,26 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     } else if (!longTag.containsKey(metrics[0])) {
                         longTag.put(metrics[0], new int[]{metrics[0], metrics[1], val});
                     }
-                    glyph[i++] = (char) metrics[0];
+                    glyphs[i++] = (char) metrics[0];
                 }
                 if (ttf.isApplyLigatures()) {
-                    GlyphLine glyphLine = ttf.applyLigatureFeature(glyph, i);
+                    GlyphLine glyphLine = ttf.applyLigatureFeature(glyphs, i);
                     if (glyphLine != null) {
-                        glyph = glyphLineToChars(glyphLine);
-                        i = glyph.length;
-                        for (char ch: glyph) {
+                        glyphs = glyphLineToChars(glyphLine);
+                        i = glyphs.length;
+                        for (char ch: glyphs) {
                             int code = (int)ch;
                             if (longTag.get(code) == null) {
-                                Character uniChar = ttf.getUnicodeChar(code);
-                                longTag.put(code, new int[] {code, ttf.getWidth(uniChar), uniChar});
+                                Integer uniChar = ttf.getUnicodeChar(code);
+                                Glyph glyph = ttf.getGlyph(code);
+                                longTag.put(code, new int[] {code, glyph.width, uniChar!=null?uniChar:0});
                             }
                         }
                     }
                 }
             }
 
-            String s = new String(glyph, 0, i);
+            String s = new String(glyphs, 0, i);
             try {
                 return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
             } catch (UnsupportedEncodingException e) {
@@ -964,7 +988,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         int length = glyphLine.end - glyphLine.start;
         char[] glyphs = new char[length];
         for (int k = 0; k < length; k++) {
-            glyphs[k] = (char) glyphLine.glyphs.get(glyphLine.start + k).code;
+            glyphs[k] = (char) glyphLine.glyphs.get(glyphLine.start + k).index;
         }
         return glyphs;
     }

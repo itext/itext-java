@@ -1,10 +1,20 @@
 package com.itextpdf.signatures;
 
-import org.bouncycastle.jcajce.provider.digest.*;
-
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import org.bouncycastle.jcajce.provider.digest.GOST3411;
+import org.bouncycastle.jcajce.provider.digest.MD2;
+import org.bouncycastle.jcajce.provider.digest.MD5;
+import org.bouncycastle.jcajce.provider.digest.RIPEMD128;
+import org.bouncycastle.jcajce.provider.digest.RIPEMD160;
+import org.bouncycastle.jcajce.provider.digest.RIPEMD256;
+import org.bouncycastle.jcajce.provider.digest.SHA1;
+import org.bouncycastle.jcajce.provider.digest.SHA224;
+import org.bouncycastle.jcajce.provider.digest.SHA256;
+import org.bouncycastle.jcajce.provider.digest.SHA384;
+import org.bouncycastle.jcajce.provider.digest.SHA512;
 
 /**
  * Implementation for digests accessed directly from the BouncyCastle library bypassing

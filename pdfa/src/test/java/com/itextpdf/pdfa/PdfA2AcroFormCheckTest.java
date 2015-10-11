@@ -1,19 +1,22 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfOutputIntent;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
-import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.pdfa.PdfAConformanceLevel;
-import com.itextpdf.pdfa.PdfADocument;
-import com.itextpdf.pdfa.PdfOutputIntent;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfA2AcroFormCheckTest {

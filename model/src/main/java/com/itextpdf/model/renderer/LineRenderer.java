@@ -3,7 +3,11 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.TabStop;
-import com.itextpdf.model.layout.*;
+import com.itextpdf.model.layout.LayoutArea;
+import com.itextpdf.model.layout.LayoutContext;
+import com.itextpdf.model.layout.LayoutResult;
+import com.itextpdf.model.layout.LineLayoutResult;
+import com.itextpdf.model.layout.TextLayoutResult;
 
 import java.util.ArrayList;
 import java.util.Iterator;

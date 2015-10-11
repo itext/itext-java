@@ -3,11 +3,22 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.cmap.*;
+import com.itextpdf.basics.font.cmap.AbstractCMap;
+import com.itextpdf.basics.font.cmap.CMapByteCid;
+import com.itextpdf.basics.font.cmap.CMapCidByte;
+import com.itextpdf.basics.font.cmap.CMapCidUni;
+import com.itextpdf.basics.font.cmap.CMapLocationResource;
+import com.itextpdf.basics.font.cmap.CMapParser;
+import com.itextpdf.basics.font.cmap.CMapUniCid;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

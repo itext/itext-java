@@ -1,6 +1,8 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfObjectWrapper;
 
 import java.util.List;
 
@@ -60,7 +62,5 @@ abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper imple
 //        }
 //        return structParentIndex;
 //    }
-
-    protected abstract PdfDictionary getPageObject();
 
 }

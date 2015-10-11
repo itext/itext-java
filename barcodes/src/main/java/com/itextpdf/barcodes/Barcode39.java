@@ -9,7 +9,7 @@ import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.IOException;
 
 public class Barcode39 extends Barcode1D {

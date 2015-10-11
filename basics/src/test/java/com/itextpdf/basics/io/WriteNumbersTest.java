@@ -1,15 +1,14 @@
 package com.itextpdf.basics.io;
 
-import com.itextpdf.basics.test.ITextTest;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Random;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 public class WriteNumbersTest {
 

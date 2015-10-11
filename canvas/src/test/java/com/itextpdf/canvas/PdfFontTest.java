@@ -2,7 +2,13 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.font.CidFont;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontFactory;
+import com.itextpdf.basics.font.TrueTypeCollection;
+import com.itextpdf.basics.font.TrueTypeFont;
+import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.canvas.font.PdfType3Font;
 import com.itextpdf.canvas.font.Type3Glyph;
@@ -10,7 +16,12 @@ import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfTrueTypeFont;
 import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.font.PdfType1Font;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfOutputStream;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
@@ -21,15 +32,16 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfEncodings;
 import com.itextpdf.text.pdf.PdfException;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class PdfFontTest extends ExtendedITextTest{
@@ -133,10 +145,10 @@ public class PdfFontTest extends ExtendedITextTest{
 
 
     @Test
-    public void createDocumentWithLigatures() throws IOException, PdfException, InterruptedException {
+    public void createDocumentWithLigatures1() throws IOException, PdfException, InterruptedException {
         int pageCount = 1;
-        String filename = destinationFolder + "DocumentWithLigatures.pdf";
-        String cmpFilename = sourceFolder + "cmp_DocumentWithLigatures.pdf";
+        String filename = destinationFolder + "DocumentWithLigatures1.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithLigatures1.pdf";
         final String author = "Alexander Chingarev";
         final String creator = "iText 6";
         final String title = "Ligatures test";
@@ -168,6 +180,53 @@ public class PdfFontTest extends ExtendedITextTest{
                     .moveText(36, 600)
                     .setFontAndSize(new PdfType0Font(pdfDoc, foglihtenNo07, "Identity-H"), 24)
                     .showText("The quick brown fox jumps fi ff")
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 400, 100, 100).fill();
+            canvas.release();
+            page.flush();
+        }
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareVisually(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithLigatures2() throws IOException, PdfException, InterruptedException {
+        int pageCount = 1;
+        String filename = destinationFolder + "DocumentWithLigatures2.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithLigatures2.pdf";
+        final String author = "Alexander Chingarev";
+        final String creator = "iText 6";
+        final String title = "Ligatures test";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "LobsterTwo-Regular.ttf"));
+        TrueTypeFont foglihtenNo07 = new TrueTypeFont(ttf, com.itextpdf.basics.font.PdfEncodings.IDENTITY_H);
+        foglihtenNo07.setApplyLigatures(true);
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, foglihtenNo07, "Identity-H"), 24)
+                    .showText("f i fi ff ffl ffi osx sx yp ux rz")
+                    .endText()
+                    .restoreState();
+            foglihtenNo07.setApplyLigatures(false);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 600)
+                    .setFontAndSize(new PdfType0Font(pdfDoc, foglihtenNo07, "Identity-H"), 24)
+                    .showText("f i fi ff ffl ffi osx sx yp ux rz")
                     .endText()
                     .restoreState();
             canvas.rectangle(100, 400, 100, 100).fill();
@@ -222,7 +281,7 @@ public class PdfFontTest extends ExtendedITextTest{
         tilde.lineTo(5, 5);
         tilde.stroke();
 
-        Type3Glyph symbol233 = type3.createGlyph('é', 600, 0, 0, 600, 700);
+        Type3Glyph symbol233 = type3.createGlyph('\u00E9', 600, 0, 0, 600, 700);
         symbol233.setLineWidth(100);
         symbol233.moveTo(540, 5);
         symbol233.lineTo(5, 340);
@@ -693,7 +752,7 @@ public class PdfFontTest extends ExtendedITextTest{
 
         PdfType3Font pdfType3Font = new PdfType3Font(outputPdfDoc, (PdfDictionary) inputPdfDoc.getPdfObject(4));
 
-        Type3Glyph newGlyph = pdfType3Font.createGlyph('ö', 600, 0, 0, 600, 700);
+        Type3Glyph newGlyph = pdfType3Font.createGlyph('\u00F6', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
         newGlyph.moveTo(540, 5);
         newGlyph.lineTo(5, 840);
@@ -1152,6 +1211,102 @@ public class PdfFontTest extends ExtendedITextTest{
         byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "abserif4_5.ttf"));
         byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(sourceFolder + "cmr10.pfb"));
         Assert.assertTrue("TrueType (TTF) expected", FontFactory.createFont(ttf, pfb, "WinAnsi") instanceof TrueTypeFont);
+    }
+
+    @Test
+    @LogMessage(messages = {}, ignore = true)
+    public void testWriteTTC() throws IOException, InterruptedException {
+
+        String filename = destinationFolder + "DocumentWithTTC.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
+
+        final String author = "Trusevich Dzmitry";
+        final String creator = "iText 6";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        String font = sourceFolder + "uming.ttc";
+
+        PdfFont pdfTrueTypeFont = PdfFont.createFont(pdfDoc, font,  0, "WinAnsi", true);
+
+        pdfTrueTypeFont.setSubset(true);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+
+        byte[] ttc = Utilities.inputStreamToArray(new FileInputStream(font));
+        pdfTrueTypeFont = PdfFont.createFont(pdfDoc, ttc, 1, "WinAnsi", true);
+        pdfTrueTypeFont.setSubset(true);
+        page = pdfDoc.addNewPage();
+        canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+
+    }
+
+    @Test
+    public void testCheckTTCSize() throws IOException {
+        TrueTypeCollection collection = new TrueTypeCollection(sourceFolder + "uming.ttc","WinAnsi");
+        Assert.assertTrue(collection.getTTCSize() == 4);
+    }
+
+    @Test
+    @LogMessage(messages = {LogMessageConstant.REGISTERING_DIRECTORY})
+    public void testFontDirectoryRegister() throws IOException {
+        PdfFont.registerDirectory(sourceFolder);
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        for(String name : PdfFont.getRegisteredFonts()){
+            PdfFont pdfFont = PdfFont.createRegisteredFont(pdfDoc,name);
+            if(pdfFont == null)
+                Assert.assertTrue("Font {"+name+"} can't be empty",false);
+        }
+
+        pdfDoc.addNewPage();
+
+        pdfDoc.close();
+    }
+
+    @Test
+    public void testFontRegister() throws IOException {
+        FontFactory.register(sourceFolder + "Aller_Rg.ttf", "aller");
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfFont pdfFont= PdfFont.createRegisteredFont(pdfDoc, "aller");
+        Assert.assertTrue(pdfFont instanceof  PdfTrueTypeFont);
+        pdfDoc.addNewPage();
+        pdfDoc.close();
     }
 
 

@@ -15,25 +15,25 @@ import java.util.zip.InflaterInputStream;
 /**
  * Handles FlateDecode filter.
  */
-class FlateDecodeFilter implements FilterHandler{
+public class FlateDecodeFilter implements FilterHandler{
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        byte[] res = FlateDecode(b, true);
+        byte[] res = flateDecode(b, true);
         if (res == null)
-            res = FlateDecode(b, false);
+            res = flateDecode(b, false);
         b = decodePredictor(res, decodeParams);
         return b;
     }
 
     /**
-     * A helper to FlateDecode.
+     * A helper to flateDecode.
      *
      * @param in the input data
      * @param strict {@code true} to read a correct stream. {@code false} to try to read a corrupted stream.
      * @return the decoded data
      */
-    public static byte[] FlateDecode(final byte in[], final boolean strict) {
+    public static byte[] flateDecode(final byte in[], final boolean strict) {
         ByteArrayInputStream stream = new ByteArrayInputStream(in);
         InflaterInputStream zip = new InflaterInputStream(stream);
         ByteArrayOutputStream out = new ByteArrayOutputStream();

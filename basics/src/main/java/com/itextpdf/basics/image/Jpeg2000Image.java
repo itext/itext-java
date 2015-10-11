@@ -1,11 +1,12 @@
 package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.LogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Jpeg2000Image extends Image {
 

@@ -4,21 +4,38 @@ import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.core.pdf.tagging.*;
+import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
+import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
+import com.itextpdf.core.pdf.tagging.PdfObjRef;
+import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.TreeSet;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.*;
-import java.util.List;
-import java.util.TreeSet;
+import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
 public class PdfTaggingTest extends ExtendedITextTest {
@@ -28,7 +45,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
     @BeforeClass
     static public void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -78,7 +95,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest01.pdf", sourceFolder + "cmp_taggingTest01.pdf", destinationFolder, "diff_"));
+        compareResult("taggingTest01.pdf", "cmp_taggingTest01.pdf", "diff01_");
     }
 
     @Test
@@ -111,7 +128,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest02.pdf", sourceFolder + "cmp_taggingTest02.pdf", destinationFolder, "diff_"));
+        compareResult("taggingTest02.pdf", "cmp_taggingTest02.pdf", "diff02_");
     }
 
     @Test
@@ -238,7 +255,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest04.pdf", sourceFolder + "cmp_taggingTest04.pdf", destinationFolder, "diff_"));
+        compareResult("taggingTest04.pdf", "cmp_taggingTest04.pdf", "diff04_");
     }
 
     @Test
@@ -264,8 +281,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         destination.close();
         source.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest05.pdf", sourceFolder + "cmp_taggingTest05.pdf", destinationFolder, "diff_"));
-
+        compareResult("taggingTest05.pdf", "cmp_taggingTest05.pdf", "diff05_");
     }
 
     @Test
@@ -285,8 +301,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         destination.close();
         source.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest06.pdf", sourceFolder + "cmp_taggingTest06.pdf", destinationFolder, "diff_"));
-
+        compareResult("taggingTest06.pdf", "cmp_taggingTest06.pdf", "diff06_");
     }
 
     @Test
@@ -306,7 +321,10 @@ public class PdfTaggingTest extends ExtendedITextTest {
         destination.close();
         source.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest07.pdf", sourceFolder + "cmp_taggingTest07.pdf", destinationFolder, "diff_"));
+        String errorMessage = new CompareTool().compareByContent(destinationFolder + "taggingTest07.pdf", sourceFolder + "cmp_taggingTest07.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     @Test
@@ -326,8 +344,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         destination.close();
         source.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest08.pdf", sourceFolder + "cmp_taggingTest08.pdf", destinationFolder, "diff_"));
-
+        compareResult("taggingTest08.pdf", "cmp_taggingTest08.pdf", "diff08_");
     }
 
     @Test
@@ -349,8 +366,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         document1.close();
         document2.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest09.pdf", sourceFolder + "cmp_taggingTest09.pdf", destinationFolder, "diff_"));
-
+        compareResult("taggingTest09.pdf", "cmp_taggingTest09.pdf", "diff09_");
     }
 
     @Test
@@ -369,8 +385,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         destination.close();
         source.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest10.pdf", sourceFolder + "cmp_taggingTest10.pdf", destinationFolder, "diff_"));
-
+        compareResult("taggingTest10.pdf", "cmp_taggingTest10.pdf", "diff10_");
     }
 
     @Test
@@ -411,10 +426,25 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "taggingTest11.pdf", sourceFolder + "cmp_taggingTest11.pdf", destinationFolder, "diff_"));
+        compareResult("taggingTest11.pdf", "cmp_taggingTest11.pdf", "diff11_");
     }
 
+    private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)
+            throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        String outPdf = destinationFolder + outFileName;
+        String cmpPdf = sourceFolder + cmpFileName;
 
+        String contentDifferences = compareTool.compareByContent(outPdf,
+                cmpPdf, destinationFolder, diffNamePrefix);
+        String taggedStructureDifferences = compareTool.compareTagStructures(outPdf, cmpPdf);
 
+        String errorMessage = "";
+        errorMessage += taggedStructureDifferences == null ? "" : taggedStructureDifferences + "\n";
+        errorMessage += contentDifferences == null ? "" : contentDifferences;
+        if (!errorMessage.isEmpty()) {
+            Assert.fail(errorMessage);
+        }
+    }
 
 }

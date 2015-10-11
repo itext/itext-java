@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface LogMessage {
     String[] messages();
+    boolean ignore() default false;
 }

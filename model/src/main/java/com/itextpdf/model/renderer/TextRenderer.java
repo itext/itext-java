@@ -9,12 +9,18 @@ import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.bidi.BidiAlgorithm;
 import com.itextpdf.model.bidi.BidiBracketMap;
 import com.itextpdf.model.bidi.BidiCharacterMap;
-import com.itextpdf.model.bidi.BidiAlgorithm;
 import com.itextpdf.model.element.Text;
-import com.itextpdf.model.hyphenation.ISplitCharacters;
-import com.itextpdf.model.layout.*;
+import com.itextpdf.model.hyphenation.Hyphenation;
+import com.itextpdf.model.hyphenation.HyphenationConfig;
+import com.itextpdf.model.layout.LayoutArea;
+import com.itextpdf.model.layout.LayoutContext;
+import com.itextpdf.model.layout.LayoutPosition;
+import com.itextpdf.model.layout.LayoutResult;
+import com.itextpdf.model.layout.TextLayoutResult;
+import com.itextpdf.model.splitting.ISplitCharacters;
 
 import java.util.List;
 
@@ -187,7 +193,7 @@ public class TextRenderer extends AbstractRenderer {
 
             if (firstCharacterWhichExceedsAllowedWidth == -1) {
                 // can fit the whole word in a line
-                if (lineLeftPos == - 1) {
+                if (lineLeftPos == -1) {
                     lineLeftPos = currentTextPos;
                 }
                 lineRightPos = Math.max(lineRightPos, nonBreakablePartEnd + 1);
@@ -207,8 +213,54 @@ public class TextRenderer extends AbstractRenderer {
                     applyMargins(occupiedArea.getBBox(), true);
                     return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
                 } else {
+                    // cannot fit a word as a whole
+
                     boolean wordSplit = false;
-                    if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced) {
+                    boolean hyphenationApplied = false;
+
+                    HyphenationConfig hyphenationConfig = getProperty(Property.HYPHENATION);
+                    if (hyphenationConfig != null) {
+                        int[] wordBounds = getWordBoundsForHyphenation(text, currentTextPos, rightPos, Math.max(currentTextPos, firstCharacterWhichExceedsAllowedWidth - 1));
+                        if (wordBounds != null) {
+                            String word = Utilities.convertFromUtf32(text, wordBounds[0], wordBounds[1]);
+                            Hyphenation hyph = hyphenationConfig.hyphenate(word);
+                            if (hyph != null) {
+                                for (int i = hyph.length() - 1; i >= 0; i--) {
+                                    String pre = hyph.getPreHyphenText(i);
+                                    String pos = hyph.getPostHyphenText(i);
+                                    int[] text = Utilities.convertToUtf32(pre + hyphenationConfig.getHyphenSymbol());
+                                    float currentHyphenationChoicePreTextWidth =
+                                            getSubstringWidth(fontKerning == Property.FontKerning.YES, text, 0, text.length, font, fontSize, hScale, characterSpacing, wordSpacing);
+                                    if (currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
+                                        hyphenationApplied = true;
+
+                                        if (lineLeftPos == -1) {
+                                            lineLeftPos = currentTextPos;
+                                        }
+                                        lineRightPos = Math.max(lineRightPos, currentTextPos + pre.length());
+                                        int[] lineCopy = new int[lineRightPos - lineLeftPos + 1];
+                                        System.arraycopy(line, lineLeftPos, lineCopy, 0, lineRightPos - lineLeftPos);
+                                        lineCopy[lineCopy.length - 1] = hyphenationConfig.getHyphenSymbol();
+                                        line = lineCopy;
+                                        lineLeftPos = 0;
+                                        lineRightPos = lineCopy.length;
+
+                                        // TODO these values are based on whole word. recalculate properly based on hyphenated part
+                                        currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
+                                        currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
+                                        currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
+
+                                        currentLineWidth += currentHyphenationChoicePreTextWidth;
+                                        currentTextPos += pre.length();
+
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) {
                         // if the word is too long for a single line we will have to split it
                         wordSplit = true;
                         if (lineLeftPos == - 1) {
@@ -268,16 +320,17 @@ public class TextRenderer extends AbstractRenderer {
             byte[] lineLevels = new byte[lineRightPos - lineLeftPos];
             System.arraycopy(levels, lineLeftPos - levelsOffset, lineLevels, 0, lineRightPos - lineLeftPos);
             int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
-            line = new int[lineRightPos - lineLeftPos];
+            int[] reorderedLine = new int[lineRightPos - lineLeftPos];
             for (int i = 0; i < lineRightPos - lineLeftPos; i++) {
-                line[i] = text[lineLeftPos + reorder[i]];
+                reorderedLine[i] = line[lineLeftPos + reorder[i]];
 
                 // Mirror RTL glyphs
                 if (levels[lineLeftPos - levelsOffset + reorder[i]] % 2 == 1) {
-                    int mirror = BidiBracketMap.getPairedBracket(line[i]);
-                    line[i] = mirror;
+                    int mirror = BidiBracketMap.getPairedBracket(reorderedLine[i]);
+                    reorderedLine[i] = mirror;
                 }
             }
+            line = reorderedLine;
             lineRightPos -= lineLeftPos;
             lineLeftPos = 0;
 
@@ -354,10 +407,19 @@ public class TextRenderer extends AbstractRenderer {
                 canvas.setWordSpacing(wordSpacing);
             if (horizontalScaling != null && horizontalScaling != 1)
                 canvas.setHorizontalScaling(horizontalScaling * 100);
+
+            // convert to printable array
+            StringBuilder sb = new StringBuilder();
+            for (int i = lineLeftPos; i < lineRightPos; i++) {
+                if (!noPrint(line[i])) {
+                    sb.append(Utilities.convertFromUtf32(line[i]));
+                }
+            }
+
             if (fontKerning == Property.FontKerning.YES) {
-                canvas.showTextKerned(Utilities.convertFromUtf32(line, lineLeftPos, lineRightPos));
+                canvas.showTextKerned(sb.toString());
             } else {
-                canvas.showText(Utilities.convertFromUtf32(line, lineLeftPos, lineRightPos));
+                canvas.showText(sb.toString());
             }
             canvas.endText().restoreState();
 
@@ -524,7 +586,7 @@ public class TextRenderer extends AbstractRenderer {
             return 0;
         int spaces = 0;
         for (int i = lineLeftPos; i < lineRightPos; i++) {
-            if (text[i] == ' ') {
+            if (line[i] == ' ') {
                 spaces++;
             }
         }
@@ -580,7 +642,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private static boolean noPrint(int c) {
-        return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e;
+        return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e || c == '\u00AD';
     }
 
     private float getCharWidth(int c, PdfFont font, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
@@ -605,5 +667,42 @@ public class TextRenderer extends AbstractRenderer {
         } else {
             return 0;
         }
+    }
+
+    private float getSubstringWidth(boolean kerned, int[] text, int leftPos, int rightPos, PdfFont font, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
+        float width = 0;
+        for (int i = leftPos; i < rightPos; i++) {
+            float charWidth = getCharWidth(text[i], font, fontSize, hScale, characterSpacing, wordSpacing);
+            width += charWidth;
+            if (kerned) {
+                float kerning = i != leftPos ? getKerning(text[i - 1], text[i], font, fontSize, hScale) : 0;
+                width += kerning;
+            }
+        }
+        return width / TEXT_SPACE_COEFF;
+    }
+
+    private int[] getWordBoundsForHyphenation(int[] text, int leftTextPos, int rightTextPos, int wordMiddleCharPos) {
+        while (wordMiddleCharPos >= leftTextPos && !isCharPartOfWordForHyphenation(text[wordMiddleCharPos]) && !Character.isWhitespace(text[wordMiddleCharPos])) {
+            wordMiddleCharPos--;
+        }
+        if (wordMiddleCharPos >= leftTextPos) {
+            int left = wordMiddleCharPos;
+            while (left >= leftTextPos && isCharPartOfWordForHyphenation(text[left])) {
+                left--;
+            }
+            int right = wordMiddleCharPos;
+            while (right < rightTextPos && isCharPartOfWordForHyphenation(text[right])) {
+                right++;
+            }
+            return new int[]{left + 1, right};
+        } else {
+            return null;
+        }
+    }
+
+    private boolean isCharPartOfWordForHyphenation(int c) {
+        return Character.isLetter(c) || Character.isDigit(c) ||
+                c == '\u00ad'; // soft hyphen
     }
 }

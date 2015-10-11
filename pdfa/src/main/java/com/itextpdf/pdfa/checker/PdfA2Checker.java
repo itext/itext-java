@@ -4,18 +4,33 @@ import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.Jpeg2000Image;
-import com.itextpdf.canvas.PdfGraphicsState;
+import com.itextpdf.canvas.CanvasGraphicsState;
 import com.itextpdf.canvas.color.Color;
-import com.itextpdf.canvas.color.DeviceRgb;
 import com.itextpdf.canvas.color.PatternColor;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfBoolean;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.colorspace.*;
+import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.core.pdf.colorspace.PdfPattern;
+import com.itextpdf.core.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.pdfa.PdfAConformanceLevel;
+import com.itextpdf.core.pdf.PdfAConformanceLevel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class PdfA2Checker extends PdfA1Checker{
 
@@ -73,9 +88,8 @@ public class PdfA2Checker extends PdfA1Checker{
                 PdfDictionary shadingDictionary = ((PdfPattern.Shading) pattern).getShading();
                 PdfObject colorSpace = shadingDictionary.get(PdfName.ColorSpace);
                 checkColorSpace(PdfColorSpace.makeColorSpace(colorSpace, null), currentColorSpaces, true, true);
-                PdfGraphicsState gState = new PdfGraphicsState();
                 PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
-                gState.updateFromExtGState(new PdfExtGState(extGStateDict));
+                CanvasGraphicsState gState = new CanvasGraphicsState(new PdfExtGState(extGStateDict));
                 checkExtGState(gState);
             }
         }
@@ -154,7 +168,7 @@ public class PdfA2Checker extends PdfA1Checker{
     }
 
     @Override
-    public void checkExtGState(PdfGraphicsState extGState) {
+    public void checkExtGState(CanvasGraphicsState extGState) {
         if (Integer.valueOf(1).equals(extGState.getOverprintMode())) {
             if (extGState.getFillOverprint() && currentFillCsIsIccBasedCMYK) {
                 throw new PdfAConformanceException(PdfAConformanceException.OverprintModeShallNotBeOneWhenAnICCBasedCMYKColourSpaceIsUsedAndWhenOverprintingIsSetToTrue);
@@ -193,10 +207,10 @@ public class PdfA2Checker extends PdfA1Checker{
         if (extGState.getSoftMask() != null && extGState.getSoftMask() instanceof PdfDictionary) {
             transparencyIsUsed = true;
         }
-        if (extGState.getStrokeAlpha() != null && extGState.getStrokeAlpha() < 1) {
+        if (extGState.getStrokeOpacity() != null && extGState.getStrokeOpacity() < 1) {
             transparencyIsUsed = true;
         }
-        if (extGState.getFillAlpha() != null && extGState.getFillAlpha() < 1) {
+        if (extGState.getFillOpacity() != null && extGState.getFillOpacity() < 1) {
             transparencyIsUsed = true;
         }
 
@@ -414,11 +428,30 @@ public class PdfA2Checker extends PdfA1Checker{
         PdfName[] boxNames = new PdfName[] {PdfName.MediaBox, PdfName.CropBox, PdfName.TrimBox, PdfName.ArtBox, PdfName.BleedBox};
         for (PdfName boxName: boxNames) {
             Rectangle box =  page.getAsRectangle(boxName);
-            if (box !=null ) {
+            if (box != null) {
                 float width = box.getWidth();
                 float height = box.getHeight();
                 if (width < MIN_PAGE_SIZE || width > MAX_PAGE_SIZE || height < MIN_PAGE_SIZE || height > MAX_PAGE_SIZE)
                     throw new PdfAConformanceException(PdfAConformanceException.PageLess3UnitsNoGreater14400InEitherDirection);
+            }
+        }
+    }
+
+    @Override
+    protected void checkFileSpec(PdfDictionary fileSpec) {
+        if (fileSpec.containsKey(PdfName.EF)) {
+            if (!fileSpec.containsKey(PdfName.F) || !fileSpec.containsKey(PdfName.UF) || !fileSpec.containsKey(PdfName.Desc)) {
+                throw new PdfAConformanceException(PdfAConformanceException.FileSpecificationDictionaryShallContainFKeyUFKeyAndDescKey);
+            }
+
+            PdfDictionary ef = fileSpec.getAsDictionary(PdfName.EF);
+            PdfStream embeddedFile = ef.getAsStream(PdfName.F);
+            if (embeddedFile == null) {
+                throw new PdfAConformanceException(PdfAConformanceException.EFKeyOfFileSpecificationDictionaryShallContainDictionaryWithValidFKey);
+            }
+            PdfName subtype = embeddedFile.getAsName(PdfName.Subtype);
+            if (!PdfName.ApplicationPdf.equals(subtype)) {
+                throw new PdfAConformanceException(PdfAConformanceException.EmbeddedFileShallBeOfPdfMimeType);
             }
         }
     }
@@ -463,9 +496,7 @@ public class PdfA2Checker extends PdfA1Checker{
     }
 
     @Override
-    protected void checkPage(PdfPage page) {
-        PdfDictionary pageDict = page.getPdfObject();
-
+    protected void checkPageObject(PdfDictionary pageDict, PdfDictionary pageResources) {
         if (pageDict.containsKey(PdfName.AA)) {
             throw new PdfAConformanceException(PdfAConformanceException.PageDictionaryShallNotContainAAEntry);
         }
@@ -478,7 +509,7 @@ public class PdfA2Checker extends PdfA1Checker{
             transparencyIsUsed = true;
             PdfObject cs = pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS);
             if (cs != null) {
-                PdfDictionary currentColorSpaces = page.getResources().getPdfObject().getAsDictionary(PdfName.ColorSpace);
+                PdfDictionary currentColorSpaces = pageResources.getAsDictionary(PdfName.ColorSpace);
                 checkColorSpace(PdfColorSpace.makeColorSpace(cs, null), currentColorSpaces, true, null);
             }
         }
@@ -549,6 +580,20 @@ public class PdfA2Checker extends PdfA1Checker{
 
     @Override
     protected void checkImage(PdfStream image, PdfDictionary currentColorSpaces) {
+        PdfColorSpace colorSpace = null;
+        if (isAlreadyChecked(image)) {
+            colorSpace = checkedObjectsColorspace.get(image);
+            checkColorSpace(colorSpace, currentColorSpaces, true, null);
+            return;
+        }
+
+        PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
+        if (colorSpaceObj != null) {
+            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj, null);
+            checkColorSpace(colorSpace, currentColorSpaces, true, null);
+            checkedObjectsColorspace.put(image, colorSpace);
+        }
+
         if (image.containsKey(PdfName.Alternates)) {
             throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainAlternatesKey);
         }
@@ -560,11 +605,6 @@ public class PdfA2Checker extends PdfA1Checker{
             throw new PdfAConformanceException(PdfAConformanceException.TheValueOfInterpolateKeyShallNotBeTrue);
         }
         checkRenderingIntent(image.getAsName(PdfName.Intent));
-
-        PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
-        if (colorSpaceObj != null) {
-            checkColorSpace(PdfColorSpace.makeColorSpace(colorSpaceObj, null), currentColorSpaces, true, null);
-        }
 
         if (image.getAsStream(PdfName.SMask) != null) {
             transparencyIsUsed = true;
@@ -616,13 +656,19 @@ public class PdfA2Checker extends PdfA1Checker{
                         if (image.get(PdfName.ColorSpace) == null) {
                             switch(colorSpecBox.getEnumCs()) {
                                 case 1:
-                                    checkColorSpace(new PdfDeviceCs.Gray(), currentColorSpaces, true, null);
+                                    PdfDeviceCs.Gray deviceGrayCs = new PdfDeviceCs.Gray();
+                                    checkColorSpace(deviceGrayCs, currentColorSpaces, true, null);
+                                    checkedObjectsColorspace.put(image, deviceGrayCs);
                                     break;
                                 case 3:
-                                    checkColorSpace(new PdfDeviceCs.Rgb(), currentColorSpaces, true, null);
+                                    PdfDeviceCs.Rgb deviceRgbCs = new PdfDeviceCs.Rgb();
+                                    checkColorSpace(deviceRgbCs, currentColorSpaces, true, null);
+                                    checkedObjectsColorspace.put(image, deviceRgbCs);
                                     break;
                                 case 12:
-                                    checkColorSpace(new PdfDeviceCs.Cmyk(), currentColorSpaces, true, null);
+                                    PdfDeviceCs.Cmyk deviceCmykCs = new PdfDeviceCs.Cmyk();
+                                    checkColorSpace(deviceCmykCs, currentColorSpaces, true, null);
+                                    checkedObjectsColorspace.put(image, deviceCmykCs);
                                     break;
                             }
                         }
@@ -651,6 +697,8 @@ public class PdfA2Checker extends PdfA1Checker{
 
     @Override
      protected void checkFormXObject(PdfStream form) {
+        if (isAlreadyChecked(form)) return;
+
         if (form.containsKey(PdfName.OPI)) {
             throw new PdfAConformanceException(PdfAConformanceException.AFormXobjectDictionaryShallNotContainOpiKey);
         }

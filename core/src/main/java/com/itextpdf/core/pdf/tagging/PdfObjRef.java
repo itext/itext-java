@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf.tagging;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 
 public class PdfObjRef extends PdfMcr<PdfDictionary> {
@@ -19,12 +20,14 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
 
     @Override
     public Integer getMcid() {
-        return 0;
+        return null;
     }
 
     @Override
-    protected PdfDictionary getPageObject() {
-        PdfDictionary page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
+    public PdfDictionary getPageObject() {
+        PdfDictionary page = ((PdfDictionary)getPdfObject()).getAsDictionary(PdfName.Pg);
+        if (page == null)
+            page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
         return page;
     }
 

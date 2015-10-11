@@ -7,6 +7,7 @@ import com.itextpdf.basics.font.FontMetrics;
 import com.itextpdf.basics.font.FontNames;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.TrueTypeFont;
+import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -15,13 +16,14 @@ import com.itextpdf.core.pdf.PdfIndirectReference;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Note. For TrueType FontNames.getStyle() is the same to Subfamily(). So, we shouldn't add style to /BaseFont.
@@ -128,7 +130,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         }
     }
 
-
     /**
      * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
      * otherwise the font is read and output in a PdfStream object.
@@ -188,24 +189,24 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 if (subset) {
                     subsetPrefix = createSubsetPrefix();
                 }
-                HashSet<Integer> glyphs = new HashSet<Integer>();
+                HashSet<Integer> glyphs = new HashSet<>();
                 for (int k = firstChar; k <= lastChar; ++k) {
                     if (shortTag[k] != 0) {
-                        int[] metrics = null;
+                        Glyph glyph = null;
                         if (getFontProgram().getEncoding().hasSpecialEncoding()) {
                             int[] cd = AdobeGlyphList.nameToUnicode(getFontProgram().getEncoding().getDifferences(k));
                             if (cd != null) {
-                                metrics = getFontProgram().getMetrics(cd[0]);
+                                glyph = getFontProgram().getMetrics(cd[0]);
                             }
                         } else {
                             if (getFontProgram().getEncoding().isFontSpecific()) {
-                                metrics = getFontProgram().getMetrics(k);
+                                glyph = getFontProgram().getMetrics(k);
                             } else {
-                                metrics = getFontProgram().getMetrics(getFontProgram().getEncoding().getUnicodeDifferences(k));
+                                glyph = getFontProgram().getMetrics(getFontProgram().getEncoding().getUnicodeDifferences(k));
                             }
                         }
-                        if (metrics != null) {
-                            glyphs.add(metrics[0]);
+                        if (glyph != null) {
+                            glyphs.add(glyph.index);
                         }
                     }
                 }
@@ -214,7 +215,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     byte[] fontStreamBytes;
                     if (subset || getFontProgram().getDirectoryOffset() != 0 || subsetRanges != null) {
                         //clone glyphs due to possible cache issue
-                        fontStreamBytes = getFontProgram().getSubset(new HashSet<Integer>(glyphs), subset);
+                        fontStreamBytes = getFontProgram().getSubset(new HashSet<>(glyphs), subset);
                     } else {
                         fontStreamBytes = getFontProgram().getFontStreamBytes();
                     }

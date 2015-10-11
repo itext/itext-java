@@ -63,17 +63,10 @@ import java.util.Map;
  */
 public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
 
-    Map<Integer, Character> glyphToCharacterMap;
-
     public GlyphSubstitutionTableReader(RandomAccessFileOrArray rf, int gsubTableLocation, OpenTypeGdefTableReader gdef,
-        Map<Integer, Character> glyphToCharacterMap, int[] glyphWidthsByIndex) throws IOException {
-        super(rf, gsubTableLocation, gdef, glyphToCharacterMap, glyphWidthsByIndex);
-        this.glyphToCharacterMap = glyphToCharacterMap;
+        Map<Integer, Glyph> indexGlyphMap) throws IOException {
+        super(rf, gsubTableLocation, gdef, indexGlyphMap);
         startReadingTable();
-    }
-
-    public Map<Integer, Character> getGlyphToCharacterMap() {
-        return glyphToCharacterMap;
     }
 
     @Override
