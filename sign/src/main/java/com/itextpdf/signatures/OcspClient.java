@@ -15,5 +15,5 @@ public interface OcspClient {
      * from the check cert or from other implementation specific source
      * @return A byte array with the validation or null if the validation could not be obtained
      */
-    byte[] getEncoded(X509Certificate checkCert, X509Certificate issuerCert, String url); // TODO: issuer?
+    byte[] getEncoded(X509Certificate checkCert, X509Certificate issuerCert, String url);
 }

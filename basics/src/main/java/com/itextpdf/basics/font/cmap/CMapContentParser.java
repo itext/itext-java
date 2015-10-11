@@ -159,6 +159,7 @@ public class CMapContentParser {
         return false;
     }
 
+    // TODO: Duplicates PdfName.generateValue (REFACTOR)
     protected static String decodeName(byte[] content) {
         StringBuilder buf = new StringBuilder();
         try {

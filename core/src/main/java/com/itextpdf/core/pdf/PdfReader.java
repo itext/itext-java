@@ -369,6 +369,23 @@ public class PdfReader {
         return b;
     }
 
+    /** Gets a new file instance of the original PDF
+     * document.
+     * @return a new file instance of the original PDF document
+     */
+    public RandomAccessFileOrArray getSafeFile() {
+        return tokens.getSafeFile();
+    }
+
+    /**
+     * Provides the size of the opened file.
+     * @return The size of the opened file.
+     * @throws IOException
+     */
+    public long getFileLength() throws IOException {
+        return tokens.getSafeFile().length();
+    }
+
     /**
      * Parses the entire PDF
      */
