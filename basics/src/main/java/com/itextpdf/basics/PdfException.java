@@ -28,7 +28,7 @@ public class PdfException extends RuntimeException {
     public static final String BitsPerSample1IsNotSupported = "bits.per.sample.1.is.not.supported";
     public static final String BmpImageException = "bmp.image.exception";
     public static final String BytesCanBeAssignedToByteArrayOutputStreamOnly = "bytes.can.be.assigned.to.bytearrayoutputstream.only";
-
+    public static final String BytesCanBeResetInByteArrayOutputStreamOnly = "bytes.can.be.reset.in.bytearrayoutputstream.only";
 
     public static final String CannotAddObjectToObjectstream = "cannot.add.object.to.objectstream";
     public static final String CannotAddStructElemToContent = "cannot.add.structelem.to.content";
@@ -49,8 +49,10 @@ public class PdfException extends RuntimeException {
     public static final String CannotHandleBoxSizesHigherThan2_32 = "cannot.handle.box.sizes.higher.than.2.32";
     public static final String CannotInflateTiffImage = "cannot.inflate.tiff.image";
     public static final String CannotOpenDocument = "cannot.open.document";
+    public static final String CannotReadAStreamInOrderToAppendNewBytesReason1 = "cannot.read.a.stream.in.order.to.append.new.bytes.reason.1";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
     public static final String CannotReadTiffImage = "cannot.read.tiff.image";
+    public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotWriteByte = "cannot.write.byte";
     public static final String CannotWriteBytes = "cannot.write.bytes";
     public static final String CannotWriteFloatNumber = "cannot.write.float.number";

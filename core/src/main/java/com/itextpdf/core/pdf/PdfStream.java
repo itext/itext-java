@@ -200,6 +200,57 @@ public class PdfStream extends PdfDictionary {
         return bytes;
     }
 
+    /**
+     * Sets <code>bytes</code> as stream's content.
+     * Could not be used with streams which were created by <code>InputStream</code>.
+     * @param bytes new content for stream; if <code>null</code> then stream's content will be discarded
+     */
+    public void setData(byte[] bytes) {
+        setData(bytes, false);
+    }
+
+    /**
+     * Sets or appends <code>bytes</code> to stream content.
+     * Could not be used with streams which were created by <code>InputStream</code>.
+     * @param bytes new content for stream; if <code>null</code> and <code>append</code> is false then
+     *              stream's content will be discarded
+     * @param append if set to true then <code>bytes</code> will be appended to the end,
+     *               rather then replace original content
+     */
+    public void setData(byte[] bytes, boolean append) {
+        if (inputStream != null) {
+            throw new PdfException(PdfException.CannotSetDataToPdfstreamWhichWasCreatedByInputstream);
+        }
+
+        boolean outputStreamIsUninitialized = outputStream == null;
+        if (outputStreamIsUninitialized) {
+            outputStream = new PdfOutputStream(new ByteArrayOutputStream());
+        }
+
+        if (append) {
+            if (outputStreamIsUninitialized && getReader() != null) {
+                byte[] oldBytes;
+                try {
+                    oldBytes = getBytes();
+                } catch (PdfException ex) {
+                    throw new PdfException(PdfException.CannotReadAStreamInOrderToAppendNewBytesReason1, ex.getMessage());
+                }
+                offset = 0;
+                outputStream.writeBytes(oldBytes);
+            }
+
+            if (bytes != null) {
+                outputStream.writeBytes(bytes);
+            }
+        } else {
+            if (bytes != null) {
+                outputStream.assignBytes(bytes, bytes.length);
+            } else {
+                outputStream.reset();
+            }
+        }
+    }
+
     @Override
     protected PdfStream newInstance() {
         return new PdfStream();

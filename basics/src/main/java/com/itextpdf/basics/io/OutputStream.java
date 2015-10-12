@@ -406,4 +406,12 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
         } else
             throw new PdfException(PdfException.BytesCanBeAssignedToByteArrayOutputStreamOnly);
     }
+
+    public void reset() {
+        if (outputStream instanceof ByteArrayOutputStream) {
+            ((ByteArrayOutputStream) outputStream).reset();
+            currentPos = 0;
+        } else
+            throw new PdfException(PdfException.BytesCanBeResetInByteArrayOutputStreamOnly);
+    }
 }
