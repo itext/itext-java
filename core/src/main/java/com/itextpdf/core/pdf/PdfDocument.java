@@ -655,7 +655,7 @@ public class PdfDocument implements IEventDispatcher {
                         for (int i = 0; i < xref.size(); i++) {
                             PdfIndirectReference indirectReference = xref.get(i);
                             if (!indirectReference.isFree() && !indirectReference.checkState(PdfObject.Flushed)) {
-                                PdfObject object = xref.get(i).getRefersTo();
+                                PdfObject object = indirectReference.getRefersTo();
                                 object.flush();
                             }
                         }
