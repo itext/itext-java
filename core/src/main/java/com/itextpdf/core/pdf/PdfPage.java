@@ -7,11 +7,7 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.tagging.IPdfTag;
-import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
-import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
-import com.itextpdf.core.pdf.tagging.PdfObjRef;
-import com.itextpdf.core.pdf.tagging.PdfStructElem;
+import com.itextpdf.core.pdf.tagging.*;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.core.xmp.XMPMeta;
@@ -342,9 +338,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.CropBox, new PdfArray(rectangle));
     }
 
-    public void setArtBox(Rectangle rectangle){
-        if(getPdfObject().getAsRectangle(PdfName.TrimBox) != null)
-            throw new PdfException(PdfException.OnlyOneOfArtboxOrTrimBoxCanExistInThePage);
+    public void setArtBox(Rectangle rectangle) {
+        if (getPdfObject().getAsRectangle(PdfName.TrimBox) != null) {
+            getPdfObject().remove(PdfName.TrimBox);
+            Logger logger = LoggerFactory.getLogger(PdfPage.class);
+            logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
+        }
         getPdfObject().put(PdfName.ArtBox, new PdfArray(rectangle));
     }
 
@@ -352,9 +351,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsRectangle(PdfName.ArtBox);
     }
 
-    public void setTrimBox(Rectangle rectangle){
-        if(getPdfObject().getAsRectangle(PdfName.ArtBox) != null)
-            throw new PdfException(PdfException.OnlyOneOfArtboxOrTrimBoxCanExistInThePage);
+    public void setTrimBox(Rectangle rectangle) {
+        if (getPdfObject().getAsRectangle(PdfName.ArtBox) != null) {
+            getPdfObject().remove(PdfName.ArtBox);
+            Logger logger = LoggerFactory.getLogger(PdfPage.class);
+            logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
+        }
         getPdfObject().put(PdfName.TrimBox, new PdfArray(rectangle));
     }
 
