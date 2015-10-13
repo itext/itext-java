@@ -90,14 +90,18 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         if (moreInfo != null) {
             for (Map.Entry<String, String> entry : moreInfo.entrySet()) {
                 String key = entry.getKey();
-                PdfName keyName = new PdfName(key);
                 String value = entry.getValue();
-                if (value == null) {
-                    getPdfObject().remove(keyName);
-                } else {
-                    getPdfObject().put(keyName, new PdfString(value, PdfEncodings.UnicodeBig));
-                }
+                setMoreInfo(key, value);
             }
+        }
+    }
+
+    public void setMoreInfo(String key, String value) {
+        PdfName keyName = new PdfName(key);
+        if (value == null) {
+            getPdfObject().remove(keyName);
+        } else {
+            getPdfObject().put(keyName, new PdfString(value, PdfEncodings.UnicodeBig));
         }
     }
 
