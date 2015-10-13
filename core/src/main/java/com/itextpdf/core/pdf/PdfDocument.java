@@ -297,6 +297,10 @@ public class PdfDocument implements IEventDispatcher {
         }
     }
 
+    public int getNumOfPdfObjects() {
+        return xref.size();
+    }
+
     /**
      * Gets the page by page number.
      *
