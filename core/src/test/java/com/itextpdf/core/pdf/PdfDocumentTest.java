@@ -1523,7 +1523,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void removeUnusedObjectsInStampingModeTest() throws IOException, InterruptedException {
-        String filenameIn = "docWithUnusedObjects.pdf";
+        String filenameIn = "docWithUnusedObjects_1.pdf";
         String filenameOut = "removeUnusedObjectsInStamping.pdf";
 
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filenameIn));
@@ -1550,6 +1550,66 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfReader testerReader = new PdfReader(destinationFolder + filenameOut);
         PdfDocument testerDocument = new PdfDocument(testerReader);
         assertEquals(testerDocument.getXref().size(), 6);
+        testerDocument.close();
+    }
+
+
+    @Test
+    public void AddUnusedObjectsInWriterModeTest() throws IOException, InterruptedException {
+        String filename = "addUnusedObjectsInWriter.pdf";
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfDocument pdfDocument = new PdfDocument(writer);
+
+        pdfDocument.addNewPage();
+
+        PdfDictionary unusedDictionary = new PdfDictionary();
+        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        unusedArray.add(new PdfNumber(42));
+        unusedDictionary.put(new PdfName("testName"), unusedArray);
+
+        unusedDictionary.makeIndirect(pdfDocument);
+
+        assertEquals(pdfDocument.getXref().size(), 8);
+        pdfDocument.setFlushUnusedObjects(true);
+        pdfDocument.close();
+
+
+        PdfReader testerReader = new PdfReader(destinationFolder + filename);
+        PdfDocument testerDocument = new PdfDocument(testerReader);
+        assertEquals(testerDocument.getXref().size(), 8);
+        testerDocument.close();
+    }
+
+    @Test
+    public void AddUnusedObjectsInStampingModeTest() throws IOException, InterruptedException {
+        String filenameIn = "docWithUnusedObjects_2.pdf";
+        String filenameOut = "addUnusedObjectsInStamping.pdf";
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filenameIn));
+        PdfDocument pdfDocument = new PdfDocument(writer);
+
+        pdfDocument.addNewPage();
+
+        PdfDictionary unusedDictionary = new PdfDictionary();
+        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        unusedArray.add(new PdfNumber(42));
+        unusedDictionary.put(new PdfName("testName"), unusedArray);
+
+        unusedDictionary.makeIndirect(pdfDocument).flush();
+        pdfDocument.close();
+
+
+        PdfReader reader = new PdfReader(destinationFolder + filenameIn);
+        PdfDocument doc = new PdfDocument(reader, new PdfWriter(new FileOutputStream(destinationFolder + filenameOut)));
+        assertEquals(doc.getXref().size(), 8);
+        doc.setFlushUnusedObjects(true);
+        doc.close();
+
+
+        PdfReader testerReader = new PdfReader(destinationFolder + filenameOut);
+        PdfDocument testerDocument = new PdfDocument(testerReader);
+        assertEquals(testerDocument.getXref().size(), 8);
         testerDocument.close();
     }
 

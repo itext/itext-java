@@ -102,6 +102,11 @@ public class PdfDocument implements IEventDispatcher {
 
     protected boolean isClosing = false;
 
+    /**
+    * flag determines whether to write unused objects to result document
+    */
+    protected boolean flushUnusedObjects = false;
+
     protected Set<PdfFont> documentFonts = new HashSet<PdfFont>();
 
     /**
@@ -132,7 +137,7 @@ public class PdfDocument implements IEventDispatcher {
      * Open PDF document in writing mode.
      * Document has no pages when initialized.
      *
-     * @param writer PDF writer
+     * @param writer     PDF writer
      * @param pdfVersion pdf version of the resultant document
      */
     public PdfDocument(PdfWriter writer, PdfVersion pdfVersion) {
@@ -173,8 +178,8 @@ public class PdfDocument implements IEventDispatcher {
      * <br/>
      * Note: to enable append mode use {@link #PdfDocument(PdfReader, PdfWriter, boolean)} instead.
      *
-     * @param reader PDF reader.
-     * @param writer PDF writer.
+     * @param reader        PDF reader.
+     * @param writer        PDF writer.
      * @param newPdfVersion the pdf version of the resultant file.
      */
     public PdfDocument(PdfReader reader, PdfWriter writer, PdfVersion newPdfVersion) {
@@ -184,9 +189,9 @@ public class PdfDocument implements IEventDispatcher {
     /**
      * Open PDF document in stamping mode.
      *
-     * @param reader PDF reader.
-     * @param writer PDF writer.
-     * @param append if true, incremental updates will
+     * @param reader        PDF reader.
+     * @param writer        PDF writer.
+     * @param append        if true, incremental updates will
      * @param newPdfVersion the pdf version of the resultant file, or null to leave it as is.
      */
     protected PdfDocument(PdfReader reader, PdfWriter writer, boolean append, PdfVersion newPdfVersion) {
@@ -645,6 +650,17 @@ public class PdfDocument implements IEventDispatcher {
                     info.flush();
                     flushFonts();
                     writer.flushWaitingObjects();
+                    // flush unused objects
+                    if (flushUnusedObjects) {
+                        for (int i = 0; i < xref.size(); i++) {
+                            PdfIndirectReference indirectReference = xref.get(i);
+                            if (!indirectReference.isFree() && !indirectReference.checkState(PdfObject.Flushed)) {
+                                PdfObject object = xref.get(i).getRefersTo();
+                                object.flush();
+                            }
+                        }
+                    }
+
                 }
 
                 byte[] originalFileID = null;
@@ -775,7 +791,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param pageFrom
      * @param pageTo
      * @param toDocument
-     * @param copier a copier which bears a special copy logic. May be NULL
+     * @param copier     a copier which bears a special copy logic. May be NULL
      * @return list of copied pages
      * @throws PdfException
      */
@@ -891,6 +907,14 @@ public class PdfDocument implements IEventDispatcher {
         this.closeWriter = closeWriter;
     }
 
+    public boolean isFlushUnusedObjects() {
+        return flushUnusedObjects;
+    }
+
+    public void setFlushUnusedObjects(boolean flushUnusedObjects) {
+        this.flushUnusedObjects = flushUnusedObjects;
+    }
+
     public PdfOutline getOutlines(boolean updateOutlines) {
         return catalog.getOutlines(updateOutlines);
     }
@@ -938,10 +962,17 @@ public class PdfDocument implements IEventDispatcher {
         outputIntents.add(outputIntent.getPdfObject());
     }
 
-    public void checkIsoConformance(Object obj, IsoKey key) { }
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) { }
-    public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) { }
-    protected void checkIsoConformance() { }
+    public void checkIsoConformance(Object obj, IsoKey key) {
+    }
+
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) {
+    }
+
+    public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) {
+    }
+
+    protected void checkIsoConformance() {
+    }
 
     protected void addRdfDescription(XMPMeta xmpMeta, PdfAConformanceLevel conformanceLevel) throws XMPException {
         switch (conformanceLevel) {
@@ -992,9 +1023,9 @@ public class PdfDocument implements IEventDispatcher {
 
     /**
      * Initializes document.
-     * @param newPdfVersion new pdf version of the resultant file if stamper is used and the version needs to be changed,
-     *                   or {@code null} otherwise
      *
+     * @param newPdfVersion new pdf version of the resultant file if stamper is used and the version needs to be changed,
+     *                      or {@code null} otherwise
      * @throws PdfException
      */
     protected void open(PdfVersion newPdfVersion) {
