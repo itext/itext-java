@@ -31,6 +31,10 @@ public final class FilterHandlers {
         map.put(PdfName.Crypt, new DoNothingFilter());
         map.put(PdfName.RunLengthDecode, new RunLengthDecodeFilter());
 
+        map.put(PdfName.JBIG2Decode, new DoNothingFilter());
+        map.put(PdfName.DCTDecode, new DoNothingFilter());
+        map.put(PdfName.JPXDecode, new DoNothingFilter());
+
         defaults = Collections.unmodifiableMap(map);
     }
 
