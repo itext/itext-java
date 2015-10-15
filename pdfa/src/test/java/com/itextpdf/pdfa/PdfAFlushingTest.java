@@ -129,7 +129,7 @@ public class PdfAFlushingTest extends ITextTest{
 
         PdfReader testerReader = new PdfReader(destinationFolder + filenameIn);
         PdfDocument testerDocument = new PdfDocument(testerReader);
-        assertEquals(testerDocument.getIndirectReferences().size(), 11);
+        assertEquals(testerDocument.listIndirectReferences().size(), 11);
         testerDocument.close();
     }
 }
