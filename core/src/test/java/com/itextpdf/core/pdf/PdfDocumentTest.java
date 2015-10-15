@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
-public class PdfDocumentTest extends ExtendedITextTest{
+public class PdfDocumentTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfDocumentTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfDocumentTest/";
@@ -35,8 +35,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping1() throws IOException {
-        String filename1 =  destinationFolder + "stamping1_1.pdf";
-        String filename2 =  destinationFolder + "stamping1_2.pdf";
+        String filename1 = destinationFolder + "stamping1_1.pdf";
+        String filename2 = destinationFolder + "stamping1_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -78,15 +78,15 @@ public class PdfDocumentTest extends ExtendedITextTest{
         String date = reader.getInfo().get("ModDate");
         Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
         long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
-        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
+        String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         assertTrue(message, diff < 5000);
         reader.close();
     }
 
     @Test
     public void stamping2() throws IOException {
-        String filename1 =  destinationFolder + "stamping2_1.pdf";
-        String filename2 =  destinationFolder + "stamping2_2.pdf";
+        String filename1 = destinationFolder + "stamping2_1.pdf";
+        String filename2 = destinationFolder + "stamping2_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -127,8 +127,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping3() throws IOException {
-        String filename1 =  destinationFolder + "stamping3_1.pdf";
-        String filename2 =  destinationFolder + "stamping3_2.pdf";
+        String filename1 = destinationFolder + "stamping3_1.pdf";
+        String filename2 = destinationFolder + "stamping3_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -171,8 +171,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping4() throws IOException {
-        String filename1 =  destinationFolder + "stamping4_1.pdf";
-        String filename2 =  destinationFolder + "stamping4_2.pdf";
+        String filename1 = destinationFolder + "stamping4_1.pdf";
+        String filename2 = destinationFolder + "stamping4_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -190,7 +190,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
         for (int i = 2; i <= pageCount; i++) {
             PdfPage page2 = pdfDoc2.addNewPage();
-            page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page "+i+"\n"));
+            page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page2.flush();
         }
         pdfDoc2.close();
@@ -217,8 +217,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping5() throws IOException {
-        String filename1 =  destinationFolder + "stamping5_1.pdf";
-        String filename2 =  destinationFolder + "stamping5_2.pdf";
+        String filename1 = destinationFolder + "stamping5_1.pdf";
+        String filename2 = destinationFolder + "stamping5_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -237,7 +237,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
         for (int i = 2; i <= pageCount; i++) {
             PdfPage page2 = pdfDoc2.addNewPage();
-            page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page "+i+"\n"));
+            page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page2.flush();
         }
         pdfDoc2.close();
@@ -264,8 +264,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping6() throws IOException {
-        String filename1 =  destinationFolder + "stamping6_1.pdf";
-        String filename2 =  destinationFolder + "stamping6_2.pdf";
+        String filename1 = destinationFolder + "stamping6_1.pdf";
+        String filename2 = destinationFolder + "stamping6_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -307,8 +307,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping7() throws IOException {
-        String filename1 =  destinationFolder + "stamping7_1.pdf";
-        String filename2 =  destinationFolder + "stamping7_2.pdf";
+        String filename1 = destinationFolder + "stamping7_1.pdf";
+        String filename2 = destinationFolder + "stamping7_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -350,17 +350,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping8() throws IOException {
-        String filename1 =  destinationFolder + "stamping8_1.pdf";
-        String filename2 =  destinationFolder + "stamping8_2.pdf";
+        String filename1 = destinationFolder + "stamping8_1.pdf";
+        String filename2 = destinationFolder + "stamping8_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(true);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -393,17 +393,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping9() throws IOException {
-        String filename1 =  destinationFolder + "stamping9_1.pdf";
-        String filename2 =  destinationFolder + "stamping9_2.pdf";
+        String filename1 = destinationFolder + "stamping9_1.pdf";
+        String filename2 = destinationFolder + "stamping9_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(false);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -436,17 +436,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping10() throws IOException {
-        String filename1 =  destinationFolder + "stamping10_1.pdf";
-        String filename2 =  destinationFolder + "stamping10_2.pdf";
+        String filename1 = destinationFolder + "stamping10_1.pdf";
+        String filename2 = destinationFolder + "stamping10_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(true);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -479,17 +479,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping11() throws IOException {
-        String filename1 =  destinationFolder + "stamping11_1.pdf";
-        String filename2 =  destinationFolder + "stamping11_2.pdf";
+        String filename1 = destinationFolder + "stamping11_1.pdf";
+        String filename2 = destinationFolder + "stamping11_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(false);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -522,16 +522,16 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping12() throws IOException {
-        String filename1 =  destinationFolder + "stamping12_1.pdf";
-        String filename2 =  destinationFolder + "stamping12_2.pdf";
+        String filename1 = destinationFolder + "stamping12_1.pdf";
+        String filename2 = destinationFolder + "stamping12_2.pdf";
         int pageCount = 1010;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -571,16 +571,16 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stamping13() throws IOException {
-        String filename1 =  destinationFolder + "stamping13_1.pdf";
-        String filename2 =  destinationFolder + "stamping13_2.pdf";
+        String filename1 = destinationFolder + "stamping13_1.pdf";
+        String filename2 = destinationFolder + "stamping13_2.pdf";
         int pageCount = 1010;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -593,7 +593,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
             assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
         }
         pdfDoc2.removePage(1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc2.addNewPage();
             page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
@@ -622,10 +622,11 @@ public class PdfDocumentTest extends ExtendedITextTest{
         reader.close();
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void stamping14() throws IOException {
-        String filename1 =  sourceFolder + "20000PagesDocument.pdf";
-        String filename2 =  destinationFolder + "stamping14.pdf";
+        String filename1 = sourceFolder + "20000PagesDocument.pdf";
+        String filename2 = destinationFolder + "stamping14.pdf";
 
         PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
         PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
@@ -662,8 +663,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
     public void stampingStreamsCompression01() throws IOException {
         // by default, old streams should not be recompressed
 
-        String filenameIn =  sourceFolder + "stampingStreamsCompression.pdf";
-        String filenameOut =  destinationFolder + "stampingStreamsCompression01.pdf";
+        String filenameIn = sourceFolder + "stampingStreamsCompression.pdf";
+        String filenameOut = destinationFolder + "stampingStreamsCompression01.pdf";
 
         PdfReader reader = new PdfReader(filenameIn);
         PdfWriter writer = new PdfWriter(filenameOut);
@@ -686,8 +687,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
     public void stampingStreamsCompression02() throws IOException {
         // if user specified, stream may be uncompressed
 
-        String filenameIn =  sourceFolder + "stampingStreamsCompression.pdf";
-        String filenameOut =  destinationFolder + "stampingStreamsCompression02.pdf";
+        String filenameIn = sourceFolder + "stampingStreamsCompression.pdf";
+        String filenameOut = destinationFolder + "stampingStreamsCompression02.pdf";
 
         PdfReader reader = new PdfReader(filenameIn);
         PdfWriter writer = new PdfWriter(filenameOut);
@@ -710,8 +711,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
     public void stampingStreamsCompression03() throws IOException {
         // if user specified, stream may be recompressed
 
-        String filenameIn =  sourceFolder + "stampingStreamsCompression.pdf";
-        String filenameOut =  destinationFolder + "stampingStreamsCompression03.pdf";
+        String filenameIn = sourceFolder + "stampingStreamsCompression.pdf";
+        String filenameOut = destinationFolder + "stampingStreamsCompression03.pdf";
 
         PdfReader reader = new PdfReader(filenameIn);
         PdfWriter writer = new PdfWriter(filenameOut);
@@ -732,17 +733,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingXmp1() throws IOException, XMPException {
-        String filename1 =  destinationFolder + "stampingXmp1_1.pdf";
-        String filename2 =  destinationFolder + "stampingXmp1_2.pdf";
+        String filename1 = destinationFolder + "stampingXmp1_1.pdf";
+        String filename2 = destinationFolder + "stampingXmp1_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(true);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -778,17 +779,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingXmp2() throws IOException, XMPException {
-        String filename1 =  destinationFolder + "stampingXmp2_1.pdf";
-        String filename2 =  destinationFolder + "stampingXmp2_2.pdf";
+        String filename1 = destinationFolder + "stampingXmp2_1.pdf";
+        String filename2 = destinationFolder + "stampingXmp2_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(false);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -825,8 +826,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingAppend1() throws IOException {
-        String filename1 =  destinationFolder + "stampingAppend1_1.pdf";
-        String filename2 =  destinationFolder + "stampingAppend1_2.pdf";
+        String filename1 = destinationFolder + "stampingAppend1_1.pdf";
+        String filename2 = destinationFolder + "stampingAppend1_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -869,15 +870,15 @@ public class PdfDocumentTest extends ExtendedITextTest{
         String date = reader.getInfo().get("ModDate");
         Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
         long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
-        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
+        String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         assertTrue(message, diff < 5000);
         reader.close();
     }
 
     @Test
     public void stampingAppend2() throws IOException {
-        String filename1 =  destinationFolder + "stampingAppend2_1.pdf";
-        String filename2 =  destinationFolder + "stampingAppend2_2.pdf";
+        String filename1 = destinationFolder + "stampingAppend2_1.pdf";
+        String filename2 = destinationFolder + "stampingAppend2_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -919,8 +920,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingAppend3() throws IOException {
-        String filename1 =  destinationFolder + "stampingAppend3_1.pdf";
-        String filename2 =  destinationFolder + "stampingAppend3_2.pdf";
+        String filename1 = destinationFolder + "stampingAppend3_1.pdf";
+        String filename2 = destinationFolder + "stampingAppend3_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -963,8 +964,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingAppend4() throws IOException {
-        String filename1 =  destinationFolder + "stampingAppend4_1.pdf";
-        String filename2 =  destinationFolder + "stampingAppend4_2.pdf";
+        String filename1 = destinationFolder + "stampingAppend4_1.pdf";
+        String filename2 = destinationFolder + "stampingAppend4_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -982,7 +983,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2, true);
         for (int i = 2; i <= pageCount; i++) {
             PdfPage page2 = pdfDoc2.addNewPage();
-            page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page "+i+"\n"));
+            page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page2.flush();
         }
 
@@ -1010,8 +1011,8 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingAppend5() throws IOException {
-        String filename1 =  destinationFolder + "stampingAppend5_1.pdf";
-        String filename2 =  destinationFolder + "stampingAppend5_2.pdf";
+        String filename1 = destinationFolder + "stampingAppend5_1.pdf";
+        String filename2 = destinationFolder + "stampingAppend5_2.pdf";
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -1030,7 +1031,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2, true);
         for (int i = 2; i <= pageCount; i++) {
             PdfPage page2 = pdfDoc2.addNewPage();
-            page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page "+i+"\n"));
+            page2.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page2.flush();
         }
         pdfDoc2.close();
@@ -1057,17 +1058,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingAppend8() throws IOException {
-        String filename1 =  destinationFolder + "stampingAppend8_1.pdf";
-        String filename2 =  destinationFolder + "stampingAppend8_2.pdf";
+        String filename1 = destinationFolder + "stampingAppend8_1.pdf";
+        String filename2 = destinationFolder + "stampingAppend8_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(true);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -1100,17 +1101,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingAppend9() throws IOException {
-        String filename1 =  destinationFolder + "stampingAppend9_1.pdf";
-        String filename2 =  destinationFolder + "stampingAppend9_2.pdf";
+        String filename1 = destinationFolder + "stampingAppend9_1.pdf";
+        String filename2 = destinationFolder + "stampingAppend9_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(false);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -1143,17 +1144,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingAppend10() throws IOException {
-        String filename1 =  destinationFolder + "stampingAppend10_1.pdf";
-        String filename2 =  destinationFolder + "stampingAppend10_2.pdf";
+        String filename1 = destinationFolder + "stampingAppend10_1.pdf";
+        String filename2 = destinationFolder + "stampingAppend10_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(true);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -1186,17 +1187,17 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void stampingAppend11() throws IOException {
-        String filename1 =  destinationFolder + "stampingAppend11_1.pdf";
-        String filename2 =  destinationFolder + "stampingAppend11_2.pdf";
+        String filename1 = destinationFolder + "stampingAppend11_1.pdf";
+        String filename2 = destinationFolder + "stampingAppend11_2.pdf";
         int pageCount = 10;
 
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         writer1.setFullCompression(false);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        for (int i = 1; i <= pageCount; i++ ) {
+        for (int i = 1; i <= pageCount; i++) {
             PdfPage page = pdfDoc1.addNewPage();
-            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i +"\n"));
+            page.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + i + "\n"));
             page.flush();
         }
         pdfDoc1.close();
@@ -1348,7 +1349,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copying2_2.pdf");
         assertEquals("Rebuilt", false, reader.isRebuilt());
         for (int i = 0; i < 5; i++) {
-            byte[] bytes = reader.getPageContent(i+1);
+            byte[] bytes = reader.getPageContent(i + 1);
             assertEquals("%page " + String.valueOf(i * 2 + 1) + "\n", new String(bytes));
         }
         reader.close();
@@ -1408,7 +1409,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
 
     @Test
     public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException, DocumentException {
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "iphone_user_guide.pdf"));
         String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -1460,7 +1461,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         String filename = sourceFolder + "iphone_user_guide.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
-        FileOutputStream fos = new FileOutputStream(destinationFolder+"stampingDocWithTaggedStructure.pdf");
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "stampingDocWithTaggedStructure.pdf");
         PdfWriter writer = new PdfWriter(fos);
 
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
@@ -1473,7 +1474,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         String filename = sourceFolder + "fieldsOn2-sPage.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
-        FileOutputStream fos = new FileOutputStream(destinationFolder+"copyDocumentsWithFormFields.pdf");
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "copyDocumentsWithFormFields.pdf");
         PdfWriter writer = new PdfWriter(fos);
 
         PdfDocument sourceDoc = new PdfDocument(reader);
@@ -1613,10 +1614,36 @@ public class PdfDocumentTest extends ExtendedITextTest{
         testerDocument.close();
     }
 
+    @Test
+    public void AddUnusedStreamObjectsTest() throws IOException, InterruptedException {
+        String filenameIn = "docWithUnusedObjects_3.pdf";
+
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filenameIn));
+        PdfDocument pdfDocument = new PdfDocument(writer);
+
+        pdfDocument.addNewPage();
+
+        PdfDictionary unusedDictionary = new PdfDictionary();
+        PdfArray unusedArray = new PdfArray().makeIndirect(pdfDocument);
+        unusedArray.add(new PdfNumber(42));
+        PdfStream stream = new PdfStream(new byte[]{1, 2, 34, 45}, 0);
+        unusedArray.add(stream);
+        unusedDictionary.put(new PdfName("testName"), unusedArray);
+        unusedDictionary.makeIndirect(pdfDocument).flush();
+        pdfDocument.setFlushUnusedObjects(true);
+        pdfDocument.close();
+
+        PdfReader testerReader = new PdfReader(destinationFolder + filenameIn);
+        PdfDocument testerDocument = new PdfDocument(testerReader);
+        assertEquals(testerDocument.getXref().size(), 9);
+        testerDocument.close();
+    }
+
     static void verifyPdfPagesCount(PdfObject root) {
         if (root.getType() == PdfObject.IndirectReference)
-            root = ((PdfIndirectReference)root).getRefersTo();
-        PdfDictionary pages = (PdfDictionary)root;
+            root = ((PdfIndirectReference) root).getRefersTo();
+        PdfDictionary pages = (PdfDictionary) root;
         if (!pages.containsKey(PdfName.Kids)) return;
         PdfNumber count = pages.getAsNumber(PdfName.Count);
         if (count != null) {
@@ -1624,7 +1651,7 @@ public class PdfDocumentTest extends ExtendedITextTest{
         }
         PdfObject kids = pages.get(PdfName.Kids);
         if (kids.getType() == PdfObject.Array) {
-            for (PdfObject kid : (PdfArray)kids){
+            for (PdfObject kid : (PdfArray) kids) {
                 verifyPdfPagesCount(kid);
             }
         } else {

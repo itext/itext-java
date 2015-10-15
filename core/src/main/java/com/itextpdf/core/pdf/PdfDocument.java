@@ -934,7 +934,7 @@ public class PdfDocument implements IEventDispatcher {
         catalog.addNewDestinationName(key, value);
     }
 
-    public List<PdfIndirectReference> listIndirectReferences() {
+    public List<PdfIndirectReference> getIndirectReferences() {
         List<PdfIndirectReference> indRefs = new ArrayList<>(xref.size());
         for (int i = 0; i < xref.size(); ++i) {
             PdfIndirectReference indref = xref.get(i);
@@ -976,6 +976,12 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     protected void checkIsoConformance() {
+    }
+
+    protected void markObjectAsMustBeFlushed(PdfObject pdfObject){
+        if(pdfObject.getIndirectReference()!=null){
+            pdfObject.getIndirectReference().setState(PdfObject.MustBeFlushed);
+        }
     }
 
     protected void addRdfDescription(XMPMeta xmpMeta, PdfAConformanceLevel conformanceLevel) throws XMPException {
