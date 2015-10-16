@@ -64,9 +64,10 @@ public class Barcode39 extends Barcode1D {
             {0,1,0,0,1,0,1,0,0}
     };
 
-    /** The index chars to <CODE>BARS</CODE>.
+    /** The index chars to <CODE>BARS</CODE>, symbol * use only start and stop  characters,
+     *  the * character will not appear in the input data.
      */
-    private static final String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%*";
+    private static final String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
 
     /** The character combinations to make the code 39 extended.
      */
