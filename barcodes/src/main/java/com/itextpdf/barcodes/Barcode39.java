@@ -14,62 +14,67 @@ import java.io.IOException;
 
 public class Barcode39 extends Barcode1D {
 
-    /** The bars to generate the code.
+    /**
+     * The bars to generate the code.
      */
     private static final byte[][] BARS =
-    {
-            {0,0,0,1,1,0,1,0,0},
-            {1,0,0,1,0,0,0,0,1},
-            {0,0,1,1,0,0,0,0,1},
-            {1,0,1,1,0,0,0,0,0},
-            {0,0,0,1,1,0,0,0,1},
-            {1,0,0,1,1,0,0,0,0},
-            {0,0,1,1,1,0,0,0,0},
-            {0,0,0,1,0,0,1,0,1},
-            {1,0,0,1,0,0,1,0,0},
-            {0,0,1,1,0,0,1,0,0},
-            {1,0,0,0,0,1,0,0,1},
-            {0,0,1,0,0,1,0,0,1},
-            {1,0,1,0,0,1,0,0,0},
-            {0,0,0,0,1,1,0,0,1},
-            {1,0,0,0,1,1,0,0,0},
-            {0,0,1,0,1,1,0,0,0},
-            {0,0,0,0,0,1,1,0,1},
-            {1,0,0,0,0,1,1,0,0},
-            {0,0,1,0,0,1,1,0,0},
-            {0,0,0,0,1,1,1,0,0},
-            {1,0,0,0,0,0,0,1,1},
-            {0,0,1,0,0,0,0,1,1},
-            {1,0,1,0,0,0,0,1,0},
-            {0,0,0,0,1,0,0,1,1},
-            {1,0,0,0,1,0,0,1,0},
-            {0,0,1,0,1,0,0,1,0},
-            {0,0,0,0,0,0,1,1,1},
-            {1,0,0,0,0,0,1,1,0},
-            {0,0,1,0,0,0,1,1,0},
-            {0,0,0,0,1,0,1,1,0},
-            {1,1,0,0,0,0,0,0,1},
-            {0,1,1,0,0,0,0,0,1},
-            {1,1,1,0,0,0,0,0,0},
-            {0,1,0,0,1,0,0,0,1},
-            {1,1,0,0,1,0,0,0,0},
-            {0,1,1,0,1,0,0,0,0},
-            {0,1,0,0,0,0,1,0,1},
-            {1,1,0,0,0,0,1,0,0},
-            {0,1,1,0,0,0,1,0,0},
-            {0,1,0,1,0,1,0,0,0},
-            {0,1,0,1,0,0,0,1,0},
-            {0,1,0,0,0,1,0,1,0},
-            {0,0,0,1,0,1,0,1,0},
-            {0,1,0,0,1,0,1,0,0}
-    };
+            {
+                    {0, 0, 0, 1, 1, 0, 1, 0, 0},
+                    {1, 0, 0, 1, 0, 0, 0, 0, 1},
+                    {0, 0, 1, 1, 0, 0, 0, 0, 1},
+                    {1, 0, 1, 1, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 1, 1, 0, 0, 0, 1},
+                    {1, 0, 0, 1, 1, 0, 0, 0, 0},
+                    {0, 0, 1, 1, 1, 0, 0, 0, 0},
+                    {0, 0, 0, 1, 0, 0, 1, 0, 1},
+                    {1, 0, 0, 1, 0, 0, 1, 0, 0},
+                    {0, 0, 1, 1, 0, 0, 1, 0, 0},
+                    {1, 0, 0, 0, 0, 1, 0, 0, 1},
+                    {0, 0, 1, 0, 0, 1, 0, 0, 1},
+                    {1, 0, 1, 0, 0, 1, 0, 0, 0},
+                    {0, 0, 0, 0, 1, 1, 0, 0, 1},
+                    {1, 0, 0, 0, 1, 1, 0, 0, 0},
+                    {0, 0, 1, 0, 1, 1, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 1, 1, 0, 1},
+                    {1, 0, 0, 0, 0, 1, 1, 0, 0},
+                    {0, 0, 1, 0, 0, 1, 1, 0, 0},
+                    {0, 0, 0, 0, 1, 1, 1, 0, 0},
+                    {1, 0, 0, 0, 0, 0, 0, 1, 1},
+                    {0, 0, 1, 0, 0, 0, 0, 1, 1},
+                    {1, 0, 1, 0, 0, 0, 0, 1, 0},
+                    {0, 0, 0, 0, 1, 0, 0, 1, 1},
+                    {1, 0, 0, 0, 1, 0, 0, 1, 0},
+                    {0, 0, 1, 0, 1, 0, 0, 1, 0},
+                    {0, 0, 0, 0, 0, 0, 1, 1, 1},
+                    {1, 0, 0, 0, 0, 0, 1, 1, 0},
+                    {0, 0, 1, 0, 0, 0, 1, 1, 0},
+                    {0, 0, 0, 0, 1, 0, 1, 1, 0},
+                    {1, 1, 0, 0, 0, 0, 0, 0, 1},
+                    {0, 1, 1, 0, 0, 0, 0, 0, 1},
+                    {1, 1, 1, 0, 0, 0, 0, 0, 0},
+                    {0, 1, 0, 0, 1, 0, 0, 0, 1},
+                    {1, 1, 0, 0, 1, 0, 0, 0, 0},
+                    {0, 1, 1, 0, 1, 0, 0, 0, 0},
+                    {0, 1, 0, 0, 0, 0, 1, 0, 1},
+                    {1, 1, 0, 0, 0, 0, 1, 0, 0},
+                    {0, 1, 1, 0, 0, 0, 1, 0, 0},
+                    {0, 1, 0, 1, 0, 1, 0, 0, 0},
+                    {0, 1, 0, 1, 0, 0, 0, 1, 0},
+                    {0, 1, 0, 0, 0, 1, 0, 1, 0},
+                    {0, 0, 0, 1, 0, 1, 0, 1, 0},
+                    {0, 1, 0, 0, 1, 0, 1, 0, 0}
+            };
 
-    /** The index chars to <CODE>BARS</CODE>, symbol * use only start and stop  characters,
-     *  the * character will not appear in the input data.
+    /**
+     * The index chars to <CODE>BARS</CODE>, symbol * use only start and stop  characters,
+     * the * character will not appear in the input data.
      */
-    private static final String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
+    private static final String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%*";
 
-    /** The character combinations to make the code 39 extended.
+
+
+    /**
+     * The character combinations to make the code 39 extended.
      */
     private static final String EXTENDED = "%U" +
             "$A$B$C$D$E$F$G$H$I$J$K$L$M$N$O$P$Q$R$S$T$U$V$W$X$Y$Z" +
@@ -85,7 +90,7 @@ public class Barcode39 extends Barcode1D {
      */
     public Barcode39(PdfDocument document) {
         super(document);
-        try{
+        try {
             x = 0.8f;
             n = 2;
             font = PdfFont.createStandardFont(document, FontConstants.HELVETICA, PdfEncodings.WINANSI);
@@ -96,23 +101,28 @@ public class Barcode39 extends Barcode1D {
             checksumText = false;
             startStopText = true;
             extended = false;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
     }
 
-    /** Creates the bars.
+    /**
+     * Creates the bars.
+     *
      * @param text the text to create the bars. This text does not include the start and
-     * stop characters
+     *             stop characters
      * @return the bars
      */
     public static byte[] getBarsCode39(String text) {
         text = "*" + text + "*";
-        byte[] bars= new byte[text.length() * 10 - 1];
+        byte[] bars = new byte[text.length() * 10 - 1];
         for (int k = 0; k < text.length(); ++k) {
-            int idx = CHARS.indexOf(text.charAt(k));
-            if (idx < 0) {
+            char ch = text.charAt(k);
+            int idx = CHARS.indexOf(ch);
+            if(ch == '*' && k != 0 && k != (text.length() - 1)){
+                throw new IllegalArgumentException("The character " + ch + " is illegal in code 39");
+            }
+            if (idx < 0 ) {
                 throw new IllegalArgumentException("The character " + text.charAt(k) + " is illegal in code 39");
             }
             System.arraycopy(BARS[idx], 0, bars, k * 10, 9);
@@ -120,8 +130,10 @@ public class Barcode39 extends Barcode1D {
         return bars;
     }
 
-    /** Converts the extended text into a normal, escaped text,
+    /**
+     * Converts the extended text into a normal, escaped text,
      * ready to generate bars.
+     *
      * @param text the extended text
      * @return the escaped text
      */
@@ -142,7 +154,9 @@ public class Barcode39 extends Barcode1D {
         return out.toString();
     }
 
-    /** Calculates the checksum.
+    /**
+     * Calculates the checksum.
+     *
      * @param text the text
      * @return the checksum
      */
@@ -150,6 +164,10 @@ public class Barcode39 extends Barcode1D {
         int chk = 0;
         for (int k = 0; k < text.length(); ++k) {
             int idx = CHARS.indexOf(text.charAt(k));
+            char ch = text.charAt(k);
+            if(ch == '*' && k != 0 && k != (text.length() - 1)){
+                throw new IllegalArgumentException("The character " + ch + " is illegal in code 39");
+            }
             if (idx < 0) {
                 throw new IllegalArgumentException("The character " + text.charAt(k) + " is illegal in code 39");
             }
@@ -158,8 +176,10 @@ public class Barcode39 extends Barcode1D {
         return CHARS.charAt(chk % 43);
     }
 
-    /** Gets the maximum area that the barcode and the text, if
+    /**
+     * Gets the maximum area that the barcode and the text, if
      * any, will occupy. The lower left corner is always (0, 0).
+     *
      * @return the size the barcode occupies.
      */
     @Override
@@ -195,39 +215,41 @@ public class Barcode39 extends Barcode1D {
         return new Rectangle(fullWidth, fullHeight);
     }
 
-    /** Places the barcode in a <CODE>PdfCanvas</CODE>. The
+    /**
+     * Places the barcode in a <CODE>PdfCanvas</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
      * The bars and text are written in the following colors:<p>
      * <P><TABLE BORDER=1>
      * <TR>
-     *    <TH><P><CODE>barColor</CODE></TH>
-     *    <TH><P><CODE>textColor</CODE></TH>
-     *    <TH><P>Result</TH>
-     *    </TR>
+     * <TH><P><CODE>barColor</CODE></TH>
+     * <TH><P><CODE>textColor</CODE></TH>
+     * <TH><P>Result</TH>
+     * </TR>
      * <TR>
-     *    <TD><P><CODE>null</CODE></TD>
-     *    <TD><P><CODE>null</CODE></TD>
-     *    <TD><P>bars and text painted with current fill color</TD>
-     *    </TR>
+     * <TD><P><CODE>null</CODE></TD>
+     * <TD><P><CODE>null</CODE></TD>
+     * <TD><P>bars and text painted with current fill color</TD>
+     * </TR>
      * <TR>
-     *    <TD><P><CODE>barColor</CODE></TD>
-     *    <TD><P><CODE>null</CODE></TD>
-     *    <TD><P>bars and text painted with <CODE>barColor</CODE></TD>
-     *    </TR>
+     * <TD><P><CODE>barColor</CODE></TD>
+     * <TD><P><CODE>null</CODE></TD>
+     * <TD><P>bars and text painted with <CODE>barColor</CODE></TD>
+     * </TR>
      * <TR>
-     *    <TD><P><CODE>null</CODE></TD>
-     *    <TD><P><CODE>textColor</CODE></TD>
-     *    <TD><P>bars painted with current color<br>text painted with <CODE>textColor</CODE></TD>
-     *    </TR>
+     * <TD><P><CODE>null</CODE></TD>
+     * <TD><P><CODE>textColor</CODE></TD>
+     * <TD><P>bars painted with current color<br>text painted with <CODE>textColor</CODE></TD>
+     * </TR>
      * <TR>
-     *    <TD><P><CODE>barColor</CODE></TD>
-     *    <TD><P><CODE>textColor</CODE></TD>
-     *    <TD><P>bars painted with <CODE>barColor</CODE><br>text painted with <CODE>textColor</CODE></TD>
-     *    </TR>
+     * <TD><P><CODE>barColor</CODE></TD>
+     * <TD><P><CODE>textColor</CODE></TD>
+     * <TD><P>bars painted with <CODE>barColor</CODE><br>text painted with <CODE>textColor</CODE></TD>
+     * </TR>
      * </TABLE>
-     * @param canvas the <CODE>PdfCanvas</CODE> where the barcode will be placed
-     * @param barColor the color of the bars. It can be <CODE>null</CODE>
+     *
+     * @param canvas    the <CODE>PdfCanvas</CODE> where the barcode will be placed
+     * @param barColor  the color of the bars. It can be <CODE>null</CODE>
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the dimensions the barcode occupies
      */
@@ -311,8 +333,10 @@ public class Barcode39 extends Barcode1D {
         return getBarcodeSize();
     }
 
-    /** Creates a <CODE>java.awt.Image</CODE>. This image only
+    /**
+     * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
+     *
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
@@ -330,12 +354,12 @@ public class Barcode39 extends Barcode1D {
             bCode += getChecksum(bCode);
         }
         int len = bCode.length() + 2;
-        int nn = (int)n;
+        int nn = (int) n;
         int fullWidth = len * (6 + 3 * nn) + (len - 1);
         byte[] bars = getBarsCode39(bCode);
         boolean print = true;
         int ptr = 0;
-        int height = (int)barHeight;
+        int height = (int) barHeight;
         int[] pix = new int[fullWidth * height];
         for (int k = 0; k < bars.length; ++k) {
             int w = (bars[k] == 0 ? 1 : nn);
