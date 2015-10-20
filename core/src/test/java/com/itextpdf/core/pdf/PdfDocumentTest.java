@@ -1,6 +1,8 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.LogMessageConstant;
+import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.basics.io.*;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
@@ -10,14 +12,20 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 
 import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -1657,5 +1665,28 @@ public class PdfDocumentTest extends ExtendedITextTest {
         } else {
             verifyPdfPagesCount(kids);
         }
+    }
+
+    @Test
+    public void testImageCompressLevel() throws IOException {
+        byte[] b = ImageFactory.getImage(sourceFolder+"berlin2013.jpg").getData();
+        com.itextpdf.basics.io.ByteArrayOutputStream image =  new com.itextpdf.basics.io.ByteArrayOutputStream();
+        image.assignBytes(b,b.length);
+
+        ByteArrayOutputStream byteArrayStream1 = new com.itextpdf.basics.io.ByteArrayOutputStream();
+        Deflater deflater = new Deflater(9);
+        DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream1, deflater);
+        image.writeTo(zip);
+        zip.close();
+
+        ByteArrayOutputStream byteArrayStream2 = new com.itextpdf.basics.io.ByteArrayOutputStream();
+        Deflater deflater2 = new Deflater(-1);
+        DeflaterOutputStream zip2 = new DeflaterOutputStream(byteArrayStream2, deflater2);
+        image.writeTo(zip2);
+        zip2.close();
+        deflater2.end();
+
+        Assert.assertTrue(byteArrayStream1.size() == byteArrayStream2.size());
+
     }
 }
