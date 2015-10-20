@@ -2,7 +2,6 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.io.*;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
@@ -11,9 +10,10 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.text.DocumentException;
 
-import java.io.*;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.zip.Deflater;
@@ -25,7 +25,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
