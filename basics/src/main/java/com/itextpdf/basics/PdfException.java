@@ -28,7 +28,7 @@ public class PdfException extends RuntimeException {
     public static final String BitsPerSample1IsNotSupported = "bits.per.sample.1.is.not.supported";
     public static final String BmpImageException = "bmp.image.exception";
     public static final String BytesCanBeAssignedToByteArrayOutputStreamOnly = "bytes.can.be.assigned.to.bytearrayoutputstream.only";
-
+    public static final String BytesCanBeResetInByteArrayOutputStreamOnly = "bytes.can.be.reset.in.bytearrayoutputstream.only";
 
     public static final String CannotAddObjectToObjectstream = "cannot.add.object.to.objectstream";
     public static final String CannotAddStructElemToContent = "cannot.add.structelem.to.content";
@@ -49,8 +49,10 @@ public class PdfException extends RuntimeException {
     public static final String CannotHandleBoxSizesHigherThan2_32 = "cannot.handle.box.sizes.higher.than.2.32";
     public static final String CannotInflateTiffImage = "cannot.inflate.tiff.image";
     public static final String CannotOpenDocument = "cannot.open.document";
+    public static final String CannotReadAStreamInOrderToAppendNewBytesReason1 = "cannot.read.a.stream.in.order.to.append.new.bytes.reason.1";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
     public static final String CannotReadTiffImage = "cannot.read.tiff.image";
+    public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotWriteByte = "cannot.write.byte";
     public static final String CannotWriteBytes = "cannot.write.bytes";
     public static final String CannotWriteFloatNumber = "cannot.write.float.number";
@@ -163,7 +165,6 @@ public class PdfException extends RuntimeException {
     public static final String NoValidEncryptionMode = "no.valid.encryption.mode";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
     public static final String OnlyBmpCanBeWrappedInWmf = "only.bmp.can.be.wrapped.in.wmf";
-    public static final String OnlyOneOfArtboxOrTrimBoxCanExistInThePage ="only.one.of.artbox.or.trimbox.can.exist.in.the.page";
     public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.instead";
     public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "page.1.cannot.be.added.to.document.2.because.it.belongs.to.document.3";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";

@@ -179,6 +179,7 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
+        markObjectAsMustBeFlushed(pdfObject);
         if (isClosing || checker.objectIsChecked(pdfObject)) {
             super.flushObject(pdfObject, canBeInObjStm);
         } else {

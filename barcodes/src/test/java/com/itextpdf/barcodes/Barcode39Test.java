@@ -1,6 +1,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.color.Color;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -70,5 +71,16 @@ public class Barcode39Test {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void barcode03Test() {
+
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        PdfDocument document = new PdfDocument(writer);
+        Barcode39 barcode = new Barcode39(document);
+        barcode.getBarsCode39("9781935*182610");
+
+
     }
 }
