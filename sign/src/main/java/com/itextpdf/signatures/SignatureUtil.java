@@ -293,7 +293,7 @@ public class SignatureUtil {
     }
 
     // TODO: copied from iText 5 PdfArray.asLongArray
-    public long[] asLongArray(PdfArray arr) {
+    public static long[] asLongArray(PdfArray arr) {
         long[] rslt = new long[arr.size()];
 
         for (int k = 0; k < rslt.length; ++k) {
