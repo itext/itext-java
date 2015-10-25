@@ -1,47 +1,3 @@
-/*
- * $Id$
- *
- * This file is part of the iText (R) project.
- * Copyright (c) 1998-2015 iText Group NV
- * Authors: Bruno Lowagie, Paulo Soares, et al.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License version 3
- * as published by the Free Software Foundation with the addition of the
- * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
- * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
- * OF THIRD PARTY RIGHTS
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * You should have received a copy of the GNU Affero General Public License
- * along with this program; if not, see http://www.gnu.org/licenses or write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA, 02110-1301 USA, or download the license from the following URL:
- * http://itextpdf.com/terms-of-use/
- *
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public License,
- * a covered work must retain the producer line in every PDF that is created
- * or manipulated using iText.
- *
- * You can be released from the requirements of the license by purchasing
- * a commercial license. Buying such a license is mandatory as soon as you
- * develop commercial activities involving the iText software without
- * disclosing the source code of your own applications.
- * These activities include: offering paid services to customers as an ASP,
- * serving PDFs on the fly in a web application, shipping iText with a closed
- * source product.
- *
- * For more information, please contact iText Software Corp. at this
- * address: sales@itextpdf.com
- */
 package com.itextpdf.signatures;
 
 import com.itextpdf.basics.geom.Rectangle;
@@ -606,16 +562,19 @@ public class PdfSignatureAppearance {
                     break;
             }
 
-            if(renderingMode != RenderingMode.GRAPHIC) {
+            if (renderingMode != RenderingMode.GRAPHIC) {
                 List<String> splittedText = font.splitString(text, (int) layer2FontSize, dataRect.getWidth());
                 PdfCanvas canvas = new PdfCanvas(n2, document);
 
+                float x = dataRect.getLeft();
+                float y = dataRect.getTop();
+
                 canvas.setFontAndSize(font, layer2FontSize);
                 canvas.beginText();
-                canvas.setTextMatrix(dataRect.getLeft(), dataRect.getTop() - layer2FontSize);
+                canvas.setTextMatrix(x, y);
 
                 for (String str : splittedText) {
-                    canvas.newlineText();
+                    canvas.moveText(0, -layer2FontSize);
                     canvas.showText(str);
                 }
 
@@ -1035,15 +994,22 @@ public class PdfSignatureAppearance {
      */
     public void preClose(HashMap<PdfName, Integer> exclusionSizes) throws IOException {
         if (preClosed) {
-            throw new RuntimeException("document.already.pre.closed");
+            throw new RuntimeException("document.already.pre.closed"); // TODO: correct the message
         }
+
+        // TODO: add mergeVerification functionality
 
         preClosed = true;
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
+        SignatureUtil sgnUtil = new SignatureUtil(document);
         String name = getFieldName();
-        boolean fieldExist = acroForm.getField(fieldName) != null;
+        boolean fieldExist = sgnUtil.doesSignatureFieldExist(name);
         acroForm.setSignatureFlags(PdfAcroForm.SIGNATURE_EXIST | PdfAcroForm.APPEND_ONLY);
         PdfSigFieldLockDictionary fieldLock = null;
+
+        if (cryptoDictionary == null) {
+            throw new /*DocumentException*/RuntimeException("No crypto dictionary defined."); // TODO: correct the message
+        }
 
         cryptoDictionary.getPdfObject().makeIndirect(document);
 
@@ -1051,7 +1017,9 @@ public class PdfSignatureAppearance {
             PdfSignatureFormField sigField = (PdfSignatureFormField) acroForm.getField(fieldName);
             sigField.put(PdfName.V, cryptoDictionary);
 
-            if (sigField.getSigFieldLockDictionary() == null && this.fieldLock != null) {
+            fieldLock = sigField.getSigFieldLockDictionary();
+
+            if (fieldLock == null && this.fieldLock != null) {
                 this.fieldLock.getPdfObject().makeIndirect(document);
                 sigField.put(PdfName.Lock, this.fieldLock);
                 fieldLock = this.fieldLock;
@@ -1098,35 +1066,33 @@ public class PdfSignatureAppearance {
 
             ap.put(PdfName.N, getAppearance().getPdfObject());
             acroForm.addField(sigField, document.getPage(pagen));
+            acroForm.setModified(); // TODO: test this (ain't sure whether I need this)
         }
 
-        exclusionLocations = new HashMap<PdfName, PdfLiteral>();
-        if (cryptoDictionary == null) {
-            throw new /*DocumentException*/RuntimeException("No crypto dictionary defined.");
+        exclusionLocations = new HashMap<>();
+
+        PdfLiteral lit = new PdfLiteral(80);
+        exclusionLocations.put(PdfName.ByteRange, lit);
+        cryptoDictionary.put(PdfName.ByteRange, lit);
+        for (Map.Entry<PdfName, Integer> entry: exclusionSizes.entrySet()) {
+            PdfName key = entry.getKey();
+            Integer v = entry.getValue();
+            lit = new PdfLiteral(v.intValue());
+            exclusionLocations.put(key, lit);
+            cryptoDictionary.put(key, lit);
         }
-        else {
-            PdfLiteral lit = new PdfLiteral(80);
-            exclusionLocations.put(PdfName.ByteRange, lit);
-            cryptoDictionary.put(PdfName.ByteRange, lit);
-            for (Map.Entry<PdfName, Integer> entry: exclusionSizes.entrySet()) {
-                PdfName key = entry.getKey();
-                Integer v = entry.getValue();
-                lit = new PdfLiteral(v.intValue());
-                exclusionLocations.put(key, lit);
-                cryptoDictionary.put(key, lit);
-            }
-            if (certificationLevel > 0)
-                addDocMDP(cryptoDictionary);
-            if (fieldLock != null)
-                addFieldMDP(cryptoDictionary, fieldLock);
-            if (signatureEvent != null)
-                signatureEvent.getSignatureDictionary(cryptoDictionary);
-        }
+        if (certificationLevel > 0)
+            addDocMDP(cryptoDictionary);
+        if (fieldLock != null)
+            addFieldMDP(cryptoDictionary, fieldLock);
+        if (signatureEvent != null)
+            signatureEvent.getSignatureDictionary(cryptoDictionary);
+
         if (certificationLevel > 0) {
             // add DocMDP entry to root
             PdfDictionary docmdp = new PdfDictionary();
             docmdp.put(PdfName.DocMDP, cryptoDictionary.getPdfObject());
-            document.getCatalog().put(PdfName.Perms, docmdp);
+            document.getCatalog().put(PdfName.Perms, docmdp); // TODO: setModified?
         }
 
         document.close();
@@ -1135,10 +1101,10 @@ public class PdfSignatureAppearance {
         long byteRangePosition = exclusionLocations.get(PdfName.ByteRange).getPosition();
         exclusionLocations.remove(PdfName.ByteRange);
         int idx = 1;
-        for (PdfLiteral lit: exclusionLocations.values()) {
-            long n = lit.getPosition();
+        for (PdfLiteral lit1: exclusionLocations.values()) {
+            long n = lit1.getPosition();
             range[idx++] = n;
-            range[idx++] = lit.getBytesCount() + n;
+            range[idx++] = lit1.getBytesCount() + n;
         }
         Arrays.sort(range, 1, range.length - 1);
         for (int k = 3; k < range.length - 2; k += 2)
@@ -1197,11 +1163,11 @@ public class PdfSignatureAppearance {
                 PdfObject obj = update.get(key);
                 PdfLiteral lit = exclusionLocations.get(key);
                 if (lit == null)
-                    throw new IllegalArgumentException("the.key.1.didn.t.reserve.space.in.preclose");
+                    throw new IllegalArgumentException("the.key.1.didn.t.reserve.space.in.preclose"); // TODO: correct the message
                 bous.reset();
                 os.write(obj);
                 if (bous.size() > lit.getBytesCount())
-                    throw new IllegalArgumentException("the.key.1.is.too.big.is.2.reserved.3");
+                    throw new IllegalArgumentException("the.key.1.is.too.big.is.2.reserved.3"); // TODO: correct the message
                 if (tempFile == null) {
                     System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), bous.size());
                 } else {
@@ -1210,7 +1176,7 @@ public class PdfSignatureAppearance {
                 }
             }
             if (update.size() != exclusionLocations.size())
-                throw new IllegalArgumentException("the.update.dictionary.has.less.keys.than.required");
+                throw new IllegalArgumentException("the.update.dictionary.has.less.keys.than.required"); // TODO: correct the message
             if (tempFile == null) {
                 originalOS.write(bout, 0, bout.length);
             } else {
@@ -1221,7 +1187,7 @@ public class PdfSignatureAppearance {
                     while (length > 0) {
                         int r = raf.read(buf, 0, (int)Math.min((long)buf.length, length));
                         if (r < 0)
-                            throw new EOFException("unexpected.eof");
+                            throw new EOFException("unexpected.eof"); // TODO: correct the message
                         originalOS.write(buf, 0, r);
                         length -= r;
                     }
@@ -1229,7 +1195,6 @@ public class PdfSignatureAppearance {
             }
         }
         finally {
-            // TODO: should I close reader?
             if (tempFile != null) {
                 raf.close();
 

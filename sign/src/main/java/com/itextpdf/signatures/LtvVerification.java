@@ -236,7 +236,7 @@ public class LtvVerification {
     }
 
     private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
-        PdfDictionary dic = acroForm.getField(signatureName).getPdfObject().getAsDictionary(PdfName.V); // TODO: refactor
+        PdfDictionary dic = sgnUtil.getSignatureDictionary(signatureName);
         PdfString contents = dic.getAsString(PdfName.Contents);
         byte[] bc = PdfEncodings.convertToBytes(contents.getValue(), null);
         byte[] bt = null;

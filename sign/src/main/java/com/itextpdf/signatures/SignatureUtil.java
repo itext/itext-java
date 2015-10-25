@@ -282,6 +282,16 @@ public class SignatureUtil {
         }
     }
 
+    /**
+     * Checks whether a name exists as a signature field or not. It checks both signed fields and blank signatures.
+     * @param name String
+     * @return boolean does the signature field exist
+     * @since 5.5.1
+     */
+    public boolean doesSignatureFieldExist(String name) {
+        return getBlankSignatureNames().contains(name) || getSignatureNames().contains(name);
+    }
+
     // TODO: refactor. Copied from PdfString.getValueBytes
     public byte[] getValueBytes(PdfString str) {
         String encoding = str.getEncoding();
