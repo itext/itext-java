@@ -3,14 +3,17 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.geom.PageSize;
+import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfResources;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutResult;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,7 @@ public class DocumentRenderer extends AbstractRenderer {
     protected boolean immediateFlush = true;
     protected LayoutArea currentArea = null;
     protected int currentPageNumber = 0;
+    protected List wrappedContentPage = new ArrayList();
 
     public DocumentRenderer(Document document) {
         this(document, true);
@@ -162,7 +166,17 @@ public class DocumentRenderer extends AbstractRenderer {
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         if (!resultRenderer.isFlushed()) {
             ensureDocumentHasNPages(resultRenderer.getOccupiedArea().getPageNumber());
-            PdfPage correspondingPage = document.getPdfDocument().getPage(resultRenderer.getOccupiedArea().getPageNumber());
+            int pageNum = resultRenderer.getOccupiedArea().getPageNumber();
+            PdfPage correspondingPage = document.getPdfDocument().getPage(pageNum);
+
+            if(document.getPdfDocument().getReader() != null && document.getPdfDocument().getWriter() != null){
+                if(!wrappedContentPage.contains(pageNum)) {
+                    correspondingPage.newContentStreamBefore().getOutputStream().writeBytes(OutputStream.getIsoBytes("q\n"));
+                    correspondingPage.newContentStreamAfter().getOutputStream().writeBytes(OutputStream.getIsoBytes("Q\n"));
+                    wrappedContentPage.add(pageNum);
+                }
+            }
+
             resultRenderer.draw(document.getPdfDocument(), new PdfCanvas(correspondingPage));
         }
     }
