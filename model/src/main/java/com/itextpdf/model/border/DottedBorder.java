@@ -15,6 +15,11 @@ public class DottedBorder extends Border {
     }
 
     @Override
+    public int getType() {
+        return 2;
+    }
+
+    @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float initialGap = width * gapModifier;
         float dx = x2 - x1;
@@ -54,6 +59,29 @@ public class DottedBorder extends Border {
                 .moveTo(x1, y1).lineTo(x2, y2)
                 .stroke();
 
+    }
+
+    @Override
+    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+        float initialGap = width * gapModifier;
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        double borderLength = Math.sqrt(dx * dx + dy * dy);
+
+        float adjustedGap = getDotsGap(borderLength, initialGap + width);
+        if (adjustedGap > width) {
+            adjustedGap -= width;
+        }
+
+        canvas.
+                saveState().
+                setLineWidth(width).
+                setStrokeColor(color).
+                setLineDash(width, adjustedGap, width + adjustedGap / 2).
+                moveTo(x1, y1).
+                lineTo(x2, y2).
+                stroke().
+                restoreState();
     }
 
     protected float getDotsGap(double distance, float initialGap) {

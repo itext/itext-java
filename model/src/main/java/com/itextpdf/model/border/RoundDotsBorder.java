@@ -16,6 +16,11 @@ public class RoundDotsBorder extends Border {
     }
 
     @Override
+    public int getType() {
+        return 4;
+    }
+
+    @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float initialGap = width * gapModifier;
         float dx = x2 - x1;
@@ -43,6 +48,31 @@ public class RoundDotsBorder extends Border {
                 x1 -= widthHalf;
                 x2 -= widthHalf;
                 break;
+        }
+
+        canvas.setStrokeColor(color);
+        canvas.setLineWidth(width);
+        canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
+
+        canvas.setLineDash(0, adjustedGap, adjustedGap/2)
+                .moveTo(x1, y1).lineTo(x2, y2)
+                .stroke();
+    }
+
+    @Override
+    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+        float initialGap = width * gapModifier;
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        double borderLength = Math.sqrt(dx * dx + dy * dy);
+        float adjustedGap = getDotsGap(borderLength, initialGap);
+        boolean isHorizontal = false;
+        if (Math.abs(y2 - y1) < 0.0005f) {
+            isHorizontal = true;
+        }
+
+        if (isHorizontal) {
+            x2 -= width;
         }
 
         canvas.setStrokeColor(color);
