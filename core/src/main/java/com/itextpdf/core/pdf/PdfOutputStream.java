@@ -129,7 +129,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     }
 
     public PdfOutputStream write(PdfObject pdfObject) {
-        if (pdfObject.checkState(PdfObject.MustBeIndirect)) {
+        if (pdfObject.checkState(PdfObject.MustBeIndirect) && document != null) {
             pdfObject.makeIndirect(document);
             pdfObject = pdfObject.getIndirectReference();
         }
@@ -316,7 +316,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         try {
             boolean userDefinedCompression = pdfStream.getCompressionLevel() != UNDEFINED_COMPRESSION;
             if (!userDefinedCompression) {
-               pdfStream.setCompressionLevel(document.getWriter().getCompressionLevel());
+                int defaultCompressionLevel = document != null ?
+                        document.getWriter().getCompressionLevel() :
+                        DEFAULT_COMPRESSION;
+                pdfStream.setCompressionLevel(defaultCompressionLevel);
             }
             boolean toCompress = pdfStream.getCompressionLevel() != NO_COMPRESSION;
             boolean allowCompression = !pdfStream.containsKey(PdfName.Filter) && isNotMetadataPdfStream(pdfStream);

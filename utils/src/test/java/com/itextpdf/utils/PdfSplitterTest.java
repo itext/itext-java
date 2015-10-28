@@ -32,7 +32,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
 
     @BeforeClass
     static public void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -153,7 +153,6 @@ public class PdfSplitterTest extends ExtendedITextTest{
     }
 
     @Test
-    @Ignore
     public void splitDocumentBySize() throws IOException, InterruptedException {
         String inputFileName = sourceFolder + "splitBySize.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
