@@ -39,7 +39,6 @@ public class PdfFormXObject extends PdfXObject {
         getPdfObject().getOutputStream().writeBytes(page.getContentBytes());
         resources = new PdfResources((PdfDictionary)page.getResources().getPdfObject().clone());
         getPdfObject().put(PdfName.Resources, resources.getPdfObject());
-
     }
 
     public PdfResources getResources() {
