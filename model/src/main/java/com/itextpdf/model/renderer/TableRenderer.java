@@ -358,8 +358,12 @@ public class TableRenderer extends AbstractRenderer {
         return new TableRenderer[] {splitRenderer, overflowRenderer};
     }
 
-    protected TableRenderer createSplitRenderer(Table.RowRange rowRange) {
-        TableRenderer splitRenderer = new TableRenderer((Table) modelElement, rowRange);
+    protected <T extends TableRenderer> T makeSplitRenderer(Table.RowRange rowRange) {
+        return (T) new TableRenderer((Table) modelElement, rowRange);
+    }
+
+    protected <T extends TableRenderer> T createSplitRenderer(Table.RowRange rowRange) {
+        TableRenderer splitRenderer = makeSplitRenderer(rowRange);
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         // TODO childRenderers will be populated twice during the relayout.
@@ -368,16 +372,20 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.addAllProperties(getOwnProperties());
         splitRenderer.headerRenderer = headerRenderer;
         splitRenderer.footerRenderer = footerRenderer;
-        return splitRenderer;
+        return (T) splitRenderer;
     }
 
-    protected TableRenderer createOverflowRenderer(Table.RowRange rowRange) {
-        TableRenderer overflowRenderer = new TableRenderer((Table) modelElement, rowRange);
+    protected <T extends TableRenderer> T makeOverflowRenderer(Table.RowRange rowRange) {
+        return (T) new TableRenderer((Table) modelElement, rowRange);
+    }
+
+    protected <T extends TableRenderer> T createOverflowRenderer(Table.RowRange rowRange) {
+        TableRenderer overflowRenderer = makeOverflowRenderer(rowRange);
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
         overflowRenderer.isOriginalNonSplitRenderer = false;
-        return overflowRenderer;
+        return (T) overflowRenderer;
     }
 
     /**
