@@ -212,8 +212,6 @@ class PdfPagesTree {
             throw new PdfException(PdfException.DocumentHasNoPages);
         if (generated)
             throw new PdfException(PdfException.PdfPagesTreeCouldBeGeneratedOnlyOnce);
-        pageRefs = null;
-        pages = null;
 
         if (root == null) {
             while (parents.size() != 1) {
@@ -242,6 +240,11 @@ class PdfPagesTree {
         }
         generated = true;
         return root.getPdfObject();
+    }
+
+    protected void clearPageRefs() {
+        pageRefs = null;
+        pages = null;
     }
 
     protected ArrayList<PdfPages> getParents() {

@@ -278,6 +278,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param flushXObjects if true the images and FormXObjects associated with this page will also be flushed.
      */
     public void flush(boolean flushXObjects) {
+        if (isFlushed()) {
+            return;
+        }
         if (getDocument().isTagged() && structParents == null) {
             PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
             if (n != null)
