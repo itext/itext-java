@@ -67,6 +67,28 @@ class PdfPagesTree {
     }
 
     /**
+     * Returns the {@see PdfPage} by page's PdfDictionary.
+     *
+     * @param pageDictionary page's PdfDictionary
+     * @return the {@code PdfPage} object, that wraps {@code pageDictionary}.
+     */
+    public PdfPage getPage(PdfDictionary pageDictionary) {
+        int pageNum = pageRefs.indexOf(pageDictionary);
+        if (pageNum >= 0) {
+            return getPage(pageNum + 1);
+        }
+        for (int i = 0; i < pageRefs.size(); i++) {
+            if (pageRefs.get(i) == null) {
+                loadPage(i);
+            }
+            if (pageRefs.get(i).equals(pageDictionary)) {
+                return getPage(i + 1);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Gets total number of @see PdfPages.
      * @return total number of pages
      */

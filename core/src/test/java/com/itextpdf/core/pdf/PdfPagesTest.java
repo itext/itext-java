@@ -268,8 +268,6 @@ public class PdfPagesTest extends ExtendedITextTest{
 
     @Test@Ignore
     public void testInheritedResourcesUpdate() throws IOException {
-
-
         String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
         PdfReader reader1 = new PdfReader(inputFileName1);
 
@@ -285,6 +283,29 @@ public class PdfPagesTest extends ExtendedITextTest{
         pdfDoc.close();
 
         Assert.assertEquals(2, fontCount);
+    }
+
+    @Test
+    public void getPageByDictionary() throws IOException {
+        String filename = sourceFolder + "1000PagesDocument.pdf";
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfObject[] pageDictionaries =  new PdfObject[] {
+                pdfDoc.getPdfObject(4),
+                pdfDoc.getPdfObject(255),
+                pdfDoc.getPdfObject(512),
+                pdfDoc.getPdfObject(1023),
+                pdfDoc.getPdfObject(2049),
+                pdfDoc.getPdfObject(3100)
+        };
+
+        for (PdfObject pageObject: pageDictionaries) {
+            PdfDictionary pageDictionary = (PdfDictionary) pageObject;
+            Assert.assertEquals(PdfName.Page, pageDictionary.get(PdfName.Type));
+            PdfPage page = pdfDoc.getCatalog().getPage(pageDictionary);
+            Assert.assertEquals(pageDictionary, page.getPdfObject());
+        }
+        pdfDoc.close();
     }
 
 
