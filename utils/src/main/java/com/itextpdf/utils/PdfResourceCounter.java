@@ -114,7 +114,7 @@ public class PdfResourceCounter {
                 }
             });
 
-            os.write(resources.get(ref));
+            os.write((PdfObject)resources.get(ref).clone());
             length += os.getCurrentPos() - 1;
         }
 

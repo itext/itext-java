@@ -14,6 +14,11 @@ public class SolidBorder extends Border {
     }
 
     @Override
+    public int getType() {
+        return 0;
+    }
+
+    @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
         float x4 = 0, y4 = 0;
@@ -48,5 +53,17 @@ public class SolidBorder extends Border {
 
         canvas.setFillColor(color);
         canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
+    }
+
+    @Override
+    public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+        canvas.
+                saveState().
+                moveTo(x1, y1).
+                setStrokeColor(color).
+                setLineWidth(width).
+                lineTo(x2, y2).
+                stroke().
+                restoreState();
     }
 }

@@ -104,6 +104,7 @@ public class TableRenderer extends AbstractRenderer {
         // Usually this is just the current row id of a cell, but it has valuable meaning when a cell has rowspan.
         int[] targetOverflowRowIndex = new int[tableModel.getNumberOfColumns()];
 
+        horizontalBorders[0] = tableModel.getLastRowBottomBorder();
         for (int row = 0; row < rows.size(); row++) {
             CellRenderer[] currentRow = rows.get(row);
             for (int col = 0; col < currentRow.length; col++) {
@@ -357,8 +358,12 @@ public class TableRenderer extends AbstractRenderer {
         return new TableRenderer[] {splitRenderer, overflowRenderer};
     }
 
-    protected TableRenderer createSplitRenderer(Table.RowRange rowRange) {
-        TableRenderer splitRenderer = new TableRenderer((Table) modelElement, rowRange);
+    protected <T extends TableRenderer> T makeSplitRenderer(Table.RowRange rowRange) {
+        return (T) new TableRenderer((Table) modelElement, rowRange);
+    }
+
+    protected <T extends TableRenderer> T createSplitRenderer(Table.RowRange rowRange) {
+        TableRenderer splitRenderer = makeSplitRenderer(rowRange);
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         // TODO childRenderers will be populated twice during the relayout.
@@ -367,16 +372,20 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.addAllProperties(getOwnProperties());
         splitRenderer.headerRenderer = headerRenderer;
         splitRenderer.footerRenderer = footerRenderer;
-        return splitRenderer;
+        return (T) splitRenderer;
     }
 
-    protected TableRenderer createOverflowRenderer(Table.RowRange rowRange) {
-        TableRenderer overflowRenderer = new TableRenderer((Table) modelElement, rowRange);
+    protected <T extends TableRenderer> T makeOverflowRenderer(Table.RowRange rowRange) {
+        return (T) new TableRenderer((Table) modelElement, rowRange);
+    }
+
+    protected <T extends TableRenderer> T createOverflowRenderer(Table.RowRange rowRange) {
+        TableRenderer overflowRenderer = makeOverflowRenderer(rowRange);
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
         overflowRenderer.isOriginalNonSplitRenderer = false;
-        return overflowRenderer;
+        return (T) overflowRenderer;
     }
 
     /**
@@ -451,15 +460,16 @@ public class TableRenderer extends AbstractRenderer {
                         rend.setBorders(cellBorders[0], 2);
                     }
                 } else {
-                    CellRenderer rend = rows.get(row - rowspan + 1)[colN];
-                    if (rend != null) {
-                        rend.setBorders(horizontalBorders[row + 1 - rowspan][i], 0);
+                    if (cell != null) {
+                        cell.setBorders(horizontalBorders[row + 1 - rowspan][i], 0);
                     }
                 }
             }
         } else {
             for (int i = 0; i < colspan; i++ ) {
-                horizontalBorders[0][colN + i] = cellBorders[0];
+                if (!checkAndReplaceBorderInArray(horizontalBorders, 0, colN + i, cellBorders[0])) {
+                    cell.setBorders(horizontalBorders[0][i], 0);
+                }
             }
         }
         for (int i = 0; i < colspan; i++) {
@@ -534,41 +544,27 @@ public class TableRenderer extends AbstractRenderer {
             if (i == 0) {
                 if (verticalBorders != null && verticalBorders.length > 0 && verticalBorders[0].length > 0 && verticalBorders[verticalBorders.length - 1].length > 0) {
                     Border firstBorder = verticalBorders[0][0];
-                    Border lastBorder = verticalBorders[verticalBorders.length - 1][0];
                     if (firstBorder != null) {
                         x1 -= firstBorder.getWidth() / 2;
-                    }
-                    if (lastBorder != null) {
-                        x2 += lastBorder.getWidth() / 2;
                     }
                 }
             } else if(i == horizontalBorders.length - 1) {
                 if (verticalBorders != null && verticalBorders.length > 0 && verticalBorders[0].length > 0 && verticalBorders[verticalBorders.length - 1] != null && verticalBorders[verticalBorders.length - 1].length > 0
                         && verticalBorders[0] != null) {
                     Border firstBorder = verticalBorders[0][verticalBorders[verticalBorders.length - 1].length - 1];
-                    Border lastBorder = verticalBorders[verticalBorders.length - 1][verticalBorders[verticalBorders.length - 1].length - 1];
                     if (firstBorder != null) {
                         x1 -= firstBorder.getWidth() / 2;
                     }
-                    if (lastBorder != null) {
-                        x2 += lastBorder.getWidth() / 2;
-                    }
                 }
             }
+
             int j;
             for (j = 1; j < borders.length; j++) {
                 Border prevBorder = borders[j - 1];
                 Border curBorder = borders[j];
                 if (prevBorder != null) {
                     if (!prevBorder.equals(curBorder)) {
-                        canvas.
-                                saveState().
-                                moveTo(x1, y1).
-                                setStrokeColor(prevBorder.getColor()).
-                                setLineWidth(prevBorder.getWidth()).
-                                lineTo(x2, y1).
-                                stroke().
-                                restoreState();
+                        prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
                         x1 = x2;
                     }
                 } else {
@@ -582,14 +578,10 @@ public class TableRenderer extends AbstractRenderer {
 
             Border lastBorder = borders[j - 1];
             if (lastBorder != null) {
-                canvas.
-                        saveState().
-                        moveTo(x1, y1).
-                        setStrokeColor(lastBorder.getColor()).
-                        setLineWidth(lastBorder.getWidth()).
-                        lineTo(x2, y1).
-                        stroke().
-                        restoreState();
+                if (i == 0 || i == horizontalBorders.length - 1) {
+                    x2 += lastBorder.getWidth() / 2;
+                }
+                lastBorder.drawCellBorder(canvas, x1, y1, x2, y1);
             }
             if (i < heights.size()) {
                 y1 -= heights.get(i);
@@ -609,14 +601,7 @@ public class TableRenderer extends AbstractRenderer {
                 Border curBorder = borders[j];
                 if (prevBorder != null) {
                     if (!prevBorder.equals(curBorder)) {
-                        canvas.
-                                saveState().
-                                moveTo(x1, y1).
-                                setStrokeColor(prevBorder.getColor()).
-                                setLineWidth(prevBorder.getWidth()).
-                                lineTo(x1, y2).
-                                stroke().
-                                restoreState();
+                        prevBorder.drawCellBorder(canvas, x1, y1, x1, y2);
                         y1 = y2;
                     }
                 } else {
@@ -632,14 +617,7 @@ public class TableRenderer extends AbstractRenderer {
             }
             Border lastBorder = borders[j - 1];
             if (lastBorder != null) {
-                canvas.
-                        saveState().
-                        moveTo(x1, y1).
-                        setStrokeColor(lastBorder.getColor()).
-                        setLineWidth(lastBorder.getWidth()).
-                        lineTo(x1, y2).
-                        stroke().
-                        restoreState();
+                lastBorder.drawCellBorder(canvas, x1, y1, x1, y2);
             }
             if (i < columnWidths.length) {
                 x1 += columnWidths[i];

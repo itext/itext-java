@@ -571,7 +571,6 @@ public class PdfDocument implements IEventDispatcher {
     public void close() {
         try {
             isClosing = true;
-            removeAllHandlers();
             if (writer != null) {
                 if (catalog.isFlushed())
                     throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
@@ -650,6 +649,9 @@ public class PdfDocument implements IEventDispatcher {
                         }
                     }
 
+                    for(int pageNum = 1; pageNum <= getNumOfPages(); pageNum++) {
+                        getPage(pageNum).flush();
+                    }
                     catalog.getPdfObject().flush(false);
                     info.flush();
                     flushFonts();
@@ -704,6 +706,8 @@ public class PdfDocument implements IEventDispatcher {
                     writer.close();
                 }
             }
+            catalog.pageTree.clearPageRefs();
+            removeAllHandlers();
             if (reader != null && isCloseReader()) {
                 reader.close();
             }

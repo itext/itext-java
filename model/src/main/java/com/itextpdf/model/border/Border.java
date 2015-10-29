@@ -6,9 +6,16 @@ import com.itextpdf.canvas.color.Color;
 public abstract class Border {
 
     public static final Border NO_BORDER = null;
+    public static final int SOLID = 0;
+    public static final int DASHED = 1;
+    public static final int DOTTED = 2;
+    public static final int DOUBLE = 3;
+    public static final int ROUND_DOTS = 4;
+    public static final int _3D = 5;
 
     protected Color color;
     protected float width;
+    protected int type;
     private int hash;
 
     public Border(float width) {
@@ -46,6 +53,10 @@ public abstract class Border {
      */
     public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter);
 
+    public abstract void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2);
+
+    public abstract int getType();
+
     public Color getColor() {
         return color;
     }
@@ -61,7 +72,7 @@ public abstract class Border {
         }
         if (anObject instanceof Border) {
             Border anotherBorder = (Border) anObject;
-            if (anotherBorder.getColor() != this.getColor() || anotherBorder.getWidth() != this.getWidth()) {
+            if (anotherBorder.getType() != getType() || anotherBorder.getColor() != getColor() || anotherBorder.getWidth() != getWidth()) {
                 return false;
             }
         } else {

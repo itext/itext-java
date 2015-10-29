@@ -690,7 +690,7 @@ public class TableTest extends ExtendedITextTest{
         }
         doc.setRenderer(new DocumentRenderer(doc) {
             @Override
-            protected PageSize addNewPage() {
+            protected PageSize addNewPage(PageSize customPageSize) {
                 PageSize pageSize = currentPageNumber % 2 == 1 ? PageSize.A4 : PageSize.A4.rotate();
                 pdfDoc.addNewPage(pageSize);
                 return pageSize;

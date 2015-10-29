@@ -2,6 +2,7 @@ package com.itextpdf.model.element;
 
 import com.itextpdf.model.Document;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.border.Border;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.TableRenderer;
 
@@ -29,6 +30,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     // For large tables we might contain only a few rows, not all of them, other ones might have been flushed.
     private int rowWindowStart = 0;
     private Document document;
+    private Cell[] lastAddedRow;
 
     /**
      * Constructs a {@code Table} with the relative column widths.
@@ -323,7 +325,15 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      */
     @Override
     public void flush() {
+        Cell[] row = null;
+        if (!rows.isEmpty()) {
+            row = rows.get(rows.size() - 1);
+        }
+
         document.add(this);
+        if (row != null) {
+            lastAddedRow = row;
+        }
     }
 
     /**
@@ -354,6 +364,24 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
 
     public void setDocument(Document document) {
         this.document = document;
+    }
+
+    public Border[] getLastRowBottomBorder() {
+        Border[] horizontalBorder = new Border[getNumberOfColumns()];
+        if (lastAddedRow != null) {
+            for (int i = 0; i < lastAddedRow.length; i++) {
+                Cell cell = lastAddedRow[i];
+                if (cell != null) {
+                    Border border = cell.getProperty(Property.BORDER);
+                    if (border == null) {
+                        border = cell.getProperty(Property.BORDER_BOTTOM);
+                    }
+                    horizontalBorder[i] = border;
+                }
+            }
+        }
+
+        return horizontalBorder;
     }
 
     protected void calculateWidths() {

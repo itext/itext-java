@@ -11,6 +11,7 @@ import com.itextpdf.model.element.Div;
 import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.layout.LayoutArea;
+import com.itextpdf.model.layout.LayoutResult;
 import com.itextpdf.model.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -159,9 +160,9 @@ public class KeepTogetherTest extends ExtendedITextTest{
             int currentPageNumber;
 
             @Override
-            public LayoutArea getNextArea() {
+            public LayoutArea getNextArea(LayoutResult overflowResult) {
                 if (nextAreaNumber % 2 == 0) {
-                    currentPageNumber = super.getNextArea().getPageNumber();
+                    currentPageNumber = super.getNextArea(overflowResult).getPageNumber();
                     nextAreaNumber++;
                     return (currentArea = new LayoutArea(currentPageNumber, new Rectangle(100, 100, 100, 500)));
                 } else {

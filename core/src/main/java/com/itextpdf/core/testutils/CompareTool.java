@@ -645,13 +645,14 @@ public class CompareTool {
                         if (compareResult != null && currentPath != null)
                             compareResult.addError(currentPath, String.format("PdfDictionary %s entry: Expected: %s. Found: %s", key.toString(), cmpObj.toString(), outObj.toString()));
                         dictsAreSame = false;
-                    }
-                    String cmpName = cmpObj.toString().substring(cmpObj.toString().indexOf('+'));
-                    String outName = outObj.toString().substring(outObj.toString().indexOf('+'));
-                    if (!cmpName.equals(outName)) {
-                        if (compareResult != null && currentPath != null)
-                            compareResult.addError(currentPath, String.format("PdfDictionary %s entry: Expected: %s. Found: %s", key.toString(), cmpObj.toString(), outObj.toString()));
-                        dictsAreSame = false;
+                    } else {
+                        String cmpName = cmpObj.toString().substring(cmpObj.toString().indexOf('+'));
+                        String outName = outObj.toString().substring(outObj.toString().indexOf('+'));
+                        if (!cmpName.equals(outName)) {
+                            if (compareResult != null && currentPath != null)
+                                compareResult.addError(currentPath, String.format("PdfDictionary %s entry: Expected: %s. Found: %s", key.toString(), cmpObj.toString(), outObj.toString()));
+                            dictsAreSame = false;
+                        }
                     }
                     continue;
                 }

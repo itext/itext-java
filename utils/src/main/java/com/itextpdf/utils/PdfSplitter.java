@@ -28,6 +28,9 @@ public class PdfSplitter {
      * @param pdfDocument the document to be split.
      */
     public PdfSplitter(PdfDocument pdfDocument) {
+        if (pdfDocument.getWriter() != null) {
+            throw new PdfException(PdfException.CannotSplitDocumentThatIsBeingWritten);
+        }
         this.pdfDocument = pdfDocument;
     }
 
