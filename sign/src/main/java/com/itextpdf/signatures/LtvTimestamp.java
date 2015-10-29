@@ -27,10 +27,10 @@ public class LtvTimestamp {
      * @throws IOException
      * @throws GeneralSecurityException
      */
-    public static void timestamp(PdfSignatureAppearance sap, TSAClient tsa, String signatureName) throws IOException, GeneralSecurityException {
+    public static void timestamp(PdfSigner sap, TSAClient tsa, String signatureName) throws IOException, GeneralSecurityException {
         int contentEstimated = tsa.getTokenSizeEstimate();
         sap.addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL5);
-        sap.setVisibleSignature(new Rectangle(0,0,0,0), 1, signatureName);
+        sap.setFieldName(signatureName);
 
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, PdfName.ETSI_RFC3161);
         dic.put(PdfName.Type, PdfName.DocTimeStamp);

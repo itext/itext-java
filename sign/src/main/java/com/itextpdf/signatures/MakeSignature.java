@@ -51,7 +51,7 @@ public class MakeSignature {
      * @throws NoSuchAlgorithmException
      * @throws Exception
      */
-    public static void signDetached(PdfSignatureAppearance sap, ExternalDigest externalDigest, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
+    public static void signDetached(PdfSigner sap, ExternalDigest externalDigest, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
                                     TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, GeneralSecurityException {
         Collection<byte[]> crlBytes = null;
         int i = 0;
@@ -69,15 +69,16 @@ public class MakeSignature {
             if (tsaClient != null)
                 estimatedSize += 4192;
         }
-        sap.setCertificate(chain[0]);
+        PdfSignatureAppearance appearance = sap.getSignatureAppearance();
+        appearance.setCertificate(chain[0]);
         if (sigtype == CryptoStandard.CADES) {
             sap.addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
         }
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, sigtype == CryptoStandard.CADES ? PdfName.ETSI_CAdES_DETACHED : PdfName.Adbe_pkcs7_detached);
-        dic.setReason(sap.getReason());
-        dic.setLocation(sap.getLocation());
-        dic.setSignatureCreator(sap.getSignatureCreator());
-        dic.setContact(sap.getContact());
+        dic.setReason(appearance.getReason());
+        dic.setLocation(appearance.getLocation());
+        dic.setSignatureCreator(appearance.getSignatureCreator());
+        dic.setContact(appearance.getContact());
         dic.setDate(new PdfDate(sap.getSignDate())); // time-stamp will over-rule this
         sap.setCryptoDictionary(dic);
 
@@ -145,12 +146,13 @@ public class MakeSignature {
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    public static void signExternalContainer(PdfSignatureAppearance sap, ExternalSignatureContainer externalSignatureContainer, int estimatedSize) throws GeneralSecurityException, IOException {
+    public static void signExternalContainer(PdfSigner sap, ExternalSignatureContainer externalSignatureContainer, int estimatedSize) throws GeneralSecurityException, IOException {
         PdfSignature dic = new PdfSignature(null, null);
-        dic.setReason(sap.getReason());
-        dic.setLocation(sap.getLocation());
-        dic.setSignatureCreator(sap.getSignatureCreator());
-        dic.setContact(sap.getContact());
+        PdfSignatureAppearance appearance = sap.getSignatureAppearance();
+        dic.setReason(appearance.getReason());
+        dic.setLocation(appearance.getLocation());
+        dic.setSignatureCreator(appearance.getSignatureCreator());
+        dic.setContact(appearance.getContact());
         dic.setDate(new PdfDate(sap.getSignDate())); // time-stamp will over-rule this
         externalSignatureContainer.modifySigningDictionary(dic.getPdfObject());
         sap.setCryptoDictionary(dic);
