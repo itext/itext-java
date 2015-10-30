@@ -1,6 +1,7 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.geom.PageSize;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.BlockElement;
@@ -11,6 +12,14 @@ import com.itextpdf.model.renderer.RootRenderer;
 
 public class Document extends RootElement<Document> {
 
+    protected float leftMargin = 36;
+
+    protected float rightMargin = 36;
+
+    protected float topMargin = 36;
+
+    protected float bottomMargin = 36;
+
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
     }
@@ -18,6 +27,8 @@ public class Document extends RootElement<Document> {
     public Document(PdfDocument pdfDoc, PageSize pageSize) {
         this(pdfDoc, pageSize, true);
     }
+
+
 
     public Document(PdfDocument pdfDoc, PageSize pageSize, boolean immediateFlush) {
         this.pdfDocument = pdfDoc;
@@ -86,5 +97,59 @@ public class Document extends RootElement<Document> {
         if (rootRenderer == null)
             rootRenderer = new DocumentRenderer(this, immediateFlush);
         return rootRenderer;
+    }
+
+    public float getLeftMargin() {
+        return leftMargin;
+    }
+
+    public void setLeftMargin(float leftMargin) {
+        this.leftMargin = leftMargin;
+    }
+
+    public float getRightMargin() {
+        return rightMargin;
+    }
+
+    public void  setRightMargin(float rightMargin) {
+        this.rightMargin = rightMargin;
+    }
+
+    public float getTopMargin() {
+        return topMargin;
+    }
+
+    public void  setTopMargin(float topMargin) {
+        this.topMargin = topMargin;
+    }
+
+    public float getBottomMargin() {
+        return bottomMargin;
+    }
+
+    public void setBottomMargin(float bottomMargin) {
+        this.bottomMargin = bottomMargin;
+    }
+
+    public void setMargins(float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
+        setLeftMargin(leftMargin);
+        setRightMargin(rightMargin);
+        setTopMargin(topMargin);
+        setBottomMargin(bottomMargin);
+    }
+
+    public Rectangle getPageEffectiveArea(PageSize pageSize) {
+        return new Rectangle(leftMargin, bottomMargin, pageSize.getWidth() - leftMargin - rightMargin, pageSize.getHeight() - bottomMargin - topMargin);
+    }
+
+    /**
+     * Rotates PageSize clockwise with all the margins, i.e. the margins are rotated as well.
+     */
+    public PageSize rotatePage(PageSize pageSize) {
+        setTopMargin(leftMargin);
+        setRightMargin(topMargin);
+        setBottomMargin(rightMargin);
+        setLeftMargin(bottomMargin);
+        return pageSize.rotate();
     }
 }

@@ -36,11 +36,9 @@ public class DocumentRenderer extends RootRenderer {
         PageSize customPageSize = overflowResult != null ? overflowResult.getNewPageSize() : null;
         PageSize lastPageSize = ensureDocumentHasNPages(currentPageNumber, customPageSize);
         if (lastPageSize == null) {
-            PageSize defaultPageSize = document.getPdfDocument().getDefaultPageSize();
-            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getPageSize()).
-                    setMargins(defaultPageSize.getTopMargin(), defaultPageSize.getRightMargin(), defaultPageSize.getBottomMargin(), defaultPageSize.getLeftMargin());
+            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getPageSize());
         }
-        return (currentArea = new LayoutArea(currentPageNumber, lastPageSize.getEffectiveArea()));
+        return (currentArea = new LayoutArea(currentPageNumber, document.getPageEffectiveArea(lastPageSize)));
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {

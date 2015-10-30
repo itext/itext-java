@@ -71,8 +71,8 @@ public class TabsTest extends ExtendedITextTest{
         addTabbedTextToParagraph(p, text0, new Float[0], null, null, null);
         doc.add(p);
 
-        float left = doc.getPdfDocument().getDefaultPageSize().getLeftMargin();
-        float right = doc.getPdfDocument().getDefaultPageSize().getRightMargin();float pageWidth = doc.getPdfDocument().getDefaultPageSize().getWidth();
+        float left = doc.getLeftMargin();
+        float right = doc.getRightMargin();float pageWidth = doc.getPdfDocument().getDefaultPageSize().getWidth();
         Float[] defaultStopPositions = {0f, 50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, pageWidth - left - right};
         drawTabStopsPositions(Arrays.asList(defaultStopPositions), doc, 1, 0, 120);
 
@@ -277,7 +277,7 @@ public class TabsTest extends ExtendedITextTest{
 
     private void drawTabStopsPositions(java.util.List<Float> positions, Document doc, int pageNum, int yStart, int dy) {
         PdfCanvas canvas = new PdfCanvas(doc.getPdfDocument().getPage(pageNum));
-        float left = doc.getPdfDocument().getDefaultPageSize().getLeftMargin();
+        float left = doc.getLeftMargin();
         float h = doc.getPdfDocument().getPage(pageNum).getCropBox().getHeight() - yStart;
 
         canvas.saveState();
