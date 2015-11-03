@@ -50,6 +50,7 @@ public class PdfReader {
     protected String certificateKeyProvider; //added by Aiken Sam for certificate decryption
     protected ExternalDecryptionProcess externalDecryptionProcess;
     private boolean ownerPasswordUsed;
+    private boolean unethicalReading;
     private PdfObject cryptoRef;
 
     protected boolean encrypted = false;
@@ -387,6 +388,10 @@ public class PdfReader {
         return tokens.getSafeFile().length();
     }
 
+    public void setUnethicalReading(boolean unethicalReading) {
+        this.unethicalReading = unethicalReading;
+    }
+
     /**
      * Parses the entire PDF
      */
@@ -403,6 +408,10 @@ public class PdfReader {
             rebuildXref();
         }
         readDecryptObj();
+    }
+
+    protected boolean isOpenedWithFullPermission() {
+        return !encrypted || ownerPasswordUsed || unethicalReading;
     }
 
     private void readDecryptObj() {
