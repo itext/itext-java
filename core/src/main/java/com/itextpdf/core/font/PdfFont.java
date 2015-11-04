@@ -150,6 +150,10 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return createFont(pdfDocument, fontProgram, encoding, embedded);
     }
 
+    public static PdfFont createRegisteredFont(PdfDocument pdfDocument, String fontName, final String encoding,boolean embedded) throws IOException {
+        return createRegisteredFont(pdfDocument, fontName, encoding, embedded, FontConstants.UNDEFINED);
+    }
+
     public static PdfFont createRegisteredFont(PdfDocument pdfDocument, String fontName, final String encoding,boolean embedded, int style) throws IOException {
         return createRegisteredFont(pdfDocument, fontName, encoding, embedded, style, false);
     }

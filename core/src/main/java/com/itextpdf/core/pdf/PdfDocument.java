@@ -4,6 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.core.Version;
+import com.itextpdf.core.crypto.BadPasswordException;
 import com.itextpdf.core.events.EventDispatcher;
 import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
@@ -1064,6 +1065,9 @@ public class PdfDocument implements IEventDispatcher {
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }
             if (writer != null) {
+                if (reader != null && !reader.isOpenedWithFullPermission()) {
+                    throw new BadPasswordException("pdfreader.not.opened.with.owner.password");
+                }
                 writer.document = this;
                 if (reader == null) {
                     catalog = new PdfCatalog(this);

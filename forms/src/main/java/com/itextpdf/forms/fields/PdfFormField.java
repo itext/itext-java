@@ -75,8 +75,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected int checkType;
     protected float borderWidth = 1;
 
-    private int kidIndex = 1;
-
     public PdfFormField() {
         this(new PdfDictionary());
         put(PdfName.FT, getFormType());
@@ -397,6 +395,36 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.AP, ap);
     }
 
+    /**
+     * Sets the field value and the display string. The display string
+     * is used to build the appearance.
+     * @param display the string that is used for the appearance. If <CODE>null</CODE>
+     * the <CODE>value</CODE> parameter will be used
+     * @param value the field value
+     * @return the edited field
+     */
+    public <T extends PdfFormField> T setValue (String display, String value) {
+        if (display == null) {
+            return setValue(value);
+        }
+        setValue(display, true);
+        PdfName formType = getFormType();
+        if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
+            put(PdfName.V, new PdfString(value));
+        } else if (PdfName.Btn.equals(formType)) {
+            if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
+                text = value;
+                //@TODO Base64 images support
+            } else {
+                put(PdfName.V, new PdfName(value));
+            }
+        } else {
+            put(PdfName.V, new PdfString(value));
+        }
+
+        return (T) this;
+    }
+
     public <T extends PdfFormField> T setParent(PdfFormField parent) {
         return put(PdfName.Parent, parent);
     }
@@ -419,10 +447,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfString kidName = kid.getFieldName();
         if (kidName != null) {
             kid.setFieldName(getFieldName().toUnicodeString() + "." + kidName.toUnicodeString());
-        } else {
-            kid.setFieldName(getFieldName().toUnicodeString() + "." + kidIndex);
-            kid.setFieldName(getFieldName().toUnicodeString() + "." + kidIndex);
-            kidIndex++;
         }
 
         return put(PdfName.Kids, kids);
