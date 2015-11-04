@@ -2,8 +2,8 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.canvas.color.Color;
-import com.itextpdf.canvas.color.DeviceCmyk;
+import com.itextpdf.core.color.Color;
+import com.itextpdf.core.color.DeviceCmyk;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;

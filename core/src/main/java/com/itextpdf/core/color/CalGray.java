@@ -1,4 +1,4 @@
-package com.itextpdf.canvas.color;
+package com.itextpdf.core.color;
 
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;

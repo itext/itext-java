@@ -1,8 +1,8 @@
 package com.itextpdf.canvas.image;
 
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.canvas.color.Color;
-import com.itextpdf.canvas.color.DeviceRgb;
+import com.itextpdf.core.color.Color;
+import com.itextpdf.core.color.DeviceRgb;
 
 import java.io.IOException;
 import java.io.InputStream;

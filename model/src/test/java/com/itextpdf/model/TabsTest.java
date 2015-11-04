@@ -2,7 +2,7 @@ package com.itextpdf.model;
 
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.color.Color;
 import com.itextpdf.canvas.draw.DashedLine;
 import com.itextpdf.canvas.draw.DottedLine;
 import com.itextpdf.canvas.draw.Drawable;

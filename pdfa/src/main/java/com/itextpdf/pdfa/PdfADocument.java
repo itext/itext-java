@@ -74,16 +74,16 @@ public class PdfADocument extends PdfDocument {
 
         if (gState.getTextRenderingMode() != null) {
             switch (gState.getTextRenderingMode()) {
-                case PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_STROKE:
-                case PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_STROKE_CLIP:
+                case PdfCanvasConstants.TextRenderingMode.STROKE:
+                case PdfCanvasConstants.TextRenderingMode.STROKE_CLIP:
                     stroke = true;
                     break;
-                case PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_FILL:
-                case PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_FILL_CLIP:
+                case PdfCanvasConstants.TextRenderingMode.FILL:
+                case PdfCanvasConstants.TextRenderingMode.FILL_CLIP:
                     fill = true;
                     break;
-                case PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE:
-                case PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE_CLIP:
+                case PdfCanvasConstants.TextRenderingMode.FILL_STROKE:
+                case PdfCanvasConstants.TextRenderingMode.FILL_STROKE_CLIP:
                     stroke = true;
                     fill = true;
                     break;

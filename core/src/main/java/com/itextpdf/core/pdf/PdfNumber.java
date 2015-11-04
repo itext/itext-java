@@ -31,7 +31,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     }
 
     @Override
-    public byte getType() {
+    public int getType() {
         return Number;
     }
 

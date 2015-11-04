@@ -148,7 +148,7 @@ public class PdfStream extends PdfDictionary {
     }
 
     @Override
-    public byte getType() {
+    public int getType() {
         return Stream;
     }
 

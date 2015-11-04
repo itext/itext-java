@@ -2,8 +2,8 @@ package com.itextpdf.model;
 
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.canvas.color.Color;
-import com.itextpdf.canvas.color.DeviceGray;
+import com.itextpdf.core.color.Color;
+import com.itextpdf.core.color.DeviceGray;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;

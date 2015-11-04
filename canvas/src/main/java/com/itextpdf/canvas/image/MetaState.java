@@ -2,8 +2,8 @@ package com.itextpdf.canvas.image;
 
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.PdfCanvasConstants;
-import com.itextpdf.canvas.color.Color;
-import com.itextpdf.canvas.color.DeviceRgb;
+import com.itextpdf.core.color.Color;
+import com.itextpdf.core.color.DeviceRgb;
 
 import java.util.ArrayList;
 import java.util.Stack;

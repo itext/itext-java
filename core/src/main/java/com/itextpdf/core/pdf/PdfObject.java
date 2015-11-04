@@ -57,7 +57,7 @@ abstract public class PdfObject {
      *
      * @return object type.
      */
-    abstract public byte getType();
+    abstract public int getType();
 
     /**
      * Flushes the object to the document.

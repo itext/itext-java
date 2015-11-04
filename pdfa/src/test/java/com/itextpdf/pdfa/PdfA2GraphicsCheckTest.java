@@ -4,9 +4,9 @@ import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.PdfCanvasConstants;
-import com.itextpdf.canvas.color.Color;
-import com.itextpdf.canvas.color.DeviceCmyk;
-import com.itextpdf.canvas.color.DeviceGray;
+import com.itextpdf.core.color.Color;
+import com.itextpdf.core.color.DeviceCmyk;
+import com.itextpdf.core.color.DeviceGray;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -164,13 +164,13 @@ public class PdfA2GraphicsCheckTest {
 
         PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", PdfEncodings.WINANSI, true);
         canvas.setFontAndSize(font, 12);
-        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_CLIP);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.CLIP);
         canvas.setFillColor(Color.RED).beginText().showText(shortText).endText();
 
-        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_STROKE);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
         canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
 
-        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_FILL);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL);
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
 
         doc.close();
@@ -215,13 +215,13 @@ public class PdfA2GraphicsCheckTest {
 
         PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", PdfEncodings.WINANSI, true);
         canvas.setFontAndSize(font, 12);
-        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_STROKE);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
         canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
 
-        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_STROKE);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
 
-        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.TEXT_RENDERING_MODE_INVISIBLE);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.INVISIBLE);
         canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
 
         doc.close();

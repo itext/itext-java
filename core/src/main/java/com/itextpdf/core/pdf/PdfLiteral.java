@@ -27,7 +27,7 @@ public class PdfLiteral extends PdfPrimitiveObject {
     }
 
     @Override
-    public byte getType() {
+    public int getType() {
         return Literal;
     }
 

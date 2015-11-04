@@ -1,10 +1,10 @@
 package com.itextpdf.model.border;
 
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.canvas.color.Color;
-import com.itextpdf.canvas.color.DeviceCmyk;
-import com.itextpdf.canvas.color.DeviceGray;
-import com.itextpdf.canvas.color.DeviceRgb;
+import com.itextpdf.core.color.Color;
+import com.itextpdf.core.color.DeviceCmyk;
+import com.itextpdf.core.color.DeviceGray;
+import com.itextpdf.core.color.DeviceRgb;
 
 public abstract class Border3D extends Border{
     public static final DeviceRgb gray = new DeviceRgb(212, 208, 200);

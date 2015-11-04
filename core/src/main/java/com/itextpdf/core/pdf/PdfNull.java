@@ -16,7 +16,7 @@ public class PdfNull extends PdfPrimitiveObject {
     }
 
     @Override
-    public byte getType() {
+    public int getType() {
         return Null;
     }
 

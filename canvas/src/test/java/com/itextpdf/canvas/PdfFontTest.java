@@ -9,7 +9,7 @@ import com.itextpdf.basics.font.TrueTypeCollection;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.canvas.color.DeviceRgb;
+import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.canvas.font.PdfType3Font;
 import com.itextpdf.canvas.font.Type3Glyph;
 import com.itextpdf.core.font.PdfFont;

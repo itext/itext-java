@@ -151,7 +151,7 @@ public class PdfDictionary extends PdfObject {
 
 
     @Override
-    public byte getType() {
+    public int getType() {
         return Dictionary;
     }
 

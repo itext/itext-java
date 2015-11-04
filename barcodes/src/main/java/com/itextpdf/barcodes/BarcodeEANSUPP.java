@@ -5,7 +5,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.color.Color;
 
 
 public class BarcodeEANSUPP extends Barcode1D {

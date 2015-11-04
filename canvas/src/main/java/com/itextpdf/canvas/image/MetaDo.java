@@ -7,7 +7,7 @@ import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.canvas.PdfCanvasConstants;
-import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 
 import java.io.ByteArrayOutputStream;

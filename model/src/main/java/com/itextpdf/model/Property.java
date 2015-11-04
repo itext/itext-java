@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.color.Color;
 
 public enum Property {
 

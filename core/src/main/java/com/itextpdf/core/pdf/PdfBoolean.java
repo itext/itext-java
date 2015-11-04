@@ -29,7 +29,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
         return value;
     }
 
-    public byte getType() {
+    public int getType() {
         return Boolean;
     }
 

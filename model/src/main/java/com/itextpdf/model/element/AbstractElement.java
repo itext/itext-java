@@ -1,7 +1,7 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.canvas.PdfCanvasConstants;
-import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;

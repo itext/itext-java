@@ -23,6 +23,11 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         list.add(obj);
     }
 
+    public PdfArray(PdfArray arr) {
+        this();
+        list.addAll(arr.list);
+    }
+
     public PdfArray(Rectangle rectangle) {
         list = new ArrayList<>(4);
         add(new PdfNumber(rectangle.getLeft()));
@@ -178,7 +183,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     }
 
     @Override
-    public byte getType() {
+    public int getType() {
         return Array;
     }
 

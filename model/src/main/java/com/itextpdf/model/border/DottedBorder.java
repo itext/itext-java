@@ -1,7 +1,7 @@
 package com.itextpdf.model.border;
 
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.canvas.color.Color;
+import com.itextpdf.core.color.Color;
 
 public class DottedBorder extends Border {
     private static final float gapModifier = 1.5f;
