@@ -138,7 +138,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "TestGroup", "1");
 
-        PdfFormField.createRadioButton(pdfDoc, rect, group, "2");
+        PdfFormField.createRadioButton(pdfDoc, rect, group, "1");
         PdfFormField.createRadioButton(pdfDoc, rect1, group, "2");
 
         form.addField(group);

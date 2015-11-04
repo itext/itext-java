@@ -75,8 +75,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected int checkType;
     protected float borderWidth = 1;
 
-    private int kidIndex = 1;
-
     public PdfFormField() {
         this(new PdfDictionary());
         put(PdfName.FT, getFormType());
@@ -449,10 +447,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfString kidName = kid.getFieldName();
         if (kidName != null) {
             kid.setFieldName(getFieldName().toUnicodeString() + "." + kidName.toUnicodeString());
-        } else {
-            kid.setFieldName(getFieldName().toUnicodeString() + "." + kidIndex);
-            kid.setFieldName(getFieldName().toUnicodeString() + "." + kidIndex);
-            kidIndex++;
         }
 
         return put(PdfName.Kids, kids);
