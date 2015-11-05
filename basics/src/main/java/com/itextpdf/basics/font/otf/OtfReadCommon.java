@@ -66,7 +66,8 @@ public class OtfReadCommon {
 	private static void readRangeRecord(RandomAccessFileOrArray rf, List<Integer> glyphIds) throws IOException {
 		int startGlyphId = rf.readShort();
 		int endGlyphId = rf.readShort();
-		int startCoverageIndex = rf.readShort();
+		@SuppressWarnings("unused")
+        int startCoverageIndex = rf.readShort();
 		for (int glyphId = startGlyphId; glyphId <= endGlyphId; glyphId++) {
 			glyphIds.add(glyphId);
 		}

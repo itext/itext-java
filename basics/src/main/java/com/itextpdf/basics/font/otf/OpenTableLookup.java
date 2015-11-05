@@ -30,7 +30,7 @@ public abstract class OpenTableLookup {
     
     protected abstract void readSubTable(int subTableLocation) throws IOException; 
     
-    protected abstract boolean transformOne(GlyphLine line);
+    public abstract boolean transformOne(GlyphLine line);
     
     public boolean transformLine(GlyphLine line) {
         boolean changed = false;

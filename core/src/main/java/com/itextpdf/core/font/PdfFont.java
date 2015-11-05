@@ -42,6 +42,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws IOException {
         return createStandardFont(pdfDocument, FontConstants.HELVETICA, PdfEncodings.WINANSI);
+
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {

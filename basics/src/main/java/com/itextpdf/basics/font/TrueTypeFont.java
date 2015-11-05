@@ -3,23 +3,13 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.otf.FeatureRecord;
-import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.basics.font.otf.GlyphLine;
-import com.itextpdf.basics.font.otf.GlyphSubstitutionTableReader;
-import com.itextpdf.basics.font.otf.OpenTableLookup;
-import com.itextpdf.basics.font.otf.OpenTypeGdefTableReader;
+import com.itextpdf.basics.font.otf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 
 public class TrueTypeFont extends FontProgram {
 
@@ -39,6 +29,7 @@ public class TrueTypeFont extends FontProgram {
     private OpenTypeGdefTableReader gdefTable;
 
     private boolean applyLigatures = false;
+    private String otfScript = null;
 
     Map<Integer, Glyph> indexGlyphMap;
     Map<Integer, Glyph> codeGlyphMap;
@@ -100,6 +91,24 @@ public class TrueTypeFont extends FontProgram {
         this.applyLigatures = applyLigatures;
     }
 
+    public void setScriptForOTF(Character.UnicodeScript script){
+        switch (script) {
+            case LATIN:
+                otfScript = "latn";
+                break;
+            case ARABIC:
+                otfScript = "arab";
+                break;
+            default:
+                otfScript = null;
+                break;
+        }
+    }
+
+    public String getOtfScript() {
+        return otfScript;
+    }
+
     /**
      * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
      * to the font's encoding.
@@ -150,7 +159,111 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
-    public GlyphLine applyLigatureFeature(char[] glyphs, Integer length) {
+    public boolean applyOtfScript(GlyphLine glyphLine) {
+        if (otfScript == null) {
+            return false;
+        }
+        if (gsubTable != null) {
+            LanguageRecord languageRecord = null;
+            for (ScriptRecord record: gsubTable.getScriptRecords()) {
+                if (otfScript.equals(record.tag)) {
+                    languageRecord = record.defaultLanguage;
+                    break;
+                }
+            }
+            if (languageRecord == null) {
+                return false;
+            }
+            boolean transformed = false;
+            //TODO move words splitting to GlyphLine as method or even property.
+            List<Integer> words = splitGlyphLineIntoWords(glyphLine);
+            for (int featureIndex: languageRecord.features) {
+                FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
+               switch (feature.tag) {
+                   case "init":
+                       List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{feature});
+                       for (OpenTableLookup lookup : lookups) {
+                           if (lookup == null) {
+                               continue;
+                           }
+                           for (int i = 0; i < words.size(); i += 2) {
+                               glyphLine.idx = words.get(i);
+                               if (lookup.transformOne(glyphLine)) {
+                                   transformed = true;
+                               }
+                           }
+                       }
+                       glyphLine.idx = 0;
+                       break;
+                   case "medi":
+                       lookups = gsubTable.getLookups(new FeatureRecord[]{feature});
+                       for (OpenTableLookup lookup : lookups) {
+                           if (lookup == null) {
+                               continue;
+                           }
+                           for (int i = 0; i < words.size(); i += 2) {
+                               for (int k = words.get(i) + 1; k < words.get(i + 1) - 1; k++) {
+                                   glyphLine.idx = k;
+                                   if (lookup.transformOne(glyphLine)) {
+                                       transformed = true;
+                                   }
+                               }
+                           }
+                       }
+                       glyphLine.idx = 0;
+                       break;
+                   case "fina":
+                       lookups = gsubTable.getLookups(new FeatureRecord[]{feature});
+                       for (OpenTableLookup lookup : lookups) {
+                           if (lookup == null) {
+                               continue;
+                           }
+                           for (int i = 1; i < words.size(); i += 2) {
+                               glyphLine.idx = words.get(i) - 1;
+                               if (lookup.transformOne(glyphLine)) {
+                                   transformed = true;
+                               }
+                           }
+                       }
+                       glyphLine.idx = 0;
+                       break;
+               }
+            }
+            return transformed;
+        }
+        return false;
+    }
+
+    private List<Integer> splitGlyphLineIntoWords(GlyphLine glyphLine) {
+        List<Integer> words = new ArrayList<>((glyphLine.end - glyphLine.start + 2) / 2);
+        boolean started = false;
+        for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            Integer code = glyphLine.glyphs.get(i).unicode;
+            if (splitCharacters.indexOf(code) == -1) {
+                if (!started) {
+                    words.add(i);
+                    started = true;
+                }
+            } else {
+                if (started) {
+                    words.add(i);
+                    started = false;
+                }
+            }
+        }
+        if (words.size() % 2 != 0) {
+            words.add(glyphLine.end);
+        }
+
+        return words;
+    }
+
+    List<Integer> splitCharacters = Arrays.asList(0x000d, 0x000a, 0x000b, 0x000c, 0x0085, 0x2028, 0x2029,
+            0x0027, 0x0022, 0x002E, 0x2018, 0x2019, 0x2024, 0xFE52, 0xFF07, 0xFF0E, 0x00B7, 0x0387, 0x05F4,
+            0x2027, 0x003A, 0xFE13, 0xFE55, 0xFF1A, 0x02D7, 0xFE50, 0xFE54, 0xFF0C, 0xFF1B, 0x0020,
+            0x00A0, 0x2007, 0x2008, 0x2009, 0x202F);
+
+    public boolean applyLigaFeature(GlyphLine glyphLine) {
         if (gsubTable != null) {
             List<FeatureRecord> features = gsubTable.getFeatureRecords();
             FeatureRecord liga = null;
@@ -162,7 +275,6 @@ public class TrueTypeFont extends FontProgram {
             }
             if (liga != null) {
                 boolean transformed = false;
-                GlyphLine glyphLine = createGlyphLine(glyphs, length);
                 if (glyphLine != null) {
                     List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{liga});
                     for (OpenTableLookup lookup : lookups) {
@@ -172,16 +284,13 @@ public class TrueTypeFont extends FontProgram {
                         glyphLine.idx = 0;
                     }
                 }
-                if (transformed) {
-                    return glyphLine;
-                }
+                return transformed;
             }
         }
-
-        return null;
+        return false;
     }
 
-    GlyphLine createGlyphLine(char[] glyphs, Integer length) {
+    public GlyphLine createGlyphLine(char[] glyphs, Integer length) {
         GlyphLine glyphLine = new GlyphLine();
         glyphLine.glyphs = new ArrayList<>(length);
         glyphLine.start = 0;

@@ -175,8 +175,17 @@ public abstract class OpenTypeFontTableReader {
                 hash.put(idx, 1);
             }
         }
-        ArrayList<OpenTableLookup> ret = new ArrayList<OpenTableLookup>();
+        ArrayList<OpenTableLookup> ret = new ArrayList<>();
         for (int idx : hash.toOrderedKeys()) {
+            ret.add(lookupList.get(idx));
+        }
+        return ret;
+    }
+
+    public List<OpenTableLookup> getLookups(FeatureRecord feature) {
+        //TODO see getLookups(FeatureRecord[]) method. Is it realy make sense to order features?
+        List<OpenTableLookup> ret = new ArrayList<>(feature.lookups.length);
+        for (int idx : feature.lookups) {
             ret.add(lookupList.get(idx));
         }
         return ret;

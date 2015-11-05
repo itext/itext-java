@@ -29,6 +29,7 @@ public class GsubLookupFormat4 extends OpenTableLookup {
     
     @Override
     public boolean transformOne(GlyphLine line) {
+        //TODO >
         if (line.idx >= line.end)
             return false;
         boolean changed = false;
@@ -59,7 +60,7 @@ public class GsubLookupFormat4 extends OpenTableLookup {
                         line.glyphs.remove(gidx.idx--);
                     }
                     Integer c = openReader.getGlyphToCharacter(lig[0]);
-                    Glyph glyph = new Glyph(lig[0], openReader.getGlyphWidth(lig[0]), 0, c == null ? composed : String.valueOf((char) (int) c), isMark);
+                    Glyph glyph = new Glyph(lig[0], openReader.getGlyphWidth(lig[0]), c, c == null ? composed : String.valueOf((char) (int) c), isMark);
                     line.glyphs.set(line.idx, glyph);
                     line.end -= lig.length - 1;
                     break;

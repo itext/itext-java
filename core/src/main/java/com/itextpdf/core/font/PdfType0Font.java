@@ -196,18 +196,29 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     }
                     glyphs[i++] = (char) metrics[0];
                 }
-                if (ttf.isApplyLigatures()) {
-                    GlyphLine glyphLine = ttf.applyLigatureFeature(glyphs, i);
-                    if (glyphLine != null) {
-                        glyphs = glyphLineToChars(glyphLine);
-                        i = glyphs.length;
-                        for (char ch: glyphs) {
-                            int code = (int)ch;
-                            if (longTag.get(code) == null) {
-                                Integer uniChar = ttf.getUnicodeChar(code);
-                                Glyph glyph = ttf.getGlyph(code);
-                                longTag.put(code, new int[] {code, glyph.width, uniChar!=null?uniChar:0});
-                            }
+
+                //TODO yes, just ligatures have no sense, this case will be removed after scripts implementation
+                GlyphLine glyphLine = null;
+                if (ttf.getOtfScript() != null) {
+                    glyphLine = ttf.createGlyphLine(glyphs, i);
+                    if (!ttf.applyOtfScript(glyphLine)) {
+                       glyphLine = null;
+                    }
+                } else if (ttf.isApplyLigatures()) {
+                    glyphLine = ttf.createGlyphLine(glyphs, i);
+                    if (!ttf.applyLigaFeature(glyphLine)) {
+                        glyphLine = null;
+                    }
+                }
+                if (glyphLine != null) {
+                    glyphs = glyphLineToChars(glyphLine);
+                    i = glyphs.length;
+                    for (char ch: glyphs) {
+                        int code = (int)ch;
+                        if (longTag.get(code) == null) {
+                            Integer uniChar = ttf.getUnicodeChar(code);
+                            Glyph glyph = ttf.getGlyph(code);
+                            longTag.put(code, new int[] {code, glyph.width, uniChar!=null?uniChar:0});
                         }
                     }
                 }

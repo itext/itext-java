@@ -134,6 +134,6 @@ public class Glyph {
 
     @Override
     public String toString() {
-        return Glyph.class.getSimpleName() + " [id=" + index + ", width=" + width + ", chars=" + chars + "]";
+        return String.format("%s [uni=%d, id=%d, width=%d, chars=%s]", Glyph.class.getSimpleName(), unicode, index, width, chars);
     }
 }
