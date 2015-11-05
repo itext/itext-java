@@ -410,7 +410,8 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         float[] array1 = {100, 100, 100, 200, 200, 200, 300, 300};
         PdfArray firstPoint = new PdfArray(array1);
 
-        PdfArray resultArray = new PdfArray(firstPoint);
+        PdfArray resultArray = new PdfArray();
+        resultArray.add(firstPoint);
 
         PdfDictionary borderStyle = new PdfDictionary();
         borderStyle.put(PdfName.Type, PdfName.Border);
