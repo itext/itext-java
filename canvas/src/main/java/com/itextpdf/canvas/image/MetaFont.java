@@ -1,8 +1,6 @@
 package com.itextpdf.canvas.image;
 
-import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.font.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -79,11 +77,11 @@ public class MetaFont extends MetaObject {
         faceName = faceName.toLowerCase();
     }
 
-    public FontProgram getFont() {
+    public FontProgram getFont() throws IOException {
         if (font != null)
             return font;
         //TODO ff2 = FontFactory.getFont(faceName, BaseFont.CP1252, true, 10, ((italic != 0) ? Font.ITALIC : 0) | ((bold != 0) ? Font.BOLD : 0));
-        FontProgram ff2 = null;
+        FontProgram ff2 = FontFactory.createRegisteredFont(faceName, PdfEncodings.CP1252, ((italic != 0) ? FontConstants.ITALIC : 0) | ((bold != 0) ? FontConstants.BOLD : 0));
         font = ff2;
         if (font != null)
             return font;

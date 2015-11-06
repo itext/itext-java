@@ -1530,7 +1530,7 @@ public class PdfCanvas {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
-            addImage(xObject, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
+            addImage(xObject, width, 0, 0, width, x, y);
             return xObject;
         } else {
             PdfImageXObject imageXObject = new PdfImageXObject(image);

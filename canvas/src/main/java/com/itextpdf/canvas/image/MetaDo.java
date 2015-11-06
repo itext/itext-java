@@ -510,17 +510,12 @@ public class MetaDo {
                         cb.rectangle(xDest, yDest, destWidth, destHeight);
                         cb.clip();
                         cb.newPath();
-//                        TODO Scale image to fit. PdfCanvas will do this job
-//                        bmp.scaleAbsolute(destWidth * bmpImage.getWidth() / srcWidth, -destHeight * bmpImage.getHeight() / srcHeight);
-//                        bmp.setAbsolutePosition(xDest - destWidth * xSrc / srcWidth,
-//                                                      yDest + destHeight * ySrc / srcHeight - bmpImage.getScaledHeight());
                         Image bmpImage = ImageFactory.getBmpImage(b, true, b.length);
                         PdfImageXObject imageXObject = new PdfImageXObject(bmpImage);
+
                         float width = destWidth * bmpImage.getWidth() / srcWidth;
                         float height = -destHeight * bmpImage.getHeight() / srcHeight;
                         float x = xDest - destWidth * xSrc / srcWidth;
-//                        TODO: verify scaled height!
-//                        float y = yDest + destHeight * ySrc / srcHeight - bmpImage.getScaledHeight();
                         float y = yDest + destHeight * ySrc / srcHeight - height;
                         cb.addXObject(imageXObject, new Rectangle(x, y, width, height));
                         cb.restoreState();
@@ -549,7 +544,6 @@ public class MetaDo {
         int align = state.getTextAlign();
         // NOTE, MetaFont always creates with CP1252 encoding.
         int normalizedWidth = 0;
-        //TODO encoding and FontProgram will be independent
         byte bytes[] = fp.getEncoding().convertToBytes(text);
         for (byte b : bytes) {
             normalizedWidth += fp.getWidth(0xff & b);
@@ -584,7 +578,7 @@ public class MetaDo {
         cb.beginText();
         //TODO Actually here must be used the font which is default for the OS
         //TODO Uncomment it after PdfDocument will be removed from PdfFont constructors
-//        cb.setFontAndSize(PdfFont.getDefaultFont(document), fontSize);
+        //cb.setFontAndSize(PdfFont.createFont(null, state.getCurrentFont().getFont(), null, true), fontSize);
         cb.setTextMatrix(tx, ty);
         cb.showText(text);
         cb.endText();
