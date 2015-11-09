@@ -398,12 +398,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the field value and the display string. The display string
      * is used to build the appearance.
+     * @param value the field value
      * @param display the string that is used for the appearance. If <CODE>null</CODE>
      * the <CODE>value</CODE> parameter will be used
-     * @param value the field value
      * @return the edited field
      */
-    public <T extends PdfFormField> T setValue (String display, String value) {
+    public <T extends PdfFormField> T setValue (String value, String display) {
         if (display == null) {
             return setValue(value);
         }
