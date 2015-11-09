@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.parser.EventData;
 import com.itextpdf.core.parser.EventListener;
 import com.itextpdf.core.parser.EventType;
@@ -9,7 +10,6 @@ import com.itextpdf.core.parser.PdfContentStreamProcessor;
 import com.itextpdf.core.parser.TextRenderInfo;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -25,7 +25,7 @@ public class PdfContentStreamProcessorTest extends ExtendedITextTest {
     @Test
     public void contentStreamProcessorTest() throws IOException {
 
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "yaxiststar.pdf"), new PdfWriter(new ByteOutputStream()));
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "yaxiststar.pdf"), new PdfWriter(new ByteArrayOutputStream()));
 
         for (int i = 1; i <= document.getNumOfPages(); ++i) {
             PdfPage page = document.getPage(i);
