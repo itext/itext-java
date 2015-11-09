@@ -1074,12 +1074,12 @@ public class PdfDocument implements IEventDispatcher {
                     info = new PdfDocumentInfo(this).addCreationDate();
                     info.addModDate();
                     info.setProducer(Version.getInstance().getVersion());
-                    trailer = new PdfDictionary();
-                    trailer.put(PdfName.Root, catalog.getPdfObject());
-                    trailer.put(PdfName.Info, info.getPdfObject());
                 } else {
                     info.addModDate();
                 }
+                trailer = new PdfDictionary();
+                trailer.put(PdfName.Root, catalog.getPdfObject());
+                trailer.put(PdfName.Info, info.getPdfObject());
             }
             if (appendMode) {       // Due to constructor reader and writer not null.
                 assert reader != null;
