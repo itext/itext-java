@@ -49,7 +49,7 @@ public class PdfContentStreamProcessor {
      * @since 5.0.6
      */
     /**  */
-    final private Map<Integer, PdfFont> cachedFonts = new HashMap<Integer, PdfFont>();
+    final  private Map<Integer, PdfFont> cachedFonts = new HashMap<Integer, PdfFont>();
     /**
      * A stack containing marked content info.
      * @since 5.0.2
@@ -117,7 +117,7 @@ public class PdfContentStreamProcessor {
         Integer n = fontDict.getIndirectReference().getObjNumber();
         PdfFont font = cachedFonts.get(n);
         if (font == null) {
-            /*font = PdfFont.createFont(fontDict.getDocument(), fontDict);*/ // TODO: there is a bug in reader. Delete the line below after fixing it and uncomment this line
+            //font = PdfFont.createFont(fontDict.getDocument(), fontDict); // TODO: bug in pdfFont constructor, need to create constructor for reading mode
             font = PdfFont.getDefaultFont(fontDict.getDocument());
             cachedFonts.put(n, font);
         }
