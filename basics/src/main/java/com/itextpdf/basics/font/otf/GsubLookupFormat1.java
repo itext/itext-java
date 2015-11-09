@@ -64,4 +64,9 @@ public class GsubLookupFormat1 extends OpenTableLookup {
             throw new IllegalArgumentException("Bad substFormat: " + substFormat);
         }
     }
+
+    //TODO this method should be either removed or moved to OpenTableLookup
+    public boolean hasSubstitution(int index) {
+        return substMap.containsKey(index);
+    }
 }
