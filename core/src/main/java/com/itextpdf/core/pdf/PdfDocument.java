@@ -703,6 +703,7 @@ public class PdfDocument implements IEventDispatcher {
                 trailer.put(PdfName.Info, info.getPdfObject());
 
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
+                writer.flush();
                 if (isCloseWriter()) {
                     writer.close();
                 }
