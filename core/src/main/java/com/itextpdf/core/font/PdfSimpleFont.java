@@ -45,7 +45,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      * @return a width in Text Space.
      */
     @Override
-    public float getWidth(int ch) {
+    public int getWidth(int ch) {
         int total = 0;
         byte[] bytes = fontProgram.getEncoding().convertToBytes(ch);
         for (byte b : bytes) {
@@ -61,7 +61,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      * @return a width of string in Text Space.
      */
     @Override
-    public float getWidth(String s) {
+    public int getWidth(String s) {
         int total = 0;
         byte[] bytes = fontProgram.getEncoding().convertToBytes(s);
         for (byte b : bytes) {

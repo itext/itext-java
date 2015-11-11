@@ -10,11 +10,8 @@ import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.splitting.ISplitCharacters;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractElement<Type extends AbstractElement> implements IElement<Type> {
 
@@ -345,6 +342,10 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
      */
     public Type setHyphenation(HyphenationConfig hyphenationConfig) {
         return setProperty(Property.HYPHENATION, hyphenationConfig);
+    }
+
+    public Type setFontScript(Character.UnicodeScript script) {
+        return setProperty(Property.FONT_SCRIPT, script);
     }
 
 }

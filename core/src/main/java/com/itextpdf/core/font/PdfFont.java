@@ -1,6 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.CidFont;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontFactory;
@@ -9,6 +10,8 @@ import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.TrueTypeCollection;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -321,13 +324,33 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return PdfEncodings.convertToBytes(text, "");
     }
 
+    public byte[] convertToBytes(GlyphLine glyphLine) {
+        // TODO implement correctly for all fonts after moved to GlyphLines without intermediate unicode conversion
+        // convert to printable array
+        StringBuilder sb = new StringBuilder();
+        for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            if (glyphLine.glyphs.get(i).unicode != null) {
+                sb.append(Utilities.convertFromUtf32(glyphLine.glyphs.get(i).unicode));
+            }
+        }
+        return convertToBytes(sb.toString());
+    }
+
+    public byte[] convertToBytes(Glyph glyph) {
+        // TODO implement correctly for all fonts after moved to GlyphLines without intermediate unicode conversion
+        if (glyph.unicode != null) {
+            return convertToBytes(Utilities.convertFromUtf32(glyph.unicode));
+        }
+        throw new IllegalStateException();
+    }
+
     /**
      * Returns the width of a certain character of this font in 1000 normalized units.
      *
      * @param ch a certain character.
      * @return a width in Text Space.
      */
-    public float getWidth(int ch) {
+    public int getWidth(int ch) {
         // TODO abstract method
         throw new IllegalStateException();
     }
@@ -338,7 +361,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param s a string content.
      * @return a width of string in Text Space.
      */
-    public float getWidth(String s) {
+    public int getWidth(String s) {
         // TODO abstract method
         throw new IllegalStateException();
     }
@@ -419,6 +442,15 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public boolean hasKernPairs() {
         FontProgram fontProgram = getFontProgram();
         return fontProgram != null && fontProgram.hasKernPairs();
+    }
+
+    public int getKerning(Glyph glyph1, Glyph glyph2) {
+        FontProgram fontProgram = getFontProgram();
+        if (fontProgram != null) {
+            return fontProgram.getKerning(glyph1, glyph2);
+        } else {
+            return 0;
+        }
     }
 
     public int getKerning(int char1, int char2) {

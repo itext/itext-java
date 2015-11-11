@@ -3,10 +3,14 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.FontMetrics;
 import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.TrueTypeFont;
+import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.bidi.BidiAlgorithm;
@@ -22,6 +26,7 @@ import com.itextpdf.model.layout.LayoutResult;
 import com.itextpdf.model.layout.TextLayoutResult;
 import com.itextpdf.model.splitting.ISplitCharacters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TextRenderer extends AbstractRenderer {
@@ -31,37 +36,31 @@ public class TextRenderer extends AbstractRenderer {
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1/30f;
     private static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
 
-    // Unicode character numbers of the text.
-    protected int[] text;
-    // Left pos of the part of the {@see text} which belongs to this renderer, inclusive
-    protected int leftPos;
-    // Right pos of the part of the {@see text} which belongs to this renderer, exclusive
-    protected int rightPos;
-    // Processed line bounds which are the result of the layout function. They are then used on {@see draw()}
-    protected int[] line;
-    protected int lineLeftPos;
-    protected int lineRightPos;
     protected float yLineOffset;
     protected byte[] levels;
     protected int levelsOffset;
 
+    protected GlyphLine text;
+    protected GlyphLine line;
+    protected String strToBeConverted;
+
     protected float tabAnchorCharacterPosition = -1;
 
     public TextRenderer(Text textElement) {
-        this (textElement, textElement.getText());
+        this(textElement, textElement.getText());
     }
 
     public TextRenderer(Text textElement, String text) {
         super(textElement);
-        this.text = Utilities.convertToUtf32(text);
-        leftPos = 0;
-        rightPos = this.text != null ? this.text.length : 0;
+        this.strToBeConverted = text;
     }
 
     @Override
     public TextLayoutResult layout(LayoutContext layoutContext) {
-        line = text;
-        lineLeftPos = lineRightPos = -1;
+        convertWaitingStringToGlyphLine();
+
+        line = new GlyphLine(text);
+        line.start = line.end = -1;
 
         Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
         if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
@@ -79,12 +78,16 @@ public class TextRenderer extends AbstractRenderer {
                     break;
             }
 
-            byte[] types = BidiCharacterMap.getCharacterTypes(text, leftPos, rightPos);
-            byte[] pairTypes = BidiBracketMap.getBracketTypes(text, leftPos, rightPos);
-            int[] pairValues = BidiBracketMap.getBracketValues(text, leftPos, rightPos);
+            int[] unicodeIds = new int[text.end - text.start];
+            for (int i = text.start; i < text.end; i++) {
+                unicodeIds[i - text.start] = text.glyphs.get(i).unicode;
+            }
+            byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start);
+            byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
+            int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
             BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
-            levels = bidiReorder.getLevels(new int[] {rightPos - leftPos});
-            levelsOffset = leftPos;
+            levels = bidiReorder.getLevels(new int[] {text.end - text.start});
+            levelsOffset = 0;
         }
 
         LayoutArea area = layoutContext.getArea();
@@ -95,7 +98,7 @@ public class TextRenderer extends AbstractRenderer {
 
         boolean anythingPlaced = false;
 
-        int currentTextPos = leftPos;
+        int currentTextPos = text.start;
         float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
         float textRise = getPropertyAsFloat(Property.TEXT_RISE);
         Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
@@ -106,6 +109,13 @@ public class TextRenderer extends AbstractRenderer {
         ISplitCharacters splitCharacters = getProperty(Property.SPLIT_CHARACTERS);
         float italicSkewAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
         float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
+
+        Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
+        if (script != null && isOtfFont(font)) {
+            ((TrueTypeFont)font.getFontProgram()).setScriptForOTF(script);
+            ((TrueTypeFont)font.getFontProgram()).applyOtfScript(text);
+           // ((TrueTypeFont)font.getFontProgram()).applyLigaFeature(text);
+        }
 
         FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
         float ascender;
@@ -130,14 +140,13 @@ public class TextRenderer extends AbstractRenderer {
 
         TextLayoutResult result = null;
 
-        while (currentTextPos < rightPos) {
-            int currentCharCode = text[currentTextPos];
-            if (noPrint(currentCharCode)) {
+        while (currentTextPos < text.end) {
+            if (noPrint(text.glyphs.get(currentTextPos))) {
                 currentTextPos++;
                 continue;
             }
 
-            int nonBreakablePartEnd = rightPos - 1;
+            int nonBreakablePartEnd = text.end - 1;
             float nonBreakablePartFullWidth = 0;
             float nonBreakablePartWidthWhichDoesNotExceedAllowedWidth = 0;
             float nonBreakablePartMaxAscender = 0;
@@ -145,24 +154,25 @@ public class TextRenderer extends AbstractRenderer {
             float nonBreakablePartMaxHeight = 0;
             int firstCharacterWhichExceedsAllowedWidth = -1;
 
-            for (int ind = currentTextPos; ind < rightPos; ind++) {
-                if (text[ind] == '\n') {
+            for (int ind = currentTextPos; ind < text.end; ind++) {
+                if (text.glyphs.get(ind).unicode == '\n') {
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
                     break;
                 }
 
-                int charCode = text[ind];
-                if (noPrint(charCode))
+                Glyph currentGlyph = text.glyphs.get(ind);
+                int charCode = currentGlyph.unicode;
+                if (noPrint(currentGlyph))
                     continue;
 
-                if (tabAnchorCharacter != null && tabAnchorCharacter == text[ind]) {
+                if (tabAnchorCharacter != null && tabAnchorCharacter == text.glyphs.get(ind).unicode.intValue()) {
                     tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
                     tabAnchorCharacter = null;
                 }
 
-                float glyphWidth = getCharWidth(charCode, font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+                float glyphWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
                 float kerning = fontKerning == Property.FontKerning.YES && previousCharPos != -1 ?
-                        getKerning(text[previousCharPos], charCode, font, fontSize, hScale) / TEXT_SPACE_COEFF : 0;
+                        getKerning(text.glyphs.get(previousCharPos), currentGlyph, font, fontSize, hScale) / TEXT_SPACE_COEFF : 0;
                 if ((nonBreakablePartFullWidth + glyphWidth + kerning + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                 }
@@ -183,9 +193,9 @@ public class TextRenderer extends AbstractRenderer {
                     break;
                 }
 
-                if (splitCharacters.isSplitCharacter(charCode, text, ind) || ind + 1 == rightPos ||
-                        splitCharacters.isSplitCharacter(text[ind + 1], text, ind) &&
-                                (Character.isWhitespace(text[ind + 1]) || Character.isSpaceChar(text[ind + 1]))) {
+                if (splitCharacters.isSplitCharacter(charCode, text, ind) || ind + 1 == text.end ||
+                        splitCharacters.isSplitCharacter(text.glyphs.get(ind + 1).unicode, text, ind) &&
+                                (Character.isWhitespace(text.glyphs.get(ind + 1).unicode) || Character.isSpaceChar(text.glyphs.get(ind + 1).unicode))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -193,10 +203,10 @@ public class TextRenderer extends AbstractRenderer {
 
             if (firstCharacterWhichExceedsAllowedWidth == -1) {
                 // can fit the whole word in a line
-                if (lineLeftPos == -1) {
-                    lineLeftPos = currentTextPos;
+                if (line.start == -1) {
+                    line.start = currentTextPos;
                 }
-                lineRightPos = Math.max(lineRightPos, nonBreakablePartEnd + 1);
+                line.end = Math.max(line.end, nonBreakablePartEnd + 1);
                 //addTextSubstring(currentLine, text, currentTextPos, nonBreakablePartEnd + 1);
                 currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                 currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
@@ -220,30 +230,27 @@ public class TextRenderer extends AbstractRenderer {
 
                     HyphenationConfig hyphenationConfig = getProperty(Property.HYPHENATION);
                     if (hyphenationConfig != null) {
-                        int[] wordBounds = getWordBoundsForHyphenation(text, currentTextPos, rightPos, Math.max(currentTextPos, firstCharacterWhichExceedsAllowedWidth - 1));
+                        int[] wordBounds = getWordBoundsForHyphenation(text, currentTextPos, text.end, Math.max(currentTextPos, firstCharacterWhichExceedsAllowedWidth - 1));
                         if (wordBounds != null) {
-                            String word = Utilities.convertFromUtf32(text, wordBounds[0], wordBounds[1]);
+                            String word = text.toUnicodeString(wordBounds[0], wordBounds[1]);
                             Hyphenation hyph = hyphenationConfig.hyphenate(word);
                             if (hyph != null) {
                                 for (int i = hyph.length() - 1; i >= 0; i--) {
                                     String pre = hyph.getPreHyphenText(i);
                                     String pos = hyph.getPostHyphenText(i);
-                                    int[] text = Utilities.convertToUtf32(pre + hyphenationConfig.getHyphenSymbol());
                                     float currentHyphenationChoicePreTextWidth =
-                                            getSubstringWidth(fontKerning == Property.FontKerning.YES, text, 0, text.length, font, fontSize, hScale, characterSpacing, wordSpacing);
+                                            getGlyphLineWidth(fontKerning == Property.FontKerning.YES, convertToGlyphLine(pre + hyphenationConfig.getHyphenSymbol()), font, fontSize, hScale, characterSpacing, wordSpacing);
                                     if (currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
                                         hyphenationApplied = true;
 
-                                        if (lineLeftPos == -1) {
-                                            lineLeftPos = currentTextPos;
+                                        if (line.start == -1) {
+                                            line.start = currentTextPos;
                                         }
-                                        lineRightPos = Math.max(lineRightPos, currentTextPos + pre.length());
-                                        int[] lineCopy = new int[lineRightPos - lineLeftPos + 1];
-                                        System.arraycopy(line, lineLeftPos, lineCopy, 0, lineRightPos - lineLeftPos);
-                                        lineCopy[lineCopy.length - 1] = hyphenationConfig.getHyphenSymbol();
+                                        line.end = Math.max(line.end, currentTextPos + pre.length());
+                                        GlyphLine lineCopy = line.copy(line.start, line.end);
+                                        lineCopy.glyphs.add(convertToGlyph(hyphenationConfig.getHyphenSymbol(), font));
+                                        lineCopy.end++;
                                         line = lineCopy;
-                                        lineLeftPos = 0;
-                                        lineRightPos = lineCopy.length;
 
                                         // TODO these values are based on whole word. recalculate properly based on hyphenated part
                                         currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
@@ -263,10 +270,10 @@ public class TextRenderer extends AbstractRenderer {
                     if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) {
                         // if the word is too long for a single line we will have to split it
                         wordSplit = true;
-                        if (lineLeftPos == - 1) {
-                            lineLeftPos = currentTextPos;
+                        if (line.start == - 1) {
+                            line.start = currentTextPos;
                         }
-                        lineRightPos = Math.max(lineRightPos, firstCharacterWhichExceedsAllowedWidth);
+                        line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
                         currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                         currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                         currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
@@ -274,7 +281,7 @@ public class TextRenderer extends AbstractRenderer {
                         currentTextPos = firstCharacterWhichExceedsAllowedWidth;
                     }
 
-                    if (lineRightPos <= 0) {
+                    if (line.end <= 0) {
                         result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                     } else {
                         result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null).setWordHasBeenSplit(wordSplit);
@@ -317,26 +324,24 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         if (baseDirection != Property.BaseDirection.NO_BIDI) {
-            byte[] lineLevels = new byte[lineRightPos - lineLeftPos];
-            System.arraycopy(levels, lineLeftPos - levelsOffset, lineLevels, 0, lineRightPos - lineLeftPos);
+            byte[] lineLevels = new byte[line.end - line.start];
+            System.arraycopy(levels, line.start - levelsOffset, lineLevels, 0, line.end -  line.start);
             int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
-            int[] reorderedLine = new int[lineRightPos - lineLeftPos];
-            for (int i = 0; i < lineRightPos - lineLeftPos; i++) {
-                reorderedLine[i] = line[lineLeftPos + reorder[i]];
+            List<Glyph> reorderedLine = new ArrayList<>(line.end - line.start);
+            for (int i = 0; i < line.end - line.start; i++) {
+                reorderedLine.add(line.glyphs.get(line.start + reorder[i]));
 
                 // Mirror RTL glyphs
-                if (levels[lineLeftPos - levelsOffset + reorder[i]] % 2 == 1) {
-                    int mirror = BidiBracketMap.getPairedBracket(reorderedLine[i]);
-                    reorderedLine[i] = mirror;
+                if (levels[line.start - levelsOffset + reorder[i]] % 2 == 1) {
+                    int mirror = BidiBracketMap.getPairedBracket(reorderedLine.get(i).unicode);
+                    reorderedLine.set(i, convertToGlyph(BidiBracketMap.getPairedBracket(reorderedLine.get(i).unicode), font));
                 }
             }
-            line = reorderedLine;
-            lineRightPos -= lineLeftPos;
-            lineLeftPos = 0;
+            line = new GlyphLine(reorderedLine, 0, line.end - line.start);
 
             // Don't forget to update the line for the split renderer
             if (result.getStatus() == LayoutResult.PARTIAL) {
-                ((TextRenderer)result.getSplitRenderer()).setLine(line, lineLeftPos, lineRightPos);
+                ((TextRenderer)result.getSplitRenderer()).line = line;
             }
         }
 
@@ -354,7 +359,7 @@ public class TextRenderer extends AbstractRenderer {
 
         float leftBBoxX = occupiedArea.getBBox().getX();
 
-        if (lineRightPos > lineLeftPos) {
+        if (line.end > line.start) {
             PdfFont font = getPropertyAsFont(Property.FONT);
             float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
             Color fontColor = getPropertyAsColor(Property.FONT_COLOR);
@@ -408,18 +413,22 @@ public class TextRenderer extends AbstractRenderer {
             if (horizontalScaling != null && horizontalScaling != 1)
                 canvas.setHorizontalScaling(horizontalScaling * 100);
 
-            // convert to printable array
-            StringBuilder sb = new StringBuilder();
-            for (int i = lineLeftPos; i < lineRightPos; i++) {
-                if (!noPrint(line[i])) {
-                    sb.append(Utilities.convertFromUtf32(line[i]));
+            GlyphLine output = new GlyphLine(line);
+            List<Glyph> printGlyphs = new ArrayList<>();
+            for (int i = line.start; i < line.end; i++) {
+                // TODO index == 0 is bad comparison
+                if (!noPrint(line.glyphs.get(i)) && !(isOtfFont(font) && line.glyphs.get(i).index == 0)) {
+                    printGlyphs.add(line.glyphs.get(i));
                 }
             }
+            output.glyphs = printGlyphs;
+            output.start = 0;
+            output.end = printGlyphs.size();
 
             if (fontKerning == Property.FontKerning.YES) {
-                canvas.showTextKerned(sb.toString());
+                canvas.showTextKerned(output);
             } else {
-                canvas.showText(sb.toString());
+                canvas.showText(output);
             }
             canvas.endText().restoreState();
 
@@ -466,8 +475,17 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     public void trimFirst() {
-        while (leftPos < rightPos && Character.isWhitespace(text[leftPos])) {
-            leftPos++;
+        convertWaitingStringToGlyphLine();
+
+        while (text.start < text.end && Character.isWhitespace(text.glyphs.get(text.start).unicode)) {
+            text.start++;
+        }
+    }
+
+    private void convertWaitingStringToGlyphLine() {
+        if (text == null && strToBeConverted != null) {
+            text = convertToGlyphLine(strToBeConverted);
+            strToBeConverted = null;
         }
     }
 
@@ -477,7 +495,7 @@ public class TextRenderer extends AbstractRenderer {
     public float trimLast() {
         float trimmedSpace = 0;
 
-        if (lineRightPos <= 0)
+        if (line.end <= 0)
             return trimmedSpace;
 
         float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
@@ -486,21 +504,21 @@ public class TextRenderer extends AbstractRenderer {
         PdfFont font = getPropertyAsFont(Property.FONT);
         Float hScale = getProperty(Property.HORIZONTAL_SCALING);
 
-        int firstNonSpaceCharIndex = lineRightPos - 1;
+        int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= 0) {
-            if (!Character.isWhitespace(line[firstNonSpaceCharIndex])) {
+            if (!Character.isWhitespace(line.glyphs.get(firstNonSpaceCharIndex).unicode)) {
                 break;
             }
 
-            float currentCharWidth = getCharWidth(line[firstNonSpaceCharIndex], font, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-            float kerning = (firstNonSpaceCharIndex != 0 ? getKerning(line[firstNonSpaceCharIndex], line[firstNonSpaceCharIndex], font, fontSize, hScale) : 0) / TEXT_SPACE_COEFF;
+            float currentCharWidth = getCharWidth(line.glyphs.get(firstNonSpaceCharIndex), fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+            float kerning = (firstNonSpaceCharIndex != 0 ? getKerning(line.glyphs.get(firstNonSpaceCharIndex), line.glyphs.get(firstNonSpaceCharIndex), font, fontSize, hScale) : 0) / TEXT_SPACE_COEFF;
             trimmedSpace += currentCharWidth - kerning;
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
 
             firstNonSpaceCharIndex--;
         }
 
-        lineRightPos = firstNonSpaceCharIndex + 1;
+        line.end = firstNonSpaceCharIndex + 1;
 
         return trimmedSpace;
     }
@@ -524,28 +542,27 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     public void setText(String text) {
-        int[] utf32Text = Utilities.convertToUtf32(text);
-        setText(utf32Text, 0, utf32Text.length);
+        this.text = convertToGlyphLine(text);
     }
 
-    public void setText(int[] text, int leftPos, int rightPos) {
-        this.text = text;
-        this.leftPos = leftPos;
-        this.rightPos = rightPos;
+    public void setText(GlyphLine text, int leftPos, int rightPos) {
+        this.text = new GlyphLine(text);
+        this.text.start = leftPos;
+        this.text.end = rightPos;
     }
 
     /**
      * The length of the whole text assigned to this renderer.
      */
     public int length() {
-        return text == null ? 0 : rightPos - leftPos;
+        return text == null ? 0 : text.end - text.start;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = leftPos; i < rightPos; i++) {
-            sb.append(Utilities.convertFromUtf32ToCharArray(text[i]));
+        for (int i = text.start; i < text.end; i++) {
+            sb.append(Utilities.convertFromUtf32ToCharArray(text.glyphs.get(i).unicode));
         }
         return sb.toString();
     }
@@ -556,11 +573,32 @@ public class TextRenderer extends AbstractRenderer {
      * @return Unicode char code
      */
     public int charAt(int pos) {
-        return text[pos + leftPos];
+        return text.glyphs.get(pos + text.start).unicode;
     }
 
     public float getTabAnchorCharacterPosition(){
         return tabAnchorCharacterPosition;
+    }
+
+    private GlyphLine convertToGlyphLine(String text) {
+        PdfFont font = getPropertyAsFont(Property.FONT);
+        int[] unicodeIds = Utilities.convertToUtf32(text);
+        GlyphLine glyphLine = new GlyphLine();
+        for (int unicodeId : unicodeIds) {
+            glyphLine.glyphs.add(convertToGlyph(unicodeId, font));
+        }
+        glyphLine.start = 0;
+        glyphLine.end = unicodeIds.length;
+        return glyphLine;
+    }
+
+    // TODO this should be handled at font level
+    private Glyph convertToGlyph(int code, PdfFont font) {
+        return isOtfFont(font) ? ((TrueTypeFont)font.getFontProgram()).getMetrics(code) : new Glyph(0, font.getWidth(code), code);
+    }
+
+    private boolean isOtfFont(PdfFont font) {
+        return font instanceof PdfType0Font && font.getFontProgram() instanceof TrueTypeFont;
     }
 
     @Override
@@ -572,21 +610,15 @@ public class TextRenderer extends AbstractRenderer {
      * Returns the length of the {@see line} which is the result of the layout call.
      */
     protected int lineLength() {
-        return lineRightPos > 0 ? lineRightPos - lineLeftPos: 0;
-    }
-
-    protected void setLine(int[] line, int lineLeftPos, int lineRightPos) {
-        this.line = line;
-        this.lineLeftPos = lineLeftPos;
-        this.lineRightPos = lineRightPos;
+        return line.end > 0 ? line.end - line.start: 0;
     }
 
     protected int getNumberOfSpaces() {
-        if (lineRightPos <= 0)
+        if (line.end <= 0)
             return 0;
         int spaces = 0;
-        for (int i = lineLeftPos; i < lineRightPos; i++) {
-            if (line[i] == ' ') {
+        for (int i = line.start; i < line.end; i++) {
+            if (line.glyphs.get(i).unicode == ' ') {
                 spaces++;
             }
         }
@@ -603,8 +635,8 @@ public class TextRenderer extends AbstractRenderer {
 
     protected TextRenderer[] split(int initialOverflowTextPos) {
         TextRenderer splitRenderer = createSplitRenderer();
-        splitRenderer.setText(text, leftPos, initialOverflowTextPos);
-        splitRenderer.setLine(line, lineLeftPos, lineRightPos);
+        splitRenderer.setText(text, text.start, initialOverflowTextPos);
+        splitRenderer.line = line;
         splitRenderer.occupiedArea = occupiedArea.clone();
         splitRenderer.parent = parent;
         splitRenderer.yLineOffset = yLineOffset;
@@ -612,7 +644,7 @@ public class TextRenderer extends AbstractRenderer {
         splitRenderer.levelsOffset = levelsOffset;
 
         TextRenderer overflowRenderer = createOverflowRenderer();
-        overflowRenderer.setText(text, initialOverflowTextPos, rightPos);
+        overflowRenderer.setText(text, initialOverflowTextPos, text.end);
         overflowRenderer.levels = levels;
         overflowRenderer.levelsOffset = levelsOffset;
         overflowRenderer.parent = parent;
@@ -641,25 +673,29 @@ public class TextRenderer extends AbstractRenderer {
         canvas.restoreState();
     }
 
-    private static boolean noPrint(int c) {
+    private static boolean noPrint(Glyph g) {
+        if (g.unicode == null) {
+            return false;
+        }
+        int c = g.unicode;
         return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e || c == '\u00AD';
     }
 
-    private float getCharWidth(int c, PdfFont font, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
+    private float getCharWidth(Glyph g, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
         if (hScale == null)
             hScale = 1f;
 
-        float resultWidth = font.getWidth(c) * fontSize * hScale;
+        float resultWidth = g.width * fontSize * hScale;
         if (characterSpacing != null) {
             resultWidth += characterSpacing * hScale * TEXT_SPACE_COEFF;
         }
-        if (wordSpacing != null && c == ' ') {
+        if (wordSpacing != null && g.unicode != null && g.unicode == ' ') {
             resultWidth += wordSpacing * hScale * TEXT_SPACE_COEFF;
         }
         return resultWidth;
     }
 
-    private float getKerning(int char1, int char2, PdfFont font, float fontSize, Float hScale) {
+    private float getKerning(Glyph char1, Glyph char2, PdfFont font, float fontSize, Float hScale) {
         if (hScale == null)
             hScale = 1f;
         if (font.hasKernPairs()) {
@@ -669,30 +705,30 @@ public class TextRenderer extends AbstractRenderer {
         }
     }
 
-    private float getSubstringWidth(boolean kerned, int[] text, int leftPos, int rightPos, PdfFont font, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
+    private float getGlyphLineWidth(boolean kerned, GlyphLine glyphLine, PdfFont font, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
         float width = 0;
-        for (int i = leftPos; i < rightPos; i++) {
-            float charWidth = getCharWidth(text[i], font, fontSize, hScale, characterSpacing, wordSpacing);
+        for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            float charWidth = getCharWidth(glyphLine.glyphs.get(i), fontSize, hScale, characterSpacing, wordSpacing);
             width += charWidth;
             if (kerned) {
-                float kerning = i != leftPos ? getKerning(text[i - 1], text[i], font, fontSize, hScale) : 0;
+                float kerning = i != glyphLine.start ? getKerning(glyphLine.glyphs.get(i - 1), glyphLine.glyphs.get(i), font, fontSize, hScale) : 0;
                 width += kerning;
             }
         }
         return width / TEXT_SPACE_COEFF;
     }
 
-    private int[] getWordBoundsForHyphenation(int[] text, int leftTextPos, int rightTextPos, int wordMiddleCharPos) {
-        while (wordMiddleCharPos >= leftTextPos && !isCharPartOfWordForHyphenation(text[wordMiddleCharPos]) && !Character.isWhitespace(text[wordMiddleCharPos])) {
+    private int[] getWordBoundsForHyphenation(GlyphLine text, int leftTextPos, int rightTextPos, int wordMiddleCharPos) {
+        while (wordMiddleCharPos >= leftTextPos && !isCharPartOfWordForHyphenation(text.glyphs.get(wordMiddleCharPos).unicode) && !Character.isWhitespace(text.glyphs.get(wordMiddleCharPos).unicode)) {
             wordMiddleCharPos--;
         }
         if (wordMiddleCharPos >= leftTextPos) {
             int left = wordMiddleCharPos;
-            while (left >= leftTextPos && isCharPartOfWordForHyphenation(text[left])) {
+            while (left >= leftTextPos && isCharPartOfWordForHyphenation(text.glyphs.get(left).unicode)) {
                 left--;
             }
             int right = wordMiddleCharPos;
-            while (right < rightTextPos && isCharPartOfWordForHyphenation(text[right])) {
+            while (right < rightTextPos && isCharPartOfWordForHyphenation(text.glyphs.get(right).unicode)) {
                 right++;
             }
             return new int[]{left + 1, right};

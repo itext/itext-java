@@ -1,5 +1,7 @@
 package com.itextpdf.core.pdf;
 
+import com.itextpdf.core.font.PdfFont;
+
 /**
  * <CODE>PdfTextArray</CODE> defines an array with displacements and <CODE>PdfString</CODE>-objects.
  * <P>
@@ -14,7 +16,7 @@ package com.itextpdf.core.pdf;
 public class PdfTextArray extends PdfArray {
 
     private Float lastNumber;
-    private String lastString;
+    private StringBuilder lastString;
 
     @Override
     public boolean add(PdfObject pdfObject) {
@@ -22,7 +24,7 @@ public class PdfTextArray extends PdfArray {
             add(((PdfNumber)pdfObject).getFloatValue());
             return true;
         } else if (pdfObject instanceof PdfString) {
-            add(((PdfString)pdfObject).toUnicodeString());
+            add(((PdfString)pdfObject).getValueBytes());
             return true;
         }
         return false;
@@ -48,15 +50,23 @@ public class PdfTextArray extends PdfArray {
         return false;
     }
 
-    public boolean add(String text) {
+    public boolean add(String text, PdfFont font) {
         // adding an empty string doesn't modify the TextArray at all
+        return add(font.convertToBytes(text));
+    }
+
+    public boolean add(byte[] text) {
+        return add(new PdfString(text).getValue());
+    }
+
+    protected boolean add(String text) {
         if (text.length() > 0) {
             if (lastString != null) {
-                lastString += text;
-                set(size() - 1, new PdfString(lastString));
+                lastString.append(text);
+                set(size() - 1, new PdfString(lastString.toString()));
             } else {
-                lastString = text;
-                super.add(new PdfString(lastString));
+                lastString = new StringBuilder(text);
+                super.add(new PdfString(lastString.toString()));
             }
             lastNumber = null;
             return true;

@@ -233,17 +233,57 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         } else {
             throw new PdfException("font.has.no.suitable.cmap");
         }
-
     }
 
     @Override
-    public float getWidth(int ch) {
+    public byte[] convertToBytes(GlyphLine glyphLine) {
+        if (glyphLine != null && cidFontType == CidFontType2) {
+            TrueTypeFont ttf = (TrueTypeFont) fontProgram;
+            char[] glyphs = new char[glyphLine.end - glyphLine.start];
+            for (int i = glyphLine.start; i < glyphLine.end; i++) {
+                Glyph glyph = glyphLine.glyphs.get(i);
+                glyphs[i - glyphLine.start] = (char)glyph.index;
+                int code = glyph.index;
+                if (longTag.get(code) == null) {
+                    Integer uniChar = glyph.unicode;
+                    longTag.put(code, new int[] {code, glyph.width, uniChar!=null?uniChar:0});
+                }
+            }
+
+            String s = new String(glyphs, 0, glyphs.length);
+            try {
+                return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+            } catch (UnsupportedEncodingException e) {
+                throw new PdfException("TrueTypeFont", e);
+            }
+        }
+        return super.convertToBytes(glyphLine);
+    }
+
+    @Override
+    public byte[] convertToBytes(Glyph glyph) {
+        int code = glyph.index;
+        TrueTypeFont ttf = (TrueTypeFont) fontProgram;
+        if (longTag.get(code) == null) {
+            Integer uniChar = ttf.getUnicodeChar(code);
+            longTag.put(code, new int[] {code, glyph.width, uniChar!=null?uniChar:0});
+        }
+        String s = new String(new char[] {(char)glyph.index}, 0, 1);
+        try {
+            return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+        } catch (UnsupportedEncodingException e) {
+            throw new PdfException("TrueTypeFont", e);
+        }
+    }
+
+    @Override
+    public int getWidth(int ch) {
         int width = fontProgram.getWidth(cmapEncoding.getCidCode(ch));
         return width > 0 ? width : FontProgram.DEFAULT_WIDTH;
     }
 
     @Override
-    public float getWidth(String text) {
+    public int getWidth(String text) {
         int total = 0;
         for (int k = 0; k < text.length(); ++k) {
             int ch;

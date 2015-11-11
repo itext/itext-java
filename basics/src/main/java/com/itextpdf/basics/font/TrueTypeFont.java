@@ -4,12 +4,13 @@ import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.otf.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TrueTypeFont extends FontProgram {
 
@@ -199,9 +200,11 @@ public class TrueTypeFont extends FontProgram {
             for (OpenTableLookup lookup : init) {
                 if (lookup != null) {
                     for (int i = 0; i < words.size(); i += 2) {
-                        glyphLine.idx = words.get(i);
-                        if (lookup.transformOne(glyphLine)) {
-                            transformed = true;
+                        if (words.get(i) + 1 != words.get(i + 1)) {
+                            glyphLine.idx = words.get(i);
+                            if (lookup.transformOne(glyphLine)) {
+                                transformed = true;
+                            }
                         }
                     }
                 }
@@ -220,10 +223,12 @@ public class TrueTypeFont extends FontProgram {
             }
             for (OpenTableLookup lookup : fina) {
                 if (lookup != null) {
-                    for (int i = 1; i < words.size(); i += 2) {
-                        glyphLine.idx = words.get(i) - 1;
-                        if (lookup.transformOne(glyphLine)) {
-                            transformed = true;
+                    for (int i = 0; i < words.size(); i += 2) {
+                        if (words.get(i) + 1 != words.get(i + 1)) {
+                            glyphLine.idx = words.get(i + 1) - 1;
+                            if (lookup.transformOne(glyphLine)) {
+                                transformed = true;
+                            }
                         }
                     }
                 }
@@ -367,6 +372,21 @@ public class TrueTypeFont extends FontProgram {
     }
 
     /**
+     * Gets the kerning between two glyphs.
+     *
+     * @param glyph1 the first glyph
+     * @param glyph1 the second glyph
+     * @return the kerning to be applied
+     */
+    @Override
+    public int getKerning(Glyph glyph1, Glyph glyph2) {
+        if (glyph1 == null || glyph2 == null) {
+            return 0;
+        }
+        return kerning.get((glyph1.index << 16) + glyph2.index);
+    }
+
+    /**
      * Gets the glyph index and metrics for a character.
      *
      * @param ch the character code
@@ -383,7 +403,12 @@ public class TrueTypeFont extends FontProgram {
 //                return null;
 //            }
 //        }
-        return codeGlyphMap.get(ch);
+        Glyph result = codeGlyphMap.get(ch);
+        if (result == null) {
+            int zeroMetrics = ch != 0 && getMetrics(0) != null ? getMetrics(0).width : 0;
+            return new Glyph(0, zeroMetrics, ch);
+        }
+        return result;
     }
 
     public boolean isCff() {
@@ -651,7 +676,7 @@ public class TrueTypeFont extends FontProgram {
         List<Integer> words = new ArrayList<>(glyphLine.glyphs.size());
         boolean started = false;
         for (int i = 0; i < glyphLine.glyphs.size(); i++) {
-            if (!hasSubstitution(medi, glyphLine.glyphs.get(i).index)) {
+            if (!hasSubstitution(medi, glyphLine.glyphs.get(i).index) || isSameSubstitution(medi, fina, glyphLine.glyphs.get(i))) {
                 if (started) {
                     // if the glyph has no fina form, it is not an arabic glyph
                     boolean hasFinaForm = hasSubstitution(fina, glyphLine.glyphs.get(i).index);
@@ -671,6 +696,12 @@ public class TrueTypeFont extends FontProgram {
         return words;
     }
 
+    private boolean isSameSubstitution(List<OpenTableLookup> feature1, List<OpenTableLookup> feature2, Glyph glyph) {
+        Glyph t1 = transform(feature1, glyph);
+        Glyph t2 = transform(feature2, glyph);
+        return t1 == t2 || t1 != null && t1.equals(t2);
+    }
+
     private boolean hasSubstitution(List<OpenTableLookup> feature, int index) {
         for (OpenTableLookup lookup : feature) {
             if (lookup != null) {
@@ -680,5 +711,22 @@ public class TrueTypeFont extends FontProgram {
             }
         }
         return false;
+    }
+
+    private Glyph transform(List<OpenTableLookup> feature, Glyph glyph) {
+        for (OpenTableLookup lookup : feature) {
+            if (lookup != null) {
+                if (((GsubLookupFormat1)lookup).hasSubstitution(glyph.index)) {
+                    GlyphLine gl = new GlyphLine();
+                    gl.start = 0;
+                    gl.end = 1;
+                    gl.idx = 0;
+                    gl.glyphs = Arrays.asList(glyph);
+                    lookup.transformOne(gl);
+                    return gl.glyphs.get(0);
+                }
+            }
+        }
+        return null;
     }
 }

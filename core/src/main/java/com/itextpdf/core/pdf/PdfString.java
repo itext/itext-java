@@ -142,7 +142,7 @@ public class PdfString extends PdfPrimitiveObject {
      * @return byte array
      */
     // Analog of com.itextpdf.text.pdf.PdfString.getBytes() method in iText5.
-    protected byte[] getValueBytes() {
+    public byte[] getValueBytes() {
         if (value == null)
             generateValue();
         if (encoding != null && encoding.equals(PdfEncodings.UnicodeBig) && PdfEncodings.isPdfDocEncoding(value))
