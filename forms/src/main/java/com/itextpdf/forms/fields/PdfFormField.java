@@ -71,6 +71,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     protected String text;
     protected PdfFont font;
+    protected int fontSize;
     protected Color color;
     protected int checkType;
     protected float borderWidth = 1;
@@ -391,6 +392,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         appearance.getResources().addFont(font);
         PdfDictionary ap = new PdfDictionary();
         ap.put(PdfName.N, appearance.getPdfObject());
+        getPdfObject().put(PdfName.V, new PdfString(value));
 
         return put(PdfName.AP, ap);
     }
@@ -685,7 +687,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
-        setDefaultAppearance(setFontAndSize(font, fontSize));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
 
         float height = rect.getHeight();
         float width = rect.getWidth();
@@ -725,7 +727,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
-        setDefaultAppearance(setFontAndSize(font, fontSize));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
 
         float width = rect.getWidth();
         float height = rect.getHeight();
@@ -852,7 +854,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
         drawButton(canvas, 0, 0, width, height, text, font, fontSize);
-        setDefaultAppearance(setFontAndSize(font, fontSize));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
@@ -921,6 +923,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public void setFont(PdfFont font) {
         this.font = font;
+        regenerateField();
+    }
+
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+        regenerateField();
+    }
+
+    public void setFontAndSize(PdfFont font, int fontSize) {
+        this.font = font;
+        this.fontSize = fontSize;
+        regenerateField();
     }
 
     public void setCheckType(int checkType) {
@@ -930,7 +944,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         this.checkType = checkType;
         text = typeChars[checkType - 1];
         try {
-            setFont(PdfFont.createStandardFont(getDocument(), FontConstants.ZAPFDINGBATS, PdfEncodings.WINANSI));
+            font = PdfFont.createStandardFont(getDocument(), FontConstants.ZAPFDINGBATS, PdfEncodings.WINANSI);
         }
         catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
@@ -1129,7 +1143,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return array;
     }
 
-    protected String setFontAndSize(PdfFont font, int fontSize) {
+    protected String generateDefaultAppearanceString(PdfFont font, int fontSize) {
         PdfStream stream = new PdfStream();
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
         canvas.setFontAndSize(font, fontSize).resetFillColorRgb();
@@ -1148,16 +1162,40 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 String str = getDefaultAppearance().toUnicodeString();
                 Object[] dab = splitDAelements(str);
                 PdfName fontName = new PdfName(dab[DA_FONT].toString());
-                fontAndSize[0] =  PdfFont.createFont(getDocument(), fontDic.getAsDictionary(fontName));
-                fontAndSize[1] = dab[DA_SIZE];
+                if (font != null) {
+                    fontAndSize[0] = font;
+                } else {
+                    fontAndSize[0] =  PdfFont.createFont(getDocument(), fontDic.getAsDictionary(fontName));
+                }
+                if (fontSize != 0) {
+                    fontAndSize[1] = fontSize;
+                } else {
+                    fontAndSize[1] = dab[DA_SIZE];
+                }
                 color = (Color) dab[DA_COLOR];
             } else {
-                fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
-                fontAndSize[1] = DEFAULT_FONT_SIZE;
+                if (font != null) {
+                    fontAndSize[0] = font;
+                } else {
+                    fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
+                }
+                if (fontSize != 0) {
+                    fontAndSize[1] = fontSize;
+                } else {
+                    fontAndSize[1] = DEFAULT_FONT_SIZE;
+                }
             }
         } else {
-            fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
-            fontAndSize[1] = DEFAULT_FONT_SIZE;
+            if (font != null) {
+                fontAndSize[0] = font;
+            } else {
+                fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
+            }
+            if (fontSize != 0) {
+                fontAndSize[1] = fontSize;
+            } else {
+                fontAndSize[1] = DEFAULT_FONT_SIZE;
+            }
         }
 
         return fontAndSize;

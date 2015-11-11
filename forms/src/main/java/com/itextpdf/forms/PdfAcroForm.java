@@ -347,12 +347,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary parent = field.getParent();
         if (parent != null) {
-            parent.getAsArray(PdfName.Kids).remove(field.getPdfObject().getIndirectReference());
+            PdfArray kids = parent.getAsArray(PdfName.Kids);
+            if (!kids.remove(field.getPdfObject().getIndirectReference())) {
+                kids.remove(field.getPdfObject());
+            }
             fields.remove(fieldName);
             return true;
         }
 
-        if (getFields().remove(field.getPdfObject().getIndirectReference())) {
+        if (getFields().remove(field.getPdfObject().getIndirectReference()) || getFields().remove(field.getPdfObject())) {
             fields.remove(fieldName);
             return true;
         }
@@ -392,7 +395,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfString fieldName = formField.getFieldName();
             String name;
             if (fieldName == null) {
-                name = formField.getParent().getAsString(PdfName.T).toUnicodeString() + "_" + index;
+                name = formField.getParent().getAsString(PdfName.T).toUnicodeString() + "." + index;
                 index++;
             } else {
                 name = fieldName.toUnicodeString();
