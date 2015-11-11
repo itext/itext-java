@@ -31,7 +31,7 @@ public class LinkRenderer extends TextRenderer{
             applyAbsolutePositioningTranslation(true);
         }
 
-        PdfPage page = linkAnnotation.getDocument().getPage(occupiedArea.getPageNumber());
+        PdfPage page = document.getPage(occupiedArea.getPageNumber());
         page.addAnnotation(linkAnnotation);
     }
 }
