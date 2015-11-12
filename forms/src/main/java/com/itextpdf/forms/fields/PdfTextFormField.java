@@ -13,11 +13,11 @@ public class PdfTextFormField extends PdfFormField {
     public static final int FF_COMB = makeFieldFlag(25);
     public static final int FF_RICH_TEXT = makeFieldFlag(26);
 
-    public PdfTextFormField() {
+    protected PdfTextFormField() {
         super();
     }
 
-    public PdfTextFormField(PdfWidgetAnnotation widget) {
+    protected PdfTextFormField(PdfWidgetAnnotation widget) {
         super(widget);
     }
 

@@ -8,11 +8,11 @@ import com.itextpdf.forms.PdfSigFieldLockDictionary;
 
 public class PdfSignatureFormField extends PdfFormField {
 
-    public PdfSignatureFormField() {
+    protected PdfSignatureFormField() {
         super();
     }
 
-    public PdfSignatureFormField(PdfWidgetAnnotation widget) {
+    protected PdfSignatureFormField(PdfWidgetAnnotation widget) {
         super(widget);
     }
 

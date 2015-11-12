@@ -18,11 +18,11 @@ public class PdfChoiceFormField extends PdfFormField {
     public static final int FF_DO_NOT_SPELL_CHECK = makeFieldFlag(23);
     public static final int FF_COMMIT_ON_SEL_CHANGE = makeFieldFlag(27);
 
-    public PdfChoiceFormField() {
+    protected PdfChoiceFormField() {
         super();
     }
 
-    public PdfChoiceFormField(PdfWidgetAnnotation widget) {
+    protected PdfChoiceFormField(PdfWidgetAnnotation widget) {
         super(widget);
     }
 

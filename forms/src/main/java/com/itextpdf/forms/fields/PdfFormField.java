@@ -76,12 +76,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected int checkType;
     protected float borderWidth = 1;
 
-    public PdfFormField() {
+    protected PdfFormField() {
         this(new PdfDictionary());
         put(PdfName.FT, getFormType());
     }
 
-    public PdfFormField(PdfWidgetAnnotation widget) {
+    protected PdfFormField(PdfWidgetAnnotation widget) {
         this(new PdfDictionary());
         addKid(widget);
         put(PdfName.FT, getFormType());

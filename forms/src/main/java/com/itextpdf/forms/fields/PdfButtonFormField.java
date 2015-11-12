@@ -14,11 +14,11 @@ public class PdfButtonFormField extends PdfFormField {
     public final static int FF_PUSH_BUTTON = makeFieldFlag(17);
     public final static int FF_RADIOS_IN_UNISON = makeFieldFlag(26);
 
-    public PdfButtonFormField() {
+    protected PdfButtonFormField() {
         super();
     }
 
-    public PdfButtonFormField(PdfWidgetAnnotation widget) {
+    protected PdfButtonFormField(PdfWidgetAnnotation widget) {
         super(widget);
     }
 
