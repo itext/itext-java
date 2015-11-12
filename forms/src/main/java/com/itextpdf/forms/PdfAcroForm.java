@@ -18,6 +18,9 @@ import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.xfa.XfaForm;
+import com.itextpdf.forms.xfa.Xml2Som;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -39,16 +42,20 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     private static PdfName resourceNames[] = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
     private PdfDictionary defaultResources;
     private LinkedHashSet<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
+    private XfaForm xfaForm;
+
 
     public PdfAcroForm(PdfDictionary pdfObject) {
         super(pdfObject);
         getFormFields();
+        xfaForm = new XfaForm(pdfObject);
     }
 
     public PdfAcroForm(PdfArray fields) {
         super(new PdfDictionary());
         put(PdfName.Fields, fields);
         getFormFields();
+        xfaForm = new XfaForm();
     }
 
     /**
@@ -78,7 +85,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 acroForm.defaultResources = new PdfDictionary();
             }
             acroForm.document = document;
+            acroForm.xfaForm = new XfaForm(document);
         }
+
+
 
         return acroForm;
     }
@@ -500,6 +510,57 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 result.put(name, res);
             }
         }
+    }
+
+    public boolean hasXfaForm(){
+        return xfaForm != null && xfaForm.isXfaPresent();
+    }
+
+    public XfaForm getXfaForm(){
+        return xfaForm;
+    }
+
+    /**
+     * Removes the XFA stream from the document.
+     */
+    public void removeXfaForm() {
+        if(hasXfaForm()) {
+            PdfDictionary root = document.getCatalog().getPdfObject();
+            PdfDictionary acroform = root.getAsDictionary(PdfName.AcroForm);
+            acroform.remove(PdfName.XFA);
+            xfaForm = new XfaForm();
+        }
+    }
+
+    public void setXfaFieldValue(String name, String value) {
+        if (hasXfaForm()) {
+            name = xfaForm.findFieldName(name, this);
+            if (name != null) {
+                String shortName = Xml2Som.getShortName(name);
+                Node xn = xfaForm.findDatasetsNode(shortName);
+                if (xn == null) {
+                    xn = xfaForm.getDatasetsSom().insertNode(xfaForm.getDatasetsNode(), shortName);
+                }
+                xfaForm.setNodeText(xn, value);
+            }
+        }
+    }
+
+    /**
+     * Gets the xfa field value.
+     * @param name the fully qualified field name
+     * @return the field value
+     */
+    public String getXfaFieldValue(String name) {
+        if (xfaForm.isXfaPresent()) {
+            name = xfaForm.findFieldName(name, this);
+            if (name != null) {
+
+                name = Xml2Som.getShortName(name);
+                return XfaForm.getNodeText(xfaForm.findDatasetsNode(name));
+            }
+        }
+        return null;
     }
 
     private PdfPage getPage(PdfDictionary pageDic) {

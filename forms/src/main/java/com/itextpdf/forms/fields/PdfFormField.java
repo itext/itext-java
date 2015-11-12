@@ -350,7 +350,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.V, new PdfString(value));
         }
 
-        if (formType.equals(PdfName.Btn) && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) == 0) {
+        if (PdfName.Btn.equals(formType) && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) == 0) {
             if (generateAppearance) {
                 regenerateField();
             }
