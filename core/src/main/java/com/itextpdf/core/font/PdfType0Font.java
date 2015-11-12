@@ -238,7 +238,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     @Override
     public byte[] convertToBytes(GlyphLine glyphLine) {
         if (glyphLine != null && cidFontType == CidFontType2) {
-            TrueTypeFont ttf = (TrueTypeFont) fontProgram;
             char[] glyphs = new char[glyphLine.end - glyphLine.start];
             for (int i = glyphLine.start; i < glyphLine.end; i++) {
                 Glyph glyph = glyphLine.glyphs.get(i);
@@ -246,7 +245,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 int code = glyph.index;
                 if (longTag.get(code) == null) {
                     Integer uniChar = glyph.unicode;
-                    longTag.put(code, new int[] {code, glyph.width, uniChar!=null?uniChar:0});
+                    longTag.put(code, new int[]{code, glyph.width, uniChar != null ? uniChar : 0});
                 }
             }
 
@@ -585,7 +584,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 buf.append(size).append(" beginbfrange\n");
             }
             --size;
-            int metric[] = (int[]) metrics[k];
+            int[] metric = (int[]) metrics[k];
             String fromTo = CMapContentParser.toHex(metric[0]);
             buf.append(fromTo).append(fromTo).append(CMapContentParser.toHex(metric[2])).append('\n');
         }

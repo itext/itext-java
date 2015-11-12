@@ -405,8 +405,7 @@ public class TrueTypeFont extends FontProgram {
 //        }
         Glyph result = codeGlyphMap.get(ch);
         if (result == null) {
-            int zeroMetrics = ch != 0 && getMetrics(0) != null ? getMetrics(0).width : 0;
-            return new Glyph(0, zeroMetrics, ch);
+            result = new Glyph(indexGlyphMap.get(0), ch);
         }
         return result;
     }

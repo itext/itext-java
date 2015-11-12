@@ -417,7 +417,7 @@ public class TextRenderer extends AbstractRenderer {
             List<Glyph> printGlyphs = new ArrayList<>();
             for (int i = line.start; i < line.end; i++) {
                 // TODO index == 0 is bad comparison
-                if (!noPrint(line.glyphs.get(i)) && !(isOtfFont(font) && line.glyphs.get(i).index == 0)) {
+                if (!noPrint(line.glyphs.get(i))) {
                     printGlyphs.add(line.glyphs.get(i));
                 }
             }

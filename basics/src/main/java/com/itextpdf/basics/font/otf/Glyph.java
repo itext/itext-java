@@ -88,11 +88,24 @@ public class Glyph {
         this.IsMark = glyph.IsMark;
     }
     
+
     public Glyph(Glyph glyph) {
         this.index = glyph.index;
         this.width = glyph.width;
         this.chars = glyph.chars;
         this.unicode = glyph.unicode;
+        this.XPlacement = glyph.XPlacement;
+        this.YPlacement = glyph.YPlacement;
+        this.XAdvance = glyph.XAdvance;
+        this.YAdvance = glyph.YAdvance;
+        this.IsMark = glyph.IsMark;
+    }
+
+    public Glyph(Glyph glyph, Integer unicode) {
+        this.index = glyph.index;
+        this.width = glyph.width;
+        this.chars = glyph.chars;
+        this.unicode = unicode;
         this.XPlacement = glyph.XPlacement;
         this.YPlacement = glyph.YPlacement;
         this.XAdvance = glyph.XAdvance;
