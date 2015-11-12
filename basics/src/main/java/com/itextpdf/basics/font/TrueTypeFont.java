@@ -675,11 +675,12 @@ public class TrueTypeFont extends FontProgram {
         List<Integer> words = new ArrayList<>(glyphLine.glyphs.size());
         boolean started = false;
         for (int i = 0; i < glyphLine.glyphs.size(); i++) {
-            if (!hasSubstitution(medi, glyphLine.glyphs.get(i).index) || isSameSubstitution(medi, fina, glyphLine.glyphs.get(i))) {
+            Glyph medialForm = transform(medi, glyphLine.glyphs.get(i));
+            Glyph finalForm = transform(fina, glyphLine.glyphs.get(i));
+            if (medialForm == null || (finalForm != null && medialForm.index == finalForm.index)) {
                 if (started) {
                     // if the glyph has no fina form, it is not an arabic glyph
-                    boolean hasFinaForm = hasSubstitution(fina, glyphLine.glyphs.get(i).index);
-                    words.add(hasFinaForm ? i + 1 : i);
+                    words.add(finalForm != null ? i + 1 : i);
                     started = false;
                 }
             } else {
@@ -693,23 +694,6 @@ public class TrueTypeFont extends FontProgram {
             words.add(glyphLine.glyphs.size());
         }
         return words;
-    }
-
-    private boolean isSameSubstitution(List<OpenTableLookup> feature1, List<OpenTableLookup> feature2, Glyph glyph) {
-        Glyph t1 = transform(feature1, glyph);
-        Glyph t2 = transform(feature2, glyph);
-        return t1 == t2 || t1 != null && t1.equals(t2);
-    }
-
-    private boolean hasSubstitution(List<OpenTableLookup> feature, int index) {
-        for (OpenTableLookup lookup : feature) {
-            if (lookup != null) {
-                if (((GsubLookupFormat1)lookup).hasSubstitution(index)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private Glyph transform(List<OpenTableLookup> feature, Glyph glyph) {
