@@ -740,7 +740,7 @@ public class PdfReader {
             case Number:
                 return new PdfNumber(tokens.getByteContent());
             case String:
-                return new PdfString(tokens.getByteContent(), tokens.isHexString());/*.decrypt(decrypt);*/
+                return new PdfString(tokens.getByteContent(), tokens.isHexString());/*.decrypt(decrypt); see DEVSIX-336 */
             case Name:
                 return readPdfName(readAsDirect);
             case Ref:
