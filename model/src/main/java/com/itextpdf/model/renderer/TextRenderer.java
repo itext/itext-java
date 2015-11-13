@@ -63,33 +63,6 @@ public class TextRenderer extends AbstractRenderer {
         line = new GlyphLine(text);
         line.start = line.end = -1;
 
-        Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
-        if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
-            byte direction;
-            switch (baseDirection) {
-                case LEFT_TO_RIGHT:
-                    direction = 0;
-                    break;
-                case RIGHT_TO_LEFT:
-                    direction = 1;
-                    break;
-                case DEFAULT_BIDI:
-                default:
-                    direction = 2;
-                    break;
-            }
-
-            int[] unicodeIds = new int[text.end - text.start];
-            for (int i = text.start; i < text.end; i++) {
-                unicodeIds[i - text.start] = text.glyphs.get(i).unicode;
-            }
-            byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start);
-            byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
-            int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
-            BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
-            levels = bidiReorder.getLevels(new int[] {text.end - text.start});
-        }
-
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = applyMargins(area.getBBox().clone(), false);
         applyBorderBox(layoutBox, false);
@@ -114,7 +87,39 @@ public class TextRenderer extends AbstractRenderer {
         if (script != null && isOtfFont(font) && !otfFeaturesApplied) {
             ((TrueTypeFont)font.getFontProgram()).setScriptForOTF(script);
             ((TrueTypeFont)font.getFontProgram()).applyOtfScript(text);
+            ((TrueTypeFont)font.getFontProgram()).applyLigaFeature(text, true);
             otfFeaturesApplied = true;
+        }
+
+        Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
+        if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
+            byte direction;
+            switch (baseDirection) {
+                case LEFT_TO_RIGHT:
+                    direction = 0;
+                    break;
+                case RIGHT_TO_LEFT:
+                    direction = 1;
+                    break;
+                case DEFAULT_BIDI:
+                default:
+                    direction = 2;
+                    break;
+            }
+
+            int[] unicodeIds = new int[text.end - text.start];
+            for (int i = text.start; i < text.end; i++) {
+                assert text.glyphs.get(i).chars.length() > 0;
+                // we assume all the chars will have the same bidi group
+                // we also assume pairing symbols won't get merged with other ones
+                int unicode = text.glyphs.get(i).chars.charAt(0);
+                unicodeIds[i - text.start] = text.glyphs.get(i).unicode;
+            }
+            byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start);
+            byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
+            int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
+            BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
+            levels = bidiReorder.getLevels(new int[] {text.end - text.start});
         }
 
         FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();

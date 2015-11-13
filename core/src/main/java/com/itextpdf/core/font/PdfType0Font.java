@@ -206,7 +206,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     }
                 } else if (ttf.isApplyLigatures()) {
                     glyphLine = ttf.createGlyphLine(glyphs, i);
-                    if (!ttf.applyLigaFeature(glyphLine)) {
+                    if (!ttf.applyLigaFeature(glyphLine, false)) {
                         glyphLine = null;
                     }
                 }

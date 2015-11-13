@@ -165,13 +165,7 @@ public class TrueTypeFont extends FontProgram {
             return false;
         }
         if (gsubTable != null) {
-            LanguageRecord languageRecord = null;
-            for (ScriptRecord record: gsubTable.getScriptRecords()) {
-                if (otfScript.equals(record.tag)) {
-                    languageRecord = record.defaultLanguage;
-                    break;
-                }
-            }
+            LanguageRecord languageRecord = getLanguageRecord();
             if (languageRecord == null) {
                 return false;
             }
@@ -180,7 +174,7 @@ public class TrueTypeFont extends FontProgram {
             List<OpenTableLookup> medi = null;
             List<OpenTableLookup> fina = null;
             List<OpenTableLookup> rlig = null;
-            for (int featureIndex: languageRecord.features) {
+            for (int featureIndex : languageRecord.features) {
                 FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
                 switch (feature.tag) {
                     case "init":
@@ -201,29 +195,42 @@ public class TrueTypeFont extends FontProgram {
             if (applyInitMediFinaShaping(glyphLine, init, medi, fina)) {
                 transformed = true;
             }
-//            if (applyRligFeature(glyphLine, rlig)) {
-//                transformed = true;
-//            }
+            if (applyRligFeature(glyphLine, rlig)) {
+                transformed = true;
+            }
 
             return transformed;
         }
         return false;
     }
 
-    public boolean applyLigaFeature(GlyphLine glyphLine) {
+    public boolean applyLigaFeature(GlyphLine glyphLine, boolean scriptSpecific) {
         if (gsubTable != null) {
-            List<FeatureRecord> features = gsubTable.getFeatureRecords();
-            FeatureRecord liga = null;
-            for (FeatureRecord featureRecord : features) {
-                if (featureRecord.tag.equals("liga")) {
-                    liga = featureRecord;
-                    break;
+            List<FeatureRecord> ligaFeatures = new ArrayList<>();
+
+            if (scriptSpecific) {
+                LanguageRecord languageRecord = getLanguageRecord();
+                if (languageRecord == null) {
+                    return false;
+                }
+                for (int featureIndex : languageRecord.features) {
+                    FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
+                    if (feature.tag.equals("liga")) {
+                        ligaFeatures.add(feature);
+                    }
+                }
+            } else {
+                for (FeatureRecord featureRecord : gsubTable.getFeatureRecords()) {
+                    if (featureRecord.tag.equals("liga")) {
+                        ligaFeatures.add(featureRecord);
+                    }
                 }
             }
-            if (liga != null) {
+
+            if (ligaFeatures.size() > 0) {
                 boolean transformed = false;
                 if (glyphLine != null) {
-                    List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{liga});
+                    List<OpenTableLookup> lookups = gsubTable.getLookups(ligaFeatures.toArray(new FeatureRecord[ligaFeatures.size()]));
                     for (OpenTableLookup lookup : lookups) {
                         if (lookup != null && lookup.transformLine(glyphLine)) {
                             transformed = true;
@@ -741,5 +748,16 @@ public class TrueTypeFont extends FontProgram {
             }
         }
         return null;
+    }
+
+    private LanguageRecord getLanguageRecord() {
+        LanguageRecord languageRecord = null;
+        for (ScriptRecord record : gsubTable.getScriptRecords()) {
+            if (otfScript.equals(record.tag)) {
+                languageRecord = record.defaultLanguage;
+                break;
+            }
+        }
+        return languageRecord;
     }
 }
