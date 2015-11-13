@@ -38,11 +38,12 @@ public class TextRenderer extends AbstractRenderer {
 
     protected float yLineOffset;
     protected byte[] levels;
-    protected int levelsOffset;
 
     protected GlyphLine text;
     protected GlyphLine line;
     protected String strToBeConverted;
+
+    protected boolean otfFeaturesApplied = false;
 
     protected float tabAnchorCharacterPosition = -1;
 
@@ -87,7 +88,6 @@ public class TextRenderer extends AbstractRenderer {
             int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
             BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
             levels = bidiReorder.getLevels(new int[] {text.end - text.start});
-            levelsOffset = 0;
         }
 
         LayoutArea area = layoutContext.getArea();
@@ -111,10 +111,10 @@ public class TextRenderer extends AbstractRenderer {
         float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
 
         Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
-        if (script != null && isOtfFont(font)) {
+        if (script != null && isOtfFont(font) && !otfFeaturesApplied) {
             ((TrueTypeFont)font.getFontProgram()).setScriptForOTF(script);
             ((TrueTypeFont)font.getFontProgram()).applyOtfScript(text);
-           // ((TrueTypeFont)font.getFontProgram()).applyLigaFeature(text);
+            otfFeaturesApplied = true;
         }
 
         FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
@@ -325,14 +325,14 @@ public class TextRenderer extends AbstractRenderer {
 
         if (baseDirection != Property.BaseDirection.NO_BIDI) {
             byte[] lineLevels = new byte[line.end - line.start];
-            System.arraycopy(levels, line.start - levelsOffset, lineLevels, 0, line.end -  line.start);
+            System.arraycopy(levels, line.start, lineLevels, 0, line.end -  line.start);
             int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
             List<Glyph> reorderedLine = new ArrayList<>(line.end - line.start);
             for (int i = 0; i < line.end - line.start; i++) {
                 reorderedLine.add(line.glyphs.get(line.start + reorder[i]));
 
                 // Mirror RTL glyphs
-                if (levels[line.start - levelsOffset + reorder[i]] % 2 == 1) {
+                if (levels[line.start + reorder[i]] % 2 == 1) {
                     int mirror = BidiBracketMap.getPairedBracket(reorderedLine.get(i).unicode);
                     reorderedLine.set(i, convertToGlyph(BidiBracketMap.getPairedBracket(reorderedLine.get(i).unicode), font));
                 }
@@ -482,13 +482,6 @@ public class TextRenderer extends AbstractRenderer {
         }
     }
 
-    private void convertWaitingStringToGlyphLine() {
-        if (text == null && strToBeConverted != null) {
-            text = convertToGlyphLine(strToBeConverted);
-            strToBeConverted = null;
-        }
-    }
-
     /**
      * Returns the amount of space in points which the text was trimmed by.
      */
@@ -542,13 +535,16 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     public void setText(String text) {
-        this.text = convertToGlyphLine(text);
+        GlyphLine glyphLine = convertToGlyphLine(text);
+        setText(glyphLine, glyphLine.start, glyphLine.end);
     }
 
     public void setText(GlyphLine text, int leftPos, int rightPos) {
         this.text = new GlyphLine(text);
         this.text.start = leftPos;
         this.text.end = rightPos;
+        this.levels = null;
+        this.otfFeaturesApplied = false;
     }
 
     /**
@@ -641,12 +637,12 @@ public class TextRenderer extends AbstractRenderer {
         splitRenderer.parent = parent;
         splitRenderer.yLineOffset = yLineOffset;
         splitRenderer.levels = levels;
-        splitRenderer.levelsOffset = levelsOffset;
+        splitRenderer.otfFeaturesApplied = otfFeaturesApplied;
 
         TextRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.setText(text, initialOverflowTextPos, text.end);
         overflowRenderer.levels = levels;
-        overflowRenderer.levelsOffset = levelsOffset;
+        overflowRenderer.otfFeaturesApplied = otfFeaturesApplied;
         overflowRenderer.parent = parent;
 
         return new TextRenderer[] {splitRenderer, overflowRenderer};
@@ -740,5 +736,13 @@ public class TextRenderer extends AbstractRenderer {
     private boolean isCharPartOfWordForHyphenation(int c) {
         return Character.isLetter(c) || Character.isDigit(c) ||
                 c == '\u00ad'; // soft hyphen
+    }
+
+    private void convertWaitingStringToGlyphLine() {
+        if (strToBeConverted != null) {
+            GlyphLine glyphLine = convertToGlyphLine(strToBeConverted);
+            setText(glyphLine, glyphLine.start, glyphLine.end);
+            strToBeConverted = null;
+        }
     }
 }

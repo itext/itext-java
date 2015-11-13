@@ -179,6 +179,7 @@ public class TrueTypeFont extends FontProgram {
             List<OpenTableLookup> init = null;
             List<OpenTableLookup> medi = null;
             List<OpenTableLookup> fina = null;
+            List<OpenTableLookup> rlig = null;
             for (int featureIndex: languageRecord.features) {
                 FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
                 switch (feature.tag) {
@@ -191,49 +192,19 @@ public class TrueTypeFont extends FontProgram {
                     case "fina":
                         fina = gsubTable.getLookups(new FeatureRecord[]{feature});
                         break;
+                    case "rlig":
+                        rlig = gsubTable.getLookups(new FeatureRecord[]{feature});
+                        break;
                 }
             }
-            if (init == null || medi == null || fina == null) {
-                return false;
+
+            if (applyInitMediFinaShaping(glyphLine, init, medi, fina)) {
+                transformed = true;
             }
-            List<Integer> words = splitArabicGlyphLineIntoWords(glyphLine, medi, fina);
-            for (OpenTableLookup lookup : init) {
-                if (lookup != null) {
-                    for (int i = 0; i < words.size(); i += 2) {
-                        if (words.get(i) + 1 != words.get(i + 1)) {
-                            glyphLine.idx = words.get(i);
-                            if (lookup.transformOne(glyphLine)) {
-                                transformed = true;
-                            }
-                        }
-                    }
-                }
-            }
-            for (OpenTableLookup lookup : medi) {
-                if (lookup != null) {
-                    for (int i = 0; i < words.size(); i += 2) {
-                        for (int k = words.get(i) + 1; k < words.get(i + 1) - 1; k++) {
-                            glyphLine.idx = k;
-                            if (lookup.transformOne(glyphLine)) {
-                                transformed = true;
-                            }
-                        }
-                    }
-                }
-            }
-            for (OpenTableLookup lookup : fina) {
-                if (lookup != null) {
-                    for (int i = 0; i < words.size(); i += 2) {
-                        if (words.get(i) + 1 != words.get(i + 1)) {
-                            glyphLine.idx = words.get(i + 1) - 1;
-                            if (lookup.transformOne(glyphLine)) {
-                                transformed = true;
-                            }
-                        }
-                    }
-                }
-            }
-            glyphLine.idx = 0;
+//            if (applyRligFeature(glyphLine, rlig)) {
+//                transformed = true;
+//            }
+
             return transformed;
         }
         return false;
@@ -694,6 +665,65 @@ public class TrueTypeFont extends FontProgram {
             words.add(glyphLine.glyphs.size());
         }
         return words;
+    }
+
+    private boolean applyInitMediFinaShaping(GlyphLine glyphLine, List<OpenTableLookup> init, List<OpenTableLookup> medi, List<OpenTableLookup> fina) {
+        if (init == null || medi == null || fina == null) {
+            return false;
+        }
+        boolean transformed = false;
+        List<Integer> words = splitArabicGlyphLineIntoWords(glyphLine, medi, fina);
+        for (OpenTableLookup lookup : init) {
+            if (lookup != null) {
+                for (int i = 0; i < words.size(); i += 2) {
+                    if (words.get(i) + 1 != words.get(i + 1)) {
+                        glyphLine.idx = words.get(i);
+                        if (lookup.transformOne(glyphLine)) {
+                            transformed = true;
+                        }
+                    }
+                }
+            }
+        }
+        for (OpenTableLookup lookup : medi) {
+            if (lookup != null) {
+                for (int i = 0; i < words.size(); i += 2) {
+                    for (int k = words.get(i) + 1; k < words.get(i + 1) - 1; k++) {
+                        glyphLine.idx = k;
+                        if (lookup.transformOne(glyphLine)) {
+                            transformed = true;
+                        }
+                    }
+                }
+            }
+        }
+        for (OpenTableLookup lookup : fina) {
+            if (lookup != null) {
+                for (int i = 0; i < words.size(); i += 2) {
+                    if (words.get(i) + 1 != words.get(i + 1)) {
+                        glyphLine.idx = words.get(i + 1) - 1;
+                        if (lookup.transformOne(glyphLine)) {
+                            transformed = true;
+                        }
+                    }
+                }
+            }
+        }
+        glyphLine.idx = 0;
+        return transformed;
+    }
+
+    private boolean applyRligFeature(GlyphLine glyphLine, List<OpenTableLookup> rlig) {
+        boolean transformed = false;
+        if (glyphLine != null && rlig != null) {
+            for (OpenTableLookup lookup : rlig) {
+                if (lookup != null && lookup.transformLine(glyphLine)) {
+                    transformed = true;
+                }
+                glyphLine.idx = 0;
+            }
+        }
+        return transformed;
     }
 
     private Glyph transform(List<OpenTableLookup> feature, Glyph glyph) {
