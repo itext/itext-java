@@ -149,7 +149,7 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithType3Font() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithType3Font.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithType3Font.pdf";
-        String testString = "A A A A E E E ~ é";
+        String testString = "A A A A E E E ~ \u00E9"; // A A A A E E E ~ é
 
         //writing type3 font characters
         final String author = "Dmitry Trusevich";
