@@ -736,7 +736,7 @@ public class TrueTypeFont extends FontProgram {
     private Glyph transform(List<OpenTableLookup> feature, Glyph glyph) {
         for (OpenTableLookup lookup : feature) {
             if (lookup != null) {
-                if (((GsubLookupFormat1)lookup).hasSubstitution(glyph.index)) {
+                if (lookup.hasSubstitution(glyph.index)) {
                     GlyphLine gl = new GlyphLine();
                     gl.start = 0;
                     gl.end = 1;

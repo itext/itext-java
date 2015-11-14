@@ -69,4 +69,8 @@ public abstract class OpenTableLookup {
         public Glyph glyph;
         public int idx;
     }
+
+    public boolean hasSubstitution(int index) {
+        return false;
+    }
 }

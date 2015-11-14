@@ -20,8 +20,9 @@ public class GsubLookupFormat1 extends OpenTableLookup {
 
     @Override
     public boolean transformOne(GlyphLine line) {
-        if (line.idx >= line.end)
+        if (line.idx >= line.end) {
             return false;
+        }
         Glyph g = line.glyphs.get(line.idx);
         boolean changed = false;
         if (!openReader.IsSkip(g.index, lookupFlag)) {
@@ -65,7 +66,7 @@ public class GsubLookupFormat1 extends OpenTableLookup {
         }
     }
 
-    //TODO this method should be either removed or moved to OpenTableLookup
+    @Override
     public boolean hasSubstitution(int index) {
         return substMap.containsKey(index);
     }
