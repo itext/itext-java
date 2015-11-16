@@ -1,5 +1,7 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.font.otf.Glyph;
+
 import java.util.StringTokenizer;
 
 public abstract class FontProgram {
@@ -86,6 +88,16 @@ public abstract class FontProgram {
     }
 
     public abstract int getKerning(int char1, int char2);
+
+    public int getKerning(Glyph glyph1, Glyph glyph2) {
+        // TODO abstract method
+        // TODO implement correctly for all cases
+        if (glyph1.unicode != null && glyph2.unicode != null) {
+            return getKerning(glyph1.unicode, glyph2.unicode);
+        }
+        return 0;
+    }
+
 
     //TODO change to protected!
     public void setRegistry(String registry) {

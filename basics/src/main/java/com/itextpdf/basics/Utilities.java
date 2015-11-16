@@ -99,7 +99,6 @@ public class Utilities {
         buf.append('(');
         for (byte b : bytes) {
             switch (b) {
-
                 case '\r':
                     buf.append(escR);
                     break;

@@ -2,12 +2,13 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
+import com.itextpdf.canvas.image.WmfImageHelper;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.PatternColor;
-import com.itextpdf.canvas.image.WmfImageHelper;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.IsoKey;
 import com.itextpdf.core.pdf.PdfArray;
@@ -20,6 +21,7 @@ import com.itextpdf.core.pdf.PdfOutputStream;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfResources;
 import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.PdfTextArray;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
@@ -169,7 +171,8 @@ public class PdfCanvas {
      * This array may later be used as an argument of a TJ operator
      * (@link #showText(PdfArray)}
      */
-    public static PdfTextArray getKernArray(final String text, final PdfFont font) {
+    // TODO convert to GlyphLine and call appropriate method?
+    public static PdfTextArray getKernArray(String text, final PdfFont font) {
         PdfTextArray kernArray = new PdfTextArray();
         if (text.length() > 0) {
             StringBuilder currentStr = new StringBuilder();
@@ -180,13 +183,35 @@ public class PdfCanvas {
                 if (kern == 0) {
                     currentStr.append(chars[i]);
                 } else {
-                    kernArray.add(currentStr.toString());
+                    kernArray.add(currentStr.toString(), font);
                     kernArray.add(-kern);
                     currentStr.setLength(0);
                     currentStr.append(chars[i]);
                 }
             }
-            kernArray.add(currentStr.toString());
+            kernArray.add(currentStr.toString(), font);
+        }
+        return kernArray;
+    }
+
+    /**
+     * Constructs a kern array for the text in the given font.
+     * This array may later be used as an argument of a TJ operator
+     * (@link #showText(PdfArray)}
+     */
+    public static PdfTextArray getKernArray(GlyphLine text, final PdfFont font) {
+        PdfTextArray kernArray = new PdfTextArray();
+        if (text.length() > 0) {
+            kernArray.add(font.convertToBytes(text.glyphs.get(text.start)));
+            for (int i = text.start + 1; i < text.end; i++) {
+                int kern = font.getKerning(text.glyphs.get(i - 1), text.glyphs.get(i));
+                if (kern == 0) {
+                    kernArray.add(font.convertToBytes(text.glyphs.get(i)));
+                } else {
+                    kernArray.add(-kern);
+                    kernArray.add(font.convertToBytes(text.glyphs.get(i)));
+                }
+            }
         }
         return kernArray;
     }
@@ -556,6 +581,21 @@ public class PdfCanvas {
     }
 
     /**
+     * Shows text (operator Tj).
+     *
+     * @param text text to show.
+     * @return current canvas.
+     */
+    public PdfCanvas showText(GlyphLine text) {
+        document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
+        if (currentGs.getFont() == null)
+            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
+        Utilities.writeEscapedString(contentStream.getOutputStream(), currentGs.getFont().convertToBytes(text));
+        contentStream.getOutputStream().writeBytes(Tj);
+        return this;
+    }
+
+    /**
      * Shows text (operator TJ)
      * @param textArray the text array. Each element of array can be a string or a number.
      *                  If the element is a string, this operator shows the string.
@@ -565,11 +605,13 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas showText(PdfArray textArray) {
+        if (currentGs.getFont() == null)
+            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
         contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
-                showText2(obj.toString());
+                Utilities.writeEscapedString(contentStream.getOutputStream(), ((PdfString)obj).getValueBytes());
             } else if (obj.isNumber()) {
                 contentStream.getOutputStream().writeFloat(((PdfNumber)obj).getFloatValue());
             }
@@ -581,10 +623,28 @@ public class PdfCanvas {
 
     /**
      * Shows text applying kerning, if kern pairs are specified for the current font.
-     * @param text the yexy to show
+     * @param text the text to show
      * @return current canvas
      */
     public PdfCanvas showTextKerned(String text) {
+        PdfFont currentFont = currentGs.getFont();
+        if (currentFont == null) {
+            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
+        }
+        if (currentFont.hasKernPairs()) {
+            showText(getKernArray(text, currentFont));
+        } else {
+            showText(text);
+        }
+        return this;
+    }
+
+    /**
+     * Shows text applying kerning, if kern pairs are specified for the current font.
+     * @param text the text to show
+     * @return current canvas
+     */
+    public PdfCanvas showTextKerned(GlyphLine text) {
         PdfFont currentFont = currentGs.getFont();
         if (currentFont == null) {
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
@@ -1992,14 +2052,14 @@ public class PdfCanvas {
      *
      * @param text the text to write.
      */
-    private void showText2(final String text) {
+    private void showText2(String text) {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = currentGs.getFont().convertToBytes(text);
         Utilities.writeEscapedString(contentStream.getOutputStream(), b);
     }
 
-    private void addToPropertiesAndBeginLayer(final PdfOCG layer) {
+    private void addToPropertiesAndBeginLayer(PdfOCG layer) {
         PdfName name = resources.addProperties(layer.getPdfObject());
         contentStream.getOutputStream().write(PdfName.OC).writeSpace().write(name).writeSpace().writeBytes(BDC).writeNewLine();
     }

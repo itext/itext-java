@@ -1,12 +1,18 @@
 package com.itextpdf.model.splitting;
 
+import com.itextpdf.basics.font.otf.GlyphLine;
+
 /**
  * The default implementation of {@see ISplitCharacters interface}.
  */
 public class DefaultSplitCharacters implements ISplitCharacters {
 
     @Override
-    public boolean isSplitCharacter(int charCode, int[] text, int charTextPos) {
+    public boolean isSplitCharacter(GlyphLine text, int glyphPos) {
+        if (text.glyphs.get(glyphPos).unicode == null) {
+            return false;
+        }
+        int charCode = text.glyphs.get(glyphPos).unicode;
         return (charCode <= ' ' || charCode == '-' || charCode == '\u2010'
                 || (charCode >= 0x2002 && charCode <= 0x200b)
                 || (charCode >= 0x2e80 && charCode < 0xd7a0)

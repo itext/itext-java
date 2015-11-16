@@ -20,6 +20,7 @@ public enum Property {
     FONT(true),
     FONT_COLOR(true),
     FONT_KERNING(true),
+    FONT_SCRIPT(true),
     FONT_SIZE(true),
     HEIGHT,
     HORIZONTAL_ALIGNMENT(true),

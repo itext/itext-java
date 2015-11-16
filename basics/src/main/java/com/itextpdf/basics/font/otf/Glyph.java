@@ -44,6 +44,8 @@
  */
 package com.itextpdf.basics.font.otf;
 
+import com.itextpdf.basics.Utilities;
+
 public class Glyph {
     
     /** The <i>code</i> or <i>id</i> by which this is represented in the Font File. */
@@ -61,7 +63,7 @@ public class Glyph {
     public final boolean IsMark;
 
     public Glyph(int index, int width, Integer unicode) {
-        this(index, width, unicode, null, false);
+        this(index, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
     }
 
     public Glyph(int index, int width, Integer unicode, String chars, boolean IsMark) {
@@ -88,11 +90,24 @@ public class Glyph {
         this.IsMark = glyph.IsMark;
     }
     
+
     public Glyph(Glyph glyph) {
         this.index = glyph.index;
         this.width = glyph.width;
         this.chars = glyph.chars;
         this.unicode = glyph.unicode;
+        this.XPlacement = glyph.XPlacement;
+        this.YPlacement = glyph.YPlacement;
+        this.XAdvance = glyph.XAdvance;
+        this.YAdvance = glyph.YAdvance;
+        this.IsMark = glyph.IsMark;
+    }
+
+    public Glyph(Glyph glyph, Integer unicode) {
+        this.index = glyph.index;
+        this.width = glyph.width;
+        this.chars = unicode != null ? Utilities.convertFromUtf32(unicode) : null;
+        this.unicode = unicode;
         this.XPlacement = glyph.XPlacement;
         this.YPlacement = glyph.YPlacement;
         this.XAdvance = glyph.XAdvance;
