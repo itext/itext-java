@@ -259,6 +259,7 @@ public class PdfSigner {
                 }
 
                 appearance.setFieldName(fieldName);
+                // TODO: retrieve rect and page number from existing field
             }
 
             this.fieldName = fieldName;

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
  * Class that signs your PDF.
  * @author Paulo Soares
  */
+// TODO refactor (remove this class)
 public class MakeSignature {
 
     /**
