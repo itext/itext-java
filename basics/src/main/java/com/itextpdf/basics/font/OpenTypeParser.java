@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -298,7 +299,7 @@ class OpenTypeParser {
      * Reads the font data.
      */
     protected void process() throws IOException {
-        tables = new HashMap<>();
+        tables = new LinkedHashMap<>();
         if (ttcIndex >= 0) {
             int dirIdx = ttcIndex;
             if (dirIdx < 0) {
@@ -543,7 +544,7 @@ class OpenTypeParser {
                 throw new PdfException("table.1.does.not.exist").setMessageParams("name");
             }
         }
-        allNameEntries = new HashMap<>();
+        allNameEntries = new LinkedHashMap<>();
         raf.seek(table_location[0] + 2);
         int numRecords = raf.readUnsignedShort();
         int startOfStorage = raf.readUnsignedShort();
@@ -860,7 +861,7 @@ class OpenTypeParser {
      * @throws IOException the font file could not be read
      */
     private HashMap<Integer, int[]> readFormat0() throws IOException {
-        HashMap<Integer, int[]> h = new HashMap<>();
+        HashMap<Integer, int[]> h = new LinkedHashMap<>();
         raf.skipBytes(4);
         for (int k = 0; k < 256; ++k) {
             int[] r = new int[2];
@@ -879,7 +880,7 @@ class OpenTypeParser {
      * @throws IOException the font file could not be read
      */
     private HashMap<Integer, int[]> readFormat4(boolean fontSpecific) throws IOException {
-        HashMap<Integer, int[]> h = new HashMap<>();
+        HashMap<Integer, int[]> h = new LinkedHashMap<>();
         int table_lenght = raf.readUnsignedShort();
         raf.skipBytes(2);
         int segCount = raf.readUnsignedShort() / 2;
@@ -941,7 +942,7 @@ class OpenTypeParser {
      * @throws IOException the font file could not be read
      */
     private HashMap<Integer, int[]> readFormat6() throws IOException {
-        HashMap<Integer, int[]> h = new HashMap<>();
+        HashMap<Integer, int[]> h = new LinkedHashMap<>();
         raf.skipBytes(4);
         int start_code = raf.readUnsignedShort();
         int code_count = raf.readUnsignedShort();
@@ -955,7 +956,7 @@ class OpenTypeParser {
     }
 
     private HashMap<Integer, int[]> readFormat12() throws IOException {
-        HashMap<Integer, int[]> h = new HashMap<>();
+        HashMap<Integer, int[]> h = new LinkedHashMap<>();
         raf.skipBytes(2);
         @SuppressWarnings("unused")
         int table_length = raf.readInt();

@@ -36,7 +36,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class PdfType0Font extends PdfSimpleFont<FontProgram> {
@@ -54,7 +55,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     protected boolean vertical;
     protected CMapEncoding cmapEncoding;
-    protected HashMap<Integer, int[]> longTag;
+    protected LinkedHashMap<Integer, int[]> longTag;
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
 
@@ -78,7 +79,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         this.embedded = true;
         vertical = cmap.endsWith(FontConstants.V_SYMBOL);
         cmapEncoding = new CMapEncoding(cmap);
-        longTag = new HashMap<>();
+        longTag = new LinkedHashMap<>();
         cidFontType = CidFontType2;
         if (ttf.isFontSpecific()) {
             specificUnicodeDifferences = new char[256];
@@ -106,7 +107,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         vertical = cmap.endsWith("V");
         String uniMap = getUniMapName(fontProgram.getRegistry());
         cmapEncoding = new CMapEncoding(cmap, uniMap);
-        longTag = new HashMap<>();
+        longTag = new LinkedHashMap<>();
         cidFontType = CidFontType0;
     }
 
@@ -456,7 +457,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             } else {
                 byte[] ttfBytes;
                 if (subset || ttf.getDirectoryOffset() != 0) {
-                    ttfBytes = ttf.getSubset(new HashSet<>(longTag.keySet()), true);
+                    ttfBytes = ttf.getSubset(new LinkedHashSet<>(longTag.keySet()), true);
                 } else {
                     ttfBytes = ttf.getFontStreamBytes();
                 }
@@ -878,7 +879,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     private void initFontProgramData()  {
-        longTag = new HashMap<Integer, int[]>();
+        longTag = new LinkedHashMap<>();
         String encoding = fontDictionary.getAsName(PdfName.Encoding).getValue();
         String fontName = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0).getAsName(PdfName.BaseFont).getValue();
         if (CidFontProperties.isCidFont(fontName, encoding)) {

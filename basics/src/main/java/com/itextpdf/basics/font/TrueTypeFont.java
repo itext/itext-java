@@ -602,8 +602,8 @@ public class TrueTypeFont extends FontProgram {
 
         HashMap<Integer, int[]> cmap = getActiveCmap();
         int[] glyphWidths = fontParser.getGlyphWidthsByIndex();
-        codeGlyphMap = new HashMap<>(cmap.size());
-        indexGlyphMap = new HashMap<>(glyphWidths.length);
+        codeGlyphMap = new LinkedHashMap<>(cmap.size());
+        indexGlyphMap = new LinkedHashMap<>(glyphWidths.length);
         for (Integer charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
             if (index >= glyphWidths.length) {
