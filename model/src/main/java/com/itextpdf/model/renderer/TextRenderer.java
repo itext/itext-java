@@ -113,7 +113,7 @@ public class TextRenderer extends AbstractRenderer {
                 // we assume all the chars will have the same bidi group
                 // we also assume pairing symbols won't get merged with other ones
                 int unicode = text.glyphs.get(i).chars.charAt(0);
-                unicodeIds[i - text.start] = text.glyphs.get(i).unicode;
+                unicodeIds[i - text.start] = unicode;
             }
             byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start);
             byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
@@ -160,13 +160,12 @@ public class TextRenderer extends AbstractRenderer {
             int firstCharacterWhichExceedsAllowedWidth = -1;
 
             for (int ind = currentTextPos; ind < text.end; ind++) {
-                if (text.glyphs.get(ind).unicode == '\n') {
+                if (isNewLine(text, ind)) {
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
                     break;
                 }
 
                 Glyph currentGlyph = text.glyphs.get(ind);
-                int charCode = currentGlyph.unicode;
                 if (noPrint(currentGlyph))
                     continue;
 
@@ -198,8 +197,8 @@ public class TextRenderer extends AbstractRenderer {
                     break;
                 }
 
-                if (splitCharacters.isSplitCharacter(charCode, text, ind) || ind + 1 == text.end ||
-                        splitCharacters.isSplitCharacter(text.glyphs.get(ind + 1).unicode, text, ind) &&
+                if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
+                        splitCharacters.isSplitCharacter(text, ind + 1) &&
                                 (Character.isWhitespace(text.glyphs.get(ind + 1).unicode) || Character.isSpaceChar(text.glyphs.get(ind + 1).unicode))) {
                     nonBreakablePartEnd = ind;
                     break;
@@ -338,8 +337,9 @@ public class TextRenderer extends AbstractRenderer {
 
                 // Mirror RTL glyphs
                 if (levels[line.start + reorder[i]] % 2 == 1) {
-                    int mirror = BidiBracketMap.getPairedBracket(reorderedLine.get(i).unicode);
-                    reorderedLine.set(i, convertToGlyph(BidiBracketMap.getPairedBracket(reorderedLine.get(i).unicode), font));
+                    if (reorderedLine.get(i).unicode != null) {
+                        reorderedLine.set(i, convertToGlyph(BidiBracketMap.getPairedBracket(reorderedLine.get(i).unicode), font));
+                    }
                 }
             }
             line = new GlyphLine(reorderedLine, 0, line.end - line.start);
@@ -351,6 +351,10 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         return result;
+    }
+
+    private boolean isNewLine(GlyphLine text, int ind) {
+        return text.glyphs.get(ind).unicode != null && text.glyphs.get(ind).unicode == '\n';
     }
 
     @Override
