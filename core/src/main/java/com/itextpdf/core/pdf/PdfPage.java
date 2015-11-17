@@ -41,7 +41,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject);
         makeIndirect(pdfDocument);
-        pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, this));
     }
 
     protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
@@ -56,7 +55,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             structParents = pdfDocument.getNextStructParentIndex();
             getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
         }
-        pdfDocument.dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, this));
     }
 
     protected PdfPage(PdfDocument pdfDocument) {

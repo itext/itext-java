@@ -348,6 +348,7 @@ public class PdfDocument implements IEventDispatcher {
     public PdfPage addNewPage(PageSize pageSize) {
         PdfPage page = new PdfPage(this, pageSize);
         catalog.addPage(page);
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
         return page;
     }
@@ -375,6 +376,7 @@ public class PdfDocument implements IEventDispatcher {
         PdfPage page = new PdfPage(this, pageSize);
         catalog.addPage(index, page);
         currentPage = page;
+        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
         return currentPage;
     }
