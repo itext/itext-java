@@ -1,5 +1,6 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
@@ -7,6 +8,9 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ImageRenderer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Image extends AbstractElement<Image> implements ILeafElement<Image>, IAccessibleElement<Image> {
 
@@ -128,7 +132,33 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     public Image setAutoScale(boolean autoScale) {
+        if (hasProperty(Property.AUTO_SCALE_WIDTH) && hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale &&
+                ((Boolean) getProperty(Property.AUTO_SCALE_WIDTH) ||
+                        (Boolean) getProperty(Property.AUTO_SCALE_HEIGHT))) {
+            Logger logger = LoggerFactory.getLogger(Image.class);
+            logger.warn(LogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
+        }
         return setProperty(Property.AUTO_SCALE, autoScale);
+    }
+
+    public Image setAutoScaleHeight(boolean autoScale) {
+        if (hasProperty(Property.AUTO_SCALE_WIDTH) && autoScale && (Boolean) getProperty(Property.AUTO_SCALE_WIDTH)) {
+            setProperty(Property.AUTO_SCALE_WIDTH, false);
+            setProperty(Property.AUTO_SCALE_HEIGHT, false);
+            return setProperty(Property.AUTO_SCALE, true);
+        } else {
+            return setProperty(Property.AUTO_SCALE_WIDTH, autoScale);
+        }
+    }
+
+    public Image setAutoScaleWidth(boolean autoScale) {
+        if (hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale && (Boolean) getProperty(Property.AUTO_SCALE_HEIGHT)) {
+            setProperty(Property.AUTO_SCALE_WIDTH, false);
+            setProperty(Property.AUTO_SCALE_HEIGHT, false);
+            return setProperty(Property.AUTO_SCALE, true);
+        } else {
+            return setProperty(Property.AUTO_SCALE_WIDTH, autoScale);
+        }
     }
 
     public Image setFixedPosition(float x, float y) {

@@ -83,7 +83,8 @@ public class ImageRenderer extends AbstractRenderer {
             angle = 0f;
         }
         t.rotate(angle);
-        float scaleCoef = adjustPositionAfterRotation(angle, layoutBox.getWidth(), layoutBox.getHeight(), getPropertyAsBoolean(Property.AUTO_SCALE));
+        float scaleCoef = adjustPositionAfterRotation(angle, layoutBox.getWidth(), layoutBox.getHeight());
+
         imageItselfScaledHeight *= scaleCoef;
         imageItselfScaledWidth *= scaleCoef;
         if (xObject instanceof PdfFormXObject) {
@@ -162,7 +163,7 @@ public class ImageRenderer extends AbstractRenderer {
         }
     }
 
-    private float adjustPositionAfterRotation(float angle, float maxWidth, float maxHeight, boolean isScale) {
+    private float adjustPositionAfterRotation(float angle, float maxWidth, float maxHeight) {
         if (angle != 0) {
             AffineTransform t = AffineTransform.getRotateInstance(angle);
             Point2D p00 = t.transform(new Point2D.Float(0, 0), new Point2D.Float());
@@ -195,14 +196,23 @@ public class ImageRenderer extends AbstractRenderer {
         }
         // Rotating image can cause fitting into area problems.
         // So let's find scaling coefficient
+        // TODO
         float scaleCoeff = 1;
-        if (isScale) {
+        // hasProperty(Property) checks only properties field, cannot use it
+        if (null != getPropertyAsBoolean(Property.AUTO_SCALE) && getPropertyAsBoolean(Property.AUTO_SCALE)) {
             scaleCoeff = Math.min(maxWidth / width, maxHeight / height);
             height *= scaleCoeff;
             width *= scaleCoeff;
-            pivotY *= scaleCoeff;
+        } else if (null != getPropertyAsBoolean(Property.AUTO_SCALE_WIDTH) && getPropertyAsBoolean(Property.AUTO_SCALE_WIDTH)) {
+            scaleCoeff = maxWidth / width;
+            height *= scaleCoeff;
+            width = maxWidth;
+        } else if (null != getPropertyAsBoolean(Property.AUTO_SCALE_HEIGHT) && getPropertyAsBoolean(Property.AUTO_SCALE_HEIGHT)) {
+            scaleCoeff = maxHeight / height;
+            height = maxHeight;
+            width *= scaleCoeff;
         }
-
+        pivotY *= scaleCoeff;
         return scaleCoeff;
     }
 

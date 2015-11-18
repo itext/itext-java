@@ -5,6 +5,8 @@ import com.itextpdf.core.color.Color;
 public enum Property {
 
     AUTO_SCALE,
+    AUTO_SCALE_HEIGHT,
+    AUTO_SCALE_WIDTH,
     BACKGROUND,
     BASE_DIRECTION(true),
     BOLD_SIMULATION(true),
