@@ -1,5 +1,7 @@
 package com.itextpdf.model.renderer;
 
+import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.layout.LayoutContext;
@@ -34,11 +36,16 @@ public class CellRenderer extends BlockRenderer {
     }
 
     @Override
-    protected BlockRenderer createOverflowRenderer(int layoutResult) {
+    protected CellRenderer createOverflowRenderer(int layoutResult) {
         CellRenderer overflowRenderer = new CellRenderer(getModelElement());
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
         return overflowRenderer;
+    }
+
+    @Override
+    public void drawBorder(PdfDocument document, PdfCanvas canvas) {
+        // Do nothing here. Border drawing for tables is done on TableRenderer.
     }
 }

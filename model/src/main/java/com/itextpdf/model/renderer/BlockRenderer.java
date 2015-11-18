@@ -7,7 +7,6 @@ import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.BlockElement;
-import com.itextpdf.model.element.Table;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
 import com.itextpdf.model.layout.LayoutPosition;
@@ -198,9 +197,7 @@ public class BlockRenderer extends AbstractRenderer {
         beginRotationIfApplied(canvas);
 
         drawBackground(document, canvas);
-        if (!(parent.getModelElement() instanceof Table)) {
-            drawBorder(document, canvas);
-        }
+        drawBorder(document, canvas);
         drawChildren(document, canvas);
 
         endRotationIfApplied(canvas);
@@ -340,7 +337,7 @@ public class BlockRenderer extends AbstractRenderer {
 
 
 
-    private void beginRotationIfApplied(PdfCanvas canvas) {
+    protected void beginRotationIfApplied(PdfCanvas canvas) {
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
             float heightDiff = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
@@ -354,7 +351,7 @@ public class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    private void endRotationIfApplied(PdfCanvas canvas) {
+    protected void endRotationIfApplied(PdfCanvas canvas) {
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
             float heightDiff = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();

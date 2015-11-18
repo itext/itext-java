@@ -9,7 +9,11 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Link;
 import com.itextpdf.model.layout.LayoutPosition;
 
-public class LinkRenderer extends TextRenderer{
+public class LinkRenderer extends TextRenderer {
+
+    public LinkRenderer(Link link) {
+        this (link, link.getText());
+    }
 
     public LinkRenderer(Link linkElement, String text) {
         super(linkElement, text);
