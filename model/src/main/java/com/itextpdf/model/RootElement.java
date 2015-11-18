@@ -110,10 +110,10 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
-     * @param horAlign horizontal alignment about the specified point
+     * @param textAlign horizontal alignment about the specified point
      */
-    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.HorizontalAlignment horAlign) {
-        return showTextAligned(text, x, y, horAlign, 0);
+    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign) {
+        return showTextAligned(text, x, y, textAlign, 0);
     }
 
     /**
@@ -121,11 +121,11 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
-     * @param horAlign horizontal alignment about the specified point
+     * @param textAlign horizontal alignment about the specified point
      * @param angle the angle of rotation applied to the text, in radians
      */
-    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.HorizontalAlignment horAlign, float angle) {
-        return showTextAligned(text, x, y, horAlign, Property.VerticalAlignment.BOTTOM, angle);
+    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, float angle) {
+        return showTextAligned(text, x, y, textAlign, Property.VerticalAlignment.BOTTOM, angle);
     }
 
     /**
@@ -133,13 +133,13 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
-     * @param horAlign horizontal alignment about the specified point
+     * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
      * @param angle the angle of rotation applied to the text, in radians
      */
-    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.HorizontalAlignment horAlign, Property.VerticalAlignment vertAlign, float angle) {
+    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text);
-        return showTextAligned(p, x, y, pdfDocument.getNumOfPages(), horAlign, vertAlign, angle);
+        return showTextAligned(p, x, y, pdfDocument.getNumOfPages(), textAlign, vertAlign, angle);
     }
 
     /**
@@ -147,13 +147,13 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
-     * @param horAlign horizontal alignment about the specified point
+     * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
      * @param angle the angle of rotation applied to the text, in radians
      */
-    public <T extends RootElement> T showTextAlignedKerned(String text, float x, float y, Property.HorizontalAlignment horAlign, Property.VerticalAlignment vertAlign, float angle) {
+    public <T extends RootElement> T showTextAlignedKerned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text).setFontKerning(Property.FontKerning.YES);
-        return showTextAligned(p, x, y, pdfDocument.getNumOfPages(), horAlign, vertAlign, angle);
+        return showTextAligned(p, x, y, pdfDocument.getNumOfPages(), textAlign, vertAlign, angle);
     }
 
     /**
@@ -163,13 +163,13 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
      * @param pageNumber the page number to write the text
-     * @param horAlign horizontal alignment about the specified point
+     * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
      * @param angle the angle of rotation applied to the text, in radians
      */
-    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, int pageNumber, Property.HorizontalAlignment horAlign, Property.VerticalAlignment vertAlign, float angle) {
+    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, int pageNumber, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Div div = new Div();
-        div.setHorizontalAlignment(horAlign).setVerticalAlignment(vertAlign);
+        div.setTextAlignment(textAlign).setVerticalAlignment(vertAlign);
         if (angle != 0) {
             div.setRotationAngle(angle);
         }
@@ -179,10 +179,12 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
         float divWidth = AbstractRenderer.INF;
         float divHeight = AbstractRenderer.INF;
         float divX = x, divY = y;
-        if (horAlign == Property.HorizontalAlignment.CENTER) {
+        if (textAlign == Property.TextAlignment.CENTER) {
             divX = x - divWidth / 2;
-        } else if (horAlign == Property.HorizontalAlignment.RIGHT) {
+            p.setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
+        } else if (textAlign == Property.TextAlignment.RIGHT) {
             divX = x - divWidth;
+            p.setHorizontalAlignment(Property.HorizontalAlignment.RIGHT);
         }
 
         if (vertAlign == Property.VerticalAlignment.MIDDLE) {

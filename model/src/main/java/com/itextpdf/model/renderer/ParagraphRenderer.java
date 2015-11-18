@@ -89,15 +89,15 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
             }
 
-            Property.HorizontalAlignment horizontalAlignment = getProperty(Property.HORIZONTAL_ALIGNMENT);
-            if (result.getStatus() == LayoutResult.PARTIAL && horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
-                    horizontalAlignment == Property.HorizontalAlignment.JUSTIFIED_ALL) {
+            Property.TextAlignment textAlignment = getProperty(Property.TEXT_ALIGNMENT);
+            if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == Property.TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
+                    textAlignment == Property.TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
                     processedRenderer.justify(layoutBox.getWidth() - lineIndent);
                 }
-            } else if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT && processedRenderer != null) {
+            } else if (textAlignment != null && textAlignment != Property.TextAlignment.LEFT && processedRenderer != null) {
                 float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
-                switch (horizontalAlignment) {
+                switch (textAlignment) {
                     case RIGHT:
                         processedRenderer.move(deltaX, 0);
                         break;
@@ -115,7 +115,6 @@ public class ParagraphRenderer extends BlockRenderer {
                     processedRenderer != null && leading != null && processedRenderer.getOccupiedArea().getBBox().getHeight() + processedRenderer.getLeadingValue(leading) - processedRenderer.getMaxAscent() > layoutBox.getHeight();
 
             if (doesNotFit) {
-                // TODO avoid infinite loop
                 if (currentAreaPos + 1 < areas.size()) {
                     layoutBox = areas.get(++currentAreaPos).clone();
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();

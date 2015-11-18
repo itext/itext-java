@@ -429,7 +429,7 @@ public class RotationTest extends ExtendedITextTest{
         doc.add(new Paragraph(para1Text));
 
         Paragraph p = new Paragraph();
-        p.add("texttext").setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
+        p.add("texttext").setTextAlignment(Property.TextAlignment.CENTER).setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
         p.setRotationAngle(Math.PI / 4);
         doc.add(p);
 

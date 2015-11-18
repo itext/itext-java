@@ -357,13 +357,13 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
         Property.HorizontalAlignment horizontalAlignment = childRenderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
         if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT) {
-            float deltaX = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
+            float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
             switch (horizontalAlignment) {
                 case RIGHT:
-                    childRenderer.move(deltaX, 0);
+                    childRenderer.move(freeSpace, 0);
                     break;
                 case CENTER:
-                    childRenderer.move(deltaX / 2, 0);
+                    childRenderer.move(freeSpace / 2, 0);
                     break;
             }
         }

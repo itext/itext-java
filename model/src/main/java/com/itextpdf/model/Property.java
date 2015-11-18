@@ -25,7 +25,7 @@ public enum Property {
     FONT_SCRIPT(true),
     FONT_SIZE(true),
     HEIGHT,
-    HORIZONTAL_ALIGNMENT(true),
+    HORIZONTAL_ALIGNMENT,
     /**
      * Value of 1 is equivalent to no scaling
      **/
@@ -62,6 +62,7 @@ public enum Property {
     TAB_DEFAULT,
     TAB_LEADER,
     TAB_STOPS,
+    TEXT_ALIGNMENT(true),
     TEXT_RENDERING_MODE(true),
     TEXT_RISE(true),
     TOP,
@@ -94,15 +95,21 @@ public enum Property {
     public enum HorizontalAlignment {
         LEFT,
         CENTER,
-        RIGHT,
-        JUSTIFIED,
-        JUSTIFIED_ALL,
+        RIGHT
     }
 
     public enum VerticalAlignment {
         TOP,
         MIDDLE,
         BOTTOM
+    }
+
+    public enum TextAlignment {
+        LEFT,
+        CENTER,
+        RIGHT,
+        JUSTIFIED,
+        JUSTIFIED_ALL
     }
 
     public static final class TextRenderingMode {

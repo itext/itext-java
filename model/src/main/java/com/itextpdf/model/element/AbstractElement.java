@@ -144,6 +144,10 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         return setProperty(Property.FONT_SIZE, fontSize);
     }
 
+    public Type setTextAlignment(Property.TextAlignment alignment) {
+        return setProperty(Property.TEXT_ALIGNMENT, alignment);
+    }
+
     public Type setCharacterSpacing(float charSpacing) {
         return setProperty(Property.CHARACTER_SPACING, charSpacing);
     }
