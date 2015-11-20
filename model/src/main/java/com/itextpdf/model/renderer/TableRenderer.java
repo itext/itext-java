@@ -59,6 +59,13 @@ public class TableRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
+        if (!((Table)modelElement).isComplete()) {
+            setProperty(Property.MARGIN_BOTTOM, 0);
+        }
+        if (rowRange.getStartRow() != 0) {
+            setProperty(Property.MARGIN_TOP, 0);
+        }
+        applyMargins(layoutBox, false);
         Table tableModel = (Table) getModelElement();
 
         Float tableWidth = retrieveWidth(layoutBox.getWidth());
@@ -293,6 +300,7 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.decreaseHeight(rowHeight);
         }
 
+        applyMargins(occupiedArea.getBBox(), true);
         if (tableModel.isSkipLastFooter() || !tableModel.isComplete()) {
             footerRenderer = null;
         }
