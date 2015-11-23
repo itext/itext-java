@@ -1,10 +1,13 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.codec.Base64;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.basics.image.Image;
+import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
@@ -30,10 +33,13 @@ import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.core.pdf.xobject.PdfXObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 
@@ -70,6 +76,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
 
     protected String text;
+    protected Image img;
     protected PdfFont font;
     protected int fontSize;
     protected Color color;
@@ -341,7 +348,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.V, new PdfString(value));
         } else if (PdfName.Btn.equals(formType)) {
              if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
-                 text = value;
+                 try{
+                     img = ImageFactory.getImage(Base64.decode(value));
+                 } catch (Exception e) {
+                     text = value;
+                     //put(PdfName.V, new PdfName(value));
+                 }
                  //@TODO Base64 images support
              } else {
                  put(PdfName.V, new PdfName(value));
@@ -853,12 +865,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
-        drawButton(canvas, 0, 0, width, height, text, font, fontSize);
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
-
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
+
+        if (img != null) {
+            PdfImageXObject imgXObj = new PdfImageXObject(img);
+            canvas.addXObject(imgXObj, width, 0, 0, height, 0, 0);
+            xObject.getResources().addImage(imgXObj);
+        } else {
+            drawButton(canvas, 0, 0, width, height, text, font, fontSize);
+            setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
+            xObject.getResources().addFont(font);
+        }
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
-        xObject.getResources().addFont(font);
 
         return xObject;
     }
@@ -1007,17 +1025,23 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if ((ff & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 try {
                     value = text;
+                    PdfFormXObject appearance = null;
                     Rectangle rect = getRect(getPdfObject());
                     PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
-                    PdfStream asNormal = null;
-                    if (apDic != null) {
-                        asNormal = apDic.getAsStream(PdfName.N);
+                    if (img != null) {
+                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, null, 0);
+                    } else {
+                        PdfStream asNormal = null;
+                        if (apDic != null) {
+                            asNormal = apDic.getAsStream(PdfName.N);
+                        }
+                        Object[] fontAndSize = getFontAndSize(asNormal);
+                        PdfFont font = (PdfFont) fontAndSize[0];
+                        int fontSize = (int) fontAndSize[1];
+                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, font, fontSize);
+                        appearance.getResources().addFont(font);
                     }
-                    Object[] fontAndSize = getFontAndSize(asNormal);
-                    PdfFont font = (PdfFont) fontAndSize[0];
-                    int fontSize = (int) fontAndSize[1];
-                    PdfFormXObject appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, font, fontSize);
-                    appearance.getResources().addFont(font);
+
                     apDic = new PdfDictionary();
                     apDic.put(PdfName.N, appearance.getPdfObject());
                     put(PdfName.AP, apDic);
