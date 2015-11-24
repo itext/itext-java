@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class DefaultLayoutTest extends ExtendedITextTest{
+public class DefaultLayoutTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/DefaultLayoutTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/DefaultLayoutTest/";

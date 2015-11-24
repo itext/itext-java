@@ -752,10 +752,12 @@ public class TrueTypeFont extends FontProgram {
 
     private LanguageRecord getLanguageRecord() {
         LanguageRecord languageRecord = null;
-        for (ScriptRecord record : gsubTable.getScriptRecords()) {
-            if (otfScript.equals(record.tag)) {
-                languageRecord = record.defaultLanguage;
-                break;
+        if (otfScript != null) {
+            for (ScriptRecord record : gsubTable.getScriptRecords()) {
+                if (otfScript.equals(record.tag)) {
+                    languageRecord = record.defaultLanguage;
+                    break;
+                }
             }
         }
         return languageRecord;
