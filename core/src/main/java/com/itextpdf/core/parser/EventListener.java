@@ -13,7 +13,7 @@ public interface EventListener {
      * @param data Combines the data required for processing corresponding event type.
      * @param type Event type.
      */
-    void eventOccured(EventData data, EventType type);
+    void eventOccurred(EventData data, EventType type);
 
     /**
      * Provides the set of event types this listener supports.

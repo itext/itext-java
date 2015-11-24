@@ -2,6 +2,7 @@ package com.itextpdf.core.parser;
 
 
 import com.itextpdf.basics.geom.Point2D;
+import com.itextpdf.basics.geom.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,6 +145,13 @@ public class Path {
         }
 
         curveTo(x1, y1, x3, y3, x3, y3);
+    }
+
+    /**
+     * Appends a rectangle to the current path as a complete subpath.
+     */
+    public void rectangle(Rectangle rect) {
+        rectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 
     /**

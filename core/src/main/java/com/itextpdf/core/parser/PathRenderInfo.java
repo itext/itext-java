@@ -32,7 +32,7 @@ public class PathRenderInfo implements EventData {
     /**
      * @param path      The path to be rendered.
      * @param operation One of the possible combinations of {@link #STROKE} and {@link #FILL} values or {@link #NO_OP}
-     * @param rule      Either {@link PdfContentByte#NONZERO_WINDING_RULE} or {@link PdfContentByte#EVEN_ODD_RULE}.
+     * @param rule      Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}.
      * @param gs        The graphics state.
      */
     public PathRenderInfo(Path path, int operation, int rule, GraphicsState gs) {
@@ -44,7 +44,7 @@ public class PathRenderInfo implements EventData {
 
     /**
      * If the operation is {@link #NO_OP} then the rule is ignored,
-     * otherwise {@link PdfContentByte#NONZERO_WINDING_RULE} is used by default.
+     * otherwise {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} is used by default.
      *
      * See {@link #PathRenderInfo(Path, int, int, GraphicsState)}
      */
@@ -68,7 +68,7 @@ public class PathRenderInfo implements EventData {
     }
 
     /**
-     * @return Either {@link PdfContentByte#NONZERO_WINDING_RULE} or {@link PdfContentByte#EVEN_ODD_RULE}.
+     * @return Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}.
      */
     public int getRule() {
         return rule;

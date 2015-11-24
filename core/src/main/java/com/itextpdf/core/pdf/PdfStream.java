@@ -233,7 +233,7 @@ public class PdfStream extends PdfDictionary {
                 try {
                     oldBytes = getBytes();
                 } catch (PdfException ex) {
-                    throw new PdfException(PdfException.CannotReadAStreamInOrderToAppendNewBytesReason1, ex.getMessage());
+                    throw new PdfException(PdfException.CannotReadAStreamInOrderToAppendNewBytes, ex);
                 }
                 offset = 0;
                 outputStream.writeBytes(oldBytes);

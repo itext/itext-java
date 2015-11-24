@@ -351,7 +351,7 @@ public class PdfReader {
             PdfName filterName = (PdfName) filters.get(j);
             FilterHandler filterHandler = filterHandlers.get(filterName);
             if (filterHandler == null)
-                throw new PdfException(PdfException.Filter1IsNotSupported).setMessageParams(filterName);
+                throw new PdfException(PdfException.Filter1IsNotSupported).setMessageParams(filterName); //TODO replace with some kind of UnsupportedException
 
             PdfDictionary decodeParams;
             if (j < dp.size()) {
@@ -361,7 +361,7 @@ public class PdfReader {
                 } else if (dpEntry.getType() == PdfObject.Dictionary) {
                     decodeParams = (PdfDictionary) dpEntry;
                 } else {
-                    throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(dpEntry.getClass().toString());
+                    throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(dpEntry.getClass().toString()); //TODO replace with some kind of UnsupportedException
                 }
             } else {
                 decodeParams = null;

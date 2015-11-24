@@ -48,7 +48,7 @@ public class WmfImageHelper {
             }
             InputMeta in = new InputMeta(is);
             if (in.readInt() != 0x9AC6CDD7)	{
-                throw new PdfException("1.is.not.a.valid.placeable.windows.metafile", errorID);
+                throw new PdfException(PdfException._1IsNotAValidPlaceableWindowsMetafile, errorID);
             }
             in.readWord();
             int left = in.readShort();

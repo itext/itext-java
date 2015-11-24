@@ -188,23 +188,6 @@ public class TextRenderInfo implements EventData {
         return gs.getFont();
     }
 
-// removing - this shouldn't be needed now that we are exposing getCharacterRenderInfos()
-//	/**
-//	 * @return The character spacing width, in user space units (Tc value, scaled to user space)
-//	 * @since 5.3.3
-//	 */
-//	public float getCharacterSpacing(){
-//		return convertWidthFromTextSpaceToUserSpace(gs.characterSpacing);
-//	}
-//
-//	/**
-//	 * @return The word spacing width, in user space units (Tw value, scaled to user space)
-//	 * @since 5.3.3
-//	 */
-//	public float getWordSpacing(){
-//		return convertWidthFromTextSpaceToUserSpace(gs.wordSpacing);
-//	}
-
     /**
      * The rise represents how far above the nominal baseline the text should be rendered.  The {@link #getBaseline()}, {@link #getAscentLine()} and {@link #getDescentLine()} methods already include Rise.
      * This method is exposed to allow listeners to determine if an explicit rise was involved in the computation of the baseline (this might be useful, for example, for identifying superscript rendering)

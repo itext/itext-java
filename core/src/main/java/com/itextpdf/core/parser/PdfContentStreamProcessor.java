@@ -1,5 +1,6 @@
 package com.itextpdf.core.parser;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
@@ -11,64 +12,54 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Processor for a PDF content Stream.
- * @since	2.1.4
+ * Processor for a PDF content stream.
  */
 public class PdfContentStreamProcessor {
 
     /** Listener that will be notified of render events */
     protected final EventListener eventListener;
 
-    /**
-     * The current path.
-     *
-     * @since 5.5.7
-     */
     protected Path currentPath = new Path();
 
-    /**
-     * Default operator
-     * @since 5.0.1
-     */
     public static final String DEFAULTOPERATOR = "DefaultOperator";
 
     /** A map with all supported operators (PDF syntax). */
-    final private Map<String, ContentOperator> operators;
-    /** Resources for the content stream. */
-    private ResourceDictionary resources;
+    private Map<String, ContentOperator> operators;
+
+    /**
+     * Resources for the content stream.
+     * Current resources are always at the top of the stack.
+     * Stack is needed in case if some "inner" content stream with it's own resources
+     * is encountered (like Form XObject).
+     */
+    private Stack<PdfDictionary> resourcesStack;
+
     /** Stack keeping track of the graphics state. */
     private final Stack<GraphicsState> gsStack = new Stack<GraphicsState>();
-    /** Text matrix. */
+
     private Matrix textMatrix;
-    /** Text line matrix. */
     private Matrix textLineMatrix;
+
     /** A map with all supported XObject handlers */
-    final private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
-    /**
-     * The font cache.
-     * @since 5.0.6
-     */
-    /**  */
-    final  private Map<Integer, PdfFont> cachedFonts = new HashMap<Integer, PdfFont>();
+    private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
+
+    /** The font cache */
+    private Map<Integer, PdfFont> cachedFonts = new HashMap<Integer, PdfFont>();
+
     /**
      * A stack containing marked content info.
-     * @since 5.0.2
      */
-    private final Stack<MarkedContentInfo> markedContentStack = new Stack<MarkedContentInfo>();
+    private Stack<MarkedContentInfo> markedContentStack = new Stack<MarkedContentInfo>();
 
     /**
      * Indicates whether the current clipping path should be modified by
      * intersecting it with the current path.
-     *
-     * @since 5.5.7
      */
     private boolean clip;
 
     /**
      * Specifies the filling rule which should be applied while calculating
      * new clipping path.
-     *
-     * @since 5.5.7
      */
     private int clippingRule;
 
@@ -113,12 +104,22 @@ public class PdfContentStreamProcessor {
      * @return the font
      * @since 5.0.6
      */
-    private PdfFont getFont(PdfDictionary fontDict) throws IOException {
+    private PdfFont getFont(PdfDictionary fontDict) {
         Integer n = fontDict.getIndirectReference().getObjNumber();
         PdfFont font = cachedFonts.get(n);
         if (font == null) {
             //font = PdfFont.createFont(fontDict.getDocument(), fontDict); // TODO: bug in pdfFont constructor, need to create constructor for reading mode
-            font = PdfFont.getDefaultFont(fontDict.getDocument());
+
+
+            //TODO temporary code
+            try {
+                font = PdfFont.getDefaultFont(fontDict.getDocument());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //
+
+
             cachedFonts.put(n, font);
         }
         return font;
@@ -128,7 +129,7 @@ public class PdfContentStreamProcessor {
      * Loads all the supported graphics and text state operators in a map.
      */
     protected void populateOperators() {
-        registerContentOperator(DEFAULTOPERATOR, new IgnoreOperatorContentOperator());
+        registerContentOperator(DEFAULTOPERATOR, new IgnoreOperator());
 
         registerContentOperator("q", new PushGraphicsState());
         registerContentOperator("Q", new PopGraphicsState());
@@ -146,6 +147,8 @@ public class PdfContentStreamProcessor {
         registerContentOperator("SCN", new SetColorStroke());
         registerContentOperator("cm", new ModifyCurrentTransformationMatrix());
         registerContentOperator("gs", new ProcessGraphicsStateResource());
+
+        registerContentOperator("EI", new EndImage());
 
         SetTextCharacterSpacing tcOperator = new SetTextCharacterSpacing();
         registerContentOperator("Tc", tcOperator);
@@ -238,14 +241,13 @@ public class PdfContentStreamProcessor {
         gsStack.add(new GraphicsState());
         textMatrix = null;
         textLineMatrix = null;
-        resources = new ResourceDictionary();
+        resourcesStack = new Stack<>();
         clip = false;
         currentPath = new Path();
     }
 
     /**
-     * Returns the current graphics state.
-     * @return	the graphics state
+     * @return the current graphics state
      */
     public GraphicsState gs(){
         return gsStack.peek();
@@ -256,7 +258,7 @@ public class PdfContentStreamProcessor {
      * @param operator	the PDF Syntax of the operator
      * @param operands	a list with operands
      */
-    private void invokeOperator(PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception{
+    private void invokeOperator(PdfLiteral operator, ArrayList<PdfObject> operands) {
         ContentOperator op = operators.get(operator.toString());
         if (op == null)
             op = operators.get(DEFAULTOPERATOR);
@@ -285,14 +287,14 @@ public class PdfContentStreamProcessor {
      * Used to trigger beginTextBlock on the renderListener
      */
     private void beginText(){
-        eventListener.eventOccured(null, EventType.BEGIN_TEXT);
+        eventListener.eventOccurred(null, EventType.BEGIN_TEXT);
     }
 
     /**
      * Used to trigger endTextBlock on the renderListener
      */
     private void endText(){
-        eventListener.eventOccured(null, EventType.END_TEXT);
+        eventListener.eventOccurred(null, EventType.END_TEXT);
     }
 
     /**
@@ -301,7 +303,7 @@ public class PdfContentStreamProcessor {
      */
     private void displayPdfString(PdfString string){
         TextRenderInfo renderInfo = new TextRenderInfo(string, gs(), textMatrix, markedContentStack);
-        eventListener.eventOccured(renderInfo, EventType.RENDER_TEXT);
+        eventListener.eventOccurred(renderInfo, EventType.RENDER_TEXT);
         textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
     }
 
@@ -310,7 +312,7 @@ public class PdfContentStreamProcessor {
      * @param xobjectName the name of the XObject to retrieve from the resource dictionary
      */
     private void displayXObject(PdfName xobjectName) {
-        PdfDictionary xobjects = (PdfDictionary) resources.get(PdfName.XObject);
+        PdfDictionary xobjects = (PdfDictionary) resourcesStack.peek().get(PdfName.XObject);
         PdfStream xobjectStream = xobjects.getAsStream(xobjectName);
         PdfName subType = xobjectStream.getAsName(PdfName.Subtype);
         XObjectDoHandler handler = xobjectDoHandlers.get(subType);
@@ -337,103 +339,47 @@ public class PdfContentStreamProcessor {
      * Processes PDF syntax.
      * <b>Note:</b> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
      * @param contentBytes	the bytes of a content stream
-     * @param resources		the resources that come with the content stream
+     * @param resources		the resources of the content stream. Must not be null.
      */
-    public void processContent(byte[] contentBytes, PdfDictionary resources){
-        this.resources.push(resources);
-        try {
+    public void processContent(byte[] contentBytes, PdfDictionary resources) {
+        if (resources == null) {
+            throw new PdfException(PdfException.ResourcesCannotBeNull);
+        }
+        this.resourcesStack.push(resources);
             PdfTokenizer tokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
-            PdfContentParser ps = new PdfContentParser(tokeniser);
+            PdfContentStreamParser ps = new PdfContentStreamParser(tokeniser, resources);
             ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
+        try {
             while (ps.parse(operands).size() > 0){
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
-                if ("BI".equals(operator.toString())){
-                    // we don't call invokeOperator for embedded images - this is one area of the PDF spec that is particularly nasty and inconsistent
-                    PdfDictionary colorSpaceDic = resources != null ? (PdfDictionary) resources.get(PdfName.ColorSpace) : null;
-                    handleInlineImage(InlineImageUtils.parseInlineImage(ps, colorSpaceDic), colorSpaceDic);
-                } else {
-                    invokeOperator(operator, operands);
-                }
+                invokeOperator(operator, operands);
             }
-
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e); // TODO: was ExceptionConverter
-        }
-        this.resources.pop();
-
-    }
-
-    /**
-     * Callback when an inline image is found.  This requires special handling because inline images don't follow the standard operator syntax
-     * @param info the inline image
-     * @param colorSpaceDic the color space for the inline immage
-     */
-    protected void handleInlineImage(InlineImageInfo info, PdfDictionary colorSpaceDic){
-        ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs().getCtm(), info, colorSpaceDic);
-        eventListener.eventOccured(renderInfo, EventType.RENDER_IMAGE);
-    }
-
-    /**
-     * A resource dictionary that allows stack-like behavior to support resource dictionary inheritance
-     */
-    private static class ResourceDictionary extends PdfDictionary{
-        private final List<PdfDictionary> resourcesStack = new ArrayList<PdfDictionary>();
-        public ResourceDictionary() {
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotParseContentStream, e);
         }
 
-        public void push(PdfDictionary resources){
-            resourcesStack.add(resources);
-        }
+        this.resourcesStack.pop();
 
-        public void pop(){
-            resourcesStack.remove(resourcesStack.size()-1);
-        }
-
-        @Override
-        public PdfObject get(PdfName key) {
-            for (int i = resourcesStack.size() - 1; i >= 0; i--){
-                PdfDictionary subResource = resourcesStack.get(i);
-                if (subResource != null){
-                    PdfObject obj =  subResource.get(key);
-                    if (obj != null) return obj;
-                }
-            }
-            return super.get(key); // shouldn't be necessary, but just in case we've done something crazy
-        }
     }
 
     /**
      * Processes PDF syntax.
      * <br/>
-     * <strong>Note:</strong> If you re-use a given {@link 1}, you must call {@link 1#reset()}
+     * <strong>Note:</strong> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
      *
-     * @param pageContentBytes The bytes of the page's content stream
-     * @param pageDictionary   The page dictionary.
+     * @param page the page to process
      */
-    public void processPageContent(byte[] pageContentBytes, PdfDictionary pageDictionary) {
-        initClippingPath(pageDictionary);
+    public void processPageContent(PdfPage page) {
+        initClippingPath(page);
         GraphicsState gs = gs();
-        eventListener.eventOccured(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED); // TODO: refactor -1 constants
-        processContent(pageContentBytes, pageDictionary.getAsDictionary(PdfName.Resources));
+        eventListener.eventOccurred(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED); // TODO: refactor -1 constants
+        processContent(page.getContentBytes(), page.getResources().getPdfObject());
     }
 
-    private void initClippingPath(PdfDictionary pageDictionary) {
-        PdfArray cropBoxRect = getCropboxRect(pageDictionary);
+    private void initClippingPath(PdfPage page) {
         Path clippingPath = new Path();
-
-        float x = cropBoxRect.getAsNumber(0).getFloatValue();
-        float y = cropBoxRect.getAsNumber(1).getFloatValue();
-        float width = cropBoxRect.getAsNumber(2).getFloatValue() - x;
-        float height = cropBoxRect.getAsNumber(3).getFloatValue() - y;
-
-        clippingPath.rectangle(x, y, width, height);
+        clippingPath.rectangle(page.getCropBox());
         gs().setClippingPath(clippingPath);
-    }
-
-    private PdfArray getCropboxRect(PdfDictionary pageDictionary) {
-        PdfArray cropboxRect = pageDictionary.getAsArray(PdfName.CropBox);
-        return cropboxRect != null ? cropboxRect : pageDictionary.getAsArray(PdfName.MediaBox);
     }
 
     /**
@@ -448,13 +394,13 @@ public class PdfContentStreamProcessor {
      */
     protected void paintPath(int operation, int rule) {
         PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, gs());
-        eventListener.eventOccured(renderInfo, EventType.RENDER_PATH);
+        eventListener.eventOccurred(renderInfo, EventType.RENDER_PATH);
 
         if (clip) {
             clip = false;
             GraphicsState gs = gs();
             gs.clip(currentPath, clippingRule);
-            eventListener.eventOccured(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED); // TODO: refactor -1 constants
+            eventListener.eventOccurred(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED); // TODO: refactor -1 constants
         }
 
         currentPath = new Path();
@@ -463,7 +409,7 @@ public class PdfContentStreamProcessor {
     /**
      * A content operator implementation (unregistered).
      */
-    private static class IgnoreOperatorContentOperator implements ContentOperator{
+    private static class IgnoreOperator implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands){
             // ignore the operator
         }
@@ -628,14 +574,10 @@ public class PdfContentStreamProcessor {
             PdfName fontResourceName = (PdfName)operands.get(0);
             float size = ((PdfNumber)operands.get(1)).getFloatValue();
 
-            PdfDictionary fontsDictionary = (PdfDictionary) processor.resources.get(PdfName.Font);
+            PdfDictionary fontsDictionary = (PdfDictionary) processor.resourcesStack.peek().get(PdfName.Font);
             PdfDictionary fontDict = fontsDictionary.getAsDictionary(fontResourceName);
             PdfFont font = null;
-            try { // TODO: extract exception
-                font = processor.getFont(fontDict);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            font = processor.getFont(fontDict);
 
             processor.gs().font = font;
             processor.gs().fontSize = size;
@@ -710,22 +652,17 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
 
             PdfName dictionaryName = (PdfName)operands.get(0);
-            PdfDictionary extGState = (PdfDictionary) processor.resources.get(PdfName.ExtGState);
+            PdfDictionary extGState = (PdfDictionary) processor.resourcesStack.peek().get(PdfName.ExtGState);
             if (extGState == null)
-                throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage(*/"resources.do.not.contain.extgstate.entry.unable.to.process.operator.1"/*, operator)*/);
+                throw new PdfException(PdfException.ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1).setMessageParams(operator);
             PdfDictionary gsDic = extGState.getAsDictionary(dictionaryName);
             if (gsDic == null)
-                throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage(*/"1.is.an.unknown.graphics.state.dictionary"/*, dictionaryName)*/);
+                throw new PdfException(PdfException._1IsAnUnknownGraphicsStateDictionary).setMessageParams(dictionaryName);
 
             // at this point, all we care about is the FONT entry in the GS dictionary
             PdfArray fontParameter = gsDic.getAsArray(PdfName.Font);
             if (fontParameter != null){
-                PdfFont font = null;
-                try { // TODO: remove exception
-                    font = processor.getFont(fontParameter.getAsDictionary(0));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                PdfFont font = processor.getFont(fontParameter.getAsDictionary(0));
                 float size = fontParameter.getAsNumber(1).getFloatValue();
 
                 processor.gs().font = font;
@@ -803,7 +740,7 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
             processor.gsStack.pop();
             GraphicsState gs = processor.gs();
-            processor.eventListener.eventOccured(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED);
+            processor.eventListener.eventOccurred(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED);
         }
     }
 
@@ -943,15 +880,15 @@ public class PdfContentStreamProcessor {
 
             PdfObject properties = operands.get(1);
 
-            processor.beginMarkedContent((PdfName)operands.get(0), getPropertiesDictionary(properties, processor.resources));
+            processor.beginMarkedContent((PdfName)operands.get(0), getPropertiesDictionary(properties, processor.resourcesStack.peek()));
         }
 
-        private PdfDictionary getPropertiesDictionary(PdfObject operand1, ResourceDictionary resources){
+        private PdfDictionary getPropertiesDictionary(PdfObject operand1, PdfDictionary resources){
             if (operand1.isDictionary())
                 return (PdfDictionary)operand1;
 
             PdfName dictionaryName = ((PdfName)operand1);
-            return (PdfDictionary) resources.get(dictionaryName);
+            return resources.getAsDictionary(dictionaryName);
         }
     }
 
@@ -973,6 +910,21 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
             PdfName xobjectName = (PdfName)operands.get(0);
             processor.displayXObject(xobjectName);
+        }
+    }
+
+    /**
+     * A content operator implementation (EI). BI and ID operators are parsed along with this operator.
+     * This not a usual operator, it will have a single operand, which will be a PdfStream object which
+     * encapsulates inline image dictionary and bytes
+     */
+    private static class EndImage implements ContentOperator {
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
+            PdfStream imageStream = (PdfStream) operands.get(0);
+
+            PdfDictionary colorSpaceDic = processor.resourcesStack.peek().getAsDictionary(PdfName.ColorSpace);
+            ImageRenderInfo renderInfo = new ImageRenderInfo(processor.gs().getCtm(), imageStream, colorSpaceDic, true);
+            processor.eventListener.eventOccurred(renderInfo, EventType.RENDER_IMAGE);
         }
     }
 
@@ -1039,7 +991,10 @@ public class PdfContentStreamProcessor {
 
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream) {
 
-            final PdfDictionary resources = stream.getAsDictionary(PdfName.Resources);
+            PdfDictionary resources = stream.getAsDictionary(PdfName.Resources);
+            if (resources == null) {
+                resources = processor.resourcesStack.peek();
+            }
 
             // we read the content bytes up here so if it fails we don't leave the graphics state stack corrupted
             // this is probably not necessary (if we fail on this, probably the entire content stream processing
@@ -1075,9 +1030,9 @@ public class PdfContentStreamProcessor {
     private static class ImageXObjectDoHandler implements XObjectDoHandler{
 
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream) {
-            PdfDictionary colorSpaceDic = (PdfDictionary) processor.resources.get(PdfName.ColorSpace);
-            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs().getCtm(), xobjectStream, colorSpaceDic);
-            processor.eventListener.eventOccured(renderInfo, EventType.RENDER_IMAGE);
+            PdfDictionary colorSpaceDic = (PdfDictionary) processor.resourcesStack.peek().get(PdfName.ColorSpace);
+            ImageRenderInfo renderInfo = new ImageRenderInfo(processor.gs().getCtm(), xobjectStream, colorSpaceDic, false);
+            processor.eventListener.eventOccurred(renderInfo, EventType.RENDER_IMAGE);
         }
     }
 

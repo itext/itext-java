@@ -1,11 +1,8 @@
 package com.itextpdf.core.parser;
 
-import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
-
-import java.io.IOException;
 
 /**
  * Represents image data from a PDF
@@ -13,87 +10,54 @@ import java.io.IOException;
  */
 public class ImageRenderInfo implements EventData {
     /** The coordinate transformation matrix that was in effect when the image was rendered */
-    private final Matrix ctm;
-    /** A reference to the image XObject */
-    private final PdfStream stream;
-    /** A reference to an inline image */
-    private final InlineImageInfo inlineImageInfo;
-    /** the color space associated with the image */
-    private final PdfDictionary colorSpaceDictionary;
-    /** the image object to be rendered, if it has been parsed already.  Null otherwise. */
-    private PdfImageObject imageObject = null;
-
-    private ImageRenderInfo(Matrix ctm, PdfStream stream, PdfDictionary colorSpaceDictionary) {
-        this.ctm = ctm;
-        this.stream = stream;
-        this.inlineImageInfo = null;
-        this.colorSpaceDictionary = colorSpaceDictionary;
-    }
-
-    private ImageRenderInfo(Matrix ctm, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary) {
-        this.ctm = ctm;
-        this.stream = null;
-        this.inlineImageInfo = inlineImageInfo;
-        this.colorSpaceDictionary = colorSpaceDictionary;
-    }
+    private Matrix ctm;
+    private PdfImageXObject image;
+    /** the color space dictionary from resources which are associated with the image */
+    private PdfDictionary colorSpaceDictionary;
+    /** defines if the encountered image was inline */
+    private boolean isInline;
 
     /**
-     * Create an ImageRenderInfo object based on an XObject (this is the most common way of including an image in PDF)
+     * Create an ImageRenderInfo
      * @param ctm the coordinate transformation matrix at the time the image is rendered
-     * @param ref a reference to the image XObject
-     * @return the ImageRenderInfo representing the rendered XObject
-     * @since 5.0.1
+     * @param stream image stream object
+     * @param colorSpaceDictionary the color space dictionary from resources which are associated with the image
+     * @param isInline defines if the encountered image was inline
      */
-    public static ImageRenderInfo createForXObject(Matrix ctm, PdfStream stream, PdfDictionary colorSpaceDictionary){
-        return new ImageRenderInfo(ctm, stream, colorSpaceDictionary);
+    public ImageRenderInfo(Matrix ctm, PdfStream stream, PdfDictionary colorSpaceDictionary, boolean isInline) {
+        this.ctm = ctm;
+        this.image = new PdfImageXObject(stream);
+        this.colorSpaceDictionary = colorSpaceDictionary;
+        this.isInline = isInline;
     }
 
     /**
-     * Create an ImageRenderInfo object based on inline image data.  This is nowhere near completely thought through
-     * and really just acts as a placeholder.
-     * @param ctm the coordinate transformation matrix at the time the image is rendered
-     * @param imageObject the image object representing the inline image
-     * @return the ImageRenderInfo representing the rendered embedded image
-     * @since 5.0.1
+     * Gets an image wrapped in ImageXObject.
+     * You can:
+     * <ul>
+     *     <li>get image bytes with {@link PdfImageXObject#getImageBytes(boolean)};</li>
+     *     <li>obtain PdfStream object which contains image dictionary with {@link PdfImageXObject#getPdfObject()} method;</li>
+     *     <li>convert image to {@link java.awt.image.BufferedImage} with {@link PdfImageXObject#getBufferedImage()};</li>
+     *     //TODO: correct this when something like convertToNativeImage method is implemented
+     *     <li>convert this image to native image with PdfImageXObject#convertToNativeImage;</li>
+     * </ul>
      */
-    protected static ImageRenderInfo createForEmbeddedImage(Matrix ctm, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary){
-        ImageRenderInfo renderInfo = new ImageRenderInfo(ctm, inlineImageInfo, colorSpaceDictionary);
-        return renderInfo;
+    public PdfImageXObject getImage() {
+        return image;
     }
 
     /**
-     * Gets an object containing the image dictionary and bytes.
-     * @return an object containing the image dictionary and byte[]
-     * @since 5.0.2
-     */
-    public PdfImageObject getImage() throws IOException {
-        prepareImageObject();
-        return imageObject;
-    }
-
-    private void prepareImageObject() throws IOException{
-        if (imageObject != null)
-            return;
-
-        if (stream != null){
-            imageObject = new PdfImageObject(stream, colorSpaceDictionary);
-        } else if (inlineImageInfo != null){
-            imageObject = new PdfImageObject(inlineImageInfo.getImageDictionary(), inlineImageInfo.getSamples(), colorSpaceDictionary);
-        }
-    }
-
-    /**
-     * @return a vector in User space representing the start point of the xobject
+     * @return a vector in User space representing the start point of the image
      */
     public Vector getStartPoint(){
         return new Vector(0, 0, 1).cross(ctm);
     }
 
     /**
-     * @return The coordinate transformation matrix active when this image was rendered.  Coordinates are in User space.
+     * @return The coordinate transformation matrix which was active when this image was rendered. Coordinates are in User space.
      * @since 5.0.3
      */
-    public Matrix getImageCTM(){
+    public Matrix getImageCtm(){
         return ctm;
     }
 
@@ -107,10 +71,16 @@ public class ImageRenderInfo implements EventData {
     }
 
     /**
-     * @return an indirect reference to the image // TODO: correct the doc
-     * @since 5.0.2
+     * @return true if image was inlined in original stream.
      */
-    public PdfStream getStream() {
-        return stream;
+    public boolean isInline() {
+        return isInline;
+    }
+
+    /**
+     * @return the color space dictionary from resources which are associated with the image
+     */
+    public PdfDictionary getColorSpaceDictionary() {
+        return colorSpaceDictionary;
     }
 }

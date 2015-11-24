@@ -10,6 +10,7 @@ public class PdfException extends RuntimeException {
 
 
     public static final String _1CorruptedJfifMarker = "1.corrupted.jfif.marker";
+    public static final String _1IsAnUnknownGraphicsStateDictionary = "1.is.an.unknown.graphics.state.dictionary";
     public static final String _1IsAnUnknownImageFormat = "1.is.an.unknown.image.format";
     public static final String _1IsNotAValidJpegFile = "1.is.not.a.valid.jpeg.file";
     public static final String _1IsNotAValidPlaceableWindowsMetafile = "1.is.not.a.valid.placeable.windows.metafile";
@@ -45,11 +46,13 @@ public class PdfException extends RuntimeException {
     public static final String CannotGetTiffImageColor = "cannot.get.tiff.image.color";
     public static final String CannotGetTiffNumberOfPages = "cannot.get.tiff.number.of.pages";
     public static final String CannotFind1Frame = "cannot.find.1.frame";
+    public static final String CannotFindImageDataOrEI = "cannot.find.image.data.or.EI";
     public static final String CannotFlushObject = "cannot.flush.object";
     public static final String CannotHandleBoxSizesHigherThan2_32 = "cannot.handle.box.sizes.higher.than.2.32";
     public static final String CannotInflateTiffImage = "cannot.inflate.tiff.image";
     public static final String CannotOpenDocument = "cannot.open.document";
-    public static final String CannotReadAStreamInOrderToAppendNewBytesReason1 = "cannot.read.a.stream.in.order.to.append.new.bytes.reason.1";
+    public static final String CannotParseContentStream = "could.not.parse.content.stream";
+    public static final String CannotReadAStreamInOrderToAppendNewBytes = "cannot.read.a.stream.in.order.to.append.new.bytes.reason.1";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
     public static final String CannotReadTiffImage = "cannot.read.tiff.image";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
@@ -80,6 +83,7 @@ public class PdfException extends RuntimeException {
     public static final String DocumentToCopyToCannotBeNull = "document.to.copy.to.cannot.be.null";
     public static final String ElementCannotFitAnyArea = "element.cannot.fit.any.area";
     public static final String EncryptionCanOnlyBeAddedBeforeOpeningDocument = "encryption.can.only.be.added.before.opening.the.document";
+    public static final String EndOfContentStreamReachedBeforeEndOfImageData = "end.of.content.stream.reached.before.end.of.image.data";
     public static final String EolCodeWordEncounteredInBlackRun = "eol.code.word.encountered.in.black.run";
     public static final String EolCodeWordEncounteredInWhiteRun = "eol.code.word.encountered.in.white.run";
     public static final String ErrorAtFilePointer1 = "error.at.file.pointer.1";
@@ -98,6 +102,7 @@ public class PdfException extends RuntimeException {
     public static final String Filter1IsNotSupported = "filter.1.is.not.supported";
     public static final String FilePosition0CrossReferenceEntryInThisXrefSubsection = "file.position.0.cross.reference.entry.in.this.xref.subsection";
     public static final String FilterCcittfaxdecodeIsOnlySupportedForImages = "filter.ccittfaxdecode.is.only.supported.for.images";
+    public static final String FilterIsNotANameOrArray = "filter.is.not.a.name.or.array";
     public static final String FirstScanlineMustBe1dEncoded = "first.scanline.must.be.1d.encoded";
     public static final String FlateCompressException = "flate.compress.exception";
     public static final String FlushedPageCannotBeAddedOrInserted = "flushed.page.cannot.be.added.or.inserted";
@@ -166,6 +171,7 @@ public class PdfException extends RuntimeException {
     public static final String NoValidEncryptionMode = "no.valid.encryption.mode";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
     public static final String OnlyBmpCanBeWrappedInWmf = "only.bmp.can.be.wrapped.in.wmf";
+    public static final String OperatorEINotFoundAfterEndOfImageData = "operator.EI.not.found.after.end.of.image.data";
     public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.instead";
     public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "page.1.cannot.be.added.to.document.2.because.it.belongs.to.document.3";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
@@ -187,9 +193,10 @@ public class PdfException extends RuntimeException {
     public static final String PngFilterUnknown = "png.filter.unknown";
     public static final String PngImageException = "png.image.exception";
     public static final String PrematureEofWhileReadingJpg = "premature.eof.while.reading.jpg";
+    public static final String ResourcesCannotBeNull = "resources.cannot.be.null";
+    public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "resources.do.not.contain.extgstate.entry.unable.to.process.operator.1";
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
-    public static final String FilterIsNotANameOrArray = "filter.is.not.a.name.or.array";
     public static final String StructureElementIsNotLinkedToStructParent = "structure.element.is.not.linked.to.structparent";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String StructureElementShallContainPgKey = "structure.element.shall.contain.pg.key";
@@ -209,7 +216,9 @@ public class PdfException extends RuntimeException {
     public static final String TransparencyLengthMustBeEqualTo2WithCcittImages = "transparency.length.must.be.equal.to.2.with.ccitt.images";
     public static final String UnbalancedBeginEndMarkedContentOperators = "unbalanced.begin.end.marked.content.operators";
     public static final String UnbalancedLayerOperators = "unbalanced.layer.operators";
+    public static final String UnexpectedCharacter1FoundAfterIDInInlineImage = "unexpected.character.1.found.after.ID.in.inline.image";
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
+    public static final String UnexpectedColorSpace1 = "unexpected.color.space.1";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
     public static final String UnknownCompressionType1 = "unknown.compression.type.1";

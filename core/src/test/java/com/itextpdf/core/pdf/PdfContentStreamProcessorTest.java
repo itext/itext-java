@@ -31,7 +31,7 @@ public class PdfContentStreamProcessorTest extends ExtendedITextTest {
             PdfPage page = document.getPage(i);
 
             PdfContentStreamProcessor processor = new PdfContentStreamProcessor(new EventListener() {
-                public void eventOccured(EventData data, EventType type) {
+                public void eventOccurred(EventData data, EventType type) {
                     switch (type) {
                         case BEGIN_TEXT:
                             System.out.println("-------- BEGIN TEXT CALLED ---------");
@@ -42,7 +42,7 @@ public class PdfContentStreamProcessorTest extends ExtendedITextTest {
                             System.out.println("-------- RENDER TEXT CALLED --------");
 
                             TextRenderInfo renderInfo = (TextRenderInfo) data;
-                            System.out.println("String: " + ((TextRenderInfo) data).getPdfString());
+                            System.out.println("String: " + renderInfo.getPdfString());
 
                             System.out.println("------------------------------------");
                             break;
@@ -56,7 +56,7 @@ public class PdfContentStreamProcessorTest extends ExtendedITextTest {
                             System.out.println("-------- RENDER IMAGE CALLED---------");
 
                             ImageRenderInfo renderInfo1 = (ImageRenderInfo) data;
-                            System.out.println("Image: " + renderInfo1.getStream());
+                            System.out.println("Image: " + renderInfo1.getImage().getPdfObject());
 
                             System.out.println("------------------------------------");
                             break;
@@ -86,7 +86,7 @@ public class PdfContentStreamProcessorTest extends ExtendedITextTest {
                 }
             });
 
-            processor.processPageContent(page.getContentBytes(), page.getPdfObject());
+            processor.processPageContent(page);
 
         }
     }
