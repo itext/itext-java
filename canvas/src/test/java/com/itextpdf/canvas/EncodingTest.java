@@ -9,6 +9,7 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -166,6 +167,144 @@ public class EncodingTest {
                 moveText(36, 806).
                 setFontAndSize(font, 12).
                 showText("\u0188").
+                endText().
+                restoreState();
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+    }
+
+    @Test
+    public void symbolDefaultFontTest() throws IOException, InterruptedException {
+        String fileName = "symbolDefaultFontTest.pdf";
+        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfDocument doc = new PdfDocument(writer);
+
+        PdfFont font = PdfFont.createFont(doc, FontConstants.SYMBOL, PdfEncodings.WINANSI);
+        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+        String str = new String();
+        for (int i = 32; i <= 100; i++) {
+            str+= (char)i;
+        }
+        canvas.
+                saveState().
+                beginText().
+                moveText(36, 806).
+                setFontAndSize(font, 12).
+                showText(str).
+                endText();
+
+        str = "";
+        for (int i = 101; i <= 190; i++) {
+            str+= (char)i;
+        }
+        canvas.
+                saveState().
+                beginText().
+                moveText(36, 786).
+                setFontAndSize(font, 12).
+                showText(str).
+                endText();
+        str = "";
+        for (int i = 191; i <= 254; i++) {
+            str+= (char)i;
+        }
+        canvas.
+                beginText().
+                moveText(36, 766).
+                showText(str).
+                endText().
+                restoreState();
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+    }
+
+    @Test@Ignore("DEVSIX-346")
+    public void symbolFontWinansiTest() throws IOException, InterruptedException {
+        String fileName = "symbolFontTest.pdf";
+        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfDocument doc = new PdfDocument(writer);
+
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "Symbols1.ttf", PdfEncodings.WINANSI);
+        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+        String str = new String();
+        for (int i = 32; i <= 100; i++) {
+            str+= (char)i;
+        }
+        canvas.
+                saveState().
+                beginText().
+                moveText(36, 806).
+                setFontAndSize(font, 12).
+                showText(str).
+                endText();
+
+        str = "";
+        for (int i = 101; i <= 190; i++) {
+            str+= (char)i;
+        }
+        canvas.
+                saveState().
+                beginText().
+                moveText(36, 786).
+                setFontAndSize(font, 12).
+                showText(str).
+                endText();
+        str = "";
+        for (int i = 191; i <= 254; i++) {
+            str+= (char)i;
+        }
+        canvas.
+                beginText().
+                moveText(36, 766).
+                showText(str).
+                endText().
+                restoreState();
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+    }
+
+    @Test@Ignore("DEVSIX-346")
+    public void symbolFontIdentityHTest() throws IOException, InterruptedException {
+        String fileName = "symbolFontTest.pdf";
+        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfDocument doc = new PdfDocument(writer);
+
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
+        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+        String str = new String();
+        for (int i = 32; i <= 100; i++) {
+            str+= (char)i;
+        }
+        canvas.
+                saveState().
+                beginText().
+                moveText(36, 806).
+                setFontAndSize(font, 12).
+                showText(str).
+                endText();
+
+        str = "";
+        for (int i = 101; i <= 190; i++) {
+            str+= (char)i;
+        }
+        canvas.
+                saveState().
+                beginText().
+                moveText(36, 786).
+                setFontAndSize(font, 12).
+                showText(str).
+                endText();
+        str = "";
+        for (int i = 191; i <= 254; i++) {
+            str+= (char)i;
+        }
+        canvas.
+                beginText().
+                moveText(36, 766).
+                showText(str).
                 endText().
                 restoreState();
         doc.close();
