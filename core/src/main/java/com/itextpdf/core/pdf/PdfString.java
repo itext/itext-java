@@ -30,6 +30,14 @@ public class PdfString extends PdfPrimitiveObject {
     protected String value;
     protected String encoding;
     protected boolean hexWriting = false;
+    /*
+    * using for decryption
+    * */
+    private int decryptInfoNum = 0;
+    /*
+    * using for decryption
+    * */
+    private int decryptInfoGen = 0;
 
     public PdfString(String value, String encoding) {
         super();
@@ -178,11 +186,7 @@ public class PdfString extends PdfPrimitiveObject {
             assert content != null : "No byte content to decrypt value";
             byte[] decodedContent = decodeContent();
             content = null;
-            if (getIndirectReference() != null) {
-                decrypt.setHashKey(getIndirectReference().getObjNumber(), getIndirectReference().getGenNumber());
-            } else {
-                decrypt.setHashKey(0, 0);
-            }
+            decrypt.setHashKey(decryptInfoNum, decryptInfoGen);
             value = new String(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
         }
         return this;
@@ -339,5 +343,19 @@ public class PdfString extends PdfPrimitiveObject {
         return buffer.toString();
     }
 
+    public int getDecryptInfoNum() {
+        return decryptInfoNum;
+    }
 
+    public void setDecryptInfoNum(int decryptInfoNum) {
+        this.decryptInfoNum = decryptInfoNum;
+    }
+
+    public int getDecryptInfoGen() {
+        return decryptInfoGen;
+    }
+
+    public void setDecryptInfoGen(int decryptInfoGen) {
+        this.decryptInfoGen = decryptInfoGen;
+    }
 }

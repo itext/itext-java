@@ -53,6 +53,8 @@ public class PdfReader {
     private boolean unethicalReading;
     private PdfObject cryptoRef;
 
+    //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
+    private PdfIndirectReference currentIndirectReference;
     protected boolean encrypted = false;
     protected boolean rebuiltXref = false;
     protected boolean hybridXref = false;
@@ -739,8 +741,14 @@ public class PdfReader {
                 return readArray();
             case Number:
                 return new PdfNumber(tokens.getByteContent());
-            case String:
-                return new PdfString(tokens.getByteContent(), tokens.isHexString());/*.decrypt(decrypt); see DEVSIX-336 */
+            case String: {
+                PdfString pdfString = new PdfString(tokens.getByteContent(), tokens.isHexString());
+                if(currentIndirectReference != null) {
+                    pdfString.setDecryptInfoNum(currentIndirectReference.getObjNumber());
+                    pdfString.setDecryptInfoGen(currentIndirectReference.getGenNumber());
+                }
+                return password == null ? pdfString : pdfString.decrypt(decrypt);
+            }
             case Name:
                 return readPdfName(readAsDirect);
             case Ref:
@@ -1170,6 +1178,7 @@ public class PdfReader {
         if (reference.refersTo != null)
             return reference.refersTo;
         try {
+            currentIndirectReference = reference;
             if (reference.getObjStreamNumber() > 0) {
                 PdfStream objectStream = (PdfStream) pdfDocument.getXref().
                         get(reference.getObjStreamNumber()).getRefersTo(false);
