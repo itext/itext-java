@@ -7,6 +7,7 @@ import com.itextpdf.basics.Utilities;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +23,12 @@ import com.itextpdf.basics.font.otf.LanguageRecord;
 import com.itextpdf.basics.font.otf.OpenTableLookup;
 import com.itextpdf.basics.font.otf.OpenTypeGdefTableReader;
 import com.itextpdf.basics.font.otf.ScriptRecord;
+=======
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+>>>>>>> Initial Devanagari syllables clusterization. Shaping implementation prototyping
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +46,8 @@ public class TrueTypeFont extends FontProgram {
     private OpenTypeGdefTableReader gdefTable;
 
     private boolean applyLigatures = false;
-    private String otfScript = null;
+    private Character.UnicodeScript script = null;
+    private String otfScriptTag = null;
 
     /**
      * The map containing the kerning information. It represents the content of
@@ -80,26 +88,30 @@ public class TrueTypeFont extends FontProgram {
         this.applyLigatures = applyLigatures;
     }
 
-    public void setScriptForOTF(Character.UnicodeScript script){
+    public void setScriptForOTF(Character.UnicodeScript script) {
+        this.script = script;
         switch (script) {
             case LATIN:
-                otfScript = "latn";
+                otfScriptTag = "latn";
                 break;
             case ARABIC:
-                otfScript = "arab";
+                otfScriptTag = "arab";
+                break;
+            case DEVANAGARI:
+                otfScriptTag = "dev2"; // TODO there is also old-style "deva" implementation
                 break;
             default:
-                otfScript = null;
+                otfScriptTag = null;
                 break;
         }
     }
 
     public String getOtfScript() {
-        return otfScript;
+        return otfScriptTag;
     }
 
     public boolean applyOtfScript(GlyphLine glyphLine) {
-        if (otfScript == null) {
+        if (otfScriptTag == null) {
             return false;
         }
         if (gsubTable != null) {
@@ -108,33 +120,78 @@ public class TrueTypeFont extends FontProgram {
                 return false;
             }
             boolean transformed = false;
-            List<OpenTableLookup> init = null;
-            List<OpenTableLookup> medi = null;
-            List<OpenTableLookup> fina = null;
-            List<OpenTableLookup> rlig = null;
-            for (int featureIndex : languageRecord.features) {
-                FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
-                switch (feature.tag) {
-                    case "init":
-                        init = gsubTable.getLookups(new FeatureRecord[]{feature});
-                        break;
-                    case "medi":
-                        medi = gsubTable.getLookups(new FeatureRecord[]{feature});
-                        break;
-                    case "fina":
-                        fina = gsubTable.getLookups(new FeatureRecord[]{feature});
-                        break;
-                    case "rlig":
-                        rlig = gsubTable.getLookups(new FeatureRecord[]{feature});
-                        break;
-                }
-            }
 
-            if (applyInitMediFinaShaping(glyphLine, init, medi, fina)) {
-                transformed = true;
-            }
-            if (applyRligFeature(glyphLine, rlig)) {
-                transformed = true;
+            if (Character.UnicodeScript.ARABIC.equals(script)) {
+                List<OpenTableLookup> init = null;
+                List<OpenTableLookup> medi = null;
+                List<OpenTableLookup> fina = null;
+                List<OpenTableLookup> rlig = null;
+                for (int featureIndex : languageRecord.features) {
+                    FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
+                    switch (feature.tag) {
+                        case "init":
+                            init = gsubTable.getLookups(new FeatureRecord[]{feature});
+                            break;
+                        case "medi":
+                            medi = gsubTable.getLookups(new FeatureRecord[]{feature});
+                            break;
+                        case "fina":
+                            fina = gsubTable.getLookups(new FeatureRecord[]{feature});
+                            break;
+                        case "rlig":
+                            rlig = gsubTable.getLookups(new FeatureRecord[]{feature});
+                            break;
+                    }
+                }
+
+                if (applyInitMediFinaShaping(glyphLine, init, medi, fina)) {
+                    transformed = true;
+                }
+                if (applyRligFeature(glyphLine, rlig)) {
+                    transformed = true;
+                }
+            } else if (Character.UnicodeScript.DEVANAGARI.equals(script)) {
+                List<DevanagariCluster> clusters = splitDevanagariGlyphLineIntoClusters(glyphLine);
+
+                if (clusters != null && clusters.size() > 0) {
+                    for (DevanagariCluster cluster : clusters) {
+                        // TODO reordering
+
+                        Map<String, List<OpenTableLookup>> features = new LinkedHashMap<>();
+                        for (int featureIndex : languageRecord.features) {
+                            FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
+                            List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{feature});
+                            features.put(feature.tag, lookups);
+                        }
+
+                        int start = glyphLine.start;
+                        int end = glyphLine.end;
+
+                        // TODO do it cluster by cluster. end might be shifted as a result of applying a feature to a cluster, so be careful.
+
+                        // Localized forms
+                        if (transform(features.get("locl"), glyphLine)) {
+                            transformed = true;
+                        }
+
+                        // Basic Shaping forms
+                        String[] basicShapingForms = new String[] {"nukt", "akhn", "rphf", "rkrf", "blwf", "half", "vatu", "cjct"};
+                        for (String feature : basicShapingForms) {
+                            if (transform(features.get(feature), glyphLine)) {
+                                transformed = true;
+                            }
+                        }
+
+                        // TODO final reordering
+
+                        String[] presentationForms = new String[] {"pres", "abvs", "blws", "psts", "haln", "calt"};
+                        for (String feature : presentationForms) {
+                            if (transform(features.get(feature), glyphLine)) {
+                                transformed = true;
+                            }
+                        }
+                    }
+                }
             }
 
             return transformed;
@@ -533,27 +590,43 @@ public class TrueTypeFont extends FontProgram {
     }
 
     private Glyph transform(List<OpenTableLookup> feature, Glyph glyph) {
-        for (OpenTableLookup lookup : feature) {
-            if (lookup != null) {
-                if (lookup.hasSubstitution(glyph.index)) {
-                    GlyphLine gl = new GlyphLine();
-                    gl.start = 0;
-                    gl.end = 1;
-                    gl.idx = 0;
-                    gl.glyphs = Arrays.asList(glyph);
-                    lookup.transformOne(gl);
-                    return gl.glyphs.get(0);
+        if (feature != null) {
+            for (OpenTableLookup lookup : feature) {
+                if (lookup != null) {
+                    if (lookup.hasSubstitution(glyph.index)) {
+                        GlyphLine gl = new GlyphLine();
+                        gl.start = 0;
+                        gl.end = 1;
+                        gl.idx = 0;
+                        gl.glyphs = Arrays.asList(glyph);
+                        lookup.transformOne(gl);
+                        return gl.glyphs.get(0);
+                    }
                 }
             }
         }
         return null;
     }
 
+    private boolean transform(List<OpenTableLookup> feature, GlyphLine glyphLine) {
+        boolean transformed = false;
+        if (feature != null) {
+            for (OpenTableLookup lookup : feature) {
+                if (lookup != null) {
+                    if (lookup.transformLine(glyphLine)) {
+                        transformed = true;
+                    }
+                }
+            }
+        }
+        return transformed;
+    }
+
     private LanguageRecord getLanguageRecord() {
         LanguageRecord languageRecord = null;
-        if (otfScript != null) {
+        if (otfScriptTag != null) {
             for (ScriptRecord record : gsubTable.getScriptRecords()) {
-                if (otfScript.equals(record.tag)) {
+                if (otfScriptTag.equals(record.tag)) {
                     languageRecord = record.defaultLanguage;
                     break;
                 }
@@ -561,4 +634,89 @@ public class TrueTypeFont extends FontProgram {
         }
         return languageRecord;
     }
+
+    private List<DevanagariCluster> splitDevanagariGlyphLineIntoClusters(GlyphLine glyphLine) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = glyphLine.start; i < glyphLine.end; i++) {
+            Glyph glyph = glyphLine.glyphs.get(i);
+            sb.append(glyph.unicode == null ? 'X' : getDevanagariClass(glyph.unicode));
+        }
+        String classes = sb.toString();
+
+        String regex = "(((C|R)N?((HZ?)|(ZH)))*(C|R)N?A?((HZ?)|(M*N?H?))?S?D?)|" +
+                "((RH)?VN?((Z?H(C|R))|(Z(C|R)))?(M*N?H?)?S?(D{1,2})?)|" +
+                "(X(RH)?BN?((Z?H(C|R))|(Z(C|R)))?(M*N?H?)?S?(D{1,2})?)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher("X" + classes);
+
+        List<DevanagariCluster> clusters = new ArrayList<>();
+
+        while (matcher.find()) {
+            clusters.add(new DevanagariCluster(glyphLine, glyphLine.start + matcher.start() - 1, glyphLine.start + matcher.end() - 1, classes.substring(matcher.start() - 1, matcher.end() - 1)));
+        }
+
+        // TODO sorting and eliminating intersections?
+
+        return clusters;
+    }
+
+    /**
+     * Classifies each char according to its Devanagari class.
+     * Classes are:
+     * X - no indic char
+     * C - Consonant
+     * V - Independent vowel
+     * N - Nukta
+     * H - Halant/Virama
+     * Z - ZWJ|ZWNJ
+     * M - Dependent Vowel Signs (Matras)
+     * S - Syllable modifier signs
+     * D - Vedic
+     * A - Anudatta (U+0952)
+     * B - NO-BREAK SPACE
+     * R - Ra
+     */
+    private char getDevanagariClass(int c) {
+        if (c == '\u0952')
+            return 'A';
+        else if (c == '\u094d')
+            return 'H';
+        else if (c == '\u093c')
+            return 'N';
+        else if (c == '\u0930')
+            return 'R';
+        else if (c == '\u0951')
+            return 'D';
+        else if (c == '\u00a0')
+            return 'B';
+        else if (c == '\u200d' || c == '\u200c')
+            return 'Z';
+        else if ((c >= '\u0915' && c <= '\u0939') || (c >= '\u0958' && c <= '\u095f')
+                || (c >= '\u0978' && c <= '\u097a'))
+            return 'C';
+        else if ((c >= '\u0904' && c <= '\u0914') || (c >= '\u0972' && c <= '\u0977'))
+            return 'V';
+        else if ((c >= '\u093a' && c <= '\u093b') || (c >= '\u093e' && c <= '\u094c')
+                || (c >= '\u094e' && c <= '\u094f') || (c >= '\u0955' && c <= '\u0957'))
+            return 'M';
+        else if ((c >= '\u0900' && c <= '\u0903') || c == '\u093d')
+            return 'S';
+        else
+            return 'X';
+    }
+
+    private static class DevanagariCluster {
+        public GlyphLine glyphLine;
+        public int start;
+        public int end;
+        public String classes;
+
+        public DevanagariCluster(GlyphLine glyphLine, int start, int end, String classes) {
+            this.glyphLine = glyphLine;
+            this.start = start;
+            this.end = end;
+            this.classes = classes;
+        }
+    }
+
 }
