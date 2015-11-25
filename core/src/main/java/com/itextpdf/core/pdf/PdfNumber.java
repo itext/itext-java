@@ -20,7 +20,7 @@ public class PdfNumber extends PdfPrimitiveObject {
         setValue(value);
     }
 
-    protected PdfNumber(byte[] content) {
+    public PdfNumber(byte[] content) {
         super(content);
         this.valueType = Double;
         this.value = java.lang.Double.NaN;

@@ -14,10 +14,6 @@ import java.util.ArrayList;
 public class PdfContentStreamParser {
 
     /**
-     * Commands have this type.
-     */
-    public static final int COMMAND_TYPE = 100;
-    /**
      * Holds value of property tokeniser.
      */
     private PdfTokenizer tokeniser;
@@ -66,12 +62,12 @@ public class PdfContentStreamParser {
         PdfObject ob = null;
         while ((ob = readObject()) != null) {
             ls.add(ob);
-            if (ob.getType() == COMMAND_TYPE) {
+            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.Other) {
                 if (ob.toString().equals("BI")) {
                     PdfStream inlineImageAsStream = InlineImageParsingUtils.parse(this, currentResources);
                     ls.clear();
                     ls.add(inlineImageAsStream);
-                    ls.add(new PdfLiteral("EI")); //TODO
+                    ls.add(new PdfLiteral("EI"));
                 }
                 break;
             }
@@ -111,10 +107,9 @@ public class PdfContentStreamParser {
                 tokeniser.throwError(PdfException.DictionaryKey1IsNotAName, tokeniser.getStringValue());
             PdfName name = new PdfName(tokeniser.getStringValue());
             PdfObject obj = readObject();
-            int type = obj.getType(); //TODO see pdfReader and try to do the same
-            if (-type == PdfTokenizer.TokenType.EndDic.ordinal())
+            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic)
                 tokeniser.throwError(PdfException.UnexpectedGtGt);
-            if (-type == PdfTokenizer.TokenType.EndArray.ordinal())
+            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndArray)
                 tokeniser.throwError(PdfException.UnexpectedCloseBracket);
             dic.put(name, obj);
         }
@@ -130,11 +125,10 @@ public class PdfContentStreamParser {
         PdfArray array = new PdfArray();
         while (true) {
             PdfObject obj = readObject();
-            int type = obj.getType();
-            if (-type == PdfTokenizer.TokenType.EndArray.ordinal())
+            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndArray)
                 break;
-            if (-type == PdfTokenizer.TokenType.EndDic.ordinal())
-                throw new IOException(/*MessageLocalization.getComposedMessage(*/"unexpected.gt.gt"/*)*/);
+            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic)
+                tokeniser.throwError(PdfException.UnexpectedGtGt);
             array.add(obj);
         }
         return array;
@@ -149,7 +143,6 @@ public class PdfContentStreamParser {
         if (!nextValidToken())
             return null;
         final PdfTokenizer.TokenType type = tokeniser.getTokenType();
-        final int ordinal = type.ordinal();
         switch (type) {
             case StartDic: {
                 PdfDictionary dic = readDictionary();
@@ -163,22 +156,10 @@ public class PdfContentStreamParser {
             case Name:
                 return new PdfName(tokeniser.getByteContent());
             case Number:
-                //TODO would be nice to use PdfNumber(byte[]) here, as in this case number parsing won't happen until it's needed.
-                return new PdfNumber(Double.parseDouble(tokeniser.getStringValue()));
-            case Other:
-                return new PdfLiteral(tokeniser.getStringValue()) {
-                    @Override
-                    public int getType() {
-                        return COMMAND_TYPE;
-                    }
-                }; // TODO: correct this
+                //use PdfNumber(byte[]) here, as in this case number parsing won't happen until it's needed.
+                return new PdfNumber(tokeniser.getByteContent());
             default:
-                return new PdfLiteral(tokeniser.getStringValue()) {
-                    @Override
-                    public int getType() {
-                        return -ordinal;
-                    } // TODO: correct this
-                };
+                return new PdfLiteral(tokeniser.getByteContent());
         }
     }
 
