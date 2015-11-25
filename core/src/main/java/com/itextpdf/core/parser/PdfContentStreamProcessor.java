@@ -81,7 +81,11 @@ public class PdfContentStreamProcessor {
     private void populateXObjectDoHandlers(){
         registerXObjectDoHandler(PdfName.Default, new IgnoreXObjectDoHandler());
         registerXObjectDoHandler(PdfName.Form, new FormXObjectDoHandler());
-        registerXObjectDoHandler(PdfName.Image, new ImageXObjectDoHandler());
+
+        if (eventListener.getSupportedEvents() == null ||
+                eventListener.getSupportedEvents().contains(EventType.RENDER_IMAGE)) {
+            registerXObjectDoHandler(PdfName.Image, new ImageXObjectDoHandler());
+        }
     }
 
     /**
@@ -131,84 +135,104 @@ public class PdfContentStreamProcessor {
     protected void populateOperators() {
         registerContentOperator(DEFAULTOPERATOR, new IgnoreOperator());
 
+        Set<EventType> supportedEvents = eventListener.getSupportedEvents();
+
         registerContentOperator("q", new PushGraphicsState());
         registerContentOperator("Q", new PopGraphicsState());
-        registerContentOperator("g", new SetGrayFill());
-        registerContentOperator("G", new SetGrayStroke());
-        registerContentOperator("rg", new SetRGBFill());
-        registerContentOperator("RG", new SetRGBStroke());
-        registerContentOperator("k", new SetCMYKFill());
-        registerContentOperator("K", new SetCMYKStroke());
-        registerContentOperator("cs", new SetColorSpaceFill());
-        registerContentOperator("CS", new SetColorSpaceStroke());
-        registerContentOperator("sc", new SetColorFill());
-        registerContentOperator("SC", new SetColorStroke());
-        registerContentOperator("scn", new SetColorFill());
-        registerContentOperator("SCN", new SetColorStroke());
         registerContentOperator("cm", new ModifyCurrentTransformationMatrix());
-        registerContentOperator("gs", new ProcessGraphicsStateResource());
 
-        registerContentOperator("EI", new EndImage());
+        registerContentOperator("Do", new Do());
 
-        SetTextCharacterSpacing tcOperator = new SetTextCharacterSpacing();
-        registerContentOperator("Tc", tcOperator);
-        SetTextWordSpacing twOperator = new SetTextWordSpacing();
-        registerContentOperator("Tw", twOperator);
-        registerContentOperator("Tz", new SetTextHorizontalScaling());
-        SetTextLeading tlOperator = new SetTextLeading();
-        registerContentOperator("TL", tlOperator);
-        registerContentOperator("Tf", new SetTextFont());
-        registerContentOperator("Tr", new SetTextRenderMode());
-        registerContentOperator("Ts", new SetTextRise());
-
-        registerContentOperator("BT", new BeginText());
-        registerContentOperator("ET", new EndText());
         registerContentOperator("BMC", new BeginMarkedContent());
         registerContentOperator("BDC", new BeginMarkedContentDictionary());
         registerContentOperator("EMC", new EndMarkedContent());
 
-        TextMoveStartNextLine tdOperator = new TextMoveStartNextLine();
-        registerContentOperator("Td", tdOperator);
-        registerContentOperator("TD", new TextMoveStartNextLineWithLeading(tdOperator, tlOperator));
-        registerContentOperator("Tm", new TextSetTextMatrix());
-        TextMoveNextLine tstarOperator = new TextMoveNextLine(tdOperator);
-        registerContentOperator("T*", tstarOperator);
+        if (supportedEvents == null || supportedEvents.contains(EventType.RENDER_TEXT)
+                || supportedEvents.contains(EventType.RENDER_PATH)
+                || supportedEvents.contains(EventType.CLIP_PATH_CHANGED)) {
 
-        ShowText tjOperator = new ShowText();
-        registerContentOperator("Tj", tjOperator);
-        MoveNextLineAndShowText tickOperator = new MoveNextLineAndShowText(tstarOperator, tjOperator);
-        registerContentOperator("'", tickOperator);
-        registerContentOperator("\"", new MoveNextLineAndShowTextWithSpacing(twOperator, tcOperator, tickOperator));
-        registerContentOperator("TJ", new ShowTextArray());
+            registerContentOperator("g", new SetGrayFill());
+            registerContentOperator("G", new SetGrayStroke());
+            registerContentOperator("rg", new SetRGBFill());
+            registerContentOperator("RG", new SetRGBStroke());
+            registerContentOperator("k", new SetCMYKFill());
+            registerContentOperator("K", new SetCMYKStroke());
+            registerContentOperator("cs", new SetColorSpaceFill());
+            registerContentOperator("CS", new SetColorSpaceStroke());
+            registerContentOperator("sc", new SetColorFill());
+            registerContentOperator("SC", new SetColorStroke());
+            registerContentOperator("scn", new SetColorFill());
+            registerContentOperator("SCN", new SetColorStroke());
+            registerContentOperator("gs", new ProcessGraphicsStateResource());
+        }
 
-        registerContentOperator("Do", new Do());
+        if (supportedEvents == null || supportedEvents.contains(EventType.RENDER_IMAGE)) {
+            registerContentOperator("EI", new EndImage());
+        }
 
-        registerContentOperator("w", new SetLineWidth());
-        registerContentOperator("J", new SetLineCap());
-        registerContentOperator("j", new SetLineJoin());
-        registerContentOperator("M", new SetMiterLimit());
-        registerContentOperator("d", new SetLineDashPattern());
+        if (supportedEvents == null || supportedEvents.contains(EventType.RENDER_TEXT)
+                || supportedEvents.contains(EventType.BEGIN_TEXT)
+                || supportedEvents.contains(EventType.END_TEXT)) {
+            registerContentOperator("BT", new BeginText());
+            registerContentOperator("ET", new EndText());
+        }
 
-        int fillStroke = PathRenderInfo.FILL | PathRenderInfo.STROKE;
-        registerContentOperator("m", new MoveTo());
-        registerContentOperator("l", new LineTo());
-        registerContentOperator("c", new Curve());
-        registerContentOperator("v", new CurveFirstPointDuplicated());
-        registerContentOperator("y", new CurveFourhPointDuplicated());
-        registerContentOperator("h", new CloseSubpath());
-        registerContentOperator("re", new Rectangle());
-        registerContentOperator("S", new PaintPath(PathRenderInfo.STROKE, -1, false));
-        registerContentOperator("s", new PaintPath(PathRenderInfo.STROKE, -1, true));
-        registerContentOperator("f", new PaintPath(PathRenderInfo.FILL, PdfCanvasConstants.FillingRule.NONZERO_WINDING, false));
-        registerContentOperator("F", new PaintPath(PathRenderInfo.FILL, PdfCanvasConstants.FillingRule.NONZERO_WINDING, false));
-        registerContentOperator("f*", new PaintPath(PathRenderInfo.FILL, PdfCanvasConstants.FillingRule.EVEN_ODD, false));
-        registerContentOperator("B", new PaintPath(fillStroke, PdfCanvasConstants.FillingRule.NONZERO_WINDING, false));
-        registerContentOperator("B*", new PaintPath(fillStroke, PdfCanvasConstants.FillingRule.EVEN_ODD, false));
-        registerContentOperator("b", new PaintPath(fillStroke, PdfCanvasConstants.FillingRule.NONZERO_WINDING, true));
-        registerContentOperator("b*", new PaintPath(fillStroke, PdfCanvasConstants.FillingRule.EVEN_ODD, true));
-        registerContentOperator("n", new PaintPath(PathRenderInfo.NO_OP, -1, false));
-        registerContentOperator("W", new ClipPath(PdfCanvasConstants.FillingRule.NONZERO_WINDING));
-        registerContentOperator("W*", new ClipPath(PdfCanvasConstants.FillingRule.EVEN_ODD));
+        if (supportedEvents == null || supportedEvents.contains(EventType.RENDER_TEXT)) {
+            SetTextCharacterSpacing tcOperator = new SetTextCharacterSpacing();
+            registerContentOperator("Tc", tcOperator);
+            SetTextWordSpacing twOperator = new SetTextWordSpacing();
+            registerContentOperator("Tw", twOperator);
+            registerContentOperator("Tz", new SetTextHorizontalScaling());
+            SetTextLeading tlOperator = new SetTextLeading();
+            registerContentOperator("TL", tlOperator);
+            registerContentOperator("Tf", new SetTextFont());
+            registerContentOperator("Tr", new SetTextRenderMode());
+            registerContentOperator("Ts", new SetTextRise());
+
+            TextMoveStartNextLine tdOperator = new TextMoveStartNextLine();
+            registerContentOperator("Td", tdOperator);
+            registerContentOperator("TD", new TextMoveStartNextLineWithLeading(tdOperator, tlOperator));
+            registerContentOperator("Tm", new TextSetTextMatrix());
+            TextMoveNextLine tstarOperator = new TextMoveNextLine(tdOperator);
+            registerContentOperator("T*", tstarOperator);
+
+            ShowText tjOperator = new ShowText();
+            registerContentOperator("Tj", tjOperator);
+            MoveNextLineAndShowText tickOperator = new MoveNextLineAndShowText(tstarOperator, tjOperator);
+            registerContentOperator("'", tickOperator);
+            registerContentOperator("\"", new MoveNextLineAndShowTextWithSpacing(twOperator, tcOperator, tickOperator));
+            registerContentOperator("TJ", new ShowTextArray());
+        }
+
+        if (supportedEvents == null || supportedEvents.contains(EventType.CLIP_PATH_CHANGED)
+                || supportedEvents.contains(EventType.RENDER_PATH)) {
+            registerContentOperator("w", new SetLineWidth());
+            registerContentOperator("J", new SetLineCap());
+            registerContentOperator("j", new SetLineJoin());
+            registerContentOperator("M", new SetMiterLimit());
+            registerContentOperator("d", new SetLineDashPattern());
+
+            int fillStroke = PathRenderInfo.FILL | PathRenderInfo.STROKE;
+            registerContentOperator("m", new MoveTo());
+            registerContentOperator("l", new LineTo());
+            registerContentOperator("c", new Curve());
+            registerContentOperator("v", new CurveFirstPointDuplicated());
+            registerContentOperator("y", new CurveFourhPointDuplicated());
+            registerContentOperator("h", new CloseSubpath());
+            registerContentOperator("re", new Rectangle());
+            registerContentOperator("S", new PaintPath(PathRenderInfo.STROKE, -1, false));
+            registerContentOperator("s", new PaintPath(PathRenderInfo.STROKE, -1, true));
+            registerContentOperator("f", new PaintPath(PathRenderInfo.FILL, PdfCanvasConstants.FillingRule.NONZERO_WINDING, false));
+            registerContentOperator("F", new PaintPath(PathRenderInfo.FILL, PdfCanvasConstants.FillingRule.NONZERO_WINDING, false));
+            registerContentOperator("f*", new PaintPath(PathRenderInfo.FILL, PdfCanvasConstants.FillingRule.EVEN_ODD, false));
+            registerContentOperator("B", new PaintPath(fillStroke, PdfCanvasConstants.FillingRule.NONZERO_WINDING, false));
+            registerContentOperator("B*", new PaintPath(fillStroke, PdfCanvasConstants.FillingRule.EVEN_ODD, false));
+            registerContentOperator("b", new PaintPath(fillStroke, PdfCanvasConstants.FillingRule.NONZERO_WINDING, true));
+            registerContentOperator("b*", new PaintPath(fillStroke, PdfCanvasConstants.FillingRule.EVEN_ODD, true));
+            registerContentOperator("n", new PaintPath(PathRenderInfo.NO_OP, -1, false));
+            registerContentOperator("W", new ClipPath(PdfCanvasConstants.FillingRule.NONZERO_WINDING));
+            registerContentOperator("W*", new ClipPath(PdfCanvasConstants.FillingRule.EVEN_ODD));
+        }
     }
 
     /**

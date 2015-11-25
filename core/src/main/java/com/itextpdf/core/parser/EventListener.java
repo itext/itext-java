@@ -17,7 +17,9 @@ public interface EventListener {
 
     /**
      * Provides the set of event types this listener supports.
-     * @return Set of event types supported by this listener.
+     * Returns null if all possible event types are supported.
+     * @return Set of event types supported by this listener or
+     * null if all possible event types are supported.
      */
     Set<EventType> getSupportedEvents();
 }
