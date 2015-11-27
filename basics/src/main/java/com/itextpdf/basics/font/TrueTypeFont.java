@@ -1,12 +1,14 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.otf.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -608,7 +610,7 @@ public class TrueTypeFont extends FontProgram {
             int index = cmap.get(charCode)[0];
             if (index >= glyphWidths.length) {
                 Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);
-                LOGGER.warn(String.format(String.format("Font %s has invalid glyph: %%d", getFontNames().getFontName()), index));
+                LOGGER.warn(MessageFormat.format(LogMessageConstant.FONT_HAS_INVALID_GLYPH, getFontNames().getFontName(), index));
                 continue;
             }
             Glyph glyph = new Glyph(index, glyphWidths[index], charCode);

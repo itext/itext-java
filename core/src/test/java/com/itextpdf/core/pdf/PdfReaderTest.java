@@ -7,6 +7,7 @@ import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -986,7 +987,9 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.INVALID_INDIRECT_REFERENCE})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE)
+    })
     public void fixPdfTest13() throws IOException {
         String filename = sourceFolder + "XRefWithInvalidGenerations1.pdf";
 
@@ -1034,7 +1037,9 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.INVALID_INDIRECT_REFERENCE})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE)
+    })
     public void fixPdfTest14() throws IOException {
         String filename = sourceFolder + "XRefWithInvalidGenerations2.pdf";
 

@@ -26,6 +26,7 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.BaseFont;
@@ -1078,7 +1079,9 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE)
+    })
     public void createWrongPfb() throws IOException, InterruptedException {
         byte[] afm = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         PdfFont font = PdfFont.createType1Font(null, afm, afm, null);
@@ -1121,7 +1124,9 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {}, ignore = true)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FONT_HAS_INVALID_GLYPH, count = 131)
+    })
     public void testWriteTTC() throws IOException, InterruptedException {
 
         String filename = destinationFolder + "DocumentWithTTC.pdf";
@@ -1187,7 +1192,9 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.REGISTERING_DIRECTORY})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.REGISTERING_DIRECTORY)
+    })
     public void testFontDirectoryRegister() throws IOException {
         PdfFont.registerDirectory(sourceFolder);
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());

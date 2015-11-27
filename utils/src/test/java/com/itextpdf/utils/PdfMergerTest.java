@@ -8,6 +8,7 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.text.DocumentException;
 
 import java.io.FileInputStream;
@@ -106,7 +107,9 @@ public class PdfMergerTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void mergeDocumentTest03() throws IOException, InterruptedException, DocumentException, ParserConfigurationException, SAXException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";
@@ -143,7 +146,9 @@ public class PdfMergerTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void mergeDocumentTest04() throws IOException, InterruptedException, DocumentException, ParserConfigurationException, SAXException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";

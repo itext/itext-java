@@ -15,6 +15,7 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.text.DocumentException;
 
 import java.io.File;
@@ -77,7 +78,9 @@ public class PdfXObjectTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
+    })
     public void createDocumentFromImages2() throws IOException, DocumentException, InterruptedException {
         final String destinationDocument = destinationFolder + "documentFromImages2.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);

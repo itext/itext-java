@@ -8,6 +8,7 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.text.DocumentException;
 
 import java.io.FileInputStream;
@@ -222,7 +223,9 @@ public class PdfOutlineTest extends ExtendedITextTest{
 
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void copyPagesWithOutlines() throws IOException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder+"copyPagesWithOutlines01.pdf"));

@@ -15,6 +15,7 @@ import com.itextpdf.model.layout.LayoutResult;
 import com.itextpdf.model.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -63,7 +64,9 @@ public class KeepTogetherTest extends ExtendedITextTest{
 
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     public void keepTogetherParagraphTest02() throws IOException, InterruptedException {
 
         String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest02.pdf";
@@ -143,7 +146,9 @@ public class KeepTogetherTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA})
+    @LogMessages(messages = {
+           @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     public void keepTogetherDivTest02() throws IOException, InterruptedException {
 
 

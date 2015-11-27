@@ -2,6 +2,7 @@ package com.itextpdf.basics;
 
 public class LogMessageConstant {
     public static final String ELEMENT_DOES_NOT_FIT_AREA ="Element does not fit current area. KeepTogether property will be ignored";
+    public static final String FONT_HAS_INVALID_GLYPH = "Font {0} has invalid glyph: {1}";
     public static final String IMAGE_HAS_AMBIGUOUS_SCALE = "The image cannot be auto scaled and scaled by a certain parameter simultaneously";
     public static final String IMAGE_HAS_JBIG2DECODE_FILTER = "Image cannot be inline if it has JBIG2Decode filter. It will be added as an ImageXObject";
     public static final String IMAGE_HAS_MASK = "Image cannot be inline if it has a Mask";
@@ -12,5 +13,6 @@ public class LogMessageConstant {
     public static final String REGISTERING_DIRECTORY = "Registering directory";
     public static final String SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY = "Source document has AcroForm dictionary. The pages you are going to copy may have FormFields, but they will not be copied, because you have not used any IPdfPageExtraCopier";
     public static final String START_MARKER_MISSING_IN_PFB_FILE = "Start marker is missing in the pfb file";
-    public static final String DOCUMENT_ALREADY_HAS_FIELD = "The document already has field 1. Annotations of the fields with this name will be added to the existing one as children. If you want to have separate fields, please, rename them manually before copying.";
+    public static final String DOCUMENT_ALREADY_HAS_FIELD = "The document already has field {0}. Annotations of the fields with this name will be added to the existing one as children. If you want to have separate fields, please, rename them manually before copying.";
+
 }

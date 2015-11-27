@@ -8,6 +8,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.text.DocumentException;
 
 import java.io.ByteArrayOutputStream;
@@ -1476,7 +1477,9 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void copyDocumentsWithFormFieldsTest() throws IOException, InterruptedException {
         String filename = sourceFolder + "fieldsOn2-sPage.pdf";
 

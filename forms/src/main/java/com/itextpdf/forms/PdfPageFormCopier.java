@@ -12,6 +12,7 @@ import com.itextpdf.forms.fields.PdfFormField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,7 +70,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                                 if (fieldsTo.containsKey(annotNameString)) {
                                     field = mergeFieldsWithTheSameName(field, fieldsTo.get(annotNameString));
                                     Logger logger = LoggerFactory.getLogger(PdfPageFormCopier.class);
-                                    logger.warn(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD.replace("1", annotNameString));
+                                    logger.warn(MessageFormat.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, annotNameString));
                                 }
                                 formTo.addField(field, null);
                             }

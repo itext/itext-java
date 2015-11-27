@@ -1,5 +1,6 @@
 package com.itextpdf.forms;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
@@ -13,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -30,8 +32,10 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
-    @Test@Ignore
-    //@TODO Remove ignore when DEVSIX-333 is done.
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 13)
+    })
     public void copyFieldsTest01() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "appearances1.pdf";
         String srcFilename2 = sourceFolder + "fieldsOn2-sPage.pdf";
@@ -108,8 +112,10 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyLargeFile.pdf", destinationFolder, "diff_"));
     }
 
-    @Test@Ignore
-    //@TODO Remove ignore when DEVSIX-333 is done.
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD)
+    })
     public void copyFieldsTest04() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "srcFile1.pdf";
 

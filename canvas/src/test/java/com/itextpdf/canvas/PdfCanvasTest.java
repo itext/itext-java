@@ -39,6 +39,7 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.BarcodePDF417;
 
@@ -1571,10 +1572,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER,
-            LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER,
-            LogMessageConstant.IMAGE_HAS_MASK,
-            LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER),
+            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER),
+            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_MASK),
+            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
+    })
     public void inlineImagesTest01() throws IOException, InterruptedException {
         String filename = "inlineImages01.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
@@ -1597,10 +1600,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessage(messages = {LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER,
-            LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER,
-            LogMessageConstant.IMAGE_HAS_MASK,
-            LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER),
+            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER),
+            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_MASK),
+            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
+    })
     public void inlineImagesTest02() throws IOException, InterruptedException {
         String filename = "inlineImages02.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));

@@ -20,6 +20,7 @@ import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -259,7 +260,9 @@ public class PdfTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessage(messages = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void taggingTest05() throws Exception {
         FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
         PdfReader reader = new PdfReader(fis);
@@ -285,7 +288,9 @@ public class PdfTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessage(messages = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void taggingTest06() throws Exception {
         FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
         PdfReader reader = new PdfReader(fis);
@@ -305,7 +310,9 @@ public class PdfTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessage(messages = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void taggingTest07() throws Exception {
         FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
         PdfReader reader = new PdfReader(fis);
@@ -328,7 +335,9 @@ public class PdfTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessage(messages = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void taggingTest08() throws Exception {
         FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
         PdfReader reader = new PdfReader(fis);
@@ -370,7 +379,9 @@ public class PdfTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessage(messages = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
     public void taggingTest10() throws Exception {
         FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
         PdfReader reader = new PdfReader(fis);

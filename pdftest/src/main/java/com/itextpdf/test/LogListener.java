@@ -2,8 +2,10 @@ package com.itextpdf.test;
 
 
 import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.lang.annotation.Annotation;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.junit.Assert;
@@ -19,11 +21,15 @@ import ch.qos.logback.core.read.ListAppender;
 
 public class LogListener extends TestWatcher {
 
+
     private final static String ROOT_ITEXT_PACKAGE = "com.itextpdf";
 
-    private final CustomListAppender<ILoggingEvent> listAppender = new CustomListAppender<ILoggingEvent>();
+    private final ListAppender<ILoggingEvent> listAppender = new CustomListAppender<ILoggingEvent>();
 
     private final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+    private final String LEFT_CURLY_BRACES = "{";
+    private final String RIGHT_CURLY_BRACES = "}";
 
     @Override
     protected void starting(Description description) {
@@ -36,14 +42,39 @@ public class LogListener extends TestWatcher {
         after();
     }
 
-    public boolean contains(String loggingStatement) {
+
+    private int contains(String loggingStatement) {
         List<ILoggingEvent> list = listAppender.list;
+        int index = 0;
         for (ILoggingEvent event : list) {
-            if (event.getFormattedMessage().contains(loggingStatement)) {
-                return true;
+            if (equalsMessageByTemplate(event.getFormattedMessage(), loggingStatement)) {
+                index ++ ;
             }
         }
-        return false;
+        return index;
+    }
+
+    /*
+    * compare  parametrized message with  base template, for example:
+    *  "Hello fox1 , World  fox2 !" with "Hello {0} , World {1} !"
+    * */
+    private boolean equalsMessageByTemplate(String message, String template) {
+        if (template.indexOf(RIGHT_CURLY_BRACES) > 0 && template.indexOf(LEFT_CURLY_BRACES) > 0) {
+            String templateWithoutParameters = template.replaceAll("\\{.*?\\} ?", "");
+            String[] splitTemplate = templateWithoutParameters.split("\\s+");
+            int prevPosition = 0;
+            for (int i = 0; i < splitTemplate.length; i++) {
+                int foundedIndex = message.indexOf(splitTemplate[i]);
+                if (foundedIndex < 0 && foundedIndex < prevPosition) {
+                    return false;
+                } else {
+                    prevPosition = foundedIndex;
+                }
+            }
+            return true;
+        } else {
+            return message.contains(template);
+        }
     }
 
     public int getSize() {
@@ -71,23 +102,29 @@ public class LogListener extends TestWatcher {
     }
 
     private void checkLogMessages(Description description) {
-        Annotation annotation = description.getAnnotation(LogMessage.class);
+        Annotation annotation = description.getAnnotation(LogMessages.class);
         if (annotation != null) {
-            LogMessage logMessage = (LogMessage) annotation;
-            if (!logMessage.ignore()) {
-                for (String message : logMessage.messages()) {
-                    Assert.assertTrue(description.getClassName()
-                            + "."
-                            + description.getMethodName()
-                            + ": " + "Some log messages are not found in test execution", contains(message));
+            LogMessages logMessages = (LogMessages) annotation;
+            if (!logMessages.ignore()) {
+                LogMessage[] messages = logMessages.messages();
+                for (LogMessage logMessage : messages) {
+                    int foundedCount = contains(logMessage.messageTemplate());
+                    if(foundedCount != logMessage.count()){
+                        Assert.assertTrue(MessageFormat.format("{0}.{1}: Some log messages are not found in test execution - {2} messages",
+                                description.getClassName(),
+                                description.getMethodName(),
+                                logMessage.count() - foundedCount),
+                                false);
+                    }
                 }
             }
         } else {
             if (getSize() > 0) {
-                Assert.assertFalse(description.getClassName()
-                        + "." + description.getMethodName()
-                        + ": "
-                        + "The test doesn't check the message logging", true);
+                Assert.assertTrue(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
+                        description.getClassName(),
+                        description.getMethodName(),
+                        getSize()),
+                        false);
             }
         }
     }
