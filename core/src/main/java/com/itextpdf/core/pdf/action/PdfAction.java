@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf.action;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfBoolean;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -20,6 +21,35 @@ import com.itextpdf.core.pdf.navigation.PdfStringDestination;
 import java.util.List;
 
 public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
+
+    /** a possible submitvalue */
+    public static final int SUBMIT_EXCLUDE = 1;
+    /** a possible submitvalue */
+    public static final int SUBMIT_INCLUDE_NO_VALUE_FIELDS = 2;
+    /** a possible submitvalue */
+    public static final int SUBMIT_HTML_FORMAT = 4;
+    /** a possible submitvalue */
+    public static final int SUBMIT_HTML_GET = 8;
+    /** a possible submitvalue */
+    public static final int SUBMIT_COORDINATES = 16;
+    /** a possible submitvalue */
+    public static final int SUBMIT_XFDF = 32;
+    /** a possible submitvalue */
+    public static final int SUBMIT_INCLUDE_APPEND_SAVES = 64;
+    /** a possible submitvalue */
+    public static final int SUBMIT_INCLUDE_ANNOTATIONS = 128;
+    /** a possible submitvalue */
+    public static final int SUBMIT_PDF = 256;
+    /** a possible submitvalue */
+    public static final int SUBMIT_CANONICAL_FORMAT = 512;
+    /** a possible submitvalue */
+    public static final int SUBMIT_EXCL_NON_USER_ANNOTS = 1024;
+    /** a possible submitvalue */
+    public static final int SUBMIT_EXCL_F_KEY = 2048;
+    /** a possible submitvalue */
+    public static final int SUBMIT_EMBED_FORM = 8196;
+    /** a possible submitvalue */
+    public static final int RESET_EXCLUDE = 1;
 
     public PdfAction(PdfDocument document) {
         this(new PdfDictionary(), document);
@@ -166,6 +196,20 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return new PdfAction(pdfDocument).put(PdfName.S, PdfName.JavaScript).put(PdfName.JS, new PdfString(javaScript));
     }
 
+    static public PdfAction createSubmitForm(PdfDocument pdfDocument, String file, Object[] names, int flags) {
+        PdfAction action = new PdfAction(pdfDocument);
+        action.put(PdfName.S, PdfName.SubmitForm);
+        PdfDictionary dic = new PdfDictionary();
+        dic.put(PdfName.F, new PdfString(file));
+        dic.put(PdfName.FS, PdfName.URL);
+        action.put(PdfName.F, dic);
+        if (names != null) {
+            action.put(PdfName.Fields, buildArray(names));
+        }
+        action.put(PdfName.Flags, new PdfNumber(flags));
+        return action;
+    }
+
     static public void setAdditionalAction(PdfObjectWrapper<PdfDictionary> wrapper, PdfName key, PdfAction action) {
         PdfDictionary dic;
         PdfObject obj = wrapper.getPdfObject().get(PdfName.AA);
@@ -212,4 +256,17 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return arr;
     }
 
+    static PdfArray buildArray(Object names[]) {
+        PdfArray array = new PdfArray();
+        for (int k = 0; k < names.length; ++k) {
+            Object obj = names[k];
+            if (obj instanceof String)
+                array.add(new PdfString((String)obj));
+            else if (obj instanceof PdfAnnotation)
+                array.add(((PdfAnnotation)obj).getPdfObject().getIndirectReference());
+            else
+                throw new PdfException("the.array.must.contain.string.or.pdfannotation");
+        }
+        return array;
+    }
 }

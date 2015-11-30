@@ -567,6 +567,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName SubFilter = createDirectName("SubFilter");
     public static final PdfName Subj = createDirectName("Subj");
     public static final PdfName Subject = createDirectName("Subject");
+    public static final PdfName SubmitForm = createDirectName("SubmitForm");
     public static final PdfName Subtype = createDirectName("Subtype");
     public static final PdfName Subtype2 = createDirectName("Subtype2");
     public static final PdfName Supplement = createDirectName("Supplement");
@@ -618,6 +619,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Underline = createDirectName("Underline");
     public static final PdfName Unspecified = createDirectName("Unspecified");
     public static final PdfName URI = createDirectName("URI");
+    public static final PdfName URL = createDirectName("URL");
     public static final PdfName Usage = createDirectName("Usage");
     public static final PdfName UseOutlines = createDirectName("UseOutlines");
     public static final PdfName User = createDirectName("User");

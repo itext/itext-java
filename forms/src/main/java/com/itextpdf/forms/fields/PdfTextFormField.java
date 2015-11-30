@@ -23,6 +23,7 @@ public class PdfTextFormField extends PdfFormField {
 
     protected PdfTextFormField(PdfDictionary pdfObject) {
         super(pdfObject);
+        setBorderWidth(0);
     }
 
     @Override
