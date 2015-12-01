@@ -1213,7 +1213,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfArray kids = getKids();
         if (kids != null) {
             for (PdfObject kid : kids) {
-                PdfFormField fld = new PdfFormField((PdfDictionary) kid);
+                PdfDictionary kidDic;
+                if (kid.isIndirectReference()) {
+                    kidDic = (PdfDictionary) ((PdfIndirectReference) kid).getRefersTo();
+                } else {
+                    kidDic = (PdfDictionary) kid;
+                }
+                PdfFormField fld = new PdfFormField(kidDic);
                 String[] states = fld.getAppearanceStates();
                 for (String state : states) {
                     names.add(state);

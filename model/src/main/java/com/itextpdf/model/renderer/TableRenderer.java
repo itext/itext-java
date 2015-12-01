@@ -123,6 +123,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         for (int row = 0; row < rows.size(); row++) {
+            Property.VerticalAlignment verticalAlignment = null;
             CellRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
             boolean split = false;
@@ -165,7 +166,10 @@ public class TableRenderer extends AbstractRenderer {
                 float cellLayoutBoxBottom = layoutBox.getY() + (!currentCellHasBigRowspan || hasContent ? 0 : layoutBox.getHeight());
                 Rectangle cellLayoutBox = new Rectangle(layoutBox.getX() + colOffset, cellLayoutBoxBottom, cellWidth, cellLayoutBoxHeight);
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(), cellLayoutBox);
+                verticalAlignment = cell.getProperty(Property.VERTICAL_ALIGNMENT);
+                cell.setProperty(Property.VERTICAL_ALIGNMENT, null);
                 LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
+                cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 //width of BlockRenderer depends on child areas, while in cell case it is hardly define.
                 cell.getOccupiedArea().getBBox().setWidth(cellWidth);
 
@@ -211,7 +215,15 @@ public class TableRenderer extends AbstractRenderer {
                                     for (int addRow = row + 1; addRow < rows.size(); addRow++) {
                                         if (rows.get(addRow)[addCol] != null) {
                                             CellRenderer addRenderer = rows.get(addRow)[addCol];
-                                            if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 >= addRow) {
+                                            verticalAlignment = addRenderer.getProperty(Property.VERTICAL_ALIGNMENT);
+                                            if (verticalAlignment != null && verticalAlignment.equals(Property.VerticalAlignment.BOTTOM)) {
+                                                if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 < addRow) {
+                                                    cellProcessingQueue.add(new CellRendererInfo(addRenderer, addCol, addRow));
+                                                    cellWithBigRowspanAdded = true;
+                                                } else {
+                                                    horizontalBorders[row + 1][addCol] = addRenderer.getBorders()[2];
+                                                }
+                                            } else if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 >= addRow){
                                                 cellProcessingQueue.add(new CellRendererInfo(addRenderer, addCol, addRow));
                                                 cellWithBigRowspanAdded = true;
                                             }
@@ -266,6 +278,7 @@ public class TableRenderer extends AbstractRenderer {
                     Rectangle bBox = cell.getOccupiedArea().getBBox();
                     bBox.moveDown(shift);
                     bBox.setHeight(height);
+                    cell.applyVerticalAlignment();
                 }
 
                 occupiedArea.getBBox().moveDown(rowHeight);
