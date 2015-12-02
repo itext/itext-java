@@ -431,18 +431,15 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             addRangeUni(ttf, longTag, true);
             int[][] metrics = longTag.values().toArray(new int[0][]);
             Arrays.sort(metrics, new MetricComparator());
-            PdfStream cidSet;
-            if (metrics.length == 0) {
-                cidSet = new PdfStream(new byte[]{(byte)0x80});
-            } else {
-                int top = metrics[metrics.length - 1][0];
-                byte[] bt = new byte[top / 8 + 1];
-                for (int[] metric : metrics) {
-                    int v = metric[0];
-                    bt[v / 8] |= rotbits[v % 8];
-                }
-                cidSet = new PdfStream(bt);
+            int maxGlyphId = ttf.getFontMetrics().getMaxGlyphId();
+            byte[] cidSetBytes = new byte[ttf.getFontMetrics().getMaxGlyphId() / 8 + 1];
+            for (int i = 0; i < maxGlyphId / 8; i++) {
+                cidSetBytes[i] |= 0xff;
             }
+            for (int i = 0; i < maxGlyphId % 8; i++) {
+                cidSetBytes[cidSetBytes.length - 1] |= rotbits[i];
+            }
+            PdfStream cidSet = new PdfStream(cidSetBytes);
 
             PdfStream fontStream;
             // sivan: cff

@@ -1,5 +1,6 @@
 package com.itextpdf.pdfa;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
@@ -8,6 +9,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfOutputIntent;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 
@@ -18,6 +20,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,7 +40,7 @@ public class PdfAFontTest {
         new File(outputDir).mkdirs();
     }
 
-    @Test
+
     public void fontCheckPdfA1_01() throws IOException, XMPException {
         PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA1_01.pdf"));
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -180,5 +186,80 @@ public class PdfAFontTest {
                 .restoreState();
 
         doc.close();
+    }
+
+
+    public void cidFontCheckTest1() throws  XMPException,IOException, InterruptedException {
+        String outPdf = outputDir + "cidFontCheckTest1.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outPdf));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "Identity-H", true);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 12)
+                .showText("Hello World")
+                .endText()
+                .restoreState();
+
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, sourceFolder + "cidset/cmp_cidFontCheckTest1.pdf", outputDir, "diff_"));
+    }
+
+    @Test
+    public void cidFontCheckTest2() throws XMPException, IOException, InterruptedException {
+        String outPdf = outputDir + "cidFontCheckTest2.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outPdf));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "Puritan2.otf", "Identity-H", true);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 12)
+                .showText("Hello World")
+                .endText()
+                .restoreState();
+
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, sourceFolder + "cidset/cmp_cidFontCheckTest2.pdf", outputDir, "diff_"));
+    }
+
+    @Test
+    public void cidFontCheckTest3() throws XMPException, IOException, InterruptedException {
+        String outPdf = outputDir + "cidFontCheckTest3.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outPdf));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setXmpMetadata();
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "NotoSansCJKjp-Bold.otf", "Identity-H", true);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 12)
+                .showText("Hello World")
+                .endText()
+                .restoreState();
+
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, sourceFolder + "cidset/cmp_cidFontCheckTest3.pdf", outputDir, "diff_"));
     }
 }
