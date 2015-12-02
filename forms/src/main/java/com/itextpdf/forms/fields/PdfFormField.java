@@ -1204,8 +1204,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         dic = dic.getAsDictionary(PdfName.AP);
         if (dic != null){
             dic = dic.getAsDictionary(PdfName.N);
-            for (PdfName state : dic.keySet()) {
-                names.add(state.getValue());
+            if (dic != null) {
+                for (PdfName state : dic.keySet()) {
+                    names.add(state.getValue());
+                }
             }
         }
 
@@ -1229,7 +1231,27 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         String out[] = new String[names.size()];
 
         return names.toArray(out);
+    }
 
+    public <T extends PdfFormField> T setAppearance(PdfName appearanceType, String appearanceState, PdfStream appearanceStream) {
+        PdfWidgetAnnotation widget = getWidgets().get(0);
+        PdfDictionary dic;
+        if (widget != null) {
+            dic = widget.getPdfObject();
+        } else {
+            dic = getPdfObject();
+        }
+        PdfDictionary ap = dic.getAsDictionary(PdfName.AP);
+        if (ap != null) {
+            PdfDictionary appearanceDictionary = ap.getAsDictionary(appearanceType);
+            if (appearanceDictionary == null) {
+                ap.put(appearanceType, appearanceStream);
+            } else {
+                appearanceDictionary.put(new PdfName(appearanceState), appearanceStream);
+            }
+        }
+
+        return (T) this;
     }
 
     protected void drawTextAligned(PdfCanvas canvas, int alignment, String text, float x, float y, PdfFont font, int fontSize) {
