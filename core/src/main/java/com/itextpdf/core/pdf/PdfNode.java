@@ -50,13 +50,13 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
             limits.add(key);
 
         names.add(key);
-        PdfDictionary dict = new PdfDictionary();
-        dict.makeIndirect(this.document);
-        dict.put(PdfName.D, value);
-        names.add(dict.getIndirectReference());
-        if (limits.size() == 2)
-            limits.remove(1);
-        limits.add(1, key);
+        names.add(value.makeIndirect(getDocument()));
+        if (limits != null) {
+            if (limits.size() == 2)
+                limits.remove(1);
+            limits.add(1, key);
+        }
+
         getPdfObject().put(PdfName.Names, names);
         getPdfObject().put(PdfName.Limits, limits);
     }

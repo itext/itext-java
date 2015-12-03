@@ -31,8 +31,8 @@ public class PdfNameTree {
             }
             parents.add(root);
         } else {
-            root = null;
-            parents.add(new PdfNode(document));
+            root = new PdfNode(document);
+            parents.add(root);
         }
     }
 
@@ -44,27 +44,21 @@ public class PdfNameTree {
      * @throws PdfException
      */
     public void addNewName(PdfObject key, PdfObject value) {
-        PdfNode node;
-        if (root != null) {
-            node = parents.get(parents.size() - 1);
-            int kidsCount = 0;
-            if (node.getKids() != null)
-                kidsCount = node.getKids().size();
-            if (kidsCount == 0 && node.getNames() != null)
-                kidsCount = node.getNames().size();
-            if (kidsCount >= NodeSize || (node.getKids() != null && node.getKids().size() != 0)) {
-                node = new PdfNode(document);
-                parents.get(parents.size() - 1).addKid(node);
-            }
-        } else {
-            node = parents.get(parents.size() - 1);
-            if (node.getNames() != null && node.getNames().size() >= NodeSize) {
-                node = new PdfNode(document);
-                parents.add(node);
-            }
+        PdfNode node = parents.get(parents.size() - 1);
+        int kidsCount = 0;
+        if (node.getKids() != null)
+            kidsCount = node.getKids().size();
+        if (kidsCount == 0 && node.getNames() != null)
+            kidsCount = node.getNames().size();
+        if (kidsCount >= NodeSize || (node.getKids() != null && node.getKids().size() != 0)) {
+            node = new PdfNode(document);
+            parents.get(parents.size() - 1).addKid(node);
         }
 
         node.addName(key, value);
+        if (root == node) {
+            node.remove(PdfName.Limits);
+        }
     }
 
     /**
@@ -93,5 +87,9 @@ public class PdfNameTree {
         }
 
         return root.getPdfObject();
+    }
+
+    public PdfNode getRoot() {
+        return root;
     }
 }

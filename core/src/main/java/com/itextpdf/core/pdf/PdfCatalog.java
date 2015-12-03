@@ -217,6 +217,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
     }
 
+    public PdfNameTree getNameTree(PdfName treeType) {
+        PdfNameTree nameTree = new PdfNameTree(this, treeType);
+        return nameTree;
+    }
+
     /**
      * True indicates that getOCProperties() was called, may have been modified,
      * and thus its dictionary needs to be reconstructed.
@@ -248,8 +253,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (destinationTree == null){
             destinationTree = new PdfNameTree(this, PdfName.Dests);
         }
-        destinationTree.addNewName(key, value);
-        names.put(key, value);
+        PdfDictionary destination = new PdfDictionary();
+        destination.put(PdfName.D, value);
+        destinationTree.addNewName(key, destination);
+        names.put(key, destination);
     }
 
     /**

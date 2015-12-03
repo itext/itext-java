@@ -10,6 +10,7 @@ import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.core.xmp.PdfAXMPUtil;
@@ -981,6 +982,17 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) {
+    }
+
+    public void addFileAttachment(String description, PdfFileSpec fs) {
+        PdfNameTree fileAttachmentTree = new PdfNameTree(catalog, PdfName.EmbeddedFiles);
+        fileAttachmentTree.addNewName(new PdfString(description), fs.getPdfObject());
+        PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
+        if (names == null) {
+            names = new PdfDictionary();
+            catalog.put(PdfName.Names, names);
+        }
+        names.put(PdfName.EmbeddedFiles, fileAttachmentTree.getRoot().getPdfObject());
     }
 
     protected void checkIsoConformance() {
