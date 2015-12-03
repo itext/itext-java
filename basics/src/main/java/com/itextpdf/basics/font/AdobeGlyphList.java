@@ -47,6 +47,13 @@ public class AdobeGlyphList {
                     continue;
                 }
                 String hex = t2.nextToken();
+                // AdobeGlyphList could contains symbols with marks, e.g.:
+                // resh;05E8
+                // reshhatafpatah;05E8 05B2
+                // So in this case we will just skip this nam
+                if (t2.hasMoreTokens()) {
+                    continue;
+                }
                 Integer num = Integer.valueOf(hex, 16);
                 unicode2names.put(num, name);
                 names2unicode.put(name, num);
@@ -77,5 +84,13 @@ public class AdobeGlyphList {
 
     public static String unicodeToName(int num) {
         return unicode2names.get(num);
+    }
+
+    public static int getNameToUnicodeLength() {
+        return names2unicode.size();
+    }
+
+    public static int getUnicodeToNameLength() {
+        return unicode2names.size();
     }
 }
