@@ -40,7 +40,7 @@ public class PdfAFontTest {
         new File(outputDir).mkdirs();
     }
 
-
+    @Test
     public void fontCheckPdfA1_01() throws IOException, XMPException {
         PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA1_01.pdf"));
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -188,7 +188,7 @@ public class PdfAFontTest {
         doc.close();
     }
 
-
+    @Test
     public void cidFontCheckTest1() throws  XMPException,IOException, InterruptedException {
         String outPdf = outputDir + "cidFontCheckTest1.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(outPdf));
