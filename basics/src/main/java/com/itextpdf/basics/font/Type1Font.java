@@ -2,9 +2,12 @@ package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -23,20 +26,14 @@ public class Type1Font extends FontProgram {
      */
     private String characterSet;
 
-    /**
-     * Represents the section CharMetrics in the AFM file. Each value of this array
-     * contains a {@code Object[4]} with an Integer, Integer, String and int[].
-     * This is the code, width, name and char bbox. The key is the name of the char
-     * and also an Integer with the char number.
-     */
-    private HashMap<Object, Object[]> charMetrics = new HashMap<>();
+    private boolean fontSpecific;
+
+    HashMap<Integer, Glyph> notFoundGlyphs = new HashMap<>();
 
     /**
-     * Represents the section KernPairs in the AFM file. The key is the name of the first character
-     * and the value is a {@code Object[]} with two elements for each kern pair. Position 0 is the name of
-     * the second character and position 1 is the kerning distance. This is repeated for all the pairs.
+     * Represents the section KernPairs in the AFM file.
      */
-    private HashMap<String, Object[]> kernPairs = new HashMap<>();
+    private HashMap<Long, Integer> kernPairs = new HashMap<>();
 
     /**
      * Types of records in a PFB file. ASCII is 1 and BINARY is 2. They have to appear in the PFB file in this sequence.
@@ -121,32 +118,14 @@ public class Type1Font extends FontProgram {
         return !kernPairs.isEmpty();
     }
 
-    /**
-     * Gets the kerning between two Unicode characters. The characters
-     * are converted to names and this names are used to find the kerning
-     * pairs in the {@code HashMap} {@code KernPairs}.
-     *
-     * @param char1 the first char
-     * @param char2 the second char
-     * @return the kerning to be applied
-     */
     @Override
-    public int getKerning(int char1, int char2) {
-        String first = AdobeGlyphList.unicodeToName(char1);
-        if (first == null) {
-            return 0;
-        }
-        String second = AdobeGlyphList.unicodeToName(char2);
-        if (second == null) {
-            return 0;
-        }
-        Object[] obj = kernPairs.get(first);
-        if (obj == null) {
-            return 0;
-        }
-        for (int k = 0; k < obj.length; k += 2) {
-            if (second.equals(obj[k])) {
-                return (Integer) obj[k + 1];
+    public int getKerning(Glyph first, Glyph second) {
+        if (first.unicode != null && second.unicode != null) {
+            Long record = ((long)first.unicode << 32) + second.unicode;
+            if (kernPairs.containsKey(record)) {
+                return kernPairs.get(record);
+            } else {
+                return 0;
             }
         }
         return 0;
@@ -155,38 +134,72 @@ public class Type1Font extends FontProgram {
     /**
      * Sets the kerning between two Unicode chars.
      *
-     * @param char1 the first char.
-     * @param char2 the second char.
+     * @param first the first unicode char.
+     * @param second the second unicode char.
      * @param kern  the kerning to apply in normalized 1000 units.
      * @return {@code true} if the kerning was applied, {@code false} otherwise.
      */
-    public boolean setKerning(int char1, int char2, int kern) {
-        String first = AdobeGlyphList.unicodeToName(char1);
-        if (first == null) {
-            return false;
-        }
-        String second = AdobeGlyphList.unicodeToName(char2);
-        if (second == null)
-            return false;
-        Object[] obj = kernPairs.get(first);
-        if (obj == null) {
-            obj = new Object[]{second, kern};
-            kernPairs.put(first, obj);
-            return true;
-        }
-        for (int k = 0; k < obj.length; k += 2) {
-            if (second.equals(obj[k])) {
-                obj[k + 1] = kern;
-                return true;
+    public boolean setKerning(int first, int second, int kern) {
+        Long record = ((long)first << 32) + second;
+        kernPairs.put(record, kern);
+        return true;
+    }
+
+    /**
+     * Find glyph by glyph name.
+     * @param name Glyph name
+     * @return Glyph instance if found, otherwise null.
+     */
+    public Glyph getGlyph(String name) {
+        return getGlyph(-1, name);
+    }
+
+    /**
+     * Find glyph by character code. Useful in case FontSpecific encoding.
+     * @param c char code
+     * @return Glyph instance if found, otherwise null.
+     */
+    public Glyph getGlyph(int c) {
+        return getGlyph(c, null);
+    }
+
+    /**
+     * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
+     * to the font's encoding.
+     *
+     * @param text the <CODE>String</CODE> to be converted
+     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
+     */
+    public byte[] convertToBytes(String text) {
+        return encoding.convertToBytes(text);
+    }
+
+    @Override
+    public GlyphLine createGlyphLine(String content) {
+        ArrayList<Glyph> glyphs = new ArrayList<>(content.length());
+        for (int i = 0; i < content.length(); i++) {
+            Glyph glyph;
+            if (fontSpecific) {
+                glyph = codeToGlyph.get(content.charAt(i) & 0xff);
+            } else {
+                Integer unicode = (int) content.charAt(i);
+                glyph = unicodeToGlyph.get(unicode);
+                if (glyph == null) {
+                    // Handle special glyphs like sfthyphen (00AD).
+                    // This glyphs will be skipped while converting to bytes
+                    if (notFoundGlyphs.containsKey(unicode)) {
+                        glyph = notFoundGlyphs.get(unicode);
+                    } else {
+                        glyph = new Glyph(-1, 0, unicode, null);
+                        notFoundGlyphs.put(unicode, glyph);
+                    }
+                }
+            }
+            if (glyph != null) {
+                glyphs.add(glyph);
             }
         }
-        int size = obj.length;
-        Object[] obj2 = new Object[size + 2];
-        System.arraycopy(obj, 0, obj2, 0, size);
-        obj2[size] = second;
-        obj2[size + 1] = kern;
-        kernPairs.put(first, obj2);
-        return true;
+        return new GlyphLine(glyphs);
     }
 
     /**
@@ -200,36 +213,35 @@ public class Type1Font extends FontProgram {
      */
     @Override
     protected int getRawWidth(int c, String name) {
-        Object[] metrics;
-        if (name == null) { // font specific
-            metrics = charMetrics.get(c);
+        //TODO add test with '.notdef' and incorrect 'glyph name'.
+        Glyph glyph = getGlyph(c, name);
+        if (glyph != null) {
+            return glyph.width;
         } else {
-            if (name.equals(".notdef")) {
-                return 0;
-            }
-            metrics = charMetrics.get(name);
+            return 0;
         }
-        if (metrics != null) {
-            return (Integer) metrics[1];
-        }
-        return 0;
     }
 
     @Override
     protected int[] getRawCharBBox(int c, String name) {
-        Object[] metrics;
-        if (name == null) { // font specific
-            metrics = charMetrics.get(Integer.valueOf(c));
+        Glyph glyph = getGlyph(c, name);
+        if (glyph != null) {
+            return glyph.bbox;
         } else {
-            if (name.equals(FontConstants.notdef)) {
-                return null;
-            }
-            metrics = charMetrics.get(name);
+            return null;
         }
-        if (metrics != null) {
-            return (int[]) metrics[3];
+    }
+
+    protected Glyph getGlyph(int c, String name) {
+        //TODO may be only PdfFont should use String name while FontProgram should use unicode notation?
+        //TODO Do not forget about ABBYY fonts and FontProgram as basics level
+        if (name == null) {
+            return codeToGlyph.get(c);
+        } else if (c > -1) { // TODO specific internal usecase, may be no need?
+            return unicodeToGlyph.get(AdobeGlyphList.nameToUnicode(name));
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -251,17 +263,6 @@ public class Type1Font extends FontProgram {
     @Override
     public int[] getCharBBox(int code) {
         return charBBoxes[code];
-    }
-
-    /**
-     * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
-     * to the font's encoding.
-     *
-     * @param text the <CODE>String</CODE> to be converted
-     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
-     */
-    public byte[] convertToBytes(String text) {
-        return encoding.convertToBytes(text);
     }
 
     public byte[] getFontStreamBytes() {
@@ -444,12 +445,17 @@ public class Type1Font extends FontProgram {
                         break;
                 }
             }
-            Object[] metrics = new Object[]{C, WX, N, B};
+            Integer unicode = AdobeGlyphList.nameToUnicode(N);
+            Glyph glyph = new Glyph(C, WX, unicode, B);
             if (C >= 0) {
-                charMetrics.put(C, metrics);
+                codeToGlyph.put(C, glyph);
             }
-            charMetrics.put(N, metrics);
+            if (unicode != null) {
+                unicodeToGlyph.put(unicode, glyph);
+            }
         }
+
+
         if (startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
@@ -458,10 +464,15 @@ public class Type1Font extends FontProgram {
                 throw new PdfException("missing.endcharmetrics.in.the.metrics.file");
             }
         }
-        if (!charMetrics.containsKey("nonbreakingspace")) {
-            Object[] space = charMetrics.get("space");
-            if (space != null)
-                charMetrics.put("nonbreakingspace", space);
+
+        //From AdobeGlyphList:
+        // nonbreakingspace;00A0
+        // space;0020
+        if (!unicodeToGlyph.containsKey(0x00A0)) {
+            Glyph space = unicodeToGlyph.get(0x0020);
+            if (space != null) {
+                unicodeToGlyph.put(0x00A0, new Glyph(space.index, space.width, 0x00A0, space.bbox));
+            }
         }
         boolean endOfMetrics = false;
         while ((line = raf.readLine()) != null) {
@@ -489,16 +500,13 @@ public class Type1Font extends FontProgram {
                     String first = tok.nextToken();
                     String second = tok.nextToken();
                     Integer width = (int) Float.parseFloat(tok.nextToken());
-                    Object[] relates = kernPairs.get(first);
-                    if (relates == null) {
-                        kernPairs.put(first, new Object[]{second, width});
-                    } else {
-                        int n = relates.length;
-                        Object[] relates2 = new Object[n + 2];
-                        System.arraycopy(relates, 0, relates2, 0, n);
-                        relates2[n] = second;
-                        relates2[n + 1] = width;
-                        kernPairs.put(first, relates2);
+
+                    Integer firstUni = AdobeGlyphList.nameToUnicode(first);
+                    Integer secondUni = AdobeGlyphList.nameToUnicode(second);
+
+                    if (firstUni != null && secondUni != null) {
+                        Long record = ((long)firstUni << 32) + secondUni;
+                        kernPairs.put(record, width);
                     }
                 } else if (ident.equals("EndKernPairs")) {
                     startKernPairs = false;
@@ -524,10 +532,7 @@ public class Type1Font extends FontProgram {
         }
         raf.close();
 
-        boolean fontSpecific = true;
-        if (encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding")) {
-            fontSpecific = false;
-        }
+        fontSpecific = !(encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding"));
         encoding = new FontEncoding(baseEncoding, fontSpecific);
         if (encoding.hasSpecialEncoding()) {
             createSpecialEncoding();

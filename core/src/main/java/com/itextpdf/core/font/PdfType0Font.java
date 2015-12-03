@@ -164,7 +164,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 actualMetrics = ttf.getActiveCmap();
             }
             int len = text.length();
-            char glyphs[] = new char[len];
+            char[] glyphs = new char[len];
             int i = 0;
             if (!isCopy && ttf.isFontSpecific()) {
                 byte[] b = PdfEncodings.convertToBytes(text, "symboltt");

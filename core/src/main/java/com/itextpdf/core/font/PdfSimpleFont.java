@@ -452,11 +452,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 if (obj.isNumber())
                     currentNumber = ((PdfNumber) obj).getIntValue();
                 else {
-                    int[] c = AdobeGlyphList.nameToUnicode(((PdfName) obj).getValue());
-                    if (c != null && c.length > 0) {
-                        fontProgram.getEncoding().getSpecialMap().put(c[0], currentNumber);
+                    Integer c = AdobeGlyphList.nameToUnicode(((PdfName) obj).getValue());
+                    if (c != null) {
+                        fontProgram.getEncoding().getSpecialMap().put(c, currentNumber);
                         fontProgram.getEncoding().setDifferences(currentNumber, ((PdfName) obj).getValue());
-                        fontProgram.getEncoding().setUnicodeDifferences(currentNumber, (char) c[0]);
+                        fontProgram.getEncoding().setUnicodeDifferences(currentNumber, (char) (int)c);
                     } else {
                         CMapToUnicode toUnicode = processToUnicode();
                         if (toUnicode == null) {

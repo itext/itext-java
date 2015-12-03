@@ -34,6 +34,7 @@ public abstract class OpenTableLookup {
     
     public boolean transformLine(GlyphLine line) {
         boolean changed = false;
+        line.idx = line.start;
         while (line.idx < line.end && line.idx >= line.start) {
             changed = transformOne(line) || changed;
         }

@@ -49,9 +49,11 @@ import com.itextpdf.basics.Utilities;
 public class Glyph {
     
     /** The <i>code</i> or <i>id</i> by which this is represented in the Font File. */
+    //TODO rename to code, due to dual notation: index in otl and code in type1
     public final int index;
     /** The normalized width of this Glyph. */
     public final int width;
+    public int[] bbox = null;
     /** utf-32 representation of glyph if appears. Zer*/
     public final Integer unicode;
     /** The Unicode text represented by this Glyph */
@@ -66,6 +68,15 @@ public class Glyph {
         this(index, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
     }
 
+    public Glyph(int index, int width, Integer unicode, int[] bbox) {
+        this(index, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
+        this.bbox = bbox;
+    }
+
+    public Glyph(int width, Integer unicode) {
+        this(-1, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
+    }
+
     public Glyph(int index, int width, Integer unicode, String chars, boolean IsMark) {
         this.index = index;
         this.width = width;
@@ -78,17 +89,17 @@ public class Glyph {
         this.IsMark = IsMark;
     }
 
-    public Glyph(Glyph glyph, int XPlacement, int YPlacement, int XAdvance, int YAdvance) {
-        this.index = glyph.index;
-        this.width = glyph.width;
-        this.chars = glyph.chars;
-        this.unicode = glyph.unicode;
-        this.XPlacement = glyph.XPlacement + XPlacement;
-        this.YPlacement = glyph.YPlacement + YPlacement;
-        this.XAdvance = glyph.XAdvance + XAdvance;
-        this.YAdvance = glyph.YAdvance + YAdvance;
-        this.IsMark = glyph.IsMark;
-    }
+//    public Glyph(Glyph glyph, int XPlacement, int YPlacement, int XAdvance, int YAdvance) {
+//        this.index = glyph.index;
+//        this.width = glyph.width;
+//        this.chars = glyph.chars;
+//        this.unicode = glyph.unicode;
+//        this.XPlacement = glyph.XPlacement + XPlacement;
+//        this.YPlacement = glyph.YPlacement + YPlacement;
+//        this.XAdvance = glyph.XAdvance + XAdvance;
+//        this.YAdvance = glyph.YAdvance + YAdvance;
+//        this.IsMark = glyph.IsMark;
+//    }
     
 
     public Glyph(Glyph glyph) {

@@ -2,6 +2,8 @@ package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.basics.font.otf.GlyphLine;
 
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -65,7 +67,7 @@ public class CidFont extends FontProgram {
     }
 
     @Override
-    public int getKerning(int char1, int char2) {
+    public int getKerning(Glyph glyph1, Glyph glyph2) {
         return 0;
     }
 
@@ -81,6 +83,11 @@ public class CidFont extends FontProgram {
 
     @Override
     protected int[] getRawCharBBox(int c, String name) {
+        return null;
+    }
+
+    @Override
+    public GlyphLine createGlyphLine(String content) {
         return null;
     }
 

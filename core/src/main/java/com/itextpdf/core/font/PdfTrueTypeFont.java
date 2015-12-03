@@ -194,9 +194,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     if (shortTag[k] != 0) {
                         Glyph glyph = null;
                         if (getFontProgram().getEncoding().hasSpecialEncoding()) {
-                            int[] cd = AdobeGlyphList.nameToUnicode(getFontProgram().getEncoding().getDifferences(k));
+                            Integer cd = AdobeGlyphList.nameToUnicode(getFontProgram().getEncoding().getDifferences(k));
                             if (cd != null) {
-                                glyph = getFontProgram().getMetrics(cd[0]);
+                                glyph = getFontProgram().getMetrics(cd);
                             }
                         } else {
                             if (getFontProgram().getEncoding().isFontSpecific()) {

@@ -17,12 +17,17 @@ import java.util.List;
 public class GlyphLine {
     public List<Glyph> glyphs;
     public int start;
-    //TODO end or length?
     public int end;
     public int idx;
 
     public GlyphLine() {
         this.glyphs = new ArrayList<>();
+    }
+
+    public GlyphLine(List<Glyph> glyphs) {
+        this.glyphs = glyphs;
+        this.start = 0;
+        this.end = glyphs.size();
     }
 
     public GlyphLine(List<Glyph> glyphs, int start, int end) {

@@ -1,5 +1,8 @@
 package com.itextpdf.basics.font;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class FontNames {
 
     //macStyle bits
@@ -57,6 +60,8 @@ public class FontNames {
     // Font width Ultra-expanded, 200%
     private static final int FWIDTH_ULTRA_EXPANDED = 9;
 
+    protected HashMap<Integer, List<String[]>> allNames;
+
     // name, ID = 4
     private String[][] fullName;
     // name, ID = 1 or 16
@@ -78,6 +83,16 @@ public class FontNames {
     // os/2.fsType != 2
     private boolean allowEmbedding;
 
+    /**
+     * Extracts the names of the font in all the languages available.
+     *
+     * @param id the name id to retrieve in OpenType notation
+     * @return not empty {@code String[][]} if any names exists, otherwise {@code null}.
+     */
+    public String[][] getNames(int id) {
+        List<String[]> names = allNames.get(id);
+        return names != null && names.size() > 0 ? listToArray(names) : null;
+    }
 
     public String[][] getFullName() {
         return fullName;
@@ -143,6 +158,9 @@ public class FontNames {
         return (macStyle & EXTENDED_FLAG) != 0;
     }
 
+    protected void setAllNames(HashMap<Integer, List<String[]>> allNames) {
+        this.allNames = allNames;
+    }
 
     protected void setFullName(String[][] fullName) {
         this.fullName = fullName;
@@ -232,5 +250,13 @@ public class FontNames {
             default:
                 return 400;
         }
+    }
+
+    private String[][] listToArray(List<String[]> list) {
+        String[][] array = new String[list.size()][];
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
+        }
+        return array;
     }
 }

@@ -1,13 +1,13 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.basics.font.otf.GlyphLine;
 
-import com.itextpdf.basics.IntHashtable;
+import java.util.ArrayList;
 
 public class Type3Font extends FontProgram {
 
     private double[] fontMatrix = {0.001, 0, 0, 0.001, 0, 0};
-
-    private IntHashtable widthsTable = new IntHashtable();
 
     @Override
     public int getPdfFontFlags() {
@@ -16,27 +16,50 @@ public class Type3Font extends FontProgram {
 
     @Override
     protected int getRawWidth(int c, String name) {
-        return 0;
+        return getWidth(c);
     }
 
     @Override
     protected int[] getRawCharBBox(int c, String name) {
-        return new int[0];
+        return getCharBBox(c);
     }
 
     @Override
-    public int getWidth(int char1) {
-        return widthsTable.get(char1);
+    public GlyphLine createGlyphLine(String content) {
+        ArrayList<Glyph> glyphs = new ArrayList<>(content.length());
+        for (int i = 0; i < content.length(); i++) {
+            Glyph glyph = codeToGlyph.get(content.charAt(i) & 0xff);
+            if (glyph != null) {
+                glyphs.add(glyph);
+            }
+        }
+        return new GlyphLine(glyphs);
     }
 
     @Override
-    public int[] getCharBBox(int code) {
+    public int getWidth(int ch) {
+        if (codeToGlyph.containsKey(ch)) {
+            return codeToGlyph.get(ch).width;
+        }
+        return 0;
+    }
+
+    @Override
+    public int[] getCharBBox(int ch) {
+        if (codeToGlyph.containsKey(ch)) {
+            return codeToGlyph.get(ch).bbox;
+        }
         return null;
     }
 
     @Override
-    public int getKerning(int char1, int char2) {
-        throw new IllegalStateException();
+    public int getKerning(int ch1, int ch2) {
+        return 0;
+    }
+
+    @Override
+    public int getKerning(Glyph glyph1, Glyph glyph2) {
+        return 0;
     }
 
     public double[] getFontMatrix() {
@@ -47,9 +70,10 @@ public class Type3Font extends FontProgram {
         this.fontMatrix = fontMatrix;
     }
 
-    public IntHashtable getWidthsTable() {
-        return widthsTable;
+    public void addGlyph(int ch, int width, int[] bbox) {
+        if (ch > -1 && ch < 256) {
+            codeToGlyph.put(ch, new Glyph(ch, width, null, bbox));
+        }
     }
-
 
 }

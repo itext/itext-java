@@ -23,8 +23,6 @@ public class TrueTypeFont extends FontProgram {
 
     protected int[][] bBoxes;
 
-    protected HashMap<Integer, List<String[]>> allNames;
-
     //TODO doublicated with PdfType0Font.isVertical.
     protected boolean isVertical;
 
@@ -33,10 +31,6 @@ public class TrueTypeFont extends FontProgram {
 
     private boolean applyLigatures = false;
     private String otfScript = null;
-
-    Map<Integer, Glyph> indexGlyphMap;
-    Map<Integer, Glyph> codeGlyphMap;
-
 
     /**
      * The map containing the kerning information. It represents the content of
@@ -85,6 +79,8 @@ public class TrueTypeFont extends FontProgram {
             this.encoding = new FontEncoding(encoding, true);
         }
     }
+
+
 
     public boolean isApplyLigatures() {
         return applyLigatures;
@@ -246,21 +242,40 @@ public class TrueTypeFont extends FontProgram {
         return false;
     }
 
+    @Override
+    public GlyphLine createGlyphLine(String text) {
+        ArrayList<Glyph> glyphs = new ArrayList<>(text.length());
+        if (isFontSpecific()) {
+            byte[] bytes = PdfEncodings.convertToBytes(text, "symboltt");
+            for (byte b : bytes) {
+                glyphs.add(getMetrics(b & 0xff));
+            }
+        } else {
+            for (int k = 0; k < text.length(); ++k) {
+                int val;
+                if (Utilities.isSurrogatePair(text, k)) {
+                    val = Utilities.convertToUtf32(text, k);
+                    k++;
+                } else {
+                    val = text.charAt(k);
+                }
+                glyphs.add(getMetrics(val));
+            }
+        }
+        return new GlyphLine(glyphs);
+    }
+
     public GlyphLine createGlyphLine(char[] glyphs, Integer length) {
-        GlyphLine glyphLine = new GlyphLine();
-        glyphLine.glyphs = new ArrayList<>(length);
-        glyphLine.start = 0;
-        glyphLine.end = length;
-        glyphLine.idx = 0;
+        ArrayList<Glyph> glyphLine = new ArrayList<>(length);
         for (int k = 0; k < length; k++) {
             //glyphCode, glyphWidth, String.valueOf(c), false
             int index = glyphs[k];
             Integer ch = gsubTable.getGlyphToCharacter(index);
             Glyph glyph = getGlyph(index);
             glyph.chars = String.valueOf((char) (int) ch);
-            glyphLine.glyphs.add(glyph);
+            glyphLine.add(glyph);
         }
-        return glyphLine;
+        return new GlyphLine(glyphLine);
     }
 
     /**
@@ -291,7 +306,7 @@ public class TrueTypeFont extends FontProgram {
     }
 
     public Glyph getGlyph(int index) {
-        return indexGlyphMap.get(index);
+        return codeToGlyph.get(index);
     }
 
     /**
@@ -323,7 +338,7 @@ public class TrueTypeFont extends FontProgram {
 
 
     public Integer getUnicodeChar(int index) {
-        return indexGlyphMap.get(index).unicode;
+        return codeToGlyph.get(index).unicode;
     }
 
     @Override
@@ -332,47 +347,27 @@ public class TrueTypeFont extends FontProgram {
     }
 
     /**
-     * Gets the kerning between two Unicode chars.
-     *
-     * @param char1 the first char
-     * @param char2 the second char
-     * @return the kerning to be applied
-     */
-    @Override
-    public int getKerning(int char1, int char2) {
-        Glyph glyph = getMetrics(char1);
-        if (glyph == null)
-            return 0;
-        int c1 = glyph.index;
-        glyph = getMetrics(char2);
-        if (glyph == null)
-            return 0;
-        int c2 = glyph.index;
-        return kerning.get((c1 << 16) + c2);
-    }
-
-    /**
      * Gets the kerning between two glyphs.
      *
-     * @param glyph1 the first glyph
-     * @param glyph1 the second glyph
+     * @param first the first glyph
+     * @param second the second glyph
      * @return the kerning to be applied
      */
     @Override
-    public int getKerning(Glyph glyph1, Glyph glyph2) {
-        if (glyph1 == null || glyph2 == null) {
+    public int getKerning(Glyph first, Glyph second) {
+        if (first == null || second == null) {
             return 0;
         }
-        return kerning.get((glyph1.index << 16) + glyph2.index);
+        return kerning.get((first.index << 16) + second.index);
     }
 
     /**
      * Gets the glyph index and metrics for a character.
      *
-     * @param ch the character code
+     * @param charCode the character code
      * @return an {@code int} array with {glyph index, width}
      */
-    public Glyph getMetrics(int ch) {
+    public Glyph getMetrics(int charCode) {
 // TODO I guess, this code is redundant, because font parser save both code code & 0xff values,
 // TODO while parsing cmapand in case symbol cmap
 // if fontSpecific is true with cmap(3,0)
@@ -383,19 +378,18 @@ public class TrueTypeFont extends FontProgram {
 //                return null;
 //            }
 //        }
-        Glyph result = codeGlyphMap.get(ch);
+        Glyph result = unicodeToGlyph.get(charCode);
+        // special use case for not found glyphs
+        // in this case we should use .notdef glyph, but correct unicode value.
         if (result == null) {
-            result = new Glyph(indexGlyphMap.get(0), ch);
+            result = new Glyph(codeToGlyph.get(0), charCode);
+            unicodeToGlyph.put(charCode, result);
         }
         return result;
     }
 
     public boolean isCff() {
         return fontParser.isCff();
-    }
-
-    public HashMap<Integer, List<String[]>> getAllNames() {
-        return allNames;
     }
 
     public HashMap<Integer, int[]> getActiveCmap() {
@@ -491,22 +485,11 @@ public class TrueTypeFont extends FontProgram {
 
     @Override
     protected int[] getRawCharBBox(int ch, String name) {
-        Glyph glyph = codeGlyphMap.get(ch);
+        Glyph glyph = unicodeToGlyph.get(ch);
         if (glyph == null || bBoxes == null) {
             return null;
         }
         return bBoxes[glyph.index];
-    }
-
-    /**
-     * Extracts the names of the font in all the languages available.
-     *
-     * @param id the name id to retrieve
-     * @return not empty {@code String[][]} if any names exists, otherwise {@code null}.
-     */
-    protected String[][] getNames(int id) throws IOException {
-        List<String[]> names = allNames.get(id);
-        return names != null && names.size() > 0 ? listToArray(names) : null;
     }
 
     protected void readGdefTable() throws IOException {
@@ -521,7 +504,7 @@ public class TrueTypeFont extends FontProgram {
     protected void readGsubTable() throws IOException {
         int[] gsub = fontParser.tables.get("GSUB");
         if (gsub != null) {
-            gsubTable = new GlyphSubstitutionTableReader(fontParser.raf, gsub[0], gdefTable, indexGlyphMap);
+            gsubTable = new GlyphSubstitutionTableReader(fontParser.raf, gsub[0], gdefTable, codeToGlyph);
         }
     }
 
@@ -535,28 +518,28 @@ public class TrueTypeFont extends FontProgram {
         isSymbol = fontParser.getCmapTable().fontSpecific;
         kerning = fontParser.readKerning(head.unitsPerEm);
         bBoxes = fontParser.readBbox(head.unitsPerEm);
-        allNames = fontParser.getAllNameEntries();
 
         // font names group
+        fontNames.setAllNames(fontParser.getAllNameEntries());
         fontNames.setFontName(fontParser.getPsFontName());
-        fontNames.setFullName(getNames(4));
-        String[][] otfFamilyName = getNames(16);
+        fontNames.setFullName(fontNames.getNames(4));
+        String[][] otfFamilyName = fontNames.getNames(16);
         if (otfFamilyName != null) {
             fontNames.setFamilyName(otfFamilyName);
         } else {
-            fontNames.setFamilyName(getNames(1));
+            fontNames.setFamilyName(fontNames.getNames(1));
         }
-        String[][] subfamily = getNames(2);
+        String[][] subfamily = fontNames.getNames(2);
         if (subfamily != null) {
             fontNames.setStyle(subfamily[0][3]);
         }
-        String[][] otfSubFamily = getNames(17);
+        String[][] otfSubFamily = fontNames.getNames(17);
         if (otfFamilyName != null) {
             fontNames.setSubfamily(otfSubFamily);
         } else {
             fontNames.setSubfamily(subfamily);
         }
-        String[][] cidName = getNames(20);
+        String[][] cidName = fontNames.getNames(20);
         if (cidName != null) {
             fontNames.setCidFontName(cidName[0][3]);
         }
@@ -592,11 +575,11 @@ public class TrueTypeFont extends FontProgram {
         fontMetrics.setIsFixedPitch(post.isFixedPitch);
 
         // font identification group
-        String[][] ttfVersion = getNames(5);
+        String[][] ttfVersion = fontNames.getNames(5);
         if (ttfVersion != null) {
             fontIdentification.setTtfVersion(ttfVersion[0][3]);
         }
-        String[][] ttfUniqueId = getNames(3);
+        String[][] ttfUniqueId = fontNames.getNames(3);
         if (ttfUniqueId != null) {
             fontIdentification.setTtfVersion(ttfUniqueId[0][3]);
         }
@@ -604,8 +587,8 @@ public class TrueTypeFont extends FontProgram {
 
         HashMap<Integer, int[]> cmap = getActiveCmap();
         int[] glyphWidths = fontParser.getGlyphWidthsByIndex();
-        codeGlyphMap = new LinkedHashMap<>(cmap.size());
-        indexGlyphMap = new LinkedHashMap<>(glyphWidths.length);
+        unicodeToGlyph = new LinkedHashMap<>(cmap.size());
+        codeToGlyph = new LinkedHashMap<>(glyphWidths.length);
         for (Integer charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
             if (index >= glyphWidths.length) {
@@ -614,16 +597,16 @@ public class TrueTypeFont extends FontProgram {
                 continue;
             }
             Glyph glyph = new Glyph(index, glyphWidths[index], charCode);
-            codeGlyphMap.put(charCode, glyph);
-            indexGlyphMap.put(index, glyph);
+            unicodeToGlyph.put(charCode, glyph);
+            codeToGlyph.put(index, glyph);
         }
 
         for (int index = 0; index < glyphWidths.length; index++) {
-            if (indexGlyphMap.containsKey(index)) {
+            if (codeToGlyph.containsKey(index)) {
                 continue;
             }
             Glyph glyph = new Glyph(index, glyphWidths[index], null);
-            indexGlyphMap.put(index, glyph);
+            codeToGlyph.put(index, glyph);
         }
 
         readGdefTable();
@@ -641,14 +624,6 @@ public class TrueTypeFont extends FontProgram {
                 createEncoding();
             }
         }
-    }
-
-    private String[][] listToArray(List<String[]> list) {
-        String[][] array = new String[list.size()][];
-        for (int i = 0; i < list.size(); i++) {
-            array[i] = list.get(i);
-        }
-        return array;
     }
 
     private List<Integer> splitArabicGlyphLineIntoWords(GlyphLine glyphLine, List<OpenTableLookup> medi, List<OpenTableLookup> fina) {
@@ -718,7 +693,6 @@ public class TrueTypeFont extends FontProgram {
                 }
             }
         }
-        glyphLine.idx = 0;
         return transformed;
     }
 
@@ -729,7 +703,6 @@ public class TrueTypeFont extends FontProgram {
                 if (lookup != null && lookup.transformLine(glyphLine)) {
                     transformed = true;
                 }
-                glyphLine.idx = 0;
             }
         }
         return transformed;

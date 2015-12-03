@@ -1,13 +1,23 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.basics.font.otf.GlyphLine;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public abstract class FontProgram {
 
     public static final int DEFAULT_WIDTH = 1000;
     public static final int UNITS_NORMALIZATION = 1000;
+
+    // In case Type1: char code to glyph.
+    // In case TrueType: glyph index to glyph.
+    HashMap<Integer, Glyph> codeToGlyph = new HashMap<>();
+    HashMap<Integer, Glyph> unicodeToGlyph = new HashMap<>();
+
     /**
      * Font encoding.
      */
@@ -34,6 +44,10 @@ public abstract class FontProgram {
     protected String encodingScheme = "FontSpecific";
 
     protected String registry;
+
+    public int countOfGlyphs() {
+        return Math.max(codeToGlyph.size(), unicodeToGlyph.size());
+    }
 
     public FontEncoding getEncoding() {
         return encoding;
@@ -69,6 +83,8 @@ public abstract class FontProgram {
 
     protected abstract int[] getRawCharBBox(int c, String name);
 
+    public abstract GlyphLine createGlyphLine(String content);
+
     /**
      * Get glyph's width.
      * @param code char code, depends from implementation.
@@ -87,17 +103,25 @@ public abstract class FontProgram {
         return false;
     }
 
-    public abstract int getKerning(int char1, int char2);
-
-    public int getKerning(Glyph glyph1, Glyph glyph2) {
-        // TODO abstract method
-        // TODO implement correctly for all cases
-        if (glyph1.unicode != null && glyph2.unicode != null) {
-            return getKerning(glyph1.unicode, glyph2.unicode);
-        }
-        return 0;
+    /**
+     * Gets the kerning between two glyphs.
+     *
+     * @param first the first unicode value
+     * @param second the second unicode value
+     * @return the kerning to be applied
+     */
+    public int getKerning(int first, int second) {
+        return getKerning(unicodeToGlyph.get(first), unicodeToGlyph.get(second));
     }
 
+    /**
+     * Gets the kerning between two glyphs.
+     *
+     * @param first the first glyph
+     * @param second the second glyph
+     * @return the kerning to be applied
+     */
+    public abstract int getKerning(Glyph first, Glyph second);
 
     //TODO change to protected!
     public void setRegistry(String registry) {

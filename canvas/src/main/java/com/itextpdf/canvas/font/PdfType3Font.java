@@ -24,17 +24,13 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     private boolean[] usedSlot = new boolean[256];
 
-
     private HashMap<Integer, Type3Glyph> charGlyphs = new HashMap<Integer, Type3Glyph>();
-
-
 
     private boolean isColor = false;
 
     /**
      * array of six numbers specifying the font matrix, mapping glyph space to text space
      */
-
 
     PdfArray differences = new PdfArray();
 
@@ -94,7 +90,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
         if (!isColor) {
             Rectangle bbox = fontProgram.getFontMetrics().getBbox();
-            if (fontProgram.getWidthsTable().size() == 0) {
+            if (fontProgram.countOfGlyphs() == 0) {
                 bbox.setBbox(llx, lly, urx, ury);
             } else {
                 float newLlx = Math.min(bbox.getLeft(), llx);
@@ -105,7 +101,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
             }
         }
 
-        fontProgram.getWidthsTable().put(c, wx);
+        fontProgram.addGlyph(c, wx, new int[]{llx, lly, urx, ury});
 
 
         glyph = new Type3Glyph(getDocument());
@@ -141,7 +137,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     }
 
     public boolean charExists(int c) {
-        if (c > 0 && c < 256) {
+        if (c >= 0 && c < 256) {
             return usedSlot[c];
         } else {
             return false;
@@ -174,7 +170,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         int w = 0;
         for (int u = firstChar; u <= lastChar; u++, w++) {
             if (usedSlot[u]) {
-                wd[w] = fontProgram.getWidthsTable().get(u);
+                wd[w] = fontProgram.getWidth(u);
             }
         }
 
@@ -220,7 +216,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
         for (int i = 0; i < width.length; i++) {
             if (width[i] != 0) {
-                fontProgram.getWidthsTable().put(i, width[i]);
+                fontProgram.addGlyph(i, width[i], null);
                 usedSlot[i] = true;
             }
         }
@@ -228,9 +224,9 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         Iterator<Map.Entry<PdfName, PdfObject>> it = charProcsDic.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<PdfName, PdfObject> procsEntry = it.next();
-            int[] val = AdobeGlyphList.nameToUnicode(procsEntry.getKey().getValue());
+            Integer val = AdobeGlyphList.nameToUnicode(procsEntry.getKey().getValue());
             if (val != null) {
-                charGlyphs.put(val[0], new Type3Glyph(getDocument(), (((PdfStream) ((PdfIndirectReference) procsEntry.getValue()).getRefersTo())).getBytes()));
+                charGlyphs.put(val, new Type3Glyph(getDocument(), (((PdfStream) ((PdfIndirectReference) procsEntry.getValue()).getRefersTo())).getBytes()));
             }
 
         }
@@ -272,8 +268,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
                 toDescriptorDictionary.flush();
             }
         }
-
-
     }
 
     private int[] getWidths() {

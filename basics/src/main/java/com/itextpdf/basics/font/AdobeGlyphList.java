@@ -9,8 +9,8 @@ import java.util.StringTokenizer;
 
 public class AdobeGlyphList {
 
-    private static HashMap<Integer, String> unicode2names = new HashMap<Integer, String>();
-    private static HashMap<String, int[]> names2unicode = new HashMap<String, int[]>();
+    private static HashMap<Integer, String> unicode2names = new HashMap<>();
+    private static HashMap<String, Integer> names2unicode = new HashMap<>();
 
     static {
         InputStream is = null;
@@ -20,12 +20,13 @@ public class AdobeGlyphList {
                 String msg = "AdobeGlyphList.txt not found as resource. (It must exist as resource in the package com.itextpdf.text.pdf.fonts)";
                 throw new Exception(msg);
             }
-            byte buf[] = new byte[1024];
+            byte[] buf = new byte[1024];
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             while (true) {
                 int size = is.read(buf);
-                if (size < 0)
+                if (size < 0) {
                     break;
+                }
                 out.write(buf, 0, size);
             }
             is.close();
@@ -34,50 +35,47 @@ public class AdobeGlyphList {
             StringTokenizer tk = new StringTokenizer(s, "\r\n");
             while (tk.hasMoreTokens()) {
                 String line = tk.nextToken();
-                if (line.startsWith("#"))
+                if (line.startsWith("#")) {
                     continue;
+                }
                 StringTokenizer t2 = new StringTokenizer(line, " ;\r\n\t\f");
-                String name = null;
-                String hex = null;
-                if (!t2.hasMoreTokens())
+                if (!t2.hasMoreTokens()) {
                     continue;
-                name = t2.nextToken();
-                if (!t2.hasMoreTokens())
+                }
+                String name = t2.nextToken();
+                if (!t2.hasMoreTokens()) {
                     continue;
-                hex = t2.nextToken();
+                }
+                String hex = t2.nextToken();
                 Integer num = Integer.valueOf(hex, 16);
                 unicode2names.put(num, name);
-                names2unicode.put(name, new int[]{num.intValue()});
+                names2unicode.put(name, num);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("AdobeGlyphList.txt loading error: " + e.getMessage());
-        }
-        finally {
+        } finally {
             if (is != null) {
                 try {
                     is.close();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     // empty on purpose
                 }
             }
         }
     }
 
-    public static int[] nameToUnicode(String name) {
-        int[] v = names2unicode.get(name);
+    public static Integer nameToUnicode(String name) {
+        Integer v = names2unicode.get(name);
         if (v == null && name.length() == 7 && name.toLowerCase().startsWith("uni")) {
             try {
-                return new int[]{Integer.parseInt(name.substring(3), 16)};
-            }
-            catch (Exception ex) {
+                return Integer.parseInt(name.substring(3), 16);
+            } catch (Exception ignored) {
             }
         }
         return v;
     }
 
     public static String unicodeToName(int num) {
-        return unicode2names.get(Integer.valueOf(num));
+        return unicode2names.get(num);
     }
 }
