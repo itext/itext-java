@@ -107,6 +107,7 @@ public class PdfException extends RuntimeException {
     public static final String FlateCompressException = "flate.compress.exception";
     public static final String FlushedPageCannotBeAddedOrInserted = "flushed.page.cannot.be.added.or.inserted";
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "font.and.size.must.be.set.before.writing.any.text";
+    public static final String FontEmbeddingIssue = "font.embedding.issue";
     public static final String FontSizeTooSmall = "font.size.too.small";
     public static final String FormXObjectMustHaveBbox = "form.xobject.must.have.bbox";
     public static final String FunctionIsNotCompatibleWitColorSpace = "function.is.not.compatible.with.color.space";

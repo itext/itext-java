@@ -623,10 +623,11 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * otherwise the font is read and output in a PdfStream object.
      *
      * @return the PdfStream containing the font or {@code null}, if there is an error reading the font.
+     * @exception PdfException Method will throw exception if {@code fontStreamBytes} is {@code null}.
      */
     protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
         if (fontStreamBytes == null) {
-            return null;
+            throw new PdfException(PdfException.FontEmbeddingIssue);
         }
         PdfStream fontStream = new PdfStream(fontStreamBytes).makeIndirect(getDocument());
         for (int k = 0; k < fontStreamLengths.length; ++k) {

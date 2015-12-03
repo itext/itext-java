@@ -312,7 +312,6 @@ public class CFFFontSubset extends CFFFont {
      * subset version of the original.
      * @param fontName - The name of the font to be taken out of the CFF
      * @return The new font stream
-     * @throws IOException
      */
     public byte[] Process(String fontName){
         try
@@ -332,8 +331,7 @@ public class CFFFontSubset extends CFFFont {
             // Prepare the new Global and Local Subrs Indices
             BuildNewLGSubrs(j);
             // Build the new file
-            byte[] Ret = BuildNewFile(j);
-            return Ret;
+            return BuildNewFile(j);
         } catch (IOException e) {
             throw new PdfException(PdfException.IoException, e);
         } finally {

@@ -431,16 +431,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             addRangeUni(ttf, longTag, true);
             int[][] metrics = longTag.values().toArray(new int[0][]);
             Arrays.sort(metrics, new MetricComparator());
-            int maxGlyphId = ttf.getFontMetrics().getMaxGlyphId();
-            byte[] cidSetBytes = new byte[ttf.getFontMetrics().getMaxGlyphId() / 8 + 1];
-            for (int i = 0; i < maxGlyphId / 8; i++) {
-                cidSetBytes[i] |= 0xff;
-            }
-            for (int i = 0; i < maxGlyphId % 8; i++) {
-                cidSetBytes[cidSetBytes.length - 1] |= rotbits[i];
-            }
-            PdfStream cidSet = new PdfStream(cidSetBytes);
-
             PdfStream fontStream;
             // sivan: cff
             if (ttf.isCff()) {
@@ -465,7 +455,18 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 subsetPrefix = createSubsetPrefix();
             }
             PdfDictionary fontDescriptor = PdfTrueTypeFont.getFontDescriptor(getDocument(), ttf, fontStream, subsetPrefix);
-            fontDescriptor.put(PdfName.CIDSet, cidSet);
+
+            // CIDSet shall be based on font.maxGlyphId property of the font, it is maxp.numGlyphs for ttf,
+            // because technically we convert all unused glyphs to space, e.g. just remove outlines.
+            int maxGlyphId = ttf.getFontMetrics().getMaxGlyphId();
+            byte[] cidSetBytes = new byte[ttf.getFontMetrics().getMaxGlyphId() / 8 + 1];
+            for (int i = 0; i < maxGlyphId / 8; i++) {
+                cidSetBytes[i] |= 0xff;
+            }
+            for (int i = 0; i < maxGlyphId % 8; i++) {
+                cidSetBytes[cidSetBytes.length - 1] |= rotbits[i];
+            }
+            fontDescriptor.put(PdfName.CIDSet, new PdfStream(cidSetBytes));
 
             PdfDictionary cidFont = getCidFontType2(ttf, fontDescriptor, subsetPrefix, metrics);
 
