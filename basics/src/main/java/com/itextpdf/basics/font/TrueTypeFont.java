@@ -9,6 +9,9 @@ import com.itextpdf.basics.font.indic.DevanagariCluster;
 import com.itextpdf.basics.font.indic.IndicCategory;
 import com.itextpdf.basics.font.indic.IndicConfig;
 import com.itextpdf.basics.font.indic.IndicPosition;
+import com.itextpdf.basics.font.indic.IndicSyllabicCategory;
+import com.itextpdf.basics.font.indic.IndicTable;
+import com.itextpdf.basics.font.indic.IndicUtil;
 import com.itextpdf.basics.font.indic.RephMode;
 import com.itextpdf.basics.font.indic.RephPosition;
 import com.itextpdf.basics.font.otf.FeatureRecord;
@@ -203,7 +206,40 @@ public class TrueTypeFont extends FontProgram {
                             }
                         }
                     }
+
+                    GlyphLine newGlyphLine = new GlyphLine(glyphLine);
+                    List<Glyph> glyphs = new ArrayList<>();
+                    for (int i = 0; i < glyphLine.start; i++) {
+                        glyphs.add(glyphLine.glyphs.get(i));
+                    }
+                    int lastFinish = glyphLine.start;
+                    for (DevanagariCluster cluster : clusters) {
+                        if (cluster.glyphLineStart > lastFinish) {
+                            for (int j = lastFinish; j < cluster.glyphLineStart; j++) {
+                                glyphs.add(glyphLine.glyphs.get(j));
+                            }
+                        }
+                        for (int j = 0; j < cluster.glyphs.size(); j++) {
+                            glyphs.add(cluster.glyphs.get(j));
+                        }
+                        lastFinish = cluster.glyphLineEnd;
+                    }
+                    for (int j = lastFinish; j < glyphLine.end; j++) {
+                        glyphs.add(glyphLine.glyphs.get(j));
+                    }
+                    newGlyphLine.glyphs = glyphs;
+                    newGlyphLine.end = glyphs.size();
+                    for (int j = glyphLine.end; j < glyphLine.glyphs.size(); j++) {
+                        newGlyphLine.glyphs.add(glyphLine.glyphs.get(j));
+                    }
+
+                    glyphLine.glyphs.clear();
+                    glyphLine.glyphs.addAll(newGlyphLine.glyphs);
+                    glyphLine.end = newGlyphLine.end;
+                    transformed = true;
                 }
+
+
             }
 
             return transformed;
@@ -212,13 +248,108 @@ public class TrueTypeFont extends FontProgram {
     }
 
     private void setIndicProperties(DevanagariCluster cluster) {
+        StringBuilder newClasses = new StringBuilder();
         for (int i = 0; i < cluster.glyphs.size(); i++) {
-            int codepoint = cluster.glyphs.get(i).unicode;
-            // TODO
+            int u = cluster.glyphs.get(i).unicode;
+            int type = IndicTable.getCategories(u);
+            int cat = type & 0x7F;
+            int pos = type >> 8;
+
+            /*
+             * Re-assign category
+             */
+
+
+            /* The spec says U+0952 is OT_A.  However, testing shows that Uniscribe
+             * treats a whole bunch of characters similarly.
+             * TESTS: For example, for U+0951:
+             * U+092E,U+0947,U+0952
+             * U+092E,U+0952,U+0947
+             * U+092E,U+0947,U+0951
+             * U+092E,U+0951,U+0947
+             * U+092E,U+0951,U+0952
+             * U+092E,U+0952,U+0951
+             */
+            if (IndicUtil.inRanges (u, 0x0951, 0x0952,
+                    0x1CD0, 0x1CD2,
+                    0x1CD4, 0x1CE1) ||
+                    u == 0x1CF4)
+                cat = IndicCategory.OT_A;
+            /* The following act more like the Bindus. */
+            else if (IndicUtil.inRange (u, 0x0953, 0x0954))
+                cat = IndicCategory.OT_SM;
+            /* The following act like consonants. */
+            else if (IndicUtil.inRanges (u, 0x0A72, 0x0A73,
+                    0x1CF5, 0x1CF6))
+                cat = IndicCategory.OT_C;
+            /* TODO: The following should only be allowed after a Visarga.
+             * For now, just treat them like regular tone marks. */
+            else if (IndicUtil.inRange (u, 0x1CE2, 0x1CE8))
+                cat = IndicCategory.OT_A;
+           /* TODO: The following should only be allowed after some of
+            * the nasalization marks, maybe only for U+1CE9..U+1CF1.
+            * For now, just treat them like tone marks. */
+            else if (u == 0x1CED)
+                cat = IndicCategory.OT_A;
+            /* The following take marks in standalone clusters, similar to Avagraha. */
+            else if (IndicUtil.inRanges (u, 0xA8F2, 0xA8F7,
+                    0x1CE9, 0x1CEC,
+                    0x1CEE, 0x1CF1))
+            {
+                cat = IndicCategory.OT_Symbol;
+                assert (IndicSyllabicCategory.INDIC_SYLLABIC_CATEGORY_AVAGRAHA == IndicCategory.OT_Symbol);
+            }
+            else if (IndicUtil.inRange(u, 0x17CD, 0x17D1) ||
+                    u == 0x17CB || u == 0x17D3 || u == 0x17DD) /* Khmer Various signs */
+            {
+            /* These are like Top Matras. */
+                cat = IndicCategory.OT_M;
+                pos = IndicPosition.POS_ABOVE_C;
+            }
+            else if (u == 0x17C6) cat = IndicCategory.OT_N; /* Khmer Bindu doesn't like to be repositioned. */
+            else if (u == 0x17D2) cat = IndicCategory.OT_Coeng; /* Khmer coeng */
+            else if (IndicUtil.inRange (u, 0x2010, 0x2011))
+                cat = IndicCategory.OT_PLACEHOLDER;
+            else if (u == 0x25CC) cat = IndicCategory.OT_DOTTEDCIRCLE;
+            else if (u == 0xA982) cat = IndicCategory.OT_SM; /* Javanese repha. */
+            else if (u == 0xA9BE) cat = IndicCategory.OT_CM2; /* Javanese medial ya. */
+            else if (u == 0xA9BD) { cat = IndicCategory.OT_M; pos = IndicPosition.POS_POST_C; } /* Javanese vocalic r. */
+
+
+            /*
+             * Re-assign position.
+             */
+            if ((flag(cat) & CONSONANT_FLAGS) != 0) {
+                pos = IndicPosition.POS_BASE_C;
+                if (isRa(u))
+                    cat = IndicCategory.OT_Ra;
+            } else if (cat == IndicCategory.OT_M) {
+                pos = matraPosition(u, pos);
+            } else if ((flag(cat) & (flag(IndicCategory.OT_SM) | flag(IndicCategory.OT_VD) | flag(IndicCategory.OT_A) | flag(IndicCategory.OT_Symbol))) != 0) {
+                pos = IndicPosition.POS_SMVD;
+            }
+
+            if (u == 0x0B01) pos = IndicPosition.POS_BEFORE_SUB; /* Oriya Bindu is BeforeSub in the spec. */
+
+            newClasses.append((char)cat);
+            cluster.indicPos.set(i, pos);
         }
+        cluster.classes = newClasses.toString();
     }
 
-
+    private int matraPosition(int u, int side) {
+        switch (side) {
+            case IndicPosition.POS_PRE_C:
+                return IndicPosition.MatraPosLeft(u);
+            case IndicPosition.POS_POST_C:
+                return IndicPosition.MatraPosRight(u);
+            case IndicPosition.POS_ABOVE_C:
+                return IndicPosition.MatraPosTop(u);
+            case IndicPosition.POS_BELOW_C:
+                return IndicPosition.MatraPosBottom(u);
+        }
+        return side;
+    }
 
     private void initialReordering(final DevanagariCluster cluster, final IndicConfig config, List<OpenTableLookup> rphf, boolean isOldSpec) {
        // TODO at some point reassigning categories takes place. Not sure when
@@ -269,7 +400,7 @@ public class TrueTypeFont extends FontProgram {
                     base = start;
                     hasReph = true;
                 }
-            } else if (config.getRephMode() == RephMode.REPH_MODE_LOG_REPHA /* TODO && info[start].indic_category() == OT_Repha*/) {
+            } else if (config.getRephMode() == RephMode.REPH_MODE_LOG_REPHA && cluster.classes.charAt(start) == IndicCategory.OT_Repha) {
                 limit += 1;
                 while (limit < end && isJoiner(cluster.glyphs.get(limit), cluster.classes.charAt(limit)))
                     limit++;
@@ -284,7 +415,7 @@ public class TrueTypeFont extends FontProgram {
                     boolean seenBelow = false;
                     do {
                         i--;
-	                /* -> until a consonant is found */
+                    /* -> until a consonant is found */
                         if (isConsonant(cluster.glyphs.get(i), cluster.classes.charAt(i))) {
                     /* -> that does not have a below-base or post-base form
                      * (post-base forms have to follow below-base forms), */
@@ -402,27 +533,26 @@ public class TrueTypeFont extends FontProgram {
          * With lohit-ttf-20121122/Lohit-Malayalam.ttf
          */
 
-        // TODO
-//        if (indic_plan->is_old_spec)
-//        {
-//            bool disallow_double_halants = buffer->props.script != HB_SCRIPT_MALAYALAM;
-//            for (unsigned int i = base + 1; i < end; i++)
-//            if (info[i].indic_category() == OT_H)
-//            {
-//                unsigned int j;
-//                for (j = end - 1; j > i; j--)
-//                    if (is_consonant (info[j]) ||
-//                            (disallow_double_halants && info[j].indic_category() == OT_H))
-//                        break;
-//                if (info[j].indic_category() != OT_H && j > i) {
-//	  /* Move Halant to after last consonant. */
-//                    hb_glyph_info_t t = info[i];
-//                    memmove (&info[i], &info[i + 1], (j - i) * sizeof (info[0]));
-//                    info[j] = t;
-//                }
-//                break;
-//            }
-//        }
+        if (isOldSpec) {
+            boolean disallowDoubleHalants = true; // TODO!! buffer->props.script != HB_SCRIPT_MALAYALAM;
+            for (int i = base + 1; i < end; i++)
+                if (cluster.classes.charAt(i) == IndicCategory.OT_H) {
+                    int j;
+                    for (j = end - 1; j > i; j--)
+                        if (isConsonant(cluster.glyphs.get(j), cluster.classes.charAt(j)) ||
+                                (disallowDoubleHalants && cluster.classes.charAt(j) == IndicCategory.OT_H))
+                            break;
+                    if (cluster.classes.charAt(j) != IndicCategory.OT_H && j > i) {
+                    /* Move Halant to after last consonant. */
+                        Glyph tG = cluster.glyphs.get(i);
+                        int tPos = cluster.indicPos.get(i);
+                        char tCat = cluster.classes.charAt(i);
+                        cluster.memMove(i, i + 1, j - i);
+                        cluster.set(j, tG, tCat, tPos);
+                    }
+                    break;
+                }
+        }
 
         /* Attach misc marks to previous char to move with them. */
         {
@@ -492,7 +622,7 @@ public class TrueTypeFont extends FontProgram {
              * reordering of pre-base stuff happening later...
              */
             // TODO
-//            if (indic_plan->is_old_spec || end - base > 127)
+//            if (isOldSpec || end - base > 127)
 //                buffer->merge_clusters (base, end);
 //            else
 //            {
@@ -500,12 +630,12 @@ public class TrueTypeFont extends FontProgram {
 //                for (int i = base; i < end; i++)
 //                if (info[i].syllable() != 255)
 //                {
-//                    unsigned int max = i;
-//                    unsigned int j = start + info[i].syllable();
+//                    int max = i;
+//                    int j = start + info[i].syllable();
 //                    while (j != i)
 //                    {
 //                        max = MAX (max, j);
-//                        unsigned int next = start + info[j].syllable();
+//                        int next = start + info[j].syllable();
 //                        info[j].syllable() = 255; /* So we don't process j later again. */
 //                        j = next;
 //                    }
@@ -634,7 +764,7 @@ public class TrueTypeFont extends FontProgram {
         return false;
     }
 
-    private static long flag(char category) {
+    private static long flag(int category) {
         return 1L << category;
     }
 
@@ -651,6 +781,34 @@ public class TrueTypeFont extends FontProgram {
 
     private boolean isConsonant(Glyph glyph, char category) {
         return isOneOf(category, CONSONANT_FLAGS);
+    }
+
+    /* XXX
+ * This is a hack for now.  We should move this data into the main Indic table.
+ * Or completely remove it and just check in the tables.
+ */
+    static private final int[] raChars = {
+            0x0930, /* Devanagari */
+            0x09B0, /* Bengali */
+            0x09F0, /* Bengali */
+            0x0A30, /* Gurmukhi */	/* No Reph */
+            0x0AB0, /* Gujarati */
+            0x0B30, /* Oriya */
+            0x0BB0, /* Tamil */		/* No Reph */
+            0x0C30, /* Telugu */		/* Reph formed only with ZWJ */
+            0x0CB0, /* Kannada */
+            0x0D30, /* Malayalam */	/* No Reph, Logical Repha */
+
+            0x0DBB, /* Sinhala */		/* Reph formed only with ZWJ */
+
+            0x179A, /* Khmer */		/* No Reph, Visual Repha */
+    };
+
+    private boolean isRa(int u) {
+        for (int i = 0; i < raChars.length; i++)
+        if (u == raChars[i])
+            return true;
+        return false;
     }
 
     private boolean isJoiner(Glyph glyph, char category) {
@@ -1106,7 +1264,7 @@ public class TrueTypeFont extends FontProgram {
         StringBuilder sb = new StringBuilder();
         for (int i = glyphLine.start; i < glyphLine.end; i++) {
             Glyph glyph = glyphLine.glyphs.get(i);
-            sb.append(glyph.unicode == null ? 'X' : IndicCategory.getDevanagariClass(glyph.unicode));
+            sb.append(glyph.unicode == null ? 'X' : IndicCategory.getDevanagariClassChar(glyph.unicode));
         }
         String classes = sb.toString();
 
@@ -1116,7 +1274,11 @@ public class TrueTypeFont extends FontProgram {
         List<DevanagariCluster> clusters = new ArrayList<>();
 
         while (matcher.find()) {
-            clusters.add(new DevanagariCluster(glyphLine, glyphLine.start + matcher.start() - 1, glyphLine.start + matcher.end() - 1, classes.substring(matcher.start() - 1, matcher.end() - 1)));
+            StringBuilder currentClasses = new StringBuilder();
+            for (int i = matcher.start() - 1; i < matcher.end() - 1; i++) {
+                currentClasses.append((char)IndicCategory.getDevanagariClass(glyphLine.glyphs.get(glyphLine.start + i).unicode));
+            }
+            clusters.add(new DevanagariCluster(glyphLine, glyphLine.start + matcher.start() - 1, glyphLine.start + matcher.end() - 1, currentClasses.toString()));
         }
 
         // TODO sorting and eliminating intersections?
