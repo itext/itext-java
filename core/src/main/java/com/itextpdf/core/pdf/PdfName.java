@@ -648,6 +648,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName WinAnsiEncoding = createDirectName("WinAnsiEncoding");
     public static final PdfName WP = createDirectName("WP");
     public static final PdfName WT = createDirectName("WT");
+    public static final PdfName X = createDirectName("X");
     public static final PdfName XFA = createDirectName("XFA");
     public static final PdfName XML = createDirectName("XML");
     public static final PdfName XObject = createDirectName("XObject");

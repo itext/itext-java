@@ -196,7 +196,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param append        if true, incremental updates will
      * @param newPdfVersion the pdf version of the resultant file, or null to leave it as is.
      */
-    protected PdfDocument(PdfReader reader, PdfWriter writer, boolean append, PdfVersion newPdfVersion) {
+    public PdfDocument(PdfReader reader, PdfWriter writer, boolean append, PdfVersion newPdfVersion) {
         if (reader == null) {
             throw new NullPointerException("reader");
         }
