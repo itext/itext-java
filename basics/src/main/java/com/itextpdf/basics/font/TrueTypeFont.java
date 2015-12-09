@@ -185,14 +185,14 @@ public class TrueTypeFont extends FontProgram {
                         // TODO do it cluster by cluster. end might be shifted as a result of applying a feature to a cluster, so be careful.
 
                         // Localized forms
-                        if (transform(features.get("locl"), glyphLine)) {
+                        if (transform(features.get("locl"), cluster)) {
                             transformed = true;
                         }
 
                         // Basic Shaping forms
                         String[] basicShapingForms = new String[] {"nukt", "akhn", "rphf", "rkrf", "blwf", "half", "vatu", "cjct"};
                         for (String feature : basicShapingForms) {
-                            if (transform(features.get(feature), glyphLine)) {
+                            if (transform(features.get(feature), cluster)) {
                                 transformed = true;
                             }
                         }
@@ -201,7 +201,7 @@ public class TrueTypeFont extends FontProgram {
 
                         String[] presentationForms = new String[] {"pres", "abvs", "blws", "psts", "haln", "calt"};
                         for (String feature : presentationForms) {
-                            if (transform(features.get(feature), glyphLine)) {
+                            if (transform(features.get(feature), cluster)) {
                                 transformed = true;
                             }
                         }
