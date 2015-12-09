@@ -4,16 +4,9 @@ import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.indic.BasePosition;
-import com.itextpdf.basics.font.indic.DevanagariCluster;
-import com.itextpdf.basics.font.indic.IndicCategory;
+import com.itextpdf.basics.font.indic.IndicCluster;
 import com.itextpdf.basics.font.indic.IndicConfig;
-import com.itextpdf.basics.font.indic.IndicPosition;
-import com.itextpdf.basics.font.indic.IndicSyllabicCategory;
-import com.itextpdf.basics.font.indic.IndicTable;
-import com.itextpdf.basics.font.indic.IndicUtil;
-import com.itextpdf.basics.font.indic.RephMode;
-import com.itextpdf.basics.font.indic.RephPosition;
+import com.itextpdf.basics.font.indic.IndicShaper;
 import com.itextpdf.basics.font.otf.FeatureRecord;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
@@ -32,8 +25,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 >>>>>>> Initial Devanagari syllables clusterization. Shaping implementation prototyping
 import org.slf4j.Logger;
@@ -158,10 +149,10 @@ public class TrueTypeFont extends FontProgram {
                     transformed = true;
                 }
             } else if (Character.UnicodeScript.DEVANAGARI.equals(script)) {
-                List<DevanagariCluster> clusters = splitDevanagariGlyphLineIntoClusters(glyphLine);
+                List<IndicCluster> clusters = IndicShaper.splitDevanagariGlyphLineIntoClusters(glyphLine);
 
                 if (clusters != null && clusters.size() > 0) {
-                    for (DevanagariCluster cluster : clusters) {
+                    for (IndicCluster cluster : clusters) {
 
                         // TODO this is too long, move up
                         Map<String, List<OpenTableLookup>> features = new LinkedHashMap<>();
@@ -171,18 +162,17 @@ public class TrueTypeFont extends FontProgram {
                             features.put(feature.tag, lookups);
                         }
 
-                        setIndicProperties(cluster);
+                        IndicShaper.setIndicProperties(cluster);
 
                         IndicConfig devanagariConfig = new IndicConfig.DevanagariConfig();
                         boolean isOldSpec = devanagariConfig.hasOldSpec() && !otfScriptTag.endsWith("2");
 
-                        // TODO reordering
-                        initialReordering(cluster, devanagariConfig, features.get("rphf"), isOldSpec);
+                        IndicShaper.initialReordering(cluster, devanagariConfig, features.get("rphf"), isOldSpec);
 
                         int start = glyphLine.start;
                         int end = glyphLine.end;
 
-                        // TODO do it cluster by cluster. end might be shifted as a result of applying a feature to a cluster, so be careful.
+                        // TODO should it be done by cluster or by whole glyph line?
 
                         // Localized forms
                         if (transform(features.get("locl"), cluster)) {
@@ -197,7 +187,7 @@ public class TrueTypeFont extends FontProgram {
                             }
                         }
 
-                        // TODO final reordering
+                        IndicShaper.finalReordering();
 
                         String[] presentationForms = new String[] {"pres", "abvs", "blws", "psts", "haln", "calt"};
                         for (String feature : presentationForms) {
@@ -213,7 +203,7 @@ public class TrueTypeFont extends FontProgram {
                         glyphs.add(glyphLine.glyphs.get(i));
                     }
                     int lastFinish = glyphLine.start;
-                    for (DevanagariCluster cluster : clusters) {
+                    for (IndicCluster cluster : clusters) {
                         if (cluster.glyphLineStart > lastFinish) {
                             for (int j = lastFinish; j < cluster.glyphLineStart; j++) {
                                 glyphs.add(glyphLine.glyphs.get(j));
@@ -245,583 +235,6 @@ public class TrueTypeFont extends FontProgram {
             return transformed;
         }
         return false;
-    }
-
-    private void setIndicProperties(DevanagariCluster cluster) {
-        StringBuilder newClasses = new StringBuilder();
-        for (int i = 0; i < cluster.glyphs.size(); i++) {
-            int u = cluster.glyphs.get(i).unicode;
-            int type = IndicTable.getCategories(u);
-            int cat = type & 0x7F;
-            int pos = type >> 8;
-
-            /*
-             * Re-assign category
-             */
-
-
-            /* The spec says U+0952 is OT_A.  However, testing shows that Uniscribe
-             * treats a whole bunch of characters similarly.
-             * TESTS: For example, for U+0951:
-             * U+092E,U+0947,U+0952
-             * U+092E,U+0952,U+0947
-             * U+092E,U+0947,U+0951
-             * U+092E,U+0951,U+0947
-             * U+092E,U+0951,U+0952
-             * U+092E,U+0952,U+0951
-             */
-            if (IndicUtil.inRanges (u, 0x0951, 0x0952,
-                    0x1CD0, 0x1CD2,
-                    0x1CD4, 0x1CE1) ||
-                    u == 0x1CF4)
-                cat = IndicCategory.OT_A;
-            /* The following act more like the Bindus. */
-            else if (IndicUtil.inRange (u, 0x0953, 0x0954))
-                cat = IndicCategory.OT_SM;
-            /* The following act like consonants. */
-            else if (IndicUtil.inRanges (u, 0x0A72, 0x0A73,
-                    0x1CF5, 0x1CF6))
-                cat = IndicCategory.OT_C;
-            /* TODO: The following should only be allowed after a Visarga.
-             * For now, just treat them like regular tone marks. */
-            else if (IndicUtil.inRange (u, 0x1CE2, 0x1CE8))
-                cat = IndicCategory.OT_A;
-           /* TODO: The following should only be allowed after some of
-            * the nasalization marks, maybe only for U+1CE9..U+1CF1.
-            * For now, just treat them like tone marks. */
-            else if (u == 0x1CED)
-                cat = IndicCategory.OT_A;
-            /* The following take marks in standalone clusters, similar to Avagraha. */
-            else if (IndicUtil.inRanges (u, 0xA8F2, 0xA8F7,
-                    0x1CE9, 0x1CEC,
-                    0x1CEE, 0x1CF1))
-            {
-                cat = IndicCategory.OT_Symbol;
-                assert (IndicSyllabicCategory.INDIC_SYLLABIC_CATEGORY_AVAGRAHA == IndicCategory.OT_Symbol);
-            }
-            else if (IndicUtil.inRange(u, 0x17CD, 0x17D1) ||
-                    u == 0x17CB || u == 0x17D3 || u == 0x17DD) /* Khmer Various signs */
-            {
-            /* These are like Top Matras. */
-                cat = IndicCategory.OT_M;
-                pos = IndicPosition.POS_ABOVE_C;
-            }
-            else if (u == 0x17C6) cat = IndicCategory.OT_N; /* Khmer Bindu doesn't like to be repositioned. */
-            else if (u == 0x17D2) cat = IndicCategory.OT_Coeng; /* Khmer coeng */
-            else if (IndicUtil.inRange (u, 0x2010, 0x2011))
-                cat = IndicCategory.OT_PLACEHOLDER;
-            else if (u == 0x25CC) cat = IndicCategory.OT_DOTTEDCIRCLE;
-            else if (u == 0xA982) cat = IndicCategory.OT_SM; /* Javanese repha. */
-            else if (u == 0xA9BE) cat = IndicCategory.OT_CM2; /* Javanese medial ya. */
-            else if (u == 0xA9BD) { cat = IndicCategory.OT_M; pos = IndicPosition.POS_POST_C; } /* Javanese vocalic r. */
-
-
-            /*
-             * Re-assign position.
-             */
-            if ((flag(cat) & CONSONANT_FLAGS) != 0) {
-                pos = IndicPosition.POS_BASE_C;
-                if (isRa(u))
-                    cat = IndicCategory.OT_Ra;
-            } else if (cat == IndicCategory.OT_M) {
-                pos = matraPosition(u, pos);
-            } else if ((flag(cat) & (flag(IndicCategory.OT_SM) | flag(IndicCategory.OT_VD) | flag(IndicCategory.OT_A) | flag(IndicCategory.OT_Symbol))) != 0) {
-                pos = IndicPosition.POS_SMVD;
-            }
-
-            if (u == 0x0B01) pos = IndicPosition.POS_BEFORE_SUB; /* Oriya Bindu is BeforeSub in the spec. */
-
-            newClasses.append((char)cat);
-            cluster.indicPos.set(i, pos);
-        }
-        cluster.classes = newClasses.toString();
-    }
-
-    private int matraPosition(int u, int side) {
-        switch (side) {
-            case IndicPosition.POS_PRE_C:
-                return IndicPosition.MatraPosLeft(u);
-            case IndicPosition.POS_POST_C:
-                return IndicPosition.MatraPosRight(u);
-            case IndicPosition.POS_ABOVE_C:
-                return IndicPosition.MatraPosTop(u);
-            case IndicPosition.POS_BELOW_C:
-                return IndicPosition.MatraPosBottom(u);
-        }
-        return side;
-    }
-
-    private void initialReordering(final DevanagariCluster cluster, final IndicConfig config, List<OpenTableLookup> rphf, boolean isOldSpec) {
-       // TODO at some point reassigning categories takes place. Not sure when
-
-      /* 1. Find base consonant:
-       *
-       * The shaping engine finds the base consonant of the syllable, using the
-       * following algorithm: starting from the end of the syllable, move backwards
-       * until a consonant is found that does not have a below-base or post-base
-       * form (post-base forms have to follow below-base forms), or that is not a
-       * pre-base reordering Ra, or arrive at the first consonant. The consonant
-       * stopped at will be the base.
-       *
-       *   o If the syllable starts with Ra + Halant (in a script that has Reph)
-       *     and has more than one consonant, Ra is excluded from candidates for
-       *     base consonants.
-       */
-
-        int start = 0;
-        int end = cluster.glyphs.size();
-        int base = end;
-        boolean hasReph = false; // Ra + Halant
-
-        {
-        /* -> If the syllable starts with Ra + Halant (in a script that has Reph)
-         *    and has more than one consonant, Ra is excluded from candidates for
-         *    base consonants. */
-            int limit = start;
-            if (config.getRephPosition() != RephPosition.REPH_POS_DONT_CARE &&
-                /* TODO indic_plan->mask_array[RPHF] &&*/
-                    cluster.glyphs.size() >= 3 &&
-                    (
-                            (config.getRephMode() == RephMode.REPH_MODE_IMPLICIT && !isJoiner(cluster.glyphs.get(start + 2), cluster.classes.charAt(start + 2))) ||
-                                    (config.getRephMode() == RephMode.REPH_MODE_EXPLICIT && cluster.classes.charAt(start + 2) == IndicCategory.OT_ZWJ)
-                    )) {
-                          /* See if it matches the 'rphf' feature. */
-                List<Glyph> glyphs = new ArrayList<Glyph>() {{
-                    add(cluster.glyphs.get(0));
-                    add(cluster.glyphs.get(1));
-                    add(config.getRephMode() == RephMode.REPH_MODE_EXPLICIT ? cluster.glyphs.get(2) : null);
-                }};
-                if (wouldSubstitute(rphf, glyphs, 2) ||
-                        (config.getRephMode() == RephMode.REPH_MODE_EXPLICIT &&
-                                wouldSubstitute(rphf, glyphs, 3))) {
-                    limit += 2;
-                    while (limit < end && isJoiner(cluster.glyphs.get(limit), cluster.classes.charAt(limit)))
-                        limit++;
-                    base = start;
-                    hasReph = true;
-                }
-            } else if (config.getRephMode() == RephMode.REPH_MODE_LOG_REPHA && cluster.classes.charAt(start) == IndicCategory.OT_Repha) {
-                limit += 1;
-                while (limit < end && isJoiner(cluster.glyphs.get(limit), cluster.classes.charAt(limit)))
-                    limit++;
-                base = start;
-                hasReph = true;
-            }
-
-            switch (config.getBasePosition()) {
-                case BasePosition.BASE_POS_LAST: {
-                /* -> starting from the end of the syllable, move backwards */
-                    int i = end;
-                    boolean seenBelow = false;
-                    do {
-                        i--;
-                    /* -> until a consonant is found */
-                        if (isConsonant(cluster.glyphs.get(i), cluster.classes.charAt(i))) {
-                    /* -> that does not have a below-base or post-base form
-                     * (post-base forms have to follow below-base forms), */
-                            if (cluster.indicPos.get(i) != IndicPosition.POS_BELOW_C &&
-                                    (cluster.indicPos.get(i) != IndicPosition.POS_POST_C || seenBelow)) {
-                                base = i;
-                                break;
-                            }
-                            if (cluster.indicPos.get(i) == IndicPosition.POS_BELOW_C)
-                                seenBelow = true;
-
-                        /* -> or that is not a pre-base reordering Ra,
-                         *
-                         * IMPLEMENTATION NOTES:
-                         *
-                         * Our pre-base reordering Ra's are marked POS_POST_C, so will be skipped
-                         * by the logic above already.
-                         */
-
-                        /* -> or arrive at the first consonant. The consonant stopped at will
-                         * be the base. */
-                            base = i;
-                        } else {
-                        /* A ZWJ after a Halant stops the base search, and requests an explicit
-                         * half form.
-                         * A ZWJ before a Halant, requests a subjoined form instead, and hence
-                         * search continues.  This is particularly important for Bengali
-                         * sequence Ra,H,Ya that should form Ya-Phalaa by subjoining Ya. */
-                            if (start < i &&
-                                    cluster.classes.charAt(i) == IndicCategory.OT_ZWJ &&
-                                    cluster.classes.charAt(i - 1) == IndicCategory.OT_H)
-                                break;
-                        }
-                    } while (i > limit);
-                }
-                break;
-                // TODO
-                default:
-                    throw new IllegalStateException();
-            }
-
-        }
-
-
-        /* 2. Decompose and reorder Matras:
-         *
-         * Each matra and any syllable modifier sign in the cluster are moved to the
-         * appropriate position relative to the consonant(s) in the cluster. The
-         * shaping engine decomposes two- or three-part matras into their constituent
-         * parts before any repositioning. Matra characters are classified by which
-         * consonant in a conjunct they have affinity for and are reordered to the
-         * following positions:
-         *
-         *   o Before first half form in the syllable
-         *   o After subjoined consonants
-         *   o After post-form consonant
-         *   o After main consonant (for above marks)
-         *
-         * IMPLEMENTATION NOTES:
-         *
-         * The normalize() routine has already decomposed matras for us, so we don't
-         * need to worry about that.
-         */
-
-        /* 3.  Reorder marks to canonical order:
-         *
-         * Adjacent nukta and halant or nukta and vedic sign are always repositioned
-         * if necessary, so that the nukta is first.
-         *
-         * IMPLEMENTATION NOTES:
-         *
-         * We don't need to do this: the normalize() routine already did this for us.
-         */
-
-
-        /* Reorder characters */
-
-        for (int i = start; i < base; i++)
-        cluster.indicPos.set(i, Math.min(IndicPosition.POS_PRE_C, cluster.indicPos.get (i)));
-
-        if (base < end)
-            cluster.indicPos.set(base, IndicPosition.POS_BASE_C);
-
-        /* Mark final consonants.  A final consonant is one appearing after a matra,
-         * like in Khmer. */
-        for (int i = base + 1; i < end; i++)
-        if (cluster.classes.charAt(i) == IndicCategory.OT_M) {
-            for (int j = i + 1; j < end; j++)
-            if (isConsonant(cluster.glyphs.get(j), cluster.classes.charAt(j))) {
-                cluster.indicPos.set(j, IndicPosition.POS_FINAL_C);
-                break;
-            }
-            break;
-        }
-
-          /* Handle beginning Ra */
-        if (hasReph)
-            cluster.indicPos.set(start, IndicPosition.POS_RA_TO_BECOME_REPH);
-
-        /* For old-style Indic script tags, move the first post-base Halant after
-         * last consonant.
-         *
-         * Reports suggest that in some scripts Uniscribe does this only if there
-         * is *not* a Halant after last consonant already (eg. Kannada), while it
-         * does it unconditionally in other scripts (eg. Malayalam).  We don't
-         * currently know about other scripts, so we single out Malayalam for now.
-         *
-         * Kannada test case:
-         * U+0C9A,U+0CCD,U+0C9A,U+0CCD
-         * With some versions of Lohit Kannada.
-         * https://bugs.freedesktop.org/show_bug.cgi?id=59118
-         *
-         * Malayalam test case:
-         * U+0D38,U+0D4D,U+0D31,U+0D4D,U+0D31,U+0D4D
-         * With lohit-ttf-20121122/Lohit-Malayalam.ttf
-         */
-
-        if (isOldSpec) {
-            boolean disallowDoubleHalants = true; // TODO!! buffer->props.script != HB_SCRIPT_MALAYALAM;
-            for (int i = base + 1; i < end; i++)
-                if (cluster.classes.charAt(i) == IndicCategory.OT_H) {
-                    int j;
-                    for (j = end - 1; j > i; j--)
-                        if (isConsonant(cluster.glyphs.get(j), cluster.classes.charAt(j)) ||
-                                (disallowDoubleHalants && cluster.classes.charAt(j) == IndicCategory.OT_H))
-                            break;
-                    if (cluster.classes.charAt(j) != IndicCategory.OT_H && j > i) {
-                    /* Move Halant to after last consonant. */
-                        Glyph tG = cluster.glyphs.get(i);
-                        int tPos = cluster.indicPos.get(i);
-                        char tCat = cluster.classes.charAt(i);
-                        cluster.memMove(i, i + 1, j - i);
-                        cluster.set(j, tG, tCat, tPos);
-                    }
-                    break;
-                }
-        }
-
-        /* Attach misc marks to previous char to move with them. */
-        {
-            int last_pos = IndicPosition.POS_START;
-            for (int i = start; i < end; i++) {
-                if ((flag(cluster.classes.charAt(i)) & (JOINER_FLAGS | flag(IndicCategory.OT_N) | flag(IndicCategory.OT_RS) | MEDIAL_FLAGS | HALANT_OR_COENG_FLAGS)) != 0) {
-                    cluster.indicPos.set(i, last_pos);
-                    if (cluster.classes.charAt(i) == IndicCategory.OT_H && cluster.indicPos.get(i) == IndicPosition.POS_PRE_M) {
-                          /*
-                           * Uniscribe doesn't move the Halant with Left Matra.
-                           * TEST: U+092B,U+093F,U+094DE
-                           * We follow.  This is important for the Sinhala
-                           * U+0DDA split matra since it decomposes to U+0DD9,U+0DCA
-                           * where U+0DD9 is a left matra and U+0DCA is the virama.
-                           * We don't want to move the virama with the left matra.
-                           * TEST: U+0D9A,U+0DDA
-                           */
-                        for (int j = i; j > start; j--)
-                            if (cluster.indicPos.get(j - 1) != IndicPosition.POS_PRE_M) {
-                                cluster.indicPos.set(i, cluster.indicPos.get(j - 1));
-                                break;
-                            }
-                    }
-                } else if (cluster.indicPos.get(i) != IndicPosition.POS_SMVD) {
-                    last_pos = cluster.indicPos.get(i);
-                }
-            }
-        }
-
-        /* For post-base consonants let them own anything before them
-         * since the last consonant or matra. */
-        {
-            int last = base;
-            for (int i = base + 1; i < end; i++)
-                if (isConsonant(cluster.glyphs.get(i), cluster.classes.charAt(i))) {
-                    for (int j = last + 1; j < i; j++)
-                        if (cluster.indicPos.get(j) < IndicPosition.POS_SMVD)
-                            cluster.indicPos.set(j, cluster.indicPos.get(i));
-                    last = i;
-                } else if (cluster.classes.charAt(i) == IndicCategory.OT_M)
-                    last = i;
-        }
-
-        {
-            /* Use syllable() for sort accounting temporarily. */
-            // TODO do we need this?
-            // int syllable = info[start].syllable();
-            // for (unsigned int i = start; i < end; i++)
-            // info[i].syllable() = i - start;
-
-            /* Sit tight, rock 'n roll! */
-            cluster.sortIndicOrder();
-            /* Find base again */
-            base = end;
-            for (int i = start; i < end; i++)
-                if (cluster.indicPos.get(i) == IndicPosition.POS_BASE_C) {
-                    base = i;
-                    break;
-                }
-            /* Things are out-of-control for post base positions, they may shuffle
-             * around like crazy.  In old-spec mode, we move halants around, so in
-             * that case merge all clusters after base.  Otherwise, check the sort
-             * order and merge as needed.
-             * For pre-base stuff, we handle cluster issues in final reordering.
-             *
-             * We could use buffer->sort() for this, if there was no special
-             * reordering of pre-base stuff happening later...
-             */
-            // TODO
-//            if (isOldSpec || end - base > 127)
-//                buffer->merge_clusters (base, end);
-//            else
-//            {
-//            /* Note!  syllable() is a one-byte field. */
-//                for (int i = base; i < end; i++)
-//                if (info[i].syllable() != 255)
-//                {
-//                    int max = i;
-//                    int j = start + info[i].syllable();
-//                    while (j != i)
-//                    {
-//                        max = MAX (max, j);
-//                        int next = start + info[j].syllable();
-//                        info[j].syllable() = 255; /* So we don't process j later again. */
-//                        j = next;
-//                    }
-//                    if (i != max)
-//                        buffer->merge_clusters (i, max + 1);
-//                }
-//            }
-
-            /* Put syllable back in. */
-            // TODO do we need this?
-//            for (unsigned int i = start; i < end; i++)
-//            info[i].syllable() = syllable;
-        }
-
-        /* Setup masks now */
-
-        // TODO
-//        {
-//            hb_mask_t mask;
-//
-//            /* Reph */
-//            for (int i = start; i < end && info[i].indic_position() == IndicPosition.POS_RA_TO_BECOME_REPH; i++)
-//                info[i].mask |= indic_plan -> mask_array[RPHF];
-//
-//            /* Pre-base */
-//            mask = indic_plan -> mask_array[HALF];
-//            if (!indic_plan -> is_old_spec &&
-//                    config.getBlwfMode() == BlwfMode.BLWF_MODE_PRE_AND_POST)
-//                mask |= indic_plan -> mask_array[BLWF];
-//            for (int i = start; i<base; i++)
-//            info[i].mask |= mask;
-//            /* Base */
-//            mask = 0;
-//            if (base < end)
-//                info[base].mask |= mask;
-//            /* Post-base */
-//            mask = indic_plan -> mask_array[BLWF] | indic_plan -> mask_array[ABVF] | indic_plan -> mask_array[PSTF];
-//            for (int i = base + 1; i < end; i++)
-//                info[i].mask |= mask;
-//        }
-
-        // TODO
-//        if (indic_plan->is_old_spec &&
-//                buffer->props.script == HB_SCRIPT_DEVANAGARI)
-//        {
-//            /* Old-spec eye-lash Ra needs special handling.  From the
-//             * spec:
-//             *
-//             * "The feature 'below-base form' is applied to consonants
-//             * having below-base forms and following the base consonant.
-//             * The exception is vattu, which may appear below half forms
-//             * as well as below the base glyph. The feature 'below-base
-//             * form' will be applied to all such occurrences of Ra as well."
-//             *
-//             * Test case: U+0924,U+094D,U+0930,U+094d,U+0915
-//             * with Sanskrit 2003 font.
-//             *
-//             * However, note that Ra,Halant,ZWJ is the correct way to
-//             * request eyelash form of Ra, so we wouldbn't inhibit it
-//             * in that sequence.
-//             *
-//             * Test case: U+0924,U+094D,U+0930,U+094d,U+200D,U+0915
-//             */
-//            for (int i = start; i + 1 < base; i++)
-//                if (cluster.classes.charAt(i) == IndicCategory.OT_Ra &&
-//                        cluster.classes.charAt(i + 1) == IndicCategory.OT_H &&
-//                        (i + 2 == base ||
-//                                cluster.classes.charAt(i + 2) != IndicCategory.OT_ZWJ)) {
-//                    info[i].mask |= indic_plan -> mask_array[BLWF];
-//                    info[i + 1].mask |= indic_plan -> mask_array[BLWF];
-//                }
-//        }
-
-        // TODO
-//        int pref_len = config.getPrefLen();
-//        if (indic_plan -> mask_array[PREF] && base + pref_len < end) {
-//            assert (1 <= pref_len && pref_len <= 2);
-//            /* Find a Halant,Ra sequence and mark it for pre-base reordering processing. */
-//            for (int i = base + 1; i + pref_len - 1 < end; i++) {
-//                hb_codepoint_t glyphs[ 2];
-//                for (int j = 0; j < pref_len; j++)
-//                    glyphs[j] = info[i + j].codepoint;
-//                if (indic_plan -> pref.would_substitute(glyphs, pref_len, face)) {
-//                    for (int j = 0; j < pref_len; j++)
-//                        info[i++].mask |= indic_plan -> mask_array[PREF];
-//
-//                        /* Mark the subsequent stuff with 'cfar'.  Used in Khmer.
-//                         * Read the feature spec.
-//                         * This allows distinguishing the following cases with MS Khmer fonts:
-//                         * U+1784,U+17D2,U+179A,U+17D2,U+1782
-//                         * U+1784,U+17D2,U+1782,U+17D2,U+179A
-//                         */
-//                    if (indic_plan -> mask_array[CFAR])
-//                        for (; i < end; i++)
-//                            info[i].mask |= indic_plan -> mask_array[CFAR];
-//
-//                    break;
-//                }
-//            }
-//        }
-
-        /* Apply ZWJ/ZWNJ effects */
-        // TODO
-//        for (int i = start + 1; i < end; i++)
-//            if (isJoiner(cluster.glyphs.get(i), cluster.classes.charAt(i))) {
-//                boolean non_joiner = cluster.classes.charAt(i) == IndicCategory.OT_ZWNJ;
-//                int j = i;
-//
-//                do {
-//                    j--;
-//
-//                /* ZWJ/ZWNJ should disable CJCT.  They do that by simply
-//                 * being there, since we don't skip them for the CJCT
-//                 * feature (ie. F_MANUAL_ZWJ) */
-//
-//                /* A ZWNJ disables HALF. */
-//                    if (non_joiner)
-//                        info[j].mask &= ~indic_plan -> mask_array[HALF];
-//
-//                } while (j > start && !isConsonant(cluster.glyphs.get(j), cluster.classes.charAt(j)));
-//            }
-    }
-
-    private boolean wouldSubstitute(List<OpenTableLookup> feature, List<Glyph> glyphs, int glyphCount) {
-        // TODO
-        return false;
-    }
-
-    private static long flag(int category) {
-        return 1L << category;
-    }
-
-    private static final long MEDIAL_FLAGS = flag(IndicCategory.OT_CM) | flag(IndicCategory.OT_CM2);
-    /* Note:
-     *
-     * We treat Vowels and placeholders as if they were consonants.  This is safe because Vowels
-     * cannot happen in a consonant syllable.  The plus side however is, we can call the
-     * consonant syllable logic from the vowel syllable function and get it all right! */
-    private static final long CONSONANT_FLAGS = flag(IndicCategory.OT_C) | flag(IndicCategory.OT_Ra) | MEDIAL_FLAGS |
-            flag(IndicCategory.OT_V) | flag(IndicCategory.OT_PLACEHOLDER) | flag(IndicCategory.OT_DOTTEDCIRCLE);
-    private static final long JOINER_FLAGS = flag(IndicCategory.OT_ZWJ) | flag(IndicCategory.OT_ZWNJ);
-    private static final long HALANT_OR_COENG_FLAGS = flag(IndicCategory.OT_H) | flag(IndicCategory.OT_Coeng);
-
-    private boolean isConsonant(Glyph glyph, char category) {
-        return isOneOf(category, CONSONANT_FLAGS);
-    }
-
-    /* XXX
- * This is a hack for now.  We should move this data into the main Indic table.
- * Or completely remove it and just check in the tables.
- */
-    static private final int[] raChars = {
-            0x0930, /* Devanagari */
-            0x09B0, /* Bengali */
-            0x09F0, /* Bengali */
-            0x0A30, /* Gurmukhi */	/* No Reph */
-            0x0AB0, /* Gujarati */
-            0x0B30, /* Oriya */
-            0x0BB0, /* Tamil */		/* No Reph */
-            0x0C30, /* Telugu */		/* Reph formed only with ZWJ */
-            0x0CB0, /* Kannada */
-            0x0D30, /* Malayalam */	/* No Reph, Logical Repha */
-
-            0x0DBB, /* Sinhala */		/* Reph formed only with ZWJ */
-
-            0x179A, /* Khmer */		/* No Reph, Visual Repha */
-    };
-
-    private boolean isRa(int u) {
-        for (int i = 0; i < raChars.length; i++)
-        if (u == raChars[i])
-            return true;
-        return false;
-    }
-
-    private boolean isJoiner(Glyph glyph, char category) {
-        return isOneOf(category, JOINER_FLAGS);
-    }
-
-    private boolean isOneOf(char category, long flags) {
-        return ((1L << (int)category) & flags) != 0;
-    }
-
-    private boolean isLigated(Glyph glyph, char category) {
-        // TODO
-        return glyph.chars.length() > 1;
     }
 
     public boolean applyLigaFeature(GlyphLine glyphLine, boolean scriptSpecific) {
@@ -1259,32 +672,5 @@ public class TrueTypeFont extends FontProgram {
         }
         return languageRecord;
     }
-
-    private List<DevanagariCluster> splitDevanagariGlyphLineIntoClusters(GlyphLine glyphLine) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = glyphLine.start; i < glyphLine.end; i++) {
-            Glyph glyph = glyphLine.glyphs.get(i);
-            sb.append(glyph.unicode == null ? 'X' : IndicCategory.getDevanagariClassChar(glyph.unicode));
-        }
-        String classes = sb.toString();
-
-        Pattern pattern = Pattern.compile(IndicCategory.getSyllableRegex());
-        Matcher matcher = pattern.matcher("X" + classes);
-
-        List<DevanagariCluster> clusters = new ArrayList<>();
-
-        while (matcher.find()) {
-            StringBuilder currentClasses = new StringBuilder();
-            for (int i = matcher.start() - 1; i < matcher.end() - 1; i++) {
-                currentClasses.append((char)IndicCategory.getDevanagariClass(glyphLine.glyphs.get(glyphLine.start + i).unicode));
-            }
-            clusters.add(new DevanagariCluster(glyphLine, glyphLine.start + matcher.start() - 1, glyphLine.start + matcher.end() - 1, currentClasses.toString()));
-        }
-
-        // TODO sorting and eliminating intersections?
-
-        return clusters;
-    }
-
 
 }
