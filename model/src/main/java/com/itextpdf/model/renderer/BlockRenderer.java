@@ -4,7 +4,9 @@ import com.itextpdf.basics.geom.AffineTransform;
 import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.action.PdfAction;
+import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.layout.LayoutArea;
@@ -189,6 +191,9 @@ public class BlockRenderer extends AbstractRenderer {
 
     @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
+        applyDestination(document);
+        applyAction(document);
+
         int position = getPropertyAsInteger(Property.POSITION);
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(false);

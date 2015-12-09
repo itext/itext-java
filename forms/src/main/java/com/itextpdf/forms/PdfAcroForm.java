@@ -131,6 +131,16 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 put(PdfName.DR, defaultResources);
             }
         }
+        if (fieldDic.containsKey(PdfName.Subtype) && page != null) {
+            PdfArray annots = page.getPdfObject().getAsArray(PdfName.Annots);
+            if (annots == null) {
+                annots = new PdfArray();
+                page.getPdfObject().put(PdfName.Annots, annots);
+            }
+            if (!annots.contains(fieldDic)) {
+                annots.add(fieldDic);
+            }
+        }
     }
 
     /**
@@ -390,6 +400,22 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             fields.remove(oldName);
             fields.put(newName, field);
         }
+    }
+
+    public PdfFormField copyField(String name) {
+        PdfFormField oldField = getField(name);
+        if (oldField != null) {
+            PdfFormField field = new PdfFormField((PdfDictionary) oldField.getPdfObject().clone());
+            field.makeIndirect(document);
+            return field;
+        }
+
+        return null;
+    }
+
+    public void replaceField(String name, PdfFormField field) {
+        removeField(name);
+        addField(field);
     }
 
     protected PdfArray getFields() {

@@ -6,6 +6,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.model.Property;
+import com.itextpdf.model.border.Border;
 import com.itextpdf.model.element.Link;
 import com.itextpdf.model.layout.LayoutPosition;
 
@@ -30,6 +31,13 @@ public class LinkRenderer extends TextRenderer {
 
         PdfLinkAnnotation linkAnnotation = ((Link)modelElement).getLinkAnnotation();
         linkAnnotation.setRectangle(new PdfArray(occupiedArea.getBBox()));
+
+        Border border = getProperty(Property.BORDER);
+        if (border != null) {
+            linkAnnotation.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
+        } else {
+            linkAnnotation.setBorder(new PdfArray(new float[]{0, 0, 0}));
+        }
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);

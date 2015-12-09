@@ -4,7 +4,9 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.action.PdfAction;
+import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
@@ -157,6 +159,9 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
+        applyDestination(document);
+        applyAction(document);
+
         int position = getPropertyAsInteger(Property.POSITION);
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(false);
@@ -336,6 +341,34 @@ public abstract class AbstractRenderer implements IRenderer {
 
         if (dxRight != 0 || dyUp != 0)
             move(dxRight, dyUp);
+    }
+
+    protected void applyDestination(PdfDocument document){
+        String destination = getProperty(Property.DESTINATION);
+        if (destination != null) {
+            PdfArray array = new PdfArray();
+            array.add(document.getPage(occupiedArea.getPageNumber()).getPdfObject());
+            array.add(PdfName.XYZ);
+            array.add(new PdfNumber(occupiedArea.getBBox().getX()));
+            array.add(new PdfNumber(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight()));
+            array.add(new PdfNumber(1));
+            document.addNewName(new PdfString(destination), array);
+        }
+    }
+
+    protected void applyAction(PdfDocument document){
+        PdfAction action = getProperty(Property.ACTION);
+        if (action != null) {
+            PdfLinkAnnotation link = new PdfLinkAnnotation(document, getOccupiedArea().getBBox());
+            link.setAction(action);
+            Border border = getProperty(Property.BORDER);
+            if (border != null) {
+                link.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
+            } else {
+                link.setBorder(new PdfArray(new float[]{0, 0, 0}));
+            }
+            document.getPage(getOccupiedArea().getPageNumber()).addAnnotation(link);
+        }
     }
 
     protected boolean isNotFittingHeight(LayoutArea layoutArea) {

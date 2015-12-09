@@ -1408,7 +1408,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     private PdfName getTypeFromParent(PdfDictionary field) {
         PdfDictionary parent = field.getAsDictionary(PdfName.Parent);
-        PdfName formType = null;
+        PdfName formType = field.getAsName(PdfName.FT);
         if (parent != null) {
             formType = parent.getAsName(PdfName.FT);
             if (formType == null) {

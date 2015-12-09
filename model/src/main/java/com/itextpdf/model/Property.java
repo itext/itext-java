@@ -4,6 +4,7 @@ import com.itextpdf.core.color.Color;
 
 public enum Property {
 
+    ACTION,
     AUTO_SCALE,
     AUTO_SCALE_HEIGHT,
     AUTO_SCALE_WIDTH,
@@ -18,6 +19,7 @@ public enum Property {
     BOTTOM,
     CHARACTER_SPACING(true),
     COLSPAN,
+    DESTINATION,
     FIRST_LINE_INDENT(true),
     FONT(true),
     FONT_COLOR(true),

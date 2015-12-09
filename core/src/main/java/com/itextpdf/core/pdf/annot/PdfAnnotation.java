@@ -1,6 +1,7 @@
 package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfBoolean;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -248,6 +249,10 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     public <T extends PdfAnnotation> T setColor(float[] color) {
         return setColor(new PdfArray(color));
+    }
+
+    public <T extends PdfAnnotation> T setColor(Color color) {
+        return setColor(new PdfArray(color.getColorValue()));
     }
 
     public int getStructParentIndex() {

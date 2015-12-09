@@ -1,6 +1,8 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.basics.LogMessageConstant;
+import com.itextpdf.canvas.image.WmfImage;
+import com.itextpdf.canvas.image.WmfImageHelper;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
@@ -49,10 +51,24 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     public Image(com.itextpdf.basics.image.Image img, float x, float y) {
+        //@TODO DEVSIX-329
+//        if (img instanceof WmfImage) {
+//            this.xObject = new PdfFormXObject(new WmfImageHelper(img).createPdfForm());
+//        } else {
+//            this.xObject = new PdfImageXObject(img);
+//        }
+//        setProperty(Property.X, x).setProperty(Property.Y, y);
         this(new PdfImageXObject(img), x, y);
     }
 
     public Image(com.itextpdf.basics.image.Image img, float x, float y, float width) {
+        //@TODO DEVSIX-329
+//        if (img instanceof WmfImage) {
+//            this.xObject = new PdfFormXObject(new WmfImageHelper(img).createPdfForm());
+//        } else {
+//            this.xObject = new PdfImageXObject(img);
+//        }
+//        setProperty(Property.X, x).setProperty(Property.Y, y).setWidth(width).setProperty(Property.POSITION, LayoutPosition.FIXED);
         this(new PdfImageXObject(img), x, y, width);
     }
 

@@ -97,7 +97,7 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
     }
 
     static public PdfExplicitDestination create(int pageNum, PdfName type, float left, float bottom, float right, float top, float zoom) {
-        return new PdfExplicitDestination().add(pageNum).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
+        return new PdfExplicitDestination().add(--pageNum).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
     }
 
     private PdfExplicitDestination add(float value) {
