@@ -93,7 +93,7 @@ public class PdfTokenizerTest {
         Assert.assertEquals(testUnicodeString, pdfString.toUnicodeString());
 
         pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), true);
-        Assert.assertEquals("Привет", pdfString.toUnicodeString());
+        Assert.assertEquals("\u041F\u0440\u0438\u0432\u0435\u0442", pdfString.toUnicodeString());
 
         pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), false);
         Assert.assertEquals("FEFF041F04400438043204350442", pdfString.toUnicodeString());
@@ -113,7 +113,7 @@ public class PdfTokenizerTest {
 
         String testString2 ="This string contains \\245two octal characters\\307";
         pdfString = new PdfString(testString2.getBytes(),false);
-        Assert.assertEquals("This string contains ¥two octal charactersÇ", pdfString.getValue());
+        Assert.assertEquals("This string contains \u00A5two octal characters\u00C7", pdfString.getValue());
 
 
         String testString3 ="\\0053";
@@ -131,9 +131,9 @@ public class PdfTokenizerTest {
 
     @Test
     public void readPdfStringTest() throws IOException {
-        final String author = "This string9078 contains ¥two octal charactersÇ";
+        final String author = "This string9078 contains \u00A5two octal characters\u00C7";
         final String creator = "iText\r 6\n";
-        final String title = "ßãëð";
+        final String title = "\u00DF\u00E3\u00EB\u00F0";
         final String subject = "+";
         String filename = sourceFolder + "writePdfString.pdf";
 
@@ -229,7 +229,7 @@ public class PdfTokenizerTest {
         Assert.assertSame(tok.getTokenType(), PdfTokenizer.TokenType.String);
         Assert.assertSame(tok.isHexString(), true);
         str = new PdfString(tok.getByteContent(), tok.isHexString());
-        Assert.assertEquals("\u008C%GÕ\u008DKÒÆóÓ+\u0083\u000Bã%\u009D ", str.getValue());
+        Assert.assertEquals("\u008C%G\u00D5\u008DK\u00D2\u00C6\u00F3\u00D3+\u0083\u000B\u00E3%\u009D ", str.getValue());
 
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokenizer.TokenType.Number);
