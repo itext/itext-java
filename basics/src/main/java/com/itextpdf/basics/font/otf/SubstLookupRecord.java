@@ -9,7 +9,7 @@ package com.itextpdf.basics.font.otf;
  *
  * @author admin
  */
-public class SubsPosLookupRecord {
+public class SubstLookupRecord {
     int sequenceIndex;
     int lookupListIndex;
 }

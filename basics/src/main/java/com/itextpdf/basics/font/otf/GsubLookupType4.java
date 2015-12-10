@@ -14,14 +14,14 @@ import java.util.List;
  * LookupType 4: Ligature Substitution Subtable
  * @author psoares
  */
-public class GsubLookupFormat4 extends OpenTableLookup {
+public class GsubLookupType4 extends OpenTableLookup {
     /**
      * The key is the first character. The first element in the int array is the
      * output ligature
      */
     private HashMap<Integer,List<int[]>> ligatures;
     
-    public GsubLookupFormat4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
+    public GsubLookupType4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
         super(openReader, lookupFlag, subTableLocations);
         ligatures = new HashMap<>();
         readSubTables();
@@ -35,7 +35,7 @@ public class GsubLookupFormat4 extends OpenTableLookup {
         boolean changed = false;
         Glyph g = line.glyphs.get(line.idx);
         boolean match = false;
-        if (ligatures.containsKey(g.index) && !openReader.IsSkip(g.index, lookupFlag)) {
+        if (ligatures.containsKey(g.index) && !openReader.isSkip(g.index, lookupFlag)) {
             GlyphIndexer gidx = new GlyphIndexer();
             gidx.line = line;
             List<int[]> ligs = ligatures.get(g.index);
@@ -43,24 +43,19 @@ public class GsubLookupFormat4 extends OpenTableLookup {
                 match = true;
                 gidx.idx = line.idx;
                 for (int j = 1; j < lig.length; ++j) {
-                    NextGlyph(gidx);
+                    gidx.nextGlyph(openReader, lookupFlag);
                     if (gidx.glyph == null || gidx.glyph.index != lig[j]) {
                         match = false;
                         break;
                     }
                 }
                 if (match) {
-                    String composed = g.chars;
                     gidx.idx = line.idx;
-                    boolean isMark = true;
                     for (int j = 1; j < lig.length; ++j) {
-                        NextGlyph(gidx);
-                        composed += gidx.glyph.chars;
-                        isMark &= gidx.glyph.IsMark;
+                        gidx.nextGlyph(openReader, lookupFlag);
                         line.glyphs.remove(gidx.idx--);
                     }
-                    Integer c = openReader.getGlyphToCharacter(lig[0]);
-                    Glyph glyph = new Glyph(lig[0], openReader.getGlyphWidth(lig[0]), c, c == null ? composed : String.valueOf((char) (int) c), isMark);
+                    Glyph glyph = openReader.getGlyph(lig[0]);
                     line.glyphs.set(line.idx, glyph);
                     line.end -= lig.length - 1;
                     break;

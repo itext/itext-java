@@ -8,11 +8,11 @@ import java.util.List;
  * LookupType 1: Single Substitution Subtable
  * @author psoares
  */
-public class GsubLookupFormat1 extends OpenTableLookup {
+public class GsubLookupType1 extends OpenTableLookup {
 
     private HashMap<Integer,Integer> substMap;
 
-    public GsubLookupFormat1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
+    public GsubLookupType1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
         super(openReader, lookupFlag, subTableLocations);
         substMap = new HashMap<>();
         readSubTables();
@@ -25,11 +25,10 @@ public class GsubLookupFormat1 extends OpenTableLookup {
         }
         Glyph g = line.glyphs.get(line.idx);
         boolean changed = false;
-        if (!openReader.IsSkip(g.index, lookupFlag)) {
+        if (!openReader.isSkip(g.index, lookupFlag)) {
             Integer substCode = substMap.get(g.index);
             if (substCode != null) {
-                Integer c = openReader.getGlyphToCharacter(substCode);
-                Glyph glyph = new Glyph(substCode, openReader.getGlyphWidth(substCode), c, c == null ? g.chars : String.valueOf((char) (int) c), g.IsMark);
+                Glyph glyph = openReader.getGlyph(substCode);
                 line.glyphs.set(line.idx, glyph);
                 changed = true;
             }

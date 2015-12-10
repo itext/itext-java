@@ -72,8 +72,8 @@ public class OtfReadCommon {
 			glyphIds.add(glyphId);
 		}
 	}
-    
-    public static GposValueRecord ReadGposValueRecord(RandomAccessFileOrArray rf, int mask) throws IOException {
+
+    public static GposValueRecord readGposValueRecord(RandomAccessFileOrArray rf, int mask) throws IOException {
         GposValueRecord vr = new GposValueRecord();
         if ((mask & 0x0001) != 0) {
             vr.XPlacement = rf.readShort();
@@ -102,7 +102,7 @@ public class OtfReadCommon {
         return vr;
     }
     
-    public static GposAnchor ReadGposAnchor(RandomAccessFileOrArray rf, int location) throws IOException {
+    public static GposAnchor readGposAnchor(RandomAccessFileOrArray rf, int location) throws IOException {
         if (location == 0) {
             return null;
         }
@@ -114,7 +114,7 @@ public class OtfReadCommon {
         return t;
     }
     
-    public static List<OtfMarkRecord> ReadMarkArray(RandomAccessFileOrArray rf, int location) throws IOException {
+    public static List<OtfMarkRecord> readMarkArray(RandomAccessFileOrArray rf, int location) throws IOException {
         rf.seek(location);
         int markCount = rf.readUnsignedShort();
         int[] classes = new int[markCount];
@@ -127,18 +127,18 @@ public class OtfReadCommon {
         for (int k = 0; k < markCount; ++k) {
             OtfMarkRecord rec = new OtfMarkRecord();
             rec.MarkClass = classes[k];
-            rec.Anchor = ReadGposAnchor(rf, locations[k]);
+            rec.Anchor = readGposAnchor(rf, locations[k]);
             marks.add(rec);
         }
         return marks;
     }
     
-    public static SubsPosLookupRecord[] readSubsPosLookupRecord(OpenTypeFontTableReader openReader, int substCount) throws IOException {
-        SubsPosLookupRecord[] substPosLookUpRecords = new SubsPosLookupRecord[substCount];
+    public static SubstLookupRecord[] readSubstLookupRecords(RandomAccessFileOrArray rf, int substCount) throws IOException {
+        SubstLookupRecord[] substPosLookUpRecords = new SubstLookupRecord[substCount];
         for (int i = 0; i < substCount; ++i) {
-            SubsPosLookupRecord slr = new SubsPosLookupRecord();
-            slr.sequenceIndex = openReader.rf.readUnsignedShort();
-            slr.lookupListIndex = openReader.rf.readUnsignedShort();
+            SubstLookupRecord slr = new SubstLookupRecord();
+            slr.sequenceIndex = rf.readUnsignedShort();
+            slr.lookupListIndex = rf.readUnsignedShort();
             substPosLookUpRecords[i] = slr;
         }
         return substPosLookUpRecords;

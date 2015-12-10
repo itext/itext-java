@@ -44,15 +44,15 @@ public class OtfClass {
         }
     }
     
-    public int GetOtfClass(int glyph) {
+    public int getOtfClass(int glyph) {
         return mapClass.get(glyph);
     }
     
-    public boolean HasClass(int glyph) {
+    public boolean hasClass(int glyph) {
         return mapClass.containsKey(glyph);
     }
     
-    public int GetOtfClass(int glyph, boolean strict) {
+    public int getOtfClass(int glyph, boolean strict) {
         if (strict) {
             if (mapClass.containsKey(glyph)) {
                 return mapClass.get(glyph);

@@ -83,11 +83,17 @@ public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
         }
         switch (lookupType) {
             case 1:
-                return new GsubLookupFormat1(this, lookupFlag, subTableLocations);
+                return new GsubLookupType1(this, lookupFlag, subTableLocations);
+            case 2:
+                return new GsubLookupType2(this, lookupFlag, subTableLocations);
             case 3:
-                return new GsubLookupFormat3(this, lookupFlag, subTableLocations);
+                return new GsubLookupType3(this, lookupFlag, subTableLocations);
             case 4:
-                return new GsubLookupFormat4(this, lookupFlag, subTableLocations);
+                return new GsubLookupType4(this, lookupFlag, subTableLocations);
+            case 5:
+                return new GsubLookupType5(this, lookupFlag, subTableLocations);
+            case 6:
+                return new GsubLookupType6(this, lookupFlag, subTableLocations);
             default:
                 return null;
         }

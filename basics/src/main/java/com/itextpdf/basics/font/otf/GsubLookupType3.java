@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * LookupType 1: Single Substitution Subtable
+ * LookupType 3: Alternate Substitution Subtable
  * @author psoares
  */
-public class GsubLookupFormat3 extends OpenTableLookup {
+public class GsubLookupType3 extends OpenTableLookup {
 
     private HashMap<Integer, int[]> substMap;
 
-    public GsubLookupFormat3(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
+    public GsubLookupType3(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
         super(openReader, lookupFlag, subTableLocations);
         substMap = new HashMap<>();
         readSubTables();
@@ -25,12 +25,10 @@ public class GsubLookupFormat3 extends OpenTableLookup {
         }
         Glyph g = line.glyphs.get(line.idx);
         boolean changed = false;
-        if (!openReader.IsSkip(g.index, lookupFlag)) {
+        if (!openReader.isSkip(g.index, lookupFlag)) {
             int[] substCode = substMap.get(g.index);
             if (substCode != null) {
-                Integer c = openReader.getGlyphToCharacter(substCode[0]);
-                Glyph glyph = new Glyph(substCode[0], openReader.getGlyphWidth(substCode[0]),
-                        c, c == null ? g.chars : String.valueOf((char) (int) c), g.IsMark);
+                Glyph glyph = openReader.getGlyph(substCode[0]);
                 line.glyphs.set(line.idx, glyph);
                 changed = true;
             }

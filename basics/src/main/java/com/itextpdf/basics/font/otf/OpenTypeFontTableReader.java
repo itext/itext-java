@@ -94,6 +94,10 @@ public abstract class OpenTypeFontTableReader {
             return glyph.unicode;
         }
     }
+
+    public Glyph getGlyph(int index) {
+        return indexGlyphMap.get(index);
+    }
         
 	/**
 	 * This is the starting point of the class. A sub-class must call this
@@ -191,8 +195,8 @@ public abstract class OpenTypeFontTableReader {
         return ret;
     }
     
-    public boolean IsSkip(int glyph, int flag) {
-        return gdef.IsSkip(glyph, flag);
+    public boolean isSkip(int glyph, int flag) {
+        return gdef.isSkip(glyph, flag);
     }
     
 	protected abstract OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
@@ -239,6 +243,10 @@ public abstract class OpenTypeFontTableReader {
 			throws IOException {
         return OtfReadCommon.readCoverageFormat(rf, coverageLocation);
 	}
+
+    protected SubstLookupRecord[] readSubstLookupRecords(int substCount) throws IOException {
+        return OtfReadCommon.readSubstLookupRecords(rf, substCount);
+    }
 
     protected TagAndLocation[] readTagAndLocations(int baseLocation) throws IOException {
         int count = rf.readUnsignedShort();

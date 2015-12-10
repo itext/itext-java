@@ -41,34 +41,32 @@ public abstract class OpenTableLookup {
         return changed;
     }
     
-    public void NextGlyph(GlyphIndexer indexer) {
-        indexer.glyph = null;
-        indexer.idx++;
-        while (indexer.idx < indexer.line.end) {
-            Glyph g = indexer.line.glyphs.get(indexer.idx);
-            if (!openReader.IsSkip(g.index, lookupFlag)) {
-                indexer.glyph = g;
-                break;
-            }
-        }
-    }
-    
-    public void PreviousGlyph(GlyphIndexer indexer) {
-        indexer.glyph = null;
-        indexer.idx--;
-        while (indexer.idx >= indexer.line.start) {
-            Glyph g = indexer.line.glyphs.get(indexer.idx);
-            if (!openReader.IsSkip(g.index, lookupFlag)) {
-                indexer.glyph = g;
-                break;
-            }
-        }
-    }
-    
     public static class GlyphIndexer {
         public GlyphLine line;
         public Glyph glyph;
         public int idx;
+
+        public void nextGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
+            glyph = null;
+            while (++idx < line.end) {
+                Glyph g = line.glyphs.get(idx);
+                if (!openReader.isSkip(g.index, lookupFlag)) {
+                    glyph = g;
+                    break;
+                }
+            }
+        }
+
+        public void previousGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
+            glyph = null;
+            while (--idx >= line.start) {
+                Glyph g = line.glyphs.get(idx);
+                if (!openReader.isSkip(g.index, lookupFlag)) {
+                    glyph = g;
+                    break;
+                }
+            }
+        }
     }
 
     public boolean hasSubstitution(int index) {

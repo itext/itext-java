@@ -62,7 +62,7 @@ public class Glyph {
     public final int YPlacement;
     public final int XAdvance;
     public final int YAdvance;
-    public final boolean IsMark;
+    public final boolean isMark;
 
     public Glyph(int index, int width, Integer unicode) {
         this(index, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
@@ -86,7 +86,7 @@ public class Glyph {
         this.YPlacement = 0;
         this.XAdvance = 0;
         this.YAdvance = 0;
-        this.IsMark = IsMark;
+        this.isMark = IsMark;
     }
 
 //    public Glyph(Glyph glyph, int XPlacement, int YPlacement, int XAdvance, int YAdvance) {
@@ -100,7 +100,7 @@ public class Glyph {
 //        this.YAdvance = glyph.YAdvance + YAdvance;
 //        this.IsMark = glyph.IsMark;
 //    }
-    
+
 
     public Glyph(Glyph glyph) {
         this.index = glyph.index;
@@ -111,7 +111,7 @@ public class Glyph {
         this.YPlacement = glyph.YPlacement;
         this.XAdvance = glyph.XAdvance;
         this.YAdvance = glyph.YAdvance;
-        this.IsMark = glyph.IsMark;
+        this.isMark = glyph.isMark;
     }
 
     public Glyph(Glyph glyph, Integer unicode) {
@@ -123,7 +123,7 @@ public class Glyph {
         this.YPlacement = glyph.YPlacement;
         this.XAdvance = glyph.XAdvance;
         this.YAdvance = glyph.YAdvance;
-        this.IsMark = glyph.IsMark;
+        this.isMark = glyph.isMark;
     }
    
     @Override

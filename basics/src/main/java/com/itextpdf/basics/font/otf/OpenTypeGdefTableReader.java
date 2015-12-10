@@ -49,9 +49,9 @@ public class OpenTypeGdefTableReader {
         }
     }
     
-    public boolean IsSkip(int glyph, int flag) {
+    public boolean isSkip(int glyph, int flag) {
         if (glyphClass != null && (flag & (FLAG_IGNORE_BASE | FLAG_IGNORE_LIGATURE | FLAG_IGNORE_MARK)) != 0) {
-            int cla = glyphClass.GetOtfClass(glyph);
+            int cla = glyphClass.getOtfClass(glyph);
             if (cla == GLYPH_SKIP_BASE && (flag & FLAG_IGNORE_BASE) != 0) {
                 return true;
             }
@@ -63,7 +63,7 @@ public class OpenTypeGdefTableReader {
             }
         }
         if (markAttachmentClass != null && (flag >> 8) > 0) {
-            return markAttachmentClass.GetOtfClass(glyph) != (flag >> 8);
+            return markAttachmentClass.getOtfClass(glyph) != (flag >> 8);
         }
         return false;
     }
