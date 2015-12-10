@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
->>>>>>> Initial Devanagari syllables clusterization. Shaping implementation prototyping
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,7 +187,7 @@ public class TrueTypeFont extends FontProgram {
                             }
                         }
 
-                        IndicShaper.finalReordering();
+                        IndicShaper.finalReordering(cluster, devanagariConfig, script);
 
                         String[] presentationForms = new String[] {"pres", "abvs", "blws", "psts", "haln"};
                         for (String feature : presentationForms) {
