@@ -151,33 +151,34 @@ public class TrueTypeFont extends FontProgram {
             } else if (Character.UnicodeScript.DEVANAGARI.equals(script)) {
                 List<IndicCluster> clusters = IndicShaper.splitDevanagariGlyphLineIntoClusters(glyphLine);
 
+                Map<String, List<OpenTableLookup>> features = new LinkedHashMap<>();
+                for (int featureIndex : languageRecord.features) {
+                    FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
+                    List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{feature});
+                    features.put(feature.tag, lookups);
+                }
+
                 if (clusters != null && clusters.size() > 0) {
                     for (IndicCluster cluster : clusters) {
-
-                        // TODO this is too long, move up
-                        Map<String, List<OpenTableLookup>> features = new LinkedHashMap<>();
-                        for (int featureIndex : languageRecord.features) {
-                            FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
-                            List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{feature});
-                            features.put(feature.tag, lookups);
-                        }
-
                         IndicShaper.setIndicProperties(cluster);
 
                         IndicConfig devanagariConfig = new IndicConfig.DevanagariConfig();
                         boolean isOldSpec = devanagariConfig.hasOldSpec() && !otfScriptTag.endsWith("2");
 
-                        IndicShaper.initialReordering(cluster, devanagariConfig, features.get("rphf"), isOldSpec);
-
-                        int start = glyphLine.start;
-                        int end = glyphLine.end;
-
-                        // TODO should it be done by cluster or by whole glyph line?
+                        // TODO should we apply features by cluster or by whole glyph line?
 
                         // Localized forms
                         if (transform(features.get("locl"), cluster)) {
                             transformed = true;
                         }
+
+                        /* The Indic specs do not require ccmp, but we apply it here since if
+                         * there is a use of it, it's typically at the beginning. */
+                        if (transform(features.get("ccmp"), cluster)) {
+                            transformed = true;
+                        }
+
+                        IndicShaper.initialReordering(cluster, devanagariConfig, features.get("rphf"), features.get("pref"), isOldSpec, script);
 
                         // Basic Shaping forms
                         String[] basicShapingForms = new String[] {"nukt", "akhn", "rphf", "rkrf", "blwf", "half", "vatu", "cjct"};
@@ -189,8 +190,15 @@ public class TrueTypeFont extends FontProgram {
 
                         IndicShaper.finalReordering();
 
-                        String[] presentationForms = new String[] {"pres", "abvs", "blws", "psts", "haln", "calt"};
+                        String[] presentationForms = new String[] {"pres", "abvs", "blws", "psts", "haln"};
                         for (String feature : presentationForms) {
+                            if (transform(features.get(feature), cluster)) {
+                                transformed = true;
+                            }
+                        }
+
+                        String[] discretionary = new String[] {"calt", "clig"};
+                        for (String feature : discretionary) {
                             if (transform(features.get(feature), cluster)) {
                                 transformed = true;
                             }
