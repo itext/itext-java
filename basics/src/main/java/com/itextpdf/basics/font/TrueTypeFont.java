@@ -4,13 +4,24 @@ import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.otf.*;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 
+import com.itextpdf.basics.font.otf.FeatureRecord;
+import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.basics.font.otf.GlyphLine;
+import com.itextpdf.basics.font.otf.GlyphSubstitutionTableReader;
+import com.itextpdf.basics.font.otf.LanguageRecord;
+import com.itextpdf.basics.font.otf.OpenTableLookup;
+import com.itextpdf.basics.font.otf.OpenTypeGdefTableReader;
+import com.itextpdf.basics.font.otf.ScriptRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +29,10 @@ public class TrueTypeFont extends FontProgram {
 
     private OpenTypeParser fontParser;
 
-    private boolean isUnicode;
     private boolean isSymbol;
 
     protected int[][] bBoxes;
 
-    //TODO doublicated with PdfType0Font.isVertical.
     protected boolean isVertical;
 
     private GlyphSubstitutionTableReader gsubTable;
@@ -41,46 +50,27 @@ public class TrueTypeFont extends FontProgram {
      */
     protected IntHashtable kerning = new IntHashtable();
 
-    // TODO Duplicated with FontEncoding.baseEncoding.
-    protected String baseEncoding;
-
     private byte[] fontStreamBytes;
 
-    public TrueTypeFont(String path, String baseEncoding) throws IOException {
+    public TrueTypeFont(String path) throws IOException {
         fontParser = new OpenTypeParser(path);
-        this.baseEncoding = baseEncoding;
         initializeFontProperties();
     }
 
-    TrueTypeFont(String ttcPath, String baseEncoding, int ttcIndex) throws IOException {
+    TrueTypeFont(String ttcPath, int ttcIndex) throws IOException {
         fontParser = new OpenTypeParser(ttcPath, ttcIndex);
-        this.baseEncoding = baseEncoding;
         initializeFontProperties();
     }
 
-    TrueTypeFont(byte[] ttc, String baseEncoding, int ttcIndex) throws IOException {
+    TrueTypeFont(byte[] ttc, int ttcIndex) throws IOException {
         fontParser = new OpenTypeParser(ttc, ttcIndex);
-        this.baseEncoding = baseEncoding;
         initializeFontProperties();
     }
 
-    public TrueTypeFont(byte[] ttf, String baseEncoding) throws IOException {
+    public TrueTypeFont(byte[] ttf) throws IOException {
         fontParser = new OpenTypeParser(ttf);
-        this.baseEncoding = baseEncoding;
         initializeFontProperties();
     }
-
-    public TrueTypeFont(String encoding) {
-        this.baseEncoding = encoding;
-        if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
-            isUnicode = true;
-            isVertical = this.baseEncoding.endsWith("V");
-        } else {
-            this.encoding = new FontEncoding(encoding, true);
-        }
-    }
-
-
 
     public boolean isApplyLigatures() {
         return applyLigatures;
@@ -106,56 +96,6 @@ public class TrueTypeFont extends FontProgram {
 
     public String getOtfScript() {
         return otfScript;
-    }
-
-    /**
-     * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
-     * to the font's encoding.
-     *
-     * @param text the <CODE>String</CODE> to be converted
-     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
-     */
-    public byte[] convertToBytes(String text) {
-        if (isUnicode) {
-            char[] glyphs;
-            Glyph glyph;
-            int i = 0;
-            if (isFontSpecific()) {
-                byte[] b = PdfEncodings.convertToBytes(text, "symboltt");
-                glyphs = new char[b.length];
-                for (int k = 0; k < b.length; ++k) {
-                    glyph = getMetrics(b[k] & 0xff);
-                    if (glyph == null) {
-                        continue;
-                    }
-                    glyphs[i++] = (char) glyph.index;
-                }
-            } else {
-                glyphs = new char[text.length()];
-                for (int k = 0; k < text.length(); ++k) {
-                    int val;
-                    if (Utilities.isSurrogatePair(text, k)) {
-                        val = Utilities.convertToUtf32(text, k);
-                        k++;
-                    } else {
-                        val = text.charAt(k);
-                    }
-                    glyph = getMetrics(val);
-                    if (glyph == null) {
-                        continue;
-                    }
-                    glyphs[i++] = (char) glyph.index;
-                }
-            }
-            String s = new String(glyphs, 0, i);
-            try {
-                return s.getBytes("UnicodeBigUnmarked");
-            } catch (UnsupportedEncodingException e) {
-                throw new PdfException("TrueTypeFont", e);
-            }
-        } else {
-            return encoding.convertToBytes(text);
-        }
     }
 
     public boolean applyOtfScript(GlyphLine glyphLine) {
@@ -268,77 +208,14 @@ public class TrueTypeFont extends FontProgram {
     public GlyphLine createGlyphLine(char[] glyphs, Integer length) {
         ArrayList<Glyph> glyphLine = new ArrayList<>(length);
         for (int k = 0; k < length; k++) {
-            //glyphCode, glyphWidth, String.valueOf(c), false
             int index = glyphs[k];
-            Integer ch = gsubTable.getGlyphToCharacter(index);
-            Glyph glyph = getGlyph(index);
-            glyph.chars = String.valueOf((char) (int) ch);
+            Glyph glyph = getGlyphByCode(index);
+            if (glyph == null) {
+                glyph = getGlyphByCode(0);
+            }
             glyphLine.add(glyph);
         }
         return new GlyphLine(glyphLine);
-    }
-
-    /**
-     * Get glyph's width.
-     *
-     * @param code char code.
-     * @return Gets width in normalized 1000 units.
-     */
-    @Override
-    public int getWidth(int code) {
-        if (isUnicode) {
-            if (isVertical) {
-                return FontProgram.DEFAULT_WIDTH;
-// TODO I guess, this code is redundant, because font parser save both code code & 0xff values,
-// TODO while parsing cmap and in case symbol cmap
-//            } else if (isFontSpecific()) {
-//                if ((code & 0xff00) == 0 || (code & 0xff00) == 0xf000) {
-//                    return getRawWidth(code & 0xff, null);
-//                } else {
-//                    return 0;
-//                }
-            } else {
-                return getRawWidth(code, null);
-            }
-        } else {
-            return widths[code];
-        }
-    }
-
-    public Glyph getGlyph(int index) {
-        return codeToGlyph.get(index);
-    }
-
-    /**
-     * Get glyph's bbox.
-     *
-     * @param code char code, depends from implementation.
-     * @return Gets bbox in normalized 1000 units.
-     */
-    @Override
-    public int[] getCharBBox(int code) {
-        if (isUnicode) {
-            if (isVertical) {
-                return null;
-// TODO I guess, this code is redundant, because font parser save both code code & 0xff values,
-// TODO while parsing cmapand in case symbol cmap
-//            } else if (isFontSpecific()) {
-//                if ((code & 0xff00) == 0 || (code & 0xff00) == 0xf000) {
-//                    return getRawCharBBox(code & 0xff, null);
-//                } else {
-//                    return null;
-//                }
-            } else {
-                return getRawCharBBox(code, null);
-            }
-        } else {
-            return charBBoxes[code];
-        }
-    }
-
-
-    public Integer getUnicodeChar(int index) {
-        return codeToGlyph.get(index).unicode;
     }
 
     @Override
@@ -367,17 +244,8 @@ public class TrueTypeFont extends FontProgram {
      * @param charCode the character code
      * @return an {@code int} array with {glyph index, width}
      */
+    //TODO remove this method. Generation of notdef glyphs should be done by PdfFont
     public Glyph getMetrics(int charCode) {
-// TODO I guess, this code is redundant, because font parser save both code code & 0xff values,
-// TODO while parsing cmapand in case symbol cmap
-// if fontSpecific is true with cmap(3,0)
-//        if (isFontSpecific()) {
-//            if ((ch & 0xffffff00) == 0 || (ch & 0xffffff00) == 0xf000) {
-//                return codeGlyphMap.get(ch & 0xff);
-//            } else {
-//                return null;
-//            }
-//        }
         Glyph result = unicodeToGlyph.get(charCode);
         // special use case for not found glyphs
         // in this case we should use .notdef glyph, but correct unicode value.
@@ -444,13 +312,6 @@ public class TrueTypeFont extends FontProgram {
     }
 
     /**
-     * Gets table of characters widths for this simple font encoding.
-     */
-    public int[] getRawWidths() {
-        return widths;
-    }
-
-    /**
      * The offset from the start of the file to the table directory.
      * It is 0 for TTF and may vary for TTC depending on the chosen font.
      */
@@ -464,32 +325,6 @@ public class TrueTypeFont extends FontProgram {
         } catch (IOException e) {
             throw new PdfException(PdfException.IoException, e);
         }
-    }
-
-    /**
-     * Gets the width from the font according to the unicode char {@code c}.
-     * If the {@code name} is null it's a symbolic font.
-     *
-     * @param c    the unicode char
-     * @param name not used in {@code TrueTypeFont}.
-     * @return the width of the char
-     */
-    @Override
-    protected int getRawWidth(int c, String name) {
-        Glyph glyph = getMetrics(c);
-        if (glyph == null) {
-            return 0;
-        }
-        return glyph.width;
-    }
-
-    @Override
-    protected int[] getRawCharBBox(int ch, String name) {
-        Glyph glyph = unicodeToGlyph.get(ch);
-        if (glyph == null || bBoxes == null) {
-            return null;
-        }
-        return bBoxes[glyph.index];
     }
 
     protected void readGdefTable() throws IOException {
@@ -596,7 +431,7 @@ public class TrueTypeFont extends FontProgram {
                 LOGGER.warn(MessageFormat.format(LogMessageConstant.FONT_HAS_INVALID_GLYPH, getFontNames().getFontName(), index));
                 continue;
             }
-            Glyph glyph = new Glyph(index, glyphWidths[index], charCode);
+            Glyph glyph = new Glyph(index, glyphWidths[index], charCode, bBoxes != null ? bBoxes[index] : null);
             unicodeToGlyph.put(charCode, glyph);
             codeToGlyph.put(index, glyph);
         }
@@ -612,18 +447,7 @@ public class TrueTypeFont extends FontProgram {
         readGdefTable();
         readGsubTable();
 
-        if (this.baseEncoding.equals(PdfEncodings.IDENTITY_H) || this.baseEncoding.equals(PdfEncodings.IDENTITY_V)) {
-            isUnicode = true;
-            isVertical = this.baseEncoding.endsWith("V");
-        } else {
-            isUnicode = false;
-            encoding = new FontEncoding(this.baseEncoding, isSymbol);
-            if (encoding.hasSpecialEncoding()) {
-                createSpecialEncoding();
-            } else {
-                createEncoding();
-            }
-        }
+        isVertical = false;
     }
 
     private List<Integer> splitArabicGlyphLineIntoWords(GlyphLine glyphLine, List<OpenTableLookup> medi, List<OpenTableLookup> fina) {

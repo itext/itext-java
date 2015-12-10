@@ -6,6 +6,7 @@ import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class CidFont extends FontProgram {
@@ -13,8 +14,10 @@ public class CidFont extends FontProgram {
     private IntHashtable hMetrics;
     private IntHashtable vMetrics;
     private int pdfFontFlags;
+    private Set<String> compatibleCmaps;
 
-    public CidFont(String fontName) {
+    public CidFont(String fontName, Set<String> cmaps) {
+        compatibleCmaps = cmaps;
         initializeCidFontNameAndStyle(fontName);
         HashMap<String, Object> fontDesc = CidFontProperties.getAllFonts().get(fontNames.getFontName());
         if (fontDesc == null) {
@@ -23,21 +26,19 @@ public class CidFont extends FontProgram {
         initializeCidFontProperties(fontDesc);
     }
 
-    //TODO describe supported font properties, so that user could create his own custom cid font.
-    public CidFont(String fontName, HashMap<String, Object> fontDescription) {
+    //TODO sample?
+    public CidFont(String fontName, Set<String> cmaps, HashMap<String, Object> fontDescription) {
         initializeCidFontNameAndStyle(fontName);
         initializeCidFontProperties(fontDescription);
+        compatibleCmaps = cmaps;
     }
 
-    /**
-     * Checks if the font with the given name and encoding is one
-     * of the predefined CID fonts.
-     * @param fontName the font name.
-     * @param cmap the encoding.
-     * @return {@code true} if it is CJKFont.
-     */
-    public static boolean isCidFont(String fontName, String cmap) {
-        return FontCache.isCidFont(fontName, cmap);
+    public boolean compatibleWith(String cmap) {
+        if (cmap.equals(PdfEncodings.IDENTITY_H) || cmap.equals(PdfEncodings.IDENTITY_V)) {
+            return true;
+        } else {
+            return compatibleCmaps != null && compatibleCmaps.contains(cmap);
+        }
     }
 
     public IntHashtable getHMetrics() {
@@ -62,11 +63,6 @@ public class CidFont extends FontProgram {
     }
 
     @Override
-    public int[] getCharBBox(int code) {
-        return null;
-    }
-
-    @Override
     public int getKerning(Glyph glyph1, Glyph glyph2) {
         return 0;
     }
@@ -74,16 +70,6 @@ public class CidFont extends FontProgram {
     @Override
     public int getPdfFontFlags() {
         return pdfFontFlags;
-    }
-
-    @Override
-    protected int getRawWidth(int c, String name) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    protected int[] getRawCharBBox(int c, String name) {
-        return null;
     }
 
     @Override

@@ -22,7 +22,7 @@ public class IntHashtable implements Cloneable {
     /***
      * The hash table data.
      */
-    private transient Entry table[];
+    private transient Entry[] table;
 
     /***
      * The total number of entries in the hash table.

@@ -544,7 +544,7 @@ public class MetaDo {
         int align = state.getTextAlign();
         // NOTE, MetaFont always creates with CP1252 encoding.
         int normalizedWidth = 0;
-        byte bytes[] = fp.getEncoding().convertToBytes(text);
+        byte[] bytes = font.encoding.convertToBytes(text);
         for (byte b : bytes) {
             normalizedWidth += fp.getWidth(0xff & b);
         }

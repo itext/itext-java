@@ -41,7 +41,7 @@ public class PdfEncodings {
 
     public static final String EmptyString = "";
 
-    static final char winansiByteToChar[] = {
+    static final char[] winansiByteToChar = {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
             16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
             32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
@@ -59,7 +59,7 @@ public class PdfEncodings {
             224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
             240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
-    static final char pdfEncodingByteToChar[] = {
+    static final char[] pdfEncodingByteToChar = {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
             16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
             32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
@@ -77,7 +77,7 @@ public class PdfEncodings {
             224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
             240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
-    public static final int standardEncoding[] = {
+    public static final int[] standardEncoding = {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             32, 33, 34, 35, 36, 37, 38, 8217, 40, 41, 42, 43, 44, 45, 46, 47,
@@ -140,6 +140,12 @@ public class PdfEncodings {
             for (int k = 0; k < len; ++k)
                 b[k] = (byte) text.charAt(k);
             return b;
+        }
+        ExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
+        if (extra != null) {
+            byte b[] = extra.charToByte(text, encoding);
+            if (b != null)
+                return b;
         }
         IntHashtable hash = null;
         if (encoding.equals(WINANSI)) {
@@ -261,7 +267,7 @@ public class PdfEncodings {
      * @param encoding the encoding
      * @return the converted {@code String}
      */
-    public static String convertToString(byte bytes[], String encoding) {
+    public static String convertToString(byte[] bytes, String encoding) {
         if (bytes == null)
             return EmptyString;
         if (encoding == null || encoding.length() == 0) {

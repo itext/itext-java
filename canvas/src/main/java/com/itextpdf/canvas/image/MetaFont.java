@@ -43,6 +43,7 @@ public class MetaFont extends MetaObject {
     int pitchAndFamily;
     String faceName = "arial";
     FontProgram font = null;
+    FontEncoding encoding = null;
 
     public MetaFont() {
         type = META_FONT;
@@ -80,8 +81,8 @@ public class MetaFont extends MetaObject {
     public FontProgram getFont() throws IOException {
         if (font != null)
             return font;
-        //TODO ff2 = FontFactory.getFont(faceName, BaseFont.CP1252, true, 10, ((italic != 0) ? Font.ITALIC : 0) | ((bold != 0) ? Font.BOLD : 0));
-        FontProgram ff2 = FontFactory.createRegisteredFont(faceName, PdfEncodings.CP1252, ((italic != 0) ? FontConstants.ITALIC : 0) | ((bold != 0) ? FontConstants.BOLD : 0));
+        FontProgram ff2 = FontFactory.createRegisteredFont(faceName, ((italic != 0) ? FontConstants.ITALIC : 0) | ((bold != 0) ? FontConstants.BOLD : 0));
+        encoding = new FontEncoding(PdfEncodings.WINANSI);
         font = ff2;
         if (font != null)
             return font;
@@ -133,13 +134,18 @@ public class MetaFont extends MetaObject {
             }
         }
         try {
-            font = Type1Font.createStandardFont(fontName, PdfEncodings.WINANSI);
+            font = Type1Font.createStandardFont(fontName);
+            encoding = new FontEncoding(PdfEncodings.WINANSI);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         return font;
+    }
+
+    public FontEncoding getEncoding() {
+        return encoding;
     }
 
     public float getAngle() {

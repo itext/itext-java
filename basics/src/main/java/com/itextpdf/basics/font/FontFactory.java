@@ -20,7 +20,7 @@ public class FontFactory {
      * @return a BaseFont object (Helvetica, Winansi, not embedded)
      */
     public static FontProgram createFont() throws IOException {
-        return createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+        return createFont(FontConstants.HELVETICA);
     }
 
     /**
@@ -66,11 +66,10 @@ public class FontFactory {
      * </PRE>
      *
      * @param name     the name of the font or its location on file
-     * @param encoding the encoding to be applied to this font
      * @return returns a new font. This font may come from the cache
      */
-    public static FontProgram createFont(String name, String encoding) throws IOException {
-        return createFont(name, encoding, true, null, null, false);
+    public static FontProgram createFont(String name) throws IOException {
+        return createFont(name, true, null, null, false);
     }
 
     /**
@@ -116,13 +115,12 @@ public class FontFactory {
      * </PRE>
      *
      * @param name     the name of the font or its location on file
-     * @param encoding the encoding to be applied to this font
      * @param cached   ttrue if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new
      * @return returns a new font. This font may come from the cache
      */
-    public static FontProgram createFont(String name, String encoding, boolean cached) throws IOException {
-        return createFont(name, encoding, cached, null, null, false);
+    public static FontProgram createFont(String name, boolean cached) throws IOException {
+        return createFont(name, cached, null, null, false);
     }
 
     /**
@@ -159,16 +157,14 @@ public class FontFactory {
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
      *
-     * @param encoding the encoding to be applied to this font
-     *                 the cache if new, false if the font is always created new
      * @param ttfAfm   the true type font or the afm in a byte array
      *                 an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
      *                 This parameter is useful for FontFactory that may have to check many invalid font names before finding the right one
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(byte[] ttfAfm, String encoding) throws IOException {
-        return createFont(null, encoding, false, ttfAfm, null);
+    public static FontProgram createFont(byte[] ttfAfm) throws IOException {
+        return createFont(null, false, ttfAfm, null);
     }
 
 
@@ -206,8 +202,6 @@ public class FontFactory {
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
      *
-     * @param encoding the encoding to be applied to this font
-     *                 the cache if new, false if the font is always created new
      * @param ttfAfm   the true type font or the afm in a byte array
      * @param pfb      the pfb in a byte array
      *                 an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
@@ -215,8 +209,8 @@ public class FontFactory {
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(byte[] ttfAfm, byte[] pfb, String encoding) throws IOException {
-        return createFont(null, encoding, false, ttfAfm, pfb);
+    public static FontProgram createFont(byte[] ttfAfm, byte[] pfb) throws IOException {
+        return createFont(null, false, ttfAfm, pfb);
     }
 
     /**
@@ -259,7 +253,6 @@ public class FontFactory {
      * </PRE>
      *
      * @param name     the name of the font or its location on file
-     * @param encoding the encoding to be applied to this font
      * @param cached   true if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new
      * @param ttfAfm   the true type font or the afm in a byte array
@@ -267,8 +260,8 @@ public class FontFactory {
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(String name, String encoding, boolean cached, byte[] ttfAfm, byte[] pfb) throws IOException {
-        return createFont(name, encoding, cached, ttfAfm, pfb, false);
+    public static FontProgram createFont(String name, boolean cached, byte[] ttfAfm, byte[] pfb) throws IOException {
+        return createFont(name, cached, ttfAfm, pfb, false);
     }
 
     /**
@@ -311,7 +304,6 @@ public class FontFactory {
      * </PRE>
      *
      * @param name     the name of the font or its location on file
-     * @param encoding the encoding to be applied to this font
      * @param cached   true if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new
      * @param ttfAfm   the true type font or the afm in a byte array
@@ -322,17 +314,17 @@ public class FontFactory {
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(String name, String encoding, boolean cached, byte[] ttfAfm, byte[] pfb, boolean noThrow) throws IOException {
+    public static FontProgram createFont(String name, boolean cached, byte[] ttfAfm, byte[] pfb, boolean noThrow) throws IOException {
         String baseName = FontProgram.getBaseName(name);
-        encoding = FontEncoding.normalizeEncoding(encoding);
 
+        //yes, we trying to find built-in standard font with original name, not baseName.
         boolean isBuiltinFonts14 = FontConstants.BUILTIN_FONTS_14.contains(name);
-        boolean isCidFont = !isBuiltinFonts14 && FontCache.isCidFont(baseName, encoding);
+        boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
         FontProgram fontFound;
 
         if (cached && name != null) {
-            fontFound = FontCache.getFont(name, encoding);
+            fontFound = FontCache.getFont(name);
             if (fontFound != null) {
                 return fontFound;
             }
@@ -341,18 +333,18 @@ public class FontFactory {
         if (name == null) {
             if (pfb != null) {
                 try {
-                    return Type1Font.createFont(ttfAfm, pfb, encoding);
+                    return Type1Font.createFont(ttfAfm, pfb);
                 } catch (Exception ignored) {
                 }
             }
             if (ttfAfm != null) {
                 try {
-                    return new TrueTypeFont(ttfAfm, encoding);
+                    return new TrueTypeFont(ttfAfm);
                 } catch (Exception ignored) {
                 }
 
                 try {
-                    return Type1Font.createFont(ttfAfm, encoding);
+                    return Type1Font.createFont(ttfAfm);
                 } catch (Exception ignored) {
                 }
             }
@@ -366,31 +358,28 @@ public class FontFactory {
         FontProgram fontBuilt;
 
         if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm") || name.toLowerCase().endsWith(".pfm")) {
-            fontBuilt = new Type1Font(name, null, ttfAfm, pfb, encoding);
+            fontBuilt = new Type1Font(name, null, ttfAfm, pfb);
         } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf") || baseName.toLowerCase().indexOf(".ttc,") > 0) {
             if (ttfAfm != null) {
-                fontBuilt = new TrueTypeFont(ttfAfm, encoding);
+                fontBuilt = new TrueTypeFont(ttfAfm);
             } else {
-                fontBuilt = new TrueTypeFont(name, encoding);
+                fontBuilt = new TrueTypeFont(name);
             }
         } else if (isCidFont) {
-            fontBuilt = new CidFont(name);
+            fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
         } else if (noThrow) {
             return null;
         } else {
-            throw new PdfException(PdfException.Font1With2IsNotRecognized).setMessageParams(name, encoding);
+            throw new PdfException(PdfException.Font1IsNotRecognized).setMessageParams(name);
         }
 
         if (cached) {
-            fontFound = FontCache.getFont(name, encoding);
-
+            fontFound = FontCache.getFont(name);
             if (fontFound != null) {
                 return fontFound;
             }
-
-            FontCache.saveFont(fontBuilt, name, encoding);
+            FontCache.saveFont(fontBuilt, name);
         }
-
 
         return fontBuilt;
     }
@@ -430,30 +419,29 @@ public class FontFactory {
      * </PRE>
      *
      * @param ttcPath  location  of true type collection file (*.ttc)
-     * @param encoding the encoding to be applied to this font
      * @param ttcIndex the encoding to be applied to this font
      * @param cached   true if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(String ttcPath, int ttcIndex, String encoding, boolean cached) throws IOException {
+    public static FontProgram createFont(String ttcPath, int ttcIndex, boolean cached) throws IOException {
         if (cached) {
-            FontProgram fontFound = FontCache.getFont(ttcPath + ttcIndex, encoding);
+            FontProgram fontFound = FontCache.getFont(ttcPath + ttcIndex);
             if (fontFound != null) {
                 return fontFound;
             }
         }
-        FontProgram fontBuilt = new TrueTypeFont(ttcPath, encoding, ttcIndex);
+        FontProgram fontBuilt = new TrueTypeFont(ttcPath, ttcIndex);
         if (cached) {
-            FontCache.saveFont(fontBuilt, ttcPath + ttcIndex, encoding);
+            FontCache.saveFont(fontBuilt, ttcPath + ttcIndex);
         }
 
         return fontBuilt;
     }
 
-    public static FontProgram createFont(String ttcPath, int ttcIndex, String encoding) throws IOException {
-        return createFont(ttcPath, ttcIndex, encoding, false);
+    public static FontProgram createFont(String ttcPath, int ttcIndex) throws IOException {
+        return createFont(ttcPath, ttcIndex, false);
     }
 
     /**
@@ -490,50 +478,45 @@ public class FontFactory {
      * </PRE>
      *
      * @param ttc      bytes array of ttc font
-     * @param encoding the encoding to be applied to this font
      * @param ttcIndex the encoding to be applied to this font
      * @param cached   true if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(byte[] ttc, int ttcIndex, String encoding, boolean cached) throws IOException {
+    public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws IOException {
 
         if (cached) {
             String ttcNameKey = String.valueOf(Arrays.deepHashCode(new Object[]{ttc})) + ttcIndex;
-            FontProgram fontFound = FontCache.getFont(ttcNameKey, encoding);
+            FontProgram fontFound = FontCache.getFont(ttcNameKey);
             if (fontFound != null) {
                 return fontFound;
             }
         }
-        FontProgram fontBuilt = new TrueTypeFont(ttc, encoding, ttcIndex);
+        FontProgram fontBuilt = new TrueTypeFont(ttc, ttcIndex);
         String ttcNameKey = String.valueOf(Arrays.deepHashCode(new Object[]{ttc})) + ttcIndex;
         if (cached) {
-            FontCache.saveFont(fontBuilt, ttcNameKey, encoding);
+            FontCache.saveFont(fontBuilt, ttcNameKey);
         }
 
         return fontBuilt;
     }
 
-    public static FontProgram createFont(byte[] ttc, int ttcIndex, String encoding) throws IOException {
-        return createFont(ttc, ttcIndex, encoding, false);
+    public static FontProgram createFont(byte[] ttc, int ttcIndex) throws IOException {
+        return createFont(ttc, ttcIndex, false);
     }
 
 
-    public static FontProgram createRegisteredFont(String fontName, final String encoding, int style, boolean cached) throws IOException {
-        return fontRegisterProvider.getFont(fontName, encoding, style, cached);
+    public static FontProgram createRegisteredFont(String fontName, int style, boolean cached) throws IOException {
+        return fontRegisterProvider.getFont(fontName, style, cached);
     }
 
-    public static FontProgram createRegisteredFont(String fontName, final String encoding, int style) throws IOException {
-        return fontRegisterProvider.getFont(fontName, encoding, style);
-    }
-
-    public static FontProgram createRegisteredFont(String fontName, final String encoding) throws IOException {
-        return fontRegisterProvider.getFont(fontName, encoding, FontConstants.UNDEFINED);
+    public static FontProgram createRegisteredFont(String fontName, int style) throws IOException {
+        return fontRegisterProvider.getFont(fontName, style);
     }
 
     public static FontProgram createRegisteredFont(String fontName) throws IOException {
-        return fontRegisterProvider.getFont(fontName, PdfEncodings.WINANSI, FontConstants.UNDEFINED);
+        return fontRegisterProvider.getFont(fontName, FontConstants.UNDEFINED);
     }
 
     /**

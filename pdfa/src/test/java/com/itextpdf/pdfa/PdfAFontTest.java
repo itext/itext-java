@@ -47,7 +47,7 @@ public class PdfAFontTest {
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
-        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "WinAnsi", true);
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(DeviceRgb.GREEN)
@@ -67,7 +67,7 @@ public class PdfAFontTest {
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
-        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "WinAnsi");
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", "WinAnsi");
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(DeviceRgb.GREEN)
@@ -88,7 +88,7 @@ public class PdfAFontTest {
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "Identity-H", false);
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", "Identity-H", false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(DeviceRgb.GREEN)
@@ -152,7 +152,7 @@ public class PdfAFontTest {
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "Identity-H", false);
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", "Identity-H", false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(DeviceRgb.GREEN)
@@ -174,7 +174,7 @@ public class PdfAFontTest {
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "Identity-H", false);
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", "Identity-H", false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(DeviceRgb.GREEN)
@@ -197,7 +197,7 @@ public class PdfAFontTest {
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeMonoBold.ttf", "Identity-H", true);
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", "Identity-H", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()

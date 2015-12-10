@@ -3,6 +3,7 @@ package com.itextpdf.canvas.font;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.Type3Font;
+import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.font.PdfSimpleFont;
 import com.itextpdf.core.pdf.PdfArray;
@@ -134,6 +135,31 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         byte[] b2 = new byte[p];
         System.arraycopy(b, 0, b2, 0, p);
         return b2;
+    }
+
+    @Override
+    public Glyph getGlyph(int ch) {
+        //TODO simplify!
+        if (fontEncoding.canEncode(ch)) {
+            Glyph glyph;
+            if (fontEncoding.isFontSpecific()) {
+                glyph = getFontProgram().getGlyphByCode(ch);
+            } else {
+                glyph = getFontProgram().getGlyph(ch);
+            }
+            return glyph;
+        }
+        return null;
+    }
+
+    @Override
+    protected PdfStream getFontStream() {
+        return null;
+    }
+
+    @Override
+    protected PdfDictionary getFontDescriptor(PdfStream fontStream, String fontName) {
+        return null;
     }
 
     public boolean charExists(int c) {

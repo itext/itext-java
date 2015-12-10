@@ -98,12 +98,11 @@ class FontRegisterProvider {
      * Constructs a <CODE>Font</CODE>-object.
      *
      * @param fontName the name of the font
-     * @param encoding the encoding of the font
      * @param style    the style of this font
      * @return the Font constructed based on the parameters
      */
-    public FontProgram getFont(final String fontName, final String encoding, final int style) throws IOException {
-        return getFont(fontName, encoding, style, true);
+    public FontProgram getFont(final String fontName, final int style) throws IOException {
+        return getFont(fontName, style, true);
     }
 
 
@@ -111,13 +110,12 @@ class FontRegisterProvider {
      * Constructs a <CODE>Font</CODE>-object.
      *
      * @param fontName the name of the font
-     * @param encoding the encoding of the font
      * @param style    the style of this font
      * @param cached   true if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new
      * @return the Font constructed based on the parameters
      */
-    public FontProgram getFont(String fontName, final String encoding, int style, boolean cached) throws IOException {
+    public FontProgram getFont(String fontName, int style, boolean cached) throws IOException {
         if (fontName == null)
             return null;
         String lowerCaseFontName = fontName.toLowerCase();
@@ -144,23 +142,23 @@ class FontRegisterProvider {
                 }
             }
         }
-        FontProgram fontProgram = getFontProgram(fontName, encoding, cached);
+        FontProgram fontProgram = getFontProgram(fontName, cached);
 
         return fontProgram;
 
     }
 
-    protected FontProgram getFontProgram(String fontName, String encoding, boolean cached) throws IOException {
+    protected FontProgram getFontProgram(String fontName, boolean cached) throws IOException {
         FontProgram fontProgram = null;
         fontName = trueTypeFonts.get(fontName.toLowerCase());
         // the font is not registered as truetype font
         if (fontName != null) {
-            fontProgram = FontFactory.createFont(fontName, encoding, cached);
+            fontProgram = FontFactory.createFont(fontName, cached);
         }
         if (fontProgram == null) {
             try {
                 // the font is a type 1 font or CJK font
-                fontProgram = FontFactory.createFont(fontName, encoding, cached);
+                fontProgram = FontFactory.createFont(fontName, cached);
             } catch (PdfException e) {
             }
         }
@@ -231,7 +229,7 @@ class FontRegisterProvider {
     public void register(final String path, final String alias) {
         try {
             if (path.toLowerCase().endsWith(".ttf") || path.toLowerCase().endsWith(".otf") || path.toLowerCase().indexOf(".ttc,") > 0) {
-                FontProgram fontProgram = FontFactory.createFont(path, PdfEncodings.WINANSI);
+                FontProgram fontProgram = FontFactory.createFont(path);
                 Object allNames[] = new Object[]{fontProgram.getFontNames().getFontName(), fontProgram.getFontNames().getFamilyName(), fontProgram.getFontNames().getFullName()};
                 trueTypeFonts.put(((String) allNames[0]).toLowerCase(), path);
                 if (alias != null) {
@@ -289,7 +287,7 @@ class FontRegisterProvider {
                     register(path + "," + i);
                 }
             } else if (path.toLowerCase().endsWith(".afm") || path.toLowerCase().endsWith(".pfm")) {
-                FontProgram fontProgram = FontFactory.createFont(path, PdfEncodings.CP1252, false);
+                FontProgram fontProgram = FontFactory.createFont(path, false);
                 String fullName = fontProgram.getFontNames().getFullName()[0][3].toLowerCase();
                 String familyName = fontProgram.getFontNames().getFamilyName()[0][3].toLowerCase();
                 String psName =fontProgram.getFontNames().getFontName().toLowerCase();

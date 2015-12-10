@@ -31,8 +31,8 @@ public class FontCache {
      */
     public static final String CMAP_RESOURCE_PATH = FontConstants.RESOURCE_PATH + "cmap/";
 
-    private static final Map<String, Map<String, Object>> allFonts = new HashMap<String, Map<String, Object>>();
-    private static final Map<String, Set<String>> registryNames = new HashMap<String, Set<String>>();
+    private static final Map<String, Map<String, Object>> allFonts = new HashMap<>();
+    private static final Map<String, Set<String>> registryNames = new HashMap<>();
 
     private static final String CJK_REGISTRY_FILENAME = "cjk_registry.properties";
     private static final String FONTS_PROP = "fonts";
@@ -40,7 +40,7 @@ public class FontCache {
     private static final String W_PROP = "W";
     private static final String W2_PROP = "W2";
 
-    private static ConcurrentHashMap<String, FontProgram> fontCache = new ConcurrentHashMap<String, FontProgram>();
+    private static ConcurrentHashMap<String, FontProgram> fontCache = new ConcurrentHashMap<>();
 
     static {
         try {
@@ -58,22 +58,15 @@ public class FontCache {
      * Checks if the font with the given name and encoding is one
      * of the predefined CID fonts.
      * @param fontName the font name.
-     * @param cmap the encoding.
      * @return {@code true} if it is CJKFont.
      */
-    protected static boolean isCidFont(String fontName, String cmap) {
+    protected static boolean isPredefinedCidFont(String fontName) {
         if (!registryNames.containsKey(FONTS_PROP)) {
             return false;
         } else if (!registryNames.get(FONTS_PROP).contains(fontName)) {
             return false;
-        } else if (cmap.equals(PdfEncodings.IDENTITY_H) || cmap.equals(PdfEncodings.IDENTITY_V)) {
-            return true;
         }
-
-        String registry = (String) allFonts.get(fontName).get(REGISTRY_PROP);
-        Set<String> cmaps = registryNames.get(registry);
-
-        return cmaps != null && cmaps.contains(cmap);
+        return true;
     }
 
     public static String getCompatibleCidFont(String cmap) {
@@ -87,6 +80,11 @@ public class FontCache {
             }
         }
         return null;
+    }
+
+    public static Set<String> getCompatibleCmaps(String fontName) {
+        String registry = (String) FontCache.getAllFonts().get(fontName).get(REGISTRY_PROP);
+        return registryNames.get(registry);
     }
 
     public static Map<String, Map<String, Object>> getAllFonts() {
@@ -117,18 +115,18 @@ public class FontCache {
         return parseCmap(cmap, cidByte);
     }
 
-    public static FontProgram getFont(String fontName, String encoding) {
-        String key = getFontCacheKey(fontName, encoding);
+    public static FontProgram getFont(String fontName) {
+        String key = getFontCacheKey(fontName);
         return fontCache.get(key);
     }
 
-    public static void saveFont(FontProgram font, String fontName, String encoding) {
+    public static void saveFont(FontProgram font, String fontName) {
         // for most of the fonts we can retrieve encoding from FontProgram, but
         // for Cid there is no such possibility, since it is used in conjunction
         // with cmap to produce Type0 font, so I added fontName and encoding parameters
         // just for convenience.
         // TODO: probably it's better to declare saveFont(FontProgram) and saveFont(CidFont, encoding or cmap) in the future
-        String key = getFontCacheKey(fontName, encoding);
+        String key = getFontCacheKey(fontName);
         fontCache.put(key, font);
     }
 
@@ -142,7 +140,7 @@ public class FontCache {
             for (Map.Entry<Object, Object> entry : p.entrySet()) {
                 String value = (String) entry.getValue();
                 String[] splitValue = value.split(" ");
-                Set<String> set = new HashSet<String>();
+                Set<String> set = new HashSet<>();
 
                 for (String s : splitValue) {
                     if (!s.isEmpty()) {
@@ -166,7 +164,7 @@ public class FontCache {
             Properties p = new Properties();
             p.load(is);
 
-            Map<String, Object> fontProperties = new HashMap<String, Object>((Map) p);
+            Map<String, Object> fontProperties = new HashMap<>((Map) p);
             fontProperties.put(W_PROP, createMetric((String) fontProperties.get(W_PROP)));
             fontProperties.put(W2_PROP, createMetric((String) fontProperties.get(W2_PROP)));
 
@@ -199,7 +197,7 @@ public class FontCache {
         return cmap;
     }
 
-    private static String getFontCacheKey(String fontName, String encoding) {
-        return fontName + "\n" + encoding;
+    private static String getFontCacheKey(String fontName) {
+        return fontName;
     }
 }

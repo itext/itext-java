@@ -45,9 +45,9 @@ public class TrueTypeCollection {
         }
 
         if (ttcPath != null) {
-            return FontFactory.createFont(ttcPath, ttcIndex, encoding, cached);
+            return FontFactory.createFont(ttcPath, ttcIndex, cached);
         } else {
-            return FontFactory.createFont(ttc, ttcIndex, encoding, cached);
+            return FontFactory.createFont(ttc, ttcIndex, cached);
         }
     }
 

@@ -1,13 +1,12 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.font.AdobeGlyphList;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.font.*;
 import com.itextpdf.basics.font.cmap.CMapLocation;
 import com.itextpdf.basics.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.basics.font.cmap.CMapParser;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
+import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -20,17 +19,28 @@ import com.itextpdf.core.pdf.PdfString;
 import java.io.IOException;
 import java.util.Map;
 
-
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     protected T fontProgram;
 
-    public PdfSimpleFont(PdfDocument document,PdfDictionary pdfDictionary) {
+    protected FontEncoding fontEncoding;
+    /**
+     * Forces the output of the width array. Only matters for the 14 built-in fonts.
+     */
+    protected boolean forceWidthsOutput = false;
+    /**
+     * The array used with single byte encodings.
+     */
+    protected byte[] shortTag = new byte[256];
+
+    private static final byte[] emptyBytes = new byte[0];
+
+    public PdfSimpleFont(PdfDocument document, PdfDictionary pdfDictionary) {
         super(document, pdfDictionary);
     }
 
-    public PdfSimpleFont(PdfDocument document,PdfDictionary pdfDictionary, boolean isCopy) {
-        super(document, pdfDictionary,isCopy);
+    public PdfSimpleFont(PdfDocument document, PdfDictionary pdfDictionary, boolean isCopy) {
+        super(document, pdfDictionary, isCopy);
     }
 
     @Override
@@ -38,36 +48,94 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return fontProgram;
     }
 
+    @Override
+    public byte[] convertToBytes(String text) {
+        if (text == null || text.length() == 0) {
+            return emptyBytes;
+        }
+        int ptr = 0;
+        byte[] bytes = new byte[text.length()];
+        for (int i = 0; i < text.length(); i++) {
+            if (containsGlyph(text.charAt(i))) {
+                bytes[ptr++] = fontEncoding.convertToByte(text.charAt(i));
+            }
+        }
+
+        if (ptr < bytes.length) {
+            byte[] tmp = new byte[ptr];
+            System.arraycopy(bytes, 0, tmp, 0, ptr);
+            bytes = tmp;
+        }
+
+        for (byte b : bytes) {
+            shortTag[b & 0xff] = 1;
+        }
+        return bytes;
+    }
+
+//    TODO handling notdef symbols
+//    @Override
+//    public byte[] convertToBytes(String text) {
+//        byte[] bytes = fontEncoding.convertToBytes(text);
+//        for (byte b : bytes) {
+//            shortTag[b & 0xff] = 1;
+//        }
+//        return bytes;
+//    }
+
+    protected boolean containsGlyph(char ch) {
+        return getGlyph(ch) != null;
+    }
+
+    public abstract Glyph getGlyph(int ch);
+
     /**
      * Returns the width of a certain character of this font.
      *
-     * @param ch a certain Unicode character.
+     * @param ch a unicode symbol or font specific code to be checked.
      * @return a width in Text Space.
      */
     @Override
     public int getWidth(int ch) {
-        int total = 0;
-        byte[] bytes = fontProgram.getEncoding().convertToBytes(ch);
-        for (byte b : bytes) {
-            total += getFontProgram().getWidth(b & 0xff);
-        }
-        return total;
+        // TODO could single unicode symbol be encoded into 2+ bytes in case simple encoding with glyph names?
+        Glyph glyph = getGlyph(ch);
+        return glyph != null ? glyph.width : 0;
     }
 
     /**
      * Returns the width of a string of this font.
      *
-     * @param s a Unicode string content.
+     * @param text a Unicode string content.
      * @return a width of string in Text Space.
      */
     @Override
-    public int getWidth(String s) {
+    public int getWidth(String text) {
         int total = 0;
-        byte[] bytes = fontProgram.getEncoding().convertToBytes(s);
-        for (byte b : bytes) {
-            total += getFontProgram().getWidth(b & 0xff);
+        for (int i = 0; i < text.length(); i++) {
+            Glyph glyph = getGlyph(text.charAt(i));
+            if (glyph != null) {
+                total += glyph.width;
+            }
         }
         return total;
+    }
+
+    /**
+     * Gets the state of the property.
+     *
+     * @return value of property forceWidthsOutput
+     */
+    public boolean isForceWidthsOutput() {
+        return forceWidthsOutput;
+    }
+
+    /**
+     * Set to {@code true} to force the generation of the widths array.
+     *
+     * @param forceWidthsOutput {@code true} to force the generation of the widths array
+     */
+    public void setForceWidthsOutput(boolean forceWidthsOutput) {
+        this.forceWidthsOutput = forceWidthsOutput;
     }
 
     /**
@@ -79,9 +147,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     public int getDescent(String text) {
         int min = 0;
-        byte[] bytes = fontProgram.getEncoding().convertToBytes(text);
-        for (byte b : bytes) {
-            int[] bbox = getFontProgram().getCharBBox(b & 0xff);
+        for (int k = 0; k < text.length(); ++k) {
+            Glyph glyph = getGlyph(text.charAt(k));
+            int[] bbox = glyph != null ? glyph.bbox : null;
             if (bbox != null && bbox[1] < min) {
                 min = bbox[1];
             } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
@@ -101,14 +169,12 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     public int getDescent(int ch) {
         int min = 0;
-        byte[] bytes = fontProgram.getEncoding().convertToBytes(ch);
-        for (byte b : bytes) {
-            int[] bbox = getFontProgram().getCharBBox(b & 0xff);
-            if (bbox != null && bbox[1] < min) {
-                min = bbox[1];
-            } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
-                min = fontProgram.getFontMetrics().getTypoDescender();
-            }
+        Glyph glyph = getGlyph(ch);
+        int[] bbox = glyph != null ? glyph.bbox : null;
+        if (bbox != null && bbox[1] < min) {
+            min = bbox[1];
+        } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
+            min = fontProgram.getFontMetrics().getTypoDescender();
         }
 
         return min;
@@ -123,9 +189,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     public int getAscent(String text) {
         int max = 0;
-        byte[] bytes = fontProgram.getEncoding().convertToBytes(text);
-        for (byte b : bytes) {
-            int[] bbox = getFontProgram().getCharBBox(b & 0xff);
+        for (int k = 0; k < text.length(); ++k) {
+            Glyph glyph = getGlyph(text.charAt(k));
+            int[] bbox = glyph != null ? glyph.bbox : null;
             if (bbox != null && bbox[3] > max) {
                 max = bbox[3];
             } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
@@ -145,19 +211,110 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     public int getAscent(int ch) {
         int max = 0;
-        byte[] bytes = fontProgram.getEncoding().convertToBytes(ch);
-        for (byte b : bytes) {
-            int[] bbox = getFontProgram().getCharBBox(b & 0xff);
-            if (bbox != null && bbox[3] > max) {
-                max = bbox[3];
-            } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
-                max = fontProgram.getFontMetrics().getTypoAscender();
-            }
+        Glyph glyph = getGlyph(ch);
+        int[] bbox = glyph != null ? glyph.bbox : null;
+        if (bbox != null && bbox[3] > max) {
+            max = bbox[3];
+        } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
+            max = fontProgram.getFontMetrics().getTypoAscender();
         }
 
         return max;
     }
 
+    protected void flushFontData(String fontName, PdfName subtype) {
+        getPdfObject().put(PdfName.Subtype, subtype);
+        // TODO subset prefix for Type 1 and TrueType fonts?
+//        if (subset) {
+//        fontName = createSubsetPrefix() + fontName;
+//        }
+        getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
+        int firstChar;
+        int lastChar;
+        for (firstChar = 0; firstChar < 256; ++firstChar) {
+            if (shortTag[firstChar] != 0) break;
+        }
+        for (lastChar = 255; lastChar >= firstChar; --lastChar) {
+            if (shortTag[lastChar] != 0) break;
+        }
+        if (firstChar > 255) {
+            firstChar = 255;
+            lastChar = 255;
+        }
+        if (!subset || !embedded) {
+            firstChar = 0;
+            lastChar = shortTag.length - 1;
+            for (int k = 0; k < shortTag.length; ++k) {
+                //remove unsupported by encoding values
+                shortTag[k] = fontEncoding.getUnicode(k) != null ? (byte) 1 : 0;
+            }
+        }
+        if (fontEncoding.hasDifferences()) {
+            // trim range of symbols
+            for (int k = firstChar; k <= lastChar; ++k) {
+                if (!FontConstants.notdef.equals(fontEncoding.getDifferences(k))) {
+                    firstChar = k;
+                    break;
+                }
+            }
+            for (int k = lastChar; k >= firstChar; --k) {
+                if (!FontConstants.notdef.equals(fontEncoding.getDifferences(k))) {
+                    lastChar = k;
+                    break;
+                }
+            }
+            PdfDictionary enc = new PdfDictionary();
+            enc.put(PdfName.Type, PdfName.Encoding);
+            PdfArray dif = new PdfArray();
+            boolean gap = true;
+            for (int k = firstChar; k <= lastChar; ++k) {
+                if (shortTag[k] != 0) {
+                    if (gap) {
+                        dif.add(new PdfNumber(k));
+                        gap = false;
+                    }
+                    dif.add(new PdfName(fontEncoding.getDifferences(k)));
+                } else {
+                    gap = true;
+                }
+            }
+            enc.put(PdfName.Differences, dif);
+            getPdfObject().put(PdfName.Encoding, enc);
+        } else if (!fontEncoding.isFontSpecific()) {
+            getPdfObject().put(PdfName.Encoding, PdfEncodings.CP1252.equals(fontEncoding.getBaseEncoding())
+                    ? PdfName.WinAnsiEncoding
+                    : PdfName.MacRomanEncoding);
+        }
+
+        if (forceWidthsOutput || !isBuiltInFont() || fontEncoding.hasDifferences()) {
+            getPdfObject().put(PdfName.FirstChar, new PdfNumber(firstChar));
+            getPdfObject().put(PdfName.LastChar, new PdfNumber(lastChar));
+            PdfArray wd = new PdfArray();
+            for (int k = firstChar; k <= lastChar; ++k) {
+                if (shortTag[k] == 0) {
+                    wd.add(new PdfNumber(0));
+                } else {
+                    Glyph glyph = getGlyph(fontEncoding.getUnicode(k));
+                    wd.add(new PdfNumber(glyph != null ? glyph.width : 0));
+                }
+            }
+            getPdfObject().put(PdfName.Widths, wd);
+        }
+        PdfDictionary fontDescriptor = !isBuiltInFont() ? getFontDescriptor(getFontStream(), fontName) : null;
+        if (fontDescriptor != null) {
+            getPdfObject().put(PdfName.FontDescriptor, fontDescriptor);
+            fontDescriptor.flush();
+        }
+        super.flush();
+    }
+
+    protected boolean isBuiltInFont() {
+        return false;
+    }
+
+    protected abstract PdfStream getFontStream();
+
+    protected abstract PdfDictionary getFontDescriptor(PdfStream fontStream, String fontName);
 
     protected void setFontProgram(T fontProgram) {
         this.fontProgram = fontProgram;
@@ -183,8 +340,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 if (toUnicode != null) {
                     Map<Integer, Integer> rm = toUnicode.createReverseMapping();
                     for (Map.Entry<Integer, Integer> kv : rm.entrySet()) {
-                        fontProgram.getEncoding().getSpecialMap().put(kv.getKey(), kv.getValue());
-                        fontProgram.getEncoding().setUnicodeDifferences(kv.getValue(), (char)kv.getKey().intValue());
+                        //TODO Document font refactoring
+//                        fontProgram.getEncoding().getSpecialMap().put(kv.getKey(), kv.getValue());
+//                        fontProgram.getEncoding().setUnicodeDifferences(kv.getValue(), (char)kv.getKey().intValue());
                     }
                 }
             }
@@ -224,13 +382,14 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
 
         PdfArray widths = fontDictionary.getAsArray(PdfName.Widths);
-        if (widths != null) {
-            getPdfObject().put(PdfName.Widths, widths);
-            fontProgram.setWidths(getFillWidths(widths, firstChar, lastChar));
-        }
+        // TODO Document font refactoring
+//        if (widths != null) {
+//            getPdfObject().put(PdfName.Widths, widths);
+//            fontProgram.setWidths(getFillWidths(widths, firstChar, lastChar));
+//        }
 
         if (FontConstants.BUILTIN_FONTS_14.contains(fontProgram.getFontNames().getFontName())) {
-            fontProgram = initializeTypeFont(fontProgram.getFontNames().getFontName(), fontProgram.getEncoding().getBaseEncoding());
+            fontProgram = initializeTypeFont(fontProgram.getFontNames().getFontName(), fontEncoding.getBaseEncoding());
         }
 
         PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
@@ -415,65 +574,67 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
     }
 
+    // TODO Document font refactoring
     private void fillEncoding(PdfName encoding) {
-        String encodingString = encoding != null ? encoding.getValue() : null;
-        if (encoding == null && isSymbolic()) {
-            for (int k = 0; k < 256; ++k) {
-                fontProgram.getEncoding().getSpecialMap().put(k, k);
-                fontProgram.getEncoding().setUnicodeDifferences(k, (char) k);
-            }
-        } else if (PdfName.MacRomanEncoding.equals(encoding) || PdfName.WinAnsiEncoding.equals(encoding)
-                || FontConstants.SYMBOL.equals(encodingString) || FontConstants.ZAPFDINGBATS.equals(encodingString)) {
-
-            byte[] b = new byte[256];
-            for (int k = 0; k < 256; ++k) {
-                b[k] = (byte) k;
-            }
-
-            String cv = PdfEncodings.convertToString(b, fontProgram.getEncoding().getBaseEncoding());
-            char[] arr = cv.toCharArray();
-            for (int k = 0; k < 256; ++k) {
-                fontProgram.getEncoding().getSpecialMap().put(arr[k], k);
-                fontProgram.getEncoding().setUnicodeDifferences(k, arr[k]);
-            }
-        } else {
-            for (int k = 0; k < 256; ++k) {
-                fontProgram.getEncoding().getSpecialMap().put(PdfEncodings.standardEncoding[k], k);
-                fontProgram.getEncoding().setUnicodeDifferences(k, (char) PdfEncodings.standardEncoding[k]);
-            }
-        }
+//        String encodingString = encoding != null ? encoding.getValue() : null;
+//        if (encoding == null && isSymbolic()) {
+//            for (int k = 0; k < 256; ++k) {
+//                fontProgram.getEncoding().getSpecialMap().put(k, k);
+//                fontProgram.getEncoding().setUnicodeDifferences(k, (char) k);
+//            }
+//        } else if (PdfName.MacRomanEncoding.equals(encoding) || PdfName.WinAnsiEncoding.equals(encoding)
+//                || FontConstants.SYMBOL.equals(encodingString) || FontConstants.ZAPFDINGBATS.equals(encodingString)) {
+//
+//            byte[] b = new byte[256];
+//            for (int k = 0; k < 256; ++k) {
+//                b[k] = (byte) k;
+//            }
+//
+//            String cv = PdfEncodings.convertToString(b, fontProgram.getEncoding().getBaseEncoding());
+//            char[] arr = cv.toCharArray();
+//            for (int k = 0; k < 256; ++k) {
+//                fontProgram.getEncoding().getSpecialMap().put(arr[k], k);
+//                fontProgram.getEncoding().setUnicodeDifferences(k, arr[k]);
+//            }
+//        } else {
+//            for (int k = 0; k < 256; ++k) {
+//                fontProgram.getEncoding().getSpecialMap().put(PdfEncodings.standardEncoding[k], k);
+//                fontProgram.getEncoding().setUnicodeDifferences(k, (char) PdfEncodings.standardEncoding[k]);
+//            }
+//        }
     }
 
+    // TODO Document font refactoring
     private void fillDifference(PdfArray diffs) {
-        if (diffs != null) {
-            int currentNumber = 0;
-            for (int k = 0; k < diffs.size(); ++k) {
-                PdfObject obj = diffs.get(k);
-                if (obj.isNumber())
-                    currentNumber = ((PdfNumber) obj).getIntValue();
-                else {
-                    Integer c = AdobeGlyphList.nameToUnicode(((PdfName) obj).getValue());
-                    if (c != null) {
-                        fontProgram.getEncoding().getSpecialMap().put(c, currentNumber);
-                        fontProgram.getEncoding().setDifferences(currentNumber, ((PdfName) obj).getValue());
-                        fontProgram.getEncoding().setUnicodeDifferences(currentNumber, (char) (int)c);
-                    } else {
-                        CMapToUnicode toUnicode = processToUnicode();
-                        if (toUnicode == null) {
-                            toUnicode = new CMapToUnicode();
-                        }
-
-                        final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
-                        if ((unicode != null) && (unicode.length() == 1)) {
-                            fontProgram.getEncoding().getSpecialMap().put(unicode.charAt(0), currentNumber);
-                            fontProgram.getEncoding().setDifferences(currentNumber, String.valueOf(unicode.charAt(0)));
-                            fontProgram.getEncoding().setUnicodeDifferences(unicode.charAt(0), (char) currentNumber);
-                        }
-                    }
-                    ++currentNumber;
-                }
-            }
-        }
+//        if (diffs != null) {
+//            int currentNumber = 0;
+//            for (int k = 0; k < diffs.size(); ++k) {
+//                PdfObject obj = diffs.get(k);
+//                if (obj.isNumber())
+//                    currentNumber = ((PdfNumber) obj).getIntValue();
+//                else {
+//                    Integer c = AdobeGlyphList.nameToUnicode(((PdfName) obj).getValue());
+//                    if (c != null) {
+//                        fontProgram.getEncoding().getSpecialMap().put(c, currentNumber);
+//                        fontProgram.getEncoding().setDifferences(currentNumber, ((PdfName) obj).getValue());
+//                        fontProgram.getEncoding().setUnicodeDifferences(currentNumber, (char) (int)c);
+//                    } else {
+//                        CMapToUnicode toUnicode = processToUnicode();
+//                        if (toUnicode == null) {
+//                            toUnicode = new CMapToUnicode();
+//                        }
+//
+//                        final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
+//                        if ((unicode != null) && (unicode.length() == 1)) {
+//                            fontProgram.getEncoding().getSpecialMap().put(unicode.charAt(0), currentNumber);
+//                            fontProgram.getEncoding().setDifferences(currentNumber, String.valueOf(unicode.charAt(0)));
+//                            fontProgram.getEncoding().setUnicodeDifferences(unicode.charAt(0), (char) currentNumber);
+//                        }
+//                    }
+//                    ++currentNumber;
+//                }
+//            }
+//        }
     }
 
     private CMapToUnicode processToUnicode() {

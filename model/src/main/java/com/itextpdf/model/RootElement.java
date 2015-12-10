@@ -62,7 +62,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
             switch (property) {
                 case FONT:
                     if (defaultFont == null) {
-                        defaultFont = new PdfType1Font(pdfDocument, (Type1Font) FontFactory.createFont(FontConstants.HELVETICA, ""));
+                        defaultFont = new PdfType1Font(pdfDocument, (Type1Font) FontFactory.createFont(FontConstants.HELVETICA));
                     }
                     return (T) defaultFont;
                 case SPLIT_CHARACTERS:

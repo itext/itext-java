@@ -71,7 +71,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public static PdfFont createFont(PdfDocument pdfDocument, byte[] ttc, int ttcIndex, String encoding, boolean embedded) throws IOException {
         TrueTypeCollection collection = new TrueTypeCollection(ttc, encoding);
         FontProgram program = collection.getFontByTccIndex(ttcIndex);
-        return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) program, embedded);
+        return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) program, encoding, embedded);
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, String ttcPath, int ttcIndex, String encoding) throws IOException {
@@ -84,8 +84,12 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return createFont(pdfDocument, fontProgram, encoding, embedded);
     }
 
+    public static PdfFont createFont(PdfDocument pdfDocument, String path, boolean embedded) throws IOException {
+        return createFont(pdfDocument, path, PdfEncodings.WINANSI, embedded);
+    }
+
     public static PdfFont createFont(PdfDocument pdfDocument, String path, String encoding, boolean embedded) throws IOException {
-        FontProgram fontProgram = FontFactory.createFont(path, encoding);
+        FontProgram fontProgram = FontFactory.createFont(path);
         return createFont(pdfDocument, fontProgram, encoding, embedded);
     }
 
@@ -93,15 +97,19 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         if (fontProgram == null) {
             return null;
         } else if (fontProgram instanceof Type1Font) {
-            return new PdfType1Font(pdfDocument, (Type1Font) fontProgram, embedded);
+            return new PdfType1Font(pdfDocument, (Type1Font) fontProgram, encoding, embedded);
         } else if (fontProgram instanceof TrueTypeFont) {
             if (PdfEncodings.IDENTITY_H.equals(encoding) || PdfEncodings.IDENTITY_V.equals(encoding)) {
                 return new PdfType0Font(pdfDocument, (TrueTypeFont) fontProgram, encoding);
             } else {
-                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) fontProgram, embedded);
+                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) fontProgram, encoding, embedded);
             }
         } else if (fontProgram instanceof CidFont) {
-            return new PdfType0Font(pdfDocument, (CidFont) fontProgram, encoding);
+            if (((CidFont) fontProgram).compatibleWith(encoding)) {
+                return new PdfType0Font(pdfDocument, (CidFont) fontProgram, encoding);
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
@@ -112,17 +120,21 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return createFont(pdfDocument, font, encoding, false);
     }
 
+    public static PdfFont createFont(PdfDocument pdfDocument, byte[] font, boolean embedded) throws IOException {
+        return createFont(pdfDocument, font, PdfEncodings.WINANSI, embedded);
+    }
+
     public static PdfFont createFont(PdfDocument pdfDocument, byte[] font, String encoding, boolean embedded) throws IOException {
-        FontProgram fontProgram = FontFactory.createFont(null, encoding, false, font, null, true);
+        FontProgram fontProgram = FontFactory.createFont(null, false, font, null, true);
         if (fontProgram == null) {
             return null;
         } else if (fontProgram instanceof Type1Font) {
-            return new PdfType1Font(pdfDocument, (Type1Font) fontProgram, embedded);
+            return new PdfType1Font(pdfDocument, (Type1Font) fontProgram, encoding, embedded);
         } else if (fontProgram instanceof TrueTypeFont) {
             if (PdfEncodings.IDENTITY_H.equals(encoding) || PdfEncodings.IDENTITY_V.equals(encoding)) {
                 return new PdfType0Font(pdfDocument, (TrueTypeFont) fontProgram, encoding);
             } else {
-                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) fontProgram, embedded);
+                return new PdfTrueTypeFont(pdfDocument, (TrueTypeFont) fontProgram, encoding, embedded);
             }
         } else {
             return null;
@@ -134,7 +146,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfFont createStandardFont(PdfDocument pdfDocument, String name, String encoding) throws IOException {
-        return new PdfType1Font(pdfDocument, Type1Font.createStandardFont(name, encoding));
+        return new PdfType1Font(pdfDocument, Type1Font.createStandardFont(name), encoding);
     }
 
     public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics) throws IOException {
@@ -150,7 +162,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfFont createRegisteredFont(PdfDocument pdfDocument, String fontName, final String encoding, boolean embedded, int style, boolean cached) throws IOException {
-        FontProgram fontProgram = FontFactory.createRegisteredFont(fontName, encoding, style, cached);
+        FontProgram fontProgram = FontFactory.createRegisteredFont(fontName, style, cached);
         return createFont(pdfDocument, fontProgram, encoding, embedded);
     }
 
@@ -271,8 +283,19 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param binary  .pfb binary file
      */
     public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics, String binary, String encoding, boolean embedded) throws IOException {
-        return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary, encoding), embedded);
+        return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary), encoding, embedded);
     }
+
+    /**
+     * Create {@see PdfType1Font}.
+     *
+     * @param metrics path to .afm or .pfm metrics file.
+     * @param binary  .pfb binary file
+     */
+    public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics, String binary, boolean embedded) throws IOException {
+        return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary), PdfEncodings.WINANSI, embedded);
+    }
+
 
     public static PdfFont createType1Font(PdfDocument pdfDocument, byte[] metrics) throws IOException {
         return createType1Font(pdfDocument, metrics, null, PdfEncodings.WINANSI, false);
@@ -292,8 +315,18 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param metrics .afm or .pfm metrics file.
      * @param binary  .pfb binary file
      */
+    public static PdfFont createType1Font(PdfDocument pdfDocument, byte[] metrics, byte[] binary, boolean embedded) throws IOException {
+        return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary), PdfEncodings.WINANSI, embedded);
+    }
+
+    /**
+     * Create {@see PdfType1Font}.
+     *
+     * @param metrics .afm or .pfm metrics file.
+     * @param binary  .pfb binary file
+     */
     public static PdfFont createType1Font(PdfDocument pdfDocument, byte[] metrics, byte[] binary, String encoding, boolean embedded) throws IOException {
-        return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary, encoding), embedded);
+        return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary), encoding, embedded);
     }
 
     public PdfFont(PdfDocument pdfDocument, PdfDictionary pdfObject) {
@@ -619,13 +652,14 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * TODO strange comments
      * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
      * otherwise the font is read and output in a PdfStream object.
      *
      * @return the PdfStream containing the font or {@code null}, if there is an error reading the font.
      * @exception PdfException Method will throw exception if {@code fontStreamBytes} is {@code null}.
      */
-    protected PdfStream getFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
+    protected PdfStream getPdfFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
         if (fontStreamBytes == null) {
             throw new PdfException(PdfException.FontEmbeddingIssue);
         }
@@ -637,7 +671,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     protected static int[] compactRanges(ArrayList<int[]> ranges) {
-        ArrayList<int[]> simp = new ArrayList<int[]>();
+        ArrayList<int[]> simp = new ArrayList<>();
         for (int[] range : ranges) {
             for (int j = 0; j < range.length; j += 2) {
                 simp.add(new int[]{Math.max(0, Math.min(range[j], range[j + 1])), Math.min(0xffff, Math.max(range[j], range[j + 1]))});

@@ -3,10 +3,7 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public abstract class FontProgram {
 
@@ -18,24 +15,10 @@ public abstract class FontProgram {
     HashMap<Integer, Glyph> codeToGlyph = new HashMap<>();
     HashMap<Integer, Glyph> unicodeToGlyph = new HashMap<>();
 
-    /**
-     * Font encoding.
-     */
     protected FontEncoding encoding;
-    /**
-     * Contains the smallest box enclosing the character contours.
-     */
-    protected int[][] charBBoxes;
-    /**
-     * Table of characters widths for this simple font encoding.
-     */
-    protected int[] widths;
-
-    FontNames fontNames = new FontNames();
-
-    FontMetrics fontMetrics = new FontMetrics();
-
-    FontIdentification fontIdentification = new FontIdentification();
+    protected FontNames fontNames = new FontNames();
+    protected FontMetrics fontMetrics = new FontMetrics();
+    protected FontIdentification fontIdentification = new FontIdentification();
 
     /**
      * The font's encoding name. This encoding is 'StandardEncoding' or 'AdobeStandardEncoding' for a font
@@ -47,10 +30,6 @@ public abstract class FontProgram {
 
     public int countOfGlyphs() {
         return Math.max(codeToGlyph.size(), unicodeToGlyph.size());
-    }
-
-    public FontEncoding getEncoding() {
-        return encoding;
     }
 
     public FontNames getFontNames() {
@@ -65,39 +44,44 @@ public abstract class FontProgram {
         return fontIdentification;
     }
 
-    public void setWidths(int[] widths) {
-        this.widths = widths;
-    }
-
-    public int[] getWidths() {
-        return widths;
-    }
-
     public String getRegistry() {
         return registry;
     }
 
     public abstract int getPdfFontFlags();
 
-    protected abstract int getRawWidth(int c, String name);
-
-    protected abstract int[] getRawCharBBox(int c, String name);
-
     public abstract GlyphLine createGlyphLine(String content);
 
     /**
      * Get glyph's width.
-     * @param code char code, depends from implementation.
+     *
+     * @param unicode a unicode symbol or FontSpecif code.
      * @return Gets width in normalized 1000 units.
      */
-    public abstract int getWidth(int code);
+    public int getWidth(int unicode) {
+        Glyph glyph = getGlyph(unicode);
+        return glyph != null ? glyph.width : 0;
+    }
 
     /**
      * Get glyph's bbox.
-     * @param code char code, depends from implementation.
+     *
+     * @param unicode a unicode symbol or FontSpecif code.
      * @return Gets bbox in normalized 1000 units.
      */
-    public abstract int[] getCharBBox(int code);
+    public int[] getCharBBox(int unicode) {
+        Glyph glyph = getGlyph(unicode);
+        return glyph != null ? glyph.bbox : null;
+    }
+
+    public Glyph getGlyph(int unicode) {
+        return unicodeToGlyph.get(unicode);
+    }
+
+    // char code in case Type1 or index in case OpenType
+    public Glyph getGlyphByCode(int charCode) {
+        return codeToGlyph.get(charCode);
+    }
 
     public boolean hasKernPairs() {
         return false;
@@ -126,95 +110,6 @@ public abstract class FontProgram {
     //TODO change to protected!
     public void setRegistry(String registry) {
         this.registry = registry;
-    }
-
-    /**
-     * Creates the {@code widths} and the {@code differences} arrays.
-     */
-    protected void createEncoding() {
-        charBBoxes = new int[256][];
-        widths = new int[256];
-
-        if (encoding.isFontSpecific()) {
-            for (int k = 0; k < 256; ++k) {
-                widths[k] = getRawWidth(k, null);
-                charBBoxes[k] = getRawCharBBox(k, null);
-            }
-        } else {
-            String s;
-            String name;
-            char ch;
-            byte[] b = new byte[1];
-
-            for (int k = 0; k < 256; ++k) {
-                b[0] = (byte) k;
-                s = PdfEncodings.convertToString(b, encoding.getBaseEncoding());
-                if (s.length() > 0) {
-                    ch = s.charAt(0);
-                } else {
-                    ch = '?';
-                }
-                name = AdobeGlyphList.unicodeToName(ch);
-                if (name == null) {
-                    name = FontConstants.notdef;
-                }
-                encoding.setDifferences(k, name);
-                encoding.setUnicodeDifferences(k, ch);
-                widths[k] = getRawWidth(ch, name);
-                charBBoxes[k] = getRawCharBBox(ch, name);
-            }
-        }
-    }
-
-    /**
-     * Creates the {@code widths} and the {@code differences} arrays in case special user map-encoding.
-     * Encoding starts with '# simple …' or '# full …'.
-     */
-    protected void createSpecialEncoding() {
-        charBBoxes = new int[256][];
-        widths = new int[256];
-
-        StringTokenizer tok = new StringTokenizer(encoding.getBaseEncoding().substring(1), " ,\t\n\r\f");
-        if (tok.nextToken().equals("full")) {
-            while (tok.hasMoreTokens()) {
-                String order = tok.nextToken();
-                String name = tok.nextToken();
-                char uni = (char) Integer.parseInt(tok.nextToken(), 16);
-                int orderK;
-                if (order.startsWith("'")) {
-                    orderK = order.charAt(1);
-                } else {
-                    orderK = Integer.parseInt(order);
-                }
-                orderK %= 256;
-                encoding.getSpecialMap().put(uni, orderK);
-                encoding.setDifferences(orderK, name);
-                encoding.setUnicodeDifferences(orderK, uni);
-
-                widths[orderK] = getRawWidth(uni, name);
-                charBBoxes[orderK] = getRawCharBBox(uni, name);
-            }
-        } else {
-            int k = 0;
-            if (tok.hasMoreTokens()) {
-                k = Integer.parseInt(tok.nextToken());
-            }
-            while (tok.hasMoreTokens() && k < 256) {
-                String hex = tok.nextToken();
-                int uni = Integer.parseInt(hex, 16) % 0x10000;
-                String name = AdobeGlyphList.unicodeToName(uni);
-                if (name != null) {
-                    encoding.getSpecialMap().put(uni, k);
-                    encoding.setDifferences(k, name);
-                    encoding.setUnicodeDifferences(k, (char) uni);
-
-                    widths[k] = getRawWidth(uni, name);
-                    charBBoxes[k] = getRawCharBBox(uni, name);
-                    ++k;
-                }
-            }
-        }
-        encoding.fillEmptyDifferences();
     }
 
     /**

@@ -15,16 +15,6 @@ public class Type3Font extends FontProgram {
     }
 
     @Override
-    protected int getRawWidth(int c, String name) {
-        return getWidth(c);
-    }
-
-    @Override
-    protected int[] getRawCharBBox(int c, String name) {
-        return getCharBBox(c);
-    }
-
-    @Override
     public GlyphLine createGlyphLine(String content) {
         ArrayList<Glyph> glyphs = new ArrayList<>(content.length());
         for (int i = 0; i < content.length(); i++) {

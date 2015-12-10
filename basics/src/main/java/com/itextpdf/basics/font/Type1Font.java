@@ -52,37 +52,41 @@ public class Type1Font extends FontProgram {
         this.encoding = new FontEncoding(baseEncoding, fontSpecific);
     }
 
-    public static Type1Font createStandardFont(String name, String encoding) throws IOException {
+    public static Type1Font createStandardFont(String name) throws IOException {
         if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
-            return createFont(name, encoding);
+            return createFont(name);
         } else {
             throw new PdfException("1.is.not.a.standard.type1.font").setMessageParams(name);
         }
     }
 
-    public static Type1Font createFont(String metricsPath, String encoding) throws IOException {
-        return new Type1Font(metricsPath, null, null, null, encoding);
+    public static Type1Font createFont(String metricsPath) throws IOException {
+        return new Type1Font(metricsPath, null, null, null);
     }
 
-    public static Type1Font createFont(String metricsPath, String binaryPath, String encoding) throws IOException {
-        return new Type1Font(metricsPath, binaryPath, null, null, encoding);
+    public static Type1Font createFont(String metricsPath, String binaryPath) throws IOException {
+        return new Type1Font(metricsPath, binaryPath, null, null);
     }
 
-    public static Type1Font createFont(byte[] metricsData, String encoding) throws IOException {
-        return new Type1Font(null, null, metricsData, null, encoding);
+    public static Type1Font createFont(byte[] metricsData) throws IOException {
+        return new Type1Font(null, null, metricsData, null);
     }
 
-    public static Type1Font createFont(byte[] metricsData, byte[] binaryData, String encoding) throws IOException {
-        return new Type1Font(null, null, metricsData, binaryData, encoding);
+    public static Type1Font createFont(byte[] metricsData, byte[] binaryData) throws IOException {
+        return new Type1Font(null, null, metricsData, binaryData);
     }
 
-    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb, String encoding) throws IOException {
+    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws IOException {
         fontParser = new Type1Parser(metricsPath, binaryPath, afm, pfb);
-        process(encoding);
+        process();
     }
 
     public boolean isBuiltInFont() {
         return fontParser.isBuiltInFont();
+    }
+
+    public boolean isFontSpecific() {
+        return fontSpecific;
     }
 
     @Override
@@ -91,7 +95,7 @@ public class Type1Font extends FontProgram {
         if (fontMetrics.isFixedPitch()) {
             flags |= 1;
         }
-        flags |= getEncoding().isFontSpecific() ? 4 : 32;
+        flags |= isFontSpecific() ? 4 : 32;
         if (fontMetrics.getItalicAngle() < 0) {
             flags |= 64;
         }
@@ -151,27 +155,12 @@ public class Type1Font extends FontProgram {
      * @return Glyph instance if found, otherwise null.
      */
     public Glyph getGlyph(String name) {
-        return getGlyph(-1, name);
-    }
-
-    /**
-     * Find glyph by character code. Useful in case FontSpecific encoding.
-     * @param c char code
-     * @return Glyph instance if found, otherwise null.
-     */
-    public Glyph getGlyph(int c) {
-        return getGlyph(c, null);
-    }
-
-    /**
-     * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
-     * to the font's encoding.
-     *
-     * @param text the <CODE>String</CODE> to be converted
-     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
-     */
-    public byte[] convertToBytes(String text) {
-        return encoding.convertToBytes(text);
+        Integer unicode = AdobeGlyphList.nameToUnicode(name);
+        if (unicode == null) {
+            return null;
+        } else {
+            return getGlyph(unicode);
+        }
     }
 
     @Override
@@ -200,69 +189,6 @@ public class Type1Font extends FontProgram {
             }
         }
         return new GlyphLine(glyphs);
-    }
-
-    /**
-     * Gets the width from the font according to the {@code name} or,
-     * if the {@code name} is null, meaning it is a symbolic font,
-     * the char {@code c}.
-     *
-     * @param c    the char if the font is symbolic
-     * @param name the glyph name
-     * @return the width of the char
-     */
-    @Override
-    protected int getRawWidth(int c, String name) {
-        //TODO add test with '.notdef' and incorrect 'glyph name'.
-        Glyph glyph = getGlyph(c, name);
-        if (glyph != null) {
-            return glyph.width;
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    protected int[] getRawCharBBox(int c, String name) {
-        Glyph glyph = getGlyph(c, name);
-        if (glyph != null) {
-            return glyph.bbox;
-        } else {
-            return null;
-        }
-    }
-
-    protected Glyph getGlyph(int c, String name) {
-        //TODO may be only PdfFont should use String name while FontProgram should use unicode notation?
-        //TODO Do not forget about ABBYY fonts and FontProgram as basics level
-        if (name == null) {
-            return codeToGlyph.get(c);
-        } else if (c > -1) { // TODO specific internal usecase, may be no need?
-            return unicodeToGlyph.get(AdobeGlyphList.nameToUnicode(name));
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Gets the width of a {@code char} in normalized 1000 units.
-     *
-     * @param code the char code of glyph
-     * @return the width in normalized 1000 units
-     */
-    @Override
-    public int getWidth(int code) {
-        return widths[code];
-    }
-
-    /**
-     * Get glyph's bbox.
-     * @param code char code, depends from implementation.
-     * @return Gets bbox in normalized 1000 units.
-     */
-    @Override
-    public int[] getCharBBox(int code) {
-        return charBBoxes[code];
     }
 
     public byte[] getFontStreamBytes() {
@@ -323,7 +249,7 @@ public class Type1Font extends FontProgram {
         return fontStreamLengths;
     }
 
-    protected void process(String baseEncoding) throws IOException {
+    protected void process() throws IOException {
         RandomAccessFileOrArray raf = fontParser.getMetricsFile();
         String line;
         boolean startKernPairs = false;
@@ -465,7 +391,7 @@ public class Type1Font extends FontProgram {
             }
         }
 
-        //From AdobeGlyphList:
+        // From AdobeGlyphList:
         // nonbreakingspace;00A0
         // space;0020
         if (!unicodeToGlyph.containsKey(0x00A0)) {
@@ -533,11 +459,5 @@ public class Type1Font extends FontProgram {
         raf.close();
 
         fontSpecific = !(encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding"));
-        encoding = new FontEncoding(baseEncoding, fontSpecific);
-        if (encoding.hasSpecialEncoding()) {
-            createSpecialEncoding();
-        } else {
-            createEncoding();
-        }
     }
 }
