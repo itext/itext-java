@@ -14,7 +14,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.BaseFont;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -117,7 +116,7 @@ public class EncodingTest {
         Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
-    @Test @Ignore ("output should be as notdefInType0Test")
+    @Test
     public void notdefInStandardFontTest() throws IOException, InterruptedException {
         String fileName = "notdefInStandardFontTest.pdf";
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
@@ -135,7 +134,7 @@ public class EncodingTest {
                 endText().
                 restoreState();
 
-        font = PdfFont.createFont(doc, FontConstants.TIMES_ROMAN, PdfEncodings.WINANSI);
+        font = PdfFont.createFont(doc, FontConstants.HELVETICA, PdfEncodings.WINANSI);
         canvas.
                 saveState().
                 beginText().
@@ -151,13 +150,12 @@ public class EncodingTest {
         Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
-    @Test @Ignore ("output should be as notdefInType0Test")
+    @Test
     public void notdefInTrueTypeFontTest() throws IOException, InterruptedException {
         String fileName = "notdefInTrueTypeFontTest.pdf";
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
-
-        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", "# simple 32 0020 00C5 1987");
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", "# simple 32 0020 00C5 1987", true);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
                 saveState().
@@ -167,8 +165,7 @@ public class EncodingTest {
                 showText("Å \u1987").
                 endText().
                 restoreState();
-
-        font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", PdfEncodings.WINANSI);
+        font = PdfFont.createFont(doc, sourceFolder + "FreeSans.ttf", PdfEncodings.WINANSI, true);
         canvas.
                 saveState().
                 beginText().
@@ -215,7 +212,7 @@ public class EncodingTest {
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         String str = new String();
         for (int i = 32; i <= 100; i++) {
-            str+= (char)i;
+            str += (char)i;
         }
         canvas.
                 saveState().
@@ -227,7 +224,7 @@ public class EncodingTest {
 
         str = "";
         for (int i = 101; i <= 190; i++) {
-            str+= (char)i;
+            str += (char)i;
         }
         canvas.
                 saveState().
@@ -238,7 +235,7 @@ public class EncodingTest {
                 endText();
         str = "";
         for (int i = 191; i <= 254; i++) {
-            str+= (char)i;
+            str += (char)i;
         }
         canvas.
                 beginText().
@@ -266,8 +263,8 @@ public class EncodingTest {
         canvas.
                 saveState().
                 beginText().
-                moveText(36, 806).
-                setFontAndSize(font, 12).
+                moveText(36, 786).
+                setFontAndSize(font, 36).
                 showText(str).
                 endText();
 
@@ -278,8 +275,8 @@ public class EncodingTest {
         canvas.
                 saveState().
                 beginText().
-                moveText(36, 786).
-                setFontAndSize(font, 12).
+                moveText(36, 766).
+                setFontAndSize(font, 36).
                 showText(str).
                 endText();
         str = "";
@@ -288,7 +285,8 @@ public class EncodingTest {
         }
         canvas.
                 beginText().
-                moveText(36, 766).
+                moveText(36, 746).
+                setFontAndSize(font, 36).
                 showText(str).
                 endText().
                 restoreState();

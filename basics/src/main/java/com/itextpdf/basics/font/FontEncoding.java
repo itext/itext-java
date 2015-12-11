@@ -1,11 +1,7 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.LogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
 import java.util.StringTokenizer;
 
 public class FontEncoding {
@@ -103,17 +99,17 @@ public class FontEncoding {
         byte[] bytes = new byte[text.length()];
         for (int i = 0; i < text.length(); i++) {
             if (unicodeToCode.containsKey(text.charAt(i))) {
-                bytes[ptr++] = (byte) unicodeToCode.get(i);
+                bytes[ptr++] = convertToByte(text.charAt(i));
             }
         }
 
         if (ptr < bytes.length) {
-            byte[] b2 = new byte[ptr];
-            System.arraycopy(bytes, 0, b2, 0, ptr);
-            return b2;
-        } else {
-            return bytes;
+            byte[] tmp = new byte[ptr];
+            System.arraycopy(bytes, 0, tmp, 0, ptr);
+            bytes = tmp;
         }
+
+        return  bytes;
     }
 
     /**
@@ -164,22 +160,17 @@ public class FontEncoding {
                 String name = tok.nextToken();
                 char uni = (char) Integer.parseInt(tok.nextToken(), 16);
                 Integer uniName = AdobeGlyphList.nameToUnicode(name);
-                if (uniName != null) {
-                    int orderK;
-                    if (order.startsWith("'")) {
-                        orderK = order.charAt(1);
-                    } else {
-                        orderK = Integer.parseInt(order);
-                    }
-                    orderK %= 256;
-                    unicodeToCode.put(uni, orderK);
-                    codeToUnicode[orderK] = (int) uni;
-                    differences[orderK] = name;
-                    unicodeDifferences.put(uni, uniName);
+                int orderK;
+                if (order.startsWith("'")) {
+                    orderK = order.charAt(1);
                 } else {
-                    Logger logger = LoggerFactory.getLogger(FontEncoding.class);
-                    logger.warn(MessageFormat.format(LogMessageConstant.UnknowGlyphName1EntityWillBeIgnored, name));
+                    orderK = Integer.parseInt(order);
                 }
+                orderK %= 256;
+                unicodeToCode.put(uni, orderK);
+                codeToUnicode[orderK] = (int) uni;
+                differences[orderK] = name;
+                unicodeDifferences.put(uni, uniName != null ? uniName : -1);
             }
         } else {
             int k = 0;
@@ -190,13 +181,14 @@ public class FontEncoding {
                 String hex = tok.nextToken();
                 int uni = Integer.parseInt(hex, 16) % 0x10000;
                 String name = AdobeGlyphList.unicodeToName(uni);
-                if (name != null) {
-                    unicodeToCode.put(uni, k);
-                    codeToUnicode[k] = uni;
-                    differences[k] = name;
-                    unicodeDifferences.put(uni, uni);
-                    k++;
+                if (name == null) {
+                    name = "uni" + hex;
                 }
+                unicodeToCode.put(uni, k);
+                codeToUnicode[k] = uni;
+                differences[k] = name;
+                unicodeDifferences.put(uni, uni);
+                k++;
             }
         }
         for (int k = 0; k < 256; k++) {

@@ -343,6 +343,9 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         this.isCopy = isCopy;
     }
 
+    //TODO remove
+    public Glyph getGlyph(int ch) {throw new RuntimeException();}
+
     /**
      * Converts the text into bytes to be placed in the document.
      * The conversion is done according to the font and the encoding and the characters

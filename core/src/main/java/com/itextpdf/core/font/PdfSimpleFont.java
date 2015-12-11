@@ -48,46 +48,44 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return fontProgram;
     }
 
-    @Override
-    public byte[] convertToBytes(String text) {
-        if (text == null || text.length() == 0) {
-            return emptyBytes;
-        }
-        int ptr = 0;
-        byte[] bytes = new byte[text.length()];
-        for (int i = 0; i < text.length(); i++) {
-            if (containsGlyph(text.charAt(i))) {
-                bytes[ptr++] = fontEncoding.convertToByte(text.charAt(i));
-            }
-        }
-
-        if (ptr < bytes.length) {
-            byte[] tmp = new byte[ptr];
-            System.arraycopy(bytes, 0, tmp, 0, ptr);
-            bytes = tmp;
-        }
-
-        for (byte b : bytes) {
-            shortTag[b & 0xff] = 1;
-        }
-        return bytes;
-    }
-
-//    TODO handling notdef symbols
 //    @Override
 //    public byte[] convertToBytes(String text) {
-//        byte[] bytes = fontEncoding.convertToBytes(text);
+//        if (text == null || text.length() == 0) {
+//            return emptyBytes;
+//        }
+//        int ptr = 0;
+//        byte[] bytes = new byte[text.length()];
+//        for (int i = 0; i < text.length(); i++) {
+//            if (containsGlyph(text.charAt(i))) {
+//                bytes[ptr++] = fontEncoding.convertToByte(text.charAt(i));
+//            }
+//        }
+//
+//        if (ptr < bytes.length) {
+//            byte[] tmp = new byte[ptr];
+//            System.arraycopy(bytes, 0, tmp, 0, ptr);
+//            bytes = tmp;
+//        }
+//
 //        for (byte b : bytes) {
 //            shortTag[b & 0xff] = 1;
 //        }
 //        return bytes;
 //    }
 
+//    TODO handling notdef symbols
+    @Override
+    public byte[] convertToBytes(String text) {
+        byte[] bytes = fontEncoding.convertToBytes(text);
+        for (byte b : bytes) {
+            shortTag[b & 0xff] = 1;
+        }
+        return bytes;
+    }
+
     protected boolean containsGlyph(char ch) {
         return getGlyph(ch) != null;
     }
-
-    public abstract Glyph getGlyph(int ch);
 
     /**
      * Returns the width of a certain character of this font.
