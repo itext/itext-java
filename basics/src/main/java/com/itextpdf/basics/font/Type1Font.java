@@ -3,11 +3,9 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -27,8 +25,6 @@ public class Type1Font extends FontProgram {
     private String characterSet;
 
     private boolean fontSpecific;
-
-    HashMap<Integer, Glyph> notFoundGlyphs = new HashMap<>();
 
     /**
      * Represents the section KernPairs in the AFM file.
@@ -161,34 +157,6 @@ public class Type1Font extends FontProgram {
         } else {
             return getGlyph(unicode);
         }
-    }
-
-    @Override
-    public GlyphLine createGlyphLine(String content) {
-        ArrayList<Glyph> glyphs = new ArrayList<>(content.length());
-        for (int i = 0; i < content.length(); i++) {
-            Glyph glyph;
-            if (fontSpecific) {
-                glyph = codeToGlyph.get(content.charAt(i) & 0xff);
-            } else {
-                Integer unicode = (int) content.charAt(i);
-                glyph = unicodeToGlyph.get(unicode);
-                if (glyph == null) {
-                    // Handle special glyphs like sfthyphen (00AD).
-                    // This glyphs will be skipped while converting to bytes
-                    if (notFoundGlyphs.containsKey(unicode)) {
-                        glyph = notFoundGlyphs.get(unicode);
-                    } else {
-                        glyph = new Glyph(-1, 0, unicode, null);
-                        notFoundGlyphs.put(unicode, glyph);
-                    }
-                }
-            }
-            if (glyph != null) {
-                glyphs.add(glyph);
-            }
-        }
-        return new GlyphLine(glyphs);
     }
 
     public byte[] getFontStreamBytes() {

@@ -22,6 +22,7 @@ import com.itextpdf.core.pdf.PdfStream;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected PdfDictionary fontDictionary;
 
     protected boolean isCopy = false;
+
+    HashMap<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
     /**
      * true if the font is to be embedded in the PDF.
@@ -45,7 +48,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws IOException {
         return createStandardFont(pdfDocument, FontConstants.HELVETICA, PdfEncodings.WINANSI);
-
     }
 
     public static PdfFont createFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
@@ -114,7 +116,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             return null;
         }
     }
-
 
     public static PdfFont createFont(PdfDocument pdfDocument, byte[] font, String encoding) throws IOException {
         return createFont(pdfDocument, font, encoding, false);
@@ -198,7 +199,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param path the path to a ttf- or ttc-file
      */
-
     public static void register(final String path) {
         register(path, null);
     }
@@ -209,7 +209,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param path  the path to a font file
      * @param alias the alias you want to use for the font
      */
-
     public static void register(final String path, final String alias) {
         FontFactory.register(path, alias);
     }
@@ -239,7 +238,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return a set of registered fonts
      */
-
     public static Set<String> getRegisteredFonts() {
         return FontFactory.getRegisteredFonts();
     }
@@ -249,7 +247,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return a set of registered font families
      */
-
     public static Set<String> getRegisteredFamilies() {
         return FontFactory.getRegisteredFamilies();
     }
@@ -260,7 +257,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param fontname of a font that may or may not be registered
      * @return true if a given font is registered
      */
-
     public static boolean contains(final String fontname) {
         return FontFactory.isRegistered(fontname);
     }
@@ -271,7 +267,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param fontname the name of the font that has to be checked.
      * @return true if the font is found
      */
-
     public static boolean isRegistered(final String fontname) {
         return FontFactory.isRegistered(fontname);
     }
@@ -295,7 +290,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public static PdfFont createType1Font(PdfDocument pdfDocument, String metrics, String binary, boolean embedded) throws IOException {
         return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary), PdfEncodings.WINANSI, embedded);
     }
-
 
     public static PdfFont createType1Font(PdfDocument pdfDocument, byte[] metrics) throws IOException {
         return createType1Font(pdfDocument, metrics, null, PdfEncodings.WINANSI, false);
@@ -343,8 +337,17 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         this.isCopy = isCopy;
     }
 
-    //TODO remove
+    //TODO as abstract + comments!
     public Glyph getGlyph(int ch) {throw new RuntimeException();}
+
+    public boolean containsGlyph(char ch) {
+        return getGlyph(ch) != null;
+    }
+
+    //TODO remove
+    public GlyphLine createGlyphLine(String content) {
+        throw new RuntimeException();
+    }
 
     /**
      * Converts the text into bytes to be placed in the document.
@@ -593,7 +596,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType) {
         return checkFontDictionary(fontDic, fontType, true);
     }
-
 
     protected boolean checkTrueTypeFontDictionary(PdfDictionary fontDic) {
         return checkTrueTypeFontDictionary(fontDic, true);

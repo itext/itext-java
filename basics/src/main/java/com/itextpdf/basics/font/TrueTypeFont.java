@@ -284,7 +284,7 @@ public class TrueTypeFont extends FontProgram {
         return false;
     }
 
-    @Override
+    //TODO remove
     public GlyphLine createGlyphLine(String text) {
         ArrayList<Glyph> glyphs = new ArrayList<>(text.length());
         if (isFontSpecific()) {

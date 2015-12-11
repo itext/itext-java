@@ -1,7 +1,9 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontEncoding;
+import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.cmap.CMapLocation;
 import com.itextpdf.basics.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.basics.font.cmap.CMapParser;
@@ -33,8 +35,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     protected byte[] shortTag = new byte[256];
 
-    private static final byte[] emptyBytes = new byte[0];
-
     public PdfSimpleFont(PdfDocument document, PdfDictionary pdfDictionary) {
         super(document, pdfDictionary);
     }
@@ -48,32 +48,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return fontProgram;
     }
 
-//    @Override
-//    public byte[] convertToBytes(String text) {
-//        if (text == null || text.length() == 0) {
-//            return emptyBytes;
-//        }
-//        int ptr = 0;
-//        byte[] bytes = new byte[text.length()];
-//        for (int i = 0; i < text.length(); i++) {
-//            if (containsGlyph(text.charAt(i))) {
-//                bytes[ptr++] = fontEncoding.convertToByte(text.charAt(i));
-//            }
-//        }
-//
-//        if (ptr < bytes.length) {
-//            byte[] tmp = new byte[ptr];
-//            System.arraycopy(bytes, 0, tmp, 0, ptr);
-//            bytes = tmp;
-//        }
-//
-//        for (byte b : bytes) {
-//            shortTag[b & 0xff] = 1;
-//        }
-//        return bytes;
-//    }
-
-//    TODO handling notdef symbols
     @Override
     public byte[] convertToBytes(String text) {
         byte[] bytes = fontEncoding.convertToBytes(text);
@@ -81,10 +55,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             shortTag[b & 0xff] = 1;
         }
         return bytes;
-    }
-
-    protected boolean containsGlyph(char ch) {
-        return getGlyph(ch) != null;
     }
 
     /**

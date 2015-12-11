@@ -72,7 +72,7 @@ public class CidFont extends FontProgram {
         return pdfFontFlags;
     }
 
-    @Override
+    //TODO remove
     public GlyphLine createGlyphLine(String content) {
         return null;
     }

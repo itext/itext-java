@@ -50,8 +50,6 @@ public abstract class FontProgram {
 
     public abstract int getPdfFontFlags();
 
-    public abstract GlyphLine createGlyphLine(String content);
-
     /**
      * Get glyph's width.
      *

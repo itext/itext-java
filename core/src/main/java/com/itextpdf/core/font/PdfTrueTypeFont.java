@@ -1,16 +1,25 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.font.FontEncoding;
+import com.itextpdf.basics.font.FontNames;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +60,17 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     public Glyph getGlyph(int ch) {
         if (fontEncoding.canEncode(ch)) {
-            return getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(ch));
+            Glyph glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(ch));
+            //TODO TrueType what if font is specific?
+            if (glyph == null && (glyph = notdefGlyphs.get(ch)) == null) {
+                Glyph notdef = getFontProgram().getGlyphByCode(0);
+                if (notdef != null) {
+                    glyph = new Glyph(getFontProgram().getGlyphByCode(0), ch);
+                    notdefGlyphs.put(ch, glyph);
+                }
+            }
+            return glyph;
         }
-        // TODO to return notdef -> override
         return null;
     }
 
@@ -184,7 +201,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
         return fontDescriptor;
     }
-
 
     @Override
     protected TrueTypeFont initializeTypeFontForCopy(String encodingName) {

@@ -257,7 +257,7 @@ public class EncodingTest {
         PdfFont font = PdfFont.createFont(doc, sourceFolder + "Symbols1.ttf", true);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         String str = new String();
-        for (int i = 32; i <= 100; i++) {
+        for (int i = 32; i <= 65; i++) {
             str+= (char)i;
         }
         canvas.
@@ -269,13 +269,13 @@ public class EncodingTest {
                 endText();
 
         str = "";
-        for (int i = 101; i <= 190; i++) {
+        for (int i = 65; i <= 190; i++) {
             str+= (char)i;
         }
         canvas.
                 saveState().
                 beginText().
-                moveText(36, 766).
+                moveText(36, 756).
                 setFontAndSize(font, 36).
                 showText(str).
                 endText();
@@ -285,7 +285,7 @@ public class EncodingTest {
         }
         canvas.
                 beginText().
-                moveText(36, 746).
+                moveText(36, 726).
                 setFontAndSize(font, 36).
                 showText(str).
                 endText().

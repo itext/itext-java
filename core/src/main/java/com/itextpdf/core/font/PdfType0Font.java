@@ -136,8 +136,16 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override
     public Glyph getGlyph(int ch) {
+        // TODO handle unicode value with cmap and use only glyphByCode
         Glyph glyph = getFontProgram().getGlyph(ch);
-        return glyph != null ? glyph : getFontProgram().getGlyphByCode(0);
+        if (glyph == null && (glyph = notdefGlyphs.get(ch)) == null) {
+            Glyph notdef = getFontProgram().getGlyphByCode(0);
+            if (notdef != null) {
+                glyph = new Glyph(getFontProgram().getGlyphByCode(0), ch);
+                notdefGlyphs.put(ch, glyph);
+            }
+        }
+        return glyph;
     }
 
     @Override
@@ -354,7 +362,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 min = fontProgram.getFontMetrics().getTypoDescender();
             }
         }
-
         return min;
     }
 
