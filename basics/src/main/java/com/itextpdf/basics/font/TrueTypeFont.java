@@ -159,7 +159,7 @@ public class TrueTypeFont extends FontProgram {
 
                 if (clusters != null && clusters.size() > 0) {
                     for (IndicCluster cluster : clusters) {
-                        IndicShaper.setIndicProperties(cluster);
+                        //IndicShaper.setIndicProperties(cluster);
 
                         IndicConfig devanagariConfig = new IndicConfig.DevanagariConfig();
                         boolean isOldSpec = devanagariConfig.hasOldSpec() && !otfScriptTag.endsWith("2");
@@ -211,15 +211,15 @@ public class TrueTypeFont extends FontProgram {
                     }
                     int lastFinish = glyphLine.start;
                     for (IndicCluster cluster : clusters) {
-                        if (cluster.glyphLineStart > lastFinish) {
-                            for (int j = lastFinish; j < cluster.glyphLineStart; j++) {
+                        if (cluster.originalGlyphLineStart > lastFinish) {
+                            for (int j = lastFinish; j < cluster.originalGlyphLineStart; j++) {
                                 glyphs.add(glyphLine.glyphs.get(j));
                             }
                         }
                         for (int j = 0; j < cluster.glyphs.size(); j++) {
                             glyphs.add(cluster.glyphs.get(j));
                         }
-                        lastFinish = cluster.glyphLineEnd;
+                        lastFinish = cluster.originalGlyphLineEnd;
                     }
                     for (int j = lastFinish; j < glyphLine.end; j++) {
                         glyphs.add(glyphLine.glyphs.get(j));
