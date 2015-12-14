@@ -318,7 +318,7 @@ public class TextRenderer extends AbstractRenderer {
 
             if (result != null) {
                 TextRenderer[] split = split(currentTextPos);
-                if (split[1].length() > 0 && split[1].charAt(0) == '\n')
+                if (split[1].length() > 0 && split[1].charAt(0) != null && split[1].charAt(0) == '\n')
                     result.setSplitForcedByNewline(true);
                 result.setSplitRenderer(split[0]);
                 result.setOverflowRenderer(split[1]);
@@ -486,7 +486,8 @@ public class TextRenderer extends AbstractRenderer {
     public void trimFirst() {
         convertWaitingStringToGlyphLine();
 
-        while (text.start < text.end && Character.isWhitespace(text.glyphs.get(text.start).unicode)) {
+        Glyph glyph;
+        while (text.start < text.end && (glyph = text.glyphs.get(text.start)).unicode != null && Character.isWhitespace(glyph.unicode)) {
             text.start++;
         }
     }
@@ -508,12 +509,13 @@ public class TextRenderer extends AbstractRenderer {
 
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= 0) {
-            if (!Character.isWhitespace(line.glyphs.get(firstNonSpaceCharIndex).unicode)) {
+            Glyph currentGlyph = line.glyphs.get(firstNonSpaceCharIndex);
+            if (currentGlyph.unicode == null || !Character.isWhitespace(currentGlyph.unicode)) {
                 break;
             }
 
-            float currentCharWidth = getCharWidth(line.glyphs.get(firstNonSpaceCharIndex), fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-            float kerning = (firstNonSpaceCharIndex != 0 ? getKerning(line.glyphs.get(firstNonSpaceCharIndex), line.glyphs.get(firstNonSpaceCharIndex), font, fontSize, hScale) : 0) / TEXT_SPACE_COEFF;
+            float currentCharWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+            float kerning = (firstNonSpaceCharIndex != 0 ? getKerning(line.glyphs.get(firstNonSpaceCharIndex - 1), currentGlyph, font, fontSize, hScale) : 0) / TEXT_SPACE_COEFF;
             trimmedSpace += currentCharWidth - kerning;
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
 
@@ -577,7 +579,7 @@ public class TextRenderer extends AbstractRenderer {
      * @param pos the position in range [0; length())
      * @return Unicode char code
      */
-    public int charAt(int pos) {
+    public Integer charAt(int pos) {
         return text.glyphs.get(pos + text.start).unicode;
     }
 
