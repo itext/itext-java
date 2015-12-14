@@ -61,34 +61,6 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     }
 
     @Override
-    public GlyphLine createGlyphLine(String content) {
-        ArrayList<Glyph> glyphs = new ArrayList<>(content.length());
-        for (int i = 0; i < content.length(); i++) {
-            Glyph glyph;
-            if (fontEncoding.isFontSpecific()) {
-                glyph = fontProgram.getGlyphByCode(content.charAt(i) & 0xff);
-            } else {
-                Integer unicode = (int) content.charAt(i);
-                glyph = getGlyph(unicode);
-                if (glyph == null) {
-                    // Handle special glyphs like sfthyphen (00AD).
-                    // This glyphs will be skipped while converting to bytes
-                    if (notdefGlyphs.containsKey(unicode)) {
-                        glyph = notdefGlyphs.get(unicode);
-                    } else {
-                        glyph = new Glyph(-1, 0, unicode, null);
-                        notdefGlyphs.put(unicode, glyph);
-                    }
-                }
-            }
-            if (glyph != null) {
-                glyphs.add(glyph);
-            }
-        }
-        return new GlyphLine(glyphs);
-    }
-
-    @Override
     public void flush() {
         if (isCopy) {
             flushCopyFontData();
@@ -115,7 +87,10 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
             } else {
                 glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(ch));
                 if (glyph == null && (glyph = notdefGlyphs.get(ch)) == null) {
-                    notdefGlyphs.put(ch, new Glyph(-1, 0, ch));
+                    // Handle special layout characters like sfthyphen (00AD).
+                    // This glyphs will be skipped while converting to bytes
+                    glyph = new Glyph(-1, 0, ch);
+                    notdefGlyphs.put(ch, glyph);
                 }
             }
             return glyph;

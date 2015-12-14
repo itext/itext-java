@@ -284,29 +284,6 @@ public class TrueTypeFont extends FontProgram {
         return false;
     }
 
-    //TODO remove
-    public GlyphLine createGlyphLine(String text) {
-        ArrayList<Glyph> glyphs = new ArrayList<>(text.length());
-        if (isFontSpecific()) {
-            byte[] bytes = PdfEncodings.convertToBytes(text, "symboltt");
-            for (byte b : bytes) {
-                glyphs.add(getMetrics(b & 0xff));
-            }
-        } else {
-            for (int k = 0; k < text.length(); ++k) {
-                int val;
-                if (Utilities.isSurrogatePair(text, k)) {
-                    val = Utilities.convertToUtf32(text, k);
-                    k++;
-                } else {
-                    val = text.charAt(k);
-                }
-                glyphs.add(getMetrics(val));
-            }
-        }
-        return new GlyphLine(glyphs);
-    }
-
     public GlyphLine createGlyphLine(char[] glyphs, Integer length) {
         ArrayList<Glyph> glyphLine = new ArrayList<>(length);
         for (int k = 0; k < length; k++) {
@@ -338,24 +315,6 @@ public class TrueTypeFont extends FontProgram {
             return 0;
         }
         return kerning.get((first.index << 16) + second.index);
-    }
-
-    /**
-     * Gets the glyph index and metrics for a character.
-     *
-     * @param charCode the character code
-     * @return an {@code int} array with {glyph index, width}
-     */
-    //TODO remove this method. Generation of notdef glyphs should be done by PdfFont
-    public Glyph getMetrics(int charCode) {
-        Glyph result = unicodeToGlyph.get(charCode);
-        // special use case for not found glyphs
-        // in this case we should use .notdef glyph, but correct unicode value.
-        if (result == null) {
-            result = new Glyph(codeToGlyph.get(0), charCode);
-            unicodeToGlyph.put(charCode, result);
-        }
-        return result;
     }
 
     public boolean isCff() {

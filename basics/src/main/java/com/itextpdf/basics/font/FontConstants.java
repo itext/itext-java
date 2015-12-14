@@ -271,6 +271,8 @@ public class FontConstants {
      */
     public static final String notdef = ".notdef";
 
+    public static final double[] DefaultFontMatrix = {0.001, 0, 0, 0.001, 0, 0};
+
     //-TrueType constants-----------------------------------------------------------------------------------------------
 
     protected static final int HEAD_LOCA_FORMAT_OFFSET = 51;

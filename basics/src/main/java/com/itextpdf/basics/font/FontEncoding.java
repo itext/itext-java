@@ -1,6 +1,7 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.IntHashtable;
+import com.itextpdf.basics.Utilities;
 
 import java.util.StringTokenizer;
 
@@ -102,14 +103,7 @@ public class FontEncoding {
                 bytes[ptr++] = convertToByte(text.charAt(i));
             }
         }
-
-        if (ptr < bytes.length) {
-            byte[] tmp = new byte[ptr];
-            System.arraycopy(bytes, 0, tmp, 0, ptr);
-            bytes = tmp;
-        }
-
-        return  bytes;
+        return  Utilities.shortenArray(bytes, ptr);
     }
 
     /**

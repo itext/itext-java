@@ -29,6 +29,8 @@ import java.util.Set;
 
 public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
+    protected static final byte[] emptyBytes = new byte[0];
+
     protected PdfDictionary fontDictionary;
 
     protected boolean isCopy = false;
@@ -357,12 +359,14 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param text the text to convert
      * @return the conversion
      */
+    //TODO abstract
     public byte[] convertToBytes(String text) {
         //TODO when implement document fonts, throw exception
         //throw new IllegalStateException();
         return PdfEncodings.convertToBytes(text, "");
     }
 
+    //TODO abstract
     public byte[] convertToBytes(GlyphLine glyphLine) {
         // TODO implement correctly for all fonts after moved to GlyphLines without intermediate unicode conversion
         // convert to printable array
@@ -375,12 +379,17 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return convertToBytes(sb.toString());
     }
 
+    //TODO abstract
     public byte[] convertToBytes(Glyph glyph) {
         // TODO implement correctly for all fonts after moved to GlyphLines without intermediate unicode conversion
         if (glyph.unicode != null) {
             return convertToBytes(Utilities.convertFromUtf32(glyph.unicode));
         }
         throw new IllegalStateException();
+    }
+
+    public double[] getFontMatrix() {
+        return FontConstants.DefaultFontMatrix;
     }
 
     /**

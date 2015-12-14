@@ -14,6 +14,11 @@ public class Type3Font extends FontProgram {
         return 0;
     }
 
+    @Override
+    public boolean isFontSpecific() {
+        return false;
+    }
+
     //TODO remove
     public GlyphLine createGlyphLine(String content) {
         ArrayList<Glyph> glyphs = new ArrayList<>(content.length());

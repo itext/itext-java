@@ -66,6 +66,11 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return charGlyphs;
     }
 
+    @Override
+    public double[] getFontMatrix() {
+        return fontProgram.getFontMatrix();
+    }
+
     /**
      * Defines a glyph. If the character was already defined it will return the same content
      *

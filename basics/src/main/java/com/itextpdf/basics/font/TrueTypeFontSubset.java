@@ -76,7 +76,7 @@ class TrueTypeFontSubset {
         this.includeCmap = includeCmap;
         this.includeExtras = includeExtras;
         this.directoryOffset = directoryOffset;
-        glyphsInList = new ArrayList<Integer>(glyphsUsed);
+        glyphsInList = new ArrayList<>(glyphsUsed);
     }
 
     /**
@@ -189,7 +189,7 @@ class TrueTypeFontSubset {
     }
 
     protected void createTableDirectory() throws IOException {
-        tableDirectory = new HashMap<String, int[]>();
+        tableDirectory = new HashMap<>();
         rf.seek(directoryOffset);
         int id = rf.readInt();
         if (id != 0x00010000) {

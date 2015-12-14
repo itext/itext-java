@@ -50,6 +50,8 @@ public abstract class FontProgram {
 
     public abstract int getPdfFontFlags();
 
+    public abstract boolean isFontSpecific();
+
     /**
      * Get glyph's width.
      *

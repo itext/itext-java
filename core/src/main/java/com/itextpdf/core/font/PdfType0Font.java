@@ -139,18 +139,22 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         // TODO handle unicode value with cmap and use only glyphByCode
         Glyph glyph = getFontProgram().getGlyph(ch);
         if (glyph == null && (glyph = notdefGlyphs.get(ch)) == null) {
+            // Handle special layout characters like sfthyphen (00AD).
+            // This glyphs will be skipped while converting to bytes
             Glyph notdef = getFontProgram().getGlyphByCode(0);
             if (notdef != null) {
-                glyph = new Glyph(getFontProgram().getGlyphByCode(0), ch);
-                notdefGlyphs.put(ch, glyph);
+                glyph = new Glyph(notdef, ch);
+            } else {
+                glyph = new Glyph(-1, 0, ch);
             }
+            notdefGlyphs.put(ch, glyph);
         }
         return glyph;
     }
 
     @Override
     public byte[] convertToBytes(String text) {
-        //TODO type could be removed after simplifying longTag
+        //TODO different with type0 and type2 could be removed after simplifying longTag
         if (cidFontType == CidFontType0) {
             int len = text.length();
             if (isIdentity()) {
@@ -279,6 +283,63 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("TrueTypeFont", e);
         }
+    }
+
+    @Override
+    public GlyphLine createGlyphLine(String content) {
+        ArrayList<Glyph> glyphs = new ArrayList<>();
+        //TODO different with type0 and type2 could be removed after simplifying longTag
+        if (cidFontType == CidFontType0) {
+            int len = content.length();
+            if (isIdentity()) {
+                for (int k = 0; k < len; ++k) {
+                    Glyph glyph = fontProgram.getGlyphByCode((int) content.charAt(k));
+                    if (glyph != null) {
+                        glyphs.add(glyph);
+                    }
+                }
+            } else {
+                for (int k = 0; k < len; ++k) {
+                    int ch;
+                    if (Utilities.isSurrogatePair(content, k)) {
+                        ch = Utilities.convertToUtf32(content, k);
+                        k++;
+                    } else {
+                        ch = content.charAt(k);
+                    }
+                    glyphs.add(getGlyph(ch));
+                }
+            }
+        } else if (cidFontType == CidFontType2) {
+            TrueTypeFont ttf = (TrueTypeFont) fontProgram;
+            int len = content.length();
+
+            if (ttf.isFontSpecific()) {
+                byte[] b = PdfEncodings.convertToBytes(content, "symboltt");
+                len = b.length;
+                for (int k = 0; k < len; ++k) {
+                    Glyph glyph = fontProgram.getGlyph(b[k] & 0xff);
+                    if (glyph != null) {
+                        glyphs.add(glyph);
+                    }
+                }
+            } else {
+                for (int k = 0; k < len; ++k) {
+                    int val;
+                    if (Utilities.isSurrogatePair(content, k)) {
+                        val = Utilities.convertToUtf32(content, k);
+                        k++;
+                    } else {
+                        val = content.charAt(k);
+                    }
+                    glyphs.add(getGlyph(val));
+                }
+            }
+        } else {
+            throw new PdfException("font.has.no.suitable.cmap");
+        }
+
+        return new GlyphLine(glyphs);
     }
 
     @Override
@@ -432,6 +493,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     public boolean isIdentity() {
+        //TODO strange property
         return cmapEncoding.isDirect();
     }
 
@@ -517,10 +579,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
             getPdfObject().put(PdfName.Type, PdfName.Font);
             getPdfObject().put(PdfName.Subtype, PdfName.Type0);
-
-            if (ttf.isCff()) {
-                fontName = String.format("%s-%s", fontName, cmapEncoding.getCmapName());
-            }
             getPdfObject().put(PdfName.Encoding, new PdfName(cmapEncoding.getCmapName()));
             getPdfObject().put(PdfName.DescendantFonts, new PdfArray(cidFont));
 

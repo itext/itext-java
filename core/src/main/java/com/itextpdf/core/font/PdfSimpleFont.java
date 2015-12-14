@@ -1,5 +1,6 @@
 package com.itextpdf.core.font;
 
+import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.FontProgram;
@@ -9,6 +10,7 @@ import com.itextpdf.basics.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.basics.font.cmap.CMapParser;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -19,6 +21,7 @@ import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
@@ -44,6 +47,23 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     @Override
+    public GlyphLine createGlyphLine(String content) {
+        ArrayList<Glyph> glyphs = new ArrayList<>(content.length());
+        for (int i = 0; i < content.length(); i++) {
+            Glyph glyph;
+            if (fontEncoding.isFontSpecific()) {
+                glyph = fontProgram.getGlyphByCode(content.charAt(i) & 0xff);
+            } else {
+                glyph = getGlyph((int) content.charAt(i));
+            }
+            if (glyph != null) {
+                glyphs.add(glyph);
+            }
+        }
+        return new GlyphLine(glyphs);
+    }
+
+    @Override
     public T getFontProgram() {
         return fontProgram;
     }
@@ -54,6 +74,48 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         for (byte b : bytes) {
             shortTag[b & 0xff] = 1;
         }
+        return bytes;
+    }
+
+    @Override
+    public byte[] convertToBytes(GlyphLine glyphLine) {
+        if (glyphLine != null) {
+            byte[] bytes = new byte[glyphLine.length()];
+            int ptr = 0;
+            if (fontEncoding.isFontSpecific()) {
+                for (Glyph glyph : glyphLine.glyphs) {
+                    bytes[ptr++] = (byte) glyph.index;
+                }
+            } else {
+                for (Glyph glyph : glyphLine.glyphs) {
+                    if (fontEncoding.canEncode(glyph.unicode)) {
+                        bytes[ptr++] = fontEncoding.convertToByte(glyph.unicode);
+                    }
+                }
+            }
+            bytes = Utilities.shortenArray(bytes, ptr);
+            for (byte b : bytes) {
+                shortTag[b & 0xff] = 1;
+            }
+            return bytes;
+        } else {
+            return emptyBytes;
+        }
+    }
+
+    @Override
+    public byte[] convertToBytes(Glyph glyph) {
+        byte[] bytes = new byte[1];
+        if (fontEncoding.isFontSpecific()) {
+            bytes[0] = (byte) glyph.index;
+        } else {
+            if (fontEncoding.canEncode(glyph.unicode)) {
+                bytes[0] = fontEncoding.convertToByte(glyph.unicode);
+            } else {
+                return emptyBytes;
+            }
+        }
+        shortTag[bytes[0] & 0xff] = 1;
         return bytes;
     }
 
