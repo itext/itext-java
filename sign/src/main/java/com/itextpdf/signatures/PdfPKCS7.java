@@ -1,5 +1,6 @@
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.PdfName;
 
 import java.io.ByteArrayInputStream;
@@ -98,7 +99,7 @@ public class PdfPKCS7 {
         // message digest
         digestAlgorithmOid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
         if (digestAlgorithmOid == null)
-            throw new NoSuchAlgorithmException(/*MessageLocalization.getComposedMessage("unknown.hash.algorithm.1", hashAlgorithm)*/); // TODO
+            throw new PdfException(PdfException.UnknownHashAlgorithm1).setMessageParams(hashAlgorithm);
 
         // Copy the certificates
         signCert = (X509Certificate)certChain[0];
@@ -122,7 +123,7 @@ public class PdfPKCS7 {
                 digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
             }
             else {
-                throw new NoSuchAlgorithmException(/*MessageLocalization.getComposedMessage("unknown.key.algorithm.1", digestEncryptionAlgorithmOid)*/); // TODO
+                throw new PdfException(PdfException.UnknownKeyAlgorithm1).setMessageParams(digestEncryptionAlgorithmOid);
             }
         }
 
@@ -172,7 +173,7 @@ public class PdfPKCS7 {
             digestAlgorithmOid = "1.2.840.10040.4.3";
             digestEncryptionAlgorithmOid = "1.3.36.3.3.1.2";
         } catch (Exception e) {
-            throw new /*ExceptionConverter(e)*/ RuntimeException(e); // TODO
+            throw new PdfException(e);
         }
     }
 
@@ -200,15 +201,15 @@ public class PdfPKCS7 {
                 pkcs = din.readObject();
             }
             catch (IOException e) {
-                throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage("can.t.decode.pkcs7signeddata.object")*/);
+                throw new IllegalArgumentException(PdfException.CantDecodePkcs7SigneddataObject);
             }
             if (!(pkcs instanceof ASN1Sequence)) {
-                throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage("not.a.valid.pkcs.7.object.not.a.sequence")*/);
+                throw new IllegalArgumentException(PdfException.NotAValidPkcs7ObjectNotASequence);
             }
             ASN1Sequence signedData = (ASN1Sequence)pkcs;
             ASN1ObjectIdentifier objId = (ASN1ObjectIdentifier)signedData.getObjectAt(0);
             if (!objId.getId().equals(SecurityIDs.ID_PKCS7_SIGNED_DATA))
-                throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage("not.a.valid.pkcs.7.object.not.signed.data")*/);
+                throw new IllegalArgumentException(PdfException.NotAValidPkcs7ObjectNotSignedData);
             ASN1Sequence content = (ASN1Sequence)((ASN1TaggedObject)signedData.getObjectAt(1)).getObject();
             // the positions that we care are:
             //     0 - version
@@ -284,7 +285,7 @@ public class PdfPKCS7 {
             // the signerInfos
             ASN1Set signerInfos = (ASN1Set)content.getObjectAt(next);
             if (signerInfos.size() != 1)
-                throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage("this.pkcs.7.object.has.multiple.signerinfos.only.one.is.supported.at.this.time")*/);
+                throw new IllegalArgumentException(PdfException.ThisPkcs7ObjectHasMultipleSignerinfosOnlyOneIsSupportedAtThisTime);
             ASN1Sequence signerInfo = (ASN1Sequence)signerInfos.getObjectAt(0);
             // the positions that we care are
             //     0 - version
@@ -305,8 +306,8 @@ public class PdfPKCS7 {
                 }
             }
             if (signCert == null) {
-                throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage("can.t.find.signing.certificate.with.serial.1",
-                        issuer.getName() + " / " + serialNumber.toString(16))*/);
+                throw new PdfException(PdfException.CantFindSigningCertificateWithSerial1).
+                        setMessageParams(issuer.getName() + " / " + serialNumber.toString(16));
             }
             signCertificateChain();
             digestAlgorithmOid = ((ASN1ObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(2)).getObjectAt(0)).getId();
@@ -372,7 +373,7 @@ public class PdfPKCS7 {
                     }
                 }
                 if (digestAttr == null)
-                    throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage("authenticated.attribute.is.missing.the.digest")*/);
+                    throw new IllegalArgumentException(PdfException.AuthenticatedAttributeIsMissingTheDigest);
                 ++next;
             }
             if (isCades && !foundCades)
@@ -412,7 +413,7 @@ public class PdfPKCS7 {
             }
         }
         catch (Exception e) {
-            throw new /*ExceptionConverter*/RuntimeException(e);
+            throw new PdfException(e);
         }
     }
 
@@ -613,7 +614,7 @@ public class PdfPKCS7 {
                 this.digestEncryptionAlgorithmOid = SecurityIDs.ID_ECDSA;
             }
             else
-                throw /*new ExceptionConverter(*/new RuntimeException(new NoSuchAlgorithmException(/*MessageLocalization.getComposedMessage("unknown.key.algorithm.1", digestEncryptionAlgorithm)*/));
+                throw new PdfException(PdfException.UnknownKeyAlgorithm1).setMessageParams(digestEncryptionAlgorithm);
         }
     }
 
@@ -690,7 +691,7 @@ public class PdfPKCS7 {
             return bOut.toByteArray();
         }
         catch (Exception e) {
-            throw new /*ExceptionConverter*/RuntimeException(e);
+            throw new PdfException(e);
         }
     }
 
@@ -841,7 +842,7 @@ public class PdfPKCS7 {
             return bOut.toByteArray();
         }
         catch (Exception e) {
-            throw new /*ExceptionConverter*/RuntimeException(e);
+            throw new PdfException(e);
         }
     }
 
@@ -906,7 +907,7 @@ public class PdfPKCS7 {
             return getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype).getEncoded(ASN1Encoding.DER);
         }
         catch (Exception e) {
-            throw new /*ExceptionConverter*/RuntimeException(e);
+            throw new PdfException(e);
         }
     }
 
@@ -989,7 +990,7 @@ public class PdfPKCS7 {
             return new DERSet(attribute);
         }
         catch (Exception e) {
-            throw new /*ExceptionConverter*/RuntimeException(e);
+            throw new PdfException(e);
         }
     }
     

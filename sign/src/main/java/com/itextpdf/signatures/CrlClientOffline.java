@@ -1,5 +1,6 @@
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.PdfException;
 import java.security.cert.CRL;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
@@ -39,14 +40,14 @@ public class CrlClientOffline implements CrlClient {
         try {
             crls.add(((X509CRL) crl).getEncoded());
         } catch (Exception ex) {
-            throw new RuntimeException(ex); // TODO: Correct the exception
+            throw new PdfException(ex);
         }
     }
 
     /**
      * Returns the CRL bytes (the parameters are ignored).
      *
-     * @see com.itextpdf.text.pdf.security.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
+     * @see com.itextpdf.signatures.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
         return crls;

@@ -13,6 +13,7 @@ import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.StreamUtil;
 import com.itextpdf.core.pdf.PdfEncryption;
 import org.bouncycastle.asn1.DEROctetString;
@@ -93,7 +94,7 @@ public class OcspClientBouncyCastle implements OcspClient {
         dataOut.flush();
         dataOut.close();
         if (con.getResponseCode() / 100 != 2) {
-            throw new IOException(/*MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode()) TODO: correct the message*/);
+            throw new PdfException(PdfException.InvalidHttpResponse1).setMessageParams(con.getResponseCode());
         }
         //Get Response
         InputStream in = (InputStream) con.getContent();
@@ -110,8 +111,7 @@ public class OcspClientBouncyCastle implements OcspClient {
             return (BasicOCSPResp) ocspResponse.getResponseObject();
         }
         catch (Exception ex) {
-            /*if (LOGGER.isLogging(Level.ERROR))
-                LOGGER.error(ex.getMessage()); TODO: correct*/
+            LOGGER.error(ex.getMessage());
         }
         return null;
     }
@@ -120,7 +120,7 @@ public class OcspClientBouncyCastle implements OcspClient {
      * Gets an encoded byte array with OCSP validation. The method should not throw an exception.
      * @param checkCert to certificate to check
      * @param rootCert the parent certificate
-     * @param the url to get the verification. It it's null it will be taken
+     * @param url the url to get the verification. It it's null it will be taken
      * from the check cert or from other implementation specific source
      * @return	a byte array with the validation or null if the validation could not be obtained
      */
@@ -136,17 +136,16 @@ public class OcspClientBouncyCastle implements OcspClient {
                         return basicResponse.getEncoded();
                     }
                     else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
-                        throw new IOException(/* TODO: correct the message MessageLocalization.getComposedMessage("ocsp.status.is.revoked")*/);
+                        throw new IOException(PdfException.OcspStatusIsRevoked);
                     }
                     else {
-                        throw new IOException(/* TODO: correct the message MessageLocalization.getComposedMessage("ocsp.status.is.unknown")*/);
+                        throw new IOException(PdfException.OcspStatusIsUnknown);
                     }
                 }
             }
         }
         catch (Exception ex) {
-/*            if (LOGGER.isLogging(Level.ERROR))
-                LOGGER.error(ex.getMessage()); TODO: correct*/
+            LOGGER.error(ex.getMessage());
         }
         return null;
     }

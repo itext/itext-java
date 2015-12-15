@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.codec.Base64;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
@@ -151,7 +152,7 @@ public class TSAClientBouncyCastle implements TSAClient {
         int value = (failure == null) ? 0 : failure.intValue();
         if (value != 0) {
             // @todo: Translate value of 15 error codes defined by PKIFailureInfo to string
-            throw new IOException(/*MessageLocalization.getComposedMessage("invalid.tsa.1.response.code.2", tsaURL, String.valueOf(value))*/); // TODO: correct the message
+            throw new PdfException(PdfException.InvalidTsa1ResponseCode2).setMessageParams(tsaURL, String.valueOf(value));
         }
         // @todo: validate the time stap certificate chain (if we want
         //        assure we do not sign using an invalid timestamp).
@@ -159,7 +160,7 @@ public class TSAClientBouncyCastle implements TSAClient {
         // extract just the time stamp token (removes communication status info)
         TimeStampToken  tsToken = response.getTimeStampToken();
         if (tsToken == null) {
-            throw new IOException(/*MessageLocalization.getComposedMessage("tsa.1.failed.to.return.time.stamp.token.2", tsaURL, response.getStatusString())*/); // TODO: correct the message
+            throw new PdfException(PdfException.Tsa1FailedToReturnTimeStampToken2).setMessageParams(tsaURL, response.getStatusString());
         }
         TimeStampTokenInfo tsTokenInfo = tsToken.getTimeStampInfo(); // to view details
         byte[] encoded = tsToken.getEncoded();
@@ -186,7 +187,7 @@ public class TSAClientBouncyCastle implements TSAClient {
             tsaConnection = (URLConnection) url.openConnection();
         }
         catch (IOException ioe) {
-            throw new IOException(/*MessageLocalization.getComposedMessage("failed.to.get.tsa.response.from.1", tsaURL)*/); // TODO: correct the message
+            throw new PdfException(PdfException.FailedToGetTsaResponseFrom1).setMessageParams(tsaURL);
         }
         tsaConnection.setDoInput(true);
         tsaConnection.setDoOutput(true);

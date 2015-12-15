@@ -1,5 +1,6 @@
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.PdfException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,7 @@ public class CrlClientOnline implements CrlClient {
      * If you want to load a CRL from a local file, subclass this method and pass an
      * URL with the path to the local file to this method. An other option is to use
      * the CrlClientOffline class.
-     * @see com.itextpdf.text.pdf.security.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
+     * @see com.itextpdf.signatures.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
         if (checkCert == null)
@@ -126,7 +127,7 @@ public class CrlClientOnline implements CrlClient {
                 LOGGER.info("Checking CRL: " + urlt);
                 HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
                 if (con.getResponseCode() / 100 != 2) {
-                    throw new IOException(/*MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode())*/); // TODO: correct the exception
+                    throw new PdfException(PdfException.InvalidHttpResponse1).setMessageParams(con.getResponseCode());
                 }
                 //Get Response
                 InputStream inp = (InputStream) con.getContent();

@@ -1,5 +1,6 @@
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.io.RASInputStream;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
@@ -101,7 +102,7 @@ public class SignatureUtil {
                 PdfString cert = v.getAsString(PdfName.Cert);
                 if (cert == null)
                     cert = v.getAsArray(PdfName.Cert).getAsString(0);
-                pk = new PdfPKCS7(PdfEncodings.convertToBytes(contents.getValue(), null), getValueBytes(cert), provider);
+                pk = new PdfPKCS7(PdfEncodings.convertToBytes(contents.getValue(), null), cert.getValueBytes(), provider);
             }
             else
                 pk = new PdfPKCS7(PdfEncodings.convertToBytes(contents.getValue(), null), sub, provider);
@@ -125,7 +126,7 @@ public class SignatureUtil {
             return pk;
         }
         catch (Exception e) {
-            throw new /*ExceptionConverter*/RuntimeException(e); // TODO: refactor
+            throw new PdfException(e);
         }
     }
 
@@ -160,13 +161,13 @@ public class SignatureUtil {
             }
         }
         catch (Exception e) {
-            throw new /*ExceptionConverter*/RuntimeException(e); // TODO: refactor
+            throw new PdfException(e);
         } finally {
             try {
                 if (rg != null) rg.close();
             } catch (IOException e) {
                 // this really shouldn't ever happen - the source view we use is based on a Safe view, which is a no-op anyway
-                throw new /*ExceptionConverter*/RuntimeException(e); // TODO: refactor
+                throw new PdfException(e);
             }
         }
     }
@@ -277,8 +278,7 @@ public class SignatureUtil {
         try {
             return sigNames.get(name)[0] == document.getReader().getFileLength();
         } catch (IOException e) {
-            throw new RuntimeException(e);
-            // TODO: add some exception handling here (at least some logger)
+            throw new PdfException(e);
         }
     }
 
@@ -290,16 +290,6 @@ public class SignatureUtil {
      */
     public boolean doesSignatureFieldExist(String name) {
         return getBlankSignatureNames().contains(name) || getSignatureNames().contains(name);
-    }
-
-    // TODO: refactor. Copied from PdfString.getValueBytes
-    public byte[] getValueBytes(PdfString str) {
-        String encoding = str.getEncoding();
-
-        if (encoding != null && encoding.equals(PdfEncodings.UnicodeBig) && PdfEncodings.isPdfDocEncoding(str.getValue()))
-            return PdfEncodings.convertToBytes(str.getValue(), PdfEncodings.PdfDocEncoding);
-        else
-            return PdfEncodings.convertToBytes(str.getValue(), encoding);
     }
 
     // TODO: copied from iText 5 PdfArray.asLongArray

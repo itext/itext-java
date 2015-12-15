@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.io.ByteBuffer;
 import com.itextpdf.core.pdf.*;
@@ -118,7 +119,7 @@ public class LtvVerification {
      */
     public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
-            throw new IllegalStateException(/*MessageLocalization.getComposedMessage("verification.already.output")*/); // TODO: correct the message
+            throw new IllegalStateException(PdfException.VerificationAlreadyOutput);
         PdfPKCS7 pk = sgnUtil.verifySignature(signatureName);
         LOGGER.info("Adding verification for " + signatureName);
         Certificate[] xc = pk.getCertificates();
@@ -201,7 +202,7 @@ public class LtvVerification {
      */
     public boolean addVerification(String signatureName, Collection<byte[]> ocsps, Collection<byte[]> crls, Collection<byte[]> certs) throws IOException, GeneralSecurityException {
         if (used)
-            throw new IllegalStateException(/*MessageLocalization.getComposedMessage("verification.already.output")*/); // TODO: fix the message
+            throw new IllegalStateException(PdfException.VerificationAlreadyOutput);
         ValidationData vd = new ValidationData();
         if (ocsps != null) {
             for (byte[] ocsp : ocsps) {

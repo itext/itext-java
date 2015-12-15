@@ -1,5 +1,6 @@
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.PdfException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
@@ -30,7 +31,7 @@ public class KeyStoreUtil {
             return k;
         }
         catch (Exception e) {
-            throw new /*ExceptionConverter*/RuntimeException(e); // TODO: correct the exception
+            throw new PdfException(e);
         }
         finally {
             try{if (fin != null) {fin.close();}}catch(Exception ex){}

@@ -21,6 +21,8 @@ public class PdfException extends RuntimeException {
     public static final String AllFillBitsPrecedingEolCodeMustBe0 = "all.fill.bits.preceding.eol.code.must.be.0";
     public static final String AnnotShallHaveReferenceToPage = "annot.shall.have.reference.to.page";
     public static final String AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible = "append.mode.requires.a.document.without.errors.even.if.recovery.was.possible";
+    public static final String AuthenticatedAttributeIsMissingTheDigest = "authenticated.attribute.is.missing.the.digest";
+    public static final String AvailableSpaceIsNotEnoughForSignature = "available.space.is.not.enough.for.signature";
     public static final String BadEndiannessTagNot0x4949Or0x4d4d = "bad.endianness.tag.not.0x4949.or.0x4d4d";
     public static final String BadMagicNumberShouldBe42 = "bad.magic.number.should.be.42";
     public static final String BadCertificateAndKey = "bad.certificate.and.key";
@@ -62,7 +64,8 @@ public class PdfException extends RuntimeException {
     public static final String CannotWriteFloatNumber = "cannot.write.float.number";
     public static final String CannotWriteIntNumber = "cannot.write.int.number";
     public static final String CannotWritePdfStream = "cannot.write.pdf.stream";
-    public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
+    public static final String CantDecodePkcs7SigneddataObject = "can.t.decode.pkcs7signeddata.object";
+    public static final String CantFindSigningCertificateWithSerial1 = "can.t.find.signing.certificate.with.serial.1";public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
     public static final String CfNotFoundEncryption = "cf.not.found.encryption";
     public static final String CodabarCharacterOneIsIllegal = "the.character.1.is.illegal.in.codabar";
     public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "codabar.must.have.at.least.a.start.and.stop.character";
@@ -77,9 +80,11 @@ public class PdfException extends RuntimeException {
     public static final String DictionaryKey1IsNotAName = "dictionary.key.1.is.not.a.name";
     public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
+    public static final String DocumentAlreadyPreClosed = "document.already.pre.closed";
     public static final String DocumentDoesntContainStructTreeRoot = "document.doesn't.contain.structtreeroot";
     public static final String DocumentHasNoPages = "document.has.no.pages";
     public static final String DocumentHasNoCatalogObject = "document.has.no.catalog.object";
+    public static final String DocumentMustBePreclosed = "document.must.be.preclosed";
     public static final String DocumentToCopyToCannotBeNull = "document.to.copy.to.cannot.be.null";
     public static final String ElementCannotFitAnyArea = "element.cannot.fit.any.area";
     public static final String EncryptionCanOnlyBeAddedBeforeOpeningDocument = "encryption.can.only.be.added.before.opening.the.document";
@@ -98,6 +103,7 @@ public class PdfException extends RuntimeException {
 
     public static final String ExtraSamplesAreNotSupported = "extra.samples.are.not.supported";
     public static final String FdfStartxrefNotFound = "fdf.startxref.not.found";
+    public static final String FailedToGetTsaResponseFrom1 = "failed.to.get.tsa.response.from.1";
     public static final String FieldFlatteningIsNotSupportedInAppendMode = "field.flattening.is.not.supported.in.append.mode";
     public static final String FieldIsAlreadySigned = "field.is.already.signed";
     public static final String FieldNamesCannotContainADot = "field.names.cannot.contain.a.dot";
@@ -127,6 +133,8 @@ public class PdfException extends RuntimeException {
     public static final String IllegalResourceTree = "illegal.resources.tree";
     public static final String IllegalRValue = "illegal.r.value";
     public static final String IllegalVValue = "illegal.v.value";
+    public static final String InvalidHttpResponse1 = "invalid.http.response.1";
+    public static final String InvalidTsa1ResponseCode2 = "invalid.tsa.1.response.code.2";
     public static final String Font1IsNotRecognized = "font.1.is.not.recognized";
     public static final String FontIsNotRecognized = "font.is.not.recognized";
 
@@ -171,9 +179,14 @@ public class PdfException extends RuntimeException {
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
     public static final String NameAlreadyExistsInTheNameTree = "name.already.exist.in.the.name.tree";
     public static final String NoCompatibleEncryptionFound = "no.compatible.encryption.found";
+    public static final String NoCryptoDictionaryDefined = "no.crypto.dictionary.defined";
     public static final String NotAPlaceableWindowsMetafile = "not.a.placeable.windows.metafile";
+    public static final String NotAValidPkcs7ObjectNotASequence = "not.a.valid.pkcs.7.object.not.a.sequence";
+    public static final String NotAValidPkcs7ObjectNotSignedData = "not.a.valid.pkcs.7.object.not.signed.data";
     public static final String NoValidEncryptionMode = "no.valid.encryption.mode";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
+    public static final String OcspStatusIsRevoked = "ocsp.status.is.revoked";
+    public static final String OcspStatusIsUnknown = "ocsp.status.is.unknown";
     public static final String OnlyBmpCanBeWrappedInWmf = "only.bmp.can.be.wrapped.in.wmf";
     public static final String OperatorEINotFoundAfterEndOfImageData = "operator.EI.not.found.after.end.of.image.data";
     public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.instead";
@@ -200,6 +213,7 @@ public class PdfException extends RuntimeException {
     public static final String ResourcesCannotBeNull = "resources.cannot.be.null";
     public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "resources.do.not.contain.extgstate.entry.unable.to.process.operator.1";
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
+    public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
     public static final String StructureElementIsNotLinkedToStructParent = "structure.element.is.not.linked.to.structparent";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
@@ -210,10 +224,13 @@ public class PdfException extends RuntimeException {
     public static final String TwoBarcodeMustBeExternally = "the.two.barcodes.must.be.composed.externally";
     public static final String ThereAreIllegalCharactersForBarcode128In1 = "there.are.illegal.characters.for.barcode.128.in.1";
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
+    public static final String ThereIsNoFieldInTheDocumentWithSuchName1 = "there.is.no.field.in.the.document.with.such.name.1";
+    public static final String ThisPkcs7ObjectHasMultipleSignerinfosOnlyOneIsSupportedAtThisTime = "this.pkcs.7.object.has.multiple.signerinfos.only.one.is.supported.at.this.time";
     public static final String ThisInstanceOfPdfSignerIsAlreadyClosed = "this.instance.of.PdfSigner.is.already.closed";
     public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
     public static final String TiffFillOrderTagMustBeEither1Or2 = "tiff.fill.order.tag.must.be.either.1.or.2";
     public static final String TiffImageException = "tiff.image.exception";
+    public static final String Tsa1FailedToReturnTimeStampToken2 = "tsa.1.failed.to.return.time.stamp.token.2";
     public static final String TTCIndexDoesNotExistInFile = "ttc.index.doesn't.exist.in.ttc.file";
     public static final String TilesAreNotSupported = "tiles.are.not.supported";
     public static final String TrailerNotFound = "trailer.not.found";
@@ -229,7 +246,10 @@ public class PdfException extends RuntimeException {
     public static final String UnknownCompressionType1 = "unknown.compression.type.1";
     public static final String UnknownEncryptionTypeREq1 = "unknown.encryption.type.r.eq.1";
     public static final String UnknownEncryptionTypeVEq1 = "unknown.encryption.type.v.eq.1";
+    public static final String UnknownHashAlgorithm1 = "unknown.hash.algorithm.1";
+    public static final String UnknownKeyAlgorithm1 = "unknown.key.algorithm.1";
     public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";
+    public static final String VerificationAlreadyOutput = "verification.already.output";
     public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";
     public static final String WmfImageException = "wmf.image.exception";
     public static final String WrongFormFieldAddAnnotationToTheField = "wrong.form.field.add.annotation.to.the.field";

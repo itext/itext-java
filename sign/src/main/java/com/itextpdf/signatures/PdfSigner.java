@@ -518,21 +518,18 @@ public class PdfSigner {
         PdfDictionary v = signatureUtil.getSignatureDictionary(fieldName);
 
         if (v == null) {
-            /*throw new DocumentException("No field");*/
-            // TODO: add some exception in the future
+            new PdfException(PdfException.ThereIsNoFieldInTheDocumentWithSuchName1).setMessageParams(fieldName);
         }
 
         if (!signatureUtil.signatureCoversWholeDocument(fieldName)) {
-/*            throw new DocumentException("Not the last signature");*/
-            // TODO: add some exception in the future
+            new PdfException(PdfException.SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument).setMessageParams(fieldName);
         }
 
         PdfArray b = v.getAsArray(PdfName.ByteRange);
         long[] gaps = SignatureUtil.asLongArray(b); // TODO: refactor
 
         if (b.size() != 4 || gaps[0] != 0) {
-            /*throw new DocumentException("Single exclusion space supported");*/
-            // TODO: add some exception in the future
+            throw new IllegalArgumentException("Single exclusion space supported");
         }
 
         RandomAccessSource readerSource = document.getReader().getSafeFile().createSourceView();
@@ -540,13 +537,11 @@ public class PdfSigner {
         byte[] signedContent = externalSignatureContainer.sign(rg);
         int spaceAvailable = (int)(gaps[2] - gaps[1]) - 2;
         if ((spaceAvailable & 1) != 0) {
-            /*throw new DocumentException("Gap is not a multiple of 2");*/
-            // TODO: add some exception in the future
+            throw new IllegalArgumentException("Gap is not a multiple of 2");
         }
         spaceAvailable /= 2;
         if (spaceAvailable < signedContent.length) {
-            /*throw new DocumentException("Not enough space");*/
-            // TODO: add some exception in the future
+            throw new PdfException(PdfException.AvailableSpaceIsNotEnoughForSignature);
         }
         StreamUtil.CopyBytes(readerSource, 0, gaps[1] + 1, outs);
         ByteBuffer bb = new ByteBuffer(spaceAvailable * 2);
@@ -615,7 +610,7 @@ public class PdfSigner {
      */
     protected void preClose(HashMap<PdfName, Integer> exclusionSizes) throws IOException {
         if (preClosed) {
-            throw new RuntimeException("document.already.pre.closed"); // TODO: correct the message
+            throw new PdfException(PdfException.DocumentAlreadyPreClosed);
         }
 
         // TODO: add mergeVerification functionality
@@ -629,7 +624,7 @@ public class PdfSigner {
         PdfSigFieldLockDictionary fieldLock = null;
 
         if (cryptoDictionary == null) {
-            throw new /*DocumentException*/RuntimeException("No crypto dictionary defined."); // TODO: correct the message
+            throw new PdfException(PdfException.NoCryptoDictionaryDefined);
         }
 
         cryptoDictionary.getPdfObject().makeIndirect(document);
@@ -787,7 +782,7 @@ public class PdfSigner {
     protected void close(PdfDictionary update) throws IOException {
         try {
             if (!preClosed)
-                throw new RuntimeException("Document must be preclosed"); // TODO: correct the message
+                throw new PdfException(PdfException.DocumentMustBePreclosed);
             ByteArrayOutputStream bous = new ByteArrayOutputStream();
             PdfOutputStream os = new PdfOutputStream(bous);
 
@@ -795,11 +790,11 @@ public class PdfSigner {
                 PdfObject obj = update.get(key);
                 PdfLiteral lit = exclusionLocations.get(key);
                 if (lit == null)
-                    throw new IllegalArgumentException("the.key.1.didn.t.reserve.space.in.preclose"); // TODO: correct the message
+                    throw new IllegalArgumentException("The key didn't reserve space in preclose");
                 bous.reset();
                 os.write(obj);
                 if (bous.size() > lit.getBytesCount())
-                    throw new IllegalArgumentException("the.key.1.is.too.big.is.2.reserved.3"); // TODO: correct the message
+                    throw new IllegalArgumentException("The key is too big");
                 if (tempFile == null) {
                     System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), bous.size());
                 } else {
@@ -808,7 +803,7 @@ public class PdfSigner {
                 }
             }
             if (update.size() != exclusionLocations.size())
-                throw new IllegalArgumentException("the.update.dictionary.has.less.keys.than.required"); // TODO: correct the message
+                throw new IllegalArgumentException("The update dictionary has less keys than required");
             if (tempFile == null) {
                 originalOS.write(bout, 0, bout.length);
             } else {
@@ -819,7 +814,7 @@ public class PdfSigner {
                     while (length > 0) {
                         int r = raf.read(buf, 0, (int)Math.min((long)buf.length, length));
                         if (r < 0)
-                            throw new EOFException("unexpected.eof"); // TODO: correct the message
+                            throw new EOFException("unexpected eof");
                         originalOS.write(buf, 0, r);
                         length -= r;
                     }
