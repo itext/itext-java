@@ -533,7 +533,9 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             Arrays.sort(metrics, new MetricComparator());
             PdfStream fontStream;
             String fontName = ttf.getFontNames().getFontName();
-            String subsetPrefix = subset ? createSubsetPrefix() : null;
+            if (subset) {
+                fontName = createSubsetPrefix() + fontName;
+            }
             if (ttf.isCff()) {
                 byte[] cffBytes = ttf.getFontStreamBytes();
                 if (subset || subsetRanges != null) {
@@ -545,9 +547,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 // The PDF Reference manual advises to add -cmap in case CIDFontType0
                 getPdfObject().put(PdfName.BaseFont,
                         new PdfName(String.format("%s-%s", fontName, cmapEncoding.getCmapName())));
-                if (subsetPrefix != null) {
-                    fontName = subsetPrefix + fontName;
-                }
             } else {
                 byte[] ttfBytes;
                 if (subset || ttf.getDirectoryOffset() != 0) {
@@ -556,9 +555,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     ttfBytes = ttf.getFontStreamBytes();
                 }
                 fontStream = getPdfFontStream(ttfBytes, new int[]{ttfBytes.length});
-                if (subsetPrefix != null) {
-                    fontName = subsetPrefix + fontName;
-                }
                 getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
             }
 
