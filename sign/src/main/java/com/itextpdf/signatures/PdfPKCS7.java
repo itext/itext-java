@@ -701,7 +701,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
-        return getEncodedPKCS7(null, null, null, null, MakeSignature.CryptoStandard.CMS);
+        return getEncodedPKCS7(null, null, null, null, PdfSigner.CryptoStandard.CMS);
     }
 
     /**
@@ -711,7 +711,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte secondDigest[]) {
-        return getEncodedPKCS7(secondDigest, null, null, null, MakeSignature.CryptoStandard.CMS);
+        return getEncodedPKCS7(secondDigest, null, null, null, PdfSigner.CryptoStandard.CMS);
     }
 
     /**
@@ -723,7 +723,7 @@ public class PdfPKCS7 {
      * @return byte[] the bytes for the PKCS7SignedData object
      * @since	2.1.6
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, MakeSignature.CryptoStandard sigtype) {
+    public byte[] getEncodedPKCS7(byte secondDigest[], TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -901,7 +901,7 @@ public class PdfPKCS7 {
      * @param secondDigest the content digest
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, MakeSignature.CryptoStandard sigtype) {
+    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             return getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype).getEncoded(ASN1Encoding.DER);
         }
@@ -917,7 +917,7 @@ public class PdfPKCS7 {
      * @param secondDigest the content digest
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, MakeSignature.CryptoStandard sigtype) {
+    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();
@@ -971,7 +971,7 @@ public class PdfPKCS7 {
                 v.add(new DERSet(new DERSequence(revocationV)));
                 attribute.add(new DERSequence(v));
             }
-            if (sigtype == MakeSignature.CryptoStandard.CADES) {
+            if (sigtype == PdfSigner.CryptoStandard.CADES) {
                 v = new ASN1EncodableVector();
                 v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
 

@@ -63,7 +63,7 @@ public class SigningTest {
         String fieldName =  "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
-                MakeSignature.CryptoStandard.CADES, "Test 1", "TestCity", rect, false);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class SigningTest {
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
-                MakeSignature.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class SigningTest {
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
-                MakeSignature.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
     }
 
     @Test
@@ -96,13 +96,13 @@ public class SigningTest {
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
-                MakeSignature.CryptoStandard.CADES, "Test 1", "TestCity", null, true);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, true);
     }
 
     protected void sign(String src, String name, String dest,
                      Certificate[] chain, PrivateKey pk,
-                     String digestAlgorithm, String provider, MakeSignature.CryptoStandard subfilter,
-                     String reason, String location, Rectangle rectangle, boolean setReuseAppearance)
+                     String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
+                     String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
@@ -113,17 +113,16 @@ public class SigningTest {
         appearance.setReason(reason);
         appearance.setLocation(location);
 
-
         appearance.setReuseAppearance(setReuseAppearance);
 
-        if (rectangle != null) {
-            appearance.setPageRect(rectangle);
+        if (rectangleForNewField != null) {
+            appearance.setPageRect(rectangleForNewField);
         }
 
         signer.setFieldName(name);
         // Creating the signature
         ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         ExternalDigest digest = new BouncyCastleDigest();
-        MakeSignature.signDetached(signer, digest, pks, chain, null, null, null, 0, subfilter);
+        signer.signDetached(digest, pks, chain, null, null, null, 0, subfilter);
     }
 }
