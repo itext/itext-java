@@ -1,7 +1,6 @@
 package com.itextpdf.basics.font.otf;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,21 +27,7 @@ public class GsubLookupType2 extends OpenTableLookup {
         if (!openReader.isSkip(g.index, lookupFlag)) {
             int[] substSequence = substMap.get(g.index);
             if (substSequence != null) {
-                int substCode = substSequence[0]; //sequence length shall be at least 1
-                Glyph glyph = openReader.getGlyph(substCode);
-                line.glyphs.set(line.idx, glyph);
-
-                if (substSequence.length > 1) {
-                    List<Glyph> additionalGlyphs = new ArrayList<>(substSequence.length - 1);
-                    for (int i = 1; i < substSequence.length; ++i) {
-                        substCode = substSequence[i];
-                        glyph = openReader.getGlyph(substCode);
-                        additionalGlyphs.add(glyph);
-                    }
-                    line.glyphs.addAll(line.idx + 1, additionalGlyphs);
-                    line.idx += substSequence.length - 1;
-                    line.end += substSequence.length - 1;
-                }
+                line.substituteOneToMany(openReader, substSequence);
                 changed = true;
             }
         }

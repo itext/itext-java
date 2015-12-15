@@ -39,7 +39,6 @@ public class GsubLookupType5 extends OpenTableLookup {
             GlyphIndexer gidx = new GlyphIndexer();
             gidx.line = line;
             for (SubstLookupRecord substRecord : substLookupRecords) {
-
                 // There could be some skipped glyphs inside the context sequence, therefore currently GlyphIndexer and
                 // nextGlyph method are used to get to the glyph at "substRecord.sequenceIndex" index
                 gidx.idx = initialLineIndex;

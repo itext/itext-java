@@ -50,14 +50,7 @@ public class GsubLookupType4 extends OpenTableLookup {
                     }
                 }
                 if (match) {
-                    gidx.idx = line.idx;
-                    for (int j = 1; j < lig.length; ++j) {
-                        gidx.nextGlyph(openReader, lookupFlag);
-                        line.glyphs.remove(gidx.idx--);
-                    }
-                    Glyph glyph = openReader.getGlyph(lig[0]);
-                    line.glyphs.set(line.idx, glyph);
-                    line.end -= lig.length - 1;
+                    line.substituteManyToOne(openReader, lookupFlag, lig.length - 1, lig[0]);
                     break;
                 }
             }

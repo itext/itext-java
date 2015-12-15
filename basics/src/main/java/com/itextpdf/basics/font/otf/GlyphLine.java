@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.itextpdf.basics.font.otf;
 
 import com.itextpdf.basics.Utilities;
@@ -10,10 +5,6 @@ import com.itextpdf.basics.Utilities;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author admin
- */
 public class GlyphLine {
     public List<Glyph> glyphs;
     public int start;
@@ -46,8 +37,11 @@ public class GlyphLine {
     public String toUnicodeString(int left, int right) {
         StringBuilder str = new StringBuilder();
         for (int i = left; i < right; i++) {
-            // TODO ligatures correspond to more than one unicode symbol
-            str.append(Utilities.convertFromUtf32(glyphs.get(i).unicode));
+            if (glyphs.get(i).chars != null) {
+                str.append(glyphs.get(i).chars);
+            } else if (glyphs.get(i).unicode != null) {
+                str.append(Utilities.convertFromUtf32(glyphs.get(i).unicode));
+            }
         }
         return str.toString();
     }
@@ -62,6 +56,66 @@ public class GlyphLine {
 
     public int length() {
         return end - start;
+    }
+
+    public void substituteManyToOne(OpenTypeFontTableReader tableReader, int lookupFlag, int rightPartLen, int substitutionGlyphIndex) {
+        OpenTableLookup.GlyphIndexer gidx = new OpenTableLookup.GlyphIndexer();
+        gidx.line = this;
+        gidx.idx = idx;
+
+        StringBuilder chars = new StringBuilder();
+        Glyph currentGlyph = glyphs.get(idx);
+        if (currentGlyph.chars != null) {
+            chars.append(currentGlyph.chars);
+        } else if (currentGlyph.unicode != null) {
+            chars.append(Utilities.convertFromUtf32(currentGlyph.unicode));
+        }
+
+        for (int j = 0; j < rightPartLen; ++j) {
+            gidx.nextGlyph(tableReader, lookupFlag);
+            currentGlyph = glyphs.get(gidx.idx);
+            if (currentGlyph.chars != null) {
+                chars.append(currentGlyph.chars);
+            } else if (currentGlyph.unicode != null) {
+                chars.append(Utilities.convertFromUtf32(currentGlyph.unicode));
+            }
+            glyphs.remove(gidx.idx--);
+        }
+        Glyph newGlyph = tableReader.getGlyph(substitutionGlyphIndex);
+        newGlyph.chars = newGlyph.unicode != null ? Utilities.convertFromUtf32(newGlyph.unicode) : chars.toString();
+        glyphs.set(idx, newGlyph);
+        end -= rightPartLen;
+    }
+
+    public void substituteOneToOne(OpenTypeFontTableReader tableReader, int substitutionGlyphIndex) {
+        Glyph oldGlyph = glyphs.get(idx);
+        Glyph newGlyph = tableReader.getGlyph(substitutionGlyphIndex);
+        if (newGlyph.unicode != null) {
+            newGlyph.chars = Utilities.convertFromUtf32(newGlyph.unicode);
+        } else if (oldGlyph.chars != null) {
+            newGlyph.chars = oldGlyph.chars;
+        } else if (oldGlyph.unicode != null) {
+            newGlyph.chars = Utilities.convertFromUtf32(oldGlyph.unicode);
+        }
+        glyphs.set(idx, newGlyph);
+    }
+
+    public void substituteOneToMany(OpenTypeFontTableReader tableReader, int[] substGlyphIds) {
+        int substCode = substGlyphIds[0]; //sequence length shall be at least 1
+        Glyph glyph = tableReader.getGlyph(substCode);
+        glyphs.set(idx, glyph);
+
+        if (substGlyphIds.length > 1) {
+            List<Glyph> additionalGlyphs = new ArrayList<>(substGlyphIds.length - 1);
+            for (int i = 1; i < substGlyphIds.length; ++i) {
+                substCode = substGlyphIds[i];
+                glyph = tableReader.getGlyph(substCode);
+                additionalGlyphs.add(glyph);
+            }
+            glyphs.addAll(idx + 1, additionalGlyphs);
+            idx += substGlyphIds.length - 1;
+            end += substGlyphIds.length - 1;
+        }
     }
 
 }
