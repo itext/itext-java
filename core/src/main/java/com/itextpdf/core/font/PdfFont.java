@@ -561,36 +561,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return new PdfFont(document, (PdfDictionary) getPdfObject().copyToDocument(document));
     }
 
-    public List<String> splitStringold(String text, int fontSize, float maxWidth) {
-        List<String> resultString = new ArrayList<>();
-        int whiteSpacePlace = text.indexOf(' ');
-        int currentWhiteSpace = 0;
-        int startPos = 0;
-
-        float tokenLength = 0;
-        for (int i = 0; i < text.length(); i++) {
-            tokenLength += getWidthPoint(text.charAt(i), fontSize);
-            if (tokenLength >= maxWidth) {
-                //currentWhiteSpace += 1;
-                resultString.add(text.substring(startPos, currentWhiteSpace));
-                startPos = currentWhiteSpace + 1;
-                tokenLength = 0;
-                i = currentWhiteSpace;
-            }
-            if (i > whiteSpacePlace) {
-                int pos = text.indexOf(" ", i);
-                if (pos != -1) {
-                    currentWhiteSpace = whiteSpacePlace;
-                    whiteSpacePlace = pos;
-                }
-            }
-        }
-
-        resultString.add(text.substring(startPos));
-
-        return resultString;
-    }
-
     public List<String> splitString(String text, int fontSize, float maxWidth) {
         List<String> resultString = new ArrayList<>();
         int lastWhiteSpace = 0;

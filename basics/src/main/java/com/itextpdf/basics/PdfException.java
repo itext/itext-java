@@ -65,7 +65,8 @@ public class PdfException extends RuntimeException {
     public static final String CannotWriteIntNumber = "cannot.write.int.number";
     public static final String CannotWritePdfStream = "cannot.write.pdf.stream";
     public static final String CantDecodePkcs7SigneddataObject = "can.t.decode.pkcs7signeddata.object";
-    public static final String CantFindSigningCertificateWithSerial1 = "can.t.find.signing.certificate.with.serial.1";public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
+    public static final String CantFindSigningCertificateWithSerial1 = "can.t.find.signing.certificate.with.serial.1";
+    public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
     public static final String CfNotFoundEncryption = "cf.not.found.encryption";
     public static final String CodabarCharacterOneIsIllegal = "the.character.1.is.illegal.in.codabar";
     public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "codabar.must.have.at.least.a.start.and.stop.character";
