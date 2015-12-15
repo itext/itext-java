@@ -602,7 +602,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfName subType = getPdfObject().getAsName(PdfName.Subtype);
         if (subType != null && subType.equals(PdfName.Widget)) {
-            PdfAnnotation widget = PdfAnnotation.makeAnnotation(getPdfObject(), getDocument());
+            PdfAnnotation widget = PdfAnnotation.makeAnnotation(getPdfObject(), getDocument()); //TODO what?
             widgets.add((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(getPdfObject(), getDocument()));
         }
 

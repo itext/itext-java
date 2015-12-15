@@ -99,6 +99,9 @@ public class PdfException extends RuntimeException {
     public static final String ExtraSamplesAreNotSupported = "extra.samples.are.not.supported";
     public static final String FdfStartxrefNotFound = "fdf.startxref.not.found";
     public static final String FieldFlatteningIsNotSupportedInAppendMode = "field.flattening.is.not.supported.in.append.mode";
+    public static final String FieldIsAlreadySigned = "field.is.already.signed";
+    public static final String FieldNamesCannotContainADot = "field.names.cannot.contain.a.dot";
+    public static final String FieldTypeIsNotASignatureFieldType = "the.field.type.is.not.a.signature.field.type";
     public static final String Filter1IsNotSupported = "filter.1.is.not.supported";
     public static final String FilePosition0CrossReferenceEntryInThisXrefSubsection = "file.position.0.cross.reference.entry.in.this.xref.subsection";
     public static final String FilterCcittfaxdecodeIsOnlySupportedForImages = "filter.ccittfaxdecode.is.only.supported.for.images";

@@ -73,18 +73,11 @@ class PdfPagesTree {
      * @return the {@code PdfPage} object, that wraps {@code pageDictionary}.
      */
     public PdfPage getPage(PdfDictionary pageDictionary) {
-        int pageNum = pageRefs.indexOf(pageDictionary);
-        if (pageNum >= 0) {
-            return getPage(pageNum + 1);
+        int pageNum = getPageNum(pageDictionary);
+        if (pageNum > 0) {
+            return getPage(pageNum);
         }
-        for (int i = 0; i < pageRefs.size(); i++) {
-            if (pageRefs.get(i) == null) {
-                loadPage(i);
-            }
-            if (pageRefs.get(i).equals(pageDictionary)) {
-                return getPage(i + 1);
-            }
-        }
+
         return null;
     }
 
@@ -102,6 +95,27 @@ class PdfPagesTree {
      */
     public int getPageNum(PdfPage page) {
         return pages.indexOf(page) + 1;
+    }
+
+    /**
+     * Returns the index of the first occurrence of the page in this tree
+     * specified by it's PdfDictionary, or 0 if this tree does not contain the page.
+     */
+    public int getPageNum(PdfDictionary pageDictionary) {
+        int pageNum = pageRefs.indexOf(pageDictionary);
+        if (pageNum >= 0) {
+            return pageNum + 1;
+        }
+        for (int i = 0; i < pageRefs.size(); i++) {
+            if (pageRefs.get(i) == null) {
+                loadPage(i);
+            }
+            if (pageRefs.get(i).equals(pageDictionary)) {
+                return i + 1;
+            }
+        }
+
+        return 0;
     }
 
     /**

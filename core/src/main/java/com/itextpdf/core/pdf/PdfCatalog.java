@@ -73,6 +73,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return pageTree.getPageNum(page);
     }
 
+    public int getPageNum(PdfDictionary pageDictionary) {
+        return pageTree.getPageNum(pageDictionary);
+    }
+
     public boolean removePage(PdfPage page) {
         //TODO log removing flushed page
         if(outlineMode)

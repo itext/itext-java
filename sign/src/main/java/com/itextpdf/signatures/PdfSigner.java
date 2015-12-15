@@ -1,5 +1,6 @@
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.io.RASInputStream;
 import com.itextpdf.basics.io.RandomAccessSource;
@@ -242,7 +243,7 @@ public class PdfSigner {
     public void setFieldName(String fieldName) {
         if (fieldName != null) {
             if (fieldName.indexOf('.') >= 0) {
-                throw new IllegalArgumentException("field.names.cannot.contain.a.dot"); // TODO: correct the message
+                throw new IllegalArgumentException(PdfException.FieldNamesCannotContainADot);
             }
 
             PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
@@ -251,15 +252,21 @@ public class PdfSigner {
                 PdfFormField field = acroForm.getField(fieldName);
 
                 if (!PdfName.Sig.equals(field.getFormType())) {
-                    throw new IllegalArgumentException("the.field.1.is.not.a.signature.field"); // TODO: correct the message
+                    throw new IllegalArgumentException(PdfException.FieldTypeIsNotASignatureFieldType);
                 }
 
                 if (field.getValue() != null) {
-                    throw new IllegalArgumentException("field.already.signed"); // TODO: correct the message
+                    throw new IllegalArgumentException(PdfException.FieldIsAlreadySigned);
                 }
 
                 appearance.setFieldName(fieldName);
-                // TODO: retrieve rect and page number from existing field
+
+                List<PdfWidgetAnnotation> widgets = field.getWidgets();
+                if (!widgets.isEmpty()) {
+                    PdfWidgetAnnotation widget = widgets.get(0);
+                    appearance.setPageRect(getWidgetRectangle(widget));
+                    appearance.setPageNumber(getWidgetPageNumber(widget));
+                }
             }
 
             this.fieldName = fieldName;
@@ -324,7 +331,7 @@ public class PdfSigner {
      * This is the first method to be called when using external signatures. The general sequence is:
      * preClose(), getDocumentBytes() and close().
      * <p>
-     * If calling preClose() <B>dont't</B> call PdfStamper.close().
+     * If calling preClose() <B>dont't</B> call PdfStamper.close(). //TODO: review the functionality of this method and correct the comment. There is no such thing as PdfStamper in itext6.
      * <p>
      * <CODE>exclusionSizes</CODE> must contain at least
      * the <CODE>PdfName.CONTENTS</CODE> key with the size that it will take in the
@@ -621,6 +628,38 @@ public class PdfSigner {
             types = new PdfArray();
         types.add(reference);
         crypto.put(PdfName.Reference, types);
+    }
+
+    private Rectangle getWidgetRectangle(PdfWidgetAnnotation widget) {
+        PdfArray r = widget.getRectangle();
+        float x = r.getAsFloat(0);
+        float y = r.getAsFloat(1);
+        float width = r.getAsFloat(2) - x;
+        float height = r.getAsFloat(3) - y;
+        return new Rectangle(x, y, width, height);
+    }
+
+    private int getWidgetPageNumber(PdfWidgetAnnotation widget) {
+        int pageNumber = 0;
+        PdfDictionary pageDict = widget.getPdfObject().getAsDictionary(PdfName.P);
+        if (pageDict != null) {
+            pageNumber = document.getCatalog().getPageNum(pageDict);
+        } else {
+            for (int i = 1; i <= document.getNumOfPages() && pageNumber == 0; ++i) {
+                PdfArray annots = document.getPage(i).getPdfObject().getAsArray(PdfName.Annots);
+                if (annots == null) continue;
+
+                for (PdfObject obj : annots) {
+                    if (obj.isIndirectReference()) {
+                        if (widget.getPdfObject().getIndirectReference().equals(obj)) {
+                            pageNumber = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return pageNumber;
     }
 
     /**
