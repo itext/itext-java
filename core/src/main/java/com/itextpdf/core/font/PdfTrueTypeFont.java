@@ -34,6 +34,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions")
                     .setMessageParams(fontNames.getFontName());
         }
+        if ((encoding == null || encoding.length() == 0) && ttf.isFontSpecific()) {
+            encoding = FontEncoding.FontSpecific;
+        }
         if (encoding != null && FontEncoding.FontSpecific.toLowerCase().equals(encoding.toLowerCase())) {
             fontEncoding = new FontEncoding();
         } else {
@@ -46,7 +49,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     }
 
     public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont trueTypeFont) {
-        this(pdfDocument, trueTypeFont, PdfEncodings.WINANSI, false);
+        this(pdfDocument, trueTypeFont, null, false);
     }
 
     public PdfTrueTypeFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {

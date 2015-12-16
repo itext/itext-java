@@ -256,7 +256,7 @@ public class EncodingTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFont.createFont(doc, sourceFolder + "Symbols1.ttf", FontEncoding.FontSpecific, true);
+        PdfFont font = PdfFont.createFont(doc, sourceFolder + "Symbols1.ttf", true);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         String str = new String();
         for (int i = 32; i <= 65; i++) {

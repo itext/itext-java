@@ -102,13 +102,13 @@ public class ListRenderer extends BlockRenderer {
                     @Override
                     public void draw(PdfDocument document, PdfCanvas canvas) {
                         try {
-                            setProperty(Property.FONT, PdfFont.createStandardFont(document, FontConstants.SYMBOL, FontEncoding.FontSpecific));
+                            setProperty(Property.FONT, PdfFont.createStandardFont(document, FontConstants.SYMBOL));
                         } catch (IOException exc) {}
                         super.draw(document, canvas);
                     }
                 }.setParent(this);
                 try {
-                    textRenderer.setProperty(Property.FONT, PdfFont.createStandardFont(null, FontConstants.SYMBOL, FontEncoding.FontSpecific));
+                    textRenderer.setProperty(Property.FONT, PdfFont.createStandardFont(null, FontConstants.SYMBOL));
                 } catch (IOException exc) {}
             } else {
                 textRenderer = new TextRenderer(textElement).setParent(this);

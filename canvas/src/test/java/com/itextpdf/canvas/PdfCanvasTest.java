@@ -5,6 +5,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.RawImage;
