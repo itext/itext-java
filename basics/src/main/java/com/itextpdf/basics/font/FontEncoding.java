@@ -8,6 +8,8 @@ import java.util.StringTokenizer;
 public class FontEncoding {
 
     private static final byte[] emptyBytes = new byte[0];
+
+    public static String FontSpecific = "FontSpecific";
     /**
      * Base font encoding.
      */
@@ -34,30 +36,28 @@ public class FontEncoding {
      */
     private IntHashtable unicodeDifferences = new IntHashtable(256);
 
-    public FontEncoding(String baseEncoding, boolean fontSpecific) {
-        this.fontSpecific = fontSpecific;
+    public FontEncoding(String baseEncoding) {
+        this.fontSpecific = false;
+        this.baseEncoding = normalizeEncoding(baseEncoding);
+        if (this.baseEncoding.startsWith("#")) {
+            processCustomEncoding();
+        } else {
+            processEncoding();
+        }
+    }
+
+    /**
+     * This encoding will base on font encoding (FontSpecific encoding in Type 1 terminology)
+     */
+    public FontEncoding() {
+        fontSpecific = true;
         if (fontSpecific) {
             for (int ch = 0; ch < 256; ch++) {
                 unicodeToCode.put(ch, ch);
                 codeToUnicode[ch] = ch;
                 unicodeDifferences.put(ch, ch);
             }
-        } else {
-            this.baseEncoding = normalizeEncoding(baseEncoding);
-            if (this.baseEncoding.startsWith("#")) {
-                processCustomEncoding();
-            } else {
-                processEncoding();
-            }
         }
-    }
-
-    public FontEncoding(String baseEncoding) {
-        this(baseEncoding, false);
-    }
-
-    public FontEncoding(boolean fontSpecific) {
-        this(null, true);
     }
 
     public String getBaseEncoding() {
@@ -83,7 +83,6 @@ public class FontEncoding {
     public String getDifferences(int index) {
         return differences != null ? differences[index] : null;
     }
-
 
     /**
      * Converts a {@code String} to a {@code byte} array according to the encoding.

@@ -15,7 +15,6 @@ public abstract class FontProgram {
     HashMap<Integer, Glyph> codeToGlyph = new HashMap<>();
     HashMap<Integer, Glyph> unicodeToGlyph = new HashMap<>();
 
-    protected FontEncoding encoding;
     protected FontNames fontNames = new FontNames();
     protected FontMetrics fontMetrics = new FontMetrics();
     protected FontIdentification fontIdentification = new FontIdentification();

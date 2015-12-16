@@ -41,11 +41,9 @@ public class Type1Font extends FontProgram {
 
     //TODO remove
     public Type1Font(String baseEncoding) throws IOException {
-        boolean fontSpecific = true;
         if (encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding")) {
             fontSpecific = false;
         }
-        this.encoding = new FontEncoding(baseEncoding, fontSpecific);
     }
 
     public static Type1Font createStandardFont(String name) throws IOException {

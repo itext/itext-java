@@ -386,7 +386,7 @@ public class PdfFontTest extends ExtendedITextTest{
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFont.createType1Font(pdfDoc, fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb", "WinAnsi", true);
+        PdfFont pdfType1Font = PdfFont.createType1Font(pdfDoc, fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb", "FontSpecific", true);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
         new PdfCanvas(pdfDoc.addNewPage())
@@ -401,7 +401,7 @@ public class PdfFontTest extends ExtendedITextTest{
 
         byte[] afm = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-        pdfType1Font = PdfFont.createType1Font(pdfDoc, afm, pfb, true);
+        pdfType1Font = PdfFont.createType1Font(pdfDoc, afm, pfb, "FontSpecific", true);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
         new PdfCanvas(pdfDoc.addNewPage())
@@ -435,7 +435,7 @@ public class PdfFontTest extends ExtendedITextTest{
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFont.createType1Font(pdfDoc, fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb", "", true);
+        PdfFont pdfType1Font = PdfFont.createType1Font(pdfDoc, fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb", "FontSpecific", true);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas

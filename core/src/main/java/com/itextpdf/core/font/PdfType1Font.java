@@ -6,7 +6,6 @@ import com.itextpdf.basics.font.FontMetrics;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -16,7 +15,6 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 public class PdfType1Font extends PdfSimpleFont<Type1Font> {
@@ -35,7 +33,11 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         super(pdfDocument, new PdfDictionary());
         setFontProgram(type1Font);
         this.embedded = embedded && !type1Font.isBuiltInFont();
-        this.fontEncoding = new FontEncoding(encoding, type1Font.isFontSpecific());
+        if (encoding != null && FontEncoding.FontSpecific.toLowerCase().equals(encoding.toLowerCase())) {
+            fontEncoding = new FontEncoding();
+        } else {
+            fontEncoding = new FontEncoding(encoding);
+        }
     }
 
     public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, boolean embedded) {
@@ -156,7 +158,11 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
             fontDescriptor.put(PdfName.FontFile, fontStream);
             fontStream.flush();
         }
-        fontDescriptor.put(PdfName.Flags, new PdfNumber(fontProgram.getPdfFontFlags()));
+        int flags = fontProgram.getPdfFontFlags();
+        if (!fontEncoding.isFontSpecific()) {
+            flags &= ~64;
+        }
+        fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
         return fontDescriptor;
     }
 

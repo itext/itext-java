@@ -1,10 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.FontNames;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.TrueTypeFont;
+import com.itextpdf.basics.font.*;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.geom.Rectangle;
 
@@ -37,7 +34,11 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             throw new PdfException("1.cannot.be.embedded.due.to.licensing.restrictions")
                     .setMessageParams(fontNames.getFontName());
         }
-        fontEncoding = new FontEncoding(encoding, ttf.isFontSpecific());
+        if (encoding != null && FontEncoding.FontSpecific.toLowerCase().equals(encoding.toLowerCase())) {
+            fontEncoding = new FontEncoding();
+        } else {
+            fontEncoding = new FontEncoding(encoding);
+        }
     }
 
     public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont trueTypeFont, String encoding) {
@@ -190,7 +191,11 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         fontDescriptor.put(PdfName.CapHeight, new PdfNumber(getFontProgram().getFontMetrics().getCapHeight()));
         fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(getFontProgram().getFontMetrics().getItalicAngle()));
         fontDescriptor.put(PdfName.StemV, new PdfNumber(getFontProgram().getFontMetrics().getStemV()));
-        fontDescriptor.put(PdfName.Flags, new PdfNumber(getFontProgram().getPdfFontFlags()));
+        int flags = fontProgram.getPdfFontFlags();
+        if (!fontEncoding.isFontSpecific()) {
+            flags &= ~64;
+        }
+        fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
         if (fontStream != null) {
             if (getFontProgram().isCff()) {
                 fontDescriptor.put(PdfName.FontFile3, fontStream);
