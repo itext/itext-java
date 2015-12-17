@@ -1,7 +1,6 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -89,6 +88,18 @@ public class ListRenderer extends BlockRenderer {
                 case GREEK_UPPER:
                     numberText = GreekAlphabetNumbering.toGreekAlphabetNumberUpperCase(index);
                     break;
+                case ZAPF_DINGBATS_1:
+                    numberText = String.valueOf((char)(index + 171));
+                    break;
+                case ZAPF_DINGBATS_2:
+                    numberText = String.valueOf((char)(index + 181));
+                    break;
+                case ZAPF_DINGBATS_3:
+                    numberText = String.valueOf((char)(index + 191));
+                    break;
+                case ZAPF_DINGBATS_4:
+                    numberText = String.valueOf((char)(index + 201));
+                    break;
                 default:
                     throw new IllegalStateException();
             }
@@ -97,18 +108,24 @@ public class ListRenderer extends BlockRenderer {
             // Be careful. There is a workaround here. For Greek symbols we first set a dummy font with document=null
             // in order for the metrics to be taken into account correctly during layout.
             // Then on draw we set the correct font with actual document in order for the font objects to be created.
-            if (numberingType == Property.ListNumberingType.GREEK_LOWER || numberingType == Property.ListNumberingType.GREEK_UPPER) {
+            if (numberingType == Property.ListNumberingType.GREEK_LOWER || numberingType == Property.ListNumberingType.GREEK_UPPER ||
+                    numberingType == Property.ListNumberingType.ZAPF_DINGBATS_1 || numberingType == Property.ListNumberingType.ZAPF_DINGBATS_2 ||
+                    numberingType == Property.ListNumberingType.ZAPF_DINGBATS_3 || numberingType == Property.ListNumberingType.ZAPF_DINGBATS_4) {
+
+                final String constantFont = (numberingType == Property.ListNumberingType.GREEK_LOWER || numberingType == Property.ListNumberingType.GREEK_UPPER) ?
+                        FontConstants.SYMBOL : FontConstants.ZAPFDINGBATS;
+
                 textRenderer = new TextRenderer(textElement) {
                     @Override
                     public void draw(PdfDocument document, PdfCanvas canvas) {
                         try {
-                            setProperty(Property.FONT, PdfFont.createStandardFont(document, FontConstants.SYMBOL));
+                            setProperty(Property.FONT, PdfFont.createStandardFont(document, constantFont));
                         } catch (IOException exc) {}
                         super.draw(document, canvas);
                     }
                 }.setParent(this);
                 try {
-                    textRenderer.setProperty(Property.FONT, PdfFont.createStandardFont(null, FontConstants.SYMBOL));
+                    textRenderer.setProperty(Property.FONT, PdfFont.createStandardFont(null, constantFont));
                 } catch (IOException exc) {}
             } else {
                 textRenderer = new TextRenderer(textElement).setParent(this);

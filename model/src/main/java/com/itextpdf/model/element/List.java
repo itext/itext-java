@@ -42,6 +42,11 @@ public class List extends BlockElement<List> {
     }
 
     public List setListSymbol(Property.ListNumberingType listNumberingType) {
+        // Do not draw any points after ZapfDingbats special number symbol
+        if (listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_1 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_2 ||
+                listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_4) {
+            postSymbolText = " ";
+        }
         return setProperty(Property.LIST_SYMBOL, listNumberingType);
     }
 

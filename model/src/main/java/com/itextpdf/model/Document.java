@@ -13,11 +13,8 @@ import com.itextpdf.model.renderer.RootRenderer;
 public class Document extends RootElement<Document> {
 
     protected float leftMargin = 36;
-
     protected float rightMargin = 36;
-
     protected float topMargin = 36;
-
     protected float bottomMargin = 36;
 
     public Document(PdfDocument pdfDoc) {
@@ -27,8 +24,6 @@ public class Document extends RootElement<Document> {
     public Document(PdfDocument pdfDoc, PageSize pageSize) {
         this(pdfDoc, pageSize, true);
     }
-
-
 
     public Document(PdfDocument pdfDoc, PageSize pageSize, boolean immediateFlush) {
         this.pdfDocument = pdfDoc;

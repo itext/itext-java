@@ -283,7 +283,15 @@ public enum Property {
         ENGLISH_LOWER,
         ENGLISH_UPPER,
         GREEK_LOWER,
-        GREEK_UPPER
+        GREEK_UPPER,
+        // Zapfdingbats font characters in range [172; 181]
+        ZAPF_DINGBATS_1,
+        // Zapfdingbats font characters in range [182; 191]
+        ZAPF_DINGBATS_2,
+        // Zapfdingbats font characters in range [192; 201]
+        ZAPF_DINGBATS_3,
+        // Zapfdingbats font characters in range [202; 221]
+        ZAPF_DINGBATS_4
     }
 
     public enum TabAlignment {
