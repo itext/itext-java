@@ -249,6 +249,9 @@ public class PdfStream extends PdfDictionary {
                 outputStream.reset();
             }
         }
+
+        // Only when we remove old filter will the compression logic be triggered on flushing the stream
+        remove(PdfName.Filter);
     }
 
     @Override
