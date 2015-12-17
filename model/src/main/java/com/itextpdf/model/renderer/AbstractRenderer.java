@@ -85,6 +85,11 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public boolean hasProperty(Property property) {
+        return hasOwnProperty(property);
+    }
+
+    @Override
+    public boolean hasOwnProperty(Property property) {
         return properties.containsKey(property);
     }
 
@@ -107,6 +112,11 @@ public abstract class AbstractRenderer implements IRenderer {
             return (T) property;
         }
         return modelElement != null ? (T) modelElement.getDefaultProperty(key) : (T) getDefaultProperty(key);
+    }
+
+    @Override
+    public <T> T getOwnProperty(Property property) {
+        return (T) properties.get(property);
     }
 
     @Override

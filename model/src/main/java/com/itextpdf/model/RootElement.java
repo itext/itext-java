@@ -48,11 +48,21 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
 
     @Override
     public boolean hasProperty(Property property) {
+        return hasOwnProperty(property);
+    }
+
+    @Override
+    public boolean hasOwnProperty(Property property) {
         return properties.containsKey(property);
     }
 
     @Override
     public <T> T getProperty(Property property) {
+        return getOwnProperty(property);
+    }
+
+    @Override
+    public <T> T getOwnProperty(Property property) {
         return (T) properties.get(property);
     }
 

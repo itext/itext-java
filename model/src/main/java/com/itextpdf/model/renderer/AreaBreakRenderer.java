@@ -48,7 +48,17 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
+    public boolean hasOwnProperty(Property property) {
+        return false;
+    }
+
+    @Override
     public <T> T getProperty(Property key) {
+        return null;
+    }
+
+    @Override
+    public <T> T getOwnProperty(Property property) {
         return null;
     }
 
