@@ -31,6 +31,11 @@ public class DocumentRenderer extends RootRenderer {
         throw new IllegalStateException("Not applicable for DocumentRenderer");
     }
 
+    @Override
+    public DocumentRenderer getNextRenderer() {
+        return null;
+    }
+
     protected LayoutArea getNextArea(LayoutResult overflowResult) {
         moveToNextPage();
         PageSize customPageSize = overflowResult != null ? overflowResult.getNewPageSize() : null;

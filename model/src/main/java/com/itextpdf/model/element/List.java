@@ -1,7 +1,6 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.model.Property;
-import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ListRenderer;
 
 public class List extends BlockElement<List> {
@@ -24,16 +23,6 @@ public class List extends BlockElement<List> {
     public List add(ListItem listItem) {
         childElements.add(listItem);
         return this;
-    }
-
-    @Override
-    public IRenderer makeRenderer() {
-        if (nextRenderer != null) {
-            IRenderer renderer = nextRenderer;
-            nextRenderer = null;
-            return renderer;
-        }
-        return new ListRenderer(this);
     }
 
     public List add(String text) {
@@ -78,5 +67,10 @@ public class List extends BlockElement<List> {
 
     public void setPreSymbolText(String preSymbolText) {
         this.preSymbolText = preSymbolText;
+    }
+
+    @Override
+    protected ListRenderer makeNewRenderer() {
+        return new ListRenderer(this);
     }
 }

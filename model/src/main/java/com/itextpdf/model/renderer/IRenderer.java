@@ -31,4 +31,6 @@ public interface IRenderer extends IPropertyContainer<IRenderer> {
     boolean isFlushed();
 
     void move(float dx, float dy);
+
+    IRenderer getNextRenderer();
 }

@@ -5,8 +5,6 @@ import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.*;
-import com.itextpdf.core.pdf.action.PdfAction;
-import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.layout.LayoutArea;
@@ -174,8 +172,13 @@ public class BlockRenderer extends AbstractRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
+    @Override
+    public BlockRenderer getNextRenderer() {
+        return new BlockRenderer((BlockElement) modelElement);
+    }
+
     protected BlockRenderer createSplitRenderer(int layoutResult) {
-        BlockRenderer splitRenderer = new BlockRenderer((BlockElement) modelElement);
+        BlockRenderer splitRenderer = getNextRenderer();
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
@@ -183,7 +186,7 @@ public class BlockRenderer extends AbstractRenderer {
     }
 
     protected BlockRenderer createOverflowRenderer(int layoutResult) {
-        BlockRenderer overflowRenderer = new BlockRenderer((BlockElement) modelElement);
+        BlockRenderer overflowRenderer = getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         return overflowRenderer;

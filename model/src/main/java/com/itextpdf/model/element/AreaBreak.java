@@ -2,7 +2,6 @@ package com.itextpdf.model.element;
 
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.model.renderer.AreaBreakRenderer;
-import com.itextpdf.model.renderer.IRenderer;
 
 public class AreaBreak extends AbstractElement {
 
@@ -24,12 +23,7 @@ public class AreaBreak extends AbstractElement {
     }
 
     @Override
-    public IRenderer makeRenderer() {
-        if (nextRenderer != null) {
-            IRenderer renderer = nextRenderer;
-            nextRenderer = null;
-            return renderer;
-        }
+    protected AreaBreakRenderer makeNewRenderer() {
         return new AreaBreakRenderer(this);
     }
 }

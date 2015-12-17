@@ -266,7 +266,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
 
     @Override
     public TableRenderer createRendererSubTree() {
-        TableRenderer rendererRoot = makeRenderer();
+        TableRenderer rendererRoot = getRenderer();
         for (IElement child : childElements) {
             boolean childShouldBeAdded = isComplete || cellBelongsToAnyRowGroup((Cell) child, lastAddedRowGroups);
             if (childShouldBeAdded) {
@@ -277,11 +277,11 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     }
 
     @Override
-    public TableRenderer makeRenderer() {
+    public TableRenderer getRenderer() {
         if (nextRenderer != null) {
             if (nextRenderer instanceof TableRenderer) {
                 IRenderer renderer = nextRenderer;
-                nextRenderer = null;
+                nextRenderer = nextRenderer.getNextRenderer();
                 return (TableRenderer)renderer;
             } else {
                 Logger logger = LoggerFactory.getLogger(Table.class);

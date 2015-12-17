@@ -143,6 +143,11 @@ public class ImageRenderer extends AbstractRenderer {
         applyMargins(occupiedArea.getBBox(), true);
     }
 
+    @Override
+    public ImageRenderer getNextRenderer() {
+        return null;
+    }
+
     protected ImageRenderer autoScale(LayoutArea area) {
         if (width > area.getBBox().getWidth()) {
             setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);

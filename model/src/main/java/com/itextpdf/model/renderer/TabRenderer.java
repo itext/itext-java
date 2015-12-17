@@ -35,4 +35,9 @@ public class TabRenderer extends AbstractRenderer {
 
         leader.draw(canvas, occupiedArea.getBBox());
     }
+
+    @Override
+    public TabRenderer getNextRenderer() {
+        return new TabRenderer((Tab) modelElement);
+    }
 }

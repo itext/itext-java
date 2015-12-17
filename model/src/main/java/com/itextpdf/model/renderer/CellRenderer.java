@@ -27,7 +27,7 @@ public class CellRenderer extends BlockRenderer {
 
     @Override
     protected CellRenderer createSplitRenderer(int layoutResult) {
-        CellRenderer splitRenderer = new CellRenderer(getModelElement());
+        CellRenderer splitRenderer = getNextRenderer();
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
@@ -37,7 +37,7 @@ public class CellRenderer extends BlockRenderer {
 
     @Override
     protected CellRenderer createOverflowRenderer(int layoutResult) {
-        CellRenderer overflowRenderer = new CellRenderer(getModelElement());
+        CellRenderer overflowRenderer = getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
@@ -47,5 +47,10 @@ public class CellRenderer extends BlockRenderer {
     @Override
     public void drawBorder(PdfDocument document, PdfCanvas canvas) {
         // Do nothing here. Border drawing for tables is done on TableRenderer.
+    }
+
+    @Override
+    public CellRenderer getNextRenderer() {
+        return new CellRenderer(getModelElement());
     }
 }

@@ -1,7 +1,6 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.model.Property;
-import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.TextRenderer;
 
 public class Text extends AbstractElement<Text> implements ILeafElement<Text>, IAccessibleElement<Text> {
@@ -10,16 +9,6 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
 
     public Text(String text) {
         this.text = text;
-    }
-
-    @Override
-    public IRenderer makeRenderer() {
-        if (nextRenderer != null) {
-            IRenderer renderer = nextRenderer;
-            nextRenderer = null;
-            return renderer;
-        }
-        return new TextRenderer(this, text);
     }
 
     @Override
@@ -62,5 +51,10 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
      */
     public Text setHorizontalScaling(float horizontalScaling) {
         return setProperty(Property.HORIZONTAL_SCALING, horizontalScaling);
+    }
+
+    @Override
+    protected TextRenderer makeNewRenderer() {
+        return new TextRenderer(this, text);
     }
 }

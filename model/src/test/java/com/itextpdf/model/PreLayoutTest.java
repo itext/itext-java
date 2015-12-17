@@ -119,12 +119,7 @@ public class PreLayoutTest extends ExtendedITextTest{
             }
 
             @Override
-            protected ParagraphRenderer createSplitRenderer() {
-                return new TwoColumnParagraphRenderer((Paragraph) modelElement, oneColumnPage);
-            }
-
-            @Override
-            protected ParagraphRenderer createOverflowRenderer() {
+            public ParagraphRenderer getNextRenderer() {
                 return new TwoColumnParagraphRenderer((Paragraph) modelElement, oneColumnPage);
             }
         }

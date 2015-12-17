@@ -1,6 +1,5 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ListItemRenderer;
 
 public class ListItem extends Div {
@@ -20,12 +19,7 @@ public class ListItem extends Div {
     }
 
     @Override
-    public IRenderer makeRenderer() {
-        if (nextRenderer != null) {
-            IRenderer renderer = nextRenderer;
-            nextRenderer = null;
-            return renderer;
-        }
+    protected ListItemRenderer makeNewRenderer() {
         return new ListItemRenderer(this);
     }
 

@@ -1,7 +1,6 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.model.Property;
-import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ParagraphRenderer;
 
 import java.util.Arrays;
@@ -54,17 +53,6 @@ public class Paragraph extends BlockElement<Paragraph> {
         return (T) this;
     }
 
-
-    @Override
-    public IRenderer makeRenderer() {
-        if (nextRenderer != null) {
-            IRenderer renderer = nextRenderer;
-            nextRenderer = null;
-            return renderer;
-        }
-        return new ParagraphRenderer(this);
-    }
-
     @Override
     public <T> T getDefaultProperty(Property property) {
         switch (property) {
@@ -97,6 +85,12 @@ public class Paragraph extends BlockElement<Paragraph> {
         return (T) this;
     }
 
+
+    @Override
+    protected ParagraphRenderer makeNewRenderer() {
+        return new ParagraphRenderer(this);
+    }
+
     private void addTabStopsAsProperty(java.util.List<TabStop> newTabStops) {
         TreeMap<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
         if (tabStops == null) {
@@ -107,5 +101,4 @@ public class Paragraph extends BlockElement<Paragraph> {
             tabStops.put(tabStop.getTabPosition(), tabStop);
         }
     }
-
 }

@@ -20,13 +20,23 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
     protected List<IElement> childElements = new ArrayList<>();
 
     @Override
+    public IRenderer getRenderer() {
+        if (nextRenderer != null) {
+            IRenderer renderer = nextRenderer;
+            nextRenderer = nextRenderer.getNextRenderer();
+            return renderer;
+        }
+        return makeNewRenderer();
+    }
+
+    @Override
     public void setNextRenderer(IRenderer renderer) {
         this.nextRenderer = renderer;
     }
 
     @Override
     public IRenderer createRendererSubTree() {
-        IRenderer rendererRoot = makeRenderer();
+        IRenderer rendererRoot = getRenderer();
         for (IElement child : childElements) {
             rendererRoot.addChild(child.createRendererSubTree());
         }
@@ -352,4 +362,5 @@ public abstract class AbstractElement<Type extends AbstractElement> implements I
         return setProperty(Property.FONT_SCRIPT, script);
     }
 
+    protected abstract IRenderer makeNewRenderer();
 }

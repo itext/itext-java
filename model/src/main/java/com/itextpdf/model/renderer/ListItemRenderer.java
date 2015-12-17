@@ -60,8 +60,13 @@ public class ListItemRenderer extends BlockRenderer {
     }
 
     @Override
+    public ListItemRenderer getNextRenderer() {
+        return new ListItemRenderer((ListItem) modelElement);
+    }
+
+    @Override
     protected BlockRenderer createSplitRenderer(int layoutResult) {
-        ListItemRenderer splitRenderer = new ListItemRenderer((ListItem) modelElement);
+        ListItemRenderer splitRenderer = getNextRenderer();
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
@@ -76,7 +81,7 @@ public class ListItemRenderer extends BlockRenderer {
 
     @Override
     protected BlockRenderer createOverflowRenderer(int layoutResult) {
-        ListItemRenderer overflowRenderer = new ListItemRenderer((ListItem) modelElement);
+        ListItemRenderer overflowRenderer = getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         if (layoutResult == LayoutResult.NOTHING) {

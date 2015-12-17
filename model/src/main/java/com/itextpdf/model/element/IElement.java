@@ -7,7 +7,7 @@ public interface IElement<Type extends IElement> extends IPropertyContainer<Type
 
     void setNextRenderer(IRenderer renderer);
 
-    IRenderer makeRenderer();
+    IRenderer getRenderer();
 
     IRenderer createRendererSubTree();
 }

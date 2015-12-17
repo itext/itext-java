@@ -587,6 +587,11 @@ public class TextRenderer extends AbstractRenderer {
         return tabAnchorCharacterPosition;
     }
 
+    @Override
+    public TextRenderer getNextRenderer() {
+        return new TextRenderer((Text) modelElement, null);
+    }
+
     private GlyphLine convertToGlyphLine(String text) {
         PdfFont font = getPropertyAsFont(Property.FONT);
         return font.createGlyphLine(text);
@@ -621,11 +626,11 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected TextRenderer createSplitRenderer() {
-        return new TextRenderer((Text)modelElement, null);
+        return getNextRenderer();
     }
 
     protected TextRenderer createOverflowRenderer() {
-        return new TextRenderer((Text)modelElement, null);
+        return getNextRenderer();
     }
 
     protected TextRenderer[] split(int initialOverflowTextPos) {

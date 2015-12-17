@@ -96,4 +96,9 @@ public class AreaBreakRenderer implements IRenderer {
     public void move(float dx, float dy) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public AreaBreakRenderer getNextRenderer() {
+        return null;
+    }
 }

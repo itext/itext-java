@@ -46,4 +46,9 @@ public class LinkRenderer extends TextRenderer {
         PdfPage page = document.getPage(occupiedArea.getPageNumber());
         page.addAnnotation(linkAnnotation);
     }
+
+    @Override
+    public LinkRenderer getNextRenderer() {
+        return null;
+    }
 }

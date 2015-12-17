@@ -33,5 +33,8 @@ public class CanvasRenderer extends RootRenderer {
         return currentArea;
     }
 
-
+    @Override
+    public CanvasRenderer getNextRenderer() {
+        return null;
+    }
 }

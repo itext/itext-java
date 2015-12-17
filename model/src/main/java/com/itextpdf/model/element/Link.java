@@ -4,7 +4,6 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
-import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.LinkRenderer;
 
 public class Link extends Text {
@@ -24,17 +23,12 @@ public class Link extends Text {
         this(text, new PdfLinkAnnotation(destination.getDocument(), new Rectangle(0, 0, 0, 0)).setDestination(destination));
     }
 
-    @Override
-    public IRenderer makeRenderer() {
-        if (nextRenderer != null) {
-            IRenderer renderer = nextRenderer;
-            nextRenderer = null;
-            return renderer;
-        }
-        return new LinkRenderer(this, text);
-    }
-
     public PdfLinkAnnotation getLinkAnnotation(){
         return linkAnnotation;
+    }
+
+    @Override
+    protected LinkRenderer makeNewRenderer() {
+        return new LinkRenderer(this, text);
     }
 }

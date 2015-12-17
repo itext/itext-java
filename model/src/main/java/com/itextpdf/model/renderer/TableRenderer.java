@@ -35,10 +35,11 @@ public class TableRenderer extends AbstractRenderer {
 
     public TableRenderer(Table modelElement, Table.RowRange rowRange) {
         super(modelElement);
-        this.rowRange = rowRange;
-        for (int row = rowRange.getStartRow(); row <= rowRange.getFinishRow(); row++) {
-            rows.add(new CellRenderer[modelElement.getNumberOfColumns()]);
-        }
+        setRowRange(rowRange);
+    }
+
+    protected TableRenderer(Table modelElement) {
+        super(modelElement);
     }
 
     @Override
@@ -299,7 +300,7 @@ public class TableRenderer extends AbstractRenderer {
                         Cell overflowCell = currentRow[col].getModelElement().clone(false);
                         childRenderers.add(currentRow[col]);
                         currentRow[col] = null;
-                        rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.makeRenderer().setParent(this);
+                        rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
                     }
                 }
                 adjustFooterAndFixOccupiedArea(layoutBox);
@@ -332,6 +333,11 @@ public class TableRenderer extends AbstractRenderer {
         if (footerRenderer != null) {
             footerRenderer.draw(document, canvas);
         }
+    }
+
+    @Override
+    public TableRenderer getNextRenderer() {
+        return new TableRenderer((Table) modelElement);
     }
 
     protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth) {
@@ -379,12 +385,9 @@ public class TableRenderer extends AbstractRenderer {
         return new TableRenderer[] {splitRenderer, overflowRenderer};
     }
 
-    protected <T extends TableRenderer> T makeSplitRenderer(Table.RowRange rowRange) {
-        return (T) new TableRenderer((Table) modelElement, rowRange);
-    }
-
     protected <T extends TableRenderer> T createSplitRenderer(Table.RowRange rowRange) {
-        TableRenderer splitRenderer = makeSplitRenderer(rowRange);
+        TableRenderer splitRenderer = getNextRenderer();
+        splitRenderer.setRowRange(rowRange);
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         // TODO childRenderers will be populated twice during the relayout.
@@ -396,12 +399,9 @@ public class TableRenderer extends AbstractRenderer {
         return (T) splitRenderer;
     }
 
-    protected <T extends TableRenderer> T makeOverflowRenderer(Table.RowRange rowRange) {
-        return (T) new TableRenderer((Table) modelElement, rowRange);
-    }
-
     protected <T extends TableRenderer> T createOverflowRenderer(Table.RowRange rowRange) {
-        TableRenderer overflowRenderer = makeOverflowRenderer(rowRange);
+        TableRenderer overflowRenderer = getNextRenderer();
+        overflowRenderer.setRowRange(rowRange);
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
@@ -646,6 +646,18 @@ public class TableRenderer extends AbstractRenderer {
         return false;
     }
 
+    /**
+     * This method is used to set row range for table renderer during creating a new renderer.
+     * The purpose to use this method is to remove input argument RowRange from createOverflowRenderer
+     * and createSplitRenderer methods.
+     * @param rowRange
+     */
+    private void setRowRange(Table.RowRange rowRange) {
+        this.rowRange = rowRange;
+        for (int row = rowRange.getStartRow(); row <= rowRange.getFinishRow(); row++) {
+            rows.add(new CellRenderer[((Table)modelElement).getNumberOfColumns()]);
+        }
+    }
 
 
     /**

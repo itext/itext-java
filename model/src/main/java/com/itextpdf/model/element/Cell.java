@@ -31,12 +31,12 @@ public class Cell extends BlockElement<Cell> {
     }
 
     @Override
-    public CellRenderer makeRenderer() {
+    public CellRenderer getRenderer() {
         CellRenderer cellRenderer = null;
         if (nextRenderer != null) {
             if (nextRenderer instanceof CellRenderer) {
                 IRenderer renderer = nextRenderer;
-                nextRenderer = null;
+                nextRenderer = nextRenderer.getNextRenderer();
                 cellRenderer = (CellRenderer) renderer;
             } else {
                 Logger logger = LoggerFactory.getLogger(Table.class);
@@ -44,7 +44,7 @@ public class Cell extends BlockElement<Cell> {
             }
         }
         //cellRenderer could be null in case invalid type (see logger message above)
-        return cellRenderer == null ? new CellRenderer(this) : cellRenderer;
+        return cellRenderer == null ? makeNewRenderer() : cellRenderer;
     }
 
     public int getRow() {
@@ -102,6 +102,11 @@ public class Cell extends BlockElement<Cell> {
     @Override
     public String toString() {
         return String.format("Cell{row=%d, col=%d, rowspan=%d, colspan=%d}", row, col, rowspan, colspan);
+    }
+
+    @Override
+    protected CellRenderer makeNewRenderer() {
+        return new CellRenderer(this);
     }
 
     protected Cell updateCellIndexes(int row, int col, int numberOfColumns) {

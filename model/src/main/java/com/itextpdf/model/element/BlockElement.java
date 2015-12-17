@@ -2,21 +2,10 @@ package com.itextpdf.model.element;
 
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.BlockRenderer;
-import com.itextpdf.model.renderer.IRenderer;
 
 public abstract class BlockElement<T extends BlockElement> extends AbstractElement<T> implements IAccessibleElement<T> {
 
     public BlockElement() {
-    }
-
-    @Override
-    public IRenderer makeRenderer() {
-        if (nextRenderer != null) {
-            IRenderer renderer = nextRenderer;
-            nextRenderer = null;
-            return renderer;
-        }
-        return new BlockRenderer(this);
     }
 
     public Float getMarginLeft() {
@@ -147,5 +136,10 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
     public T setRotationAngle(double angle) {
         setProperty(Property.ROTATION_ANGLE, Float.valueOf((float) angle));
         return (T) this;
+    }
+
+    @Override
+    protected BlockRenderer makeNewRenderer() {
+        return new BlockRenderer(this);
     }
 }

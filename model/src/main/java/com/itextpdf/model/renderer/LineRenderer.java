@@ -168,6 +168,11 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     @Override
+    public LineRenderer getNextRenderer() {
+        return new LineRenderer();
+    }
+
+    @Override
     protected Float getFirstYLineRecursively() {
         return getYLine();
     }
@@ -228,11 +233,11 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected LineRenderer createSplitRenderer() {
-        return new LineRenderer();
+        return getNextRenderer();
     }
 
     protected LineRenderer createOverflowRenderer() {
-        return new LineRenderer();
+        return getNextRenderer();
     }
 
     protected LineRenderer[] split() {

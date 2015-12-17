@@ -199,8 +199,13 @@ public class ParagraphRenderer extends BlockRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
+    @Override
+    public ParagraphRenderer getNextRenderer() {
+        return new ParagraphRenderer((Paragraph) modelElement);
+    }
+
     protected ParagraphRenderer createOverflowRenderer() {
-        ParagraphRenderer overflowRenderer = new ParagraphRenderer((Paragraph)modelElement);
+        ParagraphRenderer overflowRenderer = getNextRenderer();
         // Reset first line indent in case of overflow.
         float firstLineIndent = getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != 0) {
@@ -210,7 +215,7 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     protected ParagraphRenderer createSplitRenderer() {
-        return new ParagraphRenderer((Paragraph)modelElement);
+        return getNextRenderer();
     }
 
     protected ParagraphRenderer[] split() {

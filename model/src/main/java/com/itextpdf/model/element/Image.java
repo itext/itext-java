@@ -72,16 +72,6 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         this(new PdfImageXObject(img), x, y, width);
     }
 
-    @Override
-    public IRenderer makeRenderer() {
-        if (nextRenderer != null) {
-            IRenderer renderer = nextRenderer;
-            nextRenderer = null;
-            return renderer;
-        }
-        return new ImageRenderer(this);
-    }
-
     public PdfXObject getXObject() {
         return xObject;
     }
@@ -230,6 +220,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         return null == getProperty(Property.VERTICAL_SCALING) ?
                 xObject.getHeight() :
                 xObject.getHeight() * (Float) getProperty(Property.VERTICAL_SCALING);
+    }
+
+    @Override
+    protected IRenderer makeNewRenderer() {
+        return new ImageRenderer(this);
     }
 
 }
