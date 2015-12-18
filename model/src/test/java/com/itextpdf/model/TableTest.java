@@ -749,8 +749,6 @@ public class TableTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(5);
-        // TODO
-        // table.setWidthPercentage(100);
         table.addHeaderCell(new Cell(1, 5).
             add(new Paragraph("Table XYZ (Continued)")));
         table.addFooterCell(new Cell(1, 5).

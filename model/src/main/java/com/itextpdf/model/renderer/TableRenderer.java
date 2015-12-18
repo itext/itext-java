@@ -38,8 +38,8 @@ public class TableRenderer extends AbstractRenderer {
         setRowRange(rowRange);
     }
 
-    protected TableRenderer(Table modelElement) {
-        super(modelElement);
+    public TableRenderer(Table modelElement) {
+        this(modelElement, new Table.RowRange(0, modelElement.getNumberOfRows()));
     }
 
     @Override
