@@ -132,11 +132,6 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         return scale(horizontalScaling, verticalScaling);
     }
 
-
-    public Image setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
-        return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
-    }
-
     public Image setAutoScale(boolean autoScale) {
         if (hasProperty(Property.AUTO_SCALE_WIDTH) && hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale &&
                 ((Boolean) getProperty(Property.AUTO_SCALE_WIDTH) ||

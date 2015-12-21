@@ -126,6 +126,10 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
 //            setProperty(Property.Y, y);
 //    }
 
+    public Type setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
+        return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
+    }
+
     public Type setFont(PdfFont font) {
         return setProperty(Property.FONT, font);
     }

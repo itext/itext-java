@@ -67,6 +67,13 @@ public class TableRenderer extends AbstractRenderer {
             setProperty(Property.MARGIN_TOP, 0);
         }
         applyMargins(layoutBox, false);
+
+        if (isPositioned()) {
+            float x = getPropertyAsFloat(Property.X);
+            float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
+            layoutBox.setX(relativeX + x);
+        }
+
         Table tableModel = (Table) getModelElement();
 
         Float tableWidth = retrieveWidth(layoutBox.getWidth());
@@ -312,6 +319,12 @@ public class TableRenderer extends AbstractRenderer {
             }
 
             layoutBox.decreaseHeight(rowHeight);
+        }
+
+        if (isPositioned()) {
+            float y = getPropertyAsFloat(Property.Y);
+            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
+            move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
         applyMargins(occupiedArea.getBBox(), true);

@@ -88,10 +88,6 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         return (T) setPaddingTop(paddingTop).setPaddingRight(paddingRight).setPaddingBottom(paddingBottom).setPaddingLeft(paddingLeft);
     }
 
-    public T setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
-        return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
-    }
-
     public T setVerticalAlignment(Property.VerticalAlignment verticalAlignment) {
         return setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
     }
