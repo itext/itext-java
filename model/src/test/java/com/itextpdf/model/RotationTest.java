@@ -1,5 +1,6 @@
 package com.itextpdf.model;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
@@ -20,6 +21,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -275,6 +278,9 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
     @Test
     public void rotationInfiniteLoopTest02() throws IOException, InterruptedException {
         String fileName = "rotationInfiniteLoopTest02.pdf";
@@ -337,6 +343,9 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
     @Test
     public void divRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divRotationTest02.pdf";

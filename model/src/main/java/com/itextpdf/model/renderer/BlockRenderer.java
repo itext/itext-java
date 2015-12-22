@@ -127,6 +127,9 @@ public class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers.clear();
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
+                        if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                        }
 
                         applyPaddings(occupiedArea.getBBox(), true);
                         applyBorderBox(occupiedArea.getBBox(), true);
@@ -164,7 +167,7 @@ public class BlockRenderer extends AbstractRenderer {
         if (getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingHeight(layoutContext.getArea())) {
-                if (!layoutContext.getArea().isEmptyArea()) {
+                if (!getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                 }
             }

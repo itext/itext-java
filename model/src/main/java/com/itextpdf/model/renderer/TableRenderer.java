@@ -302,7 +302,7 @@ public class TableRenderer extends AbstractRenderer {
                             childRenderers.add(cellSplit);
                         }
                         currentRow[col] = null;
-                        rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) splits[col].getOverflowRenderer();
+                        rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) splits[col].getOverflowRenderer().setParent(splitResult[1]);
                     } else if (hasContent && currentRow[col] != null) {
                         Cell overflowCell = currentRow[col].getModelElement().clone(false);
                         childRenderers.add(currentRow[col]);
@@ -312,6 +312,9 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 adjustFooterAndFixOccupiedArea(layoutBox);
                 int status = childRenderers.isEmpty() && footerRenderer == null ? LayoutResult.NOTHING : LayoutResult.PARTIAL;
+                if (status == LayoutResult.NOTHING && getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                    return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                }
                 return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1]);
             } else {
                 childRenderers.addAll(currChildRenderers);

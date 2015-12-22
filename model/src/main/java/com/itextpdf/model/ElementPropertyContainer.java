@@ -62,6 +62,8 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
                 return (T) Float.valueOf(0);
             case POSITION:
                 return (T)Integer.valueOf(LayoutPosition.STATIC);
+            case FORCED_PLACEMENT:
+                return (T) Boolean.FALSE;
             default:
                 return null;
         }

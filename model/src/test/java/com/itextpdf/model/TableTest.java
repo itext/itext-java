@@ -1,5 +1,6 @@
 package com.itextpdf.model;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.image.ImageFactory;
@@ -20,9 +21,12 @@ import com.itextpdf.model.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -701,9 +705,15 @@ public class TableTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-	@Test(expected = PdfException.class)
-    public void toLargeElementWithKeepTogetherPropertyInTableTest01() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+	@Test
+    public void toLargeElementWithKeepTogetherPropertyInTableTest01() throws IOException, InterruptedException {
+        String testName = "toLargeElementWithKeepTogetherPropertyInTableTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(1);
@@ -720,11 +730,18 @@ public class TableTest extends ExtendedITextTest{
         doc.add(table);
 
         pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    @Test(expected = PdfException.class)
-    public void toLargeElementInTableTest01() {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+    @Test
+    public void toLargeElementInTableTest01() throws IOException, InterruptedException {
+        String testName = "toLargeElementInTableTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "toLargeElementInTableTest01.pdf")));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{5});
@@ -735,6 +752,7 @@ public class TableTest extends ExtendedITextTest{
         doc.add(table);
 
         pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
 	@Test

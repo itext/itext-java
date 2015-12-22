@@ -59,16 +59,19 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
                                 logger.warn(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA);
+                                if (storedArea != null) {
+                                    nextStoredArea = currentArea;
+                                    currentArea = storedArea;
+                                    currentPageNumber = storedArea.getPageNumber();
+                                }
+                                storedArea = currentArea;
                             } else {
-                                throw new PdfException(PdfException.ElementCannotFitAnyArea);
+                                result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
+                                Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
+                                logger.warn(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA);
                             }
                             renderer = result.getOverflowRenderer();
-                            if (storedArea != null) {
-                                nextStoredArea = currentArea;
-                                currentArea = storedArea;
-                                currentPageNumber = storedArea.getPageNumber();
-                            }
-                            storedArea = currentArea;
+
                             continue;
                         }
                         storedArea = currentArea;
