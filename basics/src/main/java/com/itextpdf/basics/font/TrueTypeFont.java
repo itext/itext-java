@@ -3,16 +3,17 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.indic.IndicCluster;
 import com.itextpdf.basics.font.indic.IndicConfig;
 import com.itextpdf.basics.font.indic.IndicShaper;
 import com.itextpdf.basics.font.otf.FeatureRecord;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
+import com.itextpdf.basics.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.basics.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.basics.font.otf.LanguageRecord;
 import com.itextpdf.basics.font.otf.OpenTableLookup;
+import com.itextpdf.basics.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.basics.font.otf.OpenTypeGdefTableReader;
 import com.itextpdf.basics.font.otf.ScriptRecord;
 
@@ -40,6 +41,7 @@ public class TrueTypeFont extends FontProgram {
     protected boolean isVertical;
 
     private GlyphSubstitutionTableReader gsubTable;
+    private GlyphPositioningTableReader gposTable;
     private OpenTypeGdefTableReader gdefTable;
 
     private boolean applyLigatures = false;
@@ -112,8 +114,8 @@ public class TrueTypeFont extends FontProgram {
             return false;
         }
         if (gsubTable != null) {
-            LanguageRecord languageRecord = getLanguageRecord();
-            if (languageRecord == null) {
+            LanguageRecord gsubLanguageRecord = getGsubLanguageRecord();
+            if (gsubLanguageRecord == null) {
                 return false;
             }
             boolean transformed = false;
@@ -123,7 +125,7 @@ public class TrueTypeFont extends FontProgram {
                 List<OpenTableLookup> medi = null;
                 List<OpenTableLookup> fina = null;
                 List<OpenTableLookup> rlig = null;
-                for (int featureIndex : languageRecord.features) {
+                for (int featureIndex : gsubLanguageRecord.features) {
                     FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
                     switch (feature.tag) {
                         case "init":
@@ -150,11 +152,21 @@ public class TrueTypeFont extends FontProgram {
             } else if (Character.UnicodeScript.DEVANAGARI.equals(script)) {
                 List<IndicCluster> clusters = IndicShaper.splitDevanagariGlyphLineIntoClusters(glyphLine);
 
+                // Note that both GPOS and GSUB features are here. We assume the tags do not intersect
                 Map<String, List<OpenTableLookup>> features = new LinkedHashMap<>();
-                for (int featureIndex : languageRecord.features) {
+                for (int featureIndex : gsubLanguageRecord.features) {
                     FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
                     List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{feature});
                     features.put(feature.tag, lookups);
+                }
+
+                if (gposTable != null) {
+                    LanguageRecord gposLanguageRecord = getGposLanguageRecord();
+                    for (int featureIndex : gposLanguageRecord.features) {
+                        FeatureRecord feature = gposTable.getFeatureRecords().get(featureIndex);
+                        List<OpenTableLookup> lookups = gposTable.getLookups(new FeatureRecord[]{feature});
+                        features.put(feature.tag, lookups);
+                    }
                 }
 
                 if (clusters != null && clusters.size() > 0) {
@@ -198,6 +210,13 @@ public class TrueTypeFont extends FontProgram {
 
                         String[] discretionary = new String[] {"calt", "clig"};
                         for (String feature : discretionary) {
+                            if (transform(features.get(feature), cluster)) {
+                                transformed = true;
+                            }
+                        }
+
+                        String[] positioning = new String[] {"abvm", "blwm"};
+                        for (String feature : positioning) {
                             if (transform(features.get(feature), cluster)) {
                                 transformed = true;
                             }
@@ -249,7 +268,7 @@ public class TrueTypeFont extends FontProgram {
             List<FeatureRecord> ligaFeatures = new ArrayList<>();
 
             if (scriptSpecific) {
-                LanguageRecord languageRecord = getLanguageRecord();
+                LanguageRecord languageRecord = getGsubLanguageRecord();
                 if (languageRecord == null) {
                     return false;
                 }
@@ -404,6 +423,13 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
+    protected void readGposTable() throws IOException {
+        int[] gpos = fontParser.tables.get("GPOS");
+        if (gpos != null) {
+            gposTable = new GlyphPositioningTableReader(fontParser.raf, gpos[0], gdefTable, codeToGlyph);
+        }
+    }
+
     private void initializeFontProperties() throws IOException {
 
         // initialize sfnt tables
@@ -507,6 +533,7 @@ public class TrueTypeFont extends FontProgram {
 
         readGdefTable();
         readGsubTable();
+        readGposTable();
 
         isVertical = false;
     }
@@ -626,10 +653,18 @@ public class TrueTypeFont extends FontProgram {
         return transformed;
     }
 
-    private LanguageRecord getLanguageRecord() {
+    private LanguageRecord getGsubLanguageRecord() {
+        return getLanguageRecord(gsubTable);
+    }
+
+    private LanguageRecord getGposLanguageRecord() {
+        return getLanguageRecord(gposTable);
+    }
+
+    private LanguageRecord getLanguageRecord(OpenTypeFontTableReader table) {
         LanguageRecord languageRecord = null;
         if (otfScriptTag != null) {
-            for (ScriptRecord record : gsubTable.getScriptRecords()) {
+            for (ScriptRecord record : table.getScriptRecords()) {
                 if (otfScriptTag.equals(record.tag)) {
                     languageRecord = record.defaultLanguage;
                     break;

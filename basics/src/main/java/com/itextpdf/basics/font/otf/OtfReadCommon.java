@@ -107,10 +107,17 @@ public class OtfReadCommon {
             return null;
         }
         rf.seek(location);
-        rf.readUnsignedShort(); //skip format
-        GposAnchor t = new GposAnchor();
-        t.XCoordinate = rf.readShort();
-        t.YCoordinate = rf.readShort();
+        int format = rf.readUnsignedShort();
+        GposAnchor t = null;
+
+        switch (format) {
+            default:
+                t = new GposAnchor();
+                t.XCoordinate = rf.readShort();
+                t.YCoordinate = rf.readShort();
+                break;
+        }
+
         return t;
     }
     
@@ -121,13 +128,14 @@ public class OtfReadCommon {
         int[] locations = new int[markCount];
         for (int k = 0; k < markCount; ++k) {
             classes[k] = rf.readUnsignedShort();
-            locations[k] = rf.readUnsignedShort();
+            int offset = rf.readUnsignedShort();
+            locations[k] = location + offset;
         }
         List<OtfMarkRecord> marks = new ArrayList<OtfMarkRecord>();
         for (int k = 0; k < markCount; ++k) {
             OtfMarkRecord rec = new OtfMarkRecord();
-            rec.MarkClass = classes[k];
-            rec.Anchor = readGposAnchor(rf, locations[k]);
+            rec.markClass = classes[k];
+            rec.anchor = readGposAnchor(rf, locations[k]);
             marks.add(rec);
         }
         return marks;
