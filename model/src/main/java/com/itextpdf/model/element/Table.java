@@ -133,6 +133,48 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     }
 
     /**
+     * Adds a new cell with received blockElement as a content to the header of the table.
+     * The header will be displayed in the top of every area of this table.
+     * See also {@link #setSkipFirstHeader(boolean)}.
+     * @param blockElement an element to be added to a header cell
+     */
+    public void addHeaderCell(BlockElement blockElement) {
+        if (header == null) {
+            header = new Table(columnWidths);
+            header.setWidth(getWidth());
+        }
+        header.addCell(blockElement);
+    }
+
+    /**
+     * Adds a new cell with received image to the header of the table.
+     * The header will be displayed in the top of every area of this table.
+     * See also {@link #setSkipFirstHeader(boolean)}.
+     * @param image an element to be added to a header cell
+     */
+    public void addHeaderCell(Image image) {
+        if (header == null) {
+            header = new Table(columnWidths);
+            header.setWidth(getWidth());
+        }
+        header.addCell(image);
+    }
+
+    /**
+     * Adds a new cell with received string as a content to the header of the table.
+     * The header will be displayed in the top of every area of this table.
+     * See also {@link #setSkipFirstHeader(boolean)}.
+     * @param content a string to be added to a header cell
+     */
+    public void addHeaderCell(String content) {
+        if (header == null) {
+            header = new Table(columnWidths);
+            header.setWidth(getWidth());
+        }
+        header.addCell(content);
+    }
+
+    /**
      * Gets the header of the table. The header is represented as a distinct table and might have its own properties.
      * @return table header or {@code null}, if {@link #addHeaderCell(Cell)} hasn't been called.
      */
@@ -152,6 +194,48 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
             footer.setWidth(getWidth());
         }
         footer.addCell(footerCell);
+    }
+
+    /**
+     * Adds a new cell with received blockElement as a content to the footer of the table.
+     * The header will be displayed in the top of every area of this table.
+     * See also {@link #setSkipLastFooter(boolean)}.
+     * @param blockElement an element to be added to a footer cell
+     */
+    public void addFooterCell(BlockElement blockElement) {
+        if (footer == null) {
+            footer = new Table(columnWidths);
+            footer.setWidth(getWidth());
+        }
+        footer.addCell(blockElement);
+    }
+
+    /**
+     * Adds a new cell with received image as a content to the footer of the table.
+     * The header will be displayed in the top of every area of this table.
+     * See also {@link #setSkipLastFooter(boolean)}.
+     * @param image an image to be added to a footer cell
+     */
+    public void addFooterCell(Image image) {
+        if (footer == null) {
+            footer = new Table(columnWidths);
+            footer.setWidth(getWidth());
+        }
+        footer.addCell(image);
+    }
+
+    /**
+     * Adds a new cell with received string as a content to the footer of the table.
+     * The header will be displayed in the top of every area of this table.
+     * See also {@link #setSkipLastFooter(boolean)}.
+     * @param content a content string to be added to a footer cell
+     */
+    public void addFooterCell(String content) {
+        if (footer == null) {
+            footer = new Table(columnWidths);
+            footer.setWidth(getWidth());
+        }
+        footer.addCell(content);
     }
 
     /**
@@ -251,6 +335,30 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         }
         currentColumn += cell.getColspan();
         return this;
+    }
+
+    /**
+     * Adds a new cell with received blockElement as a content.
+     * @param blockElement a blockElement to add to the cell and then to the table
+     */
+    public Table addCell(BlockElement blockElement) {
+        return addCell(new Cell().add(blockElement));
+    }
+
+    /**
+     * Adds a new cell with received image as a content.
+     * @param image an image to add to the cell and then to the table
+     */
+    public Table addCell(Image image) {
+        return addCell(new Cell().add(image));
+    }
+
+    /**
+     * Adds a new cell with received string as a content.
+     * @param content a string to add to the cell and then to the table
+     */
+    public Table addCell(String content) {
+        return addCell(new Cell().add(new Paragraph(content)));
     }
 
     public Cell getCell(int row, int column) {
