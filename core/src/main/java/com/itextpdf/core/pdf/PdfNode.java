@@ -51,10 +51,22 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
 
         names.add(key);
         names.add(value.makeIndirect(getDocument()));
+        String keyValue = ((PdfString)key).toUnicodeString();
         if (limits != null) {
-            if (limits.size() == 2)
-                limits.remove(1);
-            limits.add(1, key);
+            PdfString limit = limits.getAsString(0);
+            if (limit != null) {
+                if (keyValue.compareTo(limit.toUnicodeString()) < 0) {
+                    limits.set(0, key);
+                }
+            }
+            if (limits.size() == 2) {
+                limit = limits.getAsString(1);
+                if (keyValue.compareTo(limit.toUnicodeString()) > 0) {
+                    limits.set(1, key);
+                }
+            } else {
+                limits.add(key);
+            }
         }
 
         getPdfObject().put(PdfName.Names, names);

@@ -312,7 +312,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     xObject = new PdfFormXObject((PdfStream) normal);
                 } else if (normal.isDictionary()) {
                     PdfName as = field.getPdfObject().getAsName(PdfName.AS);
-                    xObject = new PdfFormXObject(((PdfDictionary)normal).getAsStream(as)).makeIndirect(document);
+                    if (((PdfDictionary)normal).getAsStream(as) != null) {
+                        xObject = new PdfFormXObject(((PdfDictionary)normal).getAsStream(as)).makeIndirect(document);
+                    }
                 }
 
                 if (xObject != null) {
@@ -322,21 +324,22 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     }
                     PdfCanvas canvas = new PdfCanvas(page);
                     canvas.addXObject(xObject, box.getX(), box.getY());
-                    PdfArray fFields = getFields();
-                    fFields.remove(field.getPdfObject().getIndirectReference());
-                    PdfArray annots = page.getPdfObject().getAsArray(PdfName.Annots);
-                    annots.remove(field.getPdfObject().getIndirectReference());
-                    if (annots.isEmpty()) {
-                        page.getPdfObject().remove(PdfName.Annots);
-                    }
-                    PdfDictionary parent = field.getPdfObject().getAsDictionary(PdfName.Parent);
-                    if (parent != null) {
-                        PdfArray kids = parent.getAsArray(PdfName.Kids);
-                        kids.remove(field.getPdfObject().getIndirectReference());
-                        if (kids == null || kids.isEmpty()) {
-                            fFields.remove(parent.getIndirectReference());
-                        }
-                    }
+                }
+            }
+
+            PdfArray fFields = getFields();
+            fFields.remove(field.getPdfObject().getIndirectReference());
+            PdfArray annots = page.getPdfObject().getAsArray(PdfName.Annots);
+            annots.remove(field.getPdfObject().getIndirectReference());
+            if (annots.isEmpty()) {
+                page.getPdfObject().remove(PdfName.Annots);
+            }
+            PdfDictionary parent = field.getPdfObject().getAsDictionary(PdfName.Parent);
+            if (parent != null) {
+                PdfArray kids = parent.getAsArray(PdfName.Kids);
+                kids.remove(field.getPdfObject().getIndirectReference());
+                if (kids == null || kids.isEmpty()) {
+                    fFields.remove(parent.getIndirectReference());
                 }
             }
         }

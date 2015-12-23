@@ -51,8 +51,18 @@ public class PdfNameTree {
         if (kidsCount == 0 && node.getNames() != null)
             kidsCount = node.getNames().size();
         if (kidsCount >= NodeSize || (node.getKids() != null && node.getKids().size() != 0)) {
+            PdfNode parentNode = parents.get(parents.size() - 1);
+            if (parentNode.getPdfObject().containsKey(PdfName.Names)) {
+                PdfNode newKidNode = new PdfNode(document);
+                PdfArray names = parentNode.getNames();
+                for (int i = 0; i < names.size(); i++) {
+                    newKidNode.addName(names.get(i), names.get(++i));
+                }
+                parentNode.addKid(newKidNode);
+                parentNode.remove(PdfName.Names);
+            }
             node = new PdfNode(document);
-            parents.get(parents.size() - 1).addKid(node);
+            parentNode.addKid(node);
         }
 
         node.addName(key, value);
