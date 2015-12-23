@@ -151,4 +151,46 @@ public class OtfReadCommon {
         }
         return substPosLookUpRecords;
     }
+
+    public static GposAnchor[] readAnchorArray(RandomAccessFileOrArray rf, int[] locations, int left, int right) throws IOException {
+        GposAnchor[] anchors = new GposAnchor[right - left];
+        for (int i = left; i < right; i++) {
+            anchors[i - left] = readGposAnchor(rf, locations[i]);
+        }
+        return anchors;
+    }
+
+    public static List<GposAnchor[]> readBaseArray(RandomAccessFileOrArray rf, int classCount, int location) throws IOException {
+        ArrayList<GposAnchor[]> baseArray = new ArrayList<>();
+        rf.seek(location);
+        int baseCount = rf.readUnsignedShort();
+        int[] anchorLocations = readUShortArray(rf, baseCount * classCount, location);
+        int idx = 0;
+        for (int k = 0; k < baseCount; ++k) {
+            baseArray.add(readAnchorArray(rf, anchorLocations, idx, idx + classCount));
+            idx += classCount;
+        }
+        return baseArray;
+    }
+
+    public static List<List<GposAnchor[]>> readLigatureArray(RandomAccessFileOrArray rf, int classCount, int location) throws IOException {
+        ArrayList<List<GposAnchor[]>> ligatureArray = new ArrayList<>();
+        rf.seek(location);
+        int ligatureCount = rf.readUnsignedShort();
+        int[] ligatureAttachLocations = readUShortArray(rf, ligatureCount, location);
+        for (int liga = 0; liga < ligatureCount; ++liga) {
+            int ligatureAttachLocation = ligatureAttachLocations[liga];
+            ArrayList<GposAnchor[]> ligatureAttach = new ArrayList<>();
+            rf.seek(ligatureAttachLocation);
+            int componentCount = rf.readUnsignedShort();
+            int[] componentRecordsLocation = readUShortArray(rf, classCount * componentCount, ligatureAttachLocation);
+            int idx = 0;
+            for (int k = 0; k < componentCount; ++k) {
+                ligatureAttach.add(readAnchorArray(rf, componentRecordsLocation, idx, idx + classCount));
+                idx += classCount;
+            }
+            ligatureArray.add(ligatureAttach);
+        }
+        return ligatureArray;
+    }
 }
