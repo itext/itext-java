@@ -410,7 +410,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     public Integer getStructParentIndex() {
         if (structParents == null) {
-            structParents = getPdfObject().getAsNumber(PdfName.StructParents).getIntValue();
+            PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
+            if (n != null) {
+                structParents = getPdfObject().getAsNumber(PdfName.StructParents).getIntValue();
+            } else {
+                structParents = 0;
+            }
         }
         return structParents;
     }

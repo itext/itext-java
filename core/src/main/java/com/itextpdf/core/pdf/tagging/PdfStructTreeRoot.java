@@ -137,11 +137,14 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         int maxStructParentIndex = 0;
         if (nums == null)
             nums = getParentTreeObject().getAsArray(PdfName.Nums);
-        for (int i = 0; i < nums.size(); i++) {
-            PdfNumber n = nums.getAsNumber(i);
-            if (n != null && n.getIntValue() > maxStructParentIndex)
-                maxStructParentIndex = n.getIntValue();
+        if (nums != null) {
+            for (int i = 0; i < nums.size(); i++) {
+                PdfNumber n = nums.getAsNumber(i);
+                if (n != null && n.getIntValue() > maxStructParentIndex)
+                    maxStructParentIndex = n.getIntValue();
+            }
         }
+
         return maxStructParentIndex;
 
     }

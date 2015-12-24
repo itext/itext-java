@@ -747,7 +747,7 @@ public class PdfReader {
                     pdfString.setDecryptInfoNum(currentIndirectReference.getObjNumber());
                     pdfString.setDecryptInfoGen(currentIndirectReference.getGenNumber());
                 }
-                return password == null ? pdfString : pdfString.decrypt(decrypt);
+                return pdfString;
             }
             case Name:
                 return readPdfName(readAsDirect);
