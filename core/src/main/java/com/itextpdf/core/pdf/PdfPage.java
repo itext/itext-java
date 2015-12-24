@@ -217,7 +217,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, excludedKeys, true);
         PdfPage page = new PdfPage(dictionary, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
-            page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument), toDocument));
+            page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, false), toDocument));
         }
         if (toDocument.isTagged()) {
             page.structParents = toDocument.getNextStructParentIndex();

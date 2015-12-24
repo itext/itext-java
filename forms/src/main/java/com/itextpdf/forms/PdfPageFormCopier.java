@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
+import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,10 +55,17 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                         PdfDictionary parent = annot.getPdfObject().getAsDictionary(PdfName.Parent);
                         if (parent != null) {
                             PdfString parentName = parent.getAsString(PdfName.T);
-                            if (parentName == null || !usedParents.contains(parent)) {
+                            if (parentName == null) {
+                                continue;
+                            }
+                            if (!usedParents.contains(parent)) {
                                 PdfFormField field = PdfFormField.makeFormField(parent, toPage.getDocument());
+                                field.getKids().clear();
                                 formTo.addField(field, toPage);
                                 usedParents.add(parent);
+                                field.addKid((PdfWidgetAnnotation) annot);
+                            } else {
+                                parent.getAsArray(PdfName.Kids).add(annot.getPdfObject());
                             }
                         } else {
                             PdfString annotName = annot.getPdfObject().getAsString(PdfName.T);
