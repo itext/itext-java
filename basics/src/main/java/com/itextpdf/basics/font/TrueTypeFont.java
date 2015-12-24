@@ -215,7 +215,7 @@ public class TrueTypeFont extends FontProgram {
                             }
                         }
 
-                        String[] positioning = new String[] {"abvm", "blwm"};
+                        String[] positioning = new String[] {"dist", "abvm", "blwm"};
                         for (String feature : positioning) {
                             if (transform(features.get(feature), cluster)) {
                                 transformed = true;

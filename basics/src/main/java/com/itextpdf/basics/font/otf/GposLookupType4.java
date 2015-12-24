@@ -56,6 +56,7 @@ public class GposLookupType4 extends OpenTableLookup {
             int markClass = omr.markClass;
             GposAnchor baseAnchor = gpas[markClass];
             GposAnchor markAnchor = omr.anchor;
+            // TODO
 //            line.glyphs.add(line.idx, new Glyph(line.glyphs.get(line.idx),
 //                    markAnchor.XCoordinate - baseAnchor.XCoordinate,
 //                    markAnchor.YCoordinate - baseAnchor.YCoordinate,
