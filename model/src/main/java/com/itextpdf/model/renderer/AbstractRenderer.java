@@ -279,6 +279,20 @@ public abstract class AbstractRenderer implements IRenderer {
         return occupiedArea.getBBox().clone();
     }
 
+    protected Rectangle getBorderBBox() {
+        Rectangle rect = getOccupiedAreaBBox();
+        applyMargins(rect, false);
+        applyBorderBox(rect, false);
+        return rect;
+    }
+
+    protected Rectangle getInnerBBox() {
+        Rectangle rect = getOccupiedAreaBBox();
+        applyPaddings(rect, false);
+        return rect;
+    }
+
+
     protected Float retrieveWidth(float parentBoxWidth) {
         Property.UnitValue width = getProperty(Property.WIDTH);
         if (width != null) {

@@ -34,10 +34,12 @@ import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
-import com.itextpdf.core.pdf.xobject.PdfXObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.StringTokenizer;
 
 
 public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
@@ -609,7 +611,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfArray kids = getKids();
         if (kids != null) {
             for (PdfObject kid : kids) {
-                subType = ((PdfDictionary)kid).getAsName(PdfName.Subtype);
+                if (kid.isIndirectReference()) {
+                    kid = ((PdfIndirectReference) kid).getRefersTo();
+                }
+                subType = ((PdfDictionary) kid).getAsName(PdfName.Subtype);
                 if (subType != null && subType.equals(PdfName.Widget)) {
                     widgets.add((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(kid, getDocument()));
                 }
