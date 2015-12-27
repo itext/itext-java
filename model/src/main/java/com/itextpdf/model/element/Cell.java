@@ -78,6 +78,10 @@ public class Cell extends BlockElement<Cell> {
         return this;
     }
 
+    public Cell add(String content) {
+        return add(new Paragraph(content));
+    }
+
     public Cell clone(boolean includeContent) {
         Cell newCell = new Cell(rowspan, colspan);
         newCell.row = row;
