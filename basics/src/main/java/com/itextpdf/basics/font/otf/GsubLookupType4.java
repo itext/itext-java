@@ -35,16 +35,16 @@ public class GsubLookupType4 extends OpenTableLookup {
         boolean changed = false;
         Glyph g = line.glyphs.get(line.idx);
         boolean match = false;
-        if (ligatures.containsKey(g.index) && !openReader.isSkip(g.index, lookupFlag)) {
+        if (ligatures.containsKey(g.getCode()) && !openReader.isSkip(g.getCode(), lookupFlag)) {
             GlyphIndexer gidx = new GlyphIndexer();
             gidx.line = line;
-            List<int[]> ligs = ligatures.get(g.index);
+            List<int[]> ligs = ligatures.get(g.getCode());
             for (int[] lig : ligs) {
                 match = true;
                 gidx.idx = line.idx;
                 for (int j = 1; j < lig.length; ++j) {
                     gidx.nextGlyph(openReader, lookupFlag);
-                    if (gidx.glyph == null || gidx.glyph.index != lig[j]) {
+                    if (gidx.glyph == null || gidx.glyph.getCode() != lig[j]) {
                         match = false;
                         break;
                     }

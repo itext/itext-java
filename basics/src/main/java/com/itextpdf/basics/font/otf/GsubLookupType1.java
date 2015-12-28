@@ -25,8 +25,8 @@ public class GsubLookupType1 extends OpenTableLookup {
         }
         Glyph g = line.glyphs.get(line.idx);
         boolean changed = false;
-        if (!openReader.isSkip(g.index, lookupFlag)) {
-            Integer substCode = substMap.get(g.index);
+        if (!openReader.isSkip(g.getCode(), lookupFlag)) {
+            Integer substCode = substMap.get(g.getCode());
             if (substCode != null) {
                 line.substituteOneToOne(openReader, substCode);
                 changed = true;

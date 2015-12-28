@@ -82,7 +82,7 @@ public abstract class OpenTypeFontTableReader {
         if (glyph == null) {
             return 0;
         } else {
-            return glyph.width;
+            return glyph.getWidth();
         }
     }
     

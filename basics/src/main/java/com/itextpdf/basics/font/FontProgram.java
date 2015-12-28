@@ -63,7 +63,7 @@ public abstract class FontProgram {
      */
     public int getWidth(int unicode) {
         Glyph glyph = getGlyph(unicode);
-        return glyph != null ? glyph.width : 0;
+        return glyph != null ? glyph.getWidth() : 0;
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class FontProgram {
      */
     public int[] getCharBBox(int unicode) {
         Glyph glyph = getGlyph(unicode);
-        return glyph != null ? glyph.bbox : null;
+        return glyph != null ? glyph.getBbox() : null;
     }
 
     public Glyph getGlyph(int unicode) {

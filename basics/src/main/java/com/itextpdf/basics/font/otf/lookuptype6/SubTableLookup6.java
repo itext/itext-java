@@ -19,7 +19,7 @@ public abstract class SubTableLookup6 extends ContextualSubTable {
             return null;
 
         Glyph g = line.glyphs.get(line.idx);
-        List<ContextualSubstRule> rules = getSetOfRulesForStartGlyph(g.index);
+        List<ContextualSubstRule> rules = getSetOfRulesForStartGlyph(g.getCode());
         for (ContextualSubstRule rule : rules) {
             int lastGlyphIndex = checkIfContextMatch(line, rule);
 
@@ -47,7 +47,7 @@ public abstract class SubTableLookup6 extends ContextualSubTable {
         gidx.idx = startIdx;
         for (j = 0; j < rule.getLookaheadContextLength(); ++j) {
             gidx.nextGlyph(openReader, lookupFlag);
-            if (gidx.glyph == null || !rule.isGlyphMatchesLookahead(gidx.glyph.index, j)) {
+            if (gidx.glyph == null || !rule.isGlyphMatchesLookahead(gidx.glyph.getCode(), j)) {
                 break;
             }
         }
@@ -64,7 +64,7 @@ public abstract class SubTableLookup6 extends ContextualSubTable {
         gidx.idx = line.idx;
         for (j = 0; j < rule.getBacktrackContextLength(); ++j) {
             gidx.previousGlyph(openReader, lookupFlag);
-            if (gidx.glyph == null || !rule.isGlyphMatchesBacktrack(gidx.glyph.index, j)) {
+            if (gidx.glyph == null || !rule.isGlyphMatchesBacktrack(gidx.glyph.getCode(), j)) {
                 break;
             }
         }

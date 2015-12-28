@@ -144,7 +144,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     if (shortTag[k] != 0) {
                         Glyph glyph = fontProgram.getGlyph(fontEncoding.getUnicode(k));
                         if (glyph != null) {
-                            glyphs.add(glyph.index);
+                            glyphs.add(glyph.getCode());
                         }
                     }
                 }

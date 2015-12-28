@@ -357,7 +357,7 @@ public class Type1Font extends FontProgram {
         if (!unicodeToGlyph.containsKey(0x00A0)) {
             Glyph space = unicodeToGlyph.get(0x0020);
             if (space != null) {
-                unicodeToGlyph.put(0x00A0, new Glyph(space.index, space.width, 0x00A0, space.bbox));
+                unicodeToGlyph.put(0x00A0, new Glyph(space.getCode(), space.getWidth(), 0x00A0, space.getBbox()));
             }
         }
         boolean endOfMetrics = false;

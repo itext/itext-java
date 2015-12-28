@@ -34,7 +34,7 @@ public class Type3Font extends FontProgram {
     @Override
     public int getWidth(int ch) {
         if (codeToGlyph.containsKey(ch)) {
-            return codeToGlyph.get(ch).width;
+            return codeToGlyph.get(ch).getWidth();
         }
         return 0;
     }
@@ -42,7 +42,7 @@ public class Type3Font extends FontProgram {
     @Override
     public int[] getCharBBox(int ch) {
         if (codeToGlyph.containsKey(ch)) {
-            return codeToGlyph.get(ch).bbox;
+            return codeToGlyph.get(ch).getBbox();
         }
         return null;
     }

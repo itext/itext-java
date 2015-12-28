@@ -316,7 +316,7 @@ public class TrueTypeFont extends FontProgram {
         if (first == null || second == null) {
             return 0;
         }
-        return kerning.get((first.index << 16) + second.index);
+        return kerning.get((first.getCode() << 16) + second.getCode());
     }
 
     public boolean isCff() {
@@ -523,7 +523,7 @@ public class TrueTypeFont extends FontProgram {
         for (int i = 0; i < glyphLine.glyphs.size(); i++) {
             Glyph medialForm = transform(medi, glyphLine.glyphs.get(i));
             Glyph finalForm = transform(fina, glyphLine.glyphs.get(i));
-            if (medialForm == null || (finalForm != null && medialForm.index == finalForm.index)) {
+            if (medialForm == null || (finalForm != null && medialForm.getCode() == finalForm.getCode())) {
                 if (started) {
                     // if the glyph has no fina form, it is not an arabic glyph
                     words.add(finalForm != null ? i + 1 : i);
@@ -603,7 +603,7 @@ public class TrueTypeFont extends FontProgram {
         if (feature != null) {
             for (OpenTableLookup lookup : feature) {
                 if (lookup != null) {
-                    if (lookup.hasSubstitution(glyph.index)) {
+                    if (lookup.hasSubstitution(glyph.getCode())) {
                         GlyphLine gl = new GlyphLine();
                         gl.start = 0;
                         gl.end = 1;

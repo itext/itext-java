@@ -53,13 +53,12 @@ public class Glyph {
     /**
      * The <i>code</i> or <i>id</i> by which this is represented in the Font File.
      */
-    //TODO rename to code, due to dual notation: index in otl and code in type1
-    public final int index;
+    private final int code;
     /**
      * The normalized width of this Glyph.
      */
-    public final int width;
-    public int[] bbox = null;
+    private final int width;
+    private int[] bbox = null;
     /**
      * utf-32 representation of glyph if appears. Zer
      */
@@ -67,24 +66,19 @@ public class Glyph {
     /**
      * The Unicode text represented by this Glyph
      */
-    public char[] chars;
-    public final int XPlacement;
-    public final int YPlacement;
-    public final int XAdvance;
-    public final int YAdvance;
-    public final boolean isMark;
+    private char[] chars;
+    private final boolean isMark;
 
-    public Glyph(int index, int width, Integer unicode) {
-        this(index, width, unicode, null, false);
+    public Glyph(int code, int width, Integer unicode) {
+        this(code, width, unicode, null, false);
     }
 
-    public Glyph(int index, int width, char[] chars) {
-        this(index, width, codePoint(chars), chars, false);
-
+    public Glyph(int code, int width, char[] chars) {
+        this(code, width, codePoint(chars), chars, false);
     }
 
-    public Glyph(int index, int width, Integer unicode, int[] bbox) {
-        this(index, width, unicode, null, false);
+    public Glyph(int code, int width, Integer unicode, int[] bbox) {
+        this(code, width, unicode, null, false);
         this.bbox = bbox;
     }
 
@@ -92,55 +86,58 @@ public class Glyph {
         this(-1, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
     }
 
-    public Glyph(int index, int width, Integer unicode, char[] chars, boolean IsMark) {
-        this.index = index;
+    public Glyph(int code, int width, Integer unicode, char[] chars, boolean IsMark) {
+        this.code = code;
         this.width = width;
         this.unicode = unicode;
-        this.XPlacement = 0;
-        this.YPlacement = 0;
-        this.XAdvance = 0;
-        this.YAdvance = 0;
         this.isMark = IsMark;
         if (chars == null && unicode != null && Character.isValidCodePoint(unicode)) {
             this.chars = Utilities.convertFromUtf32(unicode);
         }
     }
 
-//    public Glyph(Glyph glyph, int XPlacement, int YPlacement, int XAdvance, int YAdvance) {
-//        this.index = glyph.index;
-//        this.width = glyph.width;
-//        this.chars = glyph.chars;
-//        this.unicode = glyph.unicode;
-//        this.XPlacement = glyph.XPlacement + XPlacement;
-//        this.YPlacement = glyph.YPlacement + YPlacement;
-//        this.XAdvance = glyph.XAdvance + XAdvance;
-//        this.YAdvance = glyph.YAdvance + YAdvance;
-//        this.IsMark = glyph.IsMark;
-//    }
-
-
     public Glyph(Glyph glyph) {
-        this.index = glyph.index;
+        this.code = glyph.code;
         this.width = glyph.width;
         this.chars = glyph.chars;
         this.unicode = glyph.unicode;
-        this.XPlacement = glyph.XPlacement;
-        this.YPlacement = glyph.YPlacement;
-        this.XAdvance = glyph.XAdvance;
-        this.YAdvance = glyph.YAdvance;
         this.isMark = glyph.isMark;
     }
 
     public Glyph(Glyph glyph, Integer unicode) {
-        this.index = glyph.index;
+        this.code = glyph.code;
         this.width = glyph.width;
         this.chars = unicode != null ? Utilities.convertFromUtf32(unicode) : null;
         this.unicode = unicode;
-        this.XPlacement = glyph.XPlacement;
-        this.YPlacement = glyph.YPlacement;
-        this.XAdvance = glyph.XAdvance;
-        this.YAdvance = glyph.YAdvance;
         this.isMark = glyph.isMark;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int[] getBbox() {
+        return bbox;
+    }
+
+    public Integer getUnicode() {
+        return unicode;
+    }
+
+    public char[] getChars() {
+        return chars;
+    }
+
+    public void setChars(char[] chars) {
+        this.chars = chars;
+    }
+
+    public boolean isMark() {
+        return isMark;
     }
 
     @Override
@@ -148,7 +145,7 @@ public class Glyph {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((chars == null) ? 0 : Arrays.hashCode(chars));
-        result = prime * result + index;
+        result = prime * result + code;
         result = prime * result + width;
         return result;
     }
@@ -172,7 +169,7 @@ public class Glyph {
         } else if (!Arrays.equals(chars, other.chars)) {
             return false;
         }
-        return index == other.index && width == other.width;
+        return code == other.code && width == other.width;
     }
 
     public void setUnicode(Integer unicode) {
@@ -194,6 +191,6 @@ public class Glyph {
     @Override
     public String toString() {
         return String.format("%s [uni=%d, id=%d, width=%d, chars=%s]", Glyph.class.getSimpleName(),
-                unicode, index, width, chars != null ? Arrays.toString(chars) : "null");
+                unicode, code, width, chars != null ? Arrays.toString(chars) : "null");
     }
 }

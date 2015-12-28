@@ -184,10 +184,10 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 len = b.length;
                 for (int k = 0; k < len; ++k) {
                     Glyph glyph = fontProgram.getGlyph(b[k] & 0xff);
-                    if (glyph != null && !longTag.containsKey(glyph.index)) {
-                        longTag.put(glyph.index, new int[]{glyph.index, glyph.width,
+                    if (glyph != null && !longTag.containsKey(glyph.getCode())) {
+                        longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
                                 glyph.unicode != null ? glyph.unicode : 0});
-                        glyphs[i++] = (char) glyph.index;
+                        glyphs[i++] = (char) glyph.getCode();
                     }
                 }
             } else {
@@ -203,11 +203,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     if (glyph == null) {
                         glyph = fontProgram.getGlyphByCode(0);
                     }
-                    if (!longTag.containsKey(glyph.index)) {
-                        longTag.put(glyph.index, new int[]{glyph.index, glyph.width,
+                    if (!longTag.containsKey(glyph.getCode())) {
+                        longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
                                 glyph.unicode != null ? glyph.unicode : 0});
                     }
-                    glyphs[i++] = (char) glyph.index;
+                    glyphs[i++] = (char) glyph.getCode();
                 }
 
                 GlyphLine glyphLine = null;
@@ -229,7 +229,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                         int code = (int)ch;
                         if (longTag.get(code) == null) {
                             Glyph glyph = ttf.getGlyphByCode(code);
-                            longTag.put(code, new int[] {code, glyph.width, glyph.unicode != null ? glyph.unicode : 0});
+                            longTag.put(code, new int[] {code, glyph.getWidth(), glyph.unicode != null ? glyph.unicode : 0});
                         }
                     }
                 }
@@ -252,11 +252,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             char[] glyphs = new char[glyphLine.glyphs.size()];
             for (int i = 0; i < glyphLine.glyphs.size(); i++) {
                 Glyph glyph = glyphLine.glyphs.get(i);
-                glyphs[i] = (char)glyph.index;
-                int code = glyph.index;
+                glyphs[i] = (char)glyph.getCode();
+                int code = glyph.getCode();
                 if (longTag.get(code) == null) {
                     Integer uniChar = glyph.unicode;
-                    longTag.put(code, new int[]{code, glyph.width, uniChar != null ? uniChar : 0});
+                    longTag.put(code, new int[]{code, glyph.getWidth(), uniChar != null ? uniChar : 0});
                 }
             }
 
@@ -273,11 +273,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override
     public byte[] convertToBytes(Glyph glyph) {
-        int code = glyph.index;
+        int code = glyph.getCode();
         if (longTag.get(code) == null) {
-            longTag.put(code, new int[] {code, glyph.width, glyph.unicode !=null ? glyph.unicode : 0});
+            longTag.put(code, new int[] {code, glyph.getWidth(), glyph.unicode !=null ? glyph.unicode : 0});
         }
-        String s = new String(new char[] {(char)glyph.index}, 0, 1);
+        String s = new String(new char[] {(char)glyph.getCode()}, 0, 1);
         try {
             return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
         } catch (UnsupportedEncodingException e) {
@@ -416,7 +416,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             } else {
                 ch = text.charAt(k);
             }
-            int[] bbox = getGlyph(ch).bbox;
+            int[] bbox = getGlyph(ch).getBbox();
             if (bbox != null && bbox[1] < min) {
                 min = bbox[1];
             } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
@@ -435,7 +435,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
      */
     public int getDescent(int ch) {
         int min = 0;
-        int[] bbox = getGlyph(ch).bbox;
+        int[] bbox = getGlyph(ch).getBbox();
         if (bbox != null && bbox[1] < min) {
             min = bbox[1];
         } else if (bbox ==  null && fontProgram.getFontMetrics().getTypoDescender() < min) {
@@ -462,7 +462,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             } else {
                 ch = text.charAt(k);
             }
-            int[] bbox = getGlyph(ch).bbox;
+            int[] bbox = getGlyph(ch).getBbox();
             if (bbox != null && bbox[3] > max) {
                 max = bbox[3];
             } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
@@ -482,7 +482,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
      */
     public int getAscent(int ch) {
         int max = 0;
-        int[] bbox = getGlyph(ch).bbox;
+        int[] bbox = getGlyph(ch).getBbox();
         if (bbox != null && bbox[3] > max) {
             max = bbox[3];
         } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
@@ -680,9 +680,9 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             int[] metric = (int[]) metrics[k];
             String fromTo = CMapContentParser.toHex(metric[0]);
             Glyph glyph = fontProgram.getGlyphByCode(metric[0]);
-            if (glyph.chars != null) {
-                StringBuilder uni = new StringBuilder(glyph.chars.length);
-                for (char ch: glyph.chars) {
+            if (glyph.getChars() != null) {
+                StringBuilder uni = new StringBuilder(glyph.getChars().length);
+                for (char ch: glyph.getChars()) {
                     uni.append(toHex4(ch));
                 }
                 buf.append(fromTo).append(fromTo).append('<').append(uni.toString()).append('>').append('\n');
@@ -1125,7 +1125,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         int length = glyphLine.end - glyphLine.start;
         char[] glyphs = new char[length];
         for (int k = 0; k < length; k++) {
-            glyphs[k] = (char) glyphLine.glyphs.get(glyphLine.start + k).index;
+            glyphs[k] = (char) glyphLine.glyphs.get(glyphLine.start + k).getCode();
         }
         return glyphs;
     }

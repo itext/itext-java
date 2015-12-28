@@ -25,7 +25,7 @@ public abstract class ContextualSubTable {
             return null;
 
         Glyph g = line.glyphs.get(line.idx);
-        List<ContextualSubstRule> rules = getSetOfRulesForStartGlyph(g.index);
+        List<ContextualSubstRule> rules = getSetOfRulesForStartGlyph(g.getCode());
         for (ContextualSubstRule rule : rules) {
             int lastGlyphIndex = checkIfContextMatch(line, rule);
             if (lastGlyphIndex != -1) {
@@ -58,7 +58,7 @@ public abstract class ContextualSubTable {
         //Note, that starting index shall be 1
         for (j = 1; j < rule.getContextLength(); ++j) {
             gidx.nextGlyph(openReader, lookupFlag);
-            if (gidx.glyph == null || !rule.isGlyphMatchesInput(gidx.glyph.index, j)) {
+            if (gidx.glyph == null || !rule.isGlyphMatchesInput(gidx.glyph.getCode(), j)) {
                 break;
             }
         }

@@ -50,7 +50,7 @@ public abstract class OpenTableLookup {
             glyph = null;
             while (++idx < line.end) {
                 Glyph g = line.glyphs.get(idx);
-                if (!openReader.isSkip(g.index, lookupFlag)) {
+                if (!openReader.isSkip(g.getCode(), lookupFlag)) {
                     glyph = g;
                     break;
                 }
@@ -61,7 +61,7 @@ public abstract class OpenTableLookup {
             glyph = null;
             while (--idx >= line.start) {
                 Glyph g = line.glyphs.get(idx);
-                if (!openReader.isSkip(g.index, lookupFlag)) {
+                if (!openReader.isSkip(g.getCode(), lookupFlag)) {
                     glyph = g;
                     break;
                 }

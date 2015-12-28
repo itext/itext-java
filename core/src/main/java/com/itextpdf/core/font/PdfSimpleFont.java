@@ -84,7 +84,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             int ptr = 0;
             if (fontEncoding.isFontSpecific()) {
                 for (Glyph glyph : glyphLine.glyphs) {
-                    bytes[ptr++] = (byte) glyph.index;
+                    bytes[ptr++] = (byte) glyph.getCode();
                 }
             } else {
                 for (Glyph glyph : glyphLine.glyphs) {
@@ -107,7 +107,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     public byte[] convertToBytes(Glyph glyph) {
         byte[] bytes = new byte[1];
         if (fontEncoding.isFontSpecific()) {
-            bytes[0] = (byte) glyph.index;
+            bytes[0] = (byte) glyph.getCode();
         } else {
             if (fontEncoding.canEncode(glyph.unicode)) {
                 bytes[0] = fontEncoding.convertToByte(glyph.unicode);
@@ -129,7 +129,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     public int getWidth(int ch) {
         // TODO could single unicode symbol be encoded into 2+ bytes in case simple encoding with glyph names?
         Glyph glyph = getGlyph(ch);
-        return glyph != null ? glyph.width : 0;
+        return glyph != null ? glyph.getWidth() : 0;
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         for (int i = 0; i < text.length(); i++) {
             Glyph glyph = getGlyph(text.charAt(i));
             if (glyph != null) {
-                total += glyph.width;
+                total += glyph.getWidth();
             }
         }
         return total;
@@ -179,7 +179,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         int min = 0;
         for (int k = 0; k < text.length(); ++k) {
             Glyph glyph = getGlyph(text.charAt(k));
-            int[] bbox = glyph != null ? glyph.bbox : null;
+            int[] bbox = glyph != null ? glyph.getBbox() : null;
             if (bbox != null && bbox[1] < min) {
                 min = bbox[1];
             } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
@@ -200,7 +200,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     public int getDescent(int ch) {
         int min = 0;
         Glyph glyph = getGlyph(ch);
-        int[] bbox = glyph != null ? glyph.bbox : null;
+        int[] bbox = glyph != null ? glyph.getBbox() : null;
         if (bbox != null && bbox[1] < min) {
             min = bbox[1];
         } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
@@ -221,7 +221,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         int max = 0;
         for (int k = 0; k < text.length(); ++k) {
             Glyph glyph = getGlyph(text.charAt(k));
-            int[] bbox = glyph != null ? glyph.bbox : null;
+            int[] bbox = glyph != null ? glyph.getBbox() : null;
             if (bbox != null && bbox[3] > max) {
                 max = bbox[3];
             } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
@@ -242,7 +242,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     public int getAscent(int ch) {
         int max = 0;
         Glyph glyph = getGlyph(ch);
-        int[] bbox = glyph != null ? glyph.bbox : null;
+        int[] bbox = glyph != null ? glyph.getBbox() : null;
         if (bbox != null && bbox[3] > max) {
             max = bbox[3];
         } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
@@ -325,7 +325,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                     wd.add(new PdfNumber(0));
                 } else {
                     Glyph glyph = getGlyph(fontEncoding.getUnicode(k));
-                    wd.add(new PdfNumber(glyph != null ? glyph.width : 0));
+                    wd.add(new PdfNumber(glyph != null ? glyph.getWidth() : 0));
                 }
             }
             getPdfObject().put(PdfName.Widths, wd);
