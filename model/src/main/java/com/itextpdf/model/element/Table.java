@@ -88,6 +88,9 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      */
     @Override
     public Table setWidth(Property.UnitValue width) {
+        if (width.isPointValue() && width.getValue() == 0) {
+            width = Property.UnitValue.createPercentValue(100);
+        }
         Property.UnitValue currWidth = getWidth();
         if (!width.equals(currWidth)) {
             super.setWidth(width);
