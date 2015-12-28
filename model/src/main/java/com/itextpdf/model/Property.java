@@ -38,6 +38,7 @@ public enum Property {
     KEEP_TOGETHER(true),
     LEADING,
     LEFT,
+    LIST_START,
     LIST_SYMBOL,
     LIST_SYMBOL_INDENT,
     MARGIN_BOTTOM,

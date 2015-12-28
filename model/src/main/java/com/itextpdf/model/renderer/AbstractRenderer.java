@@ -85,7 +85,9 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public boolean hasProperty(Property property) {
-        return hasOwnProperty(property);
+        return hasOwnProperty(property)
+                || (modelElement != null && modelElement.hasProperty(property))
+                || (parent != null && property.isInherited() && parent.hasProperty(property));
     }
 
     @Override

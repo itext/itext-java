@@ -31,10 +31,15 @@ public class ListRenderer extends BlockRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         List<IRenderer> symbolRenderers = new ArrayList<>();
-        int listItemCount = 0;
+        int listItemCount;
+        if (hasProperty(Property.LIST_START)) {
+            listItemCount = getPropertyAsInteger(Property.LIST_START);
+        } else {
+            listItemCount = 1;
+        }
         for (int i = 0; i < childRenderers.size(); i++) {
             if (childRenderers.get(i).getModelElement() instanceof ListItem) {
-                IRenderer currentSymbolRenderer = makeListSymbolRenderer(++listItemCount);
+                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemCount++);
                 symbolRenderers.add(currentSymbolRenderer);
                 currentSymbolRenderer.layout(layoutContext);
             }
