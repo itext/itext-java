@@ -232,6 +232,15 @@ public class LineRenderer extends AbstractRenderer {
         return length;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (IRenderer renderer: childRenderers) {
+            sb.append(renderer.toString());
+        }
+        return sb.toString();
+    }
+
     protected LineRenderer createSplitRenderer() {
         return getNextRenderer();
     }

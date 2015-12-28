@@ -165,6 +165,15 @@ public abstract class AbstractRenderer implements IRenderer {
         return value != null ? value.intValue() : null;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (IRenderer renderer : childRenderers) {
+            sb.append(renderer.toString());
+        }
+        return sb.toString();
+    }
+
     public LayoutArea getOccupiedArea() {
         return occupiedArea;
     }

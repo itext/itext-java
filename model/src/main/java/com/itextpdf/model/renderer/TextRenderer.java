@@ -1,6 +1,5 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.FontMetrics;
 import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.TrueTypeFont;
@@ -567,11 +566,8 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = text.start; i < text.end; i++) {
-            sb.append(Utilities.convertFromUtf32ToCharArray(text.glyphs.get(i).unicode));
-        }
-        return sb.toString();
+        convertWaitingStringToGlyphLine();
+        return line != null ? line.toUnicodeString(line.start, line.end) : text.toUnicodeString(text.start, text.end);
     }
 
     /**

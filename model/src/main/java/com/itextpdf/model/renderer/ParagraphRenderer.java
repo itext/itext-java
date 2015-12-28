@@ -17,7 +17,7 @@ import java.util.List;
 public class ParagraphRenderer extends BlockRenderer {
 
     protected float previousDescent = 0;
-    protected List<LineRenderer> lines = new ArrayList<>();
+    protected List<LineRenderer> lines = null;
 
     public ParagraphRenderer(Paragraph modelElement) {
         super(modelElement);
@@ -227,6 +227,21 @@ public class ParagraphRenderer extends BlockRenderer {
         overflowRenderer.parent = parent;
 
         return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (lines != null && lines.size() > 0) {
+            for (LineRenderer lineRenderer : lines) {
+                sb.append(lineRenderer.toString()).append("\n");
+            }
+        } else {
+            for (IRenderer renderer : childRenderers) {
+                sb.append(renderer.toString());
+            }
+        }
+        return sb.toString();
     }
 
     @Override
