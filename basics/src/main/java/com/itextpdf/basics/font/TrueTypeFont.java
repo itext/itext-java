@@ -34,8 +34,6 @@ public class TrueTypeFont extends FontProgram {
 
     private OpenTypeParser fontParser;
 
-    private boolean isSymbol;
-
     protected int[][] bBoxes;
 
     protected boolean isVertical;
@@ -179,47 +177,35 @@ public class TrueTypeFont extends FontProgram {
                         // TODO should we apply features by cluster or by whole glyph line?
 
                         // Localized forms
-                        if (transform(features.get("locl"), cluster)) {
-                            transformed = true;
-                        }
+                        transform(features.get("locl"), cluster);
 
                         /* The Indic specs do not require ccmp, but we apply it here since if
                          * there is a use of it, it's typically at the beginning. */
-                        if (transform(features.get("ccmp"), cluster)) {
-                            transformed = true;
-                        }
+                        transform(features.get("ccmp"), cluster);
 
                         IndicShaper.initialReordering(cluster, devanagariConfig, features.get("rphf"), features.get("pref"), isOldSpec, script);
 
                         // Basic Shaping forms
                         String[] basicShapingForms = new String[] {"nukt", "akhn", "rphf", "rkrf", "blwf", "half", "vatu", "cjct"};
                         for (String feature : basicShapingForms) {
-                            if (transform(features.get(feature), cluster)) {
-                                transformed = true;
-                            }
+                            transform(features.get(feature), cluster);
                         }
 
                         IndicShaper.finalReordering(cluster, devanagariConfig, script);
 
                         String[] presentationForms = new String[] {"pres", "abvs", "blws", "psts", "haln"};
                         for (String feature : presentationForms) {
-                            if (transform(features.get(feature), cluster)) {
-                                transformed = true;
-                            }
+                            transform(features.get(feature), cluster);
                         }
 
                         String[] discretionary = new String[] {"calt", "clig"};
                         for (String feature : discretionary) {
-                            if (transform(features.get(feature), cluster)) {
-                                transformed = true;
-                            }
+                            transform(features.get(feature), cluster);
                         }
 
                         String[] positioning = new String[] {"dist", "abvm", "blwm"};
                         for (String feature : positioning) {
-                            if (transform(features.get(feature), cluster)) {
-                                transformed = true;
-                            }
+                            transform(features.get(feature), cluster);
                         }
                     }
 
@@ -254,10 +240,7 @@ public class TrueTypeFont extends FontProgram {
                     glyphLine.end = newGlyphLine.end;
                     transformed = true;
                 }
-
-
             }
-
             return transformed;
         }
         return false;
@@ -387,10 +370,6 @@ public class TrueTypeFont extends FontProgram {
         return flags;
     }
 
-    public boolean isFontSpecific() {
-        return isSymbol;
-    }
-
     /**
      * The offset from the start of the file to the table directory.
      * It is 0 for TTF and may vary for TTC depending on the chosen font.
@@ -437,7 +416,7 @@ public class TrueTypeFont extends FontProgram {
         OpenTypeParser.HorizontalHeader hhea = fontParser.getHheaTable();
         OpenTypeParser.WindowsMetrics os_2 = fontParser.getOs_2Table();
         OpenTypeParser.PostTable post = fontParser.getPostTable();
-        isSymbol = fontParser.getCmapTable().fontSpecific;
+        isFontSpecific = fontParser.getCmapTable().fontSpecific;
         kerning = fontParser.readKerning(head.unitsPerEm);
         bBoxes = fontParser.readBbox(head.unitsPerEm);
 
@@ -527,7 +506,7 @@ public class TrueTypeFont extends FontProgram {
             if (codeToGlyph.containsKey(index)) {
                 continue;
             }
-            Glyph glyph = new Glyph(index, glyphWidths[index], null);
+            Glyph glyph = new Glyph(index, glyphWidths[index], (Integer) null);
             codeToGlyph.put(index, glyph);
         }
 

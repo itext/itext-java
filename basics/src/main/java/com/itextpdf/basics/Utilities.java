@@ -94,6 +94,11 @@ public class Utilities {
         outputStream.writeBytes(buf.getInternalBuffer(), 0, buf.size());
     }
 
+    public static void writeHexedString(OutputStream outputStream, byte[] bytes) {
+        ByteBuffer buf = createBufferedHexedString(bytes);
+        outputStream.writeBytes(buf.getInternalBuffer(), 0, buf.size());
+    }
+
     public static ByteBuffer createBufferedEscapedString(byte[] bytes) {
         ByteBuffer buf = new ByteBuffer(bytes.length * 2 + 2);
         buf.append('(');
@@ -130,6 +135,16 @@ public class Utilities {
             }
         }
         buf.append(')');
+        return buf;
+    }
+
+    public static ByteBuffer createBufferedHexedString(byte[] bytes) {
+        ByteBuffer buf = new ByteBuffer(bytes.length * 2 + 2);
+        buf.append('<');
+        for (byte b : bytes) {
+            buf.appendHex(b);
+        }
+        buf.append('>');
         return buf;
     }
 
@@ -395,11 +410,11 @@ public class Utilities {
      * @param codePoint a Unicode value
      * @return the corresponding characters in a String
      */
-    public static String convertFromUtf32(int codePoint) {
+    public static char[] convertFromUtf32(int codePoint) {
         if (codePoint < 0x10000)
-            return Character.toString((char) codePoint);
+            return new char[]{(char) codePoint};
         codePoint -= 0x10000;
-        return new String(new char[]{(char) (codePoint / 0x400 + 0xd800), (char) (codePoint % 0x400 + 0xdc00)});
+        return new char[]{(char) (codePoint / 0x400 + 0xd800), (char) (codePoint % 0x400 + 0xdc00)};
     }
 
     /**

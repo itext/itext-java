@@ -1,7 +1,6 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.basics.font.otf.GlyphLine;
 
 import java.util.HashMap;
 
@@ -10,14 +9,17 @@ public abstract class FontProgram {
     public static final int DEFAULT_WIDTH = 1000;
     public static final int UNITS_NORMALIZATION = 1000;
 
+
     // In case Type1: char code to glyph.
     // In case TrueType: glyph index to glyph.
-    HashMap<Integer, Glyph> codeToGlyph = new HashMap<>();
-    HashMap<Integer, Glyph> unicodeToGlyph = new HashMap<>();
+    protected HashMap<Integer, Glyph> codeToGlyph = new HashMap<>();
+    protected HashMap<Integer, Glyph> unicodeToGlyph = new HashMap<>();
+    protected boolean isFontSpecific;
 
     protected FontNames fontNames = new FontNames();
     protected FontMetrics fontMetrics = new FontMetrics();
     protected FontIdentification fontIdentification = new FontIdentification();
+
 
     /**
      * The font's encoding name. This encoding is 'StandardEncoding' or 'AdobeStandardEncoding' for a font
@@ -49,7 +51,9 @@ public abstract class FontProgram {
 
     public abstract int getPdfFontFlags();
 
-    public abstract boolean isFontSpecific();
+    public boolean isFontSpecific() {
+        return isFontSpecific;
+    }
 
     /**
      * Get glyph's width.
@@ -130,5 +134,33 @@ public abstract class FontProgram {
         } else {
             return name;
         }
+    }
+
+    protected void setAscender(int ascender) {
+        fontMetrics.setAscender(ascender);
+    }
+
+    protected void setDescender(int descender) {
+        fontMetrics.setDescender(descender);
+    }
+
+    protected void setCapHeight(int capHeight) {
+        fontMetrics.setCapHeight(capHeight);
+    }
+
+    protected void setItalicAngle(int italicAngle) {
+        fontMetrics.setItalicAngle(italicAngle);
+    }
+
+    protected void setFixedPitch(boolean isFixedPitch) {
+        fontMetrics.setIsFixedPitch(isFixedPitch);
+    }
+
+    protected void setBold(boolean isBold) {
+        fontNames.setMacStyle(fontNames.getMacStyle() | FontNames.BOLD_FLAG);
+    }
+
+    protected void setBbox(int[] bbox) {
+        fontMetrics.getBbox().setBbox(bbox[0], bbox[1], bbox[2], bbox[3]);
     }
 }

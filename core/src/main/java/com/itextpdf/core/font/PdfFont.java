@@ -381,11 +381,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     //TODO abstract
     public byte[] convertToBytes(Glyph glyph) {
-        // TODO implement correctly for all fonts after moved to GlyphLines without intermediate unicode conversion
-        if (glyph.unicode != null) {
-            return convertToBytes(Utilities.convertFromUtf32(glyph.unicode));
-        }
-        throw new IllegalStateException();
+        throw new RuntimeException();
     }
 
     public double[] getFontMatrix() {

@@ -20,8 +20,8 @@ import java.io.IOException;
 public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     public PdfType1Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        super(pdfDocument,fontDictionary,true);
-        checkFontDictionary(fontDictionary,PdfName.Type1);
+        super(pdfDocument, fontDictionary, true);
+        checkFontDictionary(fontDictionary, PdfName.Type1);
         init();
     }
 

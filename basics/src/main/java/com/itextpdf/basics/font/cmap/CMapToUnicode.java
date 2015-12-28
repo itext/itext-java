@@ -4,6 +4,7 @@ package com.itextpdf.basics.font.cmap;
 import com.itextpdf.basics.Utilities;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,14 +17,23 @@ import java.util.Map;
  */
 public class CMapToUnicode extends AbstractCMap {
 
-    private Map<Integer, String> singleByteMappings = new HashMap<Integer, String>();
-    private Map<Integer, String> doubleByteMappings = new HashMap<Integer, String>();
+    public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
+
+    private Map<Integer, String> singleByteMappings;
+    private Map<Integer, String> doubleByteMappings;
+
+    private CMapToUnicode(boolean emptyCMap) {
+        singleByteMappings = Collections.emptyMap();
+        doubleByteMappings = Collections.emptyMap();
+    }
 
     /**
      * Creates a new instance of CMap.
      */
     public CMapToUnicode() {
         //default constructor
+        singleByteMappings = new HashMap<>();
+        doubleByteMappings = new HashMap<>();
     }
 
     /**
@@ -52,19 +62,20 @@ public class CMapToUnicode extends AbstractCMap {
      * @param length The length of the data we are getting.
      * @return The string that matches the lookup.
      */
+    //TODO change to char[]?
     public String lookup(byte[] code, int offset, int length) {
 
         String result = null;
-        Integer key = null;
+        Integer key;
         if (length == 1) {
 
-            key = Integer.valueOf(code[offset] & 0xff);
+            key = code[offset] & 0xff;
             result = singleByteMappings.get(key);
         } else if (length == 2) {
             int intKey = code[offset] & 0xff;
             intKey <<= 8;
             intKey += code[offset + 1] & 0xff;
-            key = Integer.valueOf(intKey);
+            key = intKey;
 
             result = doubleByteMappings.get(key);
         }
@@ -72,8 +83,13 @@ public class CMapToUnicode extends AbstractCMap {
         return result;
     }
 
+    public char[] lookup(byte[] code) {
+        String result = lookup(code, 0, code.length);
+        return result != null ? result.toCharArray() : null;
+    }
+
     public Map<Integer, Integer> createReverseMapping() throws IOException {
-        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> result = new HashMap<>();
         for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
             result.put(convertToInt(entry.getValue()), entry.getKey());
         }
@@ -84,7 +100,7 @@ public class CMapToUnicode extends AbstractCMap {
     }
 
     public Map<Integer, Integer> createDirectMapping() throws IOException {
-        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> result = new HashMap<>();
         for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
             result.put(entry.getKey(), convertToInt(entry.getValue()));
         }
@@ -106,24 +122,28 @@ public class CMapToUnicode extends AbstractCMap {
     }
 
     void addChar(int cid, String uni) {
-        doubleByteMappings.put(Integer.valueOf(cid), uni);
+        doubleByteMappings.put(cid, uni);
+    }
+
+    void addChar(int cid, char[] uni) {
+        doubleByteMappings.put(cid, new String(uni));
     }
 
     @Override
     void addChar(String mark, CMapObject code) {
 
         byte[] src = mark.getBytes();
-        String dest = null;
+        String dest;
         try {
             dest = createStringFromBytes(code.toString().getBytes());
 
             if (src.length == 1) {
-                singleByteMappings.put(Integer.valueOf(src[0] & 0xff), dest);
+                singleByteMappings.put(src[0] & 0xff, dest);
             } else if (src.length == 2) {
                 int intSrc = src[0] & 0xFF;
                 intSrc <<= 8;
                 intSrc |= src[1] & 0xFF;
-                doubleByteMappings.put(Integer.valueOf(intSrc), dest);
+                doubleByteMappings.put(intSrc, dest);
             } else {
                 throw new RuntimeException();
             }

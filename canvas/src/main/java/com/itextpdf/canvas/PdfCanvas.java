@@ -2056,7 +2056,12 @@ public class PdfCanvas {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = currentGs.getFont().convertToBytes(text);
-        Utilities.writeEscapedString(contentStream.getOutputStream(), b);
+        //TODO
+        //if (currentGs.getFont() instanceof PdfType0Font) {
+//            Utilities.writeHexedString(contentStream.getOutputStream(), b);
+//        } else {
+            Utilities.writeEscapedString(contentStream.getOutputStream(), b);
+//        }
     }
 
     private void addToPropertiesAndBeginLayer(PdfOCG layer) {

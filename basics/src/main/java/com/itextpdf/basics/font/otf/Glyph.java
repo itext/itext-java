@@ -46,18 +46,28 @@ package com.itextpdf.basics.font.otf;
 
 import com.itextpdf.basics.Utilities;
 
+import java.util.Arrays;
+
 public class Glyph {
-    
-    /** The <i>code</i> or <i>id</i> by which this is represented in the Font File. */
+
+    /**
+     * The <i>code</i> or <i>id</i> by which this is represented in the Font File.
+     */
     //TODO rename to code, due to dual notation: index in otl and code in type1
     public final int index;
-    /** The normalized width of this Glyph. */
+    /**
+     * The normalized width of this Glyph.
+     */
     public final int width;
     public int[] bbox = null;
-    /** utf-32 representation of glyph if appears. Zer*/
-    public final Integer unicode;
-    /** The Unicode text represented by this Glyph */
-    public String chars;
+    /**
+     * utf-32 representation of glyph if appears. Zer
+     */
+    public Integer unicode;
+    /**
+     * The Unicode text represented by this Glyph
+     */
+    public char[] chars;
     public final int XPlacement;
     public final int YPlacement;
     public final int XAdvance;
@@ -65,11 +75,16 @@ public class Glyph {
     public final boolean isMark;
 
     public Glyph(int index, int width, Integer unicode) {
-        this(index, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
+        this(index, width, unicode, null, false);
+    }
+
+    public Glyph(int index, int width, char[] chars) {
+        this(index, width, codePoint(chars), chars, false);
+
     }
 
     public Glyph(int index, int width, Integer unicode, int[] bbox) {
-        this(index, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
+        this(index, width, unicode, null, false);
         this.bbox = bbox;
     }
 
@@ -77,16 +92,18 @@ public class Glyph {
         this(-1, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
     }
 
-    public Glyph(int index, int width, Integer unicode, String chars, boolean IsMark) {
+    public Glyph(int index, int width, Integer unicode, char[] chars, boolean IsMark) {
         this.index = index;
         this.width = width;
-        this.chars = chars;
         this.unicode = unicode;
         this.XPlacement = 0;
         this.YPlacement = 0;
         this.XAdvance = 0;
         this.YAdvance = 0;
         this.isMark = IsMark;
+        if (chars == null && unicode != null && Character.isValidCodePoint(unicode)) {
+            this.chars = Utilities.convertFromUtf32(unicode);
+        }
     }
 
 //    public Glyph(Glyph glyph, int XPlacement, int YPlacement, int XAdvance, int YAdvance) {
@@ -125,12 +142,12 @@ public class Glyph {
         this.YAdvance = glyph.YAdvance;
         this.isMark = glyph.isMark;
     }
-   
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((chars == null) ? 0 : chars.hashCode());
+        result = prime * result + ((chars == null) ? 0 : Arrays.hashCode(chars));
         result = prime * result + index;
         result = prime * result + width;
         return result;
@@ -152,14 +169,31 @@ public class Glyph {
             if (other.chars != null) {
                 return false;
             }
-        } else if (!chars.equals(other.chars)) {
+        } else if (!Arrays.equals(chars, other.chars)) {
             return false;
         }
         return index == other.index && width == other.width;
     }
 
+    public void setUnicode(Integer unicode) {
+        this.unicode = unicode;
+        this.chars = unicode != null ? Utilities.convertFromUtf32(unicode) : null;
+    }
+
+    static Integer codePoint(char[] a) {
+        if (a != null) {
+            if (a.length == 1 && Character.isISOControl(a[0])) {
+                return (int) a[0];
+            } else if (a.length == 2 && Character.isHighSurrogate(a[0]) && Character.isLowSurrogate(a[1])) {
+                return Character.toCodePoint(a[0], a[1]);
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s [uni=%d, id=%d, width=%d, chars=%s]", Glyph.class.getSimpleName(), unicode, index, width, chars);
+        return String.format("%s [uni=%d, id=%d, width=%d, chars=%s]", Glyph.class.getSimpleName(),
+                unicode, index, width, chars != null ? Arrays.toString(chars) : "null");
     }
 }

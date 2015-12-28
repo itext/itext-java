@@ -82,7 +82,8 @@ public class GlyphLine {
             glyphs.remove(gidx.idx--);
         }
         Glyph newGlyph = tableReader.getGlyph(substitutionGlyphIndex);
-        newGlyph.chars = newGlyph.unicode != null ? Utilities.convertFromUtf32(newGlyph.unicode) : chars.toString();
+        newGlyph.chars = new char[chars.length()];
+        chars.getChars(0, chars.length(), newGlyph.chars, 0);
         glyphs.set(idx, newGlyph);
         end -= rightPartLen;
     }
@@ -90,10 +91,10 @@ public class GlyphLine {
     public void substituteOneToOne(OpenTypeFontTableReader tableReader, int substitutionGlyphIndex) {
         Glyph oldGlyph = glyphs.get(idx);
         Glyph newGlyph = tableReader.getGlyph(substitutionGlyphIndex);
-        if (newGlyph.unicode != null) {
-            newGlyph.chars = Utilities.convertFromUtf32(newGlyph.unicode);
-        } else if (oldGlyph.chars != null) {
+        if (oldGlyph.chars != null) {
             newGlyph.chars = oldGlyph.chars;
+        } else if (newGlyph.unicode != null) {
+            newGlyph.chars = Utilities.convertFromUtf32(newGlyph.unicode);
         } else if (oldGlyph.unicode != null) {
             newGlyph.chars = Utilities.convertFromUtf32(oldGlyph.unicode);
         }

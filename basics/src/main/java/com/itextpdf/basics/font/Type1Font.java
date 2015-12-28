@@ -24,8 +24,6 @@ public class Type1Font extends FontProgram {
      */
     private String characterSet;
 
-    private boolean fontSpecific;
-
     /**
      * Represents the section KernPairs in the AFM file.
      */
@@ -42,7 +40,7 @@ public class Type1Font extends FontProgram {
     //TODO remove
     public Type1Font(String baseEncoding) throws IOException {
         if (encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding")) {
-            fontSpecific = false;
+            isFontSpecific = false;
         }
     }
 
@@ -77,10 +75,6 @@ public class Type1Font extends FontProgram {
 
     public boolean isBuiltInFont() {
         return fontParser.isBuiltInFont();
-    }
-
-    public boolean isFontSpecific() {
-        return fontSpecific;
     }
 
     @Override
@@ -424,6 +418,6 @@ public class Type1Font extends FontProgram {
         }
         raf.close();
 
-        fontSpecific = !(encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding"));
+        isFontSpecific = !(encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding"));
     }
 }

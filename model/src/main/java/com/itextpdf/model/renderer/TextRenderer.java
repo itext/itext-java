@@ -109,10 +109,10 @@ public class TextRenderer extends AbstractRenderer {
 
             int[] unicodeIds = new int[text.end - text.start];
             for (int i = text.start; i < text.end; i++) {
-                assert text.glyphs.get(i).chars.length() > 0;
+                assert text.glyphs.get(i).chars.length > 0;
                 // we assume all the chars will have the same bidi group
                 // we also assume pairing symbols won't get merged with other ones
-                int unicode = text.glyphs.get(i).chars.charAt(0);
+                int unicode = text.glyphs.get(i).chars[0];
                 unicodeIds[i - text.start] = unicode;
             }
             byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start);

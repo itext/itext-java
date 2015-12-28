@@ -7,58 +7,58 @@ public class FontNames {
 
     //macStyle bits
     // Bit 0: Bold (if set to 1);
-    private static final int BOLD_FLAG = 1;
+    protected static final int BOLD_FLAG = 1;
     // Bit 1: Italic (if set to 1)
-    private static final int ITALIC_FLAG = 2;
+    protected static final int ITALIC_FLAG = 2;
     // Bit 2: Underline (if set to 1)
-    private static final int UNDERLINE_FLAG = 4;
+    protected static final int UNDERLINE_FLAG = 4;
     // Bit 3: Outline (if set to 1)
-    private static final int OUTLINE_FLAG = 8;
+    protected static final int OUTLINE_FLAG = 8;
     // Bit 4: Shadow (if set to 1)
-    private static final int SHADOW_FLAG = 16;
+    protected static final int SHADOW_FLAG = 16;
     // Bit 5: Condensed (if set to 1)
-    private static final int CONDENSED_FLAG = 32;
+    protected static final int CONDENSED_FLAG = 32;
     // Bit 6: Extended (if set to 1)
-    private static final int EXTENDED_FLAG = 64;
+    protected static final int EXTENDED_FLAG = 64;
 
     // Font weight Thin
-    private static final int FW_THIN = 100;
+    protected static final int FW_THIN = 100;
     // Font weight Extra-light (Ultra-light)
-    private static final int FW_EXTRALIGHT = 200;
+    protected static final int FW_EXTRALIGHT = 200;
     // Font weight Light
-    private static final int FW_LIGHT = 300;
+    protected static final int FW_LIGHT = 300;
     // Font weight Normal
-    private static final int FW_NORMAL = 400;
+    protected static final int FW_NORMAL = 400;
     // Font weight Medium
-    private static final int FW_MEDIUM = 500;
+    protected static final int FW_MEDIUM = 500;
     // Font weight Semi-bold
-    private static final int FW_SEMIBOLD = 600;
+    protected static final int FW_SEMIBOLD = 600;
     // Font weight Bold
-    private static final int FW_BOLD = 700;
+    protected static final int FW_BOLD = 700;
     // Font weight Extra-bold (Ultra-bold)
-    private static final int FW_EXTRABOLD = 800;
+    protected static final int FW_EXTRABOLD = 800;
     // Font weight Black (Heavy)
-    private static final int FW_BLACK = 900;
+    protected static final int FW_BLACK = 900;
 
 
     // Font width Ultra-condensed, 50%
-    private static final int FWIDTH_ULTRA_CONDENSED = 1;
+    protected static final int FWIDTH_ULTRA_CONDENSED = 1;
     // Font width Extra-condensed, 62.5%
-    private static final int FWIDTH_EXTRA_CONDENSED	= 2;
+    protected static final int FWIDTH_EXTRA_CONDENSED	= 2;
     // Font width Condensed, 75%
-    private static final int FWIDTH_CONDENSED = 3;
+    protected static final int FWIDTH_CONDENSED = 3;
     // Font width Semi-condensed, 87.5%
-    private static final int FWIDTH_SEMI_CONDENSED = 4;
+    protected static final int FWIDTH_SEMI_CONDENSED = 4;
     // Font width Medium (normal), 100%
-    private static final int FWIDTH_NORMAL = 5;
+    protected static final int FWIDTH_NORMAL = 5;
     // Font width Semi-expanded, 112.5%
-    private static final int FWIDTH_SEMI_EXPANDED = 6;
+    protected static final int FWIDTH_SEMI_EXPANDED = 6;
     // Font width Expanded, 125%
-    private static final int FWIDTH_EXPANDED = 7;
+    protected static final int FWIDTH_EXPANDED = 7;
     // Font width Extra-expanded, 150%
-    private static final int FWIDTH_EXTRA_EXPANDED = 8;
+    protected static final int FWIDTH_EXTRA_EXPANDED = 8;
     // Font width Ultra-expanded, 200%
-    private static final int FWIDTH_ULTRA_EXPANDED = 9;
+    protected static final int FWIDTH_ULTRA_EXPANDED = 9;
 
     protected HashMap<Integer, List<String[]>> allNames;
 
@@ -209,6 +209,10 @@ public class FontNames {
 
     protected void setMacStyle(int macStyle) {
         this.macStyle = macStyle;
+    }
+
+    protected int getMacStyle() {
+        return macStyle;
     }
 
     protected void setAllowEmbedding(boolean allowEmbedding) {

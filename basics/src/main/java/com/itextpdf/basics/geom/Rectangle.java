@@ -22,6 +22,7 @@ public class Rectangle implements Cloneable {
         this(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 
+    //TODO check that lly is real llx and lly is lower and swap if needed
     public Rectangle setBbox(float llx, float lly, float urx, float ury) {
         x = llx;
         y = lly;

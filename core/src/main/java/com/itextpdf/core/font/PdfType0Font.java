@@ -650,7 +650,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
      *                contains the Unicode code
      * @return the stream representing this CMap or <CODE>null</CODE>
      */
-    public PdfStream getToUnicode(Object metrics[]) {
+    public PdfStream getToUnicode(Object[] metrics) {
         if (metrics.length == 0)
             return null;
         StringBuilder buf = new StringBuilder(
@@ -658,11 +658,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                         "12 dict begin\n" +
                         "begincmap\n" +
                         "/CIDSystemInfo\n" +
-                        "<< /Registry (TTX+0)\n" +
-                        "/Ordering (T42UV)\n" +
+                        "<< /Registry (Adobe)\n" +
+                        "/Ordering (UCS)\n" +
                         "/Supplement 0\n" +
                         ">> def\n" +
-                        "/CMapName /TTX+0 def\n" +
+                        "/CMapName /Adobe-Identity-UCS def\n" +
                         "/CMapType 2 def\n" +
                         "1 begincodespacerange\n" +
                         "<0000><FFFF>\n" +
@@ -679,13 +679,26 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             --size;
             int[] metric = (int[]) metrics[k];
             String fromTo = CMapContentParser.toHex(metric[0]);
-            buf.append(fromTo).append(fromTo).append(CMapContentParser.toHex(metric[2])).append('\n');
+            Glyph glyph = fontProgram.getGlyphByCode(metric[0]);
+            if (glyph.chars != null) {
+                StringBuilder uni = new StringBuilder(glyph.chars.length);
+                for (char ch: glyph.chars) {
+                    uni.append(toHex4(ch));
+                }
+                buf.append(fromTo).append(fromTo).append('<').append(uni.toString()).append('>').append('\n');
+            }
         }
         buf.append("endbfrange\n" +
                 "endcmap\n" +
                 "CMapName currentdict /CMap defineresource pop\n" +
                 "end end\n");
         return new PdfStream(PdfEncodings.convertToBytes(buf.toString(), null)).makeIndirect(getDocument());
+    }
+
+    //TODO optimize memory ussage
+    private static String toHex4(char ch) {
+        String s = "0000" + Integer.toHexString(ch);
+        return s.substring(s.length() - 4);
     }
 
     protected static String convertToHCIDMetrics(int keys[], IntHashtable h) {
