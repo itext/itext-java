@@ -30,7 +30,7 @@ import java.util.Map;
     protected PrintWriter out;
     protected String rootTag;
 
-    TaggedPdfReaderTool(PdfDocument document) {
+    public TaggedPdfReaderTool(PdfDocument document) {
         this.document = document;
     }
 
