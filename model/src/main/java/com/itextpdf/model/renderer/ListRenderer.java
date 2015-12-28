@@ -35,7 +35,10 @@ public class ListRenderer extends BlockRenderer {
             if (childRenderers.get(i).getModelElement() instanceof ListItem) {
                 IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++);
                 symbolRenderers.add(currentSymbolRenderer);
-                currentSymbolRenderer.layout(layoutContext);
+                LayoutResult listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
+                if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+                }
             }
         }
         float maxSymbolWidth = 0;
@@ -53,9 +56,7 @@ public class ListRenderer extends BlockRenderer {
             }
         }
 
-        LayoutResult result = super.layout(layoutContext);
-
-        return result;
+        return super.layout(layoutContext);
     }
 
     protected IRenderer makeListSymbolRenderer(int index) {
