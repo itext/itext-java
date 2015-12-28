@@ -162,6 +162,33 @@ public class ListTest extends ExtendedITextTest{
     }
 
     @Test
+    public void listOverflowTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listOverflowTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_listOverflowTest03.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph("Test String");
+        List list = new List(Property.ListNumberingType.DECIMAL).
+                setItemStartIndex(10).
+                add("first string").
+                add("second string").
+                add("third string").
+                add("fourth string");
+
+        for (int i = 0; i < 28; i++){
+            document.add(p);
+        }
+
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void listEmptyItemTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listEmptyItemTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listEmptyItemTest01.pdf";

@@ -29,8 +29,8 @@ public class List extends BlockElement<List> {
         return add(new ListItem(text));
     }
 
-    public List setListStart(int start) {
-        return  setProperty(Property.LIST_START, start);
+    public List setItemStartIndex(int start) {
+        return setProperty(Property.LIST_START, start);
     }
 
     public List setListSymbol(String symbol) {
