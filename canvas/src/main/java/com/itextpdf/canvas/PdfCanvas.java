@@ -10,6 +10,7 @@ import com.itextpdf.canvas.image.WmfImageHelper;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.PatternColor;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.pdf.IsoKey;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -2056,12 +2057,11 @@ public class PdfCanvas {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         byte b[] = currentGs.getFont().convertToBytes(text);
-        //TODO
-        //if (currentGs.getFont() instanceof PdfType0Font) {
-//            Utilities.writeHexedString(contentStream.getOutputStream(), b);
-//        } else {
+        if (currentGs.getFont() instanceof PdfType0Font) {
+            Utilities.writeHexedString(contentStream.getOutputStream(), b);
+        } else {
             Utilities.writeEscapedString(contentStream.getOutputStream(), b);
-//        }
+        }
     }
 
     private void addToPropertiesAndBeginLayer(PdfOCG layer) {
