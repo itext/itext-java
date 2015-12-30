@@ -418,7 +418,7 @@ public class PdfCanvas {
      */
     public PdfCanvas newlineShowText(final String text) {
         document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
-        showText2(text);
+        showTextInt(text);
         contentStream.getOutputStream()
                 .writeByte((byte) '\'')
                 .writeNewLine();
@@ -439,7 +439,7 @@ public class PdfCanvas {
                 .writeFloat(wordSpacing)
                 .writeSpace()
                 .writeFloat(charSpacing);
-        showText2(text);
+        showTextInt(text);
         contentStream.getOutputStream()
                 .writeByte((byte) '"')
                 .writeNewLine();
@@ -576,7 +576,7 @@ public class PdfCanvas {
      */
     public PdfCanvas showText(String text) {
         document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
-        showText2(text);
+        showTextInt(text);
         contentStream.getOutputStream().writeBytes(Tj);
         return this;
     }
@@ -589,9 +589,7 @@ public class PdfCanvas {
      */
     public PdfCanvas showText(GlyphLine text) {
         document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
-        if (currentGs.getFont() == null)
-            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-        Utilities.writeEscapedString(contentStream.getOutputStream(), currentGs.getFont().convertToBytes(text));
+        showTextInt(text);
         contentStream.getOutputStream().writeBytes(Tj);
         return this;
     }
@@ -2053,10 +2051,27 @@ public class PdfCanvas {
      *
      * @param text the text to write.
      */
-    private void showText2(String text) {
+    private void showTextInt(String text) {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-        byte b[] = currentGs.getFont().convertToBytes(text);
+        byte[] b = currentGs.getFont().convertToBytes(text);
+        if (currentGs.getFont() instanceof PdfType0Font) {
+            Utilities.writeHexedString(contentStream.getOutputStream(), b);
+        } else {
+            Utilities.writeEscapedString(contentStream.getOutputStream(), b);
+        }
+    }
+
+    /**
+     * A helper to insert into the content stream the {@code text}
+     * converted to bytes according to the font's encoding.
+     *
+     * @param text the text to write.
+     */
+    private void showTextInt(GlyphLine text) {
+        if (currentGs.getFont() == null)
+            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
+        byte[] b = currentGs.getFont().convertToBytes(text);
         if (currentGs.getFont() instanceof PdfType0Font) {
             Utilities.writeHexedString(contentStream.getOutputStream(), b);
         } else {

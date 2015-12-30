@@ -39,8 +39,8 @@ public class GlyphLine {
         for (int i = left; i < right; i++) {
             if (glyphs.get(i).getChars() != null) {
                 str.append(glyphs.get(i).getChars());
-            } else if (glyphs.get(i).unicode != null) {
-                str.append(Utilities.convertFromUtf32(glyphs.get(i).unicode));
+            } else if (glyphs.get(i).getUnicode() != null) {
+                str.append(Utilities.convertFromUtf32(glyphs.get(i).getUnicode()));
             }
         }
         return str.toString();
@@ -67,8 +67,8 @@ public class GlyphLine {
         Glyph currentGlyph = glyphs.get(idx);
         if (currentGlyph.getChars() != null) {
             chars.append(currentGlyph.getChars());
-        } else if (currentGlyph.unicode != null) {
-            chars.append(Utilities.convertFromUtf32(currentGlyph.unicode));
+        } else if (currentGlyph.getUnicode() != null) {
+            chars.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
         }
 
         for (int j = 0; j < rightPartLen; ++j) {
@@ -76,8 +76,8 @@ public class GlyphLine {
             currentGlyph = glyphs.get(gidx.idx);
             if (currentGlyph.getChars() != null) {
                 chars.append(currentGlyph.getChars());
-            } else if (currentGlyph.unicode != null) {
-                chars.append(Utilities.convertFromUtf32(currentGlyph.unicode));
+            } else if (currentGlyph.getUnicode() != null) {
+                chars.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
             }
             glyphs.remove(gidx.idx--);
         }
@@ -94,10 +94,10 @@ public class GlyphLine {
         Glyph newGlyph = tableReader.getGlyph(substitutionGlyphIndex);
         if (oldGlyph.getChars() != null) {
             newGlyph.setChars(oldGlyph.getChars());
-        } else if (newGlyph.unicode != null) {
-            newGlyph.setChars(Utilities.convertFromUtf32(newGlyph.unicode));
-        } else if (oldGlyph.unicode != null) {
-            newGlyph.setChars(Utilities.convertFromUtf32(oldGlyph.unicode));
+        } else if (newGlyph.getUnicode() != null) {
+            newGlyph.setChars(Utilities.convertFromUtf32(newGlyph.getUnicode()));
+        } else if (oldGlyph.getUnicode() != null) {
+            newGlyph.setChars(Utilities.convertFromUtf32(oldGlyph.getUnicode()));
         }
         glyphs.set(idx, newGlyph);
     }

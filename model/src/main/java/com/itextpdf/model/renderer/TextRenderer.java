@@ -168,7 +168,7 @@ public class TextRenderer extends AbstractRenderer {
                 if (noPrint(currentGlyph))
                     continue;
 
-                if (tabAnchorCharacter != null && tabAnchorCharacter == text.glyphs.get(ind).unicode.intValue()) {
+                if (tabAnchorCharacter != null && tabAnchorCharacter == text.glyphs.get(ind).getUnicode().intValue()) {
                     tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
                     tabAnchorCharacter = null;
                 }
@@ -198,7 +198,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                (Character.isWhitespace(text.glyphs.get(ind + 1).unicode) || Character.isSpaceChar(text.glyphs.get(ind + 1).unicode))) {
+                                (Character.isWhitespace(text.glyphs.get(ind + 1).getUnicode()) || Character.isSpaceChar(text.glyphs.get(ind + 1).getUnicode()))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -336,8 +336,8 @@ public class TextRenderer extends AbstractRenderer {
 
                 // Mirror RTL glyphs
                 if (levels[line.start + reorder[i]] % 2 == 1) {
-                    if (reorderedLine.get(i).unicode != null) {
-                        reorderedLine.set(i, font.getGlyph(BidiBracketMap.getPairedBracket(reorderedLine.get(i).unicode)));
+                    if (reorderedLine.get(i).getUnicode() != null) {
+                        reorderedLine.set(i, font.getGlyph(BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())));
                     }
                 }
             }
@@ -353,7 +353,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isNewLine(GlyphLine text, int ind) {
-        return text.glyphs.get(ind).unicode != null && text.glyphs.get(ind).unicode == '\n';
+        return text.glyphs.get(ind).getUnicode() != null && text.glyphs.get(ind).getUnicode() == '\n';
     }
 
     @Override
@@ -486,7 +486,7 @@ public class TextRenderer extends AbstractRenderer {
         convertWaitingStringToGlyphLine();
 
         Glyph glyph;
-        while (text.start < text.end && (glyph = text.glyphs.get(text.start)).unicode != null && Character.isWhitespace(glyph.unicode)) {
+        while (text.start < text.end && (glyph = text.glyphs.get(text.start)).getUnicode() != null && Character.isWhitespace(glyph.getUnicode())) {
             text.start++;
         }
     }
@@ -509,7 +509,7 @@ public class TextRenderer extends AbstractRenderer {
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= 0) {
             Glyph currentGlyph = line.glyphs.get(firstNonSpaceCharIndex);
-            if (currentGlyph.unicode == null || !Character.isWhitespace(currentGlyph.unicode)) {
+            if (currentGlyph.getUnicode() == null || !Character.isWhitespace(currentGlyph.getUnicode())) {
                 break;
             }
 
@@ -576,7 +576,7 @@ public class TextRenderer extends AbstractRenderer {
      * @return Unicode char code
      */
     public Integer charAt(int pos) {
-        return text.glyphs.get(pos + text.start).unicode;
+        return text.glyphs.get(pos + text.start).getUnicode();
     }
 
     public float getTabAnchorCharacterPosition(){
@@ -614,7 +614,7 @@ public class TextRenderer extends AbstractRenderer {
             return 0;
         int spaces = 0;
         for (int i = line.start; i < line.end; i++) {
-            if (line.glyphs.get(i).unicode == ' ') {
+            if (line.glyphs.get(i).getUnicode() == ' ') {
                 spaces++;
             }
         }
@@ -670,10 +670,10 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private static boolean noPrint(Glyph g) {
-        if (g.unicode == null) {
+        if (g.getUnicode() == null) {
             return false;
         }
-        int c = g.unicode;
+        int c = g.getUnicode();
         return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e || c == '\u00AD';
     }
 
@@ -685,7 +685,7 @@ public class TextRenderer extends AbstractRenderer {
         if (characterSpacing != null) {
             resultWidth += characterSpacing * hScale * TEXT_SPACE_COEFF;
         }
-        if (wordSpacing != null && g.unicode != null && g.unicode == ' ') {
+        if (wordSpacing != null && g.getUnicode() != null && g.getUnicode() == ' ') {
             resultWidth += wordSpacing * hScale * TEXT_SPACE_COEFF;
         }
         return resultWidth;
@@ -715,16 +715,16 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private int[] getWordBoundsForHyphenation(GlyphLine text, int leftTextPos, int rightTextPos, int wordMiddleCharPos) {
-        while (wordMiddleCharPos >= leftTextPos && !isCharPartOfWordForHyphenation(text.glyphs.get(wordMiddleCharPos).unicode) && !Character.isWhitespace(text.glyphs.get(wordMiddleCharPos).unicode)) {
+        while (wordMiddleCharPos >= leftTextPos && !isCharPartOfWordForHyphenation(text.glyphs.get(wordMiddleCharPos).getUnicode()) && !Character.isWhitespace(text.glyphs.get(wordMiddleCharPos).getUnicode())) {
             wordMiddleCharPos--;
         }
         if (wordMiddleCharPos >= leftTextPos) {
             int left = wordMiddleCharPos;
-            while (left >= leftTextPos && isCharPartOfWordForHyphenation(text.glyphs.get(left).unicode)) {
+            while (left >= leftTextPos && isCharPartOfWordForHyphenation(text.glyphs.get(left).getUnicode())) {
                 left--;
             }
             int right = wordMiddleCharPos;
-            while (right < rightTextPos && isCharPartOfWordForHyphenation(text.glyphs.get(right).unicode)) {
+            while (right < rightTextPos && isCharPartOfWordForHyphenation(text.glyphs.get(right).getUnicode())) {
                 right++;
             }
             return new int[]{left + 1, right};

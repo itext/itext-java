@@ -91,7 +91,7 @@ public abstract class OpenTypeFontTableReader {
         if (glyph == null) {
             return null;
         } else {
-            return glyph.unicode;
+            return glyph.getUnicode();
         }
     }
 

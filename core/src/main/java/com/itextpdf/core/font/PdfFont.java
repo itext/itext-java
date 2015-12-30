@@ -370,13 +370,14 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public byte[] convertToBytes(GlyphLine glyphLine) {
         // TODO implement correctly for all fonts after moved to GlyphLines without intermediate unicode conversion
         // convert to printable array
-        StringBuilder sb = new StringBuilder();
-        for (int i = glyphLine.start; i < glyphLine.end; i++) {
-            if (glyphLine.glyphs.get(i).unicode != null) {
-                sb.append(Utilities.convertFromUtf32(glyphLine.glyphs.get(i).unicode));
-            }
-        }
-        return convertToBytes(sb.toString());
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = glyphLine.start; i < glyphLine.end; i++) {
+//            if (glyphLine.glyphs.get(i).getUnicode() != null) {
+//                sb.append(Utilities.convertFromUtf32(glyphLine.glyphs.get(i).getUnicode()));
+//            }
+//        }
+//        return convertToBytes(sb.toString());
+        throw new RuntimeException();
     }
 
     //TODO abstract

@@ -50,24 +50,28 @@ import java.util.Arrays;
 
 public class Glyph {
 
-    /**
-     * The <i>code</i> or <i>id</i> by which this is represented in the Font File.
-     */
+    // The <i>code</i> or <i>id</i> by which this is represented in the Font File.
     private final int code;
-    /**
-     * The normalized width of this Glyph.
-     */
+    // The normalized width of this Glyph.
     private final int width;
+    // The normalized bbox of this Glyph.
     private int[] bbox = null;
-    /**
-     * utf-32 representation of glyph if appears. Zer
-     */
-    public Integer unicode;
-    /**
-     * The Unicode text represented by this Glyph
-     */
+    // utf-32 representation of glyph if appears. Zer
+    private Integer unicode;
+    // The Unicode text represented by this Glyph
     private char[] chars;
+    // ture, if this Glyph is Mark
     private final boolean isMark;
+
+    // placement offset
+    short xPlacement = 0;
+    short yPlacement = 0;
+    // advance offset
+    short xAdvance = 0;
+    short yAdvance = 0;
+
+    // Index delta to base glyph. If after a glyph there are several anchored glyphs we should know we to find base glyph.
+    byte anchorDelta = 0;
 
     public Glyph(int code, int width, Integer unicode) {
         this(code, width, unicode, null, false);
@@ -104,6 +108,15 @@ public class Glyph {
         this.isMark = glyph.isMark;
     }
 
+    public Glyph(Glyph glyph, int xPlacement, int yPlacement, int xAdvance, int yAdvance, int anchorDelta) {
+        this(glyph);
+        this.xPlacement = (short) xPlacement;
+        this.yPlacement = (short) yPlacement;
+        this.xAdvance = (short) xAdvance;
+        this.yAdvance = (short) yAdvance;
+        this.anchorDelta = (byte) anchorDelta;
+    }
+
     public Glyph(Glyph glyph, Integer unicode) {
         this.code = glyph.code;
         this.width = glyph.width;
@@ -128,6 +141,11 @@ public class Glyph {
         return unicode;
     }
 
+    public void setUnicode(Integer unicode) {
+        this.unicode = unicode;
+        this.chars = unicode != null ? Utilities.convertFromUtf32(unicode) : null;
+    }
+
     public char[] getChars() {
         return chars;
     }
@@ -140,7 +158,46 @@ public class Glyph {
         return isMark;
     }
 
-    @Override
+    public short getXPlacement() {
+        return xPlacement;
+    }
+
+    public void setXPlacement(short xPlacement) {
+        this.xPlacement = xPlacement;
+    }
+
+    public short getYPlacement() {
+        return yPlacement;
+    }
+
+    public void setYPlacement(short yPlacement) {
+        this.yPlacement = yPlacement;
+    }
+
+    public short getXAdvance() {
+        return xAdvance;
+    }
+
+    public void setXAdvance(short xAdvance) {
+        this.xAdvance = xAdvance;
+    }
+
+    public short getYAdvance() {
+        return yAdvance;
+    }
+
+    public void setYAdvance(short yAdvance) {
+        this.yAdvance = yAdvance;
+    }
+
+    public byte getAnchorDelta() {
+        return anchorDelta;
+    }
+
+    public boolean hasOffsets() {
+        return xPlacement == 0 && yPlacement == 0 && xAdvance == 0 && yAdvance == 0;
+    }
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -150,7 +207,6 @@ public class Glyph {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -172,12 +228,12 @@ public class Glyph {
         return code == other.code && width == other.width;
     }
 
-    public void setUnicode(Integer unicode) {
-        this.unicode = unicode;
-        this.chars = unicode != null ? Utilities.convertFromUtf32(unicode) : null;
+    public String toString() {
+        return String.format("%s [uni=%d, id=%d, width=%d, chars=%s]", Glyph.class.getSimpleName(),
+                unicode, code, width, chars != null ? Arrays.toString(chars) : "null");
     }
 
-    static Integer codePoint(char[] a) {
+    private static Integer codePoint(char[] a) {
         if (a != null) {
             if (a.length == 1 && Character.isISOControl(a[0])) {
                 return (int) a[0];
@@ -186,11 +242,5 @@ public class Glyph {
             }
         }
         return null;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s [uni=%d, id=%d, width=%d, chars=%s]", Glyph.class.getSimpleName(),
-                unicode, code, width, chars != null ? Arrays.toString(chars) : "null");
     }
 }

@@ -112,8 +112,8 @@ public class Type1Font extends FontProgram {
 
     @Override
     public int getKerning(Glyph first, Glyph second) {
-        if (first.unicode != null && second.unicode != null) {
-            Long record = ((long)first.unicode << 32) + second.unicode;
+        if (first.getUnicode() != null && second.getUnicode() != null) {
+            Long record = ((long)first.getUnicode() << 32) + second.getUnicode();
             if (kernPairs.containsKey(record)) {
                 return kernPairs.get(record);
             } else {
