@@ -1,9 +1,10 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.BlockRenderer;
 
-public abstract class BlockElement<T extends BlockElement> extends AbstractElement<T> implements IAccessibleElement<T> {
+public abstract class BlockElement<T extends BlockElement> extends AbstractElement<T> implements IElement<T>, IAccessibleElement {
 
     public BlockElement() {
     }

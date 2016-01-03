@@ -1,11 +1,15 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.TextRenderer;
 
-public class Text extends AbstractElement<Text> implements ILeafElement<Text>, IAccessibleElement<Text> {
+public class Text extends AbstractElement<Text> implements ILeafElement<Text>, IElement<Text>, IAccessibleElement {
 
     protected String text;
+    protected PdfName role = PdfName.Span;
 
     public Text(String text) {
         this.text = text;
@@ -51,6 +55,21 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
      */
     public Text setHorizontalScaling(float horizontalScaling) {
         return setProperty(Property.HORIZONTAL_SCALING, horizontalScaling);
+    }
+
+    @Override
+    public PdfName getRole() {
+        return role;
+    }
+
+    @Override
+    public void setRole(PdfName role) {
+        this.role = role;
+    }
+
+    @Override
+    public AccessibleAttributes getAccessibleAttributes() {
+        return null;
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
@@ -119,6 +121,13 @@ public class ImageRenderer extends AbstractRenderer {
     public void draw(PdfDocument document, PdfCanvas canvas) {
         super.draw(document, canvas);
 
+        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
+        PdfTagStructure tagStructure = null;
+        if (isTagged) {
+            tagStructure = document.getTagStructure();
+            tagStructure.addTag((IAccessibleElement) getModelElement());
+        }
+
         applyMargins(occupiedArea.getBBox(), false);
 
         int position = getPropertyAsInteger(Property.POSITION);
@@ -133,14 +142,26 @@ public class ImageRenderer extends AbstractRenderer {
             fixedXPosition = occupiedArea.getBBox().getX();
         }
 
+        if (isTagged) {
+            canvas.openTag(tagStructure.getTagReference());
+        }
+
         canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[1], matrix[2], matrix[3],
                 fixedXPosition + deltaX, fixedYPosition);
+
+        if (isTagged) {
+            canvas.closeTag();
+        }
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);
         }
 
         applyMargins(occupiedArea.getBBox(), true);
+
+        if (isTagged) {
+            document.getTagStructure().moveToParent();
+        }
     }
 
     @Override

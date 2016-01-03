@@ -1,11 +1,13 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.model.renderer.ListItemRenderer;
 
 public class ListItem extends Div {
 
     public ListItem() {
         super();
+        role = PdfName.LBody;
     }
 
     public ListItem(String text) {

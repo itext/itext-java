@@ -1,5 +1,7 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.ParagraphRenderer;
 
@@ -7,6 +9,8 @@ import java.util.Arrays;
 import java.util.TreeMap;
 
 public class Paragraph extends BlockElement<Paragraph> {
+
+    protected PdfName role = PdfName.P;
 
     public Paragraph() {
     }
@@ -100,5 +104,20 @@ public class Paragraph extends BlockElement<Paragraph> {
         for (TabStop tabStop : newTabStops) {
             tabStops.put(tabStop.getTabPosition(), tabStop);
         }
+    }
+
+    @Override
+    public PdfName getRole() {
+        return role;
+    }
+
+    @Override
+    public void setRole(PdfName role) {
+        this.role = role;
+    }
+
+    @Override
+    public AccessibleAttributes getAccessibleAttributes() {
+        return null;
     }
 }

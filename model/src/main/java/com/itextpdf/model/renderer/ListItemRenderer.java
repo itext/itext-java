@@ -2,6 +2,9 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.ListItem;
 import com.itextpdf.model.layout.LayoutContext;
@@ -32,6 +35,19 @@ public class ListItemRenderer extends BlockRenderer {
 
     @Override
     public void draw(PdfDocument document, PdfCanvas canvas) {
+        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
+        PdfTagStructure tagStructure = null;
+        if (isTagged) {
+            tagStructure = document.getTagStructure();
+            IAccessibleElement modelElement = (IAccessibleElement) getModelElement();
+            boolean lBodyTagIsCreated = tagStructure.isConnectedToTag(modelElement);
+            if (!lBodyTagIsCreated) {
+                tagStructure.addTag(PdfName.LI);
+            } else {
+                tagStructure.moveToTag(modelElement).moveToParent();
+            }
+        }
+
         super.draw(document, canvas);
 
         // It will be null in case of overflow (only the "split" part will contain symbol renderer.
@@ -55,7 +71,18 @@ public class ListItemRenderer extends BlockRenderer {
             }
 
             symbolRenderer.move(x + symbolAreaWidth - symbolRenderer.getOccupiedArea().getBBox().getWidth() - symbolRenderer.getOccupiedArea().getBBox().getX(), 0);
+
+            if (isTagged) {
+                tagStructure.addTag(0, PdfName.Lbl);
+            }
             symbolRenderer.draw(document, canvas);
+            if (isTagged) {
+                tagStructure.moveToParent();
+            }
+        }
+
+        if (isTagged) {
+            tagStructure.moveToParent();
         }
     }
 

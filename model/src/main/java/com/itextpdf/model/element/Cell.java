@@ -1,5 +1,7 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
 import com.itextpdf.model.border.SolidBorder;
@@ -20,6 +22,8 @@ public class Cell extends BlockElement<Cell> {
     private int col;
     private int rowspan;
     private int colspan;
+
+    protected PdfName role = PdfName.TD;
 
     public Cell(int rowspan, int colspan) {
         this.rowspan = Math.max(rowspan, 1);
@@ -109,6 +113,21 @@ public class Cell extends BlockElement<Cell> {
     }
 
     @Override
+    public PdfName getRole() {
+        return role;
+    }
+
+    @Override
+    public void setRole(PdfName role) {
+        this.role = role;
+    }
+
+    @Override
+    public AccessibleAttributes getAccessibleAttributes() {
+        return null;
+    }
+
+    @Override
     protected CellRenderer makeNewRenderer() {
         return new CellRenderer(this);
     }
@@ -119,5 +138,4 @@ public class Cell extends BlockElement<Cell> {
         colspan = Math.min(colspan, numberOfColumns - this.col);
         return this;
     }
-
 }

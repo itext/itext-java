@@ -222,6 +222,7 @@ public class ParagraphRenderer extends BlockRenderer {
         ParagraphRenderer splitRenderer = createSplitRenderer();
         splitRenderer.occupiedArea = occupiedArea.clone();
         splitRenderer.parent = parent;
+        splitRenderer.isLastRendererForModelElement = false;
 
         ParagraphRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.parent = parent;

@@ -32,6 +32,7 @@ public abstract class AbstractRenderer implements IRenderer {
     protected LayoutArea occupiedArea;
     protected IRenderer parent;
     protected Map<Property, Object> properties = new EnumMap<>(Property.class);
+    protected boolean isLastRendererForModelElement = true;
 
     public AbstractRenderer() {
     }

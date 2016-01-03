@@ -3,6 +3,7 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.layout.LayoutArea;
@@ -53,9 +54,10 @@ public class DocumentRenderer extends RootRenderer {
         if (!resultRenderer.isFlushed()) {
             ensureDocumentHasNPages(resultRenderer.getOccupiedArea().getPageNumber(), null);
             int pageNum = resultRenderer.getOccupiedArea().getPageNumber();
-            PdfPage correspondingPage = document.getPdfDocument().getPage(pageNum);
+            PdfDocument pdfDocument = document.getPdfDocument();
+            PdfPage correspondingPage = pdfDocument.getPage(pageNum);
 
-            if(document.getPdfDocument().getReader() != null && document.getPdfDocument().getWriter() != null){
+            if(pdfDocument.getReader() != null && pdfDocument.getWriter() != null){
                 if(!wrappedContentPage.contains(pageNum)) {
                     correspondingPage.newContentStreamBefore().getOutputStream().writeBytes(OutputStream.getIsoBytes("q\n"));
                     correspondingPage.newContentStreamAfter().getOutputStream().writeBytes(OutputStream.getIsoBytes("Q\n"));
@@ -63,7 +65,10 @@ public class DocumentRenderer extends RootRenderer {
                 }
             }
 
-            resultRenderer.draw(document.getPdfDocument(), new PdfCanvas(correspondingPage));
+            if (pdfDocument.isTagged()) {
+                pdfDocument.getTagStructure().setPage(correspondingPage);
+            }
+            resultRenderer.draw(pdfDocument, new PdfCanvas(correspondingPage));
         }
     }
 

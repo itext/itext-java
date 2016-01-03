@@ -1,5 +1,7 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.ListRenderer;
 
@@ -9,6 +11,8 @@ public class List extends BlockElement<List> {
 
     protected String preSymbolText = "";
     protected String postSymbolText = ". ";
+
+    protected PdfName role = PdfName.L;
 
     public List() {
         super();
@@ -76,6 +80,21 @@ public class List extends BlockElement<List> {
 
     public void setPreSymbolText(String preSymbolText) {
         this.preSymbolText = preSymbolText;
+    }
+
+    @Override
+    public PdfName getRole() {
+        return role;
+    }
+
+    @Override
+    public void setRole(PdfName role) {
+        this.role = role;
+    }
+
+    @Override
+    public AccessibleAttributes getAccessibleAttributes() {
+        return null;
     }
 
     @Override

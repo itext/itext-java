@@ -3,6 +3,9 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
 import com.itextpdf.model.element.Cell;
@@ -93,6 +96,7 @@ public class TableRenderer extends AbstractRenderer {
         boolean headerShouldBeApplied = !rows.isEmpty() && (!isOriginalNonSplitRenderer || isFirstHeader && !tableModel.isSkipFirstHeader());
         if (headerElement != null && headerShouldBeApplied) {
             headerRenderer = (TableRenderer) headerElement.createRendererSubTree().setParent(this);
+            headerRenderer.isLastRendererForModelElement = false;
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this);
@@ -104,6 +108,7 @@ public class TableRenderer extends AbstractRenderer {
         Table footerElement = tableModel.getFooter();
         if (footerElement != null) {
             footerRenderer = (TableRenderer) footerElement.createRendererSubTree().setParent(this);
+            footerRenderer.isLastRendererForModelElement = false;
             LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this);
@@ -304,7 +309,12 @@ public class TableRenderer extends AbstractRenderer {
                         currentRow[col] = null;
                         rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) splits[col].getOverflowRenderer().setParent(splitResult[1]);
                     } else if (hasContent && currentRow[col] != null) {
-                        Cell overflowCell = currentRow[col].getModelElement().clone(false);
+//                        Cell overflowCell = currentRow[col].getModelElement().clone(false);
+                        //TODO review and double check this logic
+                        // Here I use the same cell, but create a new renderer which doesn't have any children, therefore it won't have any content,
+                        // May be I'm missing something?
+                        Cell overflowCell = currentRow[col].getModelElement();
+                        currentRow[col].isLastRendererForModelElement = false;
                         childRenderers.add(currentRow[col]);
                         currentRow[col] = null;
                         rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
@@ -339,11 +349,75 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     @Override
+    public void draw(PdfDocument document, PdfCanvas canvas) {
+        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
+        if (isTagged) {
+            PdfTagStructure tagStructure = document.getTagStructure();
+            tagStructure.addTag((IAccessibleElement) getModelElement(), true);
+
+            super.draw(document, canvas);
+
+            tagStructure.moveToParent();
+            Table modelElement = (Table) getModelElement();
+            if (isLastRendererForModelElement && modelElement.isComplete()) {
+                tagStructure.removeConnectionToTag((IAccessibleElement) getModelElement());
+                if (modelElement.getHeader() != null) {
+                    tagStructure.removeConnectionToTag(modelElement.getHeader());
+                }
+                if (modelElement.getFooter() != null) {
+                    tagStructure.removeConnectionToTag(modelElement.getFooter());
+                }
+            }
+        } else {
+            super.draw(document, canvas);
+        }
+    }
+
+    @Override
     public void drawChildren(PdfDocument document, PdfCanvas canvas) {
         if (headerRenderer != null) {
             headerRenderer.draw(document, canvas);
         }
-        super.drawChildren(document, canvas);
+
+        Table modelElement = (Table) getModelElement();
+        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
+        PdfTagStructure tagStructure = null;
+        if (isTagged) {
+            tagStructure = document.getTagStructure();
+
+            if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
+                if (tagStructure.getListOfKidsRoles().contains(PdfName.TBody)) {
+                    tagStructure.moveToKid(PdfName.TBody);
+                } else {
+                    tagStructure.addTag(PdfName.TBody);
+                }
+            }
+        }
+
+        for (IRenderer child : childRenderers) {
+            if (isTagged) {
+                int cellRow = ((Cell)child.getModelElement()).getRow();
+                int rowsNum = tagStructure.getListOfKidsRoles().size();
+                if (cellRow < rowsNum) {
+                    tagStructure.moveToKid(cellRow);
+                } else {
+                    tagStructure.addTag(PdfName.TR);
+                }
+            }
+
+            child.draw(document, canvas);
+
+            if (isTagged) {
+                tagStructure.moveToParent();
+            }
+        }
+
+        if (isTagged) {
+            if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
+                tagStructure.moveToParent();
+            }
+        }
+
         drawBorders(canvas);
 
         if (footerRenderer != null) {
@@ -412,6 +486,7 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.addAllProperties(getOwnProperties());
         splitRenderer.headerRenderer = headerRenderer;
         splitRenderer.footerRenderer = footerRenderer;
+        splitRenderer.isLastRendererForModelElement = false;
         return (T) splitRenderer;
     }
 

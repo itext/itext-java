@@ -1,5 +1,7 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
@@ -14,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Table extends BlockElement<Table> implements ILargeElement<Table> {
+
+    protected PdfName role = PdfName.Table;
 
     private ArrayList<Cell[]> rows;
 
@@ -128,10 +132,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param headerCell a header cell to be added
      */
     public void addHeaderCell(Cell headerCell) {
-        if (header == null) {
-            header = new Table(columnWidths);
-            header.setWidth(getWidth());
-        }
+        ensureHeaderIsInitialized();
         header.addCell(headerCell);
     }
 
@@ -142,10 +143,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param blockElement an element to be added to a header cell
      */
     public void addHeaderCell(BlockElement blockElement) {
-        if (header == null) {
-            header = new Table(columnWidths);
-            header.setWidth(getWidth());
-        }
+        ensureHeaderIsInitialized();
         header.addCell(blockElement);
     }
 
@@ -156,10 +154,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param image an element to be added to a header cell
      */
     public void addHeaderCell(Image image) {
-        if (header == null) {
-            header = new Table(columnWidths);
-            header.setWidth(getWidth());
-        }
+        ensureHeaderIsInitialized();
         header.addCell(image);
     }
 
@@ -170,10 +165,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param content a string to be added to a header cell
      */
     public void addHeaderCell(String content) {
-        if (header == null) {
-            header = new Table(columnWidths);
-            header.setWidth(getWidth());
-        }
+        ensureHeaderIsInitialized();
         header.addCell(content);
     }
 
@@ -192,10 +184,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param footerCell a footer cell
      */
     public void addFooterCell(Cell footerCell) {
-        if (footer == null) {
-            footer = new Table(columnWidths);
-            footer.setWidth(getWidth());
-        }
+        ensureFooterIsInitialized();
         footer.addCell(footerCell);
     }
 
@@ -206,10 +195,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param blockElement an element to be added to a footer cell
      */
     public void addFooterCell(BlockElement blockElement) {
-        if (footer == null) {
-            footer = new Table(columnWidths);
-            footer.setWidth(getWidth());
-        }
+        ensureFooterIsInitialized();
         footer.addCell(blockElement);
     }
 
@@ -220,10 +206,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param image an image to be added to a footer cell
      */
     public void addFooterCell(Image image) {
-        if (footer == null) {
-            footer = new Table(columnWidths);
-            footer.setWidth(getWidth());
-        }
+        ensureFooterIsInitialized();
         footer.addCell(image);
     }
 
@@ -234,10 +217,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param content a content string to be added to a footer cell
      */
     public void addFooterCell(String content) {
-        if (footer == null) {
-            footer = new Table(columnWidths);
-            footer.setWidth(getWidth());
-        }
+        ensureFooterIsInitialized();
         footer.addCell(content);
     }
 
@@ -495,6 +475,21 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         return horizontalBorder;
     }
 
+    @Override
+    public PdfName getRole() {
+        return role;
+    }
+
+    @Override
+    public void setRole(PdfName role) {
+        this.role = role;
+    }
+
+    @Override
+    public AccessibleAttributes getAccessibleAttributes() {
+        return null;
+    }
+
     protected void calculateWidths() {
         Property.UnitValue width = getWidth();
         float total = 0;
@@ -551,6 +546,22 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     private boolean cellBelongsToAnyRowGroup(Cell cell, List<RowRange> rowGroups) {
         return rowGroups != null && rowGroups.size() > 0 && cell.getRow() >= rowGroups.get(0).getStartRow()
                 && cell.getRow() <= rowGroups.get(rowGroups.size() - 1).getFinishRow();
+    }
+
+    private void ensureHeaderIsInitialized() {
+        if (header == null) {
+            header = new Table(columnWidths);
+            header.setWidth(getWidth());
+            header.setRole(PdfName.THead);
+        }
+    }
+
+    private void ensureFooterIsInitialized() {
+        if (footer == null) {
+            footer = new Table(columnWidths);
+            footer.setWidth(getWidth());
+            footer.setRole(PdfName.TFoot);
+        }
     }
 
     public static class RowRange {

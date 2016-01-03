@@ -5,6 +5,7 @@ import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.layout.LayoutArea;
@@ -187,6 +188,7 @@ public class BlockRenderer extends AbstractRenderer {
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
+        splitRenderer.isLastRendererForModelElement = false;
         return splitRenderer;
     }
 
@@ -201,6 +203,11 @@ public class BlockRenderer extends AbstractRenderer {
     public void draw(PdfDocument document, PdfCanvas canvas) {
         applyDestination(document);
         applyAction(document);
+
+        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
+        if (isTagged) {
+            document.getTagStructure().addTag((IAccessibleElement) getModelElement(), true);
+        }
 
         int position = getPropertyAsInteger(Property.POSITION);
         if (position == LayoutPosition.RELATIVE) {
@@ -217,6 +224,13 @@ public class BlockRenderer extends AbstractRenderer {
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);
+        }
+
+        if (isTagged) {
+            document.getTagStructure().moveToParent();
+            if (isLastRendererForModelElement) {
+                document.getTagStructure().removeConnectionToTag((IAccessibleElement) getModelElement());
+            }
         }
 
         flushed = true;

@@ -1,8 +1,9 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.canvas.image.WmfImage;
-import com.itextpdf.canvas.image.WmfImageHelper;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
@@ -14,9 +15,10 @@ import com.itextpdf.model.renderer.ImageRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Image extends AbstractElement<Image> implements ILeafElement<Image>, IAccessibleElement<Image> {
+public class Image extends AbstractElement<Image> implements ILeafElement<Image>, IElement<Image>, IAccessibleElement {
 
     protected PdfXObject xObject;
+    protected PdfName role = PdfName.Figure;
 
     public Image(PdfImageXObject xObject) {
         this.xObject = xObject;
@@ -218,8 +220,22 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     @Override
+    public PdfName getRole() {
+        return role;
+    }
+
+    @Override
+    public void setRole(PdfName role) {
+        this.role = role;
+    }
+
+    @Override
+    public AccessibleAttributes getAccessibleAttributes() {
+        return null;
+    }
+
+    @Override
     protected IRenderer makeNewRenderer() {
         return new ImageRenderer(this);
     }
-
 }

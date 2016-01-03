@@ -11,6 +11,8 @@ import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.bidi.BidiAlgorithm;
 import com.itextpdf.model.bidi.BidiBracketMap;
@@ -360,6 +362,13 @@ public class TextRenderer extends AbstractRenderer {
     public void draw(PdfDocument document, PdfCanvas canvas) {
         super.draw(document, canvas);
 
+        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
+        PdfTagStructure tagStructure = null;
+        if (isTagged) {
+            tagStructure = document.getTagStructure();
+            tagStructure.addTag((IAccessibleElement) getModelElement(), true);
+        }
+
         int position = getPropertyAsInteger(Property.POSITION);
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(false);
@@ -386,6 +395,9 @@ public class TextRenderer extends AbstractRenderer {
                 strokeWidth = fontSize / 30;
             }
 
+            if (isTagged) {
+                canvas.openTag(tagStructure.getTagReference());
+            }
             canvas.saveState().beginText().setFontAndSize(font, fontSize);
 
             if (italicSimulation) {
@@ -439,6 +451,9 @@ public class TextRenderer extends AbstractRenderer {
                 canvas.showText(output);
             }
             canvas.endText().restoreState();
+            if (isTagged) {
+                canvas.closeTag();
+            }
 
             Object underlines = getProperty(Property.UNDERLINE);
             if (underlines instanceof List) {
@@ -454,6 +469,13 @@ public class TextRenderer extends AbstractRenderer {
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(false);
+        }
+
+        if (isTagged) {
+            tagStructure.moveToParent();
+            if (isLastRendererForModelElement) {
+                tagStructure.removeConnectionToTag((IAccessibleElement) getModelElement());
+            }
         }
     }
 
@@ -638,6 +660,7 @@ public class TextRenderer extends AbstractRenderer {
         splitRenderer.yLineOffset = yLineOffset;
         splitRenderer.levels = levels;
         splitRenderer.otfFeaturesApplied = otfFeaturesApplied;
+        splitRenderer.isLastRendererForModelElement = false;
 
         TextRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.setText(text, initialOverflowTextPos, text.end);

@@ -31,6 +31,7 @@ public class CellRenderer extends BlockRenderer {
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
+        splitRenderer.isLastRendererForModelElement = false;
         splitRenderer.addAllProperties(getOwnProperties());
         return splitRenderer;
     }
