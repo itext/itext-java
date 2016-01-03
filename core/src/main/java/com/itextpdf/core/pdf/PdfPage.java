@@ -514,46 +514,34 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfObject k = getFrom.get(PdfName.K);
         if (k == null)
             return;
+
+        if (k.isArray()) {
+            PdfArray a = (PdfArray) k;
+            for (int i = 0; i < a.size(); i++) {
+                PdfObject aItem = a.get(i);
+                getPageTagsFromKid(aItem, getFrom, putTo);
+            }
+        } else {
+            getPageTagsFromKid(k, getFrom, putTo);
+        }
+    }
+
+    private void getPageTagsFromKid(PdfObject k, PdfDictionary parent, List<IPdfTag> putTo) {
         switch (k.getType()) {
             case PdfObject.Number:
-                if (getFrom.getAsDictionary(PdfName.Pg) == getPdfObject())
-                    putTo.add(new PdfMcrNumber((PdfNumber) k, new PdfStructElem(getFrom, getDocument())));
+                if (parent.getAsDictionary(PdfName.Pg) == getPdfObject())
+                    putTo.add(new PdfMcrNumber((PdfNumber) k, new PdfStructElem(parent, getDocument())));
                 break;
             case PdfObject.Dictionary:
                 PdfDictionary d = (PdfDictionary) k;
                 if (PdfName.MCR.equals(d.getAsName(PdfName.Type)) && getPdfObject() == d.getAsDictionary(PdfName.Pg))
-                    putTo.add(new PdfMcrDictionary(d, new PdfStructElem(getFrom, getDocument())));
-                else if (getFrom.getAsDictionary(PdfName.Pg) == getPdfObject() && PdfName.OBJR.equals(d.getAsName(PdfName.Type))) {
+                    putTo.add(new PdfMcrDictionary(d, new PdfStructElem(parent, getDocument())));
+                else if (parent.getAsDictionary(PdfName.Pg) == getPdfObject() && PdfName.OBJR.equals(d.getAsName(PdfName.Type))) {
                     PdfDictionary pg = d.getAsDictionary(PdfName.Pg);
                     if (pg == null || pg == getPdfObject())
-                        putTo.add(new PdfObjRef(d, new PdfStructElem(getFrom, getDocument())));
+                        putTo.add(new PdfObjRef(d, new PdfStructElem(parent, getDocument())));
                 } else
                     getPageTags(d, putTo);
-                break;
-            case PdfObject.Array:
-                PdfArray a = (PdfArray) k;
-                for (int i = 0; i < a.size(); i++) {
-                    PdfObject aItem = a.get(i);
-                    switch (aItem.getType()) {
-                        case PdfObject.Number:
-                            if (getFrom.getAsDictionary(PdfName.Pg) == getPdfObject())
-                                putTo.add(new PdfMcrNumber((PdfNumber) aItem, new PdfStructElem(getFrom, getDocument())));
-                            break;
-                        case PdfObject.Dictionary:
-                            PdfDictionary dItem = (PdfDictionary) aItem;
-                            if (PdfName.MCR.equals(dItem.getAsName(PdfName.Type)) && getPdfObject() == dItem.getAsDictionary(PdfName.Pg))
-                                putTo.add(new PdfMcrDictionary(dItem, new PdfStructElem(getFrom, getDocument())));
-                            else if (getFrom.getAsDictionary(PdfName.Pg) == getPdfObject() && PdfName.OBJR.equals(dItem.getAsName(PdfName.Type))) {
-                                PdfDictionary pg = dItem.getAsDictionary(PdfName.Pg);
-                                if (pg == null || pg == getPdfObject())
-                                    putTo.add(new PdfObjRef(dItem, new PdfStructElem(getFrom, getDocument())));
-                            } else
-                                getPageTags(dItem, putTo);
-                            break;
-                        default:
-                            break;
-                    }
-                }
                 break;
             default:
                 break;

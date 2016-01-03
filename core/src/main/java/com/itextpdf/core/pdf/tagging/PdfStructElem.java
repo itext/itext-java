@@ -93,7 +93,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         super(pdfObject);
         makeIndirect(pdfDocument);
         PdfName role = getPdfObject().getAsName(PdfName.S);
-        type = getType(role);
+        type = identifyType(getDocument(), role);
     }
 
     public PdfStructElem(PdfDocument document, PdfName role, PdfPage page) {
@@ -223,45 +223,15 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public List<IPdfStructElem> getKids() {
         PdfObject k = getK();
         List<IPdfStructElem> kids = new ArrayList<IPdfStructElem>();
-        switch (k.getType()) {
-            case PdfObject.Number:
-                kids.add(new PdfMcrNumber((PdfNumber) k, this));
-                break;
-            case PdfObject.Dictionary:
-                PdfDictionary d = (PdfDictionary) k;
-                if (isStructElem(d))
-                    kids.add(new PdfStructElem(d, getDocument()));
-                else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
-                    kids.add(new PdfMcrDictionary(d, this));
-                else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))
-                    kids.add(new PdfObjRef(d, this));
-                break;
-            case PdfObject.Array:
+        if (k != null) {
+            if (k.isArray()) {
                 PdfArray a = (PdfArray) k;
                 for (int i = 0; i < a.size(); i++) {
-                    PdfObject o = a.get(i);
-                    switch (o.getType()) {
-                        case PdfObject.Dictionary:
-                            d = a.getAsDictionary(i);
-                            if (d != null) {
-                                if (isStructElem(d))
-                                    kids.add(new PdfStructElem(d, getDocument()));
-                                else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
-                                    kids.add(new PdfMcrDictionary(d, this));
-                                else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))
-                                    kids.add(new PdfObjRef(d, this));
-                            }
-                            break;
-                        case PdfObject.Number:
-                            kids.add(new PdfMcrNumber((PdfNumber) o, this));
-                            break;
-                        default:
-                            break;
-                    }
+                    addKidObjectToStructElemList(a.get(i), kids);
                 }
-                break;
-            default:
-                break;
+            } else {
+                addKidObjectToStructElemList(k, kids);
+            }
         }
         return kids;
     }
@@ -303,8 +273,27 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         getPdfObject().put(PdfName.P, parent);
     }
 
-    private int getType(PdfName role) {
-        PdfDictionary roleMap = getDocument().getStructTreeRoot().getRoleMap();
+    private void addKidObjectToStructElemList(PdfObject k, List<IPdfStructElem> list) {
+        switch (k.getType()) {
+            case PdfObject.Dictionary:
+                PdfDictionary d = (PdfDictionary) k;
+                if (isStructElem(d))
+                    list.add(new PdfStructElem(d, getDocument()));
+                else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
+                    list.add(new PdfMcrDictionary(d, this));
+                else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))
+                    list.add(new PdfObjRef(d, this));
+                break;
+            case PdfObject.Number:
+                list.add(new PdfMcrNumber((PdfNumber) k, this));
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static int identifyType(PdfDocument doc, PdfName role) {
+        PdfDictionary roleMap = doc.getStructTreeRoot().getRoleMap();
         if (roleMap.containsKey(role))
             role = roleMap.getAsName(role);
         if (groupingRoles.contains(role))
@@ -347,5 +336,4 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         if (kid instanceof PdfDictionary && isStructElem((PdfDictionary) kid))
             ((PdfDictionary) kid).put(PdfName.P, getPdfObject());
     }
-
 }

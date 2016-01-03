@@ -13,6 +13,7 @@ import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.core.xmp.PdfAXMPUtil;
 import com.itextpdf.core.xmp.PdfConst;
 import com.itextpdf.core.xmp.XMPConst;
@@ -110,6 +111,8 @@ public class PdfDocument implements IEventDispatcher {
     protected boolean flushUnusedObjects = false;
 
     protected Set<PdfFont> documentFonts = new HashSet<PdfFont>();
+
+    protected PdfTagStructure tagStructure;
 
     /**
      * Open PDF document in reading mode.
@@ -742,6 +745,19 @@ public class PdfDocument implements IEventDispatcher {
 
     public Integer getNextStructParentIndex() {
         return structParentIndex++;
+    }
+
+    public PdfTagStructure getTagStructure() {
+        if (tagStructure != null) {
+            return tagStructure;
+        }
+
+        if (!isTagged()) {
+            throw new PdfException("");//TODO exception
+        }
+
+        tagStructure = new PdfTagStructure(this);
+        return tagStructure;
     }
 
     /**

@@ -58,35 +58,39 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     public List<IPdfStructElem> getKids() {
         PdfObject k = getPdfObject().get(PdfName.K);
         List<IPdfStructElem> kids = new ArrayList<IPdfStructElem>();
-        switch (k.getType()) {
-            case PdfObject.Dictionary:
-                PdfDictionary d = (PdfDictionary) k;
-                if (PdfStructElem.isStructElem(d))
-                    kids.add(new PdfStructElem(d, getDocument()));
-                break;
-            case PdfObject.Array:
-                PdfArray a = (PdfArray) k;
-                for (int i = 0; i < a.size(); i++) {
-                    PdfObject o = a.get(i);
-                    switch (o.getType()) {
-                        case PdfObject.Dictionary:
-                            d = a.getAsDictionary(i);
-                            if (d != null) {
-                                if (PdfStructElem.isStructElem(d))
-                                    kids.add(new PdfStructElem(d, getDocument()));
-                            }
-                            break;
-                        default:
-                            break;
+
+        if (k != null) {
+            switch (k.getType()) {
+                case PdfObject.Dictionary:
+                    PdfDictionary d = (PdfDictionary) k;
+                    if (PdfStructElem.isStructElem(d))
+                        kids.add(new PdfStructElem(d, getDocument()));
+                    break;
+                case PdfObject.Array:
+                    PdfArray a = (PdfArray) k;
+                    for (int i = 0; i < a.size(); i++) {
+                        PdfObject o = a.get(i);
+                        switch (o.getType()) {
+                            case PdfObject.Dictionary:
+                                d = a.getAsDictionary(i);
+                                if (d != null) {
+                                    if (PdfStructElem.isStructElem(d))
+                                        kids.add(new PdfStructElem(d, getDocument()));
+                                }
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
+            }
         }
         return kids;
     }
 
+    //TODO couldn't it be, that the kid would be single dictionary? check spec
     public PdfArray getKidsObject() {
         PdfArray k = getPdfObject().getAsArray(PdfName.K);
         if (k == null) {
