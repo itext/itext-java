@@ -6,6 +6,7 @@ import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.model.element.Div;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -197,6 +199,56 @@ public class ImageTest extends ExtendedITextTest{
         image.setMarginLeft(100).setMarginTop(100);
         doc.add(p);
         doc.add(new Paragraph(new Text("Second Line")));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("Bug with element position when element is forced placed")
+    public void imageTest07() throws IOException, InterruptedException {
+
+        String outFileName = destinationFolder + "imageTest07.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest07.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+
+        Image image = new Image(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+
+        Div div = new Div();
+        div.add(image);
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("Bug: when there are several child renderers and the first one is forced placed, than all next " +
+            "renderers are not layouted which results in null for occupied area")
+    public void imageTest08() throws IOException, InterruptedException {
+
+        String outFileName = destinationFolder + "imageTest08.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest08.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+
+        Image image = new Image(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+
+        Div div = new Div();
+        div.add(image);
+        div.add(image);
+        doc.add(div);
 
         doc.close();
 
