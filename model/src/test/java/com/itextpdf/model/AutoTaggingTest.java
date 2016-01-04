@@ -29,8 +29,8 @@ import static org.junit.Assert.assertNull;
 @Category(IntegrationTest.class)
 public class AutoTaggingTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/AutotaggingTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/model/AutotaggingTest/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/AutoTaggingTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/model/AutoTaggingTest/";
     static final public String imageName = "Desert.jpg";
 
     @BeforeClass
