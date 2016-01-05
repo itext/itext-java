@@ -1,5 +1,6 @@
 package com.itextpdf.model;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -16,6 +17,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -206,7 +209,9 @@ public class ImageTest extends ExtendedITextTest{
     }
 
     @Test
-    @Ignore("Bug with element position when element is forced placed")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     public void imageTest07() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest07.pdf";
@@ -230,8 +235,9 @@ public class ImageTest extends ExtendedITextTest{
     }
 
     @Test
-    @Ignore("Bug: when there are several child renderers and the first one is forced placed, than all next " +
-            "renderers are not layouted which results in null for occupied area")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     public void imageTest08() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest08.pdf";

@@ -114,7 +114,7 @@ public class BlockRenderer extends AbstractRenderer {
                             break;
                         }
                     } else if (result.getStatus() == LayoutResult.NOTHING) {
-                        boolean keepTogether = Boolean.valueOf(true).equals(getProperty(Property.KEEP_TOGETHER));
+                        boolean keepTogether = getPropertyAsBoolean(Property.KEEP_TOGETHER);
                         int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
 
                         BlockRenderer splitRenderer = createSplitRenderer(layoutResult);
@@ -124,8 +124,11 @@ public class BlockRenderer extends AbstractRenderer {
                         List<IRenderer> overflowRendererChildren = new ArrayList<>();
                         overflowRendererChildren.add(result.getOverflowRenderer());
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
+                        for (IRenderer renderer : overflowRendererChildren) {
+                            renderer.setParent(overflowRenderer);
+                        }
                         overflowRenderer.childRenderers = overflowRendererChildren;
-                        if (getProperty(Property.KEEP_TOGETHER)) {
+                        if (keepTogether) {
                             splitRenderer = null;
                             overflowRenderer.childRenderers.clear();
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
@@ -196,6 +199,7 @@ public class BlockRenderer extends AbstractRenderer {
         BlockRenderer overflowRenderer = getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
+        overflowRenderer.properties = properties;
         return overflowRenderer;
     }
 

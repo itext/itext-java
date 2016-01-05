@@ -95,10 +95,7 @@ public class ImageRenderer extends AbstractRenderer {
 
         getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
 
-        if (width > layoutBox.getWidth()) {
-            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
-        }
-        if (height > layoutBox.getHeight()) {
+        if (!getPropertyAsBoolean(Property.FORCED_PLACEMENT) && (width > layoutBox.getWidth() || height > layoutBox.getHeight())) {
             return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
         }
 
