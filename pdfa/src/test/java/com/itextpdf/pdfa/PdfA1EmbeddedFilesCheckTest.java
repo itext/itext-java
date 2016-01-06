@@ -50,7 +50,7 @@ public class PdfA1EmbeddedFilesCheckTest {
         fileNames.put(PdfName.Names, names);
 
         names.add(new PdfString("some/file/path"));
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null, true);
         names.add(spec.getPdfObject());
 
         pdfDocument.addNewPage();
@@ -72,7 +72,7 @@ public class PdfA1EmbeddedFilesCheckTest {
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().getPdfObject().put(new PdfName("testStream"), stream);
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null,  true);
         stream.put(PdfName.F, spec.getPdfObject());
 
         pdfDocument.addNewPage();
@@ -94,7 +94,7 @@ public class PdfA1EmbeddedFilesCheckTest {
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().getPdfObject().put(new PdfName("testStream"), stream);
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null,  true);
         stream.put(new PdfName("fileData"), spec.getPdfObject());
 
         pdfDocument.addNewPage();

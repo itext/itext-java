@@ -294,7 +294,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfPage page1 = pdfDoc1.addNewPage();
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", "sample.wav", true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
 
         PdfFileAttachmentAnnotation fileAttach = new PdfFileAttachmentAnnotation(pdfDoc1, new Rectangle(100, 100), spec);
         fileAttach.setIconName(PdfName.Paperclip);
@@ -917,7 +917,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
         PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", "sample.wav", true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
 
         PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
@@ -957,7 +957,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
         PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, new FileInputStream(sourceFolder + "sample.wav"), "sample.wav", true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, new FileInputStream(sourceFolder + "sample.wav"), null, "sample.wav", null, null, true);
 
         PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
@@ -1006,7 +1006,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
             reads = is.read();
         }
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, baos.toByteArray(), "sample.wav", true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, baos.toByteArray(), null, "sample.wav", null, null, null, true);
 
         PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);

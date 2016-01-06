@@ -635,7 +635,7 @@ public class CompareTool {
         Set<PdfName> mergedKeys = new TreeSet<>(cmpDict.keySet());
         mergedKeys.addAll(outDict.keySet());
         for (PdfName key : mergedKeys) {
-            if (key.equals(PdfName.Parent) || key.equals(PdfName.P)) continue;
+            if (key.equals(PdfName.Parent) || key.equals(PdfName.P) || key.equals(PdfName.ModDate)) continue;
             if (outDict.isStream() && cmpDict.isStream() && (key.equals(PdfName.Filter) || key.equals(PdfName.Length))) continue;
             if (key.equals(PdfName.BaseFont) || key.equals(PdfName.FontName)) {
                 PdfObject cmpObj = cmpDict.get(key);

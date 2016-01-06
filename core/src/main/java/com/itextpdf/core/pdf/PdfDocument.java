@@ -24,6 +24,7 @@ import com.itextpdf.core.xmp.XMPUtils;
 import com.itextpdf.core.xmp.options.PropertyOptions;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -998,6 +999,14 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) {
+    }
+
+    public void addFileAttachment(String description, byte[] fileStore, String fileDisplay, String mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
+        addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, fileStore, description, fileDisplay, mimeType, fileParameter, afRelationshipValue, true));
+    }
+
+    public void addFileAttachment(String description, String file, String fileDisplay, String mimeType, PdfName afRelationshipValue) throws FileNotFoundException {
+        addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, file, description, fileDisplay, mimeType, afRelationshipValue, true));
     }
 
     public void addFileAttachment(String description, PdfFileSpec fs) {

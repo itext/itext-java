@@ -1,15 +1,7 @@
 package com.itextpdf.core.pdf.filespec;
 
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfBoolean;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.core.pdf.PdfObjectWrapper;
-import com.itextpdf.core.pdf.PdfStream;
-import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,32 +26,49 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         return fileSpec;
     }
 
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String fileDisplay, boolean isUnicodeFileName) throws FileNotFoundException {
-
+    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, String mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfStream stream = new PdfStream(fileStore).makeIndirect(doc);
+        PdfDictionary params = new PdfDictionary();
 
-        return createEmbeddedFileSpec(doc, stream, fileDisplay, isUnicodeFileName);
+        if (fileParameter != null) {
+            params.mergeDifferent(fileParameter);
+        }
+        if (!params.containsKey(PdfName.ModDate)) {
+            params.put(PdfName.ModDate, new PdfDate().getPdfObject());
+        }
+        if (fileStore != null) {
+            params.put(PdfName.Size, new PdfNumber(stream.getBytes().length));
+            stream.put(PdfName.Params, params);
+        }
+        return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String fileDisplay, boolean isUnicodeFileName) throws FileNotFoundException {
-
+    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, String mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) throws FileNotFoundException {
         PdfStream stream = new PdfStream(doc, new FileInputStream(filePath));
-
-        return createEmbeddedFileSpec(doc, stream, fileDisplay, isUnicodeFileName);
+        return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, InputStream is, String fileDisplay, boolean isUnicodeFileName) throws FileNotFoundException {
-
+    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, InputStream is, String description, String fileDisplay, String mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfStream stream = new PdfStream(doc, is);
-
-        return createEmbeddedFileSpec(doc, stream, fileDisplay, isUnicodeFileName);
+        return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
-    private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String fileDisplay, boolean isUnicodeFileName) throws FileNotFoundException {
+    private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String description, String fileDisplay, String mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfDictionary dict = new PdfDictionary();
-
         stream.put(PdfName.Type, PdfName.EmbeddedFile);
+        if (afRelationshipValue != null) {
+            dict.put(PdfName.AFRelationship, afRelationshipValue);
+        } else {
+            dict.put(PdfName.AFRelationship, PdfName.Unspecified);
+        }
 
+        if (mimeType != null) {
+            stream.put(PdfName.Subtype, new PdfName(mimeType));
+        }
+
+        if (description != null) {
+            dict.put(PdfName.Desc, new PdfString(description));
+        }
         dict.put(PdfName.Type, PdfName.Filespec);
         dict.put(PdfName.F, new PdfString(fileDisplay));
         dict.put(PdfName.UF, new PdfString(fileDisplay, isUnicodeFileName ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
