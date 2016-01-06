@@ -152,3 +152,5 @@ nbactions*.xml
 
 # Ignore generated files
 samples/src/test/resources/db/filmfestival.log
+
+.vagrant/
