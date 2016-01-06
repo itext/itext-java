@@ -1,7 +1,6 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.CidFont;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontFactory;
@@ -18,6 +17,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
+import com.itextpdf.core.pdf.PdfOutputStream;
 import com.itextpdf.core.pdf.PdfStream;
 
 import java.io.IOException;
@@ -383,6 +383,23 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     //TODO abstract
     public byte[] convertToBytes(Glyph glyph) {
         throw new RuntimeException();
+    }
+
+    //TODO abstract
+    //TODO or writePdfString?
+    public void writeText(GlyphLine text, int from, int to, PdfOutputStream stream) {
+        throw new RuntimeException();
+    }
+
+    //TODO abstract
+    //TODO or writePdfString?
+    public void writeText(String text, PdfOutputStream stream) {
+        throw new RuntimeException();
+    }
+
+    //TODO or writePdfString?
+    public void writeText(GlyphLine text, PdfOutputStream stream) {
+        writeText(text, 0, text.size() - 1, stream);
     }
 
     public double[] getFontMatrix() {

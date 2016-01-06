@@ -446,10 +446,9 @@ public class TextRenderer extends AbstractRenderer {
             output.end = printGlyphs.size();
 
             if (fontKerning == Property.FontKerning.YES) {
-                canvas.showTextKerned(output);
-            } else {
-                canvas.showText(output);
+                canvas.applyKerning(output);
             }
+            canvas.showText(output);
             canvas.endText().restoreState();
             if (isTagged) {
                 canvas.closeTag();

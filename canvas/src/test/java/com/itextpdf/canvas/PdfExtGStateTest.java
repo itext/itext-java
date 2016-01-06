@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -31,7 +32,7 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         createDestinationFolder(destinationFolder);
     }
 
-    @Test
+    @Test @Ignore("Document fonts")
     public void egsTest1() throws Exception {
         final String destinationDocument = destinationFolder + "egsTest1.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);

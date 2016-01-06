@@ -195,7 +195,15 @@ public class Glyph {
     }
 
     public boolean hasOffsets() {
-        return xPlacement == 0 && yPlacement == 0 && xAdvance == 0 && yAdvance == 0;
+        return xPlacement != 0 || yPlacement != 0 || xAdvance != 0 || yAdvance != 0;
+    }
+
+    public boolean hasPlacement() {
+        return xPlacement != 0 || yPlacement != 0;
+    }
+
+    public boolean hasAdvance() {
+        return xAdvance != 0 || yAdvance != 0;
     }
 
     public int hashCode() {

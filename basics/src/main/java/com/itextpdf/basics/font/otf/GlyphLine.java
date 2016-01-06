@@ -54,8 +54,20 @@ public class GlyphLine {
         return glyphLine;
     }
 
-    public int length() {
-        return end - start;
+    public Glyph get(int index) {
+        return glyphs.get(index);
+    }
+
+    public Glyph set(int index, Glyph glyph) {
+        return glyphs.set(index, glyph);
+    }
+
+    public boolean add(Glyph glyph) {
+        return glyphs.add(glyph);
+    }
+
+    public int size() {
+        return glyphs.size();
     }
 
     public void substituteManyToOne(OpenTypeFontTableReader tableReader, int lookupFlag, int rightPartLen, int substitutionGlyphIndex) {

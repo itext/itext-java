@@ -1,6 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.codec.Base64;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.FontProgram;
@@ -17,6 +18,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfOutputStream;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
@@ -80,7 +82,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     @Override
     public byte[] convertToBytes(GlyphLine glyphLine) {
         if (glyphLine != null) {
-            byte[] bytes = new byte[glyphLine.length()];
+            byte[] bytes = new byte[glyphLine.size()];
             int ptr = 0;
             if (fontEncoding.isFontSpecific()) {
                 for (Glyph glyph : glyphLine.glyphs) {
@@ -117,6 +119,34 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
         shortTag[bytes[0] & 0xff] = 1;
         return bytes;
+    }
+
+    @Override
+    public void writeText(GlyphLine text, int from, int to, PdfOutputStream stream) {
+        byte[] bytes = new byte[to - from + 1];
+        int ptr = 0;
+
+        if (fontEncoding.isFontSpecific()) {
+            for (int i = from; i <= to; i++) {
+                bytes[ptr++] = (byte) text.get(i).getCode();
+            }
+        } else {
+            for (int i = from; i <= to; i++) {
+                if (fontEncoding.canEncode(text.get(i).getUnicode())) {
+                    bytes[ptr++] = fontEncoding.convertToByte(text.get(i).getUnicode());
+                }
+            }
+        }
+        bytes = Utilities.shortenArray(bytes, ptr);
+        for (byte b: bytes) {
+            shortTag[b & 0xff] = 1;
+        }
+        Utilities.writeEscapedString(stream, bytes);
+    }
+
+    @Override
+    public void writeText(String text, PdfOutputStream stream) {
+        Utilities.writeEscapedString(stream, convertToBytes(text));
     }
 
     /**

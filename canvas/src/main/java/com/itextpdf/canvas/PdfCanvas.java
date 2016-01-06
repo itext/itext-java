@@ -2,6 +2,7 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
@@ -10,7 +11,6 @@ import com.itextpdf.canvas.image.WmfImageHelper;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.PatternColor;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.font.PdfType0Font;
 import com.itextpdf.core.pdf.IsoKey;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -195,6 +195,18 @@ public class PdfCanvas {
         return kernArray;
     }
 
+    public void applyKerning(GlyphLine text) {
+        PdfFont font = currentGs.getFont();
+        if (text.size() > 0) {
+            for (int i = 1; i < text.size(); i++) {
+                int kern = font.getKerning(text.glyphs.get(i - 1), text.glyphs.get(i));
+                if (kern != 0) {
+                    text.glyphs.set(i, new Glyph(text.glyphs.get(i), 0, 0, kern, 0, 0));
+                }
+            }
+        }
+    }
+
     /**
      * Constructs a kern array for the text in the given font.
      * This array may later be used as an argument of a TJ operator
@@ -202,7 +214,7 @@ public class PdfCanvas {
      */
     public static PdfTextArray getKernArray(GlyphLine text, final PdfFont font) {
         PdfTextArray kernArray = new PdfTextArray();
-        if (text.length() > 0) {
+        if (text.size() > 0) {
             kernArray.add(font.convertToBytes(text.glyphs.get(text.start)));
             for (int i = text.start + 1; i < text.end; i++) {
                 int kern = font.getKerning(text.glyphs.get(i - 1), text.glyphs.get(i));
@@ -589,8 +601,49 @@ public class PdfCanvas {
      */
     public PdfCanvas showText(GlyphLine text) {
         document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
-        showTextInt(text);
-        contentStream.getOutputStream().writeBytes(Tj);
+        PdfFont font;
+        if ((font = currentGs.getFont()) == null) {
+            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
+        }
+        float fs = currentGs.getFontSize() / 1000f;
+        float c = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
+        float h = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
+        int sub = 0;
+        float w = 0;
+        for (int i = 0; i < text.size(); i++) {
+            Glyph glyph = text.glyphs.get(i);
+            if (glyph.hasOffsets()) {
+                if (i - sub > 0) {
+                    font.writeText(text, sub, i - 1, contentStream.getOutputStream());
+                    contentStream.getOutputStream().writeBytes(Tj);
+                    contentStream.getOutputStream()
+                            .writeFloat(w)
+                            .writeSpace()
+                            .writeFloat(0)
+                            .writeSpace()
+                            .writeBytes(Td);
+                }
+
+                if (glyph.hasPlacement()) {
+                    //TODO
+                }
+                if (glyph.hasAdvance()) {
+                    contentStream.getOutputStream()
+                            .writeFloat((glyph.getXAdvance()) * fs * h)
+                            .writeSpace()
+                            .writeFloat(glyph.getYAdvance() * fs)
+                            .writeSpace()
+                            .writeBytes(Td);
+                }
+                sub = i;
+                w = 0;
+            }
+            w += (glyph.getWidth() * fs + c) * h;
+        }
+        if (text.size() - sub > 0) {
+            font.writeText(text, sub, text.size() - 1, contentStream.getOutputStream());
+            contentStream.getOutputStream().writeBytes(Tj);
+        }
         return this;
     }
 
@@ -2054,29 +2107,7 @@ public class PdfCanvas {
     private void showTextInt(String text) {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-        byte[] b = currentGs.getFont().convertToBytes(text);
-        if (currentGs.getFont() instanceof PdfType0Font) {
-            Utilities.writeHexedString(contentStream.getOutputStream(), b);
-        } else {
-            Utilities.writeEscapedString(contentStream.getOutputStream(), b);
-        }
-    }
-
-    /**
-     * A helper to insert into the content stream the {@code text}
-     * converted to bytes according to the font's encoding.
-     *
-     * @param text the text to write.
-     */
-    private void showTextInt(GlyphLine text) {
-        if (currentGs.getFont() == null)
-            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-        byte[] b = currentGs.getFont().convertToBytes(text);
-        if (currentGs.getFont() instanceof PdfType0Font) {
-            Utilities.writeHexedString(contentStream.getOutputStream(), b);
-        } else {
-            Utilities.writeEscapedString(contentStream.getOutputStream(), b);
-        }
+        currentGs.getFont().writeText(text, contentStream.getOutputStream());
     }
 
     private void addToPropertiesAndBeginLayer(PdfOCG layer) {

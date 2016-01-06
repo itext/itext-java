@@ -26,6 +26,7 @@ import com.itextpdf.core.pdf.PdfLiteral;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfOutputStream;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
@@ -281,8 +282,34 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         try {
             return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
         } catch (UnsupportedEncodingException e) {
-            throw new PdfException("TrueTypeFont", e);
+            throw new PdfException("PdfType0Font", e);
         }
+    }
+
+    @Override
+    public void writeText(GlyphLine text, int from, int to, PdfOutputStream stream) {
+        StringBuilder bytes = new StringBuilder();
+        for (int i = from; i <= to; i++) {
+            Glyph glyph = text.get(i);
+            int code = glyph.getCode();
+            bytes.append((char)glyph.getCode());
+
+            if (longTag.get(code) == null) {
+                longTag.put(code, new int[]{code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+            }
+
+        }
+        //TODO improve converting chars to hexed string
+        try {
+            Utilities.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UnicodeBigUnmarked));
+        } catch (UnsupportedEncodingException e) {
+            throw new PdfException("PdfType0Font", e);
+        }
+    }
+
+    @Override
+    public void writeText(String text, PdfOutputStream stream) {
+        Utilities.writeHexedString(stream, convertToBytes(text));
     }
 
     @Override
