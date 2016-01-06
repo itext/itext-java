@@ -201,7 +201,7 @@ public class PdfCanvas {
             for (int i = 1; i < text.size(); i++) {
                 int kern = font.getKerning(text.glyphs.get(i - 1), text.glyphs.get(i));
                 if (kern != 0) {
-                    text.glyphs.set(i, new Glyph(text.glyphs.get(i), 0, 0, kern, 0, 0));
+                    text.glyphs.set(i - 1, new Glyph(text.glyphs.get(i - 1), 0, 0, kern, 0, 0));
                 }
             }
         }
@@ -612,17 +612,16 @@ public class PdfCanvas {
         float w = 0;
         for (int i = 0; i < text.size(); i++) {
             Glyph glyph = text.glyphs.get(i);
+            w += (glyph.getWidth() * fs + c) * h;
             if (glyph.hasOffsets()) {
-                if (i - sub > 0) {
-                    font.writeText(text, sub, i - 1, contentStream.getOutputStream());
-                    contentStream.getOutputStream().writeBytes(Tj);
-                    contentStream.getOutputStream()
-                            .writeFloat(w)
-                            .writeSpace()
-                            .writeFloat(0)
-                            .writeSpace()
-                            .writeBytes(Td);
-                }
+                font.writeText(text, sub, i, contentStream.getOutputStream());
+                contentStream.getOutputStream().writeBytes(Tj);
+                contentStream.getOutputStream()
+                        .writeFloat(w)
+                        .writeSpace()
+                        .writeFloat(0)
+                        .writeSpace()
+                        .writeBytes(Td);
 
                 if (glyph.hasPlacement()) {
                     //TODO
@@ -631,14 +630,14 @@ public class PdfCanvas {
                     contentStream.getOutputStream()
                             .writeFloat((glyph.getXAdvance()) * fs * h)
                             .writeSpace()
-                            .writeFloat(glyph.getYAdvance() * fs)
+                            .writeFloat(0)//glyph.getYAdvance() * fs)// TODO we shall return previous y position
                             .writeSpace()
                             .writeBytes(Td);
                 }
-                sub = i;
+                sub = i + 1;
                 w = 0;
             }
-            w += (glyph.getWidth() * fs + c) * h;
+
         }
         if (text.size() - sub > 0) {
             font.writeText(text, sub, text.size() - 1, contentStream.getOutputStream());
