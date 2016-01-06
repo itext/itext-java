@@ -31,6 +31,6 @@ public class PageSize extends Rectangle {
 
     @Override
     public PageSize clone() {
-        return new PageSize(width, height);
+        return new PageSize(super.clone());
     }
 }
