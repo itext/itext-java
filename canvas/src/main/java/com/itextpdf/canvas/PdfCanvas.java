@@ -316,6 +316,7 @@ public class PdfCanvas {
 
     /**
      * Begins variable text block
+     *
      * @return current canvas
      */
     public PdfCanvas beginVariableText() {
@@ -324,6 +325,7 @@ public class PdfCanvas {
 
     /**
      * Ends variable text block
+     *
      * @return current canvas
      */
     public PdfCanvas endVariableText() {
@@ -373,7 +375,7 @@ public class PdfCanvas {
 
     /**
      * Sets the text leading parameter.
-     * <P>
+     * <p/>
      * The leading parameter is measured in text space units. It specifies the vertical distance
      * between the baselines of adjacent lines of text.</P>
      *
@@ -393,7 +395,7 @@ public class PdfCanvas {
 
     /**
      * Moves to the start of the next line, offset from the start of the current line.
-     * <P>
+     * <p/>
      * As a side effect, this sets the leading parameter in the text state.</P>
      *
      * @param x offset of the new current point
@@ -414,6 +416,7 @@ public class PdfCanvas {
 
     /**
      * Moves to the start of the next line.
+     *
      * @return current canvas.
      */
     public PdfCanvas newlineText() {
@@ -440,9 +443,9 @@ public class PdfCanvas {
     /**
      * Moves to the next line and shows text string, using the given values of the character and word spacing parameters.
      *
-     * @param       wordSpacing     a parameter
-     * @param       charSpacing     a parameter
-     * @param text the text to write
+     * @param wordSpacing a parameter
+     * @param charSpacing a parameter
+     * @param text        the text to write
      * @return current canvas.
      */
     public PdfCanvas newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
@@ -605,39 +608,56 @@ public class PdfCanvas {
         if ((font = currentGs.getFont()) == null) {
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         }
-        float fs = currentGs.getFontSize() / 1000f;
-        float c = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
-        float h = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
+        float fontSize = currentGs.getFontSize() / 1000f;
+        float charSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
+        float scaling = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
         int sub = 0;
-        float w = 0;
         for (int i = 0; i < text.size(); i++) {
-            Glyph glyph = text.glyphs.get(i);
-            w += (glyph.getWidth() * fs + c) * h;
+            Glyph glyph = text.get(i);
             if (glyph.hasOffsets()) {
-                font.writeText(text, sub, i, contentStream.getOutputStream());
-                contentStream.getOutputStream().writeBytes(Tj);
-                contentStream.getOutputStream()
-                        .writeFloat(w)
-                        .writeSpace()
-                        .writeFloat(0)
-                        .writeSpace()
-                        .writeBytes(Td);
-
+                if (i - 1 - sub >= 0) {
+                    font.writeText(text, sub, i - 1, contentStream.getOutputStream());
+                    contentStream.getOutputStream().writeBytes(Tj);
+                    contentStream.getOutputStream()
+                            .writeFloat(getSubrangeWidth(text, sub, i - 1))
+                            .writeSpace()
+                            .writeFloat(0)
+                            .writeSpace()
+                            .writeBytes(Td);
+                }
+                Float xPlacement = null;
+                Float yPlacement = null;
                 if (glyph.hasPlacement()) {
-                    //TODO
+                    xPlacement = getSubrangeWidth(text, i + glyph.getAnchorDelta(), i) + glyph.getXPlacement() * fontSize;
+                    yPlacement = glyph.getYAdvance() * fontSize;
+                    contentStream.getOutputStream()
+                            .writeFloat(xPlacement)
+                            .writeSpace()
+                            .writeFloat(yPlacement)
+                            .writeSpace()
+                            .writeBytes(Td);
+                }
+                font.writeText(text, i, i, contentStream.getOutputStream());
+                contentStream.getOutputStream().writeBytes(Tj);
+                if (xPlacement != null) {
+                    contentStream.getOutputStream()
+                            .writeFloat(-xPlacement)
+                            .writeSpace()
+                            .writeFloat(-yPlacement)
+                            .writeSpace()
+                            .writeBytes(Td);
+
                 }
                 if (glyph.hasAdvance()) {
                     contentStream.getOutputStream()
-                            .writeFloat((glyph.getXAdvance()) * fs * h)
+                            .writeFloat(((glyph.getWidth() + glyph.getXAdvance()) * fontSize + charSpacing) * scaling)
                             .writeSpace()
-                            .writeFloat(0)//glyph.getYAdvance() * fs)// TODO we shall return previous y position
+                            .writeFloat(glyph.getYAdvance() * fontSize)// TODO shall previous y position been restored?
                             .writeSpace()
                             .writeBytes(Td);
                 }
                 sub = i + 1;
-                w = 0;
             }
-
         }
         if (text.size() - sub > 0) {
             font.writeText(text, sub, text.size() - 1, contentStream.getOutputStream());
@@ -646,8 +666,20 @@ public class PdfCanvas {
         return this;
     }
 
+    private float getSubrangeWidth(GlyphLine text, int from, int to) {
+        float fontSize = currentGs.getFontSize() / 1000f;
+        float charSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
+        float scaling = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
+        float width = 0;
+        for (int i = from; i <= to; i++) {
+            width += (text.get(i).getWidth() * fontSize + charSpacing) * scaling;
+        }
+        return width;
+    }
+
     /**
      * Shows text (operator TJ)
+     *
      * @param textArray the text array. Each element of array can be a string or a number.
      *                  If the element is a string, this operator shows the string.
      *                  If it is a number, the operator adjusts the text position by that amount.
@@ -662,9 +694,9 @@ public class PdfCanvas {
         contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
-                Utilities.writeEscapedString(contentStream.getOutputStream(), ((PdfString)obj).getValueBytes());
+                Utilities.writeEscapedString(contentStream.getOutputStream(), ((PdfString) obj).getValueBytes());
             } else if (obj.isNumber()) {
-                contentStream.getOutputStream().writeFloat(((PdfNumber)obj).getFloatValue());
+                contentStream.getOutputStream().writeFloat(((PdfNumber) obj).getFloatValue());
             }
         }
         contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("]"));
@@ -674,6 +706,7 @@ public class PdfCanvas {
 
     /**
      * Shows text applying kerning, if kern pairs are specified for the current font.
+     *
      * @param text the text to show
      * @return current canvas
      */
@@ -692,6 +725,7 @@ public class PdfCanvas {
 
     /**
      * Shows text applying kerning, if kern pairs are specified for the current font.
+     *
      * @param text the text to show
      * @return current canvas
      */
@@ -962,6 +996,7 @@ public class PdfCanvas {
 
     /**
      * Draws a rectangle.
+     *
      * @param rectangle a rectangle to be drawn
      * @return current canvas.
      */
@@ -1363,7 +1398,7 @@ public class PdfCanvas {
         else if (c.getColorSpace().equals(colorSpace)) {
             c.setColorValue(colorValue);
             if (c instanceof PatternColor) {
-                ((PatternColor)c).setPattern(pattern);
+                ((PatternColor) c).setPattern(pattern);
             }
             setColorValueOnly = true;
         } else {
@@ -1493,7 +1528,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas beginLayer(final PdfOCG layer) {
-        if (layer instanceof PdfLayer && ((PdfLayer)layer).getTitle() != null)
+        if (layer instanceof PdfLayer && ((PdfLayer) layer).getTitle() != null)
             throw new IllegalArgumentException("Illegal layer argument.");
         if (layerDepth == null)
             layerDepth = new ArrayList<Integer>();
@@ -1502,7 +1537,7 @@ public class PdfCanvas {
             addToPropertiesAndBeginLayer(layer);
         } else if (layer instanceof PdfLayer) {
             int n = 0;
-            PdfLayer la = (PdfLayer)layer;
+            PdfLayer la = (PdfLayer) layer;
             while (la != null) {
                 if (la.getTitle() == null) {
                     addToPropertiesAndBeginLayer(la);
@@ -1537,13 +1572,13 @@ public class PdfCanvas {
     /**
      * Creates Image XObject from image and adds it to canvas (as Image XObject).
      *
-     * @param image    the {@code PdfImageXObject} object
-     * @param a        an element of the transformation matrix
-     * @param b        an element of the transformation matrix
-     * @param c        an element of the transformation matrix
-     * @param d        an element of the transformation matrix
-     * @param e        an element of the transformation matrix
-     * @param f        an element of the transformation matrix
+     * @param image the {@code PdfImageXObject} object
+     * @param a     an element of the transformation matrix
+     * @param b     an element of the transformation matrix
+     * @param c     an element of the transformation matrix
+     * @param d     an element of the transformation matrix
+     * @param e     an element of the transformation matrix
+     * @param f     an element of the transformation matrix
      * @return created Image XObject.
      */
     public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f) {
@@ -1675,20 +1710,20 @@ public class PdfCanvas {
      * Adds {@code PdfXObject} to canvas.
      *
      * @param xObject the {@code PdfImageXObject} object
-     * @param a     an element of the transformation matrix
-     * @param b     an element of the transformation matrix
-     * @param c     an element of the transformation matrix
-     * @param d     an element of the transformation matrix
-     * @param e     an element of the transformation matrix
-     * @param f     an element of the transformation matrix
+     * @param a       an element of the transformation matrix
+     * @param b       an element of the transformation matrix
+     * @param c       an element of the transformation matrix
+     * @param d       an element of the transformation matrix
+     * @param e       an element of the transformation matrix
+     * @param f       an element of the transformation matrix
      * @return canvas a reference to this object.
      * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
         if (xObject instanceof PdfFormXObject) {
-            return  addForm((PdfFormXObject)xObject, a, b, c, d, e, f);
+            return addForm((PdfFormXObject) xObject, a, b, c, d, e, f);
         } else if (xObject instanceof PdfImageXObject) {
-            return  addImage((PdfImageXObject) xObject, a, b, c, d, e, f);
+            return addImage((PdfImageXObject) xObject, a, b, c, d, e, f);
         } else {
             throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
         }
@@ -1705,9 +1740,9 @@ public class PdfCanvas {
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y) {
         if (xObject instanceof PdfFormXObject) {
-            return  addForm((PdfFormXObject)xObject, x, y);
+            return addForm((PdfFormXObject) xObject, x, y);
         } else if (xObject instanceof PdfImageXObject) {
-            return  addImage((PdfImageXObject) xObject, x, y);
+            return addImage((PdfImageXObject) xObject, x, y);
         } else {
             throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
         }
@@ -1723,9 +1758,9 @@ public class PdfCanvas {
      */
     public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
         if (xObject instanceof PdfFormXObject) {
-            return  addForm((PdfFormXObject)xObject, rect);
+            return addForm((PdfFormXObject) xObject, rect);
         } else if (xObject instanceof PdfImageXObject) {
-            return  addImage((PdfImageXObject) xObject, rect);
+            return addImage((PdfImageXObject) xObject, rect);
         } else {
             throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
         }
@@ -1743,9 +1778,9 @@ public class PdfCanvas {
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float width) {
         if (xObject instanceof PdfFormXObject) {
-            return  addForm((PdfFormXObject)xObject, x, y, width);
+            return addForm((PdfFormXObject) xObject, x, y, width);
         } else if (xObject instanceof PdfImageXObject) {
-            return  addImage((PdfImageXObject) xObject, x, y, width);
+            return addImage((PdfImageXObject) xObject, x, y, width);
         } else {
             throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
         }
@@ -1764,9 +1799,9 @@ public class PdfCanvas {
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float height, boolean dummy) {
         if (xObject instanceof PdfFormXObject) {
-            return  addForm((PdfFormXObject)xObject, x, y, height, dummy);
+            return addForm((PdfFormXObject) xObject, x, y, height, dummy);
         } else if (xObject instanceof PdfImageXObject) {
-            return  addImage((PdfImageXObject) xObject, x, y, height, dummy);
+            return addImage((PdfImageXObject) xObject, x, y, height, dummy);
         } else {
             throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
         }
@@ -1877,12 +1912,12 @@ public class PdfCanvas {
      * Adds {@code PdfImageXObject} to canvas.
      *
      * @param imageXObject the {@code PdfImageXObject} object
-     * @param a     an element of the transformation matrix
-     * @param b     an element of the transformation matrix
-     * @param c     an element of the transformation matrix
-     * @param d     an element of the transformation matrix
-     * @param e     an element of the transformation matrix
-     * @param f     an element of the transformation matrix
+     * @param a            an element of the transformation matrix
+     * @param b            an element of the transformation matrix
+     * @param c            an element of the transformation matrix
+     * @param d            an element of the transformation matrix
+     * @param e            an element of the transformation matrix
+     * @param f            an element of the transformation matrix
      * @on error
      */
     protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) {
@@ -1907,12 +1942,12 @@ public class PdfCanvas {
      * Adds {@code PdfFormXObject} to canvas.
      *
      * @param form the {@code PdfImageXObject} object
-     * @param a     an element of the transformation matrix
-     * @param b     an element of the transformation matrix
-     * @param c     an element of the transformation matrix
-     * @param d     an element of the transformation matrix
-     * @param e     an element of the transformation matrix
-     * @param f     an element of the transformation matrix
+     * @param a    an element of the transformation matrix
+     * @param b    an element of the transformation matrix
+     * @param c    an element of the transformation matrix
+     * @param d    an element of the transformation matrix
+     * @param e    an element of the transformation matrix
+     * @param f    an element of the transformation matrix
      * @return canvas a reference to this object.
      * @on error
      */

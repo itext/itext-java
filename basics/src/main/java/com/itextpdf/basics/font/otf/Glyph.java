@@ -237,8 +237,8 @@ public class Glyph {
     }
 
     public String toString() {
-        return String.format("%s [uni=%d, id=%d, width=%d, chars=%s]", Glyph.class.getSimpleName(),
-                unicode, code, width, chars != null ? Arrays.toString(chars) : "null");
+        return String.format("[id=%d, chars=%s, uni=%d, width=%d]",
+                code, chars != null ? Arrays.toString(chars) : "null", unicode, width);
     }
 
     private static Integer codePoint(char[] a) {
