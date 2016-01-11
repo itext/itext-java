@@ -156,7 +156,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("bug with footer when the last row is split")
     public void tableTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "tableTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest03.pdf";
@@ -179,7 +178,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
             table.addCell(createParagraph2());
         }
 
-        table.addCell("little text");
+        table.addCell(new Paragraph("little text"));
 
         document.add(table);
 
