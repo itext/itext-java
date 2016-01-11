@@ -18,8 +18,8 @@ import java.util.Map;
  */
 public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
     public GlyphPositioningTableReader(RandomAccessFileOrArray rf, int gposTableLocation,
-                                       OpenTypeGdefTableReader gdef, Map<Integer, Glyph> indexGlyphMap) throws IOException {
-        super(rf, gposTableLocation, gdef, indexGlyphMap);
+                                       OpenTypeGdefTableReader gdef, Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws IOException {
+        super(rf, gposTableLocation, gdef, indexGlyphMap, unitsPerEm);
         startReadingTable();
     }
 

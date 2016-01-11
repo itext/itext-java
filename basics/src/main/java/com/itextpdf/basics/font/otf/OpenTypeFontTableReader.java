@@ -69,12 +69,15 @@ public abstract class OpenTypeFontTableReader {
     private final Map<Integer, Glyph> indexGlyphMap;
     private final OpenTypeGdefTableReader gdef;
 
+    private final int unitsPerEm;
+
 	public OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation, OpenTypeGdefTableReader gdef,
-                                   Map<Integer, Glyph> indexGlyphMap) throws IOException {
+                                   Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws IOException {
 		this.rf = rf;
 		this.tableLocation = tableLocation;
         this.indexGlyphMap = indexGlyphMap;
         this.gdef = gdef;
+        this.unitsPerEm = unitsPerEm;
 	}
 	
     protected int getGlyphWidth(int index) {
@@ -198,6 +201,10 @@ public abstract class OpenTypeFontTableReader {
     public boolean isSkip(int glyph, int flag) {
         return gdef.isSkip(glyph, flag);
     }
+
+    public int getUnitsPerEm() {
+        return unitsPerEm;
+    }
     
 	protected abstract OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
 			throws IOException;
@@ -258,37 +265,5 @@ public abstract class OpenTypeFontTableReader {
             tagslLocs[k] = tl;
         }
         return tagslLocs;
-    }
-    
-    protected GposValueRecord ReadGposValueRecord(int mask) throws IOException {
-        GposValueRecord vr = new GposValueRecord();
-        if ((mask & 0x0001) != 0) {
-            vr.XPlacement = rf.readShort();
-        }
-        if ((mask & 0x0002) != 0) {
-            vr.YPlacement = rf.readShort();
-        }
-        if ((mask & 0x0004) != 0) {
-            vr.XAdvance = rf.readShort();
-        }
-        if ((mask & 0x0008) != 0) {
-            vr.YAdvance = rf.readShort();
-        }
-        if ((mask & 0x0010) != 0) {
-            rf.skip(2);
-        }
-        if ((mask & 0x0020) != 0) {
-            rf.skip(2);
-        }
-        if ((mask & 0x0020) != 0) {
-            rf.skip(2);
-        }
-        if ((mask & 0x0040) != 0) {
-            rf.skip(2);
-        }
-        if ((mask & 0x0080) != 0) {
-            rf.skip(2);
-        }
-        return vr;
     }
 }

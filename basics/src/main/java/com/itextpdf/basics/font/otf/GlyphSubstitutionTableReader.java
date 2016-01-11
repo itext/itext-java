@@ -20,8 +20,8 @@ import java.util.Map;
 public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
 
     public GlyphSubstitutionTableReader(RandomAccessFileOrArray rf, int gsubTableLocation, OpenTypeGdefTableReader gdef,
-        Map<Integer, Glyph> indexGlyphMap) throws IOException {
-        super(rf, gsubTableLocation, gdef, indexGlyphMap);
+        Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws IOException {
+        super(rf, gsubTableLocation, gdef, indexGlyphMap, unitsPerEm);
         startReadingTable();
     }
 

@@ -102,8 +102,8 @@ public class GposLookupType2 extends OpenTableLookup {
                 for (int j = 0; j < pairValueCount; ++j) {
                     int glyph2 = openReader.rf.readUnsignedShort();
                     PairValueFormat pair = new PairValueFormat();
-                    pair.first = openReader.ReadGposValueRecord(valueFormat1);
-                    pair.second = openReader.ReadGposValueRecord(valueFormat2);
+                    pair.first = OtfReadCommon.readGposValueRecord(openReader, valueFormat1);
+                    pair.second = OtfReadCommon.readGposValueRecord(openReader, valueFormat2);
                     pairs.put(glyph2, pair);
                 }
             }
@@ -167,8 +167,8 @@ public class GposLookupType2 extends OpenTableLookup {
                 posSubs.put(k, pairs);
                 for (int j = 0; j < class2Count; ++j) {
                     PairValueFormat pair = new PairValueFormat();
-                    pair.first = openReader.ReadGposValueRecord(valueFormat1);
-                    pair.second = openReader.ReadGposValueRecord(valueFormat2);
+                    pair.first = OtfReadCommon.readGposValueRecord(openReader, valueFormat1);
+                    pair.second = OtfReadCommon.readGposValueRecord(openReader, valueFormat2);
                     pairs[j] = pair;
                 }
             }

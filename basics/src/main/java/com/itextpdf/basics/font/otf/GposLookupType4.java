@@ -56,9 +56,9 @@ public class GposLookupType4 extends OpenTableLookup {
             int markClass = omr.markClass;
             GposAnchor baseAnchor = gpas[markClass];
             GposAnchor markAnchor = omr.anchor;
-            line.glyphs.add(line.idx, new Glyph(line.glyphs.get(line.idx),
-                    markAnchor.XCoordinate - baseAnchor.XCoordinate,
-                    markAnchor.YCoordinate - baseAnchor.YCoordinate,
+            line.set(line.idx, new Glyph(line.glyphs.get(line.idx),
+                    -markAnchor.XCoordinate + baseAnchor.XCoordinate,
+                    -markAnchor.YCoordinate + baseAnchor.YCoordinate,
                     0, 0, gi.idx - line.idx));
             changed = true;
             break;
@@ -79,12 +79,12 @@ public class GposLookupType4 extends OpenTableLookup {
         int baseArrayLocation = openReader.rf.readUnsignedShort() + subTableLocation;
         List<Integer> markCoverage = openReader.readCoverageFormat(markCoverageLocation);
         List<Integer> baseCoverage = openReader.readCoverageFormat(baseCoverageLocation);
-        List<OtfMarkRecord> markRecords = OtfReadCommon.readMarkArray(openReader.rf, markArrayLocation);
+        List<OtfMarkRecord> markRecords = OtfReadCommon.readMarkArray(openReader, markArrayLocation);
         MarkToBase markToBase = new MarkToBase();
         for (int k = 0; k < markCoverage.size(); ++k) {
             markToBase.marks.put(markCoverage.get(k), markRecords.get(k));
         }
-        List<GposAnchor[]> baseArray = OtfReadCommon.readBaseArray(openReader.rf, classCount, baseArrayLocation);
+        List<GposAnchor[]> baseArray = OtfReadCommon.readBaseArray(openReader, classCount, baseArrayLocation);
         for (int k = 0; k < baseCoverage.size(); ++k) {
             markToBase.bases.put(baseCoverage.get(k), baseArray.get(k));
         }

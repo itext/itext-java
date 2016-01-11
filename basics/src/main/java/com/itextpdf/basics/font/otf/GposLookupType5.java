@@ -90,12 +90,12 @@ public class GposLookupType5 extends OpenTableLookup {
         int ligatureArrayLocation = openReader.rf.readUnsignedShort() + subTableLocation;
         List<Integer> markCoverage = openReader.readCoverageFormat(markCoverageLocation);
         List<Integer> ligatureCoverage = openReader.readCoverageFormat(ligatureCoverageLocation);
-        List<OtfMarkRecord> markRecords = OtfReadCommon.readMarkArray(openReader.rf, markArrayLocation);
+        List<OtfMarkRecord> markRecords = OtfReadCommon.readMarkArray(openReader, markArrayLocation);
         MarkToLigature markToLigature = new MarkToLigature();
         for (int k = 0; k < markCoverage.size(); ++k) {
             markToLigature.marks.put(markCoverage.get(k), markRecords.get(k));
         }
-        List<List<GposAnchor[]>> ligatureArray = OtfReadCommon.readLigatureArray(openReader.rf, classCount, ligatureArrayLocation);
+        List<List<GposAnchor[]>> ligatureArray = OtfReadCommon.readLigatureArray(openReader, classCount, ligatureArrayLocation);
         for (int k = 0; k < ligatureCoverage.size(); ++k) {
             markToLigature.ligatures.put(ligatureCoverage.get(k), ligatureArray.get(k));
         }

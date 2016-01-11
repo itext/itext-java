@@ -628,7 +628,7 @@ public class PdfCanvas {
                 Float xPlacement = null;
                 Float yPlacement = null;
                 if (glyph.hasPlacement()) {
-                    xPlacement = getSubrangeWidth(text, i + glyph.getAnchorDelta(), i) + glyph.getXPlacement() * fontSize;
+                    xPlacement = -getSubrangeWidth(text, i + glyph.getAnchorDelta(), i) + glyph.getXPlacement() * fontSize;
                     yPlacement = glyph.getYAdvance() * fontSize;
                     contentStream.getOutputStream()
                             .writeFloat(xPlacement)

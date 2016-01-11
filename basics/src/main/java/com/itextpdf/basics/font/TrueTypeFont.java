@@ -398,14 +398,14 @@ public class TrueTypeFont extends FontProgram {
     protected void readGsubTable() throws IOException {
         int[] gsub = fontParser.tables.get("GSUB");
         if (gsub != null) {
-            gsubTable = new GlyphSubstitutionTableReader(fontParser.raf, gsub[0], gdefTable, codeToGlyph);
+            gsubTable = new GlyphSubstitutionTableReader(fontParser.raf, gsub[0], gdefTable, codeToGlyph, fontMetrics.getUnitsPerEm());
         }
     }
 
     protected void readGposTable() throws IOException {
         int[] gpos = fontParser.tables.get("GPOS");
         if (gpos != null) {
-            gposTable = new GlyphPositioningTableReader(fontParser.raf, gpos[0], gdefTable, codeToGlyph);
+            gposTable = new GlyphPositioningTableReader(fontParser.raf, gpos[0], gdefTable, codeToGlyph,  fontMetrics.getUnitsPerEm());
         }
     }
 

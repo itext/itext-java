@@ -73,69 +73,69 @@ public class OtfReadCommon {
 		}
 	}
 
-    public static GposValueRecord readGposValueRecord(RandomAccessFileOrArray rf, int mask) throws IOException {
+    public static GposValueRecord readGposValueRecord(OpenTypeFontTableReader tableReader, int mask) throws IOException {
         GposValueRecord vr = new GposValueRecord();
         if ((mask & 0x0001) != 0) {
-            vr.XPlacement = rf.readShort();
+            vr.XPlacement = tableReader.rf.readShort() * 1000 / tableReader.getUnitsPerEm();
         }
         if ((mask & 0x0002) != 0) {
-            vr.YPlacement = rf.readShort();
+            vr.YPlacement = tableReader.rf.readShort() * 1000 / tableReader.getUnitsPerEm();
         }
         if ((mask & 0x0004) != 0) {
-            vr.XAdvance = rf.readShort();
+            vr.XAdvance = tableReader.rf.readShort() * 1000 / tableReader.getUnitsPerEm();
         }
         if ((mask & 0x0008) != 0) {
-            vr.YAdvance = rf.readShort();
+            vr.YAdvance = tableReader.rf.readShort() * 1000 / tableReader.getUnitsPerEm();
         }
         if ((mask & 0x0010) != 0) {
-            rf.skip(2);
+            tableReader.rf.skip(2);
         }
         if ((mask & 0x0020) != 0) {
-            rf.skip(2);
+            tableReader.rf.skip(2);
         }
         if ((mask & 0x0040) != 0) {
-            rf.skip(2);
+            tableReader.rf.skip(2);
         }
         if ((mask & 0x0080) != 0) {
-            rf.skip(2);
+            tableReader.rf.skip(2);
         }
         return vr;
     }
     
-    public static GposAnchor readGposAnchor(RandomAccessFileOrArray rf, int location) throws IOException {
+    public static GposAnchor readGposAnchor(OpenTypeFontTableReader tableReader, int location) throws IOException {
         if (location == 0) {
             return null;
         }
-        rf.seek(location);
-        int format = rf.readUnsignedShort();
+        tableReader.rf.seek(location);
+        int format = tableReader.rf.readUnsignedShort();
         GposAnchor t = null;
 
         switch (format) {
             default:
                 t = new GposAnchor();
-                t.XCoordinate = rf.readShort();
-                t.YCoordinate = rf.readShort();
+                t.XCoordinate = tableReader.rf.readShort() * 1000 / tableReader.getUnitsPerEm();
+                t.YCoordinate = tableReader.rf.readShort() * 1000 / tableReader.getUnitsPerEm();
                 break;
         }
 
         return t;
     }
     
-    public static List<OtfMarkRecord> readMarkArray(RandomAccessFileOrArray rf, int location) throws IOException {
-        rf.seek(location);
-        int markCount = rf.readUnsignedShort();
+    public static List<OtfMarkRecord> readMarkArray(OpenTypeFontTableReader tableReader, int location) throws IOException {
+        tableReader.rf.seek(location);
+        int markCount = tableReader.rf.readUnsignedShort();
         int[] classes = new int[markCount];
         int[] locations = new int[markCount];
         for (int k = 0; k < markCount; ++k) {
-            classes[k] = rf.readUnsignedShort();
-            int offset = rf.readUnsignedShort();
+            classes[k] = tableReader.rf.readUnsignedShort();
+            int offset = tableReader.rf.readUnsignedShort();
             locations[k] = location + offset;
         }
         List<OtfMarkRecord> marks = new ArrayList<OtfMarkRecord>();
         for (int k = 0; k < markCount; ++k) {
             OtfMarkRecord rec = new OtfMarkRecord();
             rec.markClass = classes[k];
-            rec.anchor = readGposAnchor(rf, locations[k]);
+            rec.anchor = readGposAnchor(tableReader, locations[k]);
             marks.add(rec);
         }
         return marks;
@@ -152,41 +152,41 @@ public class OtfReadCommon {
         return substPosLookUpRecords;
     }
 
-    public static GposAnchor[] readAnchorArray(RandomAccessFileOrArray rf, int[] locations, int left, int right) throws IOException {
+    public static GposAnchor[] readAnchorArray(OpenTypeFontTableReader tableReader, int[] locations, int left, int right) throws IOException {
         GposAnchor[] anchors = new GposAnchor[right - left];
         for (int i = left; i < right; i++) {
-            anchors[i - left] = readGposAnchor(rf, locations[i]);
+            anchors[i - left] = readGposAnchor(tableReader, locations[i]);
         }
         return anchors;
     }
 
-    public static List<GposAnchor[]> readBaseArray(RandomAccessFileOrArray rf, int classCount, int location) throws IOException {
+    public static List<GposAnchor[]> readBaseArray(OpenTypeFontTableReader tableReader, int classCount, int location) throws IOException {
         ArrayList<GposAnchor[]> baseArray = new ArrayList<>();
-        rf.seek(location);
-        int baseCount = rf.readUnsignedShort();
-        int[] anchorLocations = readUShortArray(rf, baseCount * classCount, location);
+        tableReader.rf.seek(location);
+        int baseCount = tableReader.rf.readUnsignedShort();
+        int[] anchorLocations = readUShortArray(tableReader.rf, baseCount * classCount, location);
         int idx = 0;
         for (int k = 0; k < baseCount; ++k) {
-            baseArray.add(readAnchorArray(rf, anchorLocations, idx, idx + classCount));
+            baseArray.add(readAnchorArray(tableReader, anchorLocations, idx, idx + classCount));
             idx += classCount;
         }
         return baseArray;
     }
 
-    public static List<List<GposAnchor[]>> readLigatureArray(RandomAccessFileOrArray rf, int classCount, int location) throws IOException {
+    public static List<List<GposAnchor[]>> readLigatureArray(OpenTypeFontTableReader tableReader, int classCount, int location) throws IOException {
         ArrayList<List<GposAnchor[]>> ligatureArray = new ArrayList<>();
-        rf.seek(location);
-        int ligatureCount = rf.readUnsignedShort();
-        int[] ligatureAttachLocations = readUShortArray(rf, ligatureCount, location);
+        tableReader.rf.seek(location);
+        int ligatureCount = tableReader.rf.readUnsignedShort();
+        int[] ligatureAttachLocations = readUShortArray(tableReader.rf, ligatureCount, location);
         for (int liga = 0; liga < ligatureCount; ++liga) {
             int ligatureAttachLocation = ligatureAttachLocations[liga];
             ArrayList<GposAnchor[]> ligatureAttach = new ArrayList<>();
-            rf.seek(ligatureAttachLocation);
-            int componentCount = rf.readUnsignedShort();
-            int[] componentRecordsLocation = readUShortArray(rf, classCount * componentCount, ligatureAttachLocation);
+            tableReader.rf.seek(ligatureAttachLocation);
+            int componentCount = tableReader.rf.readUnsignedShort();
+            int[] componentRecordsLocation = readUShortArray(tableReader.rf, classCount * componentCount, ligatureAttachLocation);
             int idx = 0;
             for (int k = 0; k < componentCount; ++k) {
-                ligatureAttach.add(readAnchorArray(rf, componentRecordsLocation, idx, idx + classCount));
+                ligatureAttach.add(readAnchorArray(tableReader, componentRecordsLocation, idx, idx + classCount));
                 idx += classCount;
             }
             ligatureArray.add(ligatureAttach);
