@@ -114,6 +114,7 @@
                     </includes>
                     <parallel>methods</parallel>
                     <threadCount>10</threadCount>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
                 </configuration>
             </plugin>
             <!-- Run integration tests -->
