@@ -82,7 +82,7 @@ public class PdfException extends RuntimeException {
     public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
     public static final String DocumentAlreadyPreClosed = "document.already.pre.closed";
-    public static final String DocumentClosedImpossibleExecuteAction = "document.was.closed.it.is.imppossible.execute.action";
+    public static final String DocumentClosedImpossibleExecuteAction = "document.was.closed.it.is.impossible.execute.action";
     public static final String DocumentDoesntContainStructTreeRoot = "document.doesn't.contain.structtreeroot";
     public static final String DocumentHasNoPages = "document.has.no.pages";
     public static final String DocumentHasNoCatalogObject = "document.has.no.catalog.object";
