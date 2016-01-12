@@ -55,16 +55,28 @@ public class CanvasGraphicsState {
     private Float scale = 100f;
     private Float leading;
 
+    /**
+     * Creates a CanvasGraphicsState object from a PdfExtGState
+     * Essentially a copy constructor from a PdfDictionary object
+     * @param extGStateToUpdateFrom the dictionary wrapper containing source parameters
+     */
     public CanvasGraphicsState(PdfExtGState extGStateToUpdateFrom) {
-        updateFromExtGState(extGStateToUpdateFrom);
+        copyFrom(extGStateToUpdateFrom);
     }
 
+    /**
+     * Internal empty & default constructor
+     */
     protected CanvasGraphicsState() {
 
     }
 
+    /**
+     * Copy constructor
+     * @param source the Graphics State to copy from
+     */
     protected CanvasGraphicsState(final CanvasGraphicsState source) {
-
+        // TODO implement
     }
 
     public Color getFillColor() {
@@ -83,7 +95,16 @@ public class CanvasGraphicsState {
         this.strokeColor = strokeColor;
     }
 
+    /**
+     * Updates this object with the values from a dictionary-like public object
+     * 
+     * @param extGState the dictionary wrapper containing source parameters
+     */
     public void updateFromExtGState(PdfExtGState extGState) {
+        copyFrom(extGState);
+    }
+    
+    private void copyFrom(PdfExtGState extGState) {
         Float lw = extGState.getLineWidth();
         if (lw != null)
             lineWidth = lw;
@@ -111,17 +132,17 @@ public class CanvasGraphicsState {
         Integer opm = extGState.getOverprintMode();
         if (opm != null)
             overprintMode = opm;
-        PdfArray font = extGState.getFont();
-        if (font != null) {
-            PdfDictionary fontDictionary = font.getAsDictionary(0);
+        PdfArray fnt = extGState.getFont();
+        if (fnt != null) {
+            PdfDictionary fontDictionary = fnt.getAsDictionary(0);
             if (this.font != null && this.font.getPdfObject() == fontDictionary) {
 
             } else {
                 this.font = new PdfFont(extGState.getDocument(),fontDictionary);
             }
-            Float fontSize = font.getAsFloat(1);
-            if (fontSize != null)
-                this.fontSize = fontSize;
+            Float fntSz = fnt.getAsFloat(1);
+            if (fntSz != null)
+                this.fontSize = fntSz;
         }
         PdfObject bg = extGState.getBlackGenerationFunction();
         if (bg != null)
@@ -144,9 +165,9 @@ public class CanvasGraphicsState {
         PdfObject ht = extGState.getHalftone();
         if (ht != null)
             halftone = ht;
-        PdfObject htp = extGState.getHTP();
-        if (htp != null)
-            this.htp = htp;
+        PdfObject local_htp = extGState.getHTP();
+        if (local_htp != null)
+            this.htp = local_htp;
         Float fl = extGState.getFlatnessTolerance();
         if (fl != null)
             flatnessTolerance = fl;
