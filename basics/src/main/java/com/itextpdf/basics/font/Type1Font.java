@@ -69,6 +69,9 @@ public class Type1Font extends FontProgram {
     }
 
     protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws IOException {
+        checkFilePath(metricsPath);
+        checkFilePath(binaryPath);
+
         fontParser = new Type1Parser(metricsPath, binaryPath, afm, pfb);
         process();
     }

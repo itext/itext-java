@@ -1,5 +1,6 @@
 package com.itextpdf.model;
 
+import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -48,6 +49,7 @@ public class Document extends RootElement<Document> {
 
     @Override
     public Document add(BlockElement element) {
+        checkClosingStatus();
         super.add(element);
         if (element instanceof ILargeElement) {
             ((ILargeElement) element).setDocument(this);
@@ -72,6 +74,7 @@ public class Document extends RootElement<Document> {
     }
 
     public void relayout() {
+
         if (immediateFlush) {
             throw new IllegalStateException("Operation not supported with immediate flush");
         }
@@ -146,5 +149,15 @@ public class Document extends RootElement<Document> {
         setBottomMargin(rightMargin);
         setLeftMargin(bottomMargin);
         return pageSize.rotate();
+    }
+
+    /**
+     * checks whether a method is invoked at the closed document
+     * @throws PdfException
+     */
+    protected void checkClosingStatus(){
+        if(getPdfDocument().isSuccessClosing()){
+            throw  new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
+        }
     }
 }

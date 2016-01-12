@@ -106,6 +106,8 @@ public class PdfDocument implements IEventDispatcher {
 
     protected boolean isClosing = false;
 
+    protected boolean isSuccessClosing = false;
+
     /**
     * flag determines whether to write unused objects to result document
     */
@@ -241,6 +243,7 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public void setXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
+        checkClosingStatus();
         XMPMeta xmpMeta = XMPMetaFactory.create();
         xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
         xmpMeta.setObjectName("");
@@ -291,10 +294,12 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public PdfStream getXmpMetadata() {
+        checkClosingStatus();
         return getCatalog().getPdfObject().getAsStream(PdfName.Metadata);
     }
 
     public PdfObject getPdfObject(final int objNum) {
+        checkClosingStatus();
         PdfIndirectReference reference = xref.get(objNum);
         if (reference == null) {
             return null;
@@ -314,6 +319,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return page by page number.
      */
     public PdfPage getPage(int pageNum) {
+        checkClosingStatus();
         return catalog.getPage(pageNum);
     }
 
@@ -323,6 +329,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return first page of the document.
      */
     public PdfPage getFirstPage() {
+        checkClosingStatus();
         return getPage(1);
     }
 
@@ -351,6 +358,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return added page
      */
     public PdfPage addNewPage(PageSize pageSize) {
+        checkClosingStatus();
         PdfPage page = new PdfPage(this, pageSize);
         catalog.addPage(page);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
@@ -378,6 +386,7 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException in case {@code page} is flushed
      */
     public PdfPage addNewPage(int index, PageSize pageSize) {
+        checkClosingStatus();
         PdfPage page = new PdfPage(this, pageSize);
         catalog.addPage(index, page);
         currentPage = page;
@@ -394,6 +403,7 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException in case {@code page} is flushed
      */
     public PdfPage addPage(PdfPage page) {
+        checkClosingStatus();
         catalog.addPage(page);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
         return page;
@@ -408,6 +418,7 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException in case {@code page} is flushed
      */
     public PdfPage addPage(int index, PdfPage page) {
+        checkClosingStatus();
         catalog.addPage(index, page);
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
@@ -420,6 +431,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return number of pages.
      */
     public int getNumOfPages() {
+        checkClosingStatus();
         return catalog.getNumOfPages();
     }
 
@@ -430,6 +442,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return page number.
      */
     public int getPageNum(PdfPage page) {
+        checkClosingStatus();
         return catalog.getPageNum(page);
     }
 
@@ -439,6 +452,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param page a page to remove.
      */
     public boolean removePage(PdfPage page) {
+        checkClosingStatus();
         boolean result = catalog.removePage(page);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, page));
         return result;
@@ -450,6 +464,7 @@ public class PdfDocument implements IEventDispatcher {
      * @param pageNum a number of page to remove.
      */
     public PdfPage removePage(int pageNum) {
+        checkClosingStatus();
         return catalog.removePage(pageNum);
     }
 
@@ -459,6 +474,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return document information dictionary.
      */
     public PdfDocumentInfo getInfo() {
+        checkClosingStatus();
         return info;
     }
 
@@ -516,6 +532,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return PdfWriter associated with the document.
      */
     public PdfWriter getWriter() {
+        checkClosingStatus();
         return writer;
     }
 
@@ -525,6 +542,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return PdfReader associated with the document.
      */
     public PdfReader getReader() {
+        checkClosingStatus();
         return reader;
     }
 
@@ -534,6 +552,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return {@code true} if the document is opened in append mode, and {@code false} otherwise.
      */
     public boolean isAppendMode() {
+        checkClosingStatus();
         return appendMode;
     }
 
@@ -543,6 +562,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return created indirect reference.
      */
     public PdfIndirectReference createNextIndirectReference() {
+        checkClosingStatus();
         return xref.createNextIndirectReference(this);
     }
 
@@ -561,6 +581,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return PDF catalog.
      */
     public PdfCatalog getCatalog() {
+        checkClosingStatus();
         return catalog;
     }
 
@@ -570,6 +591,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return PDF document info.
      */
     public PdfDocumentInfo getDocumentInfo() {
+        checkClosingStatus();
         return info;
     }
 
@@ -577,8 +599,9 @@ public class PdfDocument implements IEventDispatcher {
      * Close PDF document.
      */
     public void close() {
+        checkClosingStatus();
+        isClosing = true;
         try {
-            isClosing = true;
             if (writer != null) {
                 if (catalog.isFlushed())
                     throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
@@ -723,6 +746,11 @@ public class PdfDocument implements IEventDispatcher {
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotCloseDocument, e, this);
         }
+        isSuccessClosing = true;
+    }
+
+    public boolean isSuccessClosing() {
+        return isSuccessClosing;
     }
 
     public boolean isTagged() {
@@ -730,6 +758,7 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public void setTagged() {
+        checkClosingStatus();
         if (structTreeRoot == null) {
             structTreeRoot = new PdfStructTreeRoot(this);
             catalog.getPdfObject().put(PdfName.StructTreeRoot, structTreeRoot.getPdfObject());
@@ -749,6 +778,7 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public PdfTagStructure getTagStructure() {
+        checkClosingStatus();
         if (tagStructure != null) {
             return tagStructure;
         }
@@ -857,6 +887,7 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
+        checkClosingStatus();
         List<PdfPage> copiedPages = new ArrayList<PdfPage>();
         LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
         HashMap<PdfPage, List<PdfOutline>> page2Outlines = new HashMap<PdfPage, List<PdfOutline>>();
@@ -918,6 +949,7 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+
         return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1, copier);
     }
 
@@ -942,10 +974,12 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public void setFlushUnusedObjects(boolean flushUnusedObjects) {
+        checkClosingStatus();
         this.flushUnusedObjects = flushUnusedObjects;
     }
 
     public PdfOutline getOutlines(boolean updateOutlines) {
+        checkClosingStatus();
         return catalog.getOutlines(updateOutlines);
     }
 
@@ -957,10 +991,12 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public void addNewName(PdfObject key, PdfObject value) {
+        checkClosingStatus();
         catalog.addNewDestinationName(key, value);
     }
 
     public List<PdfIndirectReference> listIndirectReferences() {
+        checkClosingStatus();
         List<PdfIndirectReference> indRefs = new ArrayList<>(xref.size());
         for (int i = 0; i < xref.size(); ++i) {
             PdfIndirectReference indref = xref.get(i);
@@ -977,10 +1013,12 @@ public class PdfDocument implements IEventDispatcher {
      * @return document trailer.
      */
     public PdfDictionary getTrailer() {
+        checkClosingStatus();
         return trailer;
     }
 
     public void addOutputIntent(PdfOutputIntent outputIntent) {
+        checkClosingStatus();
         if (outputIntent == null)
             return;
 
@@ -1010,6 +1048,7 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     public void addFileAttachment(String description, PdfFileSpec fs) {
+        checkClosingStatus();
         PdfNameTree fileAttachmentTree = new PdfNameTree(catalog, PdfName.EmbeddedFiles);
         fileAttachmentTree.addNewName(new PdfString(description), fs.getPdfObject());
         PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
@@ -1190,6 +1229,16 @@ public class PdfDocument implements IEventDispatcher {
             fields = acroForm.getAsArray(PdfName.Fields);
         }
 
+    }
+
+    /**
+     * checks whether a method is invoked at the closed document
+     * @throws PdfException
+     */
+    protected void checkClosingStatus(){
+        if(isSuccessClosing){
+            throw  new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
+        }
     }
 
     /**

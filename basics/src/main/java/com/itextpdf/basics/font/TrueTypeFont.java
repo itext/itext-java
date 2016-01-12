@@ -58,11 +58,13 @@ public class TrueTypeFont extends FontProgram {
     private byte[] fontStreamBytes;
 
     public TrueTypeFont(String path) throws IOException {
+        checkFilePath(path);
         fontParser = new OpenTypeParser(path);
         initializeFontProperties();
     }
 
     TrueTypeFont(String ttcPath, int ttcIndex) throws IOException {
+        checkFilePath(ttcPath);
         fontParser = new OpenTypeParser(ttcPath, ttcIndex);
         initializeFontProperties();
     }

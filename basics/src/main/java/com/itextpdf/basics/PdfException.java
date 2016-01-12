@@ -82,6 +82,7 @@ public class PdfException extends RuntimeException {
     public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
     public static final String DocumentAlreadyPreClosed = "document.already.pre.closed";
+    public static final String DocumentClosedImpossibleExecuteAction = "document.was.closed.it.is.imppossible.execute.action";
     public static final String DocumentDoesntContainStructTreeRoot = "document.doesn't.contain.structtreeroot";
     public static final String DocumentHasNoPages = "document.has.no.pages";
     public static final String DocumentHasNoCatalogObject = "document.has.no.catalog.object";
@@ -107,6 +108,7 @@ public class PdfException extends RuntimeException {
     public static final String FailedToGetTsaResponseFrom1 = "failed.to.get.tsa.response.from.1";
     public static final String FieldFlatteningIsNotSupportedInAppendMode = "field.flattening.is.not.supported.in.append.mode";
     public static final String FieldIsAlreadySigned = "field.is.already.signed";
+
     public static final String FieldNamesCannotContainADot = "field.names.cannot.contain.a.dot";
     public static final String FieldTypeIsNotASignatureFieldType = "the.field.type.is.not.a.signature.field.type";
     public static final String Filter1IsNotSupported = "filter.1.is.not.supported";
@@ -119,6 +121,8 @@ public class PdfException extends RuntimeException {
     public static final String FontAndSizeMustBeSetBeforeWritingAnyText = "font.and.size.must.be.set.before.writing.any.text";
     public static final String FontEmbeddingIssue = "font.embedding.issue";
     public static final String FontSizeTooSmall = "font.size.too.small";
+    // parametrized message
+    public static final String FontFileNotFound = "font.file.not.found";
     public static final String FormXObjectMustHaveBbox = "form.xobject.must.have.bbox";
     public static final String FunctionIsNotCompatibleWitColorSpace = "function.is.not.compatible.with.color.space";
     public static final String ImageFormatCannotBeRecognized = "image.format.cannot.be.recognized";

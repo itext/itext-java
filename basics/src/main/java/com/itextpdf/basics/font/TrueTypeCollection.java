@@ -5,6 +5,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -27,6 +28,7 @@ public class TrueTypeCollection {
     }
 
     public TrueTypeCollection(String ttcPath, String encoding) throws IOException {
+        checkFilePath(ttcPath);
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(ttcPath));
         this.ttcPath = ttcPath;
         this.encoding = encoding;
@@ -75,5 +77,14 @@ public class TrueTypeCollection {
         }
         raf.skipBytes(4);
         TTCSize = raf.readInt();
+    }
+
+    protected  void checkFilePath(String path){
+        if(path != null) {
+            File f = new File(path);
+            if ((!f.exists() || !f.isFile())) {
+                throw new PdfException(PdfException.FontFileNotFound).setMessageParams(path);
+            }
+        }
     }
 }
