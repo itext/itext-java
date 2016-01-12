@@ -44,10 +44,11 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * PdfCanvas class represents algorithm for writing data into content stream.
- * To write into page content create PdfCanvas from page instance.
- * To write into form XObject create PdfCanvas from form XObject instance.
- * Take care about calling PdfCanvas.release() after you finished writing to canvas. It will save some memory.
+ * PdfCanvas class represents an algorithm for writing data into content stream.
+ * To write into page content, create PdfCanvas from a page instance.
+ * To write into form XObject, create PdfCanvas from a form XObject instance.
+ * Make sure to call PdfCanvas.release() after you finished writing to the canvas.
+ * It will save some memory.
  */
 public class PdfCanvas {
 
