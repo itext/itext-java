@@ -124,7 +124,7 @@ public class PdfCanvas {
      */
     protected Stack<CanvasGraphicsState> gsStack = new Stack<>();
     /**
-     * the curent graphics state
+     * the current graphics state
      */
     protected CanvasGraphicsState currentGs = new CanvasGraphicsState();
     /**
@@ -149,7 +149,7 @@ public class PdfCanvas {
      */
     protected int mcid = 0;
     
-    /** The list were we save/restore the layer depth */
+    /** The list where we save/restore the layer depth */
     protected ArrayList<Integer> layerDepth;
 
     /**
