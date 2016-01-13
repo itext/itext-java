@@ -3,7 +3,12 @@ package com.itextpdf.canvas.draw;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 
-public class DashedLine implements Drawable{
+/**
+ * Implementation of {@link Drawable} which draws a dashed horizontal line over
+ * the middle of the specified rectangle.
+ */
+public class DashedLine implements Drawable {
+
     @Override
     public void draw(PdfCanvas canvas, Rectangle drawArea) {
         canvas.saveState();
