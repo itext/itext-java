@@ -1,7 +1,7 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
+import com.itextpdf.core.pdf.tagutils.AccessibleElementProperties;
 import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.TextRenderer;
@@ -10,6 +10,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
 
     protected String text;
     protected PdfName role = PdfName.Span;
+    protected AccessibleElementProperties tagProperties;
 
     public Text(String text) {
         this.text = text;
@@ -68,8 +69,11 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
     }
 
     @Override
-    public AccessibleAttributes getAccessibleAttributes() {
-        return null;
+    public AccessibleElementProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new AccessibleElementProperties();
+        }
+        return tagProperties;
     }
 
     @Override

@@ -33,7 +33,7 @@ import com.itextpdf.core.pdf.extgstate.PdfExtGState;
 import com.itextpdf.core.pdf.layer.PdfLayer;
 import com.itextpdf.core.pdf.layer.PdfLayerMembership;
 import com.itextpdf.core.pdf.layer.PdfOCG;
-import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagutils.PdfTagReference;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.pdf.xobject.PdfXObject;
@@ -2048,18 +2048,33 @@ public class PdfCanvas {
     }
 
     /**
-     * Manually open a tag, beginning a Marked Content sequence. Used primarily for Tagged PDF
+     * Manually open a canvas tag, beginning a Marked Content sequence. Used primarily for Tagged PDF
      * @param tag the type of content that will be contained
      * @return current canvas
      */
-    public PdfCanvas openTag(final IPdfTag tag) {
+    public PdfCanvas openTag(CanvasTag tag) {
         if (tag.getRole() == null)
             return this;
 //        if ((tag.getStructParentIndex() == null) && !(tag instanceof PdfArtifact))
 //            throw new PdfException(PdfException.StructureElementIsNotLinkedToStructParent, tag);
-        return beginMarkedContent(tag.getRole(), tag.getMcid() == null ? null : new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(PdfName.MCID, new PdfNumber(tag.getMcid()));
-        }}));
+        return beginMarkedContent(tag.getRole(), tag.getProperties());
+    }
+
+    /**
+     * Open a tag, beginning a Marked Content sequence. This MC sequence will belong to the tag from the document
+     * logical structure.
+     * <br>
+     * CanvasTag will be automatically created with assigned mcid(Marked Content id) to it. Mcid serves as a reference
+     * between Marked Content sequence and logical structure element.
+     * @param tagReference reference to the tag from the document logical structure
+     * @return current canvas
+     */
+    public PdfCanvas openTag(PdfTagReference tagReference) {
+        if (tagReference.getRole() == null)
+            return this;
+        CanvasTag tag = new CanvasTag(tagReference.getRole(), tagReference.createNextMcid());
+        tag.addProperties(tagReference.getProperties());
+        return openTag(tag);
     }
 
 //    public PdfCanvas openTag(final PdfStructElem structElem) {

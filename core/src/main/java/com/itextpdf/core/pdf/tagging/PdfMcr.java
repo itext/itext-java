@@ -1,5 +1,6 @@
 package com.itextpdf.core.pdf.tagging;
 
+import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Represents Marked Content Reference (MCR) object wrapper.
  */
-abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper implements IPdfTag {
+abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper implements IPdfStructElem {
 
     protected PdfStructElem parent;
 
@@ -31,10 +32,11 @@ abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper imple
 //        this.parent = parent;
 //    }
 
-    @Override
-    abstract public Integer getMcid();// {
+    public abstract Integer getMcid();// {
 //        return getPdfObject().getAsNumber(PdfName.MCID).getIntValue();
 //    }
+
+    public abstract PdfDictionary getPageObject();
 
     @Override
     public PdfName getRole() {

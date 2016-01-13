@@ -2,7 +2,7 @@ package com.itextpdf.model.element;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
+import com.itextpdf.core.pdf.tagutils.AccessibleElementProperties;
 import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
@@ -19,6 +19,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     protected PdfXObject xObject;
     protected PdfName role = PdfName.Figure;
+    protected AccessibleElementProperties tagProperties;
 
     public Image(PdfImageXObject xObject) {
         this.xObject = xObject;
@@ -230,8 +231,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     @Override
-    public AccessibleAttributes getAccessibleAttributes() {
-        return null;
+    public AccessibleElementProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new AccessibleElementProperties();
+        }
+        return tagProperties;
     }
 
     @Override

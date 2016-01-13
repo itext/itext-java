@@ -402,8 +402,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @throws PdfException
      */
     public int getNextMcid() {
+        if (!getDocument().isTagged()) {
+            throw new PdfException(""); //TODO exception message
+        }
         if (mcid == null) {
-            getPageTags();
+            PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
+            List<PdfMcr> mcrs = structTreeRoot.getPageMarkedContentReferences(this);
+            mcid = getMcid(mcrs);
         }
         return mcid++;
     }
@@ -414,26 +419,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (n != null) {
                 structParents = getPdfObject().getAsNumber(PdfName.StructParents).getIntValue();
             } else {
+                //TODO: may be put in dictionary? or will it be added on flush? check all the page's structParents logic
                 structParents = 0;
             }
         }
         return structParents;
-    }
-
-    /**
-     * Gets a list of tags on this page.
-     * Please use this method very carefully as it rereads all structure tree and is slow.
-     *
-     * @return
-     * @throws PdfException
-     */
-    public List<IPdfTag> getPageTags() {
-        if (getDocument().getStructTreeRoot() == null)
-            return null;
-        List<IPdfTag> tags = new ArrayList<IPdfTag>();
-        getPageTags(getDocument().getStructTreeRoot().getPdfObject(), tags);
-        mcid = getMcid(tags);
-        return tags;
     }
 
     public PdfPage setAdditionalAction(PdfName key, PdfAction action) {
@@ -510,44 +500,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
-    private void getPageTags(PdfDictionary getFrom, List<IPdfTag> putTo) {
-        PdfObject k = getFrom.get(PdfName.K);
-        if (k == null)
-            return;
-
-        if (k.isArray()) {
-            PdfArray a = (PdfArray) k;
-            for (int i = 0; i < a.size(); i++) {
-                PdfObject aItem = a.get(i);
-                getPageTagsFromKid(aItem, getFrom, putTo);
-            }
-        } else {
-            getPageTagsFromKid(k, getFrom, putTo);
-        }
-    }
-
-    private void getPageTagsFromKid(PdfObject k, PdfDictionary parent, List<IPdfTag> putTo) {
-        switch (k.getType()) {
-            case PdfObject.Number:
-                if (parent.getAsDictionary(PdfName.Pg) == getPdfObject())
-                    putTo.add(new PdfMcrNumber((PdfNumber) k, new PdfStructElem(parent, getDocument())));
-                break;
-            case PdfObject.Dictionary:
-                PdfDictionary d = (PdfDictionary) k;
-                if (PdfName.MCR.equals(d.getAsName(PdfName.Type)) && getPdfObject() == d.getAsDictionary(PdfName.Pg))
-                    putTo.add(new PdfMcrDictionary(d, new PdfStructElem(parent, getDocument())));
-                else if (parent.getAsDictionary(PdfName.Pg) == getPdfObject() && PdfName.OBJR.equals(d.getAsName(PdfName.Type))) {
-                    PdfDictionary pg = d.getAsDictionary(PdfName.Pg);
-                    if (pg == null || pg == getPdfObject())
-                        putTo.add(new PdfObjRef(d, new PdfStructElem(parent, getDocument())));
-                } else
-                    getPageTags(d, putTo);
-                break;
-            default:
-                break;
-        }
-    }
-
     private PdfStream newContentStream(boolean before) {
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         PdfArray array;
@@ -569,10 +521,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return contentStream;
     }
 
-    private Integer getMcid(List<IPdfTag> tags) {
+    private Integer getMcid(List<PdfMcr> mcrs) {
         Integer maxMcid = null;
-        for (IPdfTag tag : tags) {
-            Integer mcid = tag.getMcid();
+        for (PdfMcr mcr : mcrs) {
+            Integer mcid = mcr.getMcid();
             if (maxMcid == null || (mcid != null && mcid > maxMcid))
                 maxMcid = mcid;
         }

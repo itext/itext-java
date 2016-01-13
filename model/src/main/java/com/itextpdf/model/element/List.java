@@ -1,7 +1,7 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
+import com.itextpdf.core.pdf.tagutils.AccessibleElementProperties;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.ListRenderer;
 
@@ -13,6 +13,7 @@ public class List extends BlockElement<List> {
     protected String postSymbolText = ". ";
 
     protected PdfName role = PdfName.L;
+    protected AccessibleElementProperties tagProperties;
 
     public List() {
         super();
@@ -93,8 +94,11 @@ public class List extends BlockElement<List> {
     }
 
     @Override
-    public AccessibleAttributes getAccessibleAttributes() {
-        return null;
+    public AccessibleElementProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new AccessibleElementProperties();
+        }
+        return tagProperties;
     }
 
     @Override

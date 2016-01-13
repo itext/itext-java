@@ -21,7 +21,7 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
         if (PdfName.DeviceGray.equals(pdfObject))
             return new PdfDeviceCs.Gray().makeIndirect(document);
         else if (PdfName.DeviceRGB.equals(pdfObject))
-            return new PdfDeviceCs.Rgb().makeIndirect(document);
+            return new PdfDeviceCs.Rgb().makeIndirect(document); //TODO indirect PdfName?
         else if (PdfName.DeviceCMYK.equals(pdfObject))
             return new PdfDeviceCs.Cmyk().makeIndirect(document);
         else if (PdfName.Pattern.equals(pdfObject))

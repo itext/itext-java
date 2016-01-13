@@ -55,6 +55,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         add(PdfName.LI);
         add(PdfName.LBody);
         add(PdfName.Table);
+
         add(PdfName.TR);
         add(PdfName.TH);
         add(PdfName.TD);

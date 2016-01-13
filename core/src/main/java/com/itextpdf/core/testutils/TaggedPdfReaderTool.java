@@ -8,7 +8,7 @@ import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.tagging.IPdfStructElem;
-import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagging.PdfMcr;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 
@@ -99,7 +99,7 @@ import java.util.Map;
             out.print(tag);
             out.println(">");
         } else {
-            parseTag((IPdfTag) kid);
+            parseTag((PdfMcr) kid);
         }
     }
 
@@ -126,7 +126,7 @@ import java.util.Map;
         }
     }
 
-    protected void parseTag(IPdfTag kid) {
+    protected void parseTag(PdfMcr kid) {
         Integer mcid = kid.getMcid();
         PdfDictionary page = kid.getPageObject();
 

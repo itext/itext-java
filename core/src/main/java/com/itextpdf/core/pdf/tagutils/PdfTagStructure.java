@@ -1,13 +1,15 @@
 package com.itextpdf.core.pdf.tagutils;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.tagging.IPdfStructElem;
-import com.itextpdf.core.pdf.tagging.IPdfTag;
 import com.itextpdf.core.pdf.tagging.PdfMcr;
 import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /* TODO
-    1. add possibility to specify role classes through this class
+    1. add possibility to specify role mapping through this class
     2. add flushing logic? or add it to page flushing? need to build parentsTree when flushing.
     3. IllegalStateExceptions
     4. add convenient way to see current tags tree (toString method?)
@@ -67,7 +69,7 @@ public class PdfTagStructure {
             }
 
             @Override
-            public AccessibleAttributes getAccessibleAttributes() {
+            public AccessibleElementProperties getAccessibilityProperties() {
                 return null;
             }
         });
@@ -104,44 +106,22 @@ public class PdfTagStructure {
                 currentStructElem = addNewKid(index, element, keepConnectedToTag);
             }
         }
-        updateAttributes(currentStructElem, element.getAccessibleAttributes());
+        updateProperties(currentStructElem, element.getAccessibilityProperties());
 
         return this;
     }
 
-    public PdfTagStructure setAttributes(AccessibleAttributes attributes) {
-        updateAttributes(currentStructElem, attributes);
+    public PdfTagStructure setProperties(AccessibleElementProperties properties) {
+        updateProperties(currentStructElem, properties);
         return this;
     }
 
-    public IPdfTag getTagReference() {
+    public PdfTagReference getTagReference() {
         return getTagReference(-1);
     }
 
-    public IPdfTag getTagReference(int index) {
-        if (currentPage == null) {
-            throw new PdfException(""); //TODO exception
-        }
-
-        int type = PdfStructElem.identifyType(document, currentStructElem.getRole());
-        if (type != PdfStructElem.InlineLevel && type != PdfStructElem.Illustration) {
-            throw new PdfException(""); //TODO exception
-        }
-
-        //TODO check this logic on created document
-        PdfMcr tag;
-        PdfObject pageObject = currentStructElem.getPdfObject().get(PdfName.Pg);
-        if (pageObject == null) {
-            pageObject = currentPage.getPdfObject();
-            currentStructElem.getPdfObject().put(PdfName.Pg, pageObject);
-        }
-        if (currentPage.getPdfObject().equals(pageObject)) {
-            tag = new PdfMcrNumber(currentPage, currentStructElem);
-        } else {
-            tag = new PdfMcrDictionary(currentPage, currentStructElem);
-        }
-        currentStructElem.addKid(index, tag);
-        return tag;
+    public PdfTagReference getTagReference(int index) {
+        return new PdfTagReference(currentStructElem, this, index);
     }
 
     public PdfTagStructure moveToParent() {
@@ -223,6 +203,33 @@ public class PdfTagStructure {
         return this;
     }
 
+    //TODO if strucElement contains properties that have to or better to write to canvas (like E) - add them to the tag here (and may be remove them from the structure element?)
+    protected int getNextMcidForStructElem(PdfStructElem elem, int index) {
+        if (currentPage == null) {
+            throw new PdfException(""); //TODO exception
+        }
+
+        int type = PdfStructElem.identifyType(document, elem.getRole());
+        if (type != PdfStructElem.InlineLevel && type != PdfStructElem.Illustration) {
+            throw new PdfException(""); //TODO exception
+        }
+
+        //TODO check this logic on created document
+        PdfMcr mcr;
+        PdfObject pageObject = elem.getPdfObject().get(PdfName.Pg);
+        if (pageObject == null) {
+            pageObject = currentPage.getPdfObject();
+            elem.getPdfObject().put(PdfName.Pg, pageObject);
+        }
+        if (currentPage.getPdfObject().equals(pageObject)) {
+            mcr = new PdfMcrNumber(currentPage, elem);
+        } else {
+            mcr = new PdfMcrDictionary(currentPage, elem);
+        }
+        elem.addKid(index, mcr);
+        return mcr.getMcid();
+    }
+
     private void ensureDocumentTagIsOpen() {
         List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
         if (rootKids.isEmpty()) {
@@ -249,22 +256,65 @@ public class PdfTagStructure {
         return currentStructElem.addKid(index, kid);
     }
 
-    private void updateAttributes(PdfStructElem kid, AccessibleAttributes attributes) {
-        if (attributes == null) {
+    private void updateProperties(PdfStructElem elem, AccessibleElementProperties properties) {
+        if (properties == null) {
             return;
         }
 
-        if (attributes.getActualText() != null) {
-            kid.setActualText(new PdfString(attributes.getActualText()));
+        if (properties.getActualText() != null) {
+            elem.setActualText(new PdfString(properties.getActualText()));
         }
-        if (attributes.getAlternateDescription() != null) {
-            kid.setAlt(new PdfString(attributes.getAlternateDescription()));
+        if (properties.getAlternateDescription() != null) {
+            elem.setAlt(new PdfString(properties.getAlternateDescription()));
         }
-        if (attributes.getExpansion() != null) {
-            kid.setE(new PdfString(attributes.getExpansion()));
+        if (properties.getExpansion() != null) {
+            elem.setE(new PdfString(properties.getExpansion()));
         }
-        if (attributes.getLanguage() != null) {
-            kid.setLang(new PdfString(attributes.getLanguage()));
+        if (properties.getLanguage() != null) {
+            elem.setLang(new PdfString(properties.getLanguage()));
+        }
+
+        List<PdfDictionary> newAttributesList = properties.getAttributesList();
+        if (!newAttributesList.isEmpty()) {
+            PdfObject attributesObject = elem.getAttributes(false);
+
+            PdfObject combinedAttributes = combineAttributesList(attributesObject, newAttributesList, elem.getPdfObject().getAsNumber(PdfName.R));
+            elem.setAttributes(combinedAttributes);
+        }
+    }
+
+    private PdfObject combineAttributesList(PdfObject attributesObject, List<PdfDictionary> newAttributesList, PdfNumber revision) {
+        PdfObject combinedAttributes;
+
+        if (attributesObject instanceof PdfDictionary) {
+            PdfArray combinedAttributesArray = new PdfArray();
+            combinedAttributesArray.add(attributesObject);
+            addNewAttributesToAttributesArray(newAttributesList, revision, combinedAttributesArray);
+            combinedAttributes = combinedAttributesArray;
+        } else if (attributesObject instanceof PdfArray) {
+            PdfArray combinedAttributesArray = (PdfArray) attributesObject;
+            addNewAttributesToAttributesArray(newAttributesList, revision, combinedAttributesArray);
+            combinedAttributes = combinedAttributesArray;
+        } else {
+            if (newAttributesList.size() == 1) {
+                combinedAttributes = newAttributesList.get(0);
+            } else {
+                combinedAttributes = new PdfArray();
+                addNewAttributesToAttributesArray(newAttributesList, revision, (PdfArray) combinedAttributes);
+            }
+        }
+
+        return combinedAttributes;
+    }
+
+    private void addNewAttributesToAttributesArray(List<PdfDictionary> newAttributesList, PdfNumber revision, PdfArray attributesArray) {
+        if (revision != null) {
+            for (PdfDictionary attributes : newAttributesList) {
+                attributesArray.add(attributes);
+                attributesArray.add(revision);
+            }
+        } else {
+            attributesArray.addAll(newAttributesList);
         }
     }
 

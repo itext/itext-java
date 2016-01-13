@@ -9,9 +9,10 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.core.pdf.tagging.IPdfTag;
+import com.itextpdf.core.pdf.tagging.PdfMcr;
 import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.core.pdf.tagging.PdfObjRef;
@@ -66,10 +67,10 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
 
-        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("Hello ");
         canvas.closeTag();
-        canvas.openTag(span1.addKid(new PdfMcrDictionary(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrDictionary(page, span1))));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -83,11 +84,11 @@ public class PdfTaggingTest extends ExtendedITextTest {
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("Hello ");
         canvas.closeTag();
         PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
+        canvas.openTag(new CanvasTag(span2.addKid(new PdfMcrNumber(page, span2))));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -116,11 +117,11 @@ public class PdfTaggingTest extends ExtendedITextTest {
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("Hello ");
         canvas.closeTag();
         PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page));
-        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
+        canvas.openTag(new CanvasTag(span2.addKid(new PdfMcrNumber(page, span2))));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -149,11 +150,11 @@ public class PdfTaggingTest extends ExtendedITextTest {
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("Hello ");
         canvas.closeTag();
         PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page));
-        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
+        canvas.openTag(new CanvasTag(span2.addKid(new PdfMcrNumber(page, span2))));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -167,11 +168,11 @@ public class PdfTaggingTest extends ExtendedITextTest {
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("Hello ");
         canvas.closeTag();
         span2 = paragraph.addKid(new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page));
-        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
+        canvas.openTag(new CanvasTag(span2.addKid(new PdfMcrNumber(page, span2))));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -206,11 +207,11 @@ public class PdfTaggingTest extends ExtendedITextTest {
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("Hello ");
         canvas.closeTag();
         PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, new com.itextpdf.core.pdf.PdfName("Chunk"), page));
-        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
+        canvas.openTag(new CanvasTag(span2.addKid(new PdfMcrNumber(page, span2))));
         canvas.showText("World");
         canvas.closeTag();
         canvas.endText();
@@ -228,7 +229,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         page = document.getPage(1);
         canvas = new PdfCanvas(page);
 
-        List<IPdfTag> elems = page.getPageTags();
+        List<PdfMcr> elems = document.getStructTreeRoot().getPageMarkedContentReferences(page);
 
         canvas.beginText();
         canvas.setFontAndSize(PdfFont.createStandardFont(document, FontConstants.COURIER), 24);
@@ -236,16 +237,14 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         //Inserting span between of 2 existing ones.
         span1 = ((PdfStructElem) elems.get(0).getParent().getParent()).addKid(1, new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("text1");
         canvas.closeTag();
 
-        elems = page.getPageTags();
-
         //Inserting span at the end.
-        IPdfTag elem = elems.get(elems.size() - 1);
+        PdfMcr elem = elems.get(elems.size() - 1);
         span1 = ((PdfStructElem) elem.getParent().getParent()).addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("text2");
         canvas.closeTag();
 
@@ -415,12 +414,12 @@ public class PdfTaggingTest extends ExtendedITextTest {
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span1.addKid(new PdfMcrNumber(page, span1)));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("Click ");
         canvas.closeTag();
 
         PdfStructElem link = paragraph.addKid(new PdfStructElem(document, PdfName.Link, page));
-        canvas.openTag(link.addKid(new PdfMcrNumber(page, link)));
+        canvas.openTag(new CanvasTag(link.addKid(new PdfMcrNumber(page, link))));
         canvas.setFillColorRgb(0, 0, 1).showText("here");
         PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(document, new Rectangle(80, 508, 40, 18)).setColor(new float[] {0, 0, 1}).setBorder(new PdfArray(new float[]{0, 0, 1}));
         page.addAnnotation(linkAnnotation);
@@ -428,7 +427,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         canvas.closeTag();
 
         PdfStructElem span2 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
-        canvas.openTag(span2.addKid(new PdfMcrNumber(page, span2)));
+        canvas.openTag(new CanvasTag(span2.addKid(new PdfMcrNumber(page, span2))));
         canvas.setFillColorRgb(0, 0, 0);
         canvas.showText(" to visit iText site.");
         canvas.closeTag();
@@ -438,6 +437,36 @@ public class PdfTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("taggingTest11.pdf", "cmp_taggingTest11.pdf", "diff11_");
+    }
+
+    @Test
+    public void taggingTest12() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest12.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document));
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(PdfFont.createStandardFont(document, FontConstants.COURIER), 14);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
+        PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1)))
+                .addProperty(PdfName.Lang, new PdfString("en-US"))
+                .addProperty(PdfName.ActualText, new PdfString("The actual text is: Text with property list")));
+        canvas.showText("Text with property list");
+        canvas.closeTag();
+
+        canvas.endText();
+        canvas.release();
+
+        document.close();
+
+        compareResult("taggingTest12.pdf", "cmp_taggingTest12.pdf", "diff12_");
     }
 
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)

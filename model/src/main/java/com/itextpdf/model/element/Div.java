@@ -1,11 +1,12 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.AccessibleAttributes;
+import com.itextpdf.core.pdf.tagutils.AccessibleElementProperties;
 
 public class Div extends BlockElement<Div> {
 
     protected PdfName role = PdfName.Div;
+    protected AccessibleElementProperties tagProperties;
 
     public <T extends Div> T add(BlockElement element) {
         childElements.add(element);
@@ -28,7 +29,10 @@ public class Div extends BlockElement<Div> {
     }
 
     @Override
-    public AccessibleAttributes getAccessibleAttributes() {
-        return null;
+    public AccessibleElementProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new AccessibleElementProperties();
+        }
+        return tagProperties;
     }
 }
