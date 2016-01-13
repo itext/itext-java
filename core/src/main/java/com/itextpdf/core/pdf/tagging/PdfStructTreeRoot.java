@@ -170,7 +170,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      */
     public List<PdfMcr> getPageMarkedContentReferences(PdfPage page) {
         List<PdfMcr> mcrs = new ArrayList<PdfMcr>();
-        getPageMCRs(page.getPdfObject(), getDocument().getStructTreeRoot().getPdfObject(), mcrs);
+        getPageMCRs(page, page.getDocument().getStructTreeRoot().getPdfObject(), mcrs);
         return mcrs;
     }
 
@@ -257,8 +257,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             return;
 
         List<PdfObject> kids = new ArrayList<PdfObject>();
-        for (int i = 0; i < toDocument.getStructTreeRoot().getKidsObject().size(); i++) {
-            kids.add(toDocument.getStructTreeRoot().getKidsObject().get(i, false));
+        PdfArray kidsObject = toDocument.getStructTreeRoot().getKidsObject();
+        for (int i = 0; i < kidsObject.size(); i++) {
+            kids.add(kidsObject.get(i, false));
         }
 
         LinkedHashMap<PdfPage, PdfPage> page2pageSource = new LinkedHashMap<PdfPage, PdfPage>();
@@ -294,7 +295,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
-    private void getPageMCRs(PdfDictionary pageObject, PdfDictionary getFrom, List<PdfMcr> putTo) {
+    private void getPageMCRs(PdfPage page, PdfDictionary getFrom, List<PdfMcr> putTo) {
         PdfObject k = getFrom.get(PdfName.K);
         if (k == null)
             return;
@@ -303,29 +304,30 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             PdfArray a = (PdfArray) k;
             for (int i = 0; i < a.size(); i++) {
                 PdfObject aItem = a.get(i);
-                getPageMCRsFromKid(pageObject, aItem, getFrom, putTo);
+                getPageMCRsFromKid(page, aItem, getFrom, putTo);
             }
         } else {
-            getPageMCRsFromKid(pageObject, k, getFrom, putTo);
+            getPageMCRsFromKid(page, k, getFrom, putTo);
         }
     }
 
-    private void getPageMCRsFromKid(PdfDictionary pageObject, PdfObject k, PdfDictionary parent, List<PdfMcr> putTo) {
+    private void getPageMCRsFromKid(PdfPage page, PdfObject k, PdfDictionary parent, List<PdfMcr> putTo) {
+        PdfDictionary pageObject = page.getPdfObject();
         switch (k.getType()) {
             case PdfObject.Number:
                 if (parent.getAsDictionary(PdfName.Pg) == pageObject)
-                    putTo.add(new PdfMcrNumber((PdfNumber) k, new PdfStructElem(parent, getDocument())));
+                    putTo.add(new PdfMcrNumber((PdfNumber) k, new PdfStructElem(parent, page.getDocument())));
                 break;
             case PdfObject.Dictionary:
                 PdfDictionary d = (PdfDictionary) k;
                 if (PdfName.MCR.equals(d.getAsName(PdfName.Type)) && pageObject == d.getAsDictionary(PdfName.Pg))
-                    putTo.add(new PdfMcrDictionary(d, new PdfStructElem(parent, getDocument())));
+                    putTo.add(new PdfMcrDictionary(d, new PdfStructElem(parent, page.getDocument())));
                 else if (parent.getAsDictionary(PdfName.Pg) == pageObject && PdfName.OBJR.equals(d.getAsName(PdfName.Type))) {
                     PdfDictionary pg = d.getAsDictionary(PdfName.Pg);
                     if (pg == null || pg == pageObject)
-                        putTo.add(new PdfObjRef(d, new PdfStructElem(parent, getDocument())));
+                        putTo.add(new PdfObjRef(d, new PdfStructElem(parent, page.getDocument())));
                 } else
-                    getPageMCRs(pageObject, d, putTo);
+                    getPageMCRs(page, d, putTo);
                 break;
             default:
                 break;
