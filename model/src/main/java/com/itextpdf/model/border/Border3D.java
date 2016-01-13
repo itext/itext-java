@@ -27,11 +27,6 @@ public abstract class Border3D extends Border{
     }
 
     @Override
-    public int getType() {
-        return 5;
-    }
-
-    @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
         float x4 = 0, y4 = 0;

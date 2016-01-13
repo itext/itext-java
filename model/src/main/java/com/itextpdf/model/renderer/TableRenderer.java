@@ -365,14 +365,20 @@ public class TableRenderer extends AbstractRenderer {
         boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
         if (isTagged) {
             PdfTagStructure tagStructure = document.getTagStructure();
-            tagStructure.addTag((IAccessibleElement) getModelElement(), true);
+
+            IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
+            if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+            }
+
+            tagStructure.addTag(accessibleElement, true);
 
             super.draw(document, canvas);
 
             tagStructure.moveToParent();
             Table modelElement = (Table) getModelElement();
             if (isLastRendererForModelElement && modelElement.isComplete()) {
-                tagStructure.removeConnectionToTag((IAccessibleElement) getModelElement());
+                tagStructure.removeConnectionToTag(accessibleElement);
                 if (modelElement.getHeader() != null) {
                     tagStructure.removeConnectionToTag(modelElement.getHeader());
                 }

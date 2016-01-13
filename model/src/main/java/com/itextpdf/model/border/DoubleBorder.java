@@ -15,7 +15,7 @@ public class DoubleBorder extends Border{
 
     @Override
     public int getType() {
-        return 3;
+        return Border.DOUBLE;
     }
 
     @Override

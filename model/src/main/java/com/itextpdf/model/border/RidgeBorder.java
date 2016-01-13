@@ -24,6 +24,11 @@ public class RidgeBorder extends Border3D {
     }
 
     @Override
+    public int getType(){
+        return Border._3D_RIDGE;
+    }
+
+    @Override
     protected void setInnerHalfColor(PdfCanvas canvas, Side side) {
         switch (side) {
             case TOP:

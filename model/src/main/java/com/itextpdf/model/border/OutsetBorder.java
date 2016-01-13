@@ -24,6 +24,11 @@ public class OutsetBorder extends Border3D {
     }
 
     @Override
+    public int getType(){
+        return Border._3D_OUTSET;
+    }
+
+    @Override
     protected void setInnerHalfColor(PdfCanvas canvas, Border.Side side) {
         switch (side) {
             case TOP:

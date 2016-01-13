@@ -219,7 +219,7 @@ public enum Property {
             return yPosition + yPositionMul * fontSize;
         }
 
-        public float getyPositionMul() {
+        public float getYPositionMul() {
             return yPositionMul;
         }
     }

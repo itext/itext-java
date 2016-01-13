@@ -24,6 +24,11 @@ public class GrooveBorder extends Border3D {
     }
 
     @Override
+    public int getType(){
+        return Border._3D_GROOVE;
+    }
+
+    @Override
     protected void setInnerHalfColor(PdfCanvas canvas, Side side) {
         switch (side) {
             case TOP:

@@ -2,6 +2,7 @@ package com.itextpdf.model;
 
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -18,11 +19,13 @@ import com.itextpdf.model.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.xml.sax.SAXException;
 
 import static org.junit.Assert.assertNull;
 
@@ -35,11 +38,11 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @BeforeClass
     static public void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
-    public void textInParagraphTest01() throws IOException, InterruptedException {
+    public void textInParagraphTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "textInParagraphTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textInParagraphTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -56,11 +59,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
-    public void imageTest01() throws IOException, InterruptedException {
+    public void imageTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "imageTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -73,11 +77,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
-    public void divTest01() throws IOException, InterruptedException {
+    public void divTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "divTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -99,11 +104,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
-    public void tableTest01() throws IOException, InterruptedException {
+    public void tableTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -119,7 +125,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.addCell(image);
         table.addCell(createParagraph2());
         table.addCell(image);
-        table.addCell("abcdefghijklkmnopqrstuvwxyz");
+        table.addCell(new Paragraph("abcdefghijklkmnopqrstuvwxyz").setFontColor(Color.GREEN));
         table.addCell("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
@@ -129,11 +135,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
-    public void tableTest02() throws IOException, InterruptedException {
+    public void tableTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -152,11 +159,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
-    public void tableTest03() throws IOException, InterruptedException {
+    public void tableTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest03.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -184,11 +192,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
-    public void tableTest04() throws IOException, InterruptedException {
+    public void tableTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest04.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -215,6 +224,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.complete();
 
         doc.close();
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -223,7 +233,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         1. If first header is skipped - header appears after TBody or TFoot
         2. THead/TFoot row cells are all contained in single row, even when header/footer is repeated on every page.
      */
-    public void tableTest05() throws IOException, InterruptedException {
+    public void tableTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest05.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -252,6 +262,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.complete();
 
         doc.close();
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -259,7 +270,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
     /* TODO: incorrect cell tags order when rowspan is used
         1. The tag of cell with rowspan is always the last in the TR
      */
-    public void tableTest06() throws IOException, InterruptedException {
+    public void tableTest06() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest06.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest06.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -294,11 +305,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.add(table);
         doc.close();
 
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
-    public void listTest01() throws IOException, InterruptedException {
+    public void listTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "listTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -314,6 +326,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.add(list);
         doc.close();
 
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 

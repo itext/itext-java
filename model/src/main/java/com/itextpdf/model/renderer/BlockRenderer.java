@@ -209,8 +209,22 @@ public class BlockRenderer extends AbstractRenderer {
         applyAction(document);
 
         boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
+        IAccessibleElement accessibleElement = null;
         if (isTagged) {
-            document.getTagStructure().addTag((IAccessibleElement) getModelElement(), true);
+            accessibleElement = (IAccessibleElement) getModelElement();
+            if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+
+                if (accessibleElement.getRole().equals(PdfName.TD)) {
+                    AccessibleAttributesApplier.applyTableAttributes(this);
+                }
+
+                if (accessibleElement.getRole().equals(PdfName.List)) {
+                    AccessibleAttributesApplier.applyListAttributes(this);
+                }
+
+            }
+            document.getTagStructure().addTag(accessibleElement, true);
         }
 
         int position = getPropertyAsInteger(Property.POSITION);
@@ -233,7 +247,7 @@ public class BlockRenderer extends AbstractRenderer {
         if (isTagged) {
             document.getTagStructure().moveToParent();
             if (isLastRendererForModelElement) {
-                document.getTagStructure().removeConnectionToTag((IAccessibleElement) getModelElement());
+                document.getTagStructure().removeConnectionToTag(accessibleElement);
             }
         }
 

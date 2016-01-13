@@ -15,7 +15,7 @@ public class SolidBorder extends Border {
 
     @Override
     public int getType() {
-        return 0;
+        return Border.SOLID;
     }
 
     @Override

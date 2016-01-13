@@ -364,9 +364,14 @@ public class TextRenderer extends AbstractRenderer {
 
         boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
         PdfTagStructure tagStructure = null;
+        IAccessibleElement accessibleElement = null;
         if (isTagged) {
             tagStructure = document.getTagStructure();
-            tagStructure.addTag((IAccessibleElement) getModelElement(), true);
+            accessibleElement = (IAccessibleElement) getModelElement();
+            if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+            }
+            tagStructure.addTag(accessibleElement, true);
         }
 
         int position = getPropertyAsInteger(Property.POSITION);
@@ -473,7 +478,7 @@ public class TextRenderer extends AbstractRenderer {
         if (isTagged) {
             tagStructure.moveToParent();
             if (isLastRendererForModelElement) {
-                tagStructure.removeConnectionToTag((IAccessibleElement) getModelElement());
+                tagStructure.removeConnectionToTag(accessibleElement);
             }
         }
     }

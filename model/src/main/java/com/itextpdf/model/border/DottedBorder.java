@@ -16,7 +16,7 @@ public class DottedBorder extends Border {
 
     @Override
     public int getType() {
-        return 2;
+        return Border.DOTTED;
     }
 
     @Override

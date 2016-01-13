@@ -5,6 +5,7 @@ import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
@@ -122,7 +123,9 @@ public class ImageRenderer extends AbstractRenderer {
         PdfTagStructure tagStructure = null;
         if (isTagged) {
             tagStructure = document.getTagStructure();
-            tagStructure.addTag((IAccessibleElement) getModelElement());
+            IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
+            AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+            tagStructure.addTag(accessibleElement);
         }
 
         applyMargins(occupiedArea.getBBox(), false);

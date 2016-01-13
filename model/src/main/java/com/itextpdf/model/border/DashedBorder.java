@@ -18,7 +18,7 @@ public class DashedBorder extends Border {
 
     @Override
     public int getType() {
-        return 1;
+        return Border.DASHED;
     }
 
     @Override

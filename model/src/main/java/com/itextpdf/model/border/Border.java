@@ -11,7 +11,11 @@ public abstract class Border {
     public static final int DOTTED = 2;
     public static final int DOUBLE = 3;
     public static final int ROUND_DOTS = 4;
-    public static final int _3D = 5;
+    public static final int _3D_GROOVE = 5;
+    public static final int _3D_INSET = 6;
+    public static final int _3D_OUTSET = 7;
+    public static final int _3D_RIDGE = 8;
+
 
     protected Color color;
     protected float width;
@@ -72,7 +76,9 @@ public abstract class Border {
         }
         if (anObject instanceof Border) {
             Border anotherBorder = (Border) anObject;
-            if (anotherBorder.getType() != getType() || anotherBorder.getColor() != getColor() || anotherBorder.getWidth() != getWidth()) {
+            if (anotherBorder.getType() != getType()
+                    || anotherBorder.getColor() != getColor()
+                    || anotherBorder.getWidth() != getWidth()) {
                 return false;
             }
         } else {

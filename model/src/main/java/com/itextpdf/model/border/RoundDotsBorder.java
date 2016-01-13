@@ -17,7 +17,7 @@ public class RoundDotsBorder extends Border {
 
     @Override
     public int getType() {
-        return 4;
+        return Border.ROUND_DOTS;
     }
 
     @Override
