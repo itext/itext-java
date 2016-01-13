@@ -61,9 +61,6 @@ public class TextRenderer extends AbstractRenderer {
     public TextLayoutResult layout(LayoutContext layoutContext) {
         convertWaitingStringToGlyphLine();
 
-        line = new GlyphLine(text);
-        line.start = line.end = -1;
-
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = applyMargins(area.getBBox().clone(), false);
         applyBorderBox(layoutBox, false);
@@ -91,6 +88,9 @@ public class TextRenderer extends AbstractRenderer {
             ((TrueTypeFont)font.getFontProgram()).applyLigaFeature(text, true);
             otfFeaturesApplied = true;
         }
+
+        line = new GlyphLine(text);
+        line.start = line.end = -1;
 
         Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
         if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
@@ -438,17 +438,12 @@ public class TextRenderer extends AbstractRenderer {
             if (horizontalScaling != null && horizontalScaling != 1)
                 canvas.setHorizontalScaling(horizontalScaling * 100);
 
-            GlyphLine output = new GlyphLine(line);
-            List<Glyph> printGlyphs = new ArrayList<>();
-            for (int i = line.start; i < line.end; i++) {
-                // TODO index == 0 is bad comparison
-                if (!noPrint(line.glyphs.get(i))) {
-                    printGlyphs.add(line.glyphs.get(i));
+            GlyphLine output = line.filter(new GlyphLine.GlyphLineFilter() {
+                @Override
+                public boolean accept(Glyph glyph) {
+                    return !noPrint(glyph);
                 }
-            }
-            output.glyphs = printGlyphs;
-            output.start = 0;
-            output.end = printGlyphs.size();
+            });
 
             if (fontKerning == Property.FontKerning.YES) {
                 canvas.applyKerning(output);

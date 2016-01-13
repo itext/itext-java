@@ -133,7 +133,11 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
     }
 
     protected static byte[] getIsoBytes(double d, ByteUtils buffer) {
-        if (HighPrecision) {
+        return getIsoBytes(d, buffer, HighPrecision);
+    }
+
+    protected static byte[] getIsoBytes(double d, ByteUtils buffer, boolean highPrecision) {
+        if (highPrecision) {
             DecimalFormat dn = new DecimalFormat("0.######", dfs);
             byte[] result = dn.format(d).getBytes();
             if (buffer != null) {
@@ -322,7 +326,11 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
     }
 
     public T writeFloat(float value) {
-        return writeDouble(value);
+        return writeFloat(value, HighPrecision);
+    }
+
+    public T writeFloat(float value, boolean highPrecision) {
+        return writeDouble(value, highPrecision);
     }
 
     public T writeFloats(float[] value) {
@@ -335,8 +343,12 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
     }
 
     public T writeDouble(double value) {
+        return writeDouble(value, HighPrecision);
+    }
+
+    public T writeDouble(double value, boolean highPrecision) {
         try {
-            getIsoBytes(value, numBuffer.reset());
+            getIsoBytes(value, numBuffer.reset(), highPrecision);
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
             return (T) this;
         } catch (IOException e) {

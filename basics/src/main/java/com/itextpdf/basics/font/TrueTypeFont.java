@@ -211,35 +211,45 @@ public class TrueTypeFont extends FontProgram {
                         }
                     }
 
-                    GlyphLine newGlyphLine = new GlyphLine(glyphLine);
-                    List<Glyph> glyphs = new ArrayList<>();
+                    GlyphLine newGlyphLine = new GlyphLine();
+                    newGlyphLine.glyphs = new ArrayList<>();
                     for (int i = 0; i < glyphLine.start; i++) {
-                        glyphs.add(glyphLine.glyphs.get(i));
+                        newGlyphLine.add(glyphLine.glyphs.get(i));
                     }
                     int lastFinish = glyphLine.start;
                     for (IndicCluster cluster : clusters) {
                         if (cluster.originalGlyphLineStart > lastFinish) {
                             for (int j = lastFinish; j < cluster.originalGlyphLineStart; j++) {
-                                glyphs.add(glyphLine.glyphs.get(j));
+                                newGlyphLine.add(glyphLine.glyphs.get(j));
                             }
                         }
+                        int startActualTextPos = newGlyphLine.glyphs.size();
                         for (int j = 0; j < cluster.glyphs.size(); j++) {
-                            glyphs.add(cluster.glyphs.get(j));
+                            newGlyphLine.add(cluster.glyphs.get(j));
                         }
+                        newGlyphLine.setActualText(startActualTextPos, newGlyphLine.glyphs.size(), cluster.getActualText());
                         lastFinish = cluster.originalGlyphLineEnd;
                     }
                     for (int j = lastFinish; j < glyphLine.end; j++) {
-                        glyphs.add(glyphLine.glyphs.get(j));
+                        newGlyphLine.add(glyphLine.glyphs.get(j));
                     }
-                    newGlyphLine.glyphs = glyphs;
-                    newGlyphLine.end = glyphs.size();
+                    int newGlyphLineEnd = newGlyphLine.glyphs.size();
                     for (int j = glyphLine.end; j < glyphLine.glyphs.size(); j++) {
-                        newGlyphLine.glyphs.add(glyphLine.glyphs.get(j));
+                        newGlyphLine.add(glyphLine.glyphs.get(j));
                     }
 
                     glyphLine.glyphs.clear();
                     glyphLine.glyphs.addAll(newGlyphLine.glyphs);
-                    glyphLine.end = newGlyphLine.end;
+                    if (glyphLine.actualText != null) {
+                        glyphLine.actualText.clear();
+                    }
+                    if (newGlyphLine.actualText != null) {
+                        if (glyphLine.actualText == null) {
+                            glyphLine.actualText = new ArrayList<>();
+                        }
+                        glyphLine.actualText.addAll(newGlyphLine.actualText);
+                    }
+                    glyphLine.end = newGlyphLineEnd;
                     transformed = true;
                 }
             }

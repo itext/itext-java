@@ -2,6 +2,7 @@ package com.itextpdf.canvas;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.geom.Rectangle;
@@ -40,6 +41,7 @@ import com.itextpdf.core.pdf.xobject.PdfXObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
 
@@ -661,57 +663,76 @@ public class PdfCanvas {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
         float scaling = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
-        int sub = 0;
-        for (int iter = 0; iter < text.size(); iter++) {
-            Glyph glyph = text.get(iter);
-            if (glyph.hasOffsets()) {
-                if (iter - 1 - sub >= 0) {
-                    font.writeText(text, sub, iter - 1, contentStream.getOutputStream());
+        for (Iterator<GlyphLine.GlyphLinePart> iterator = text.iterator(); iterator.hasNext(); ) {
+            GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
+            if (glyphLinePart.actualText != null) {
+                PdfDictionary properties = new PdfDictionary();
+                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UnicodeBig).setHexWriting(true));
+                beginMarkedContent(PdfName.Span, properties);
+            }
+            int sub = glyphLinePart.start;
+            for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
+                Glyph glyph = text.get(i);
+                if (glyph.hasOffsets()) {
+                    if (i - 1 - sub >= 0) {
+                        font.writeText(text, sub, i - 1, contentStream.getOutputStream());
+                        contentStream.getOutputStream().writeBytes(Tj);
+                        contentStream.getOutputStream()
+                                .writeFloat(getSubrangeWidth(text, sub, i - 1), true)
+                                .writeSpace()
+                                .writeFloat(0)
+                                .writeSpace()
+                                .writeBytes(Td);
+                    }
+                    Float xPlacement = null;
+                    Float yPlacement = null;
+                    if (glyph.hasPlacement()) {
+                        xPlacement = -getSubrangeWidth(text, i + glyph.getAnchorDelta(), i) + glyph.getXPlacement() * fontSize;
+                        yPlacement = glyph.getYAdvance() * fontSize;
+                        contentStream.getOutputStream()
+                                .writeFloat(xPlacement, true)
+                                .writeSpace()
+                                .writeFloat(yPlacement, true)
+                                .writeSpace()
+                                .writeBytes(Td);
+                    }
+                    font.writeText(text, i, i, contentStream.getOutputStream());
                     contentStream.getOutputStream().writeBytes(Tj);
+                    if (xPlacement != null) {
+                        contentStream.getOutputStream()
+                                .writeFloat(-xPlacement, true)
+                                .writeSpace()
+                                .writeFloat(-yPlacement, true)
+                                .writeSpace()
+                                .writeBytes(Td);
+
+                    }
+                    if (glyph.hasAdvance()) {
+                        contentStream.getOutputStream()
+                                .writeFloat(((glyph.getWidth() + glyph.getXAdvance()) * fontSize + charSpacing) * scaling, true)
+                                .writeSpace()
+                                .writeFloat(glyph.getYAdvance() * fontSize, true)// TODO shall previous y position been restored?
+                                .writeSpace()
+                                .writeBytes(Td);
+                    }
+                    sub = i + 1;
+                }
+            }
+            if (glyphLinePart.end - sub > 0) {
+                font.writeText(text, sub, glyphLinePart.end - 1, contentStream.getOutputStream());
+                contentStream.getOutputStream().writeBytes(Tj);
+            }
+            if (glyphLinePart.actualText != null) {
+                endMarkedContent();
+            }
+            if (glyphLinePart.end > sub && iterator.hasNext()) {
                     contentStream.getOutputStream()
-                            .writeFloat(getSubrangeWidth(text, sub, iter - 1))
+                            .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.end - 1), true)
                             .writeSpace()
                             .writeFloat(0)
                             .writeSpace()
                             .writeBytes(Td);
-                }
-                Float xPlacement = null;
-                Float yPlacement = null;
-                if (glyph.hasPlacement()) {
-                    xPlacement = -getSubrangeWidth(text, iter + glyph.getAnchorDelta(), iter) + glyph.getXPlacement() * fontSize;
-                    yPlacement = glyph.getYAdvance() * fontSize;
-                    contentStream.getOutputStream()
-                            .writeFloat(xPlacement)
-                            .writeSpace()
-                            .writeFloat(yPlacement)
-                            .writeSpace()
-                            .writeBytes(Td);
-                }
-                font.writeText(text, iter, iter, contentStream.getOutputStream());
-                contentStream.getOutputStream().writeBytes(Tj);
-                if (xPlacement != null) {
-                    contentStream.getOutputStream()
-                            .writeFloat(-xPlacement)
-                            .writeSpace()
-                            .writeFloat(-yPlacement)
-                            .writeSpace()
-                            .writeBytes(Td);
-
-                }
-                if (glyph.hasAdvance()) {
-                    contentStream.getOutputStream()
-                            .writeFloat(((glyph.getWidth() + glyph.getXAdvance()) * fontSize + charSpacing) * scaling)
-                            .writeSpace()
-                            .writeFloat(glyph.getYAdvance() * fontSize)// TODO shall previous y position been restored?
-                            .writeSpace()
-                            .writeBytes(Td);
-                }
-                sub = iter + 1;
             }
-        }
-        if (text.size() - sub > 0) {
-            font.writeText(text, sub, text.size() - 1, contentStream.getOutputStream());
-            contentStream.getOutputStream().writeBytes(Tj);
         }
         return this;
     }

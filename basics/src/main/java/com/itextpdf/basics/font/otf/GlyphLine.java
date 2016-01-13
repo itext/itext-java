@@ -3,10 +3,13 @@ package com.itextpdf.basics.font.otf;
 import com.itextpdf.basics.Utilities;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
-public class GlyphLine {
+public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
     public List<Glyph> glyphs;
+    public List<ActualText> actualText;
     public int start;
     public int end;
     public int idx;
@@ -27,13 +30,20 @@ public class GlyphLine {
         this.end = end;
     }
 
+    public GlyphLine(List<Glyph> glyphs, List<ActualText> actualText, int start, int end) {
+        this(glyphs, start, end);
+        this.actualText = actualText;
+    }
+
     public GlyphLine(GlyphLine other) {
         this.glyphs = other.glyphs;
+        this.actualText = other.actualText;
         this.start = other.start;
         this.end = other.end;
         this.idx = other.idx;
     }
 
+    // TODO take into account actual text as direct order is not correct for Indic reordering
     public String toUnicodeString(int left, int right) {
         StringBuilder str = new StringBuilder();
         for (int i = left; i < right; i++) {
@@ -51,6 +61,7 @@ public class GlyphLine {
         glyphLine.start = 0;
         glyphLine.end = right - left;
         glyphLine.glyphs = new ArrayList<>(glyphs.subList(left, right));
+        glyphLine.actualText = actualText == null ? null : new ArrayList<>(actualText.subList(left, right));
         return glyphLine;
     }
 
@@ -62,8 +73,11 @@ public class GlyphLine {
         return glyphs.set(index, glyph);
     }
 
-    public boolean add(Glyph glyph) {
-        return glyphs.add(glyph);
+    public void add(Glyph glyph) {
+        glyphs.add(glyph);
+        if (actualText != null) {
+            actualText.add(null);
+        }
     }
 
     public int size() {
@@ -91,7 +105,7 @@ public class GlyphLine {
             } else if (currentGlyph.getUnicode() != null) {
                 chars.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
             }
-            glyphs.remove(gidx.idx--);
+            removeGlyph(gidx.idx--);
         }
         char[] newChars = new char[chars.length()];
         chars.getChars(0, chars.length(), newChars, 0);
@@ -126,10 +140,151 @@ public class GlyphLine {
                 glyph = tableReader.getGlyph(substCode);
                 additionalGlyphs.add(glyph);
             }
-            glyphs.addAll(idx + 1, additionalGlyphs);
+            addAllGlyphs(idx + 1, additionalGlyphs);
             idx += substGlyphIds.length - 1;
             end += substGlyphIds.length - 1;
         }
     }
 
+    public GlyphLine filter(GlyphLineFilter filter) {
+        // TODO optimize in case nothing is filtered
+        List<Glyph> stayGlyphs = new ArrayList<>(end - start);
+        List<ActualText> stayActualText = actualText != null ? new ArrayList<>(end - start) : (List)null;
+        for (int i = start; i < end; i++) {
+            if (filter.accept(glyphs.get(i))) {
+                stayGlyphs.add(glyphs.get(i));
+                if (stayActualText != null) {
+                    stayActualText.add(actualText.get(i));
+                }
+            }
+        }
+        return new GlyphLine(stayGlyphs, stayActualText, 0, stayGlyphs.size());
+    }
+
+    public void setActualText(int left, int right, String text) {
+        if (this.actualText == null) {
+            this.actualText = new ArrayList<>(glyphs.size());
+            List<ActualText> actualText = Collections.nCopies(glyphs.size(), null);
+            this.actualText.addAll(actualText);
+        }
+        ActualText actualText = new ActualText(text);
+        for (int i = left; i < right; i++) {
+            this.actualText.set(i, actualText);
+        }
+    }
+
+    @Override
+    public Iterator<GlyphLinePart> iterator() {
+        return new Iterator<GlyphLinePart>() {
+            private int pos = start;
+
+            @Override
+            public boolean hasNext() {
+                return pos < end;
+            }
+
+            @Override
+            public GlyphLinePart next() {
+                if (actualText == null) {
+                    GlyphLinePart result = new GlyphLinePart(pos, end, null);
+                    pos = end;
+                    return result;
+                } else {
+                    GlyphLinePart currentResult = nextGlyphLinePart(pos);
+                    if (currentResult == null) {
+                        return null;
+                    }
+                    pos = currentResult.end;
+                    while (pos < end && !glyphLinePartNeedsActualText(currentResult)) {
+                        currentResult.actualText = null;
+                        GlyphLinePart nextResult = nextGlyphLinePart(pos);
+                        if (nextResult != null && !glyphLinePartNeedsActualText(nextResult)) {
+                            currentResult.end = nextResult.end;
+                            pos = nextResult.end;
+                        } else {
+                            break;
+                        }
+                    }
+                    return currentResult;
+                }
+            }
+
+            @Override
+            public void remove() {
+                throw new IllegalStateException("Operation not supported");
+            }
+
+            private GlyphLinePart nextGlyphLinePart(int pos) {
+                if (pos >= end) {
+                    return null;
+                }
+                int startPos = pos;
+                ActualText startActualText = actualText.get(pos);
+                while (pos < end && actualText.get(pos) == startActualText) {
+                    pos++;
+                }
+                return new GlyphLinePart(startPos, pos, startActualText != null ? startActualText.value : null);
+            }
+
+            private boolean glyphLinePartNeedsActualText(GlyphLinePart glyphLinePart) {
+                if (glyphLinePart.actualText == null) {
+                    return false;
+                }
+                boolean needsActualText = false;
+                StringBuilder toUnicodeMapResult = new StringBuilder();
+                for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
+                    Glyph currentGlyph = glyphs.get(i);
+                    if (currentGlyph.getUnicode() == null) {
+                        needsActualText = true;
+                        break;
+                    }
+
+                    // TODO zero glyph is a special case. Unicode might be special
+
+                    toUnicodeMapResult.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
+                }
+
+                return needsActualText || !toUnicodeMapResult.toString().equals(glyphLinePart.actualText);
+            }
+        };
+    }
+
+    private void removeGlyph(int index) {
+        glyphs.remove(index);
+        if (actualText != null) {
+            actualText.remove(index);
+        }
+    }
+
+    private void addAllGlyphs(int index, List<Glyph> additionalGlyphs) {
+        glyphs.addAll(index, additionalGlyphs);
+        if (actualText != null) {
+            List<ActualText> actualTexts = Collections.nCopies(additionalGlyphs.size(), null);
+            actualText.addAll(index, actualTexts);
+        }
+    }
+
+    public static class GlyphLinePart {
+        public int start;
+        public int end;
+        public String actualText;
+
+        public GlyphLinePart(int start, int end, String actualText) {
+            this.start = start;
+            this.end = end;
+            this.actualText = actualText;
+        }
+    }
+
+    public interface GlyphLineFilter {
+        boolean accept(Glyph glyph);
+    }
+
+    protected static class ActualText {
+        public ActualText(String value) {
+            this.value = value;
+        }
+
+        public String value;
+    }
 }
