@@ -29,17 +29,27 @@ public class Type3Glyph extends PdfCanvas {
 
     private boolean isColor = false;
 
+    /**
+     * Creates a Type3Glyph canvas with a new Content Stream
+     * 
+     * @param pdfDocument the document that this canvas is created for
+     */
     public Type3Glyph(PdfDocument pdfDocument) {
         super(new PdfStream(), null, pdfDocument);
     }
 
+    /**
+     * Creates a Type3Glyph canvas with a non-empty Content Stream
+     * 
+     * @param pdfDocument the document that this canvas is created for
+     * @param bytes the pre-existing content which is added at creation time
+     */
     public Type3Glyph(PdfDocument pdfDocument, byte[] bytes) {
         super(new PdfStream(bytes), null, pdfDocument);
         if (bytes != null) {
             fillBBFromBytes(bytes);
         }
     }
-
 
     public float getWx() {
         return wx;
@@ -93,6 +103,21 @@ public class Type3Glyph extends PdfCanvas {
         this.isColor = isColor;
     }
 
+    /**
+     * Writes the width and optionally the bounding box parameters for a glyph
+     * 
+     * @param wx  the advance this character will have
+     * @param llx the X lower left corner of the glyph bounding box. If the <CODE>isColor</CODE> option is
+     *            <CODE>true</CODE> the value is ignored
+     * @param lly the Y lower left corner of the glyph bounding box. If the <CODE>isColor</CODE> option is
+     *            <CODE>true</CODE> the value is ignored
+     * @param urx the X upper right corner of the glyph bounding box. If the <CODE>isColor</CODE> option is
+     *            <CODE>true</CODE> the value is ignored
+     * @param ury the Y upper right corner of the glyph bounding box. If the <CODE>isColor</CODE> option is
+     *            <CODE>true</CODE> the value is ignored
+     * @param isColor defines whether the glyph color is specified in the glyph description in the font.
+     *            The consequence of value <CODE>true</CODE> is that the bounding box parameters are ignored.
+     */
     public void writeMetrics(float wx, float llx, float lly, float urx, float ury, boolean isColor) {
 
         this.isColor = isColor;
@@ -130,6 +155,7 @@ public class Type3Glyph extends PdfCanvas {
         }
     }
 
+    @Override
     public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean inlineImage) {
         if (!isColor && (!image.isMask() || !(image.getBpc() == 1 || image.getBpc() > 0xff))) {
             throw new PdfException("not.colorized.typed3.fonts.only.accept.mask.images");

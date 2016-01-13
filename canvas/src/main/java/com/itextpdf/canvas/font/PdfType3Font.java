@@ -20,25 +20,31 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
+/**
+ * Low-level API class for Type 3 fonts.
+ * 
+ * In Type 3 fonts, glyphs are defined by streams of PDF graphics operators.
+ * These streams are associated with character names. A separate encoding entry
+ * maps character codes to the appropriate character names for the glyphs.
+ */
 public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
-    private boolean[] usedSlot = new boolean[256];
+    private final boolean[] usedSlot = new boolean[256];
 
-    private HashMap<Integer, Type3Glyph> charGlyphs = new HashMap<Integer, Type3Glyph>();
+    private final HashMap<Integer, Type3Glyph> charGlyphs = new HashMap<>();
 
     private boolean isColor = false;
 
     /**
      * array of six numbers specifying the font matrix, mapping glyph space to text space
      */
-
     PdfArray differences = new PdfArray();
 
     /**
      * Creates a Type3 font.
      *
      * @param pdfDocument pdfDocument and only images as masks can be used
+     * @param isColor defines whether the glyph color is specified in the glyph descriptions in the font.
      */
     public PdfType3Font(PdfDocument pdfDocument, boolean isColor) {
         super(pdfDocument,new PdfDictionary());
@@ -47,9 +53,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     }
 
     /**
-     * Creates a Type3 font on based exist font dictionary.
+     * Creates a Type3 font based on an existing font dictionary.
      *
      * @param pdfDocument pdfDocument and only images as masks can be used
+     * @param fontDictionary a dictionary of type <code>/Font</code>
      */
     public PdfType3Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) {
         super(pdfDocument,fontDictionary,true);
@@ -58,6 +65,12 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         init();
     }
 
+    /**
+     * Creates a Type3 font based on a reference to an existing font dictionary.
+     *
+     * @param pdfDocument pdfDocument and only images as masks can be used
+     * @param indirectReference a reference to a font dictionary
+     */
     public PdfType3Font(PdfDocument pdfDocument, PdfIndirectReference indirectReference) {
         this(pdfDocument, (PdfDictionary) indirectReference.getRefersTo());
     }
@@ -83,6 +96,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      * @param urx the X upper right corner of the glyph bounding box. If the <CODE>colorize</CODE> option is
      *            <CODE>true</CODE> the value is ignored
      * @param ury the Y upper right corner of the glyph bounding box. If the <CODE>colorize</CODE> option is
+     *            <CODE>true</CODE> the value is ignored
      * @return a content where the glyph can be defined
      */
     public Type3Glyph createGlyph(char c, int wx, int llx, int lly, int urx, int ury) {
@@ -167,6 +181,12 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return null;
     }
 
+    /**
+     * Looks up existence of a character in this font
+     * 
+     * @param c a local glyph ID; should be in the range [0,256[
+     * @return whether or not the character exists in the font
+     */
     public boolean charExists(int c) {
         if (c >= 0 && c < 256) {
             return usedSlot[c];
