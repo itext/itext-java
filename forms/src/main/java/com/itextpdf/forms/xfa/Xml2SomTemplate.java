@@ -4,6 +4,7 @@ import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Processes the template section in the XFA form.
@@ -18,12 +19,12 @@ public  class Xml2SomTemplate extends Xml2Som {
      * @param n the template node
      */
     public Xml2SomTemplate(Node n) {
-        order = new ArrayList<String>();
-        name2Node = new HashMap<String, Node>();
-        stack = new Stack2<String>();
+        order = new ArrayList<>();
+        name2Node = new HashMap<>();
+        stack = new Stack2<>();
         anform = 0;
         templateLevel = 0;
-        inverseSearch = new HashMap<String, InverseStore>();
+        inverseSearch = new HashMap<>();
         processTemplate(n, null);
     }
 
@@ -58,10 +59,10 @@ public  class Xml2SomTemplate extends Xml2Som {
         return null;
     }
 
-    private void processTemplate(Node n, HashMap<String, Integer> ff) {
+    private void processTemplate(Node n, Map<String, Integer> ff) {
         if (ff == null)
-            ff = new HashMap<String, Integer>();
-        HashMap<String, Integer> ss = new HashMap<String, Integer>();
+            ff = new HashMap<>();
+        Map<String, Integer> ss = new HashMap<>();
         Node n2 = n.getFirstChild();
         while (n2 != null) {
             if (n2.getNodeType() == Node.ELEMENT_NODE) {
@@ -76,14 +77,14 @@ public  class Xml2SomTemplate extends Xml2Som {
                     }
                     Integer i;
                     if (annon) {
-                        i = Integer.valueOf(anform);
+                        i = anform;
                         ++anform;
                     } else {
                         i = ss.get(nn);
                         if (i == null)
-                            i = Integer.valueOf(0);
+                            i = 0;
                         else
-                            i = Integer.valueOf(i.intValue() + 1);
+                            i += 1;
                         ss.put(nn, i);
                     }
                     stack.push(nn + "[" + i.toString() + "]");
@@ -100,9 +101,9 @@ public  class Xml2SomTemplate extends Xml2Som {
                         String nn = escapeSom(name.getNodeValue());
                         Integer i = ff.get(nn);
                         if (i == null)
-                            i = Integer.valueOf(0);
+                            i = 0;
                         else
-                            i = Integer.valueOf(i.intValue() + 1);
+                            i += 1;
                         ff.put(nn, i);
                         stack.push(nn + "[" + i.toString() + "]");
                         String unstack = printStack();

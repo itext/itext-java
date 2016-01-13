@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 
@@ -277,7 +278,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[][], String value, String name) {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         for (String[] option : options) {
             text.append(option[1]).append('\n');
         }
@@ -285,7 +286,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[], String value, String name) {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         for (String option : options) {
             text.append(option).append('\n');
         }
@@ -1045,24 +1046,24 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
 
                 Object[] fontAndSize = getFontAndSize(asNormal);
-                PdfFont font = (PdfFont) fontAndSize[0];
-                int fontSize = (int) fontAndSize[1];
-                if (fontSize == 0){
-                    fontSize = DEFAULT_FONT_SIZE;
+                PdfFont localFont = (PdfFont) fontAndSize[0];
+                int fontSz = (int) fontAndSize[1];
+                if (fontSz == 0){
+                    fontSz = DEFAULT_FONT_SIZE;
                 }
 
                 PdfFormXObject appearance;
                 if (PdfName.Tx.equals(type)) {
                     if (!isMultiline()) {
-                        appearance = drawTextAppearance(bBox.toRectangle(), font, fontSize, value);
+                        appearance = drawTextAppearance(bBox.toRectangle(), localFont, fontSz, value);
                     } else {
-                        appearance = drawMultiLineTextAppearance(bBox.toRectangle(), font, fontSize, value);
+                        appearance = drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSz, value);
                     }
 
                 } else {
-                    appearance = drawMultiLineTextAppearance(bBox.toRectangle(), font, fontSize, value);
+                    appearance = drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSz, value);
                 }
-                appearance.getResources().addFont(font);
+                appearance.getResources().addFont(localFont);
                 PdfDictionary ap = new PdfDictionary();
                 ap.put(PdfName.N, appearance.getPdfObject());
                 put(PdfName.AP, ap);
@@ -1088,10 +1089,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                             asNormal = apDic.getAsStream(PdfName.N);
                         }
                         Object[] fontAndSize = getFontAndSize(asNormal);
-                        PdfFont font = (PdfFont) fontAndSize[0];
-                        int fontSize = (int) fontAndSize[1];
-                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, font, fontSize);
-                        appearance.getResources().addFont(font);
+                        PdfFont localFont = (PdfFont) fontAndSize[0];
+                        int fontSz = (int) fontAndSize[1];
+                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, localFont, fontSz);
+                        appearance.getResources().addFont(localFont);
                     }
 
                     apDic = new PdfDictionary();
@@ -1183,7 +1184,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public String[] getAppearanceStates() {
-        HashSet<String> names = new HashSet<>();
+        Set<String> names = new HashSet<>();
         PdfString stringOpt = getPdfObject().getAsString(PdfName.Opt);
         if (stringOpt != null) {
             names.add(stringOpt.toUnicodeString());
@@ -1363,7 +1364,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     protected static Object[] splitDAelements(String da) {
         PdfTokenizer tk = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(PdfEncodings.convertToBytes(da, null))));
-        ArrayList<String> stack = new ArrayList<String>();
+        List<String> stack = new ArrayList<>();
         Object ret[] = new Object[3];
         try {
             while (tk.nextToken()) {

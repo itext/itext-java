@@ -1,14 +1,15 @@
 package com.itextpdf.forms.xfa;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A structure to store each part of a SOM name and link it to the next part
  * beginning from the lower hierarchy.
  */
 public  class InverseStore {
-    protected ArrayList<String> part = new ArrayList<String>();
-    protected ArrayList<Object> follow = new ArrayList<Object>();
+    protected List<String> part = new ArrayList<>();
+    protected List<Object> follow = new ArrayList<>();
 
     /**
      * Gets the full name by traversing the hierarchy using only the

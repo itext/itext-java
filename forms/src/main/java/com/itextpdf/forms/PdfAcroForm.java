@@ -20,12 +20,15 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.forms.xfa.Xml2Som;
+
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
@@ -36,12 +39,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     static public final int APPEND_ONLY = 2;
 
     protected boolean generateAppearance;
-    protected LinkedHashMap<String, PdfFormField> fields = new LinkedHashMap<>();
+    protected Map<String, PdfFormField> fields = new LinkedHashMap<>();
     protected PdfDocument document;
 
     private static PdfName resourceNames[] = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
     private PdfDictionary defaultResources;
-    private LinkedHashSet<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
+    private Set<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
     private XfaForm xfaForm;
 
 
@@ -177,7 +180,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public LinkedHashMap<String, PdfFormField> getFormFields() {
+    public Map<String, PdfFormField> getFormFields() {
         if (fields.isEmpty()) {
             fields = iterateFields(getFields());
         }
@@ -274,7 +277,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (document.isAppendMode()) {
             throw new PdfException(PdfException.FieldFlatteningIsNotSupportedInAppendMode);
         }
-        LinkedHashSet<PdfFormField> fields;
+        Set<PdfFormField> fields;
         if (fieldsForFlattening.isEmpty()) {
             fields = new LinkedHashSet<>(getFormFields().values());
         } else {
@@ -393,7 +396,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public void renameField(String oldName, String newName) {
-        LinkedHashMap<String, PdfFormField> fields = getFormFields();
+        Map<String, PdfFormField> fields = getFormFields();
         if (fields.containsKey(newName)) {
             return;
         }
@@ -425,8 +428,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsArray(PdfName.Fields);
     }
 
-    private LinkedHashMap<String, PdfFormField> iterateFields(PdfArray array) {
-        LinkedHashMap<String, PdfFormField> fields = new LinkedHashMap<>();
+    private Map<String, PdfFormField> iterateFields(PdfArray array) {
+        Map<String, PdfFormField> fields = new LinkedHashMap<>();
 
         int index = 1;
         for (PdfObject field : array) {
@@ -620,8 +623,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
-    private LinkedHashSet<PdfFormField> prepareFieldsForFlattening(PdfFormField field) {
-        LinkedHashSet<PdfFormField> preparedFields = new LinkedHashSet<>();
+    private Set<PdfFormField> prepareFieldsForFlattening(PdfFormField field) {
+        Set<PdfFormField> preparedFields = new LinkedHashSet<>();
         preparedFields.add(field);
         PdfArray kids = field.getKids();
         if (kids != null) {

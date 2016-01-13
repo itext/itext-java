@@ -10,13 +10,14 @@ import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
@@ -46,9 +47,9 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
         List<PdfDictionary> usedParents = new ArrayList<>();
         if (formFrom != null) {
-            LinkedHashMap<String, PdfFormField> fieldsFrom = formFrom.getFormFields();
+            Map<String, PdfFormField> fieldsFrom = formFrom.getFormFields();
             if (!fieldsFrom.isEmpty()) {
-                LinkedHashMap<String, PdfFormField> fieldsTo = formTo.getFormFields();
+                Map<String, PdfFormField> fieldsTo = formTo.getFormFields();
                 List<PdfAnnotation> annots = toPage.getAnnotations();
                 for (PdfAnnotation annot : annots) {
                     if (annot.getSubtype().equals(PdfName.Widget)) {

@@ -2,12 +2,13 @@ package com.itextpdf.forms.xfa;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A class to process "classic" fields.
  */
 public class AcroFieldsSearch extends Xml2Som {
-    private HashMap<String, String> acroShort2LongName;
+    private Map<String, String> acroShort2LongName;
 
     /**
      * Creates a new instance from a Collection with the full names.
@@ -15,8 +16,8 @@ public class AcroFieldsSearch extends Xml2Som {
      * @param items the Collection
      */
     public AcroFieldsSearch(Collection<String> items) {
-        inverseSearch = new HashMap<String, InverseStore>();
-        acroShort2LongName = new HashMap<String, String>();
+        inverseSearch = new HashMap<>();
+        acroShort2LongName = new HashMap<>();
         for (String string : items) {
             String itemName = string;
             String itemShort = getShortName(itemName);
@@ -31,7 +32,7 @@ public class AcroFieldsSearch extends Xml2Som {
      *
      * @return the mapping from short names to long names
      */
-    public HashMap<String, String> getAcroShort2LongName() {
+    public Map<String, String> getAcroShort2LongName() {
         return acroShort2LongName;
     }
 
@@ -41,7 +42,7 @@ public class AcroFieldsSearch extends Xml2Som {
      *
      * @param acroShort2LongName the mapping from short names to long names
      */
-    public void setAcroShort2LongName(HashMap<String, String> acroShort2LongName) {
+    public void setAcroShort2LongName(Map<String, String> acroShort2LongName) {
         this.acroShort2LongName = acroShort2LongName;
     }
 }

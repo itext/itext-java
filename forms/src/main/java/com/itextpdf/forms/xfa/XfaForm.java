@@ -151,7 +151,7 @@ public class XfaForm {
     }
 
     public static Map<String, Node> extractXFANodes(Document domDocument) {
-        Map<String, Node> xfaNodes = new HashMap<String, Node>();
+        Map<String, Node> xfaNodes = new HashMap<>();
         Node n = domDocument.getFirstChild();
         while (n.getChildNodes().getLength() == 0) {
             n = n.getNextSibling();

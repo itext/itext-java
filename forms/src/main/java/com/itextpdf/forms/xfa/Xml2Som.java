@@ -2,8 +2,8 @@ package com.itextpdf.forms.xfa;
 
 import org.w3c.dom.Node;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A class for some basic SOM processing.
@@ -12,15 +12,15 @@ public class Xml2Som {
     /**
      * The order the names appear in the XML, depth first.
      */
-    protected ArrayList<String> order;
+    protected List<String> order;
     /**
      * The mapping of full names to nodes.
      */
-    protected HashMap<String, Node> name2Node;
+    protected Map<String, Node> name2Node;
     /**
      * The data to do a search from the bottom hierarchy.
      */
-    protected HashMap<String, InverseStore> inverseSearch;
+    protected Map<String, InverseStore> inverseSearch;
     /**
      * A stack to be used when parsing.
      */
@@ -42,7 +42,7 @@ public class Xml2Som {
         int idx = s.indexOf('.');
         if (idx < 0)
             return s;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int last = 0;
         while (idx >= 0) {
             sb.append(s.substring(last, idx));
@@ -64,7 +64,7 @@ public class Xml2Som {
         int idx = s.indexOf('\\');
         if (idx < 0)
             return s;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int last = 0;
         while (idx >= 0) {
             sb.append(s.substring(last, idx));
@@ -84,7 +84,7 @@ public class Xml2Som {
     protected String printStack() {
         if (stack.empty())
             return "";
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         for (int k = 0; k < stack.size(); ++k)
             s.append('.').append(stack.get(k));
         return s.substring(1);
@@ -101,7 +101,7 @@ public class Xml2Som {
         if (idx < 0)
             return s;
         int last = 0;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (idx >= 0) {
             sb.append(s.substring(last, idx));
             idx = s.indexOf("]", idx + 10);
@@ -130,7 +130,7 @@ public class Xml2Som {
      * @param stack         the stack with the separated SOM parts
      * @param unstack       the full name
      */
-    public static void inverseSearchAdd(HashMap<String, InverseStore> inverseSearch, Stack2<String> stack, String unstack) {
+    public static void inverseSearchAdd(Map<String, InverseStore> inverseSearch, Stack2<String> stack, String unstack) {
         String last = stack.peek();
         InverseStore store = inverseSearch.get(last);
         if (store == null) {
@@ -159,7 +159,7 @@ public class Xml2Som {
      * @param parts the SOM parts
      * @return the full name or <CODE>null</CODE> if not found
      */
-    public String inverseSearchGlobal(ArrayList<String> parts) {
+    public String inverseSearchGlobal(List<String> parts) {
         if (parts.isEmpty())
             return null;
         InverseStore store = inverseSearch.get(parts.get(parts.size() - 1));
@@ -187,7 +187,7 @@ public class Xml2Som {
     public static Stack2<String> splitParts(String name) {
         while (name.startsWith("."))
             name = name.substring(1);
-        Stack2<String> parts = new Stack2<String>();
+        Stack2<String> parts = new Stack2<>();
         int last = 0;
         int pos = 0;
         String part;
@@ -222,7 +222,7 @@ public class Xml2Som {
      *
      * @return the order the names appear in the XML, depth first
      */
-    public ArrayList<String> getOrder() {
+    public List<String> getOrder() {
         return order;
     }
 
@@ -231,7 +231,7 @@ public class Xml2Som {
      *
      * @param order the order the names appear in the XML, depth first
      */
-    public void setOrder(ArrayList<String> order) {
+    public void setOrder(List<String> order) {
         this.order = order;
     }
 
@@ -240,7 +240,7 @@ public class Xml2Som {
      *
      * @return the mapping of full names to nodes
      */
-    public HashMap<String, Node> getName2Node() {
+    public Map<String, Node> getName2Node() {
         return name2Node;
     }
 
@@ -249,7 +249,7 @@ public class Xml2Som {
      *
      * @param name2Node the mapping of full names to nodes
      */
-    public void setName2Node(HashMap<String, Node> name2Node) {
+    public void setName2Node(Map<String, Node> name2Node) {
         this.name2Node = name2Node;
     }
 
@@ -258,7 +258,7 @@ public class Xml2Som {
      *
      * @return the data to do a search from the bottom hierarchy
      */
-    public HashMap<String, InverseStore> getInverseSearch() {
+    public Map<String, InverseStore> getInverseSearch() {
         return inverseSearch;
     }
 
@@ -267,7 +267,7 @@ public class Xml2Som {
      *
      * @param inverseSearch the data to do a search from the bottom hierarchy
      */
-    public void setInverseSearch(HashMap<String, InverseStore> inverseSearch) {
+    public void setInverseSearch(Map<String, InverseStore> inverseSearch) {
         this.inverseSearch = inverseSearch;
     }
 }

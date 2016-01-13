@@ -4,6 +4,7 @@ import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Processes the datasets section in the XFA form.
@@ -16,11 +17,11 @@ public class Xml2SomDatasets extends Xml2Som {
      * @param n the datasets node
      */
     public Xml2SomDatasets(Node n) {
-        order = new ArrayList<String>();
-        name2Node = new HashMap<String, Node>();
-        stack = new Stack2<String>();
+        order = new ArrayList<>();
+        name2Node = new HashMap<>();
+        stack = new Stack2<>();
         anform = 0;
-        inverseSearch = new HashMap<String, InverseStore>();
+        inverseSearch = new HashMap<>();
         processDatasetsInternal(n);
     }
 
@@ -32,14 +33,14 @@ public class Xml2SomDatasets extends Xml2Som {
      * @return the new <CODE>Node</CODE> of the inserted name
      */
     public Node insertNode(Node n, String shortName) {
-        Stack2<String> stack = splitParts(shortName);
+        Stack2<String> localStack = splitParts(shortName);
         org.w3c.dom.Document doc = n.getOwnerDocument();
         Node n2 = null;
         n = n.getFirstChild();
         while (n.getNodeType() != Node.ELEMENT_NODE)
             n = n.getNextSibling();
-        for (int k = 0; k < stack.size(); ++k) {
-            String part = stack.get(k);
+        for (int k = 0; k < localStack.size(); ++k) {
+            String part = localStack.get(k);
             int idx = part.lastIndexOf('[');
             String name = part.substring(0, idx);
             idx = Integer.parseInt(part.substring(idx + 1, part.length() - 1));
@@ -63,7 +64,7 @@ public class Xml2SomDatasets extends Xml2Som {
             }
             n = n2;
         }
-        inverseSearchAdd(inverseSearch, stack, shortName);
+        inverseSearchAdd(inverseSearch, localStack, shortName);
         name2Node.put(shortName, n2);
         order.add(shortName);
         return n2;
@@ -92,16 +93,16 @@ public class Xml2SomDatasets extends Xml2Som {
 
     private void processDatasetsInternal(Node n) {
         if (n != null) {
-            HashMap<String, Integer> ss = new HashMap<String, Integer>();
+            Map<String, Integer> ss = new HashMap<>();
             Node n2 = n.getFirstChild();
             while (n2 != null) {
                 if (n2.getNodeType() == Node.ELEMENT_NODE) {
                     String s = escapeSom(n2.getLocalName());
                     Integer i = ss.get(s);
                     if (i == null)
-                        i = Integer.valueOf(0);
+                        i = 0;
                     else
-                        i = Integer.valueOf(i.intValue() + 1);
+                        i += 1;
                     ss.put(s, i);
                     if (hasChildren(n2)) {
                         stack.push(s + "[" + i.toString() + "]");
