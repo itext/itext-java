@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A sample implementation of the {#link IPdfPageExtraCopier} interface which
+ * copies only AcroForm fields to a new page.
+ */
 public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
     PdfAcroForm formFrom;
