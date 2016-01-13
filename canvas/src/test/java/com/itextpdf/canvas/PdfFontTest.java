@@ -37,6 +37,7 @@ import com.itextpdf.text.pdf.PdfException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -1220,6 +1221,16 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertTrue(pdfFont instanceof  PdfTrueTypeFont);
         pdfDoc.addNewPage();
         pdfDoc.close();
+    }
+
+    @Test
+    public void testSplitString() throws IOException {
+        PdfFont font = PdfFont.getDefaultFont(null);
+        List<String> list1 = font.splitString("Hello", 12, 10);
+        Assert.assertTrue(list1.size() == 2);
+
+        List<String> list2 = font.splitString("Digitally signed by Dmitry Trusevich\nDate: 2015.10.25 14:43:56 MSK\nReason: Test 1\nLocation: Ghent", 12, 176);
+        Assert.assertTrue(list2.size() == 5);
     }
 
 

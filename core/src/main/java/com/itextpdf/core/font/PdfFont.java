@@ -588,16 +588,22 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             }
             tokenLength += getWidthPoint(ch, fontSize);
             if (tokenLength >= maxWidth || ch == '\n') {
-                resultString.add(text.substring(startPos, lastWhiteSpace));
-                startPos = lastWhiteSpace + 1;
-                tokenLength = 0;
-                i = lastWhiteSpace;
+                if(startPos < lastWhiteSpace) {
+                    resultString.add(text.substring(startPos, lastWhiteSpace));
+                    startPos = lastWhiteSpace + 1;
+                    tokenLength = 0;
+                    i = lastWhiteSpace;
+                }else{
+                    resultString.add(text.substring(startPos, i+1));
+                    startPos = i+1;
+                    tokenLength = 0;
+                    i=i+1;
+                }
             }
 
         }
 
         resultString.add(text.substring(startPos));
-
         return resultString;
     }
 
