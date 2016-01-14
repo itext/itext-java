@@ -63,7 +63,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     static public final int APPEND_ONLY = 2;
 
-    protected boolean generateAppearance;
+    protected boolean generateAppearance = true;
     protected Map<String, PdfFormField> fields = new LinkedHashMap<>();
     protected PdfDocument document;
 
