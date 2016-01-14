@@ -60,14 +60,14 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
 
-    public PdfType0Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        super(pdfDocument, fontDictionary, true);
+    public PdfType0Font(PdfDictionary fontDictionary) {
+        super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type0);
         init();
     }
 
     public PdfType0Font(PdfDocument document, TrueTypeFont ttf, String cmap) {
-        super(document,new PdfDictionary());
+        super(document);
         if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
             throw new PdfException("only.identity.cmaps.supports.with.truetype");
         }
@@ -99,7 +99,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     // Or not? Possible it will be convenient construct PdfType0Font based on custom CidFont.
     // There is no typography features in CJK fonts.
     public PdfType0Font(PdfDocument document, CidFont font, String cmap) {
-        super(document,new PdfDictionary());
+        super(document);
         if (!CidFontProperties.isCidFont(font.getFontNames().getFontName(), cmap)) {
             throw new PdfException("font.1.with.2.encoding.is.not.a.cjk.font")
                     .setMessageParams(font.getFontNames().getFontName(), cmap);
@@ -114,11 +114,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override
     protected FontProgram initializeTypeFontForCopy(String encodingName)  {
-        return null;
-    }
-
-    @Override
-    protected FontProgram initializeTypeFont(String fontName, String encodingName)  {
         return null;
     }
 
@@ -526,11 +521,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override   
     public void flush() {
-        if (isCopy) {
-            flushCopyFontData();
-        } else {
-            flushFontData();
-        }
+        flushFontData();
     }
 
     private void flushCopyFontData() {
@@ -898,22 +889,23 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     protected void init() {
-        PdfName baseFont = fontDictionary.getAsName(PdfName.BaseFont);
-        getPdfObject().put(PdfName.Subtype, fontDictionary.getAsName(PdfName.Subtype));
+        //TODO add CidSet and Panose separately.
+        PdfName baseFont = getPdfObject().getAsName(PdfName.BaseFont);
+        getPdfObject().put(PdfName.Subtype, getPdfObject().getAsName(PdfName.Subtype));
         getPdfObject().put(PdfName.BaseFont, baseFont);
-        PdfName encoding = fontDictionary.getAsName(PdfName.Encoding);
+        PdfName encoding = getPdfObject().getAsName(PdfName.Encoding);
         getPdfObject().put(PdfName.Encoding, encoding);
 
         initFontProgramData();
 
         PdfDictionary toCidFont = new PdfDictionary();
-        PdfArray fromCidFontArray = fontDictionary.getAsArray(PdfName.DescendantFonts);
+        PdfArray fromCidFontArray = getPdfObject().getAsArray(PdfName.DescendantFonts);
         PdfDictionary fromCidFont = fromCidFontArray.getAsDictionary(0);
         if (fromCidFont != null) {
             toCidFont.makeIndirect(getDocument());
             PdfName subType = fromCidFont.getAsName(PdfName.Subtype);
             PdfName cidBaseFont = fromCidFont.getAsName(PdfName.BaseFont);
-            PdfObject cIDToGIDMap = fromCidFont.get(PdfName.CIDToGIDMap);
+            PdfObject cidToGidMap = fromCidFont.get(PdfName.CIDToGIDMap);
             PdfArray w = fromCidFont.getAsArray(PdfName.W);
             PdfArray w2 = fromCidFont.getAsArray(PdfName.W2);
             Integer dw = fromCidFont.getAsInt(PdfName.DW);
@@ -947,8 +939,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 toCidFont.put(PdfName.DW, new PdfNumber(dw));
             }
 
-            if (cIDToGIDMap != null) {
-                toCidFont.put(PdfName.CIDToGIDMap, cIDToGIDMap);
+            if (cidToGidMap != null) {
+                toCidFont.put(PdfName.CIDToGIDMap, cidToGidMap);
             }
 
             PdfDictionary toCidInfo = new PdfDictionary();
@@ -965,7 +957,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             }
             toCidFont.put(PdfName.CIDSystemInfo, fromCidInfo);
 
-            PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
+            PdfObject toUnicode = getPdfObject().get(PdfName.ToUnicode);
             if (toUnicode != null) {
                 int dwVal = FontProgram.DEFAULT_WIDTH;
                 if (dw != null) {
@@ -1012,8 +1004,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     private void initFontProgramData()  {
         longTag = new LinkedHashMap<>();
-        String encoding = fontDictionary.getAsName(PdfName.Encoding).getValue();
-        String fontName = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0).getAsName(PdfName.BaseFont).getValue();
+        String encoding = getPdfObject().getAsName(PdfName.Encoding).getValue();
+        String fontName = getPdfObject().getAsArray(PdfName.DescendantFonts).getAsDictionary(0).getAsName(PdfName.BaseFont).getValue();
         if (CidFontProperties.isCidFont(fontName, encoding)) {
             fontProgram = new CidFont(fontName, null);
             vertical = encoding.endsWith(FontConstants.V_SYMBOL);

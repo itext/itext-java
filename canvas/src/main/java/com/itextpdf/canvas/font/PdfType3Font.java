@@ -15,7 +15,6 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfStream;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -47,7 +46,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      * @param isColor defines whether the glyph color is specified in the glyph descriptions in the font.
      */
     public PdfType3Font(PdfDocument pdfDocument, boolean isColor) {
-        super(pdfDocument,new PdfDictionary());
+        super(pdfDocument);
         this.isColor = isColor;
         fontProgram = new Type3Font();
     }
@@ -55,24 +54,13 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     /**
      * Creates a Type3 font based on an existing font dictionary.
      *
-     * @param pdfDocument pdfDocument and only images as masks can be used
      * @param fontDictionary a dictionary of type <code>/Font</code>
      */
-    public PdfType3Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) {
-        super(pdfDocument,fontDictionary,true);
+    public PdfType3Font(PdfDictionary fontDictionary) {
+        super(fontDictionary);
         fontProgram = new Type3Font();
         checkFontDictionary(fontDictionary,PdfName.Type3);
         init();
-    }
-
-    /**
-     * Creates a Type3 font based on a reference to an existing font dictionary.
-     *
-     * @param pdfDocument pdfDocument and only images as masks can be used
-     * @param indirectReference a reference to a font dictionary
-     */
-    public PdfType3Font(PdfDocument pdfDocument, PdfIndirectReference indirectReference) {
-        this(pdfDocument, (PdfDictionary) indirectReference.getRefersTo());
     }
 
     public HashMap<Integer, Type3Glyph> getCharGlyphs() {
@@ -238,21 +226,16 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
 
     @Override
-    protected Type3Font initializeTypeFontForCopy(String encodingName) throws IOException {
-        return new Type3Font();
-    }
-
-    @Override
-    protected Type3Font initializeTypeFont(String fontName, String encodingName) throws IOException {
+    protected Type3Font initializeTypeFontForCopy(String encodingName) {
         return new Type3Font();
     }
 
     @Override
     protected void init() {
-        Rectangle fontBBoxRec = fontDictionary.getAsArray(PdfName.FontBBox).toRectangle();
-        PdfDictionary charProcsDic = fontDictionary.getAsDictionary(PdfName.CharProcs);
-        PdfArray fontMatrixArray = fontDictionary.getAsArray(PdfName.FontMatrix);
-        differences = fontDictionary.getAsDictionary(PdfName.Encoding).getAsArray(PdfName.Differences);
+        Rectangle fontBBoxRec = getPdfObject().getAsArray(PdfName.FontBBox).toRectangle();
+        PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
+        PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
+        differences = getPdfObject().getAsDictionary(PdfName.Encoding).getAsArray(PdfName.Differences);
         if (differences == null) {
             differences = new PdfArray();
         }
@@ -302,8 +285,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         getPdfObject().put(PdfName.LastChar, new PdfNumber(lastChar));
         getPdfObject().put(PdfName.Widths, new PdfArray(wd));
 
-        if(fontDictionary != null) {
-            PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
+        if(getPdfObject() != null) {
+            PdfObject toUnicode = getPdfObject().get(PdfName.ToUnicode);
             if (toUnicode != null) {
                 if (toUnicode instanceof PdfStream) {
                     PdfStream newStream = (PdfStream) toUnicode.clone();
@@ -312,7 +295,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
                 }
             }
 
-            PdfDictionary fromDescriptorDictionary = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
+            PdfDictionary fromDescriptorDictionary = getPdfObject().getAsDictionary(PdfName.FontDescriptor);
             if (fromDescriptorDictionary != null) {
                 PdfDictionary toDescriptorDictionary = getNewFontDescriptor(fromDescriptorDictionary);
                 getPdfObject().put(PdfName.FontDescriptor, toDescriptorDictionary);
@@ -322,9 +305,9 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     }
 
     private int[] getWidths() {
-        PdfArray newWidths = fontDictionary.getAsArray(PdfName.Widths);
-        PdfNumber first = fontDictionary.getAsNumber(PdfName.FirstChar);
-        PdfNumber last = fontDictionary.getAsNumber(PdfName.LastChar);
+        PdfArray newWidths = getPdfObject().getAsArray(PdfName.Widths);
+        PdfNumber first = getPdfObject().getAsNumber(PdfName.FirstChar);
+        PdfNumber last = getPdfObject().getAsNumber(PdfName.LastChar);
         int f = first.getIntValue();
         int nSize = f + newWidths.size();
         int[] tmp = new int[nSize];

@@ -82,7 +82,7 @@ public class MetaFont extends MetaObject {
         if (font != null)
             return font;
         FontProgram ff2 = FontFactory.createRegisteredFont(faceName, ((italic != 0) ? FontConstants.ITALIC : 0) | ((bold != 0) ? FontConstants.BOLD : 0));
-        encoding = new FontEncoding(PdfEncodings.WINANSI);
+        encoding = FontEncoding.createFontEncoding(PdfEncodings.WINANSI);
         font = ff2;
         if (font != null)
             return font;
@@ -135,7 +135,7 @@ public class MetaFont extends MetaObject {
         }
         try {
             font = Type1Font.createStandardFont(fontName);
-            encoding = new FontEncoding(PdfEncodings.WINANSI);
+            encoding = FontEncoding.createFontEncoding(PdfEncodings.WINANSI);
         }
         catch (Exception e) {
             throw new RuntimeException(e);

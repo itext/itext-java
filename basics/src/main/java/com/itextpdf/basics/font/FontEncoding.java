@@ -13,51 +13,59 @@ public class FontEncoding {
     /**
      * Base font encoding.
      */
-    private String baseEncoding;
+    protected String baseEncoding;
     /**
      * {@code true} if the font must use its built in encoding. In that case
      * the {@code encoding} is only used to map a char to the position inside the font, not to the expected char name.
      */
-    private boolean fontSpecific;
+    protected boolean fontSpecific;
 
     /**
      * Mapping map from unicode to simple code according to the encoding.
      */
-    private IntHashtable unicodeToCode = new IntHashtable(256);
+    protected IntHashtable unicodeToCode;
 
-    private Integer[] codeToUnicode = new Integer[256];
+    protected Integer[] codeToUnicode;
 
     /**
      * Encoding names.
      */
-    private String[] differences;
+    protected String[] differences;
     /**
      * Encodings unicode differences
      */
-    private IntHashtable unicodeDifferences = new IntHashtable(256);
+    protected IntHashtable unicodeDifferences;
 
-    public FontEncoding(String baseEncoding) {
-        this.fontSpecific = false;
-        this.baseEncoding = normalizeEncoding(baseEncoding);
-        if (this.baseEncoding.startsWith("#")) {
-            processCustomEncoding();
+    protected FontEncoding() {
+        unicodeToCode = new IntHashtable(256);
+        codeToUnicode = new Integer[256];
+        unicodeDifferences = new IntHashtable(256);
+        fontSpecific = false;
+    }
+
+    public static FontEncoding createFontEncoding(String baseEncoding) {
+        FontEncoding encoding = new FontEncoding();
+        encoding.baseEncoding = normalizeEncoding(baseEncoding);
+        if (encoding.baseEncoding.startsWith("#")) {
+            encoding.fillCustomEncoding();
         } else {
-            processEncoding();
+            encoding.fillNamedEncoding();
         }
+        return encoding;
     }
 
     /**
      * This encoding will base on font encoding (FontSpecific encoding in Type 1 terminology)
      */
-    public FontEncoding() {
-        fontSpecific = true;
-        if (fontSpecific) {
-            for (int ch = 0; ch < 256; ch++) {
-                unicodeToCode.put(ch, ch);
-                codeToUnicode[ch] = ch;
-                unicodeDifferences.put(ch, ch);
-            }
+    public static FontEncoding createFontSpecificEncoding() {
+        FontEncoding encoding = new FontEncoding();
+        encoding.fontSpecific = true;
+        for (int ch = 0; ch < 256; ch++) {
+            encoding.unicodeToCode.put(ch, ch);
+            encoding.codeToUnicode[ch] = ch;
+            encoding.unicodeDifferences.put(ch, ch);
         }
+        return encoding;
     }
 
     public String getBaseEncoding() {
@@ -127,24 +135,7 @@ public class FontEncoding {
         return unicodeToCode.containsKey(ch);
     }
 
-    /**
-     * Normalize the encoding names. "winansi" is changed to "Cp1252" and
-     * "macroman" is changed to "MacRoman".
-     *
-     * @param enc the encoding to be normalized
-     * @return the normalized encoding
-     */
-    protected static String normalizeEncoding(String enc) {
-        if (enc == null || enc.toLowerCase().equals("winansi") || enc.equals("")) {
-            return PdfEncodings.WINANSI;
-        } else if (enc.toLowerCase().equals("macroman")) {
-            return PdfEncodings.MACROMAN;
-        } else {
-            return enc;
-        }
-    }
-
-    protected void processCustomEncoding() {
+    protected void fillCustomEncoding() {
         differences = new String[256];
         StringTokenizer tok = new StringTokenizer(baseEncoding.substring(1), " ,\t\n\r\f");
         if (tok.nextToken().equals("full")) {
@@ -191,30 +182,67 @@ public class FontEncoding {
         }
     }
 
-    protected void processEncoding() {
+    protected void fillNamedEncoding() {
         PdfEncodings.convertToBytes(" ", baseEncoding); // check if the encoding exists
         boolean stdEncoding = PdfEncodings.WINANSI.equals(baseEncoding) || PdfEncodings.MACROMAN.equals(baseEncoding);
-        if (!stdEncoding) {
+        if (!stdEncoding && differences == null) {
             differences = new String[256];
         }
-        byte[] b = new byte[1];
+
+        byte[] b = new byte[256];
+        for (int k = 0; k < 256; ++k) {
+            b[k] = (byte) k;
+        }
+        String str = PdfEncodings.convertToString(b, baseEncoding);
+        char[] encoded = str.toCharArray();
         for (int ch = 0; ch < 256; ++ch) {
-            b[0] = (byte) ch;
-            String str = PdfEncodings.convertToString(b, baseEncoding);
-            if (str.length() > 0) {
-                char uni = str.charAt(0);
-                String name = AdobeGlyphList.unicodeToName(uni);
-                if (name == null) {
-                    name = FontConstants.notdef;
-                } else {
-                    unicodeToCode.put(uni, ch);
-                    codeToUnicode[ch] = (int) uni;
-                    unicodeDifferences.put(uni, uni);
-                }
-                if (!stdEncoding) {
-                    differences[ch] = name;
-                }
+            char uni = encoded[ch];
+            String name = AdobeGlyphList.unicodeToName(uni);
+            if (name == null) {
+                name = FontConstants.notdef;
+            } else {
+                unicodeToCode.put(uni, ch);
+                codeToUnicode[ch] = (int) uni;
+                unicodeDifferences.put(uni, uni);
             }
+            if (differences != null) {
+                differences[ch] = name;
+            }
+        }
+    }
+
+    protected void fillStandardEncoding() {
+        int[] encoded = PdfEncodings.standardEncoding;
+        for (int ch = 0; ch < 256; ++ch) {
+            int uni = encoded[ch];
+            String name = AdobeGlyphList.unicodeToName(uni);
+            if (name == null) {
+                name = FontConstants.notdef;
+            } else {
+                unicodeToCode.put(uni, ch);
+                codeToUnicode[ch] = (int) uni;
+                unicodeDifferences.put(uni, uni);
+            }
+            if (differences != null) {
+                differences[ch] = name;
+            }
+        }
+    }
+
+    /**
+     * Normalize the encoding names. "winansi" is changed to "Cp1252" and
+     * "macroman" is changed to "MacRoman".
+     *
+     * @param enc the encoding to be normalized
+     * @return the normalized encoding
+     */
+    protected static String normalizeEncoding(String enc) {
+        if (enc == null || enc.toLowerCase().equals("winansi") || enc.equals("")) {
+            return PdfEncodings.WINANSI;
+        } else if (enc.toLowerCase().equals("macroman")) {
+            return PdfEncodings.MACROMAN;
+        } else {
+            return enc;
         }
     }
 }

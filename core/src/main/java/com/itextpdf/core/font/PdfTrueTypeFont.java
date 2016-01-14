@@ -1,11 +1,12 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.basics.font.FontEncoding;
+import com.itextpdf.basics.font.FontNames;
+import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.geom.Rectangle;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,7 +14,6 @@ import java.util.Map;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfIndirectReference;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf, String encoding, boolean embedded) {
-        super(pdfDocument, new PdfDictionary());
+        super(pdfDocument);
         setFontProgram(ttf);
         this.embedded = embedded;
         FontNames fontNames = ttf.getFontNames();
@@ -38,28 +38,24 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             encoding = FontEncoding.FontSpecific;
         }
         if (encoding != null && FontEncoding.FontSpecific.toLowerCase().equals(encoding.toLowerCase())) {
-            fontEncoding = new FontEncoding();
+            fontEncoding = FontEncoding.createFontSpecificEncoding();
         } else {
-            fontEncoding = new FontEncoding(encoding);
+            fontEncoding = FontEncoding.createFontEncoding(encoding);
         }
     }
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont trueTypeFont, String encoding) {
-        this(pdfDocument, trueTypeFont, encoding, false);
+    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf, String encoding) {
+        this(pdfDocument, ttf, encoding, false);
     }
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont trueTypeFont) {
-        this(pdfDocument, trueTypeFont, null, false);
+    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf) {
+        this(pdfDocument, ttf, null, false);
     }
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        super(pdfDocument,fontDictionary,true);
+    public PdfTrueTypeFont(PdfDictionary fontDictionary) {
+        super(fontDictionary);
         checkTrueTypeFontDictionary(fontDictionary);
         init();
-    }
-
-    public PdfTrueTypeFont(PdfDocument pdfDocument, PdfIndirectReference indirectReference) throws IOException {
-        this(pdfDocument, (PdfDictionary) indirectReference.getRefersTo());
     }
 
     public Glyph getGlyph(int ch) {
@@ -80,22 +76,18 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     @Override
     public void flush() {
-        if (isCopy) {
-            flushCopyFontData();
+        PdfName subtype;
+        String fontName;
+        if (getFontProgram().isCff()) {
+            subtype = PdfName.Type1;
+            fontName = fontProgram.getFontNames().getFontName();
         } else {
-            PdfName subtype;
-            String fontName;
-            if (getFontProgram().isCff()) {
-                subtype = PdfName.Type1;
-                fontName = fontProgram.getFontNames().getFontName();
-            } else {
-                subtype = PdfName.TrueType;
-                fontName = subset
-                        ? createSubsetPrefix() + fontProgram.getFontNames().getFontName()
-                        : fontProgram.getFontNames().getFontName();
-            }
-            flushFontData(fontName, subtype);
+            subtype = PdfName.TrueType;
+            fontName = subset
+                    ? createSubsetPrefix() + fontProgram.getFontNames().getFontName()
+                    : fontProgram.getFontNames().getFontName();
         }
+        flushFontData(fontName, subtype);
     }
 
     protected void addRangeUni(HashSet<Integer> longTag) {
@@ -213,10 +205,5 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     @Override
     protected TrueTypeFont initializeTypeFontForCopy(String encodingName) {
         throw new RuntimeException();
-    }
-
-    @Override
-    protected TrueTypeFont initializeTypeFont(String fontName, String encodingName) throws IOException {
-        return new TrueTypeFont(fontName);
     }
 }

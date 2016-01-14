@@ -138,7 +138,7 @@ public class CanvasGraphicsState {
             if (this.font != null && this.font.getPdfObject() == fontDictionary) {
 
             } else {
-                this.font = new PdfFont(extGState.getDocument(),fontDictionary);
+                this.font = PdfFont.createFont(fontDictionary);
             }
             Float fntSz = fnt.getAsFloat(1);
             if (fntSz != null)

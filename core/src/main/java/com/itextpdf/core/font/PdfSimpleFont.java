@@ -1,7 +1,6 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.codec.Base64;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.FontProgram;
@@ -40,12 +39,12 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     protected byte[] shortTag = new byte[256];
 
-    public PdfSimpleFont(PdfDocument document, PdfDictionary pdfDictionary) {
-        super(document, pdfDictionary);
+    protected PdfSimpleFont(PdfDictionary fontDictionary) {
+        super(fontDictionary);
     }
 
-    public PdfSimpleFont(PdfDocument document, PdfDictionary pdfDictionary, boolean isCopy) {
-        super(document, pdfDictionary, isCopy);
+    protected PdfSimpleFont(PdfDocument pdfDocument) {
+        super(pdfDocument);
     }
 
     @Override
@@ -380,15 +379,17 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         this.fontProgram = fontProgram;
     }
 
-    protected abstract T initializeTypeFontForCopy(String encodingName) throws IOException;
+    //TODO remove
+    protected abstract T initializeTypeFontForCopy(String encodingName);
 
-    protected abstract T initializeTypeFont(String fontName, String encodingName) throws IOException;
+    //TODO remove
+//    protected abstract T initializeTypeFont(String fontName, String encodingName);
 
-    protected void init() throws IOException {
-        PdfName baseFont = fontDictionary.getAsName(PdfName.BaseFont);
-        getPdfObject().put(PdfName.Subtype, fontDictionary.getAsName(PdfName.Subtype));
+    protected void init() {
+        PdfName baseFont = getPdfObject().getAsName(PdfName.BaseFont);
+        getPdfObject().put(PdfName.Subtype, getPdfObject().getAsName(PdfName.Subtype));
         getPdfObject().put(PdfName.BaseFont, baseFont);
-        PdfObject encodingObj = fontDictionary.get(PdfName.Encoding);
+        PdfObject encodingObj = getPdfObject().get(PdfName.Encoding);
         initFontProgram(encodingObj);
         fontProgram.getFontNames().setFontName(baseFont.getValue());
         if (encodingObj == null) {
@@ -398,7 +399,12 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 fillEncoding(null);
                 CMapToUnicode toUnicode = processToUnicode();
                 if (toUnicode != null) {
-                    Map<Integer, Integer> rm = toUnicode.createReverseMapping();
+                    Map<Integer, Integer> rm = null;
+                    try {
+                        rm = toUnicode.createReverseMapping();
+                    } catch (IOException e) {
+
+                    }
                     for (Map.Entry<Integer, Integer> kv : rm.entrySet()) {
                         //TODO Document font refactoring
 //                        fontProgram.getEncoding().getSpecialMap().put(kv.getKey(), kv.getValue());
@@ -433,26 +439,27 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             fillEncoding((PdfName) encodingObj);
         }
 
-        PdfNumber firstChar = fontDictionary.getAsNumber(PdfName.FirstChar);
-        PdfNumber lastChar = fontDictionary.getAsNumber(PdfName.LastChar);
+        PdfNumber firstChar = getPdfObject().getAsNumber(PdfName.FirstChar);
+        PdfNumber lastChar = getPdfObject().getAsNumber(PdfName.LastChar);
 
         if (lastChar != null && firstChar != null) {
             getPdfObject().put(PdfName.FirstChar, firstChar);
             getPdfObject().put(PdfName.LastChar, lastChar);
         }
 
-        PdfArray widths = fontDictionary.getAsArray(PdfName.Widths);
+        PdfArray widths = getPdfObject().getAsArray(PdfName.Widths);
         // TODO Document font refactoring
 //        if (widths != null) {
 //            getPdfObject().put(PdfName.Widths, widths);
 //            fontProgram.setWidths(getFillWidths(widths, firstChar, lastChar));
 //        }
 
-        if (FontConstants.BUILTIN_FONTS_14.contains(fontProgram.getFontNames().getFontName())) {
-            fontProgram = initializeTypeFont(fontProgram.getFontNames().getFontName(), fontEncoding.getBaseEncoding());
-        }
+        // TODO Document font refactoring
+//        if (FontConstants.BUILTIN_FONTS_14.contains(fontProgram.getFontNames().getFontName())) {
+//            fontProgram = initializeTypeFont(fontProgram.getFontNames().getFontName(), fontEncoding.getBaseEncoding());
+//        }
 
-        PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
+        PdfObject toUnicode = getPdfObject().get(PdfName.ToUnicode);
         if (toUnicode != null) {
             if (toUnicode instanceof PdfStream) {
                 PdfStream newStream = (PdfStream) toUnicode.clone();
@@ -462,7 +469,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
 
 
-        PdfDictionary fromDescriptorDictionary = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
+        PdfDictionary fromDescriptorDictionary = getPdfObject().getAsDictionary(PdfName.FontDescriptor);
         if (fromDescriptorDictionary != null) {
             PdfDictionary toDescriptorDictionary = getNewFontDescriptor(fromDescriptorDictionary);
             getPdfObject().put(PdfName.FontDescriptor, toDescriptorDictionary);
@@ -617,7 +624,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return encodingName;
     }
 
-    private void initFontProgram(PdfObject encoding) throws IOException {
+    private void initFontProgram(PdfObject encoding) {
         if (encoding == null) {
             fontProgram = initializeTypeFontForCopy(PdfEncodings.EmptyString);
         } else if (encoding.isName()) {
@@ -699,7 +706,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     private CMapToUnicode processToUnicode() {
         CMapToUnicode cMapToUnicode = null;
-        PdfObject toUni = this.fontDictionary.get(PdfName.ToUnicode);
+        PdfObject toUni = getPdfObject().get(PdfName.ToUnicode);
         if (toUni instanceof PdfStream) {
             try {
                 byte[] uniBytes = ((PdfStream) toUni).getBytes();

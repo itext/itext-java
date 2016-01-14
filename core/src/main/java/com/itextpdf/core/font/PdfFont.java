@@ -11,7 +11,6 @@ import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
-import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
@@ -31,10 +30,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected static final byte[] emptyBytes = new byte[0];
 
-    protected PdfDictionary fontDictionary;
-
-    protected boolean isCopy = false;
-
     HashMap<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
     /**
@@ -52,13 +47,13 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return createStandardFont(pdfDocument, FontConstants.HELVETICA, null);
     }
 
-    public static PdfFont createFont(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
+    public static PdfFont createFont(PdfDictionary fontDictionary) {
         if (checkFontDictionary(fontDictionary, PdfName.Type1, false)) {
-            return new PdfType1Font(pdfDocument, fontDictionary);
+            return new PdfType1Font(fontDictionary);
         } else if (checkFontDictionary(fontDictionary, PdfName.Type0, false)) {
-            return new PdfType0Font(pdfDocument, fontDictionary);
+            return new PdfType0Font(fontDictionary);
         } else if (checkFontDictionary(fontDictionary, PdfName.TrueType, false)) {
-            return new PdfTrueTypeFont(pdfDocument, fontDictionary);
+            return new PdfTrueTypeFont(fontDictionary);
         } else {
             throw new PdfException(PdfException.DictionaryNotContainFontData);
         }
@@ -325,18 +320,15 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return new PdfType1Font(pdfDocument, Type1Font.createFont(metrics, binary), encoding, embedded);
     }
 
-    public PdfFont(PdfDocument pdfDocument, PdfDictionary pdfObject) {
-        super(pdfObject);
-        makeIndirect(pdfDocument);
+    protected PdfFont(PdfDictionary fontDictionary) {
+        super(fontDictionary);
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
-    protected PdfFont(PdfDocument document, PdfDictionary pdfDictionary, boolean isCopy) {
-        super(pdfDictionary);
+    protected PdfFont(PdfDocument document) {
+        super(new PdfDictionary());
         makeIndirect(document);
         getPdfObject().put(PdfName.Type, PdfName.Font);
-        this.fontDictionary = pdfDictionary;
-        this.isCopy = isCopy;
     }
 
     //TODO as abstract + comments!
@@ -572,7 +564,8 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     public PdfFont copy(PdfDocument document) {
-        return new PdfFont(document, (PdfDictionary) getPdfObject().copyToDocument(document));
+        throw new RuntimeException("Not implemented");
+        //return new PdfFont(document, (PdfDictionary) getPdfObject().copyToDocument(document));
     }
 
     public List<String> splitString(String text, int fontSize, float maxWidth) {
@@ -635,37 +628,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             return false;
         }
         return true;
-    }
-
-    protected boolean isSymbolic() {
-        PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
-        if (fontDescriptor == null) {
-            return false;
-        }
-        PdfNumber flags = fontDescriptor.getAsNumber(PdfName.Flags);
-        if (flags == null) {
-            return false;
-        }
-        return (flags.getIntValue() & 0x04) != 0;
-    }
-
-    protected int[] getFillWidths(PdfArray widths, PdfNumber firstObj, PdfNumber lastObj) {
-        int wd[] = new int[256];
-        if (firstObj != null && lastObj != null && widths != null) {
-            int first = firstObj.getIntValue();
-            int nSize = first + widths.size();
-            if (wd.length < nSize) {
-                int[] tmp = new int[nSize];
-                System.arraycopy(wd, 0, tmp, 0, first);
-                wd = tmp;
-            }
-            for (int k = 0; k < widths.size(); ++k) {
-                wd[first + k] = widths.getAsNumber(k).getIntValue();
-            }
-        }
-
-        return wd;
-
     }
 
     /**

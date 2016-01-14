@@ -619,6 +619,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Subtype2 = createDirectName("Subtype2");
     public static final PdfName Supplement = createDirectName("Supplement");
     public static final PdfName Sy = createDirectName("Sy");
+    public static final PdfName Symbol = new PdfName("Symbol");
     public static final PdfName Synchronous = createDirectName("Synchronous");
     public static final PdfName T = createDirectName("T");
     public static final PdfName Tag = createDirectName("Tag");
@@ -715,6 +716,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName XStep = createDirectName("XStep");
     public static final PdfName XYZ = createDirectName("XYZ");
     public static final PdfName YStep = createDirectName("YStep");
+    public static final PdfName ZapfDingbats = new PdfName("ZapfDingbats");
     public static final PdfName Zoom = createDirectName("Zoom");
 
 

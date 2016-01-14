@@ -31,6 +31,10 @@ public class PdfEncodings {
     public static final String WINANSI = "Cp1252";
     /** A possible encoding. */
     public static final String MACROMAN = "MacRoman";
+    /** A possible encoding. */
+    public static final String SYMBOL = "Symbol";
+    /** A possible encoding. */
+    public static final String ZAPFDINGBATS = "ZapfDingbats";
     /** This is the encoding to be used to output text in Unicode. */
     public static final String UnicodeBig = "UnicodeBig";
     /** This is the encoding to be used to output text for Identity-H/V CMaps. */
@@ -136,14 +140,14 @@ public class PdfEncodings {
             return new byte[0];
         if (encoding == null || encoding.length() == 0) {
             int len = text.length();
-            byte b[] = new byte[len];
+            byte[] b = new byte[len];
             for (int k = 0; k < len; ++k)
                 b[k] = (byte) text.charAt(k);
             return b;
         }
         ExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
         if (extra != null) {
-            byte b[] = extra.charToByte(text, encoding);
+            byte[] b = extra.charToByte(text, encoding);
             if (b != null)
                 return b;
         }
@@ -154,10 +158,10 @@ public class PdfEncodings {
             hash = pdfEncoding;
         }
         if (hash != null) {
-            char cc[] = text.toCharArray();
+            char[] cc = text.toCharArray();
             int len = cc.length;
             int ptr = 0;
-            byte b[] = new byte[len];
+            byte[] b = new byte[len];
             int c;
             for (int k = 0; k < len; ++k) {
                 char ch = cc[k];
@@ -172,15 +176,15 @@ public class PdfEncodings {
             }
             if (ptr == len)
                 return b;
-            byte b2[] = new byte[ptr];
+            byte[] b2 = new byte[ptr];
             System.arraycopy(b, 0, b2, 0, ptr);
             return b2;
         }
         if (encoding.equals(UnicodeBig)) {
             // workaround for jdk 1.2.2 bug
-            char cc[] = text.toCharArray();
+            char[] cc = text.toCharArray();
             int len = cc.length;
-            byte b[] = new byte[cc.length * 2 + 2];
+            byte[] b = new byte[cc.length * 2 + 2];
             b[0] = -2;
             b[1] = -1;
             int bptr = 2;
@@ -236,7 +240,7 @@ public class PdfEncodings {
         }
         if (encoding.equals(UnicodeBig)) {
             // workaround for jdk 1.2.2 bug
-            byte b[] = new byte[4];
+            byte[] b = new byte[4];
             b[0] = -2;
             b[1] = -1;
             b[2] = (byte) (ch >> 8);
@@ -373,7 +377,7 @@ public class PdfEncodings {
             return null;
         }
 
-        private final static byte table[] = {
+        private final static byte[] table = {
                 0, 35, 34, 0, 0, 0, 41, 62, 81, 42,
                 0, 0, 65, 63, 0, 0, 0, 0, 0, -4,
                 0, 0, 0, -5, 0, 0, 0, 0, 0, 0,
@@ -452,7 +456,7 @@ public class PdfEncodings {
             return new String(cc, 0, ptr);
         }
 
-        private final static char table[] = {
+        private final static char[] table = {
                 '\u00C7', '\u00FC', '\u00E9', '\u00E2', '\u00E4', '\u00E0', '\u00E5', '\u00E7', '\u00EA', '\u00EB', '\u00E8', '\u00EF', '\u00EE', '\u00EC', '\u00C4', '\u00C5',
                 '\u00C9', '\u00E6', '\u00C6', '\u00F4', '\u00F6', '\u00F2', '\u00FB', '\u00F9', '\u00FF', '\u00D6', '\u00DC', '\u00A2', '\u00A3', '\u00A5', '\u20A7', '\u0192',
                 '\u00E1', '\u00ED', '\u00F3', '\u00FA', '\u00F1', '\u00D1', '\u00AA', '\u00BA', '\u00BF', '\u2310', '\u00AC', '\u00BD', '\u00BC', '\u00A1', '\u00AB', '\u00BB',
@@ -524,7 +528,7 @@ public class PdfEncodings {
             return new String(cc, 0, ptr);
         }
 
-        private final static char table1[] = {
+        private final static char[] table1 = {
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 ' ','!','\u2200','#','\u2203','%','&','\u220b','(',')','*','+',',','-','.','/',
@@ -543,7 +547,7 @@ public class PdfEncodings {
                 '\0','\u232a','\u222b','\u2320','\u23ae','\u2321','\u239e','\u239f','\u23a0','\u23a4','\u23a5','\u23a6','\u23ab','\u23ac','\u23ad','\0'
         };
 
-        private final static char table2[] = {
+        private final static char[] table2 = {
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 '\u0020','\u2701','\u2702','\u2703','\u2704','\u260e','\u2706','\u2707','\u2708','\u2709','\u261b','\u261e','\u270C','\u270D','\u270E','\u270F',

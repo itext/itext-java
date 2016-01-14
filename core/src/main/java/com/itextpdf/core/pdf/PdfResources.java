@@ -29,9 +29,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private static final String P = "P";
     private static final String Sh = "Sh";
 
-    private Map<PdfObject, PdfName> resourceToName = new HashMap<PdfObject, PdfName>();
-    private Map<PdfName, Map<PdfName, PdfObject>> nameToResource = new HashMap<PdfName, Map<PdfName, PdfObject>>();
-    private Map<PdfIndirectReference, PdfFont> fontsMap = new HashMap<PdfIndirectReference, PdfFont>();
+    private Map<PdfObject, PdfName> resourceToName = new HashMap<>();
+    private Map<PdfName, Map<PdfName, PdfObject>> nameToResource = new HashMap<>();
+    private Map<PdfIndirectReference, PdfFont> fontsMap = new HashMap<>();
 
     private ResourceNameGenerator fontNamesGen = new ResourceNameGenerator(PdfName.Font, F);
     private ResourceNameGenerator imageNamesGen = new ResourceNameGenerator(PdfName.XObject, Im);
@@ -282,9 +282,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         for (Map.Entry<PdfName, PdfObject> entry : entrySet) {
             if (entry.getValue().isIndirectReference() && !fontsMap.containsKey(entry.getValue())) {
                 fontsMap.put((PdfIndirectReference) entry.getValue(),
-                        PdfFont.createFont(getDocument(), (PdfDictionary) ((PdfIndirectReference) entry.getValue()).getRefersTo()));
+                        PdfFont.createFont((PdfDictionary) ((PdfIndirectReference) entry.getValue()).getRefersTo()));
             } else if (entry.getValue().isDictionary()) {
-                PdfFont font = PdfFont.createFont(getDocument(), (PdfDictionary) entry.getValue());
+                PdfFont font = PdfFont.createFont((PdfDictionary) entry.getValue());
                 fontsMap.put(font.getPdfObject().getIndirectReference(), font);
             }
         }

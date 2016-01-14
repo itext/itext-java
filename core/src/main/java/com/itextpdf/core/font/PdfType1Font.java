@@ -3,43 +3,38 @@ package com.itextpdf.core.font;
 
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.FontMetrics;
-import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfIndirectReference;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
 
-import java.io.IOException;
-
-
 public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
-    public PdfType1Font(PdfDocument pdfDocument, PdfDictionary fontDictionary) throws IOException {
-        super(pdfDocument, fontDictionary, true);
+    public PdfType1Font(PdfDictionary fontDictionary) {
+        super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type1);
-        init();
-    }
 
-    public PdfType1Font(PdfDocument pdfDocument, PdfIndirectReference indirectReference) throws IOException {
-        this(pdfDocument, (PdfDictionary) indirectReference.getRefersTo());
+        CMapToUnicode toUni = DocFontUtils.processToUnicode(fontDictionary);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
+        fontProgram = DocType1Font.createSimpleFontProgram(fontDictionary, fontEncoding);
     }
 
     public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, String encoding, boolean embedded) {
-        super(pdfDocument, new PdfDictionary());
+        super(pdfDocument);
         setFontProgram(type1Font);
         this.embedded = embedded && !type1Font.isBuiltInFont();
         if ((encoding == null || encoding.length() == 0) && type1Font.isFontSpecific()) {
             encoding = FontEncoding.FontSpecific;
         }
         if (encoding != null && FontEncoding.FontSpecific.toLowerCase().equals(encoding.toLowerCase())) {
-            fontEncoding = new FontEncoding();
+            fontEncoding = FontEncoding.createFontSpecificEncoding();
         } else {
-            fontEncoding = new FontEncoding(encoding);
+            fontEncoding = FontEncoding.createFontEncoding(encoding);
         }
     }
 
@@ -67,22 +62,18 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     public void flush() {
-        if (isCopy) {
-            flushCopyFontData();
-        } else {
-            flushFontData(fontProgram.getFontNames().getFontName(), PdfName.Type1);
-        }
+        flushFontData(fontProgram.getFontNames().getFontName(), PdfName.Type1);
     }
 
     @Override
-    protected Type1Font initializeTypeFontForCopy(String encodingName) throws IOException {
-        return new Type1Font(encodingName);
+    protected Type1Font initializeTypeFontForCopy(String encodingName) {
+        throw new RuntimeException("Not implemented");
     }
 
-    @Override
-    protected Type1Font initializeTypeFont(String fontName, String encodingName) throws IOException{
-        return Type1Font.createFont(fontName, encodingName);
-    }
+//    @Override
+//    protected Type1Font initializeTypeFont(String fontName, String encodingName) {
+//        return Type1Font.createFont(fontName, encodingName);
+//    }
 
     public Glyph getGlyph(int ch) {
         if (fontEncoding.canEncode(ch)) {

@@ -154,6 +154,10 @@ public abstract class FontProgram {
         fontMetrics.setItalicAngle(italicAngle);
     }
 
+    protected void setStemV(int stemV) {
+        fontMetrics.setStemV(stemV);
+    }
+
     protected void setFixedPitch(boolean isFixedPitch) {
         fontMetrics.setIsFixedPitch(isFixedPitch);
     }

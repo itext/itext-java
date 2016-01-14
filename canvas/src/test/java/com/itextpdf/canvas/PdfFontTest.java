@@ -52,6 +52,8 @@ public class PdfFontTest extends ExtendedITextTest{
     static final public String fontsFolder = "./src/test/resources/com/itextpdf/canvas/fonts/";
     static final public String destinationFolder = "./target/test/com/itextpdf/canvas/PdfFontTest/";
 
+    static final String author = "Alexander Chingarev";
+    static final String creator = "iText 6";
 
     @BeforeClass
     static public void beforeClass() {
@@ -62,8 +64,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithKozmin() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithKozmin.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin.pdf";
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Type3 test";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -97,8 +97,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithTrueTypeAsType0() throws IOException, PdfException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0.pdf";
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Type0 test";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -154,8 +152,6 @@ public class PdfFontTest extends ExtendedITextTest{
         String testString = "A A A A E E E ~ \u00E9"; // A A A A E E E ~ é
 
         //writing type3 font characters
-        final String author = "Dmitry Trusevich";
-        final String creator = "iText 6";
         final String title = "Type3 font iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -227,8 +223,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithHelvetica() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithHelvetica.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithHelvetica.pdf";
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Type3 test";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -263,8 +257,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithHelveticaOblique() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithHelveticaOblique.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithHelveticaOblique.pdf";
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -301,8 +293,6 @@ public class PdfFontTest extends ExtendedITextTest{
         String filename = destinationFolder + "DocumentWithHelveticaBoldOblique.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithHelveticaBoldOblique.pdf";
 
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -338,8 +328,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithCourierBold() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCourierBold.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCourierBold.pdf";
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -375,9 +363,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithType1FontAfm() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10Afm.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -424,9 +409,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithType1FontPfm() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10Pfm.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Pfm.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -459,9 +441,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithType1Font5Pfm() throws IOException, DocumentException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10_5Pfm.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10_5Pfm.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -494,9 +473,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithType1Font5Afm() throws IOException, DocumentException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10_5Afm.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10_5Afm.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -529,9 +505,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithTrueTypeFont1() throws IOException, PdfException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -582,9 +555,6 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createDocumentWithTrueTypeFont2() throws IOException, PdfException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont2.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -638,13 +608,10 @@ public class PdfFontTest extends ExtendedITextTest{
 
     @Test@Ignore
     public void testNewType3FontBasedExistingFont() throws IOException, InterruptedException {
-
-        final String author = "Dmitry Trusevich";
-        final String creator = "iText 6";
-        final String title = "Type3 font iText 6 Document";
         String inputFileName = sourceFolder + "type3Font.pdf";
         String outputFileName = destinationFolder + "new_type3Font.pdf";
         String cmpOutputFileName = sourceFolder + "cmp_new_type3Font.pdf";
+        final String title = "Type3 font iText 6 Document";
 
         PdfReader reader = new PdfReader(inputFileName);
         PdfWriter pdfWriter = new PdfWriter(new FileOutputStream(outputFileName));
@@ -658,7 +625,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType3Font pdfType3Font = new PdfType3Font(outputPdfDoc, (PdfDictionary) inputPdfDoc.getPdfObject(4));
+        PdfType3Font pdfType3Font = new PdfType3Font((PdfDictionary) inputPdfDoc.getPdfObject(4));
 
         Type3Glyph newGlyph = pdfType3Font.createGlyph('\u00F6', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
@@ -684,12 +651,10 @@ public class PdfFontTest extends ExtendedITextTest{
 
     @Test@Ignore
     public void testNewType1FontBasedExistingFont() throws IOException, InterruptedException {
-        final String author = "Dmitry Trusevich";
-        final String creator = "iText 6";
-        final String title = "Type3 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithCMR10Afm.pdf";
         String filename = destinationFolder + "DocumentWithCMR10Afm_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm_new.pdf";
+        final String title = "Type 1 font iText 6 Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -703,7 +668,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, pdfDictionary);
+        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -724,14 +689,10 @@ public class PdfFontTest extends ExtendedITextTest{
 
     @Test@Ignore
     public void testNewTrueTypeFont1BasedExistingFont() throws IOException, InterruptedException {
-        final String author = "Dmitry Trusevich";
-        final String creator = "iText 6";
-        final String title = "Type3 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont1.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeFont1_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1_new.pdf";
-
-
+        final String title = "Type3 font iText 6 Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -744,7 +705,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, pdfDictionary);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -764,14 +725,10 @@ public class PdfFontTest extends ExtendedITextTest{
 
     @Test @Ignore
     public void testNewTrueTypeFont2BasedExistingFont() throws IOException, InterruptedException {
-        final String author = "Dmitry Trusevich";
-        final String creator = "iText 6";
-        final String title = "Type3 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont2.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeFont2_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2_new.pdf";
-
-
+        final String title = "Type3 font iText 6 Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -785,7 +742,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDoc, pdfDictionary);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -806,12 +763,10 @@ public class PdfFontTest extends ExtendedITextTest{
 
     @Test@Ignore
     public void testNewType0FontBasedExistingFont() throws IOException, PdfException, InterruptedException {
-        final String author = "Dmitry Trusevich";
-        final String creator = "iText 6";
-        final String title = "Type0 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_new.pdf";
+        final String title = "Type0 font iText 6 Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -825,7 +780,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDoc, pdfDictionary);
+        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -846,12 +801,10 @@ public class PdfFontTest extends ExtendedITextTest{
 
     @Test@Ignore
     public void createDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException, PdfException, InterruptedException {
-        final String author = "Dmitry Trusevich";
-        final String creator = "iText 6";
-        final String title = "Type0 font iText 6 Document";
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeAsType0.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0_new.pdf";
+        final String title = "Type0 font iText 6 Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -865,7 +818,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDoc, pdfDictionary);
+        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -886,12 +839,10 @@ public class PdfFontTest extends ExtendedITextTest{
 
     @Test@Ignore
     public void createDocumentWithType1WithToUnicodeBasedExistingFont() throws IOException, PdfException, InterruptedException {
-        final String author = "Dmitry Trusevich";
-        final String creator = "iText 6";
-        final String title = "Type1 font iText 6 Document";
         String inputFileName1 = sourceFolder + "fontWithToUnicode.pdf";
         String filename = destinationFolder + "fontWithToUnicode_new.pdf";
         String cmpFilename = sourceFolder + "cmp_fontWithToUnicode_new.pdf";
+        final String title = "Type1 font iText 6 Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -905,7 +856,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, pdfDictionary);
+        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -925,19 +876,17 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    @Ignore
     public void testType1FontUpdateContent() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithCMR10Afm.pdf";
         String filename = destinationFolder + "DocumentWithCMR10Afm_updated.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm_updated.pdf";
 
         PdfReader reader = new PdfReader(inputFileName1);
-        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filename)).setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
-        PdfType1Font pdfType1Font = new PdfType1Font(pdfDoc, pdfDictionary);
+        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -955,13 +904,12 @@ public class PdfFontTest extends ExtendedITextTest{
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
-@Test
+
+    @Test
     public void stringAscentDescent() throws IOException, PdfException, InterruptedException {
         int pageCount = 1;
         String filename = destinationFolder + "stringAscentDescent.pdf";
         String cmpFilename = sourceFolder + "cmp_stringAscentDescent.pdf";
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Type0 test";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -1012,8 +960,6 @@ public class PdfFontTest extends ExtendedITextTest{
         int pageCount = 1;
         String filename = destinationFolder + "stringAscentDescentLine.pdf";
         String cmpFilename = sourceFolder + "cmp_stringAscentDescentLine.pdf";
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
         final String title = "Type0 test";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -1128,12 +1074,8 @@ public class PdfFontTest extends ExtendedITextTest{
             @LogMessage(messageTemplate = LogMessageConstant.FONT_HAS_INVALID_GLYPH, count = 131)
     })
     public void testWriteTTC() throws IOException, InterruptedException {
-
         String filename = destinationFolder + "DocumentWithTTC.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
-
-        final String author = "Trusevich Dzmitry";
-        final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);

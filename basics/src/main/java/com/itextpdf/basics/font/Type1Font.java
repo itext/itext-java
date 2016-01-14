@@ -14,18 +14,13 @@ import org.slf4j.LoggerFactory;
 
 public class Type1Font extends FontProgram {
 
-    /**
-     * Type 1 font parser.
-     */
     private Type1Parser fontParser;
 
-    /**
-     * The character set of the font.
-     */
     private String characterSet;
 
     /**
      * Represents the section KernPairs in the AFM file.
+     * Key is uni1<<32 + uni2. Value is kerning value.
      */
     private HashMap<Long, Integer> kernPairs = new HashMap<>();
 
@@ -36,13 +31,6 @@ public class Type1Font extends FontProgram {
 
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
-
-    //TODO remove
-    public Type1Font(String baseEncoding) throws IOException {
-        if (encodingScheme.equals("AdobeStandardEncoding") || encodingScheme.equals("StandardEncoding")) {
-            isFontSpecific = false;
-        }
-    }
 
     public static Type1Font createStandardFont(String name) throws IOException {
         if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
@@ -76,8 +64,12 @@ public class Type1Font extends FontProgram {
         process();
     }
 
+    protected Type1Font(String baseFont) {
+        getFontNames().setFontName(baseFont);
+    }
+
     public boolean isBuiltInFont() {
-        return fontParser.isBuiltInFont();
+        return fontParser == null || fontParser.isBuiltInFont();
     }
 
     @Override

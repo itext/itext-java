@@ -57,9 +57,17 @@ public class TrueTypeFont extends FontProgram {
 
     private byte[] fontStreamBytes;
 
+    protected TrueTypeFont() {
+    }
+
     public TrueTypeFont(String path) throws IOException {
         checkFilePath(path);
         fontParser = new OpenTypeParser(path);
+        initializeFontProperties();
+    }
+
+    public TrueTypeFont(byte[] ttf) throws IOException {
+        fontParser = new OpenTypeParser(ttf);
         initializeFontProperties();
     }
 
@@ -71,11 +79,6 @@ public class TrueTypeFont extends FontProgram {
 
     TrueTypeFont(byte[] ttc, int ttcIndex) throws IOException {
         fontParser = new OpenTypeParser(ttc, ttcIndex);
-        initializeFontProperties();
-    }
-
-    public TrueTypeFont(byte[] ttf) throws IOException {
-        fontParser = new OpenTypeParser(ttf);
         initializeFontProperties();
     }
 
