@@ -30,12 +30,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This class represents the static form technology AcroForm on a PDF file.
+ */
 public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     /**
-     * Signature flags
+     * To be used with {@link #setSignatureFlags}
+     * 
+     * <blockquote>
+     * If set, the document contains at least one signature field. This flag
+     * allows a conforming reader to enable user interface items (such as menu
+     * items or pushbuttons) related to signature processing without having to
+     * scan the entire document for the presence of signature fields.
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
      */
     static public final int SIGNATURE_EXIST = 1;
+    /**
+     * To be used with {@link #setSignatureFlags}
+     * 
+     * <blockquote>
+     * If set, the document contains signatures that may be invalidated if the
+     * file is saved (written) in a way that alters its previous contents, as
+     * opposed to an incremental update. Merely updating the file by appending
+     * new information to the end of the previous version is safe. Conforming
+     * readers may use this flag to inform a user requesting a full save that
+     * signatures will be invalidated and require explicit confirmation before
+     * continuing with the operation.
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     */
     static public final int APPEND_ONLY = 2;
 
     protected boolean generateAppearance;
@@ -47,13 +72,25 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     private Set<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
     private XfaForm xfaForm;
 
-
+    /**
+     * Creates a PdfAcroForm as a wrapper of a dictionary.
+     * Also initializes an XFA form if an <code>/XFA</code> entry is present in
+     * the dictionary
+     * 
+     * @param pdfObject the PdfDictionary to be wrapped
+     */
     public PdfAcroForm(PdfDictionary pdfObject) {
         super(pdfObject);
         getFormFields();
         xfaForm = new XfaForm(pdfObject);
     }
 
+    /**
+     * Creates a PdfAcroForm from a {@link PdfArray} of fields.
+     * Also initializes an empty XFA form
+     * 
+     * @param fields a {@link PdfArray} of {@link PdfDictionary} objects
+     */
     public PdfAcroForm(PdfArray fields) {
         super(new PdfDictionary());
         put(PdfName.Fields, fields);
@@ -130,7 +167,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             for (PdfDictionary resDict : resources) {
                 mergeResources(defaultResources, resDict, field);
             }
-            if (defaultResources.size() != 0) {
+            if (!defaultResources.isEmpty()) {
                 put(PdfName.DR, defaultResources);
             }
         }
@@ -180,6 +217,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Gets the {@link PdfFormField form field}s as a {@link Map}
+     * 
+     * @return a map of field names and their associated {@link PdfFormField form field} objects
+     */
     public Map<String, PdfFormField> getFormFields() {
         if (fields.isEmpty()) {
             fields = iterateFields(getFields());
@@ -187,18 +229,70 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return fields;
     }
 
+    /**
+     * Sets the <code>NeedAppearances</code> boolean property on the AcroForm.
+     * 
+     * <blockquote>
+     * NeedAppearances is a flag specifying whether to construct appearance
+     * streams and appearance dictionaries for all widget annotations in the
+     * document.
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     * 
+     * @param needAppearances a boolean. Default value is <code>false</code>
+     * @return current AcroForm.
+     */
     public PdfAcroForm setNeedAppearances(boolean needAppearances) {
         return put(PdfName.NeedAppearances, new PdfBoolean(needAppearances));
     }
 
+    /**
+     * Gets the <code>NeedAppearances</code> boolean property on the AcroForm.
+     * 
+     * <blockquote>
+     * NeedAppearances is a flag specifying whether to construct appearance
+     * streams and appearance dictionaries for all widget annotations in the
+     * document.
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     * 
+     * @return the <code>NeedAppearances</code> property as a {@link PdfBoolean}. Default value is <code>false</code>
+     */
     public PdfBoolean getNeedAppearances() {
         return getPdfObject().getAsBoolean(PdfName.NeedAppearances);
     }
 
+    /**
+     * Sets the <code>SigFlags</code> integer property on the AcroForm.
+     * 
+     * <blockquote>
+     * SigFlags is a set of flags specifying various document-level
+     * characteristics related to signature fields
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     * 
+     * @param sigFlags an integer. Use {@link #SIGNATURE_EXIST} and/or {@link #APPEND_ONLY}.
+     * Use bitwise OR operator to combine these values. Default value is <code>0</code>
+     * @return current AcroForm.
+     */
     public PdfAcroForm setSignatureFlags(int sigFlags) {
         return put(PdfName.SigFlags, new PdfNumber(sigFlags));
     }
 
+    /**
+     * Changes the <code>SigFlags</code> integer property on the AcroForm.
+     * This method allows only to add flags, not to remove them. 
+     * 
+     * <blockquote>
+     * SigFlags is a set of flags specifying various document-level
+     * characteristics related to signature fields
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     * 
+     * @param sigFlag an integer. Use {@link #SIGNATURE_EXIST} and/or {@link #APPEND_ONLY}.
+     * Use bitwise OR operator to combine these values. Default is <code>0</code>
+     * @return current AcroForm.
+     */
     public PdfAcroForm setSignatureFlag(int sigFlag) {
         int flags = getSignatureFlags();
         flags = flags | sigFlag;
@@ -206,6 +300,17 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return setSignatureFlags(flags);
     }
 
+    /**
+     * Gets the <code>SigFlags</code> integer property on the AcroForm.
+     * 
+     * <blockquote>
+     * SigFlags is a set of flags specifying various document-level
+     * characteristics related to signature fields
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     * 
+     * @return current value for <code>SigFlags</code>.
+     */
     public int getSignatureFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.SigFlags);
         if (f != null)
@@ -214,50 +319,174 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             return 0;
     }
 
+    /**
+     * Sets the <code>CO</code> array property on the AcroForm.
+     * 
+     * <blockquote>
+     * <code>CO</code>, Calculation Order, is an array of indirect references to
+     * field dictionaries with calculation actions, defining the calculation
+     * order in which their values will be recalculated when the value of any
+     * field changes
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     * 
+     * @param calculationOrder an array of indirect references
+     * @return current AcroForm
+     */
     public PdfAcroForm setCalculationOrder(PdfArray calculationOrder) {
         return put(PdfName.CO, calculationOrder);
     }
 
+    /**
+     * Gets the <code>CO</code> array property on the AcroForm.
+     * 
+     * <blockquote>
+     * <code>CO</code>, Calculation Order, is an array of indirect references to
+     * field dictionaries with calculation actions, defining the calculation
+     * order in which their values will be recalculated when the value of any
+     * field changes
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     * 
+     * @return an array of indirect references
+     */
     public PdfArray getCalculationOrder() {
         return getPdfObject().getAsArray(PdfName.CO);
     }
 
+    /**
+     * Sets the <code>DR</code> dictionary property on the AcroForm.
+     * 
+     * <blockquote>
+     * <code>DR</code> is a resource dictionary containing default resources
+     * (such as fonts, patterns, or colour spaces) that shall be used by form
+     * field appearance streams. At a minimum, this dictionary shall contain a
+     * Font entry specifying the resource name and font dictionary of the
+     * default font for displaying text.
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     * 
+     * @param defaultResources a resource dictionary
+     * @return current AcroForm
+     */
     public PdfAcroForm setDefaultResources(PdfDictionary defaultResources) {
         return put(PdfName.DR, defaultResources);
     }
 
+    /**
+     * Gets the <code>DR</code> dictionary property on the AcroForm.
+     * 
+     * <blockquote>
+     * <code>DR</code> is a resource dictionary containing default resources
+     * (such as fonts, patterns, or colour spaces) that shall be used by form
+     * field appearance streams. At a minimum, this dictionary shall contain a
+     * Font entry specifying the resource name and font dictionary of the
+     * default font for displaying text.
+     * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * </blockquote>
+     * 
+     * @return a resource dictionary
+     */
     public PdfDictionary getDefaultResources() {
         return getPdfObject().getAsDictionary(PdfName.DR);
     }
 
+    /**
+     * Sets the <code>DA</code> String property on the AcroForm.
+     * 
+     * This method sets a default (fallback value) for the <code>DA</code>
+     * attribute of variable text {@link PdfFormField form field}s.
+     * 
+     * @param appearance a String containing a sequence of valid PDF syntax
+     * @return current AcroForm
+     * @see PdfFormField#setDefaultAppearance(java.lang.String) 
+     */
     public PdfAcroForm setDefaultAppearance(String appearance) {
         return put(PdfName.DA, new PdfString(appearance));
     }
 
+    /**
+     * Gets the <code>DA</code> String property on the AcroForm.
+     * 
+     * This method returns the default (fallback value) for the <code>DA</code>
+     * attribute of variable text {@link PdfFormField form field}s.
+     * 
+     * @return the form-wide default appearance, as a <code>String</code>
+     */
     public PdfString getDefaultAppearance() {
         return getPdfObject().getAsString(PdfName.DA);
     }
 
+    /**
+     * Sets the <code>Q</code> integer property on the AcroForm.
+     * 
+     * This method sets a default (fallback value) for the <code>Q</code>
+     * attribute of variable text {@link PdfFormField form field}s.
+     * 
+     * @param justification an integer representing a justification value
+     * @return current AcroForm 
+     * @see PdfFormField#setJustification(int) 
+     */
     public PdfAcroForm setDefaultJustification(int justification) {
         return put(PdfName.Q, new PdfNumber(justification));
     }
 
+    /**
+     * Gets the <code>Q</code> integer property on the AcroForm.
+     * 
+     * This method gets the default (fallback value) for the <code>Q</code>
+     * attribute of variable text {@link PdfFormField form field}s.
+     * 
+     * @return an integer representing a justification value
+     * @see PdfFormField#getJustification() 
+     */
     public PdfNumber getDefaultJustification() {
         return getPdfObject().getAsNumber(PdfName.Q);
     }
 
+    /**
+     * Sets the <code>XFA</code> property on the AcroForm.
+     * 
+     * <code>XFA</code> can either be a {@link PdfStream} or a {@link PdfArray}.
+     * Its contents must be valid XFA.
+     * 
+     * @param xfaResource a stream containing the XDP
+     * @return current AcroForm
+     */
     public PdfAcroForm setXFAResource(PdfStream xfaResource) {
         return put(PdfName.XFA, xfaResource);
     }
 
+    /**
+     * Sets the <code>XFA</code> property on the AcroForm.
+     * 
+     * <code>XFA</code> can either be a {@link PdfStream} or a {@link PdfArray}.
+     * Its contents must be valid XFA.
+     * 
+     * @param xfaResource an array of text string and stream pairs representing
+     * the individual packets comprising the XML Data Package. (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
+     * @return current AcroForm
+     */
     public PdfAcroForm setXFAResource(PdfArray xfaResource) {
         return put(PdfName.XFA, xfaResource);
     }
 
+    /**
+     * Gets the <code>XFA</code> property on the AcroForm.
+     * 
+     * @return an object representing the entire XDP. It can either be a
+     * {@link PdfStream} or a {@link PdfArray}.
+     */
     public PdfObject getXFAResource() {
         return getPdfObject().get(PdfName.XFA);
     }
 
+    /**
+     * Gets a {@link PdfFormField form field} by its name.
+     * 
+     * @param fieldName the name of the {@link PdfFormField form field} to retrieve
+     * @return the {@link PdfFormField form field}, or <code>null</code> if it isn't present
+     */
     public PdfFormField getField(String fieldName) {
         return fields.get(fieldName);
     }
@@ -266,6 +495,20 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return generateAppearance;
     }
 
+    /**
+     * Sets the attribute generateAppearance, which tells {@link #flatFields()}
+     * to generate an appearance Stream for all {@link PdfFormField form field}s that don't have one.
+     * 
+     * Not generating appearances will speed up form flattening but the results
+     * can be unexpected in Acrobat. Don't use it unless your environment is
+     * well controlled. The default is <CODE>true</CODE>.
+     * 
+     * If generateAppearance is set to <code>true</code>, then 
+     * <code>NeedAppearances</code> is set to <code>false</code>. This does not
+     * apply vice versa.
+     * 
+     * @param generateAppearance a boolean
+     */
     public void setGenerateAppearance(boolean generateAppearance) {
         if (generateAppearance) {
             getPdfObject().remove(PdfName.NeedAppearances);
@@ -273,6 +516,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         this.generateAppearance = generateAppearance;
     }
 
+    /**
+     * Flattens all interactive {@link PdfFormField form field}s in the document.
+     */
     public void flatFields() {
         if (document.isAppendMode()) {
             throw new PdfException(PdfException.FieldFlatteningIsNotSupportedInAppendMode);
@@ -356,6 +602,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Tries to remove the {@link PdfFormField form field} with the specified name from the document.
+     * 
+     * @param fieldName the name of the {@link PdfFormField form field} to remove
+     * @return a boolean representing whether or not the removal succeeded.
+     */
     public boolean removeField(String fieldName) {
         PdfFormField field = getField(fieldName);
         if (field == null) {
@@ -388,6 +640,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return false;
     }
 
+    /**
+     * Adds a {@link PdfFormField form field}, identified by name, to the list of fields to be flattened.
+     * Does not perform a flattening operation in itself.
+     * 
+     * @param fieldName the name of the {@link PdfFormField form field} to be flattened
+     */
     public void partialFormFlattening(String fieldName) {
         PdfFormField field = getFormFields().get(fieldName);
         if (field != null) {
@@ -395,6 +653,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Changes the identifier of a {@link PdfFormField form field}.
+     * 
+     * @param oldName the current name of the field
+     * @param newName the new name of the field. Must not be used currently.
+     */
     public void renameField(String oldName, String newName) {
         Map<String, PdfFormField> fields = getFormFields();
         if (fields.containsKey(newName)) {
@@ -408,6 +672,13 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Creates an in-memory copy of a {@link PdfFormField}. This new field is
+     * not added to the document.
+     * 
+     * @param name the name of the {@link PdfFormField form field} to be copied
+     * @return a clone of the original {@link PdfFormField}
+     */
     public PdfFormField copyField(String name) {
         PdfFormField oldField = getField(name);
         if (oldField != null) {
@@ -419,11 +690,23 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
+    /**
+     * Replaces the {@link PdfFormField} of a certain name with another
+     * {@link PdfFormField}
+     * 
+     * @param name the name of the {@link PdfFormField form field} to be replaced
+     * @param field the new {@link PdfFormField}
+     */
     public void replaceField(String name, PdfFormField field) {
         removeField(name);
         addField(field);
     }
 
+    /**
+     * Gets all AcroForm fields in the document.
+     * 
+     * @return a {@link PdfArray} of field dictionaries
+     */
     protected PdfArray getFields() {
         return getPdfObject().getAsArray(PdfName.Fields);
     }
@@ -530,6 +813,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return resources;
     }
 
+    /**
+     * Merges two dictionaries. When both dictionaries contain the same key,
+     * the value from the first dictionary is kept.
+     * 
+     * @param result the {@link PdfDictionary} which may get extra entries from source
+     * @param source the {@link PdfDictionary} whose entries may be merged into result
+     * @param field
+     */
+    // TODO: determine whether we need the parameter called field
     public void mergeResources(PdfDictionary result, PdfDictionary source, PdfFormField field) {
         for (PdfName name : resourceNames) {
             PdfDictionary dic = source.getAsDictionary(name);
@@ -544,10 +836,20 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Determines whether the AcroForm contains XFA data
+     * 
+     * @return a boolean 
+     */
     public boolean hasXfaForm(){
         return xfaForm != null && xfaForm.isXfaPresent();
     }
 
+    /**
+     * Gets the {@link XfaForm} atribute.
+     * 
+     * @return the XFA form object
+     */
     public XfaForm getXfaForm(){
         return xfaForm;
     }
@@ -564,6 +866,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Changes a field value in the XFA form
+     * 
+     * @param name the name of the field to be changed
+     * @param value the new value
+     */
     public void setXfaFieldValue(String name, String value) {
         if (hasXfaForm()) {
             name = xfaForm.findFieldName(name, this);
