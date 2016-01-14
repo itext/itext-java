@@ -227,18 +227,6 @@ public class PdfCanvas {
         }
         return kernArray;
     }
-    
-    public void applyKerning(GlyphLine text) {
-        PdfFont font = currentGs.getFont();
-        if (text.size() > 0) {
-            for (int iter = 1; iter < text.size(); iter++) {
-                int kern = font.getKerning(text.glyphs.get(iter - 1), text.glyphs.get(iter));
-                if (kern != 0) {
-                    text.glyphs.set(iter - 1, new Glyph(text.glyphs.get(iter - 1), 0, 0, kern, 0, 0));
-                }
-            }
-        }
-    }
 
     /**
      * Constructs a kern array for the text in the given font.

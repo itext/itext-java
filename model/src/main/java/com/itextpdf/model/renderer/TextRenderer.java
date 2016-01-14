@@ -80,12 +80,19 @@ public class TextRenderer extends AbstractRenderer {
         ISplitCharacters splitCharacters = getProperty(Property.SPLIT_CHARACTERS);
         float italicSkewAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
         float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
-
         Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
-        if (script != null && isOtfFont(font) && !otfFeaturesApplied) {
-            ((TrueTypeFont)font.getFontProgram()).setScriptForOTF(script);
-            ((TrueTypeFont)font.getFontProgram()).applyOtfScript(text);
-            ((TrueTypeFont)font.getFontProgram()).applyLigaFeature(text, true);
+
+        if (!otfFeaturesApplied) {
+            if (script != null && isOtfFont(font)) {
+                ((TrueTypeFont)font.getFontProgram()).setScriptForOTF(script);
+                ((TrueTypeFont)font.getFontProgram()).applyOtfScript(text);
+                ((TrueTypeFont)font.getFontProgram()).applyLigaFeature(text, true);
+            }
+
+            if (fontKerning == Property.FontKerning.YES) {
+                font.applyKerning(text);
+            }
+
             otfFeaturesApplied = true;
         }
 
@@ -176,16 +183,15 @@ public class TextRenderer extends AbstractRenderer {
                 }
 
                 float glyphWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-                float kerning = fontKerning == Property.FontKerning.YES && previousCharPos != -1 ?
-                        getKerning(text.glyphs.get(previousCharPos), currentGlyph, font, fontSize, hScale) / TEXT_SPACE_COEFF : 0;
-                if ((nonBreakablePartFullWidth + glyphWidth + kerning + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
+                float xAdvance = previousCharPos != -1 ? scaleXAdvance(text.glyphs.get(previousCharPos).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
+                if ((nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                 }
                 if (firstCharacterWhichExceedsAllowedWidth == -1) {
-                    nonBreakablePartWidthWhichDoesNotExceedAllowedWidth += glyphWidth + kerning;
+                    nonBreakablePartWidthWhichDoesNotExceedAllowedWidth += glyphWidth + xAdvance;
                 }
 
-                nonBreakablePartFullWidth += glyphWidth + kerning;
+                nonBreakablePartFullWidth += glyphWidth + xAdvance;
                 nonBreakablePartMaxAscender = Math.max(nonBreakablePartMaxAscender, ascender);
                 nonBreakablePartMaxDescender = Math.min(nonBreakablePartMaxDescender, descender);
                 nonBreakablePartMaxHeight = (nonBreakablePartMaxAscender - nonBreakablePartMaxDescender) * fontSize / TEXT_SPACE_COEFF + textRise;
@@ -212,7 +218,6 @@ public class TextRenderer extends AbstractRenderer {
                     line.start = currentTextPos;
                 }
                 line.end = Math.max(line.end, nonBreakablePartEnd + 1);
-                //addTextSubstring(currentLine, text, currentTextPos, nonBreakablePartEnd + 1);
                 currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                 currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                 currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
@@ -244,7 +249,7 @@ public class TextRenderer extends AbstractRenderer {
                                     String pre = hyph.getPreHyphenText(i);
                                     String pos = hyph.getPostHyphenText(i);
                                     float currentHyphenationChoicePreTextWidth =
-                                            getGlyphLineWidth(fontKerning == Property.FontKerning.YES, convertToGlyphLine(pre + hyphenationConfig.getHyphenSymbol()), font, fontSize, hScale, characterSpacing, wordSpacing);
+                                            getGlyphLineWidth(convertToGlyphLine(pre + hyphenationConfig.getHyphenSymbol()), fontSize, hScale, characterSpacing, wordSpacing);
                                     if (currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
                                         hyphenationApplied = true;
 
@@ -389,7 +394,6 @@ public class TextRenderer extends AbstractRenderer {
             Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
             Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
             Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
-            Property.FontKerning fontKerning = getProperty(Property.FONT_KERNING);
             Float horizontalScaling = getProperty(Property.HORIZONTAL_SCALING);
             boolean italicSimulation = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION));
             boolean boldSimulation = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION));
@@ -445,9 +449,6 @@ public class TextRenderer extends AbstractRenderer {
                 }
             });
 
-            if (fontKerning == Property.FontKerning.YES) {
-                canvas.applyKerning(output);
-            }
             canvas.showText(output);
             canvas.endText().restoreState();
             if (isTagged) {
@@ -524,19 +525,18 @@ public class TextRenderer extends AbstractRenderer {
         float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
         Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
         Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
-        PdfFont font = getPropertyAsFont(Property.FONT);
         Float hScale = getProperty(Property.HORIZONTAL_SCALING);
 
         int firstNonSpaceCharIndex = line.end - 1;
-        while (firstNonSpaceCharIndex >= 0) {
+        while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.glyphs.get(firstNonSpaceCharIndex);
             if (currentGlyph.getUnicode() == null || !Character.isWhitespace(currentGlyph.getUnicode())) {
                 break;
             }
 
             float currentCharWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-            float kerning = (firstNonSpaceCharIndex != 0 ? getKerning(line.glyphs.get(firstNonSpaceCharIndex - 1), currentGlyph, font, fontSize, hScale) : 0) / TEXT_SPACE_COEFF;
-            trimmedSpace += currentCharWidth - kerning;
+            float xAdvance = firstNonSpaceCharIndex > line.start ? scaleXAdvance(line.glyphs.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
+            trimmedSpace += currentCharWidth - xAdvance;
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
 
             firstNonSpaceCharIndex--;
@@ -713,25 +713,17 @@ public class TextRenderer extends AbstractRenderer {
         return resultWidth;
     }
 
-    private float getKerning(Glyph char1, Glyph char2, PdfFont font, float fontSize, Float hScale) {
-        if (hScale == null)
-            hScale = 1f;
-        if (font.hasKernPairs()) {
-            return font.getKerning(char1, char2) * fontSize * hScale;
-        } else {
-            return 0;
-        }
+    private float scaleXAdvance(float xAdvance, float fontSize, Float hScale) {
+        return xAdvance * fontSize * hScale;
     }
 
-    private float getGlyphLineWidth(boolean kerned, GlyphLine glyphLine, PdfFont font, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
+    private float getGlyphLineWidth(GlyphLine glyphLine, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
         float width = 0;
         for (int i = glyphLine.start; i < glyphLine.end; i++) {
             float charWidth = getCharWidth(glyphLine.glyphs.get(i), fontSize, hScale, characterSpacing, wordSpacing);
             width += charWidth;
-            if (kerned) {
-                float kerning = i != glyphLine.start ? getKerning(glyphLine.glyphs.get(i - 1), glyphLine.glyphs.get(i), font, fontSize, hScale) : 0;
-                width += kerning;
-            }
+            float xAdvance = (i != glyphLine.start) ? scaleXAdvance(glyphLine.glyphs.get(i - 1).getXAdvance(), fontSize, hScale) : 0;
+            width += xAdvance;
         }
         return width / TEXT_SPACE_COEFF;
     }
