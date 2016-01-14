@@ -5,7 +5,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontEncoding;
+import com.itextpdf.basics.image.GifImage;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.RawImage;
@@ -51,9 +51,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -1474,7 +1472,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getGifImage(baos.toByteArray(), 1);
+        Image img = ImageFactory.getGifFrame(baos.toByteArray(), 1);
         canvas.addImage(img, 100, 100, 200, false);
 
         document.close();
@@ -1498,7 +1496,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getGifImage(baos.toByteArray(), 2);
+        Image img = ImageFactory.getGifFrame(baos.toByteArray(), 2);
         canvas.addImage(img, 100, 100, 200, false);
 
         document.close();
@@ -1522,8 +1520,36 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getGifImage(baos.toByteArray(), 3);
+        Image img = ImageFactory.getGifFrame(baos.toByteArray(), 3);
         canvas.addImage(img, 100, 100, 200, false);
+    }
+
+    @Test
+    public void gifImageTest05() throws IOException, InterruptedException {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest05.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        InputStream is = new FileInputStream(sourceFolder + "animated_fox_dog.gif");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int reads = is.read();
+        while (reads != -1) {
+            baos.write(reads);
+            reads = is.read();
+        }
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        List<Image> frames = ImageFactory.getGifFrames(baos.toByteArray(), new int[]{1, 2, 5});
+        float y = 600;
+        for (Image img : frames) {
+            canvas.addImage(img, 100, y, 200, false);
+            y -= 200;
+        }
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest05.pdf", sourceFolder + "cmp_gifImageTest05.pdf", destinationFolder, "diff_"));
     }
 
     @Test

@@ -14,6 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public final class ImageFactory {
 
@@ -279,10 +283,15 @@ public final class ImageFactory {
         throw new IllegalArgumentException("BMP image expected.");
     }
 
-    public static Image getGifImage(URL url, int frame) {
-        byte[] imageType = readImageType(url);
+    /**
+     * Return a GifImage object. This object cannot be
+     * @param bytes
+     * @return
+     */
+    public static GifImage getGifImage(byte[] bytes) {
+        byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
-            Image image = new GifImage(url, frame);
+            GifImage image = new GifImage(bytes);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             GifImageHelper.processImage(image, baos);
             return image;
@@ -290,16 +299,82 @@ public final class ImageFactory {
         throw new IllegalArgumentException("GIF image expected.");
     }
 
-    public static Image getGifImage(byte[] bytes, int frame) {
-        byte[] imageType = readImageType(bytes);
+    /**
+     * Returns a specified frame of the gif image
+     * @param url url of gif image
+     * @param frame number of frame to be returned
+     * @return
+     */
+    public static Image getGifFrame(URL url, int frame) {
+        byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, gif)) {
-            Image image = new GifImage(bytes, frame);
+            GifImage image = new GifImage(url);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            GifImageHelper.processImage(image, baos);
-            return image;
+            GifImageHelper.processImage(image, baos, frame - 1);
+            return image.getFrames().get(frame - 1);
         }
         throw new IllegalArgumentException("GIF image expected.");
+    }
 
+    /**
+     * Returns a specified frame of the gif image
+     * @param bytes byte array of gif image
+     * @param frame number of frame to be returned
+     * @return
+     */
+    public static Image getGifFrame(byte[] bytes, int frame) {
+        byte[] imageType = readImageType(bytes);
+        if (imageTypeIs(imageType, gif)) {
+            GifImage image = new GifImage(bytes);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            GifImageHelper.processImage(image, baos, frame - 1);
+            return image.getFrames().get(frame - 1);
+        }
+        throw new IllegalArgumentException("GIF image expected.");
+    }
+
+    /**
+     * Returns <CODE>List</CODE> of gif image frames
+     * @param bytes byte array of gif image
+     * @param frameNumbers array of frame numbers of gif image
+     * @return
+     */
+    public static List<Image> getGifFrames(byte[] bytes, int[] frameNumbers) {
+        byte[] imageType = readImageType(bytes);
+        if (imageTypeIs(imageType, gif)) {
+            GifImage image = new GifImage(bytes);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Arrays.sort(frameNumbers);
+            GifImageHelper.processImage(image, baos, frameNumbers[frameNumbers.length - 1] - 1);
+            List<Image> frames = new ArrayList<>();
+            for (int frame : frameNumbers) {
+                frames.add(image.getFrames().get(frame - 1));
+            }
+            return frames;
+        }
+        throw new IllegalArgumentException("GIF image expected.");
+    }
+
+    /**
+     * Returns <CODE>List</CODE> of gif image frames
+     * @param url url of gif image
+     * @param frameNumbers array of frame numbers of gif image
+     * @return
+     */
+    public static List<Image> getGifFrames(URL url, int[] frameNumbers) {
+        byte[] imageType = readImageType(url);
+        if (imageTypeIs(imageType, gif)) {
+            GifImage image = new GifImage(url);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Arrays.sort(frameNumbers);
+            GifImageHelper.processImage(image, baos, frameNumbers[frameNumbers.length - 1] - 1);
+            List<Image> frames = new ArrayList<>();
+            for (int frame : frameNumbers) {
+                frames.add(image.getFrames().get(frame - 1));
+            }
+            return frames;
+        }
+        throw new IllegalArgumentException("GIF image expected.");
     }
 
     public static Image getJbig2Image(URL url, int page) {
@@ -434,10 +509,10 @@ public final class ImageFactory {
     private static Image getImageInstance(URL source, boolean recoverImage) {
         byte[] imageType = readImageType(source);
         if (imageTypeIs(imageType, gif)) {
-            Image image = new GifImage(source, 1);
+            GifImage image = new GifImage(source);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            GifImageHelper.processImage(image, baos);
-            return image;
+            GifImageHelper.processImage(image, baos, 0);
+            return image.getFrames().get(0);
         } else if (imageTypeIs(imageType, jpeg)) {
             Image image = new JpegImage(source);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -479,10 +554,10 @@ public final class ImageFactory {
     private static Image getImageInstance(byte[] bytes, boolean recoverImage) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
-            Image image = new GifImage(bytes, 1);
+            GifImage image = new GifImage(bytes);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            GifImageHelper.processImage(image, baos);
-            return image;
+            GifImageHelper.processImage(image, baos, 0);
+            return image.getFrames().get(0);
         } else if (imageTypeIs(imageType, jpeg)) {
             Image image = new JpegImage(bytes);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -549,6 +624,5 @@ public final class ImageFactory {
                 } catch (IOException ignored) { }
             }
         }
-
     }
 }

@@ -1,25 +1,23 @@
 package com.itextpdf.basics.image;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GifImage extends RawImage {
+public class GifImage {
 
-    private int frame;
     private float logicalHeight;
     private float logicalWidth;
+    private List<Image> frames = new ArrayList<>();
+    private byte[] bytes;
+    private URL url;
 
-    protected GifImage(URL url, int frame) {
-        super(url, GIF);
-        this.frame = frame - 1;
+    protected GifImage(URL url) {
+        this.url = url;
     }
 
-    protected GifImage(byte[] bytes, int frame) {
-        super(bytes, GIF);
-        this.frame = frame - 1;
-    }
-
-    public int getFrame() {
-        return frame;
+    protected GifImage(byte[] bytes) {
+        this.bytes = bytes;
     }
 
     public float getLogicalHeight() {
@@ -36,5 +34,21 @@ public class GifImage extends RawImage {
 
     public void setLogicalWidth(float logicalWidth) {
         this.logicalWidth = logicalWidth;
+    }
+
+    public List<Image> getFrames() {
+        return frames;
+    }
+
+    protected byte[] getBytes() {
+        return bytes;
+    }
+
+    protected URL getUrl() {
+        return url;
+    }
+
+    protected void addFrame(Image frame) {
+        frames.add(frame);
     }
 }

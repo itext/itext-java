@@ -15,6 +15,7 @@ import java.util.HashMap;
 public final class GifImageHelper {
 
     static final int MaxStackSize = 4096;   // max decoder pixel stack size
+    private static int currentFrame;
 
     private static class GifParameters {
         DataInputStream in;
@@ -56,17 +57,16 @@ public final class GifImageHelper {
         URL fromUrl;
 
         GifImage image;
-
-        boolean frameRead;
-        HashMap<String, Object> additional;
     }
 
-    public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.GIF)
-            throw new IllegalArgumentException("GIF image expected");
+    public static void processImage(GifImage image, ByteArrayOutputStream stream) {
+        processImage(image, stream, -1);
+    }
+
+    public static void processImage(GifImage image, ByteArrayOutputStream stream, int lastFrameNumber) {
         GifParameters gif = new GifParameters();
 
-        gif.image = (GifImage)image;
+        gif.image = image;
 
         InputStream is = null;
         try {
@@ -78,14 +78,12 @@ public final class GifImageHelper {
                 while ((read = is.read(bytes)) != -1) {
                     stream.write(bytes, 0, read);
                 }
-                image.imageSize = stream.toByteArray().length;
                 is.close();
                 is = new ByteArrayInputStream(stream.toByteArray());
             } else {
-                is = new ByteArrayInputStream(gif.image.getData());
-                image.imageSize = image.getData().length;
+                is = new ByteArrayInputStream(gif.image.getBytes());
             }
-            process(is, gif);
+            process(is, gif, lastFrameNumber);
         } catch (IOException e) {
             throw new PdfException(PdfException.GifImageException, e);
         } finally {
@@ -97,23 +95,14 @@ public final class GifImageHelper {
                 }
             }
         }
-        if (stream != null) {
-            updatePdfStream(gif);
-        }
     }
 
-    private static void updatePdfStream(GifParameters gif) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        RawImageHelper.updateImageAttributes(gif.image, gif.additional, baos);
-        gif.image.data = baos.toByteArray();
-    }
-
-    private static void process(InputStream is, GifParameters gif) throws IOException {
+    private static void process(InputStream is, GifParameters gif, int lastFrameNumber) throws IOException {
         gif.in = new DataInputStream(new BufferedInputStream(is));
         readHeader(gif);
-        readContents(gif);
-        if (!gif.frameRead)
-            throw new PdfException(PdfException.CannotFind1Frame).setMessageParams(gif.image.getFrame() + 1);
+        readContents(gif, lastFrameNumber);
+        if (currentFrame <= lastFrameNumber)
+            throw new PdfException(PdfException.CannotFind1Frame).setMessageParams(lastFrameNumber);
     }
 
     /**
@@ -197,17 +186,18 @@ public final class GifImageHelper {
         return bpc;
     }
 
-    private static void readContents(GifParameters gif) throws IOException {
+    private static void readContents(GifParameters gif, int lastFrameNumber) throws IOException {
         // read GIF file content blocks
         boolean done = false;
-        int currentFrame = 0;
+        currentFrame = 0;
         while (!done) {
             int code = gif.in.read();
             switch (code) {
                 case 0x2C:    // image separator
-                    boolean skipCurrentFrame = currentFrame != gif.image.getFrame();
-                    if (gif.frameRead = readFrame(skipCurrentFrame, gif))
+                    readFrame(gif);
+                    if (currentFrame == lastFrameNumber) {
                         done = true;
+                    }
                     currentFrame++;
                     break;
                 case 0x21:    // extension
@@ -237,7 +227,7 @@ public final class GifImageHelper {
     /**
      * Reads next frame image
      */
-    private static boolean readFrame(boolean skip, GifParameters gif) throws IOException {
+    private static void readFrame(GifParameters gif) throws IOException {
         gif.ix = readShort(gif);    // (sub)image position & size
         gif.iy = readShort(gif);
         gif.iw = readShort(gif);
@@ -269,32 +259,25 @@ public final class GifImageHelper {
         if (!skipZero)
             skip(gif);
 
-        if (!skip) {
-            try {
-                RawImageHelper.updateRawImageParameters(gif.image, gif.iw, gif.ih, 1, gif.m_bpc, gif.m_out);
-
-                Object[] colorspace = new Object[4];
-                colorspace[0] = "/Indexed";
-                colorspace[1] = "/DeviceRGB";
-                int len = gif.m_curr_table.length;
-                colorspace[2] = len / 3 - 1;
-                colorspace[3] = PdfEncodings.convertToString(gif.m_curr_table, null);
-                gif.additional = new HashMap<>();
-                gif.additional.put("ColorSpace", colorspace);
-                if (gif.transparency) {
-                    gif.image.setTransparency(new int[]{gif.transIndex, gif.transIndex});
-                }
-            } catch (Exception e) {
-                throw new PdfException(PdfException.GifImageException, e);
+        try {
+            Object[] colorspace = new Object[4];
+            colorspace[0] = "/Indexed";
+            colorspace[1] = "/DeviceRGB";
+            int len = gif.m_curr_table.length;
+            colorspace[2] = len / 3 - 1;
+            colorspace[3] = PdfEncodings.convertToString(gif.m_curr_table, null);
+            HashMap ad = new HashMap();
+            ad.put("ColorSpace", colorspace);
+            RawImage img = new RawImage(gif.m_out, 0);
+            RawImageHelper.updateRawImageParameters(img, gif.iw, gif.ih, 1, gif.m_bpc, gif.m_out);
+            RawImageHelper.updateImageAttributes(img, ad, new ByteArrayOutputStream());
+            gif.image.addFrame(img);
+            if (gif.transparency) {
+                img.setTransparency(new int[]{gif.transIndex, gif.transIndex});
             }
-            return true;
-        } else {
-            return false;
+        } catch (Exception e) {
+            throw new PdfException(PdfException.GifImageException, e);
         }
-
-
-        //resetFrame();
-
     }
 
     private static boolean decodeImageData(GifParameters gif) throws IOException {
