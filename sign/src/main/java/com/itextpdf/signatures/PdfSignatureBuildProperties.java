@@ -6,15 +6,23 @@ import com.itextpdf.core.pdf.PdfObjectWrapper;
 
 /**
  * Dictionary that stores signature build properties.
+ *
  * @author Kwinten Pisman
  */
 public class PdfSignatureBuildProperties extends PdfObjectWrapper<PdfDictionary> {
 
-    /** Creates new PdfSignatureBuildProperties */
+    /**
+     * Creates new PdfSignatureBuildProperties.
+     */
     public PdfSignatureBuildProperties() {
         super(new PdfDictionary());
     }
 
+    /**
+     * Creates new PdfSignatureBuildProperties with preset values.
+     *
+     * @param dict PdfDictionary containing preset values
+     */
     public PdfSignatureBuildProperties(PdfDictionary dict) {
         super(dict);
     }

@@ -1,5 +1,21 @@
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.io.ByteBuffer;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfCatalog;
+import com.itextpdf.core.pdf.PdfDeveloperExtension;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfIndirectReference;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.forms.PdfAcroForm;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -14,11 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.io.ByteBuffer;
-import com.itextpdf.core.pdf.*;
-import com.itextpdf.forms.PdfAcroForm;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -31,7 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Add verification according to PAdES-LTV (part 4)
+ * Add verification according to PAdES-LTV (part 4).
+ *
  * @author Paulo Soares
  */
 public class LtvVerification {
@@ -44,52 +56,52 @@ public class LtvVerification {
     private Map<PdfName, ValidationData> validated = new HashMap<>();
     private boolean used = false;
     /**
-     * What type of verification to include 
+     * What type of verification to include.
      */
     public enum Level {
         /**
-         * Include only OCSP
+         * Include only OCSP.
          */
         OCSP,
         /**
-         * Include only CRL
+         * Include only CRL.
          */
         CRL,
         /**
-         * Include both OCSP and CRL
+         * Include both OCSP and CRL.
          */
         OCSP_CRL,
         /**
-         * Include CRL only if OCSP can't be read
+         * Include CRL only if OCSP can't be read.
          */
         OCSP_OPTIONAL_CRL
     }
 
     /**
-     * Options for how many certificates to include
+     * Options for how many certificates to include.
      */
     public enum CertificateOption {
         /**
-         * Include verification just for the signing certificate
+         * Include verification just for the signing certificate.
          */
         SIGNING_CERTIFICATE,
         /**
-         * Include verification for the whole chain of certificates
+         * Include verification for the whole chain of certificates.
          */
         WHOLE_CHAIN
     }
 
     /**
      * Certificate inclusion in the DSS and VRI dictionaries in the CERT and CERTS
-     * keys
+     * keys.
      */
     public enum CertificateInclusion {
         /**
-         * Include certificates in the DSS and VRI dictionaries
+         * Include certificates in the DSS and VRI dictionaries.
          */
         YES,
         /**
-         * Do not include certificates in the DSS and VRI dictionaries
+         * Do not include certificates in the DSS and VRI dictionaries.
          */
         NO
     }
@@ -97,6 +109,7 @@ public class LtvVerification {
      * The verification constructor. This class should only be created with
      * PdfStamper.getLtvVerification() otherwise the information will not be
      * added to the Pdf.
+     *
      * @param document The {@link PdfDocument} to apply the validation to.
      */
     public LtvVerification(PdfDocument document) {
@@ -106,13 +119,14 @@ public class LtvVerification {
     }
 
     /**
-     * Add verification for a particular signature
+     * Add verification for a particular signature.
+     *
      * @param signatureName the signature to validate (it may be a timestamp)
      * @param ocsp the interface to get the OCSP
      * @param crl the interface to get the CRL
-     * @param certOption
+     * @param certOption options as to how many certificates to include
      * @param level the validation options to include
-     * @param certInclude
+     * @param certInclude certificate inclusion options
      * @return true if a validation was generated, false otherwise
      * @throws GeneralSecurityException
      * @throws IOException
@@ -170,10 +184,11 @@ public class LtvVerification {
     }
 
     /**
-     * Returns the issuing certificate for a child certificate.
+     * Get the issuing certificate for a child certificate.
+     *
      * @param cert	the certificate for which we search the parent
      * @param certs	an array with certificates that contains the parent
-     * @return	the partent certificate
+     * @return the parent certificate
      */
     private X509Certificate getParent(X509Certificate cert, Certificate[] certs) {
         X509Certificate parent;
@@ -192,13 +207,15 @@ public class LtvVerification {
     }
 
     /**
+     * Adds verification to the signature.
      *
-     * Alternative addVerification.
-     * I assume that inputs are deduplicated.
-     *
+     * @param signatureName name of the signature
+     * @param ocsps collection of ocsp responses
+     * @param crls collection of crls
+     * @param certs collection of certificates
+     * @return boolean
      * @throws IOException
      * @throws GeneralSecurityException
-     *
      */
     public boolean addVerification(String signatureName, Collection<byte[]> ocsps, Collection<byte[]> crls, Collection<byte[]> certs) throws IOException, GeneralSecurityException {
         if (used)
@@ -256,8 +273,7 @@ public class LtvVerification {
     }
 
     /**
-     * Merges the validation with any validation already in the document or creates
-     * a new one.
+     * Merges the validation with any validation already in the document or creates a new one.
      * @throws IOException
      */
     public void merge() throws IOException {
@@ -406,6 +422,7 @@ public class LtvVerification {
     // TODO: Refactor. Copied from itext5 Utilities
     /**
      * Converts an array of bytes to a String of hexadecimal values
+     *
      * @param bytes	a byte array
      * @return	the same bytes expressed as hexadecimal values
      */

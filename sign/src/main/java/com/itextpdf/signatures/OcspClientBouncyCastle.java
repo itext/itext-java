@@ -1,5 +1,9 @@
 package com.itextpdf.signatures;
 
+import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.io.StreamUtil;
+import com.itextpdf.core.pdf.PdfEncryption;
+
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,9 +17,6 @@ import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
-import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.StreamUtil;
-import com.itextpdf.core.pdf.PdfEncryption;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x509.Extension;
@@ -36,15 +37,19 @@ import org.slf4j.LoggerFactory;
 
 /**
  * OcspClient implementation using BouncyCastle.
+ *
  * @author Paulo Soarees
  */
 public class OcspClientBouncyCastle implements OcspClient {
 
-    /** The Logger instance */
+    /**
+     * The Logger instance.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(OcspClientBouncyCastle.class);
 
     /**
      * Generates an OCSP request using BouncyCastle.
+     *
      * @param issuerCert	certificate of the issues
      * @param serialNumber	serial number
      * @return	an OCSP request
@@ -101,6 +106,14 @@ public class OcspClientBouncyCastle implements OcspClient {
         return new OCSPResp(StreamUtil.inputStreamToArray(in));
     }
 
+    /**
+     * Get the basic OCSP response.
+     *
+     * @param checkCert the signing certificate
+     * @param rootCert the root certificate
+     * @param url the url to the ocsp server
+     * @return BasicOCSPResp
+     */
     public BasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
             OCSPResp ocspResponse = getOcspResponse(checkCert, rootCert, url);
@@ -124,6 +137,7 @@ public class OcspClientBouncyCastle implements OcspClient {
      * from the check cert or from other implementation specific source
      * @return	a byte array with the validation or null if the validation could not be obtained
      */
+    @Override
     public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
             BasicOCSPResp basicResponse = getBasicOCSPResp(checkCert, rootCert, url);

@@ -285,6 +285,7 @@ public class SignatureUtil {
     }
 
     private static class SorterComparator implements Comparator<Object[]> {
+        @Override
         public int compare(Object[] o1, Object[] o2) {
             int n1 = ((int[])o1[1])[0];
             int n2 = ((int[])o2[1])[0];

@@ -19,21 +19,28 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Provides convenient methods to make a signature appearance. Use
- * it in conjunction with {@link PdfSigner}.
+ * Provides convenient methods to make a signature appearance. Use it in conjunction with {@link PdfSigner}.
  */
 public class PdfSignatureAppearance {
 
-    /** extra space at the top. */
+    /**
+     * Extra space at the top.
+     */
     private static final float TOP_SECTION = 0.3f;
 
-    /** margin for the content inside the signature rectangle. */
+    /**
+     * Margin for the content inside the signature rectangle.
+     */
     private static final float MARGIN = 2;
 
-    /** The document to be signed */
+    /**
+     * The document to be signed.
+     */
     private PdfDocument document;
 
-    /** The page where the signature will appear. */
+    /**
+     * The page where the signature will appear.
+     */
     private int page = 1;
 
     /**
@@ -42,61 +49,99 @@ public class PdfSignatureAppearance {
      */
     private Rectangle rect;
 
-    /** rectangle that represent the position and dimension of the signature in the page. */
+    /**
+     * Rectangle that represent the position and dimension of the signature in the page.
+     */
     private Rectangle pageRect;
 
-    /** Zero level of the signature appearance */
+    /**
+     * Zero level of the signature appearance.
+     */
     private PdfFormXObject n0;
 
-    /** Second level of the signature appearance */
+    /**
+     * Second level of the signature appearance.
+     */
     private PdfFormXObject n2;
 
-    /** Form containing all layers drawn on top of each other. */
+    /**
+     * Form containing all layers drawn on top of each other.
+     */
     private PdfFormXObject topLayer;
 
-    /** The rendering mode chosen for visible signatures */
+    /**
+     * The rendering mode chosen for visible signatures.
+     */
     private RenderingMode renderingMode = RenderingMode.DESCRIPTION;
 
-    /** The reason for signing. */
+    /**
+     * The reason for signing.
+     */
     private String reason = "";
 
-    /** The caption for the reason for signing. */
+    /**
+     * The caption for the reason for signing.
+     */
     private String reasonCaption = "Reason: ";
 
-    /** Holds value of property location. */
+    /**
+     * Holds value of property location.
+     */
     private String location = "";
 
-    /** The caption for the location of signing. */
+    /**
+     * The caption for the location of signing.
+     */
     private String locationCaption = "Location: ";
 
-    /** Holds value of the application that creates the signature. */
+    /**
+     * Holds value of the application that creates the signature.
+     */
     private String signatureCreator = "";
 
-    /** The contact name of the signer. */
+    /**
+     * The contact name of the signer.
+     */
     private String contact = "";
 
-    /** Holds value of property signDate. */
+    /**
+     * Holds value of property signDate.
+     */
     private Calendar signDate;
 
-    /** The signing certificate */
+    /**
+     * The signing certificate.
+     */
     private Certificate signCertificate;
 
-    /** The image that needs to be used for a visible signature */
+    /**
+     * The image that needs to be used for a visible signature.
+     */
     private Image signatureGraphic = null;
 
-    /** A background image for the text in layer 2. */
+    /**
+     * A background image for the text in layer 2.
+     */
     private Image image;
 
-    /** the scaling to be applied to the background image.t  */
+    /**
+     * The scaling to be applied to the background image.
+     */
     private float imageScale;
 
-    /** The text that goes in Layer 2 of the signature appearance. */
+    /**
+     * The text that goes in Layer 2 of the signature appearance.
+     */
     private String layer2Text;
 
-    /** Font for the text in Layer 2. */
+    /**
+     * Font for the text in Layer 2.
+     */
     private PdfFont layer2Font;
 
-    /** Font size for the font of Layer 2 */
+    /**
+     * Font size for the font of Layer 2.
+     */
     private float layer2FontSize = 12;
 
     /**
@@ -105,9 +150,18 @@ public class PdfSignatureAppearance {
      */
     private String fieldName;
 
-    /** Indicates if we need to reuse the existing appearance as layer 0. */
+    /**
+     * Indicates if we need to reuse the existing appearance as layer 0.
+     */
     private boolean reuseAppearance = false;
 
+    /**
+     * Creates a PdfSignatureAppearance.
+     *
+     * @param document PdfDocument
+     * @param pageRect Rectangle of the appearance
+     * @param pageNumber Number of the page the appearance should be on
+     */
     protected PdfSignatureAppearance(PdfDocument document, Rectangle pageRect, int pageNumber) {
         this.document = document;
         this.pageRect = new Rectangle(pageRect);
@@ -118,6 +172,7 @@ public class PdfSignatureAppearance {
     /**
      * Provides the page number of the signature field which this signature
      * appearance is associated with.
+     *
      * @return The page number of the signature field which this signature
      * appearance is associated with.
      */
@@ -128,6 +183,7 @@ public class PdfSignatureAppearance {
     /**
      * Sets the page number of the signature field which this signature
      * appearance is associated with.
+     *
      * @param pageNumber The page number of the signature field which
      *                   this signature appearance is associated with.
      */
@@ -138,6 +194,7 @@ public class PdfSignatureAppearance {
     /**
      * Provides the rectangle that represent the position and dimension
      * of the signature field in the page.
+     *
      * @return the rectangle that represent the position and dimension
      * of the signature field in the page
      */
@@ -148,6 +205,7 @@ public class PdfSignatureAppearance {
     /**
      * Sets the rectangle that represent the position and dimension of
      * the signature field in the page.
+     *
      * @param pageRect The rectangle that represents the position and
      *                 dimension of the signature field in the page.
      */
@@ -156,6 +214,11 @@ public class PdfSignatureAppearance {
         this.rect = new Rectangle(pageRect.getWidth(), pageRect.getHeight());
     }
 
+    /**
+     * Get Layer 0 of the appearance.
+     *
+     * @return layer 0
+     */
     public PdfFormXObject getLayer0() {
         if (n0 == null) {
             n0 = new PdfFormXObject(rect);
@@ -165,6 +228,11 @@ public class PdfSignatureAppearance {
         return n0;
     }
 
+    /**
+     * Get Layer 2 of the appearance.
+     *
+     * @return layer 2
+     */
     public PdfFormXObject getLayer2() {
         if (n2 == null) {
             n2 = new PdfFormXObject(rect);
@@ -176,8 +244,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Gets the rendering mode for this signature.
+     *
      * @return the rendering mode for this signature
-     * @since 5.0.1
      */
     public RenderingMode getRenderingMode() {
         return renderingMode;
@@ -185,8 +253,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the rendering mode for this signature.
+     *
      * @param renderingMode the rendering mode
-     * @since 5.0.1
      */
     public void setRenderingMode(RenderingMode renderingMode) {
         this.renderingMode = renderingMode;
@@ -194,7 +262,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Returns the signing reason.
-     * @return The signing reason.
+     *
+     * @return reason for signing
      */
     public String getReason() {
         return this.reason;
@@ -202,7 +271,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the signing reason.
-     * @param reason A new signing reason.
+     *
+     * @param reason signing reason.
      */
     public void setReason(String reason) {
         this.reason = reason;
@@ -210,7 +280,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the caption for the signing reason.
-     * @param reasonCaption A new signing reason caption.
+     *
+     * @param reasonCaption A new signing reason caption
      */
     public void setReasonCaption(String reasonCaption) {
         this.reasonCaption = reasonCaption;
@@ -218,7 +289,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Returns the signing location.
-     * @return The signing location.
+     *
+     * @return signing location
      */
     public String getLocation() {
         return this.location;
@@ -226,7 +298,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the signing location.
-     * @param location A new signing location.
+     *
+     * @param location A new signing location
      */
     public void setLocation(String location) {
         this.location = location;
@@ -234,7 +307,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the caption for the signing location.
-     * @param locationCaption A new signing location caption.
+     *
+     * @param locationCaption A new signing location caption
      */
     public void setLocationCaption(String locationCaption) {
         this.locationCaption = locationCaption;
@@ -242,7 +316,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Returns the signature creator.
-     * @return The signature creator.
+     *
+     * @return The signature creator
      */
     public String getSignatureCreator(){
         return signatureCreator;
@@ -250,7 +325,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the name of the application used to create the signature.
-     * @param signatureCreator A new name of the application signing a document.
+     *
+     * @param signatureCreator A new name of the application signing a document
      */
     public void setSignatureCreator(String signatureCreator){
         this.signatureCreator = signatureCreator;
@@ -258,7 +334,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Returns the signing contact.
-     * @return The signing contact.
+     *
+     * @return The signing contact
      */
     public String getContact() {
         return this.contact;
@@ -266,7 +343,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the signing contact.
-     * @param contact A new signing contact.
+     *
+     * @param contact A new signing contact
      */
     public void setContact(String contact) {
         this.contact = contact;
@@ -275,18 +353,25 @@ public class PdfSignatureAppearance {
     /**
      * Sets the certificate used to provide the text in the appearance.
      * This certificate doesn't take part in the actual signing process.
+     *
      * @param signCertificate the certificate
      */
     public void setCertificate(Certificate signCertificate) {
         this.signCertificate = signCertificate;
     }
 
+    /**
+     * Get the signing certificate.
+     *
+     * @return the signing certificate
+     */
     public Certificate getCertificate() {
         return signCertificate;
     }
 
     /**
      * Gets the Image object to render.
+     *
      * @return the image
      */
     public Image getSignatureGraphic() {
@@ -294,10 +379,9 @@ public class PdfSignatureAppearance {
     }
 
     /**
-     * Sets the Image object to render when Render is set to <CODE>RenderingMode.GRAPHIC</CODE>
-     * or <CODE>RenderingMode.GRAPHIC_AND_DESCRIPTION</CODE>.
-     * @param signatureGraphic image rendered. If <CODE>null</CODE> the mode is defaulted
-     * to <CODE>RenderingMode.DESCRIPTION</CODE>
+     * Sets the Image object to render when Render is set to RenderingMode.GRAPHIC or RenderingMode.GRAPHIC_AND_DESCRIPTION.
+     *
+     * @param signatureGraphic image rendered. If null the mode is defaulted to RenderingMode.DESCRIPTION
      */
     public void setSignatureGraphic(Image signatureGraphic) {
         this.signatureGraphic = signatureGraphic;
@@ -314,6 +398,7 @@ public class PdfSignatureAppearance {
 
     /**
      * Gets the background image for the layer 2.
+     *
      * @return the background image for the layer 2
      */
     public Image getImage() {
@@ -322,6 +407,7 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the background image for the layer 2.
+     *
      * @param image the background image for the layer 2
      */
     public void setImage(Image image) {
@@ -330,6 +416,7 @@ public class PdfSignatureAppearance {
 
     /**
      * Gets the scaling to be applied to the background image.
+     *
      * @return the scaling to be applied to the background image
      */
     public float getImageScale() {
@@ -341,6 +428,7 @@ public class PdfSignatureAppearance {
      * will fully fill the rectangle. If it's less than zero the image will fill the rectangle but
      * will keep the proportions. If it's greater than zero that scaling will be applied.
      * In any of the cases the image will always be centered. It's zero by default.
+     *
      * @param imageScale the scaling to be applied to the background image
      */
     public void setImageScale(float imageScale) {
@@ -349,7 +437,8 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the signature text identifying the signer.
-     * @param text the signature text identifying the signer. If <CODE>null</CODE> or not set
+     *
+     * @param text the signature text identifying the signer. If null or not set
      * a standard description will be used
      */
     public void setLayer2Text(String text) {
@@ -358,6 +447,7 @@ public class PdfSignatureAppearance {
 
     /**
      * Gets the signature text identifying the signer if set by setLayer2Text().
+     *
      * @return the signature text identifying the signer
      */
     public String getLayer2Text() {
@@ -366,6 +456,7 @@ public class PdfSignatureAppearance {
 
     /**
      * Gets the n2 and n4 layer font.
+     *
      * @return the n2 and n4 layer font
      */
     public PdfFont getLayer2Font() {
@@ -374,18 +465,25 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the n2 and n4 layer font. If the font size is zero, auto-fit will be used.
+     *
      * @param layer2Font the n2 and n4 font
      */
     public void setLayer2Font(PdfFont layer2Font) {
         this.layer2Font = layer2Font;
     }
 
+    /**
+     * Sets the n2 and n4 layer font size.
+     *
+     * @param fontSize font size
+     */
     public void setLayer2FontSize(float fontSize) {
         this.layer2FontSize = fontSize;
     }
 
     /**
      * Gets the visibility status of the signature.
+     *
      * @return the visibility status of the signature
      */
     public boolean isInvisible() {
@@ -397,6 +495,7 @@ public class PdfSignatureAppearance {
      * <p>
      * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
      * for further details.
+     *
      * @return a top-level signature appearance
      */
     protected PdfFormXObject getAppearance() throws IOException {
@@ -685,6 +784,7 @@ public class PdfSignatureAppearance {
 
     /**
      * Returns the signature date.
+     *
      * @return the signature date
      */
     protected java.util.Calendar getSignDate() {
@@ -693,12 +793,18 @@ public class PdfSignatureAppearance {
 
     /**
      * Sets the signature date.
-     * @param signDate A new signature date.
+     *
+     * @param signDate A new signature date
      */
     protected void setSignDate(java.util.Calendar signDate) {
         this.signDate = signDate;
     }
 
+    /**
+     * Set the field name of the appearance.
+     *
+     * @param fieldName name of the field
+     */
     protected void setFieldName(String fieldName) {
         this.fieldName = fieldName;
     }
@@ -712,8 +818,7 @@ public class PdfSignatureAppearance {
     }
 
     /**
-     * Signature rendering modes
-     * @since 5.0.1
+     * Signature rendering modes.
      */
     public enum RenderingMode {
         /**
