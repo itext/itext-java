@@ -113,10 +113,13 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Retrieves AcroForm from the document. If there is no AcroForm int the document Catalog and createIfNotExist flag is true then AcroForm dictionary will be created
+     * Retrieves AcroForm from the document. If there is no AcroForm in the
+     * document Catalog and createIfNotExist flag is true then AcroForm
+     * dictionary will be created
      *
-     * @param document
-     * @param createIfNotExist
+     * @param document the document to retrieve the {@link PdfAcroForm} from
+     * @param createIfNotExist when <code>true</code>, this method will create a
+     * {@link PdfAcroForm} if none exists for this document
      * @return
      */
     public static PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist) {
@@ -148,8 +151,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This method adds the field to the last page in the document. If there's no pages, creates a new one.
-     * @param field
+     * This method adds the field to the last page in the document.
+     * If there's no pages, creates a new one.
+     *
+     * @param field the {@link PdfFormField} to be added to the form
      */
     public void addField(PdfFormField field) {
         PdfPage page;
@@ -161,9 +166,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This method adds the field to the page.
-     * @param field
-     * @param page
+     * This method adds the field to a specific page.
+     * @param field the {@link PdfFormField} to be added to the form
+     * @param page the {@link PdfPage} on which to add the field
      */
     public void addField(PdfFormField field, PdfPage page){
         PdfArray kids = field.getKids();
@@ -198,10 +203,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This method merges field with its annotation and place it on the given page. This method won't work if the field
-     * has no or more than one widget annotations.
-     * @param field to be placed.
-     * @param page where the field will be placed.
+     * This method merges field with its annotation and place it on the given
+     * page. This method won't work if the field has no or more than one widget
+     * annotations.
+     * @param field the {@link PdfFormField} to be added to the form
+     * @param page the {@link PdfPage} on which to add the field
      */
     public void addFieldAppearanceToPage(PdfFormField field, PdfPage page) {
         PdfDictionary fieldDict = field.getPdfObject();
