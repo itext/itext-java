@@ -30,7 +30,7 @@ public class Type3Glyph extends PdfCanvas {
     private boolean isColor = false;
 
     /**
-     * Creates a Type3Glyph canvas with a new Content Stream
+     * Creates a Type3Glyph canvas with a new Content Stream.
      * 
      * @param pdfDocument the document that this canvas is created for
      */
@@ -39,7 +39,7 @@ public class Type3Glyph extends PdfCanvas {
     }
 
     /**
-     * Creates a Type3Glyph canvas with a non-empty Content Stream
+     * Creates a Type3Glyph canvas with a non-empty Content Stream.
      * 
      * @param pdfDocument the document that this canvas is created for
      * @param bytes the pre-existing content which is added at creation time
