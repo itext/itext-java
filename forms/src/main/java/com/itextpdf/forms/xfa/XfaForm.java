@@ -369,7 +369,7 @@ public class XfaForm {
     }
 
     /**
-     * Sets the class that contains the template processing section of the XFA
+     * Sets the class that contains the template processing section of the XFA.
      *
      * @param templateSom the class that contains the template processing section of the XFA
      */

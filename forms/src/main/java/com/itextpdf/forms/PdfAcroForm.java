@@ -118,8 +118,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * dictionary will be created and added to the document.
      *
      * @param document the document to retrieve the {@link PdfAcroForm} from
-     * @param createIfNotExist when <code>true</code>, this method will create a
-     * {@link PdfAcroForm} if none exists for this document
+     * @param createIfNotExist when <code>true</code>, this method will create a {@link PdfAcroForm} if none exists for this document
      * @return the {@link PdfDocument document}'s AcroForm, or a new one
      */
     public static PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist) {
@@ -287,12 +286,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * 
      * <blockquote>
      * SigFlags is a set of flags specifying various document-level
-     * characteristics related to signature fields
+     * characteristics related to signature fields.
      * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
      * </blockquote>
      * 
      * @param sigFlags an integer. Use {@link #SIGNATURE_EXIST} and/or {@link #APPEND_ONLY}.
-     * Use bitwise OR operator to combine these values. Default value is <code>0</code>
+     *     Use bitwise OR operator to combine these values. Default value is <code>0</code>
      * @return current AcroForm.
      */
     public PdfAcroForm setSignatureFlags(int sigFlags) {
@@ -305,12 +304,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * 
      * <blockquote>
      * SigFlags is a set of flags specifying various document-level
-     * characteristics related to signature fields
+     * characteristics related to signature fields.
      * (ISO 32000-1, section 12.7.2 "Interactive Form Dictionary")
      * </blockquote>
      * 
      * @param sigFlag an integer. Use {@link #SIGNATURE_EXIST} and/or {@link #APPEND_ONLY}.
-     * Use bitwise OR operator to combine these values. Default is <code>0</code>
+     *     Use bitwise OR operator to combine these values. Default is <code>0</code>
      * @return current AcroForm.
      */
     public PdfAcroForm setSignatureFlag(int sigFlag) {
@@ -484,8 +483,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * Its contents must be valid XFA.
      * 
      * @param xfaResource an array of text string and stream pairs representing
-     * the individual packets comprising the XML Data Package. (ISO 32000-1,
-     * section 12.7.2 "Interactive Form Dictionary")
+     *     the individual packets comprising the XML Data Package. (ISO 32000-1,
+     *     section 12.7.2 "Interactive Form Dictionary")
      * @return current AcroForm
      */
     public PdfAcroForm setXFAResource(PdfArray xfaResource) {
@@ -540,7 +539,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Flattens all interactive {@link PdfFormField form field}s in the document.
+     * Flattens interactive {@link PdfFormField form field}s in the document. If
+     * no fields have been explicitly included via {#link #partialFormFlattening},
+     * then all fields are flattened. Otherwise only the included fields are
+     * flattened.
      */
     public void flatFields() {
         if (document.isAppendMode()) {
