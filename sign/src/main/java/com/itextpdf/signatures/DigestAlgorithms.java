@@ -177,7 +177,6 @@ public class DigestAlgorithms {
      * @return	a MessageDigest object
      * @throws NoSuchAlgorithmException
      * @throws NoSuchProviderException
-     * @throws GeneralSecurityException
      */
     public static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
             throws NoSuchAlgorithmException, NoSuchProviderException {
