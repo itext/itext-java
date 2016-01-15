@@ -22,6 +22,7 @@ import org.bouncycastle.jcajce.provider.digest.SHA512;
  */
 public class BouncyCastleDigest implements ExternalDigest {
 
+    @Override
     public MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException {
         String oid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
         if (oid == null)
