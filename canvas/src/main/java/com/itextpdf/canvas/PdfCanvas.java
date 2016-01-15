@@ -726,10 +726,12 @@ public class PdfCanvas {
     private float getSubrangeWidth(GlyphLine text, int from, int to) {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
+        float wordSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
         float scaling = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
-            width += (text.get(iter).getWidth() * fontSize + charSpacing) * scaling;
+            Glyph glyph = text.get(iter);
+            width += (glyph.getWidth() * fontSize + (glyph.getUnicode() != null && glyph.getUnicode() == ' ' ? wordSpacing : charSpacing)) * scaling;
         }
         return width;
     }
@@ -780,24 +782,24 @@ public class PdfCanvas {
         return this;
     }
 
-    /**
-     * Shows text applying kerning, if kern pairs are specified for the current font.
-     *
-     * @param text the text to show
-     * @return current canvas
-     */
-    public PdfCanvas showTextKerned(GlyphLine text) {
-        PdfFont currentFont = currentGs.getFont();
-        if (currentFont == null) {
-            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-        }
-        if (currentFont.hasKernPairs()) {
-            showText(getKernArray(text, currentFont));
-        } else {
-            showText(text);
-        }
-        return this;
-    }
+//    /**
+//     * Shows text applying kerning, if kern pairs are specified for the current font.
+//     *
+//     * @param text the text to show
+//     * @return current canvas
+//     */
+//    public PdfCanvas showTextKerned(GlyphLine text) {
+//        PdfFont currentFont = currentGs.getFont();
+//        if (currentFont == null) {
+//            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
+//        }
+//        if (currentFont.hasKernPairs()) {
+//            showText(getKernArray(text, currentFont));
+//        } else {
+//            showText(text);
+//        }
+//        return this;
+//    }
 
     /**
      * Move the current point <i>(x, y)</i>, omitting any connecting line segment.

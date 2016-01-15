@@ -182,8 +182,8 @@ public class LineRenderer extends AbstractRenderer {
         float freeWidth = occupiedArea.getBBox().getX() + width -
                 getLastChildRenderer().getOccupiedArea().getBBox().getX() - getLastChildRenderer().getOccupiedArea().getBBox().getWidth();
         int numberOfSpaces = getNumberOfSpaces();
-        int lineLength = length();
-        float baseFactor = freeWidth / (ratio * numberOfSpaces + (1 - ratio) * (lineLength - 1));
+        int baseCharsCount = baseCharactersCount();
+        float baseFactor = freeWidth / (ratio * numberOfSpaces + (1 - ratio) * (baseCharsCount - 1));
         float wordSpacing = ratio * baseFactor;
         float characterSpacing = (1 - ratio) * baseFactor;
 
@@ -230,6 +230,19 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         return length;
+    }
+
+    /**
+     * Returns the number of base characters, i.e. non-mark characters
+     */
+    protected int baseCharactersCount() {
+        int count = 0;
+        for (IRenderer child : childRenderers) {
+            if (child instanceof TextRenderer) {
+                count += ((TextRenderer) child).baseCharactersCount();
+            }
+        }
+        return count;
     }
 
     @Override
