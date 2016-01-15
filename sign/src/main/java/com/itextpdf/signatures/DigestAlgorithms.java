@@ -1,4 +1,4 @@
-/*
+    /*
  * $Id$
  *
  * This file is part of the iText (R) project.
@@ -51,35 +51,52 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class that contains a map with the different message digest algorithms.
  */
 public class DigestAlgorithms {
 
-    /** Algorithm available for signatures since PDF 1.3 */
+    /**
+     * Algorithm available for signatures since PDF 1.3.
+     */
     public static final String SHA1 = "SHA-1";
 
-    /** Algorithm available for signatures since PDF 1.6 */
+    /**
+     * Algorithm available for signatures since PDF 1.6.
+     */
     public static final String SHA256 = "SHA-256";
 
-    /** Algorithm available for signatures since PDF 1.7 */
+    /**
+     * Algorithm available for signatures since PDF 1.7.
+     */
     public static final String SHA384 = "SHA-384";
 
-    /** Algorithm available for signatures since PDF 1.7 */
+    /**
+     * Algorithm available for signatures since PDF 1.7.
+     */
     public static final String SHA512 = "SHA-512";
 
-    /** Algorithm available for signatures since PDF 1.7 */
+    /**
+     * Algorithm available for signatures since PDF 1.7.
+     */
     public static final String RIPEMD160 = "RIPEMD160";
 
-    /** Maps the digest IDs with the human-readable name of the digest algorithm. */
-    private static final HashMap<String, String> digestNames = new HashMap<>();
+    /**
+     * Maps the digest IDs with the human-readable name of the digest algorithm.
+     */
+    private static final Map<String, String> digestNames = new HashMap<>();
 
-    /** Maps digest algorithm that are unknown by the JDKs MessageDigest object to a known one. */
-    private static final HashMap<String, String> fixNames = new HashMap<>();
+    /**
+     * Maps digest algorithm that are unknown by the JDKs MessageDigest object to a known one.
+     */
+    private static final Map<String, String> fixNames = new HashMap<>();
 
-    /** Maps the name of a digest algorithm with its ID. */
-    private static final HashMap<String, String> allowedDigests = new HashMap<>();
+    /**
+     * Maps the name of a digest algorithm with its ID.
+     */
+    private static final Map<String, String> allowedDigests = new HashMap<>();
 
     static {
         digestNames.put("1.2.840.113549.2.5", "MD5");
@@ -138,6 +155,15 @@ public class DigestAlgorithms {
         allowedDigests.put("GOST3411", "1.2.643.2.2.9");
     }
 
+    /**
+     * Get a digest algorithm.
+     *
+     * @param digestOid oid of the digest algorithm
+     * @param provider the provider you want to use to create the hash
+     * @return MessageDigest object
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     */
     public static MessageDigest getMessageDigestFromOid(String digestOid, String provider)
             throws NoSuchAlgorithmException, NoSuchProviderException {
         return getMessageDigest(getDigest(digestOid), provider);
@@ -145,6 +171,7 @@ public class DigestAlgorithms {
 
     /**
      * Creates a MessageDigest object that can be used to create a hash.
+     *
      * @param hashAlgorithm	the algorithm you want to use to create a hash
      * @param provider	the provider you want to use to create the hash
      * @return	a MessageDigest object
@@ -163,7 +190,8 @@ public class DigestAlgorithms {
 
 
     /**
-     * Creates a hash using a specific digest algorithm and a provider. 
+     * Creates a hash using a specific digest algorithm and a provider.
+     *
      * @param data	the message of which you want to create a hash
      * @param hashAlgorithm	the algorithm used to create the hash
      * @param provider	the provider used to create the hash
@@ -177,6 +205,15 @@ public class DigestAlgorithms {
         return digest(data, messageDigest);
     }
 
+    /**
+     * Create a digest based on the inputstream.
+     *
+     * @param data data to be digested
+     * @param messageDigest algorithm to be used
+     * @return digest of the data
+     * @throws GeneralSecurityException
+     * @throws IOException
+     */
     public static byte[] digest(InputStream data, MessageDigest messageDigest)
             throws GeneralSecurityException, IOException {
         byte buf[] = new byte[8192];
@@ -189,6 +226,7 @@ public class DigestAlgorithms {
 
     /**
      * Gets the digest name for a certain id
+     *
      * @param oid	an id (for instance "1.2.840.113549.2.5")
      * @return	a digest name (for instance "MD5")
      */
@@ -200,6 +238,12 @@ public class DigestAlgorithms {
             return ret;
     }
 
+    /**
+     * Normalize the digest name.
+     *
+     * @param algo the name to be normalized
+     * @return normalized name
+     */
     public static String normalizeDigestName(String algo) {
         if (fixNames.containsKey(algo))
             return fixNames.get(algo);
@@ -208,7 +252,8 @@ public class DigestAlgorithms {
 
     /**
      * Returns the id of a digest algorithms that is allowed in PDF,
-     * or null if it isn't allowed. 
+     * or null if it isn't allowed.
+     *
      * @param name	The name of the digest algorithm.
      * @return	An oid.
      */

@@ -414,9 +414,9 @@ public class LtvVerification {
     }
 
     private static class ValidationData {
-        public List<byte[]> crls = new ArrayList<byte[]>();
-        public List<byte[]> ocsps = new ArrayList<byte[]>();
-        public List<byte[]> certs = new ArrayList<byte[]>();
+        private List<byte[]> crls = new ArrayList<>();
+        private List<byte[]> ocsps = new ArrayList<>();
+        private List<byte[]> certs = new ArrayList<>();
     }
 
     // TODO: Refactor. Copied from itext5 Utilities
