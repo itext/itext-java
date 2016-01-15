@@ -69,8 +69,12 @@ class PdfXrefTable {
     protected PdfIndirectReference createNextIndirectReference(PdfDocument document) {
         PdfIndirectReference indirectReference;
         if (freeReferences.size() > 0) {
-            indirectReference = xref[freeReferences.pollFirst()];
-            assert indirectReference.isFree();
+            int num = freeReferences.pollFirst();
+            indirectReference = xref[num];
+            if (indirectReference == null) {
+                indirectReference = new PdfIndirectReference(document, num);
+                xref[num] = indirectReference;
+            }
             indirectReference.setOffset(0);
             indirectReference.clearState(PdfIndirectReference.Free);
         } else {
@@ -86,10 +90,14 @@ class PdfXrefTable {
         if (!indirectReference.checkState(PdfIndirectReference.Flushed)) {
             if (indirectReference.refersTo != null) {
                 indirectReference.refersTo.setIndirectReference(null);
+                indirectReference.refersTo.setState(PdfIndirectReference.MustBeIndirect);
                 indirectReference.refersTo = null;
             }
-            if (indirectReference.getGenNumber() < MaxGeneration)
+            if (indirectReference.getGenNumber() < MaxGeneration) {
                 freeReferences.add(indirectReference.getObjNumber());
+                xref[indirectReference.getObjNumber()] = null;
+            }
+
         }
     }
 

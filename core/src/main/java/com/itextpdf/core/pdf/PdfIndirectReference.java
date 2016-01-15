@@ -207,8 +207,12 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return checkState(Free) || checkState(OriginalObjectStream);
     }
 
-    // NOTE After this operation this indirect reference could be reused for new indirect objects.
-    protected void setFree() {
+    /*
+    * The method releases indirect reference from the document, removes the associated indirect object.
+    * Be careful when using this method.Do not use this method for wrapper objects, it can be causes of errors.
+    * After this operation this indirect reference could be reused for new indirect objects.
+    */
+    public void setFree() {
         getDocument().getXref().freeReference(this);
     }
 

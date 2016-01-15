@@ -27,6 +27,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 
+import javax.sound.midi.Soundbank;
+
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
@@ -1689,6 +1691,22 @@ public class PdfDocumentTest extends ExtendedITextTest {
         deflater2.end();
 
         Assert.assertTrue(byteArrayStream1.size() == byteArrayStream2.size());
+    }
+
+    @Test
+    public void testFreeReference() throws IOException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder+ "baseFreeReference.pdf"), new PdfWriter(destinationFolder + "freeReference.pdf"));
+        pdfDocument.getWriter().setFullCompression(false);
+        pdfDocument.getPage(1).getResources().getPdfObject().getAsArray(new PdfName("d")).get(0).getIndirectReference().setFree();
+        PdfStream pdfStream = new PdfStream();
+        pdfStream.setData(new byte[]{24, 23, 67});
+        pdfStream.makeIndirect(pdfDocument);
+        pdfDocument.getPage(1).getResources().getPdfObject().getAsArray(new PdfName("d")).add(pdfStream);
+        pdfDocument.close();
+        assertNull(new CompareTool().compareByContent(destinationFolder + "freeReference.pdf", sourceFolder + "cmp_freeReference.pdf", destinationFolder, "diff_"));
+
 
     }
+
+
 }
