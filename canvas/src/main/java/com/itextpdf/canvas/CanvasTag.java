@@ -6,19 +6,38 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.tagging.PdfMcr;
 
+/**
+ * This class represents a single tag on a single piece of marked content.
+ *
+ * In Tagged PDF, a tag is the basic structure unit for marking content. The tag
+ * structure and hierarchy is largely comparable to HTML. As in HTML, every tag
+ * type has a name, defined here in the <code>role</code> attribute. The tagging
+ * mechanism in Tagged PDF is extensible, so PDF creators can choose to create
+ * custom tags.
+ */
 public class CanvasTag {
+
     protected PdfName role;
     protected Integer mcid;
     protected PdfDictionary properties;
 
+    /**
+     * Creates a tag that is referenced to the document's tag structure (i.e.
+     * logical structure).
+     *
+     * @param role the type of tag
+     */
     public CanvasTag(PdfName role) {
         this.role = role;
     }
 
     /**
-     * Creates a tag that is referenced to the document's tag structure (i.e. logical structure)
-     * @param role
-     * @param mcid marked content id which serves as a reference to the document's logical structure
+     * Creates a tag that is referenced to the document's tag structure (i.e.
+     * logical structure).
+     *
+     * @param role the type of tag
+     * @param mcid marked content id which serves as a reference to the
+     * document's logical structure
      */
     public CanvasTag(PdfName role, Integer mcid) {
         this.role = role;
@@ -27,6 +46,12 @@ public class CanvasTag {
         addProperty(PdfName.MCID, new PdfNumber(mcid));
     }
 
+    /**
+     * Creates a tag that is referenced to the document's tag structure (i.e.
+     * logical structure).
+     * 
+     * @param mcr the {@link PdfMcr Marked Content Reference} wrapper object
+     */
     public CanvasTag(PdfMcr mcr) {
         this(mcr.getRole(), mcr.getMcid());
     }
@@ -39,15 +64,29 @@ public class CanvasTag {
         return mcid;
     }
 
+    /**
+     * Adds a dictionary of properties to the {@link CanvasTag tag}'s properties
+     * 
+     * @param properties a dictionary
+     * @return current {@link CanvasTag}
+     */
     public CanvasTag addProperties(PdfDictionary properties) {
-        if (properties == null)
+        if (properties == null) {
             return this;
+        }
 
         ensurePropertiesInit();
         properties.putAll(properties);
         return this;
     }
 
+    /**
+     * Adds a single property to the {@link CanvasTag tag}'s properties
+     * 
+     * @param name a key
+     * @param value the value for the key
+     * @return current {@link CanvasTag}
+     */
     public CanvasTag addProperty(PdfName name, PdfObject value) {
         ensurePropertiesInit();
 
@@ -55,6 +94,12 @@ public class CanvasTag {
         return this;
     }
 
+    /**
+     * Removes a single property from the {@link CanvasTag tag}'s properties
+     * 
+     * @param name the key of the key-value pair to be removed
+     * @return current {@link CanvasTag}
+     */
     public CanvasTag removeProperty(PdfName name) {
         if (properties != null) {
             properties.remove(name);
@@ -62,6 +107,12 @@ public class CanvasTag {
         return this;
     }
 
+    /**
+     * Gets a property from the {@link CanvasTag tag}'s properties dictionary
+     * 
+     * @param name the key of the key-value pair to be retrieved
+     * @return the value corresponding to the key
+     */
     public PdfObject getProperty(PdfName name) {
         if (properties == null) {
             return null;
