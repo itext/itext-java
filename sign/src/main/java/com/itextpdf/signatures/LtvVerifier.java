@@ -29,7 +29,7 @@ public class LtvVerifier extends RootStoreVerifier {
     /** The Logger instance */
     protected final static Logger LOGGER = LoggerFactory.getLogger(LtvVerifier.class);
 
-    /** Do we need to check all certificate, or only the signing certificate? */
+    /** Option to specify level of verification; signing certificate only or the entire chain. */
     protected CertificateOption option = CertificateOption.SIGNING_CERTIFICATE;
     /** Verify root. */
     protected boolean verifyRootCertificate = true;
@@ -121,7 +121,7 @@ public class LtvVerifier extends RootStoreVerifier {
      */
     public List<VerificationOK> verify(List<VerificationOK> result) throws IOException, GeneralSecurityException {
         if (result == null)
-            result = new ArrayList<VerificationOK>();
+            result = new ArrayList<>();
         while (pkcs7 != null) {
             result.addAll(verifySignature());
         }
@@ -135,7 +135,7 @@ public class LtvVerifier extends RootStoreVerifier {
      */
     public List<VerificationOK> verifySignature() throws GeneralSecurityException, IOException {
         LOGGER.info("Verifying signature.");
-        List<VerificationOK> result = new ArrayList<VerificationOK>();
+        List<VerificationOK> result = new ArrayList<>();
         // Get the certificate chain
         Certificate[] chain = pkcs7.getSignCertificateChain();
         verifyChain(chain);
@@ -184,7 +184,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * Checks the certificates in a certificate chain:
      * are they valid on a specific date, and
      * do they chain up correctly?
-     * @param chain
+     * @param chain the certificate chain
      * @throws GeneralSecurityException
      */
     public void verifyChain(Certificate[] chain) throws GeneralSecurityException {
@@ -202,13 +202,13 @@ public class LtvVerifier extends RootStoreVerifier {
 
     /**
      * Verifies certificates against a list of CRLs and OCSP responses.
-     * @param signingCert
-     * @param issuerCert
+     * @param signCert the signing certificate
+     * @param issuerCert the issuer's certificate
      * @return a list of <code>VerificationOK</code> objects.
      * The list will be empty if the certificate couldn't be verified.
      * @throws GeneralSecurityException
      * @throws IOException
-     * @see com.itextpdf.text.pdf.security.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate)
+     * @see com.itextpdf.signatures.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
         // we'll verify agains the rootstore (if present)
@@ -263,7 +263,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws IOException
      */
     public List<X509CRL> getCRLsFromDSS() throws GeneralSecurityException, IOException {
-        List<X509CRL> crls = new ArrayList<X509CRL>();
+        List<X509CRL> crls = new ArrayList<>();
         if (dss == null)
             return crls;
         PdfArray crlarray = dss.getAsArray(PdfName.CRLs);

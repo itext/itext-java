@@ -6,16 +6,30 @@ import com.itextpdf.basics.io.RASInputStream;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import com.itextpdf.basics.io.WindowRandomAccessSource;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDate;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-// TODO: REFACTOR. At this moment this serves as
-// storage for some signature-related methods from iText 5 AcroFields
+
+/**
+ * Utility class that provides several convenience methods concerning digital signatures.
+ */
+// TODO: REFACTOR. At this moment this serves as storage for some signature-related methods from iText 5 AcroFields
 public class SignatureUtil {
 
     private PdfDocument document;
@@ -24,71 +38,35 @@ public class SignatureUtil {
     private ArrayList<String> orderedSignatureNames;
     private int totalRevisions;
 
+    /**
+     * Creates a SignatureUtil instance. Sets the acroForm field to the acroForm in the PdfDocument.
+     * iText will create a new AcroForm if the PdfDocument doesn't contain one.
+     *
+     * @param document PdfDocument to be inspected
+     */
     public SignatureUtil(PdfDocument document) {
         this.document = document;
         this.acroForm = PdfAcroForm.getAcroForm(document, true);
     }
 
     /**
-     * Verifies a signature. An example usage is:
-     * <p>
-     * <pre>
-     * KeyStore kall = PdfPKCS7.loadCacertsKeyStore();
-     * PdfReader reader = new PdfReader("my_signed_doc.pdf");
-     * AcroFields af = reader.getAcroFields();
-     * ArrayList names = af.getSignatureNames();
-     * for (int k = 0; k &lt; names.size(); ++k) {
-     *    String name = (String)names.get(k);
-     *    System.out.println("Signature name: " + name);
-     *    System.out.println("Signature covers whole document: " + af.signatureCoversWholeDocument(name));
-     *    PdfPKCS7 pk = af.verifySignature(name);
-     *    Calendar cal = pk.getSignDate();
-     *    Certificate pkc[] = pk.getCertificates();
-     *    System.out.println("Subject: " + PdfPKCS7.getSubjectFields(pk.getSigningCertificate()));
-     *    System.out.println("Document modified: " + !pk.verify());
-     *    Object fails[] = PdfPKCS7.verifyCertificates(pkc, kall, null, cal);
-     *    if (fails == null)
-     *        System.out.println("Certificates verified against the KeyStore");
-     *    else
-     *        System.out.println("Certificate failed: " + fails[1]);
-     * }
-     * </pre>
+     * Verifies a signature. Further verification can be done on the returned
+     * {@link PdfPKCS7} object.
      *
-     * @param name the signature field name
-     * @return a <CODE>PdfPKCS7</CODE> class to continue the verification
+     * @param name String the signature field name
+     * @return PdfPKCS7 object to continue the verification
      */
     public PdfPKCS7 verifySignature(String name) {
         return verifySignature(name, null);
     }
 
     /**
-     * Verifies a signature. An example usage is:
-     * <p>
-     * <pre>
-     * KeyStore kall = PdfPKCS7.loadCacertsKeyStore();
-     * PdfReader reader = new PdfReader("my_signed_doc.pdf");
-     * AcroFields af = reader.getAcroFields();
-     * ArrayList names = af.getSignatureNames();
-     * for (int k = 0; k &lt; names.size(); ++k) {
-     *    String name = (String)names.get(k);
-     *    System.out.println("Signature name: " + name);
-     *    System.out.println("Signature covers whole document: " + af.signatureCoversWholeDocument(name));
-     *    PdfPKCS7 pk = af.verifySignature(name);
-     *    Calendar cal = pk.getSignDate();
-     *    Certificate pkc[] = pk.getCertificates();
-     *    System.out.println("Subject: " + PdfPKCS7.getSubjectFields(pk.getSigningCertificate()));
-     *    System.out.println("Document modified: " + !pk.verify());
-     *    Object fails[] = PdfPKCS7.verifyCertificates(pkc, kall, null, cal);
-     *    if (fails == null)
-     *        System.out.println("Certificates verified against the KeyStore");
-     *    else
-     *        System.out.println("Certificate failed: " + fails[1]);
-     * }
-     * </pre>
+     * Verifies a signature. Further verification can be done on the returned
+     * {@link PdfPKCS7} object.
      *
      * @param name the signature field name
-     * @param provider the provider or <code>null</code> for the default provider
-     * @return a <CODE>PdfPKCS7</CODE> class to continue the verification
+     * @param provider the provider or null for the default provider
+     * @return PdfPKCS7 object to continue the verification
      */
     public PdfPKCS7 verifySignature(String name, String provider) {
         PdfDictionary v = getSignatureDictionary(name);
@@ -139,7 +117,6 @@ public class SignatureUtil {
      */
     public PdfDictionary getSignatureDictionary(String name) {
         getSignatureNames();
-/*        name = getTranslatedFieldName(name);*/
         if (!sigNames.containsKey(name))
             return null;
         PdfFormField field = acroForm.getField(name);
@@ -147,7 +124,7 @@ public class SignatureUtil {
         return merged.getAsDictionary(PdfName.V);
     }
 
-
+    /* Updates the /ByteRange with the provided value */
     private void updateByteRange(PdfPKCS7 pkcs7, PdfDictionary v) {
         PdfArray b = v.getAsArray(PdfName.ByteRange);
         RandomAccessFileOrArray rf = document.getReader().getSafeFile();
@@ -175,14 +152,14 @@ public class SignatureUtil {
     /**
      * Gets the field names that have signatures and are signed.
      *
-     * @return the field names that have signatures and are signed
+     * @return List containing the field names that have signatures and are signed
      */
-    public ArrayList<String> getSignatureNames() {
+    public List<String> getSignatureNames() {
         if (sigNames != null)
-            return new ArrayList<String>(orderedSignatureNames);
-        sigNames = new HashMap<String, int[]>();
-        orderedSignatureNames = new ArrayList<String>();
-        ArrayList<Object[]> sorter = new ArrayList<Object[]>();
+            return new ArrayList<>(orderedSignatureNames);
+        sigNames = new HashMap<>();
+        orderedSignatureNames = new ArrayList<>();
+        ArrayList<Object[]> sorter = new ArrayList<>();
         for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
             PdfFormField field = entry.getValue();
             PdfDictionary merged = field.getPdfObject();
@@ -222,17 +199,17 @@ public class SignatureUtil {
                 orderedSignatureNames.add(name);
             }
         }
-        return new ArrayList<String>(orderedSignatureNames);
+        return new ArrayList<>(orderedSignatureNames);
     }
 
     /**
      * Gets the field names that have blank signatures.
      *
-     * @return the field names that have blank signatures
+     * @return List containing the field names that have blank signatures
      */
-    public ArrayList<String> getBlankSignatureNames() {
+    public List<String> getBlankSignatureNames() {
         getSignatureNames();
-        ArrayList<String> sigs = new ArrayList<String>();
+        List<String> sigs = new ArrayList<>();
         for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
             PdfFormField field = entry.getValue();
             PdfDictionary merged = field.getPdfObject();
@@ -249,13 +226,11 @@ public class SignatureUtil {
      * Extracts a revision from the document.
      *
      * @param field the signature field name
-     * @return an <CODE>InputStream</CODE> covering the revision. Returns <CODE>null</CODE> if
-     * it's not a signature field
-     * @throws IOException on error
+     * @return an InputStream covering the revision. Returns null if it's not a signature field
+     * @throws IOException
      */
     public InputStream extractRevision(String field) throws IOException {
         getSignatureNames();
-/*        field = getTranslatedFieldName(field);*/
         if (!sigNames.containsKey(field))
             return null;
         int length = sigNames.get(field)[0];
@@ -264,15 +239,13 @@ public class SignatureUtil {
     }
 
     /**
-     * Checks is the signature covers the entire document or just part of it.
+     * Checks if the signature covers the entire document or just part of it.
      *
      * @param name the signature field name
-     * @return <CODE>true</CODE> if the signature covers the entire document,
-     * <CODE>false</CODE> otherwise
+     * @return true if the signature covers the entire document, false if it doesn't
      */
     public boolean signatureCoversWholeDocument(String name) {
         getSignatureNames();
-  /*      name = getTranslatedFieldName(name);*/
         if (!sigNames.containsKey(name))
             return false;
         try {
@@ -284,7 +257,8 @@ public class SignatureUtil {
 
     /**
      * Checks whether a name exists as a signature field or not. It checks both signed fields and blank signatures.
-     * @param name String
+     *
+     * @param name name of the field
      * @return boolean does the signature field exist
      * @since 5.5.1
      */
@@ -292,12 +266,19 @@ public class SignatureUtil {
         return getBlankSignatureNames().contains(name) || getSignatureNames().contains(name);
     }
 
+
+    /**
+     * Converts a {@link com.itextpdf.core.pdf.PdfArray} to an array of longs
+     *
+     * @param pdfArray PdfArray to be converted
+     * @return long[] containing the PdfArray values
+     */
     // TODO: copied from iText 5 PdfArray.asLongArray
-    public static long[] asLongArray(PdfArray arr) {
-        long[] rslt = new long[arr.size()];
+    public static long[] asLongArray(PdfArray pdfArray) {
+        long[] rslt = new long[pdfArray.size()];
 
         for (int k = 0; k < rslt.length; ++k) {
-            rslt[k] = arr.getAsNumber(k).getLongValue();
+            rslt[k] = pdfArray.getAsNumber(k).getLongValue();
         }
 
         return rslt;

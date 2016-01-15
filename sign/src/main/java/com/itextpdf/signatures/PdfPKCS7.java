@@ -592,6 +592,7 @@ public class PdfPKCS7 {
     /** External RSA data */
     private byte externalRSAdata[];
 
+
     /**
      * Sets the digest/signature to an external calculated value.
      * @param digest the digest. This is the actual signature

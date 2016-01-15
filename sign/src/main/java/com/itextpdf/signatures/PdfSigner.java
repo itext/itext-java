@@ -7,7 +7,20 @@ import com.itextpdf.basics.io.RASInputStream;
 import com.itextpdf.basics.io.RandomAccessSource;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import com.itextpdf.basics.io.StreamUtil;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDate;
+import com.itextpdf.core.pdf.PdfDeveloperExtension;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfLiteral;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfOutputStream;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.PdfVersion;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.forms.PdfAcroForm;
@@ -15,19 +28,32 @@ import com.itextpdf.forms.PdfSigFieldLockDictionary;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Takes care of the cryptographic options and appearances
- * that form a signature.
+ * Takes care of the cryptographic options and appearances that form a signature.
  */
 public class PdfSigner {
 
@@ -36,72 +62,145 @@ public class PdfSigner {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfSigner.class);
 
+    /**
+     * Enum containing the Cryptographic Standards. Possible values are "CMS" and "CADES".
+     */
     public enum CryptoStandard {
-        CMS, CADES
+        /**
+         * Cryptographic Message Syntax.
+         */
+        CMS,
+
+        /**
+         * CMS Advanced Electronic Signatures.
+         */
+        CADES
     }
 
-    /** Approval signature. */
+    /**
+     * Approval signature.
+     */
     public static final int NOT_CERTIFIED = 0;
 
-    /** Author signature, no changes allowed. */
+    /**
+     * Author signature, no changes allowed.
+     */
     public static final int CERTIFIED_NO_CHANGES_ALLOWED = 1;
 
-    /** Author signature, form filling allowed. */
+    /**
+     * Author signature, form filling allowed.
+     */
     public static final int CERTIFIED_FORM_FILLING = 2;
 
-    /** Author signature, form filling and annotations allowed. */
+    /**
+     * Author signature, form filling and annotations allowed.
+     */
     public static final int CERTIFIED_FORM_FILLING_AND_ANNOTATIONS = 3;
 
-    /** The certification level. */
+    /**
+     * The certification level.
+     */
     protected int certificationLevel = NOT_CERTIFIED;
 
-    /** The name of the field. */
+    /**
+     * The name of the field. */
     protected String fieldName;
 
-    /** The file right before the signature is added (can be null). */
+    /**
+     * The file right before the signature is added (can be null).
+     */
     protected RandomAccessFile raf;
 
-    /** The bytes of the file right before the signature is added (if raf is null) */
+    /**
+     * The bytes of the file right before the signature is added (if raf is null).
+     */
     protected byte[] bout;
 
-    /** Array containing the byte positions of the bytes that need to be hashed. */
+    /**
+     * Array containing the byte positions of the bytes that need to be hashed.
+     */
     protected long[] range;
 
+    /**
+     * The PdfDocument.
+     */
     protected PdfDocument document;
 
-    /** The crypto dictionary */
+    /**
+     * The crypto dictionary.
+     */
     protected PdfSignature cryptoDictionary;
 
-    /** Holds value of property signatureEvent. */
+    /**
+     * Holds value of property signatureEvent.
+     */
     protected SignatureEvent signatureEvent;
 
-    /** OutputStream for the bytes of the document. */
+    /** OutputStream for the bytes of the document.
+     */
     protected OutputStream originalOS;
 
+    /**
+     * Outputstream that temporarily holds the output in memory.
+     */
     protected ByteArrayOutputStream temporaryOS;
 
+    /**
+     * Tempfile to hold the output temporarily.
+     */
     protected File tempFile;
 
-    /** Name and content of keys that can only be added in the close() method. */
+    /**
+     * Name and content of keys that can only be added in the close() method.
+     */
     protected HashMap<PdfName, PdfLiteral> exclusionLocations;
 
-    /** Indicates if the pdf document has already been pre-closed. */
+    /**
+     * Indicates if the pdf document has already been pre-closed.
+     */
     protected boolean preClosed = false;
 
-    /** Signature field lock dictionary */
+    /**
+     * Signature field lock dictionary.
+     */
     protected PdfSigFieldLockDictionary fieldLock;
 
+    /**
+     * The signature appearance.
+     */
     protected PdfSignatureAppearance appearance;
 
-    /** Holds value of property signDate. */
+    /**
+     * Holds value of property signDate.
+     */
     protected Calendar signDate;
 
+    /**
+     * Boolean to check if this PdfSigner instance has been closed already or not.
+     */
     protected boolean closed;
 
+    /**
+     * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
+     *
+     * @param reader PdfReader that reads the PDF file
+     * @param writer PdfWriter to write the signed PDF file
+     * @param append boolean to indicate whether the signing should happen in append mode or not
+     * @throws IOException
+     */
     public PdfSigner(PdfReader reader, PdfWriter writer, boolean append) throws IOException {
         this(reader, writer, null, append);
     }
 
+    /**
+     * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
+     *
+     * @param reader PdfReader that reads the PDF file
+     * @param writer PdfWriter to write the signed PDF file
+     * @param tempFile File to which the output is temporarily written
+     * @param append boolean to indicate whether the signing should happen in append mode or not
+     * @throws IOException
+     */
     public PdfSigner(PdfReader reader, PdfWriter writer, File tempFile, boolean append) throws IOException {
         if (tempFile == null) {
             temporaryOS = new ByteArrayOutputStream();
@@ -127,7 +226,8 @@ public class PdfSigner {
 
     /**
      * Gets the signature date.
-     * @return the signature date
+     *
+     * @return Calendar set to the signature date
      */
     public java.util.Calendar getSignDate() {
         return signDate;
@@ -135,6 +235,7 @@ public class PdfSigner {
 
     /**
      * Sets the signature date.
+     *
      * @param signDate the signature date
      */
     public void setSignDate(java.util.Calendar signDate) {
@@ -167,6 +268,7 @@ public class PdfSigner {
     /**
      * Returns the document's certification level.
      * For possible values see {@link #setCertificationLevel(int)}.
+     *
      * @return The certified status.
      */
     public int getCertificationLevel() {
@@ -175,6 +277,7 @@ public class PdfSigner {
 
     /**
      * Sets the document's certification level.
+     *
      * @param certificationLevel a new certification level for a document.
      *                           Possible values are: <ul>
      *                              <li>{@link #NOT_CERTIFIED}</li>
@@ -189,6 +292,7 @@ public class PdfSigner {
 
     /**
      * Gets the field name.
+     *
      * @return the field name
      */
     public String getFieldName() {
@@ -198,6 +302,7 @@ public class PdfSigner {
     /**
      * Returns the user made signature dictionary. This is the dictionary at the /V key
      * of the signature field.
+     *
      * @return The user made signature dictionary.
      */
     public PdfSignature getSignatureDictionary() {
@@ -206,6 +311,7 @@ public class PdfSigner {
 
     /**
      * Getter for property signatureEvent.
+     *
      * @return Value of property signatureEvent.
      */
     public SignatureEvent getSignatureEvent() {
@@ -214,6 +320,7 @@ public class PdfSigner {
 
     /**
      * Sets the signature event to allow modification of the signature dictionary.
+     *
      * @param signatureEvent the signature event
      */
     public void setSignatureEvent(SignatureEvent signatureEvent) {
@@ -222,6 +329,7 @@ public class PdfSigner {
 
     /**
      * Gets a new signature field name that doesn't clash with any existing name.
+     *
      * @return A new signature field name.
      */
     public String getNewSigFieldName() {
@@ -237,9 +345,9 @@ public class PdfSigner {
     }
 
     /**
-     * Sets the name indicating the field to be signed. The field can
-     * already be presented in the document but shall not be signed.
-     * If the field is not presented in the document, it will be created.
+     * Sets the name indicating the field to be signed. The field can already be presented in the
+     * document but shall not be signed. If the field is not presented in the document, it will be created.
+     *
      * @param fieldName The name indicating the field to be signed.
      */
     public void setFieldName(String fieldName) {
@@ -276,15 +384,15 @@ public class PdfSigner {
     }
 
     /**
-     * Gets the <CODE>PdfDocument</CODE> associated with this instance.
-     * @return the <CODE>PdfDocument</CODE> associated with this instance
+     * Gets the PdfDocument associated with this instance.
+     * @return the PdfDocument associated with this instance
      */
     public PdfDocument getDocument() {
         return document;
     }
 
     /**
-     * Sets the PdfDocument
+     * Sets the PdfDocument.
      */
     protected void setDocument(PdfDocument document) {
         this.document = document;
@@ -299,6 +407,7 @@ public class PdfSigner {
 
     /**
      * Getter for the field lock dictionary.
+     *
      * @return Field lock dictionary.
      */
     public PdfSigFieldLockDictionary getFieldLockDict() {
@@ -310,7 +419,7 @@ public class PdfSigner {
      * <p><strong>Be aware:</strong> if a signature is created on an existing signature field,
      * then its /Lock dictionary takes the precedence (if it exists).</p>
      *
-     * @param fieldLock Field lock dictionary.
+     * @param fieldLock Field lock dictionary
      */
     public void setFieldLockDict(PdfSigFieldLockDictionary fieldLock) {
         this.fieldLock = fieldLock;
@@ -505,6 +614,7 @@ public class PdfSigner {
 
     /**
      * Signs a PDF where space was already reserved.
+     *
      * @param document the original PDF
      * @param fieldName the field to sign. It must be the last field
      * @param outs the output PDF
@@ -562,7 +672,7 @@ public class PdfSigner {
      *
      * @param cert    a Certificate if one of the CrlList implementations needs to retrieve the CRL URL from it.
      * @param crlList a list of CrlClient implementations
-     * @return a collection of CRL bytes that can be embedded in a PDF.
+     * @return a collection of CRL bytes that can be embedded in a PDF
      */
     protected Collection<byte[]> processCrl(Certificate cert, Collection<CrlClient> crlList) {
         if (crlList == null)
@@ -588,8 +698,8 @@ public class PdfSigner {
 
     /**
      * Checks if the document is in the process of closing.
-     * @return <CODE>true</CODE> if the document is in the process of closing,
-     * <CODE>false</CODE> otherwise
+     *
+     * @return true if the document is in the process of closing, false otherwise
      */
     protected boolean isPreClosed() {
         return preClosed;
@@ -601,14 +711,13 @@ public class PdfSigner {
      * <p>
      * <CODE>exclusionSizes</CODE> must contain at least
      * the <CODE>PdfName.CONTENTS</CODE> key with the size that it will take in the
-     * document. Note that due to the hex string coding this size should be
-     * byte_size*2+2.
-     * @param exclusionSizes a <CODE>HashMap</CODE> with names and sizes to be excluded in the signature
-     * calculation. The key is a <CODE>PdfName</CODE> and the value an
-     * <CODE>Integer</CODE>. At least the <CODE>PdfName.CONTENTS</CODE> must be present
+     * document. Note that due to the hex string coding this size should be byte_size*2+2.
+     *
+     * @param exclusionSizes Map with names and sizes to be excluded in the signature
+     * calculation. The key is a PdfName and the value an Integer. At least the /Contents must be present
      * @throws IOException on error
      */
-    protected void preClose(HashMap<PdfName, Integer> exclusionSizes) throws IOException {
+    protected void preClose(Map<PdfName, Integer> exclusionSizes) throws IOException {
         if (preClosed) {
             throw new PdfException(PdfException.DocumentAlreadyPreClosed);
         }
@@ -762,6 +871,7 @@ public class PdfSigner {
      * Gets the document bytes that are hashable when using external signatures.
      * The general sequence is:
      * {@link #preClose(HashMap)}, {@link #getRangeStream()} and {@link #close(PdfDictionary)}.
+     *
      * @return The {@link InputStream} of bytes to be signed.
      */
     protected InputStream getRangeStream() throws IOException {
@@ -773,9 +883,9 @@ public class PdfSigner {
      * This is the last method to be called when using external signatures. The general sequence is:
      * preClose(), getDocumentBytes() and close().
      * <p>
-     * <CODE>update</CODE> is a <CODE>PdfDictionary</CODE> that must have exactly the
+     * update is a PdfDictionary that must have exactly the
      * same keys as the ones provided in {@link #preClose(HashMap)}.
-     * @param update a <CODE>PdfDictionary</CODE> with the key/value that will fill the holes defined
+     * @param update a PdfDictionary with the key/value that will fill the holes defined
      * in {@link #preClose(HashMap)}
      * @throws IOException on error
      */
@@ -841,7 +951,8 @@ public class PdfSigner {
 
     /**
      * Returns the underlying source.
-     * @return The underlying source.
+     *
+     * @return The underlying source
      * @throws IOException
      */
     protected RandomAccessSource getUnderlyingSource() throws IOException {
@@ -850,9 +961,9 @@ public class PdfSigner {
     }
 
     /**
-     * Adds keys to the signature dictionary that define
-     * the certification level and the permissions.
+     * Adds keys to the signature dictionary that define the certification level and the permissions.
      * This method is only used for Certifying signatures.
+     *
      * @param crypto the signature dictionary
      */
     protected void addDocMDP(PdfSignature crypto) {
@@ -879,9 +990,9 @@ public class PdfSigner {
     }
 
     /**
-     * Adds keys to the signature dictionary that define
-     * the field permissions.
+     * Adds keys to the signature dictionary that define the field permissions.
      * This method is only used for signatures that lock fields.
+     *
      * @param crypto the signature dictionary
      */
     protected void addFieldMDP(PdfSignature crypto, PdfSigFieldLockDictionary fieldLock) {
@@ -907,6 +1018,12 @@ public class PdfSigner {
         crypto.put(PdfName.Reference, types);
     }
 
+    /**
+     * Get the rectangle associated to the provided widget.
+     *
+     * @param widget PdfWidgetAnnotation to extract the rectangle from
+     * @return Rectangle
+     */
     protected Rectangle getWidgetRectangle(PdfWidgetAnnotation widget) {
         PdfArray r = widget.getRectangle();
         float x = r.getAsFloat(0);
@@ -916,6 +1033,12 @@ public class PdfSigner {
         return new Rectangle(x, y, width, height);
     }
 
+    /**
+     * Get the page number associated to the provided widget.
+     *
+     * @param widget PdfWidgetAnnotation from which to extract the page number
+     * @return page number
+     */
     protected int getWidgetPageNumber(PdfWidgetAnnotation widget) {
         int pageNumber = 0;
         PdfDictionary pageDict = widget.getPdfObject().getAsDictionary(PdfName.P);
@@ -946,7 +1069,8 @@ public class PdfSigner {
 
         /**
          * Allows modification of the signature dictionary.
-         * @param sig The signature dictionary.
+         *
+         * @param sig The signature dictionary
          */
         void getSignatureDictionary(PdfSignature sig);
     }

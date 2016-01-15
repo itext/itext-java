@@ -12,21 +12,26 @@ import com.itextpdf.core.pdf.PdfString;
 public class PdfSignatureAppDictionary extends PdfObjectWrapper<PdfDictionary> {
 
     /**
-     * Creates new PdfSignatureAppDictionary
+     * Creates a new PdfSignatureAppDictionary
      */
     public PdfSignatureAppDictionary() {
         super(new PdfDictionary());
     }
 
+    /**
+     * Creates a new PdfSignatureAppDictionary.
+     *
+     * @param pdfObject PdfDictionary containing initial values
+     */
     public PdfSignatureAppDictionary(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
     /**
      * Sets the signature created property in the Prop_Build dictionary's App
-     * dictionary
+     * dictionary.
      *
-     * @param name
+     * @param name String name of the application creating the signature
      */
     public void setSignatureCreator(String name) {
         put(PdfName.Name, new PdfString(name, PdfEncodings.UnicodeBig));
