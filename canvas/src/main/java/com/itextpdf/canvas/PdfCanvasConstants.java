@@ -1,5 +1,8 @@
 package com.itextpdf.canvas;
 
+/**
+ * A container for constants defined in the PDF specification (ISO 32000-1).
+ */
 public class PdfCanvasConstants {
 
     /**
@@ -12,6 +15,9 @@ public class PdfCanvasConstants {
      * If the text rendering mode calls for filling, the current nonstroking
      * color in the graphics state is used; if it calls for stroking, the
      * current stroking color is used.
+     * 
+     * All documentation for this class is taken from ISO 32000-1, section 9.3.6
+     * "Text Rendering Mode".
      */
     public static final class TextRenderingMode {
         private TextRenderingMode() {}
@@ -36,7 +42,10 @@ public class PdfCanvasConstants {
 
     /**
      * The line cap style specifies the shape to be used at the ends of open
-     * subpaths (and dashes, if any) when they are stroked
+     * subpaths (and dashes, if any) when they are stroked.
+     * 
+     * All documentation for this class is taken from ISO 32000-1, section
+     * 8.4.3.3 "Line Cap Style".
      */
     public static class LineCapStyle {
         /**
@@ -61,6 +70,9 @@ public class PdfCanvasConstants {
      * paths that are stroked. Join styles are significant only at points where
      * consecutive segments of a path connect at an angle; segments that meet or
      * intersect fortuitously receive no special treatment.
+     * 
+     * All documentation for this class is taken from ISO 32000-1, section
+     * 8.4.3.4 "Line Join Style".
      */
     public static class LineJoinStyle {
         /**
