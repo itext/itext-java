@@ -76,7 +76,7 @@ public class CanvasTag {
         }
 
         ensurePropertiesInit();
-        properties.putAll(properties);
+        this.properties.putAll(properties);
         return this;
     }
 
