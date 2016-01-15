@@ -113,8 +113,12 @@ public class PdfFormXObject extends PdfXObject {
         return getPdfObject().getAsArray(PdfName.BBox);
     }
 
-    public void setBBox(PdfArray bBox) {
-        getPdfObject().put(PdfName.BBox, bBox);
+    public PdfFormXObject setBBox(PdfArray bBox) {
+        return put(PdfName.BBox, bBox);
+    }
+
+    public PdfFormXObject setGroup(PdfTransparencyGroup transparency) {
+        return put(PdfName.Group, transparency.getPdfObject());
     }
 
     @Override

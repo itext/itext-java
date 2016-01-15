@@ -57,7 +57,7 @@ public class XfaForm {
     /**
      * A constructor from a {@link PdfDictionary}. It is assumed, but not
      * necessary for correct initialization, that the dictionary is actually a
-     * {@link PdfAcroform}. An entry in the dictionary with the <code>XFA</code>
+     * {@link PdfAcroForm}. An entry in the dictionary with the <code>XFA</code>
      * key must contain correct XFA syntax. If the <code>XFA</code> key is
      * absent, then the constructor only tries to assign a document to this
      * {@link XfaForm}

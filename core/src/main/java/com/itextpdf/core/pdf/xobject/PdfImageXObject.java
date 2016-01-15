@@ -171,8 +171,12 @@ public class PdfImageXObject extends PdfXObject {
                 stream.put(PdfName.Mask, imageMask.getPdfObject());
         }
 
-        if (image.getImageMask() != null) {
-            stream.put(PdfName.SMask, new PdfImageXObject(image.getImageMask()).getPdfObject());
+        Image mask = image.getImageMask();
+        if (mask != null) {
+            if (mask.isSoftMask())
+                stream.put(PdfName.SMask, new PdfImageXObject(image.getImageMask()).getPdfObject());
+            else if (mask.isMask())
+                stream.put(PdfName.Mask, new PdfImageXObject(image.getImageMask()).getPdfObject());
         }
 
         if (image.getDecode() != null) {

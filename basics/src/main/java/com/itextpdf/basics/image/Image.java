@@ -197,7 +197,7 @@ public abstract class Image {
     }
 
     public boolean isSoftMask() {
-        return mask && bpc > 0 && bpc <=8;
+        return mask && bpc > 1 && bpc <=8;
     }
 
     public void makeMask() {
