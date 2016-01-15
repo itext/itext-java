@@ -54,6 +54,16 @@ public class XfaForm {
     public XfaForm() {
     }
 
+    /**
+     * A constructor from a {@link PdfDictionary}. It is assumed, but not
+     * necessary for correct initialization, that the dictionary is actually a
+     * {@link PdfAcroform}. An entry in the dictionary with the <code>XFA</code>
+     * key must contain correct XFA syntax. If the <code>XFA</code> key is
+     * absent, then the constructor only tries to assign a document to this
+     * {@link XfaForm}
+     * 
+     * @param acroFormDictionary the dictionary object to initialize from
+     */
     public XfaForm(PdfDictionary acroFormDictionary) {
         this.pdfDocument = acroFormDictionary.getDocument();
         PdfObject xfa = acroFormDictionary.get(PdfName.XFA);
@@ -106,9 +116,9 @@ public class XfaForm {
     /**
      * Sets the XFA key from a byte array. The old XFA is erased.
      *
-     * @param form        the data
+     * @param form the data
      * @param pdfDocument pdfDocument
-     * @throws java.io.IOException on error
+     * @throws java.io.IOException on IO error
      */
     public static void setXfaForm(XfaForm form, PdfDocument pdfDocument) throws IOException {
         PdfDictionary af = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
@@ -150,6 +160,14 @@ public class XfaForm {
         af.put(PdfName.XFA, stream);
     }
 
+    /**
+     * Extracts DOM nodes from an XFA document.
+     * 
+     * @param domDocument an XFA file as a {@link org.w3c.dom.Document DOM
+     * document}
+     * @return a {@link Map} of XFA packet names and their associated
+     * {@link org.w3c.dom.Node DOM nodes}
+     */
     public static Map<String, Node> extractXFANodes(Document domDocument) {
         Map<String, Node> xfaNodes = new HashMap<>();
         Node n = domDocument.getFirstChild();
@@ -404,26 +422,74 @@ public class XfaForm {
         return datasetsNode;
     }
 
+    /**
+     * Replaces the XFA data under datasets/data. Accepts a {@link File file
+     * object} to fill this object with XFA data. The resulting DOM document may
+     * be modified.
+     * 
+     * @param file the {@link File}
+     * @throws java.io.IOException on IO error on the {@link InputSource}
+     */
     public void fillXfaForm(File file) throws IOException {
         fillXfaForm(file, false);
     }
 
+    /**
+     * Replaces the XFA data under datasets/data. Accepts a {@link File file
+     * object} to fill this object with XFA data.
+     * 
+     * @param file the {@link File}
+     * @param readOnly whether or not the resulting DOM document may be modified
+     * @throws java.io.IOException on IO error on the {@link InputSource}
+     */
     public void fillXfaForm(File file, boolean readOnly) throws IOException {
         fillXfaForm(new FileInputStream(file), readOnly);
     }
 
+    /**
+     * Replaces the XFA data under datasets/data. Accepts an {@link InputStream}
+     * to fill this object with XFA data. The resulting DOM document may be
+     * modified.
+     * 
+     * @param is the {@link InputStream}
+     * @throws java.io.IOException on IO error on the {@link InputSource}
+     */
     public void fillXfaForm(InputStream is) throws IOException {
         fillXfaForm(is, false);
     }
 
+    /**
+     * Replaces the XFA data under datasets/data. Accepts an {@link InputStream}
+     * to fill this object with XFA data.
+     * 
+     * @param is the {@link InputStream}
+     * @param readOnly whether or not the resulting DOM document may be modified
+     * @throws java.io.IOException on IO error on the {@link InputSource}
+     */
     public void fillXfaForm(InputStream is, boolean readOnly) throws IOException {
         fillXfaForm(new InputSource(is), readOnly);
     }
 
+    /**
+     * Replaces the XFA data under datasets/data. Accepts a {@link InputSource
+     * SAX input source} to fill this object with XFA data. The resulting DOM
+     * document may be modified.
+     * 
+     * @param is the {@link InputSource SAX input source}
+     * @throws java.io.IOException on IO error on the {@link InputSource}
+     */
     public void fillXfaForm(InputSource is) throws IOException {
         fillXfaForm(is, false);
     }
 
+    /**
+     * Replaces the XFA data under datasets/data. Accepts a {@link InputSource
+     * SAX input source} to fill this object with XFA data.
+     * 
+     * @param is the {@link InputSource SAX input source}
+     * @param readOnly whether or not the resulting DOM document may be modified
+     * @throws java.io.IOException on IO error on the {@link InputSource}
+     */
     public void fillXfaForm(InputSource is, boolean readOnly) throws IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db;
@@ -438,14 +504,18 @@ public class XfaForm {
         }
     }
 
+    /**
+     * Replaces the XFA data under datasets/data.
+     * @param node the input {@link org.w3c.dom.Node}
+     */
     public void fillXfaForm(Node node) {
         fillXfaForm(node, false);
     }
 
     /**
-     * Replaces the data under datasets/data.
-     *
-     * @since iText 5.0.0
+     * Replaces the XFA data under datasets/data.
+     * @param node the input {@link org.w3c.dom.Node}
+     * @param readOnly whether or not the resulting DOM document may be modified
      */
     public void fillXfaForm(Node node, boolean readOnly) {
         if (readOnly) {
