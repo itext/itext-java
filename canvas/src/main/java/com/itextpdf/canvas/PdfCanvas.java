@@ -123,36 +123,36 @@ public class PdfCanvas {
     static private final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
 
     /**
-     * a LIFO stack of graphics state saved states
+     * a LIFO stack of graphics state saved states.
      */
     protected Stack<CanvasGraphicsState> gsStack = new Stack<>();
     /**
-     * the current graphics state
+     * the current graphics state.
      */
     protected CanvasGraphicsState currentGs = new CanvasGraphicsState();
     /**
-     * the content stream for this canvas object
+     * the content stream for this canvas object.
      */
     protected PdfStream contentStream;
     /**
-     * the resources for the page that this canvas belongs to
+     * the resources for the page that this canvas belongs to.
      * @see PdfResources
      */
     protected PdfResources resources;
     /**
-     * the document that the resulting content stream of this canvas will be written to
+     * the document that the resulting content stream of this canvas will be written to.
      */
     protected PdfDocument document;
     /**
-     * a counter variable for the marked content stack
+     * a counter variable for the marked content stack.
      */
     protected int mcDepth;
     /**
-     * Keeps track of the current Marked Content ID
+     * Keeps track of the current Marked Content ID.
      */
     protected int mcid = 0;
     
-    /** The list where we save/restore the layer depth */
+    /** The list where we save/restore the layer depth. */
     protected ArrayList<Integer> layerDepth;
 
     /**
@@ -202,8 +202,7 @@ public class PdfCanvas {
      * (@link #showText(PdfArray)}
      * @param text The textual contents of the PDF operator
      * @param font The font used for rendering the text
-     * @return An array of text instructions corresponding with the argument for
-     * PDF's TJ operator
+     * @return An array of text instructions corresponding with the argument for PDF's TJ operator
      */
     // TODO convert to GlyphLine and call appropriate method?
     public static PdfTextArray getKernArray(String text, final PdfFont font) {
@@ -234,8 +233,7 @@ public class PdfCanvas {
      * (@link #showText(PdfArray)}
      * @param text An array-like object containing textual information
      * @param font The font used for rendering the text
-     * @return An array of text instructions corresponding with the argument for
-     * PDF's TJ operator
+     * @return An array of text instructions corresponding with the argument for PDF's TJ operator
      */
     public static PdfTextArray getKernArray(GlyphLine text, final PdfFont font) {
         PdfTextArray kernArray = new PdfTextArray();
@@ -269,7 +267,8 @@ public class PdfCanvas {
     }
     
     /**
-     * @return container containing properties for the current state of the canvas
+     * Gets current {@link CanvasGraphicsState}.
+     * @return container containing properties for the current state of the canvas.
      */
     public CanvasGraphicsState getGraphicsState() {
         return currentGs;

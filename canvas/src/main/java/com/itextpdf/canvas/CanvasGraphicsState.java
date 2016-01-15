@@ -56,8 +56,8 @@ public class CanvasGraphicsState {
     private Float leading;
 
     /**
-     * Creates a CanvasGraphicsState object from a PdfExtGState
-     * Essentially a copy constructor from a PdfDictionary object
+     * Creates a CanvasGraphicsState object from a PdfExtGState. Essentially
+     * a copy constructor from a PdfDictionary object.
      * @param extGStateToUpdateFrom the dictionary wrapper containing source parameters
      */
     public CanvasGraphicsState(PdfExtGState extGStateToUpdateFrom) {
@@ -65,14 +65,14 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Internal empty & default constructor
+     * Internal empty & default constructor.
      */
     protected CanvasGraphicsState() {
 
     }
 
     /**
-     * Copy constructor
+     * Copy constructor.
      * @param source the Graphics State to copy from
      */
     protected CanvasGraphicsState(final CanvasGraphicsState source) {
@@ -96,12 +96,21 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Updates this object with the values from a dictionary-like public object
+     * Updates this object with the values from a dictionary-like public object.
      * 
      * @param extGState the dictionary wrapper containing source parameters
      */
     public void updateFromExtGState(PdfExtGState extGState) {
         copyFrom(extGState);
+    }
+    
+    /**
+     * Updates this object with the values from a dictionary.
+     * 
+     * @param extGState the dictionary containing source parameters
+     */
+    public void updateFromExtGState(PdfDictionary extGState) {
+        updateFromExtGState(new PdfExtGState(extGState));
     }
     
     private void copyFrom(PdfExtGState extGState) {
@@ -195,10 +204,6 @@ public class CanvasGraphicsState {
         Boolean tk = extGState.getTextKnockoutFlag();
         if (tk != null)
             textKnockout = tk;
-    }
-
-    public void updateFromExtGState(PdfDictionary extGState) {
-        updateFromExtGState(new PdfExtGState(extGState));
     }
 
     public Float getLineWidth() {

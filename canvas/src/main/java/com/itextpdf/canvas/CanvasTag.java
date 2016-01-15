@@ -9,11 +9,12 @@ import com.itextpdf.core.pdf.tagging.PdfMcr;
 /**
  * This class represents a single tag on a single piece of marked content.
  *
+ * <p>
  * In Tagged PDF, a tag is the basic structure unit for marking content. The tag
  * structure and hierarchy is largely comparable to HTML. As in HTML, every tag
  * type has a name, defined here in the <code>role</code> attribute. The tagging
  * mechanism in Tagged PDF is extensible, so PDF creators can choose to create
- * custom tags.
+ * custom tags.</p>
  */
 public class CanvasTag {
 
@@ -36,8 +37,7 @@ public class CanvasTag {
      * logical structure).
      *
      * @param role the type of tag
-     * @param mcid marked content id which serves as a reference to the
-     * document's logical structure
+     * @param mcid marked content id which serves as a reference to the document's logical structure
      */
     public CanvasTag(PdfName role, Integer mcid) {
         this.role = role;
@@ -49,7 +49,7 @@ public class CanvasTag {
     /**
      * Creates a tag that is referenced to the document's tag structure (i.e.
      * logical structure).
-     * 
+     *
      * @param mcr the {@link PdfMcr Marked Content Reference} wrapper object
      */
     public CanvasTag(PdfMcr mcr) {
@@ -65,8 +65,8 @@ public class CanvasTag {
     }
 
     /**
-     * Adds a dictionary of properties to the {@link CanvasTag tag}'s properties
-     * 
+     * Adds a dictionary of properties to the {@link CanvasTag tag}'s properties.
+     *
      * @param properties a dictionary
      * @return current {@link CanvasTag}
      */
@@ -81,8 +81,8 @@ public class CanvasTag {
     }
 
     /**
-     * Adds a single property to the {@link CanvasTag tag}'s properties
-     * 
+     * Adds a single property to the {@link CanvasTag tag}'s properties.
+     *
      * @param name a key
      * @param value the value for the key
      * @return current {@link CanvasTag}
@@ -95,8 +95,8 @@ public class CanvasTag {
     }
 
     /**
-     * Removes a single property from the {@link CanvasTag tag}'s properties
-     * 
+     * Removes a single property from the {@link CanvasTag tag}'s properties.
+     *
      * @param name the key of the key-value pair to be removed
      * @return current {@link CanvasTag}
      */
@@ -108,8 +108,8 @@ public class CanvasTag {
     }
 
     /**
-     * Gets a property from the {@link CanvasTag tag}'s properties dictionary
-     * 
+     * Gets a property from the {@link CanvasTag tag}'s properties dictionary.
+     *
      * @param name the key of the key-value pair to be retrieved
      * @return the value corresponding to the key
      */
