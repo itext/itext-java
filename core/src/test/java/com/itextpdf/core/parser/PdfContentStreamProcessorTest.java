@@ -1,26 +1,23 @@
-package com.itextpdf.core.pdf;
+package com.itextpdf.core.parser;
 
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.core.parser.EventData;
-import com.itextpdf.core.parser.EventListener;
-import com.itextpdf.core.parser.EventType;
-import com.itextpdf.core.parser.ImageRenderInfo;
-import com.itextpdf.core.parser.PathRenderInfo;
-import com.itextpdf.core.parser.PdfContentStreamProcessor;
-import com.itextpdf.core.parser.TextRenderInfo;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.PdfReader;
+import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.util.Set;
 
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 @Category(IntegrationTest.class)
 public class PdfContentStreamProcessorTest extends ExtendedITextTest {
 
-
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfContentStreamProcessorTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/PdfContentStreamProcessorTest/";
 
     @Test
     public void contentStreamProcessorTest() throws IOException {
