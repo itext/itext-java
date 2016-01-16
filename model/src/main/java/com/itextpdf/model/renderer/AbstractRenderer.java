@@ -3,18 +3,17 @@ package com.itextpdf.model.renderer;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
-import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.core.pdf.tagging.PdfStructElem;
-import com.itextpdf.core.pdf.tagutils.AccessibleElementProperties;
-import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
-import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutPosition;
 
@@ -57,17 +56,6 @@ public abstract class AbstractRenderer implements IRenderer {
         } else if (positioning == LayoutPosition.FIXED) {
             AbstractRenderer root = this;
             while (root.parent instanceof AbstractRenderer) {
-                root = (AbstractRenderer) root.parent;
-            }
-            if (root == this) {
-                positionedRenderers.add(renderer);
-                renderer.setParent(this);
-            } else {
-                root.addChild(renderer);
-            }
-        } else if (positioning == LayoutPosition.ABSOLUTE) {
-            AbstractRenderer root = this;
-            while (root.getPropertyAsInteger(Property.POSITION) == LayoutPosition.STATIC && root.parent instanceof AbstractRenderer) {
                 root = (AbstractRenderer) root.parent;
             }
             if (root == this) {
@@ -420,7 +408,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     protected boolean isPositioned() {
         Object positioning = getProperty(Property.POSITION);
-        return Integer.valueOf(LayoutPosition.ABSOLUTE).equals(positioning) || Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
+        return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
     }
 
     protected boolean isFixedLayout() {

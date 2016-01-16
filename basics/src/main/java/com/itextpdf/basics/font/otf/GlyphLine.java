@@ -43,14 +43,21 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         this.idx = other.idx;
     }
 
-    // TODO take into account actual text as direct order is not correct for Indic reordering
-    public String toUnicodeString(int left, int right) {
+    public String toUnicodeString(int start, int end) {
+        Iterator<GlyphLinePart> iter = new GlyphLinePartIterator(this, start, end);
         StringBuilder str = new StringBuilder();
-        for (int i = left; i < right; i++) {
-            if (glyphs.get(i).getChars() != null) {
-                str.append(glyphs.get(i).getChars());
-            } else if (glyphs.get(i).getUnicode() != null) {
-                str.append(Utilities.convertFromUtf32(glyphs.get(i).getUnicode()));
+        while (iter.hasNext()) {
+            GlyphLinePart part = iter.next();
+            if (part.actualText != null) {
+                str.append(part.actualText);
+            } else {
+                for (int i = part.start; i < part.end; i++) {
+                    if (glyphs.get(i).getChars() != null) {
+                        str.append(glyphs.get(i).getChars());
+                    } else if (glyphs.get(i).getUnicode() != null) {
+                        str.append(Utilities.convertFromUtf32(glyphs.get(i).getUnicode()));
+                    }
+                }
             }
         }
         return str.toString();
@@ -147,18 +154,24 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
     }
 
     public GlyphLine filter(GlyphLineFilter filter) {
-        // TODO optimize in case nothing is filtered
-        List<Glyph> stayGlyphs = new ArrayList<>(end - start);
-        List<ActualText> stayActualText = actualText != null ? new ArrayList<>(end - start) : (List)null;
+        boolean anythingFiltered = false;
+        List<Glyph> filteredGlyphs = new ArrayList<>(end - start);
+        List<ActualText> filteredActualText = actualText != null ? new ArrayList<ActualText>(end - start) : null;
         for (int i = start; i < end; i++) {
             if (filter.accept(glyphs.get(i))) {
-                stayGlyphs.add(glyphs.get(i));
-                if (stayActualText != null) {
-                    stayActualText.add(actualText.get(i));
+                filteredGlyphs.add(glyphs.get(i));
+                if (filteredActualText != null) {
+                    filteredActualText.add(actualText.get(i));
                 }
+            } else {
+                anythingFiltered = true;
             }
         }
-        return new GlyphLine(stayGlyphs, stayActualText, 0, stayGlyphs.size());
+        if (anythingFiltered) {
+            return new GlyphLine(filteredGlyphs, filteredActualText, 0, filteredGlyphs.size());
+        } else {
+            return this;
+        }
     }
 
     public void setActualText(int left, int right, String text) {
@@ -175,78 +188,7 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
 
     @Override
     public Iterator<GlyphLinePart> iterator() {
-        return new Iterator<GlyphLinePart>() {
-            private int pos = start;
-
-            @Override
-            public boolean hasNext() {
-                return pos < end;
-            }
-
-            @Override
-            public GlyphLinePart next() {
-                if (actualText == null) {
-                    GlyphLinePart result = new GlyphLinePart(pos, end, null);
-                    pos = end;
-                    return result;
-                } else {
-                    GlyphLinePart currentResult = nextGlyphLinePart(pos);
-                    if (currentResult == null) {
-                        return null;
-                    }
-                    pos = currentResult.end;
-                    while (pos < end && !glyphLinePartNeedsActualText(currentResult)) {
-                        currentResult.actualText = null;
-                        GlyphLinePart nextResult = nextGlyphLinePart(pos);
-                        if (nextResult != null && !glyphLinePartNeedsActualText(nextResult)) {
-                            currentResult.end = nextResult.end;
-                            pos = nextResult.end;
-                        } else {
-                            break;
-                        }
-                    }
-                    return currentResult;
-                }
-            }
-
-            @Override
-            public void remove() {
-                throw new IllegalStateException("Operation not supported");
-            }
-
-            private GlyphLinePart nextGlyphLinePart(int pos) {
-                if (pos >= end) {
-                    return null;
-                }
-                int startPos = pos;
-                ActualText startActualText = actualText.get(pos);
-                while (pos < end && actualText.get(pos) == startActualText) {
-                    pos++;
-                }
-                return new GlyphLinePart(startPos, pos, startActualText != null ? startActualText.value : null);
-            }
-
-            private boolean glyphLinePartNeedsActualText(GlyphLinePart glyphLinePart) {
-                if (glyphLinePart.actualText == null) {
-                    return false;
-                }
-                boolean needsActualText = false;
-                StringBuilder toUnicodeMapResult = new StringBuilder();
-                for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
-                    Glyph currentGlyph = glyphs.get(i);
-                    if (currentGlyph.getUnicode() == null) {
-                        needsActualText = true;
-                        break;
-                    }
-
-                    // TODO zero glyph is a special case. Unicode might be special
-
-                    toUnicodeMapResult.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
-                }
-
-                return needsActualText || !toUnicodeMapResult.toString().equals(glyphLinePart.actualText);
-            }
-        };
+        return new GlyphLinePartIterator(this);
     }
 
     private void removeGlyph(int index) {
@@ -286,5 +228,90 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         }
 
         public String value;
+    }
+
+    private static class GlyphLinePartIterator implements Iterator<GlyphLinePart> {
+
+        private GlyphLine glyphLine;
+
+        public GlyphLinePartIterator(GlyphLine glyphLine) {
+            this.glyphLine = glyphLine;
+            this.pos = glyphLine.start;
+        }
+
+        public GlyphLinePartIterator(GlyphLine glyphLine, int start, int end) {
+            this(new GlyphLine(glyphLine.glyphs, glyphLine.actualText, start, end));
+        }
+
+        private int pos;
+
+        @Override
+        public boolean hasNext() {
+            return pos < glyphLine.end;
+        }
+
+        @Override
+        public GlyphLinePart next() {
+            if (glyphLine.actualText == null) {
+                GlyphLinePart result = new GlyphLinePart(pos, glyphLine.end, null);
+                pos = glyphLine.end;
+                return result;
+            } else {
+                GlyphLinePart currentResult = nextGlyphLinePart(pos);
+                if (currentResult == null) {
+                    return null;
+                }
+                pos = currentResult.end;
+                while (pos < glyphLine.end && !glyphLinePartNeedsActualText(currentResult)) {
+                    currentResult.actualText = null;
+                    GlyphLinePart nextResult = nextGlyphLinePart(pos);
+                    if (nextResult != null && !glyphLinePartNeedsActualText(nextResult)) {
+                        currentResult.end = nextResult.end;
+                        pos = nextResult.end;
+                    } else {
+                        break;
+                    }
+                }
+                return currentResult;
+            }
+        }
+
+        @Override
+        public void remove() {
+            throw new IllegalStateException("Operation not supported");
+        }
+
+        private GlyphLinePart nextGlyphLinePart(int pos) {
+            if (pos >= glyphLine.end) {
+                return null;
+            }
+            int startPos = pos;
+            ActualText startActualText = glyphLine.actualText.get(pos);
+            while (pos < glyphLine.end && glyphLine.actualText.get(pos) == startActualText) {
+                pos++;
+            }
+            return new GlyphLinePart(startPos, pos, startActualText != null ? startActualText.value : null);
+        }
+
+        private boolean glyphLinePartNeedsActualText(GlyphLinePart glyphLinePart) {
+            if (glyphLinePart.actualText == null) {
+                return false;
+            }
+            boolean needsActualText = false;
+            StringBuilder toUnicodeMapResult = new StringBuilder();
+            for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
+                Glyph currentGlyph = glyphLine.glyphs.get(i);
+                if (currentGlyph.getUnicode() == null) {
+                    needsActualText = true;
+                    break;
+                }
+
+                // TODO zero glyph is a special case. Unicode might be special
+
+                toUnicodeMapResult.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
+            }
+
+            return needsActualText || !toUnicodeMapResult.toString().equals(glyphLinePart.actualText);
+        }
     }
 }
