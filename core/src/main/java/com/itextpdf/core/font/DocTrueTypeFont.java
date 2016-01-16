@@ -1,7 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -10,17 +10,18 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
-class DocType1Font extends Type1Font {
+class DocTrueTypeFont extends TrueTypeFont {
 
     private PdfStream fontFile;
     private PdfName fontFileName;
     private PdfName subtype;
 
-    private DocType1Font(String fontName) {
-        super(fontName);
+    private DocTrueTypeFont(String fontName) {
+        super();
+        getFontNames().setFontName(fontName);
     }
 
-    public static Type1Font createSimpleFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding) {
+    public static TrueTypeFont createSimpleFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding) {
         PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
         String baseFont;
         if (baseFontName != null) {
@@ -28,20 +29,7 @@ class DocType1Font extends Type1Font {
         } else {
             baseFont = DocFontUtils.createRandomFontName();
         }
-        if (!fontDictionary.containsKey(PdfName.FontDescriptor)) {
-            Type1Font type1StdFont;
-            try {
-                //if there are no font modifiers, cached font could be used,
-                //otherwise a new instance should be created.
-                type1StdFont = createStandardFont(baseFont);
-            } catch (Exception e) {
-                type1StdFont = null;
-            }
-            if (type1StdFont != null) {
-                return type1StdFont;
-            }
-        }
-        DocType1Font fontProgram = new DocType1Font(baseFont);
+        DocTrueTypeFont fontProgram = new DocTrueTypeFont(baseFont);
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.min(firstCharNumber.getIntValue(), 0) : 0;
         int[] widths = DocFontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
@@ -71,7 +59,7 @@ class DocType1Font extends Type1Font {
         return subtype;
     }
 
-    static void fillFontDescriptor(DocType1Font font, PdfDictionary fontDesc) {
+    static void fillFontDescriptor(DocTrueTypeFont font, PdfDictionary fontDesc) {
         if (fontDesc == null) {
             return;
         }
@@ -165,5 +153,9 @@ class DocType1Font extends Type1Font {
             }
         }
         font.subtype = fontDesc.getAsName(PdfName.Subtype);
+        if (font.subtype == null) {
+            font.subtype = PdfName.TrueType;
+        }
     }
+
 }

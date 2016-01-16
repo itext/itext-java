@@ -687,12 +687,12 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test @Ignore
+    @Test
     public void testNewTrueTypeFont1BasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont1.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeFont1_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1_new.pdf";
-        final String title = "Type3 font iText 6 Document";
+        final String title = "testNewTrueTypeFont1BasedExistingFont";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -705,7 +705,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDictionary);
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont((PdfDictionary) pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -723,12 +723,12 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test @Ignore
+    @Test
     public void testNewTrueTypeFont2BasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont2.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeFont2_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2_new.pdf";
-        final String title = "Type3 font iText 6 Document";
+        final String title = "True Type font iText 6 Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -742,14 +742,47 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDictionary);
+        PdfFont pdfFont = PdfFont.createFont((PdfDictionary) pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
                 .saveState()
                 .beginText()
                 .moveText(36, 700)
-                .setFontAndSize(pdfTrueTypeFont, 72)
+                .setFontAndSize(pdfFont, 72)
+                .showText("New Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void testTrueTypeFont1BasedExistingFont() throws IOException, InterruptedException {
+        String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont1.pdf";
+        String filename = destinationFolder + "DocumentWithTrueTypeFont1_updated.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1_updated.pdf";
+        final String title = "True Type font iText 6 Document";
+
+        PdfReader reader1 = new PdfReader(inputFileName1);
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(reader1, writer);
+
+        PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
+        PdfFont pdfFont = PdfFont.createFont(pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfFont, 72)
                 .showText("New Hello world")
                 .endText()
                 .restoreState();
