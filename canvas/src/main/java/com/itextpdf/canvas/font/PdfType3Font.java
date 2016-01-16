@@ -164,6 +164,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return null;
     }
 
+    @Override
+    protected void addFontStream(PdfDictionary fontDescriptor) {
+    }
+
     /**
      * Looks up existence of a character in this font
      * 

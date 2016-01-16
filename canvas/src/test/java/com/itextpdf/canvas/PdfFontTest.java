@@ -687,7 +687,7 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test@Ignore
+    @Test @Ignore
     public void testNewTrueTypeFont1BasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont1.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeFont1_new.pdf";
@@ -855,7 +855,6 @@ public class PdfFontTest extends ExtendedITextTest{
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        //TODO is it correct sample with coping PdfDictionary of font?
         PdfType1Font pdfType1Font = new PdfType1Font((PdfDictionary) pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);

@@ -1,10 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.basics.font.*;
 import com.itextpdf.basics.font.cmap.CMapLocation;
 import com.itextpdf.basics.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.basics.font.cmap.CMapParser;
@@ -378,7 +375,47 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return false;
     }
 
-    protected abstract PdfDictionary getFontDescriptor(String fontName);
+    /**
+     * Generates the font descriptor for this font or {@code null} if it is one of the 14 built in fonts.
+     *
+     * @return the PdfDictionary containing the font descriptor or {@code null}.
+     */
+    protected PdfDictionary getFontDescriptor(String fontName) {
+        FontMetrics fontMetrics = fontProgram.getFontMetrics();
+        FontNames fontNames = fontProgram.getFontNames();
+        PdfDictionary fontDescriptor = new PdfDictionary();
+        fontDescriptor.makeIndirect(getDocument());
+        fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
+        fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontMetrics.getTypoAscender()));
+        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
+        fontDescriptor.put(PdfName.Descent, new PdfNumber(fontMetrics.getTypoDescender()));
+        fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontMetrics.getBbox().clone()));
+        fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
+        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
+        fontDescriptor.put(PdfName.StemV, new PdfNumber(fontMetrics.getStemV()));
+        if (fontMetrics.getXHeight() > 0) {
+            fontDescriptor.put(PdfName.XHeight, new PdfNumber(fontMetrics.getXHeight()));
+        }
+        if (fontMetrics.getStemH() > 0) {
+            fontDescriptor.put(PdfName.StemH, new PdfNumber(fontMetrics.getStemH()));
+        }
+        if (fontNames.getFontWeight() > 0) {
+            fontDescriptor.put(PdfName.FontWeight, new PdfNumber(fontNames.getFontWeight()));
+        }
+
+        if (fontNames.getFamilyName() != null && fontNames.getFamilyName().length > 0 && fontNames.getFamilyName()[0].length >= 4) {
+            fontDescriptor.put(PdfName.FontFamily, new PdfString(fontNames.getFamilyName()[0][3]));
+        }
+        addFontStream(fontDescriptor);
+        int flags = fontProgram.getPdfFontFlags();
+        if (!fontEncoding.isFontSpecific()) {
+            flags &= ~64;
+        }
+        fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
+        return fontDescriptor;
+    }
+
+    protected abstract void addFontStream(PdfDictionary fontDescriptor);
 
     protected void setFontProgram(T fontProgram) {
         this.fontProgram = fontProgram;

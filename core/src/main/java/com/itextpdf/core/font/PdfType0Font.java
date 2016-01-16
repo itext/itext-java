@@ -512,6 +512,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         flushFontData();
     }
 
+    @Override //TODO
+    protected void addFontStream(PdfDictionary fontDescriptor) {
+        return;
+    }
+
     private void flushCopyFontData() {
         getPdfObject().flush();
     }

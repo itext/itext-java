@@ -166,33 +166,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         }
     }
 
-    /**
-     * Generates the font descriptor for this font or {@code null} if it is one of the 14 built in fonts.
-     *
-     * @param fontName   a name of the font.
-     * @return the PdfDictionary containing the font descriptor or {@code null}.
-     */
-    protected PdfDictionary getFontDescriptor(String fontName) {
-        PdfDictionary fontDescriptor = new PdfDictionary();
-        fontDescriptor.makeIndirect(getDocument());
-        fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
-        fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
-        Rectangle fontBBox = new Rectangle(getFontProgram().getFontMetrics().getBbox().clone());
-        fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontBBox));
-        fontDescriptor.put(PdfName.Ascent, new PdfNumber(getFontProgram().getFontMetrics().getTypoAscender()));
-        fontDescriptor.put(PdfName.Descent, new PdfNumber(getFontProgram().getFontMetrics().getTypoDescender()));
-        fontDescriptor.put(PdfName.CapHeight, new PdfNumber(getFontProgram().getFontMetrics().getCapHeight()));
-        fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(getFontProgram().getFontMetrics().getItalicAngle()));
-        fontDescriptor.put(PdfName.StemV, new PdfNumber(getFontProgram().getFontMetrics().getStemV()));
-        int flags = fontProgram.getPdfFontFlags();
-        if (!fontEncoding.isFontSpecific()) {
-            flags &= ~64;
-        }
-        fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
-        addFontStream(fontDescriptor);
-        return fontDescriptor;
-    }
-
     @Override
     protected TrueTypeFont initializeTypeFontForCopy(String encodingName) {
         throw new RuntimeException();
