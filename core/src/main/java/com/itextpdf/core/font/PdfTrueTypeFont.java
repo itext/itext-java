@@ -117,10 +117,12 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         }
     }
 
-    protected PdfStream getFontStream() {
+    protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
             PdfStream fontStream;
+            PdfName fontFileName;
             if (getFontProgram().isCff()) {
+                fontFileName = PdfName.FontFile3;
                 try {
                     byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();
                     fontStream = getPdfFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
@@ -131,10 +133,12 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     fontStream = null;
                 }
             } else {
+                fontFileName = PdfName.FontFile2;
                 HashSet<Integer> glyphs = new HashSet<>();
                 for (int k = 0; k < shortTag.length; k++) {
                     if (shortTag[k] != 0) {
-                        Glyph glyph = fontProgram.getGlyph(fontEncoding.getUnicode(k));
+                        Integer uni = fontEncoding.getUnicode(k);
+                        Glyph glyph = uni != null ? fontProgram.getGlyph(uni) : fontProgram.getGlyphByCode(k);
                         if (glyph != null) {
                             glyphs.add(glyph.getCode());
                         }
@@ -156,25 +160,19 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     fontStream = null;
                 }
             }
-            return fontStream;
-        } else {
-            return null;
+            if (fontStream != null) {
+                fontDescriptor.put(fontFileName, fontStream);
+            }
         }
     }
-
-    private void flushCopyFontData() {
-        super.flush();
-    }
-
 
     /**
      * Generates the font descriptor for this font or {@code null} if it is one of the 14 built in fonts.
      *
-     * @param fontStream   the PdfStream containing the font or {@code null}.
-     * @param fontName a name of the font.
+     * @param fontName   a name of the font.
      * @return the PdfDictionary containing the font descriptor or {@code null}.
      */
-    protected PdfDictionary getFontDescriptor(PdfStream fontStream, String fontName) {
+    protected PdfDictionary getFontDescriptor(String fontName) {
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(getDocument());
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
@@ -191,14 +189,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             flags &= ~64;
         }
         fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
-        if (fontStream != null) {
-            if (getFontProgram().isCff()) {
-                fontDescriptor.put(PdfName.FontFile3, fontStream);
-            } else {
-                fontDescriptor.put(PdfName.FontFile2, fontStream);
-            }
-        }
-
+        addFontStream(fontDescriptor);
         return fontDescriptor;
     }
 

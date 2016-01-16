@@ -69,7 +69,7 @@ public class Type1Font extends FontProgram {
     }
 
     public boolean isBuiltInFont() {
-        return fontParser == null || fontParser.isBuiltInFont();
+        return fontParser != null && fontParser.isBuiltInFont();
     }
 
     @Override

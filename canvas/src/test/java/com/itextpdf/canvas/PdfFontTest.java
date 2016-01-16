@@ -837,7 +837,7 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test@Ignore
+    @Test
     public void createDocumentWithType1WithToUnicodeBasedExistingFont() throws IOException, PdfException, InterruptedException {
         String inputFileName1 = sourceFolder + "fontWithToUnicode.pdf";
         String filename = destinationFolder + "fontWithToUnicode_new.pdf";
@@ -855,8 +855,8 @@ public class PdfFontTest extends ExtendedITextTest{
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-
-        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary);
+        //TODO is it correct sample with coping PdfDictionary of font?
+        PdfType1Font pdfType1Font = new PdfType1Font((PdfDictionary) pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas

@@ -3,12 +3,13 @@ package com.itextpdf.core.font;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.*;
 
 class DocType1Font extends Type1Font {
+
+    private PdfStream fontFile;
+    private PdfName fontFileName;
+    private PdfName subtype;
 
     private DocType1Font(String fontName) {
         super(fontName);
@@ -53,21 +54,37 @@ class DocType1Font extends Type1Font {
         return fontProgram;
     }
 
+    public PdfStream getFontFile() {
+        return fontFile;
+    }
+
+    public PdfName getFontFileName() {
+        return fontFileName;
+    }
+
+    public PdfName getSubtype() {
+        return subtype;
+    }
+
     static void fillFontDescriptor(DocType1Font font, PdfDictionary fontDesc) {
         if (fontDesc == null) {
             return;
         }
         PdfNumber v = fontDesc.getAsNumber(PdfName.Ascent);
         if (v != null) {
-            font.setAscender(v.getIntValue());
+            font.setTypoAscender(v.getIntValue());
         }
         v = fontDesc.getAsNumber(PdfName.Descent);
         if (v != null) {
-            font.setDescender(v.getIntValue());
+            font.setTypoDescender(v.getIntValue());
         }
         v = fontDesc.getAsNumber(PdfName.CapHeight);
         if (v != null) {
             font.setCapHeight(v.getIntValue());
+        }
+        v = fontDesc.getAsNumber(PdfName.XHeight);
+        if (v != null) {
+            font.setXHeight(v.getIntValue());
         }
         v = fontDesc.getAsNumber(PdfName.ItalicAngle);
         if (v != null) {
@@ -77,6 +94,21 @@ class DocType1Font extends Type1Font {
         if (v != null) {
             font.setStemV(v.getIntValue());
         }
+        v = fontDesc.getAsNumber(PdfName.StemH);
+        if (v != null) {
+            font.setStemH(v.getIntValue());
+        }
+        v = fontDesc.getAsNumber(PdfName.FontWeight);
+        if (v != null) {
+            font.setFontWeight(v.getIntValue());
+        }
+
+        PdfName fontStretch = fontDesc.getAsName(PdfName.FontStretch);
+        if (fontStretch != null) {
+            font.setFontWidth(fontStretch.getValue());
+        }
+
+
         PdfArray bboxValue = fontDesc.getAsArray(PdfName.FontBBox);
 
         if (bboxValue != null) {
@@ -102,11 +134,11 @@ class DocType1Font extends Type1Font {
             }
             font.setBbox(bbox);
         }
-        float maxAscent = Math.max(font.fontMetrics.getBbox().getTop(), font.fontMetrics.getAscender());
-        float minDescent = Math.min(font.fontMetrics.getBbox().getBottom(), font.fontMetrics.getDescender());
-        //This magic comes from iText5
-        font.setAscender((int) (maxAscent * 1000 / (maxAscent - minDescent)));
-        font.setDescender((int) (minDescent * 1000 / (maxAscent - minDescent)));
+
+        PdfString fontFamily = fontDesc.getAsString(PdfName.FontFamily);
+        if (fontFamily != null) {
+            font.setFontFamily(fontFamily.getValue());
+        }
 
         PdfNumber flagsValue = fontDesc.getAsNumber(PdfName.Flags);
         if (flagsValue != null) {
@@ -118,5 +150,15 @@ class DocType1Font extends Type1Font {
                 font.setBold(true);
             }
         }
+
+        PdfName[] fontFileNames = new PdfName[] {PdfName.FontFile, PdfName.FontFile2, PdfName.FontFile3};
+        for (PdfName fontFile: fontFileNames) {
+            if (fontDesc.containsKey(fontFile)) {
+                font.fontFileName = fontFile;
+                font.fontFile = fontDesc.getAsStream(fontFile);
+                break;
+            }
+        }
+        font.subtype = fontDesc.getAsName(PdfName.Subtype);
     }
 }

@@ -138,16 +138,20 @@ public abstract class FontProgram {
         }
     }
 
-    protected void setAscender(int ascender) {
-        fontMetrics.setAscender(ascender);
+    protected void setTypoAscender(int ascender) {
+        fontMetrics.setTypoAscender(ascender);
     }
 
-    protected void setDescender(int descender) {
-        fontMetrics.setDescender(descender);
+    protected void setTypoDescender(int descender) {
+        fontMetrics.setTypoDescender(descender);
     }
 
     protected void setCapHeight(int capHeight) {
         fontMetrics.setCapHeight(capHeight);
+    }
+
+    protected void setXHeight(int xHeight) {
+        fontMetrics.setXHeight(xHeight);
     }
 
     protected void setItalicAngle(int italicAngle) {
@@ -156,6 +160,49 @@ public abstract class FontProgram {
 
     protected void setStemV(int stemV) {
         fontMetrics.setStemV(stemV);
+    }
+
+    protected void setStemH(int stemH) {
+        fontMetrics.setStemH(stemH);
+    }
+
+    protected void setFontWeight(int fontWeight) {
+        fontNames.setFontWeight(fontWeight);
+    }
+
+    protected void setFontWidth(String fontWidth) {
+        fontWidth = fontWidth.toLowerCase();
+        int fontWidthValue = FontNames.FWIDTH_NORMAL;
+        switch (fontWidth) {
+            case "ultracondensed":
+                fontWidthValue = FontNames.FWIDTH_ULTRA_CONDENSED;
+                break;
+            case "extracondensed":
+                fontWidthValue = FontNames.FWIDTH_EXTRA_CONDENSED;
+                break;
+            case "condensed":
+                fontWidthValue = FontNames.FWIDTH_CONDENSED;
+                break;
+            case "semicondensed":
+                fontWidthValue = FontNames.FWIDTH_SEMI_CONDENSED;
+                break;
+            case "normal":
+                fontWidthValue = FontNames.FWIDTH_NORMAL;
+                break;
+            case "semiexpanded":
+                fontWidthValue = FontNames.FWIDTH_SEMI_EXPANDED;
+                break;
+            case "expanded":
+                fontWidthValue = FontNames.FWIDTH_EXPANDED;
+                break;
+            case "extraexpanded":
+                fontWidthValue = FontNames.FWIDTH_EXTRA_EXPANDED;
+                break;
+            case "ultraexpanded":
+                fontWidthValue = FontNames.FWIDTH_ULTRA_EXPANDED;
+                break;
+        }
+        fontNames.setFontWidth(fontWidthValue);
     }
 
     protected void setFixedPitch(boolean isFixedPitch) {
@@ -169,6 +216,11 @@ public abstract class FontProgram {
     protected void setBbox(int[] bbox) {
         fontMetrics.getBbox().setBbox(bbox[0], bbox[1], bbox[2], bbox[3]);
     }
+
+    protected void setFontFamily(String fontFamily) {
+        fontNames.setFamilyName(fontFamily);
+    }
+
 
     protected  void checkFilePath(String path){
         if(path != null) {

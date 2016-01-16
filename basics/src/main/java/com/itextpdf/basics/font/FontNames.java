@@ -122,8 +122,16 @@ public class FontNames {
         return weight;
     }
 
+    public void setFontWeight(int weight) {
+        this.weight = weight;
+    }
+
     public int getFontWidth() {
         return width;
+    }
+
+    public void setFontWidth(int width) {
+        this.width = width;
     }
 
     public boolean allowEmbedding() {

@@ -110,7 +110,7 @@ public class FontEncoding {
                 bytes[ptr++] = convertToByte(text.charAt(i));
             }
         }
-        return  Utilities.shortenArray(bytes, ptr);
+        return Utilities.shortenArray(bytes, ptr);
     }
 
     /**
@@ -237,12 +237,17 @@ public class FontEncoding {
      * @return the normalized encoding
      */
     protected static String normalizeEncoding(String enc) {
-        if (enc == null || enc.toLowerCase().equals("winansi") || enc.equals("")) {
-            return PdfEncodings.WINANSI;
-        } else if (enc.toLowerCase().equals("macroman")) {
-            return PdfEncodings.MACROMAN;
-        } else {
-            return enc;
+        String tmp = enc == null ? "" : enc.toLowerCase();
+        switch (tmp) {
+            case "":
+            case "winansi":
+            case "winansiencoding":
+                return PdfEncodings.WINANSI;
+            case "macroman":
+            case "macromanencoding":
+                return PdfEncodings.MACROMAN;
+            default:
+                return enc;
         }
     }
 }

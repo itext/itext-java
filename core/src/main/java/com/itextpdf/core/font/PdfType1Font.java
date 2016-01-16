@@ -3,6 +3,7 @@ package com.itextpdf.core.font;
 
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.FontMetrics;
+import com.itextpdf.basics.font.FontNames;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
@@ -12,6 +13,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 
 public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
@@ -22,6 +24,11 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         CMapToUnicode toUni = DocFontUtils.processToUnicode(fontDictionary);
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocType1Font.createSimpleFontProgram(fontDictionary, fontEncoding);
+
+        if (fontProgram instanceof DocType1Font) {
+            embedded = ((DocType1Font) fontProgram).getFontFile() != null;
+        }
+        subset = false;
     }
 
     public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, String encoding, boolean embedded) {
@@ -110,34 +117,40 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
      *
      * @return the PdfStream containing the font or {@code null}.
      */
-    protected PdfStream getFontStream() {
+    protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
-            byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();
-            if (fontStreamBytes == null) {
-                return null;
+            if (fontProgram instanceof DocType1Font) {
+                DocType1Font docType1Font = (DocType1Font)fontProgram;
+                fontDescriptor.put(docType1Font.getFontFileName(),
+                        docType1Font.getFontFile());
+                if (docType1Font.getSubtype() != null) {
+                    fontDescriptor.put(PdfName.Subtype, docType1Font.getSubtype());
+                }
+            } else {
+                byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();
+                if (fontStreamBytes != null) {
+                    PdfStream fontStream = new PdfStream(fontStreamBytes);
+                    int[] fontStreamLengths = getFontProgram().getFontStreamLengths();
+                    for (int k = 0; k < fontStreamLengths.length; ++k) {
+                        fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
+                    }
+                    fontDescriptor.put(PdfName.FontFile, fontStream);
+                }
             }
-            PdfStream fontStream = new PdfStream(fontStreamBytes).makeIndirect(getDocument());
-            int[] fontStreamLengths = getFontProgram().getFontStreamLengths();
-            for (int k = 0; k < fontStreamLengths.length; ++k) {
-                fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
-            }
-            return fontStream;
-        } else {
-            return null;
         }
     }
 
     /**
      * Generates the font descriptor for this font or {@code null} if it is one of the 14 built in fonts.
      *
-     * @param fontStream the PdfStream containing the font or {@code null}.
      * @return the PdfDictionary containing the font descriptor or {@code null}.
      */
-    protected PdfDictionary getFontDescriptor(PdfStream fontStream, String fontName) {
+    protected PdfDictionary getFontDescriptor(String fontName) {
         if (getFontProgram().isBuiltInFont()) {
             return null;
         }
         FontMetrics fontMetrics = fontProgram.getFontMetrics();
+        FontNames fontNames = fontProgram.getFontNames();
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(getDocument());
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
@@ -148,10 +161,20 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
         fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
         fontDescriptor.put(PdfName.StemV, new PdfNumber(fontMetrics.getStemV()));
-        if (fontStream != null) {
-            fontDescriptor.put(PdfName.FontFile, fontStream);
-            fontStream.flush();
+        if (fontMetrics.getXHeight() > 0) {
+            fontDescriptor.put(PdfName.XHeight, new PdfNumber(fontMetrics.getXHeight()));
         }
+        if (fontMetrics.getStemH() > 0) {
+            fontDescriptor.put(PdfName.StemH, new PdfNumber(fontMetrics.getStemH()));
+        }
+        if (fontNames.getFontWeight() > 0) {
+            fontDescriptor.put(PdfName.FontWeight, new PdfNumber(fontNames.getFontWeight()));
+        }
+
+        if (fontNames.getFamilyName() != null && fontNames.getFamilyName().length > 0 && fontNames.getFamilyName()[0].length >= 4) {
+            fontDescriptor.put(PdfName.FontFamily, new PdfString(fontNames.getFamilyName()[0][3]));
+        }
+        addFontStream(fontDescriptor);
         int flags = fontProgram.getPdfFontFlags();
         if (!fontEncoding.isFontSpecific()) {
             flags &= ~64;
@@ -159,7 +182,6 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
         return fontDescriptor;
     }
-
 
 
 }

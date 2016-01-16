@@ -387,12 +387,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     @Override
-    protected PdfStream getFontStream() {
-        throw new RuntimeException();
-    }
-
-    @Override
-    protected PdfDictionary getFontDescriptor(PdfStream fontStream, String fontName) {
+    protected PdfDictionary getFontDescriptor(String fontName) {
         PdfDictionary fontDescriptor = new PdfDictionary();
         fontDescriptor.makeIndirect(getDocument());
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
@@ -405,13 +400,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(getFontProgram().getFontMetrics().getItalicAngle()));
         fontDescriptor.put(PdfName.StemV, new PdfNumber(getFontProgram().getFontMetrics().getStemV()));
         fontDescriptor.put(PdfName.Flags, new PdfNumber(getFontProgram().getPdfFontFlags()));
-        if (fontStream != null && cidFontType == CidFontType2) {
-            if (((TrueTypeFont)getFontProgram()).isCff()) {
-                fontDescriptor.put(PdfName.FontFile3, fontStream);
-            } else {
-                fontDescriptor.put(PdfName.FontFile2, fontStream);
-            }
-        }
         if (fontProgram.getFontIdentification().getPanose() != null) {
             PdfDictionary styleDictionary = new PdfDictionary();
             styleDictionary.put(PdfName.Panose, new PdfString(fontProgram.getFontIdentification().getPanose()));
@@ -539,7 +527,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             }
             getPdfObject().put(PdfName.BaseFont, new PdfName(String.format("%s-%s", name, cmapEncoding.getCmapName())));
             getPdfObject().put(PdfName.Encoding, new PdfName(cmapEncoding.getCmapName()));
-            PdfDictionary fontDescriptor = getFontDescriptor(null, name);
+            PdfDictionary fontDescriptor = getFontDescriptor(name);
             PdfDictionary cidFont = getCidFontType0(fontDescriptor);
             getPdfObject().put(PdfName.DescendantFonts, new PdfArray(cidFont));
             fontDescriptor.flush();
@@ -554,6 +542,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             if (subset) {
                 fontName = createSubsetPrefix() + fontName;
             }
+            PdfDictionary fontDescriptor = getFontDescriptor(fontName);
             if (ttf.isCff()) {
                 byte[] cffBytes = ttf.getFontStreamBytes();
                 if (subset || subsetRanges != null) {
@@ -561,10 +550,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     cffBytes = cff.Process(cff.getNames()[0]);
                 }
                 fontStream = getPdfFontStream(cffBytes, new int[]{cffBytes.length});
-                fontStream.put(PdfName.Subtype, new PdfName("CIDFontType0C"));
                 // The PDF Reference manual advises to add -cmap in case CIDFontType0
                 getPdfObject().put(PdfName.BaseFont,
                         new PdfName(String.format("%s-%s", fontName, cmapEncoding.getCmapName())));
+                fontDescriptor.put(PdfName.Subtype, new PdfName("CIDFontType0C"));
+                fontDescriptor.put(PdfName.FontFile3, fontStream);
             } else {
                 byte[] ttfBytes;
                 if (subset || ttf.getDirectoryOffset() != 0) {
@@ -574,9 +564,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 }
                 fontStream = getPdfFontStream(ttfBytes, new int[]{ttfBytes.length});
                 getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
+                fontDescriptor.put(PdfName.FontFile2, fontStream);
             }
-
-            PdfDictionary fontDescriptor = getFontDescriptor(fontStream, fontName);
 
             // CIDSet shall be based on font.maxGlyphId property of the font, it is maxp.numGlyphs for ttf,
             // because technically we convert all unused glyphs to space, e.g. just remove outlines.

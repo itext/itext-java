@@ -160,12 +160,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     }
 
     @Override
-    protected PdfStream getFontStream() {
-        return null;
-    }
-
-    @Override
-    protected PdfDictionary getFontDescriptor(PdfStream fontStream, String fontName) {
+    protected PdfDictionary getFontDescriptor(String fontName) {
         return null;
     }
 

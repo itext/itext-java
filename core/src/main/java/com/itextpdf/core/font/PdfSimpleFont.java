@@ -30,6 +30,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     protected T fontProgram;
 
     protected FontEncoding fontEncoding;
+
     /**
      * Forces the output of the width array. Only matters for the 14 built-in fonts.
      */
@@ -283,10 +284,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     protected void flushFontData(String fontName, PdfName subtype) {
         getPdfObject().put(PdfName.Subtype, subtype);
-        // TODO subset prefix for Type 1 and TrueType fonts?
-//        if (subset) {
-//        fontName = createSubsetPrefix() + fontName;
-//        }
         getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
         int firstChar;
         int lastChar;
@@ -304,8 +301,16 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             firstChar = 0;
             lastChar = shortTag.length - 1;
             for (int k = 0; k < shortTag.length; ++k) {
-                //remove unsupported by encoding values
-                shortTag[k] = fontEncoding.getUnicode(k) != null ? (byte) 1 : 0;
+                // remove unsupported by encoding values in case custom encoding.
+                // save widths information in case standard pdf encodings (winansi or macroman)
+                if (fontEncoding.getUnicode(k) != null) {
+                    shortTag[k] = 1;
+                } else if (!fontEncoding.hasDifferences() && fontProgram.getGlyphByCode(k) != null) {
+                    shortTag[k] = 1;
+                } else {
+
+                    shortTag[k] = 0;
+                }
             }
         }
         if (fontEncoding.hasDifferences()) {
@@ -353,13 +358,15 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 if (shortTag[k] == 0) {
                     wd.add(new PdfNumber(0));
                 } else {
-                    Glyph glyph = getGlyph(fontEncoding.getUnicode(k));
+                    //prevent lost of widths info
+                    Integer uni = fontEncoding.getUnicode(k);
+                    Glyph glyph = uni != null ? getGlyph(uni) : fontProgram.getGlyphByCode(k);
                     wd.add(new PdfNumber(glyph != null ? glyph.getWidth() : 0));
                 }
             }
             getPdfObject().put(PdfName.Widths, wd);
         }
-        PdfDictionary fontDescriptor = !isBuiltInFont() ? getFontDescriptor(getFontStream(), fontName) : null;
+        PdfDictionary fontDescriptor = !isBuiltInFont() ? getFontDescriptor(fontName) : null;
         if (fontDescriptor != null) {
             getPdfObject().put(PdfName.FontDescriptor, fontDescriptor);
             fontDescriptor.flush();
@@ -371,9 +378,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return false;
     }
 
-    protected abstract PdfStream getFontStream();
-
-    protected abstract PdfDictionary getFontDescriptor(PdfStream fontStream, String fontName);
+    protected abstract PdfDictionary getFontDescriptor(String fontName);
 
     protected void setFontProgram(T fontProgram) {
         this.fontProgram = fontProgram;
