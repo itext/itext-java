@@ -649,7 +649,7 @@ public class PdfFontTest extends ExtendedITextTest{
        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
 
-    @Test@Ignore
+    @Test
     public void testNewType1FontBasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithCMR10Afm.pdf";
         String filename = destinationFolder + "DocumentWithCMR10Afm_new.pdf";
@@ -668,7 +668,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary);
+        PdfType1Font pdfType1Font = new PdfType1Font((PdfDictionary) pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
