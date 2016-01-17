@@ -46,10 +46,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         this.genNr = genNr;
     }
 
-    // NOTE
-    // If offset = -1 -> object have to initialize.
-    // Usually this means that PdfReader found this indirect before reading it in xref table.
-    // If offset = 0 -> it means that object is not in use, marked as 'f' in xref table.
     protected PdfIndirectReference(PdfDocument doc, int objNr, int genNr, long offset) {
         super();
         this.pdfDocument = doc;
@@ -71,10 +67,11 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return getRefersTo(true);
     }
 
-    // NOTE
-    // This method return direct object and try to resolve indirects chain.
-    // But if chain of references has length of more than 32,
+    // Gets direct object and try to resolve indirects chain.
+    // <p>
+    // Note: If chain of references has length of more than 32,
     // this method return 31st reference in chain.
+    // </p>
     public PdfObject getRefersTo(boolean recursively) {
         if (!recursively) {
             if (refersTo == null && !checkState(Flushed) && !checkState(Modified) && getReader() != null) {
@@ -208,9 +205,12 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     /*
-    * The method releases indirect reference from the document, removes the associated indirect object.
-    * Be careful when using this method.Do not use this method for wrapper objects, it can be causes of errors.
-    * After this operation this indirect reference could be reused for new indirect objects.
+    * Releases indirect reference from the document. Remove link to the referenced indirect object.
+    * <p>
+    * Note: Be careful when using this method. Do not use this method for wrapper objects,
+    * it can be cause of errors.
+    * Free indirect reference could be reused for a new indirect object.
+    * </p>
     */
     public void setFree() {
         getDocument().getXref().freeReference(this);
