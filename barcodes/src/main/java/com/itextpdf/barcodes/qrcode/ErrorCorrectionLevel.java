@@ -37,6 +37,11 @@ public final class ErrorCorrectionLevel {
         this.name = name;
     }
 
+    /**
+     * Gets the ordinal value.
+     *
+     * @return the ordinal
+     */
     public int ordinal() {
         return ordinal;
     }
@@ -49,6 +54,7 @@ public final class ErrorCorrectionLevel {
         return name;
     }
 
+    @Override
     public String toString() {
         return name;
     }
