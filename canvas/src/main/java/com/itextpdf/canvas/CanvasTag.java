@@ -18,8 +18,19 @@ import com.itextpdf.core.pdf.tagging.PdfMcr;
  */
 public class CanvasTag {
 
+    /**
+     * The type of the tag.
+     */
     protected PdfName role;
+
+    /**
+     * The marked content id of the tag.
+     */
     protected Integer mcid;
+
+    /**
+     * The properties of the tag.
+     */
     protected PdfDictionary properties;
 
     /**

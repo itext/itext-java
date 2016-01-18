@@ -2,6 +2,9 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.basics.PdfException;
 
+/**
+ * Exception that is thrown when the PDF Document doesn't adhere to the PDF/A specification.
+ */
 public class PdfAConformanceException extends PdfException {
 
     public static final String _1ActionsIsNotAllowed = "1.actions.is.not.allowed";
@@ -101,10 +104,21 @@ public class PdfAConformanceException extends PdfException {
     public static final String ValueOfNameEntryShallBeUniqueAmongAllOptionalContentConfigurationDictionaries = "value.of.name.entry.shall.be.unique.among.all.optional.content.configuration.dictionaries";
     public static final String WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry = "widget.annotation.dictionary.or.field.dictionary.shall.not.include.a.or.aa.entry";
 
+    /**
+     * Creates a PdfAConformanceException.
+     *
+     * @param message the error message
+     */
     public PdfAConformanceException(String message) {
         super(message);
     }
 
+    /**
+     * Creates a PdfAConformanceException.
+     *
+     * @param message the error message
+     * @param object an object
+     */
     public PdfAConformanceException(String message, Object object) {
         super(message, object);
     }
