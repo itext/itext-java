@@ -13,6 +13,11 @@ final class ReedSolomonException extends Exception {
      */
     private static final long serialVersionUID = 2168232776886684292L;
 
+    /**
+     * Creates a ReedSolomonException with a message.
+     *
+     * @param message the message of the exception
+     */
     public ReedSolomonException(String message) {
         super(message);
     }
