@@ -322,7 +322,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates an empty {@link PdfSignatureFormField signature form field}.
      * @param doc the {@link PdfDocument} to create the signature field in
-     * @param rect the location on the page for the text field
+     * @param rect the location on the page for the signature field
      * @return a new {@link PdfSignatureFormField}
      */
     public static PdfSignatureFormField createSignature(PdfDocument doc, Rectangle rect) {
@@ -330,10 +330,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return new PdfSignatureFormField(annot).makeIndirect(doc);
     }
 
-    public static PdfButtonFormField createRadioGroup(PdfDocument doc, String name, String defaultValue) {
+    /**
+     * Creates a {@link PdfButtonFormField radio group form field}.
+     * @param doc the {@link PdfDocument} to create the radio group in
+     * @param value the default value
+     * @param name the name of the form field
+     * @return a new {@link PdfButtonFormField radio group}
+     */
+    public static PdfButtonFormField createRadioGroup(PdfDocument doc, String value, String name) {
         PdfButtonFormField radio = createButton(doc, PdfButtonFormField.FF_RADIO);
         radio.setFieldName(name);
-        radio.put(PdfName.V, new PdfName(defaultValue));
+        radio.put(PdfName.V, new PdfName(value));
         return radio;
     }
 
