@@ -10,7 +10,7 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
-class DocTrueTypeFont extends TrueTypeFont {
+class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
 
     private PdfStream fontFile;
     private PdfName fontFileName;

@@ -794,6 +794,42 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test@Ignore
+    public void testUpdateType0FontBasedExistingFont() throws IOException, PdfException, InterruptedException {
+        String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
+        String filename = destinationFolder + "DocumentWithKozmin_update.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_update.pdf";
+        final String title = "Type0 font iText 6 Document";
+
+        PdfReader reader = new PdfReader(inputFileName1);
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(6);
+        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("New Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test@Ignore
     public void testNewType0FontBasedExistingFont() throws IOException, PdfException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_new.pdf";
@@ -812,7 +848,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary);
+        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas

@@ -60,7 +60,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         CMapToUnicode toUni = DocFontUtils.processToUnicode(fontDictionary);
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocTrueTypeFont.createSimpleFontProgram(fontDictionary, fontEncoding);
-        embedded = ((DocTrueTypeFont) fontProgram).getFontFile() != null;
+        embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
         subset = false;
     }
 
@@ -84,8 +84,8 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     public void flush() {
         PdfName subtype;
         String fontName;
-        if (fontProgram instanceof DocTrueTypeFont) {
-            subtype = ((DocTrueTypeFont) fontProgram).getSubtype();
+        if (fontProgram instanceof DocFontProgram) {
+            subtype = ((DocFontProgram) fontProgram).getSubtype();
             fontName = fontProgram.getFontNames().getFontName();
         } else if (fontProgram.isCff()) {
             subtype = PdfName.Type1;
@@ -130,9 +130,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         if (embedded) {
             PdfName fontFileName;
             PdfStream fontStream;
-            if (fontProgram instanceof DocTrueTypeFont) {
-                fontFileName = ((DocTrueTypeFont) fontProgram).getFontFileName();
-                fontStream = ((DocTrueTypeFont) fontProgram).getFontFile();
+            if (fontProgram instanceof DocFontProgram) {
+                fontFileName = ((DocFontProgram) fontProgram).getFontFileName();
+                fontStream = ((DocFontProgram) fontProgram).getFontFile();
             } else if (fontProgram.isCff()) {
                 fontFileName = PdfName.FontFile3;
                 try {

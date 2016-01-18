@@ -66,6 +66,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         init();
     }
 
+
     public PdfType0Font(PdfDocument document, TrueTypeFont ttf, String cmap) {
         super(document);
         if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
@@ -402,7 +403,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         fontDescriptor.put(PdfName.Flags, new PdfNumber(getFontProgram().getPdfFontFlags()));
         if (fontProgram.getFontIdentification().getPanose() != null) {
             PdfDictionary styleDictionary = new PdfDictionary();
-            styleDictionary.put(PdfName.Panose, new PdfString(fontProgram.getFontIdentification().getPanose()));
+            styleDictionary.put(PdfName.Panose, new PdfString(fontProgram.getFontIdentification().getPanose()).setHexWriting(true));
             fontDescriptor.put(PdfName.Style, styleDictionary);
         }
 
@@ -514,7 +515,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override //TODO
     protected void addFontStream(PdfDictionary fontDescriptor) {
-        return;
     }
 
     private void flushCopyFontData() {
