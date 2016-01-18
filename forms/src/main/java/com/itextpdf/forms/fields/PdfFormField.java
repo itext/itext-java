@@ -42,7 +42,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-
+/**
+ * This class represents a single field or field group in an {@link PdfAcroForm
+ * AcroForm}.
+ */
 public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public static final int FF_MULTILINE = makeFieldFlag(13);
@@ -106,7 +109,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Makes a field flag by bit position. Bit positions are numbered 1 to 32.
-     * But position 1 corresponds to flag 1, position 3 corresponds to flag 4 etc.
+     * But position 0 corresponds to flag 1, position 3 corresponds to flag 4 etc.
      * @param bitPosition bit position of a flag in range 1 to 32 from the pdf specification.
      * @return corresponding field flag.
      */
@@ -114,11 +117,27 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (1 << (bitPosition - 1));
     }
 
+    /**
+     * Creates an empty form field without a predefined set of layout or
+     * behavior.
+     * @param doc the {@link PdfDocument} to create the field in
+     * @return a new {@link PdfFormField}
+     */
     public static PdfFormField createEmptyField(PdfDocument doc) {
         PdfFormField field = new PdfFormField().makeIndirect(doc);
         return field;
     }
 
+    /**
+     * Creates an empty {@link PdfButtonFormField button form field} with custom
+     * behavior and layout, on a specified location.
+     * @param doc the {@link PdfDocument} to create the button field in
+     * @param rect the location on the page for the button
+     * @param flags an <code>int</code>, containing a set of binary behavioral
+     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *     flags you require.
+     * @return a new {@link PdfButtonFormField}
+     */
     public static PdfButtonFormField createButton(PdfDocument doc, Rectangle rect, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         PdfButtonFormField field = new PdfButtonFormField(annot).makeIndirect(doc);
@@ -126,16 +145,36 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return field;
     }
 
+    /**
+     * Creates an empty {@link PdfButtonFormField button form field} with custom
+     * behavior and layout.
+     * @param doc the {@link PdfDocument} to create the button field in
+     * @param flags an <code>int</code>, containing a set of binary behavioral
+     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *     flags you require.
+     * @return a new {@link PdfButtonFormField}
+     */
     public static PdfButtonFormField createButton(PdfDocument doc, int flags) {
         PdfButtonFormField field = new PdfButtonFormField().makeIndirect(doc);
         field.setFieldFlags(flags);
         return field;
     }
 
+    /**
+     * Creates an empty {@link PdfTextFormField text form field}.
+     * @param doc the {@link PdfDocument} to create the text field in
+     * @return a new {@link PdfTextFormField}
+     */
     public static PdfTextFormField createText(PdfDocument doc) {
         return new PdfTextFormField().makeIndirect(doc);
     }
 
+    /**
+     * Creates an empty {@link PdfTextFormField text form field}.
+     * @param doc the {@link PdfDocument} to create the text field in
+     * @param rect the location on the page for the text field
+     * @return a new {@link PdfTextFormField}
+     */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         PdfTextFormField field = new PdfTextFormField(annot).makeIndirect(doc);
@@ -144,6 +183,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     }
 
+    /**
+     * Creates a named {@link PdfTextFormField text form field} with a default
+     *     value, and the form's default font specified in
+     *     {@link PdfAcroform#getDefaultResources}.
+     * @param doc the {@link PdfDocument} to create the text field in
+     * @param rect the location on the page for the text field
+     * @param value the default value
+     * @param name the name of the form field
+     * @return a new {@link PdfTextFormField}
+     */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String value, String name) {
         try{
             return createText(doc, rect, PdfFont.getDefaultFont(doc), DEFAULT_FONT_SIZE, value, name);
@@ -152,6 +201,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Creates a named {@link PdfTextFormField text form field} with a default
+     *     value, with a specified font and font size.
+     * @param doc the {@link PdfDocument} to create the text field in
+     * @param rect the location on the page for the text field
+     * @param font a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @param value the default value
+     * @param name the name of the form field
+     * @return a new {@link PdfTextFormField}
+     */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, PdfFont font, int fontSize, String value, String name) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         PdfTextFormField field = new PdfTextFormField(annot).makeIndirect(doc);
@@ -165,12 +225,30 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return field;
     }
 
+    /**
+     * Creates an empty {@link PdfChoiceFormField choice form field}.
+     * @param doc the {@link PdfDocument} to create the choice field in
+     * @param flags an <code>int</code>, containing a set of binary behavioral
+     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *     flags you require.
+     * @return a new {@link PdfChoiceFormField}
+     */
     public static PdfChoiceFormField createChoice(PdfDocument doc, int flags) {
         PdfChoiceFormField field = new PdfChoiceFormField().makeIndirect(doc);
         field.setFieldFlags(flags);
         return field;
     }
 
+    /**
+     * Creates an empty {@link PdfChoiceFormField choice form field} with custom
+     * behavior and layout, on a specified location.
+     * @param doc the {@link PdfDocument} to create the choice field in
+     * @param rect the location on the page for the choice field
+     * @param flags an <code>int</code>, containing a set of binary behavioral
+     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *     flags you require.
+     * @return a new {@link PdfChoiceFormField}
+     */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         PdfChoiceFormField field = new PdfChoiceFormField(annot).makeIndirect(doc);
@@ -178,6 +256,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return field;
     }
 
+    /**
+     * Creates a {@link PdfChoiceFormField choice form field} with custom
+     * behavior and layout, on a specified location.
+     * @param doc the {@link PdfDocument} to create the choice field in
+     * @param rect the location on the page for the choice field
+     * @param options an array of {@link PdfString} objects that each represent
+     *     the 'on' state of one of the choices.
+     * @param value the default value
+     * @param name the name of the form field
+     * @param flags an <code>int</code>, containing a set of binary behavioral
+     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *     flags you require.
+     * @return a new {@link PdfChoiceFormField}
+     */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, int flags) {
         try{
             return createChoice(doc, rect, options, value, name, PdfFont.getDefaultFont(doc), DEFAULT_FONT_SIZE, flags);
@@ -186,6 +278,23 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    
+    /**
+     * Creates a {@link PdfChoiceFormField choice form field} with custom
+     * behavior and layout, on a specified location.
+     * @param doc the {@link PdfDocument} to create the choice field in
+     * @param rect the location on the page for the choice field
+     * @param options an array of {@link PdfString} objects that each represent
+     *     the 'on' state of one of the choices.
+     * @param value the default value
+     * @param name the name of the form field
+     * @param font a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @param flags an <code>int</code>, containing a set of binary behavioral
+     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *     flags you require.
+     * @return a new {@link PdfChoiceFormField}
+     */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, PdfFont font, int fontSize, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         PdfChoiceFormField field = new PdfChoiceFormField(annot).makeIndirect(doc);
@@ -201,10 +310,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return field;
     }
 
+    /**
+     * Creates an empty {@link PdfSignatureFormField signature form field}.
+     * @param doc the {@link PdfDocument} to create the signature field in
+     * @return a new {@link PdfSignatureFormField}
+     */
     public static PdfSignatureFormField createSignature(PdfDocument doc) {
         return new PdfSignatureFormField().makeIndirect(doc);
     }
 
+    /**
+     * Creates an empty {@link PdfSignatureFormField signature form field}.
+     * @param doc the {@link PdfDocument} to create the signature field in
+     * @param rect the location on the page for the text field
+     * @return a new {@link PdfSignatureFormField}
+     */
     public static PdfSignatureFormField createSignature(PdfDocument doc, Rectangle rect) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
         return new PdfSignatureFormField(annot).makeIndirect(doc);
