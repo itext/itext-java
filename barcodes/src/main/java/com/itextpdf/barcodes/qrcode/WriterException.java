@@ -13,10 +13,21 @@ public final class WriterException extends Exception {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a WriterException.
+     */
+
     public WriterException() {
+
         super();
+
     }
 
+    /**
+     * Creates a WriterException with a message.
+     *
+     * @param message message of the exception
+     */
     public WriterException(String message) {
         super(message);
     }
