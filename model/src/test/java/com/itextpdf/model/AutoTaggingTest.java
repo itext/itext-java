@@ -8,7 +8,6 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.model.Document;
 import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.element.Div;
 import com.itextpdf.model.element.Image;
@@ -22,7 +21,6 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
@@ -50,7 +48,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Paragraph p = createParagraph1(pdfDocument);
+        Paragraph p = createParagraph1();
         document.add(p);
 
         for (int i = 0; i < 26; ++i) {
@@ -92,7 +90,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Div div = new Div();
 
-        div.add(createParagraph1(pdfDocument));
+        div.add(createParagraph1());
         Image image = new Image(ImageFactory.getImage(sourceFolder + imageName));
         image.setAutoScale(true);
         div.add(image);
@@ -119,7 +117,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Table table = new Table(3);
 
-        table.addCell(createParagraph1(pdfDocument));
+        table.addCell(createParagraph1());
         Image image = new Image(ImageFactory.getImage(sourceFolder + imageName));
         image.setAutoScale(true);
         table.addCell(image);
@@ -335,8 +333,8 @@ public class AutoTaggingTest extends ExtendedITextTest {
         5. lists tests
      */
 
-    private Paragraph createParagraph1(PdfDocument pdfDocument) throws IOException {
-        PdfFont font = PdfFont.createStandardFont(pdfDocument, FontConstants.HELVETICA_BOLD);
+    private Paragraph createParagraph1() throws IOException {
+        PdfFont font = PdfFont.createStandardFont(FontConstants.HELVETICA_BOLD);
         Paragraph p = new Paragraph().add("text chunk. ").add("explicitly added separate text chunk");
         Text id = new Text("text chunk with specific font").setFont(font).setFontSize(8).setTextRise(6);
         p.add(id);

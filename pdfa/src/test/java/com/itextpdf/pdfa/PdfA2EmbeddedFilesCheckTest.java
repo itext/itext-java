@@ -29,7 +29,7 @@ public class PdfA2EmbeddedFilesCheckTest {
         pdfDocument.setXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFont.createFont(pdfDocument, sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
@@ -56,7 +56,7 @@ public class PdfA2EmbeddedFilesCheckTest {
         pdfDocument.setXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFont.createFont(pdfDocument, sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
@@ -89,7 +89,7 @@ public class PdfA2EmbeddedFilesCheckTest {
         pdfDocument.setXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFont.createFont(pdfDocument, sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()

@@ -31,8 +31,8 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         subset = false;
     }
 
-    public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, String encoding, boolean embedded) {
-        super(pdfDocument);
+    public PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
+        super();
         setFontProgram(type1Font);
         this.embedded = embedded && !type1Font.isBuiltInFont();
         if ((encoding == null || encoding.length() == 0) && type1Font.isFontSpecific()) {
@@ -45,16 +45,16 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         }
     }
 
-    public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, boolean embedded) {
-        this(pdfDocument, type1Font, null, embedded);
+    public PdfType1Font(Type1Font type1Font, boolean embedded) {
+        this(type1Font, null, embedded);
     }
 
-    public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font, String encoding) {
-        this(pdfDocument, type1Font, encoding, false);
+    public PdfType1Font(Type1Font type1Font, String encoding) {
+        this(type1Font, encoding, false);
     }
 
-    public PdfType1Font(PdfDocument pdfDocument, Type1Font type1Font) {
-        this(pdfDocument, type1Font, null, false);
+    public PdfType1Font(Type1Font type1Font) {
+        this(type1Font, null, false);
     }
 
     @Override
@@ -101,11 +101,6 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         return null;
     }
 
-
-    private void flushCopyFontData() {
-        super.flush();
-    }
-
     @Override
     protected boolean isBuiltInFont() {
         return fontProgram.isBuiltInFont();
@@ -114,8 +109,6 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     /**
      * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
      * otherwise the font is read and output in a PdfStream object.
-     *
-     * @return the PdfStream containing the font or {@code null}.
      */
     protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {

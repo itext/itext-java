@@ -21,7 +21,6 @@ import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfLiteral;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
@@ -30,7 +29,6 @@ import com.itextpdf.core.pdf.PdfOutputStream;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,8 +65,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
 
-    public PdfType0Font(PdfDocument document, TrueTypeFont ttf, String cmap) {
-        super(document);
+    public PdfType0Font(TrueTypeFont ttf, String cmap) {
+        super();
         if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
             throw new PdfException("only.identity.cmaps.supports.with.truetype");
         }
@@ -99,8 +97,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     // be able to create Type0 font based on predefined font.
     // Or not? Possible it will be convenient construct PdfType0Font based on custom CidFont.
     // There is no typography features in CJK fonts.
-    public PdfType0Font(PdfDocument document, CidFont font, String cmap) {
-        super(document);
+    public PdfType0Font(CidFont font, String cmap) {
+        super();
         if (!CidFontProperties.isCidFont(font.getFontNames().getFontName(), cmap)) {
             throw new PdfException("font.1.with.2.encoding.is.not.a.cjk.font")
                     .setMessageParams(font.getFontNames().getFontName(), cmap);
@@ -515,10 +513,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override //TODO
     protected void addFontStream(PdfDictionary fontDescriptor) {
-    }
-
-    private void flushCopyFontData() {
-        getPdfObject().flush();
     }
 
     private void flushFontData() {

@@ -46,7 +46,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
      * @param isColor defines whether the glyph color is specified in the glyph descriptions in the font.
      */
     public PdfType3Font(PdfDocument pdfDocument, boolean isColor) {
-        super(pdfDocument);
+        super();
+        makeIndirect(pdfDocument);
         this.isColor = isColor;
         fontProgram = new Type3Font();
     }

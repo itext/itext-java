@@ -185,7 +185,7 @@ public class Barcode128 extends Barcode1D {
         super(document);
         try {
             x = 0.8f;
-            font = PdfFont.createStandardFont(document, FontConstants.HELVETICA, PdfEncodings.WINANSI);
+            font = PdfFont.createStandardFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
             size = 8;
             baseline = size;
             barHeight = size * 3;

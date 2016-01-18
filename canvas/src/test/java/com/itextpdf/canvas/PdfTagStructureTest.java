@@ -44,7 +44,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         tagStructure.addTag(PdfName.P);
         canvas.beginText();
-        PdfFont standardFont = PdfFont.createStandardFont(document, FontConstants.COURIER);
+        PdfFont standardFont = PdfFont.createStandardFont(FontConstants.COURIER);
         canvas.setFontAndSize(standardFont, 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
 
@@ -71,7 +71,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         tagStructure.addTag(PdfName.P);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(document, FontConstants.HELVETICA), 24);
+        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         tagStructure.addTag(PdfName.Span);
 
@@ -108,7 +108,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         tagStructure.addTag(PdfName.P);
         canvas.beginText();
-        PdfFont standardFont = PdfFont.createStandardFont(document, FontConstants.COURIER);
+        PdfFont standardFont = PdfFont.createStandardFont(FontConstants.COURIER);
         canvas.setFontAndSize(standardFont, 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
 

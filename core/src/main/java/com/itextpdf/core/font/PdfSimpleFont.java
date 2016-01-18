@@ -41,8 +41,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         super(fontDictionary);
     }
 
-    protected PdfSimpleFont(PdfDocument pdfDocument) {
-        super(pdfDocument);
+    protected PdfSimpleFont() {
+        super();
     }
 
     @Override

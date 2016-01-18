@@ -54,7 +54,7 @@ public class BarcodeCodabar extends Barcode1D {
         try {
             x = 0.8f;
             n = 2;
-            font = PdfFont.createStandardFont(document, FontConstants.HELVETICA, PdfEncodings.WINANSI);
+            font = PdfFont.createStandardFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
             size = 8;
             baseline = size;
             barHeight = size * 3;

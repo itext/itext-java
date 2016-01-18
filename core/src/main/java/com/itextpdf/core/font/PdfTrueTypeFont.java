@@ -6,17 +6,13 @@ import com.itextpdf.basics.font.FontNames;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.basics.geom.Rectangle;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +22,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf, String encoding, boolean embedded) {
-        super(pdfDocument);
+    public PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
+        super();
         setFontProgram(ttf);
         this.embedded = embedded;
         FontNames fontNames = ttf.getFontNames();
@@ -45,12 +41,12 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         }
     }
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf, String encoding) {
-        this(pdfDocument, ttf, encoding, false);
+    public PdfTrueTypeFont(TrueTypeFont ttf, String encoding) {
+        this(ttf, encoding, false);
     }
 
-    public PdfTrueTypeFont(PdfDocument pdfDocument, TrueTypeFont ttf) {
-        this(pdfDocument, ttf, null, false);
+    public PdfTrueTypeFont(TrueTypeFont ttf) {
+        this(ttf, null, false);
     }
 
     public PdfTrueTypeFont(PdfDictionary fontDictionary) {

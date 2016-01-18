@@ -5,7 +5,6 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.image.GifImage;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.image.RawImage;
@@ -212,7 +211,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 16)
                 .showText("Hello Helvetica!")
                 .endText()
                 .restoreState();
@@ -221,7 +220,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 700)
-                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA_BOLDOBLIQUE), 16)
+                .setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA_BOLDOBLIQUE), 16)
                 .showText("Hello Helvetica Bold Oblique!")
                 .endText()
                 .restoreState();
@@ -230,7 +229,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 650)
-                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.COURIER), 16)
+                .setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 16)
                 .showText("Hello Courier!")
                 .endText()
                 .restoreState();
@@ -239,7 +238,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 600)
-                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.TIMES_ITALIC), 16)
+                .setFontAndSize(PdfFont.createStandardFont(FontConstants.TIMES_ITALIC), 16)
                 .showText("Hello Times Italic!")
                 .endText()
                 .restoreState();
@@ -248,7 +247,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 550)
-                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.SYMBOL), 16)
+                .setFontAndSize(PdfFont.createStandardFont(FontConstants.SYMBOL), 16)
                 .showText("Hello Ellada!")
                 .endText()
                 .restoreState();
@@ -257,7 +256,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 500)
-                .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.ZAPFDINGBATS), 16)
+                .setFontAndSize(PdfFont.createStandardFont(FontConstants.ZAPFDINGBATS), 16)
                 .showText("Hello ZapfDingbats!")
                 .endText()
                 .restoreState();
@@ -395,7 +394,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -441,7 +440,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -487,7 +486,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -532,7 +531,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.saveState()
                     .beginText()
                     .moveText(36, 650)
-                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.COURIER), 16)
+                    .setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 16)
                     .showText("Page " + (i + 1))
                     .endText();
 
@@ -579,7 +578,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -626,7 +625,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -673,7 +672,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -720,7 +719,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFont.createStandardFont(pdfDoc, FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -757,7 +756,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
+        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
@@ -801,7 +800,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
+            canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
@@ -855,7 +854,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
+        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!!!");
         canvas.endText();
@@ -909,7 +908,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
+            canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
@@ -962,7 +961,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
+            canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
@@ -1020,7 +1019,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(pdfDoc1, FontConstants.COURIER), 12);
+        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
