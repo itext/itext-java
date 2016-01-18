@@ -148,8 +148,6 @@ public class PdfDictionary extends PdfObject {
         return map.entrySet();
     }
 
-
-
     @Override
     public int getType() {
         return Dictionary;
@@ -184,6 +182,59 @@ public class PdfDictionary extends PdfObject {
         PdfDictionary dictionary = (PdfDictionary) clone();
         map.putAll(excluded);
         return dictionary;
+    }
+
+    /**
+     * Marks object to be saved as indirect.
+     *
+     * @param document a document the indirect reference will belong to.
+     * @return object itself.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public PdfDictionary makeIndirect(PdfDocument document) {
+        return super.makeIndirect(document);
+    }
+
+    /**
+     * Marks object to be saved as indirect.
+     *
+     * @param document a document the indirect reference will belong to.
+     * @return object itself.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public PdfDictionary makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+        return super.makeIndirect(document, reference);
+    }
+
+    /**
+     * Copies object to a specified document.
+     * Works only for objects that are read from existing document, otherwise an exception is thrown.
+     *
+     * @param document document to copy object to.
+     * @return copied object.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public PdfDictionary copyToDocument(PdfDocument document) {
+        return super.copyToDocument(document, true);
+    }
+
+    /**
+     * Copies object to a specified document.
+     * Works only for objects that are read from existing document, otherwise an exception is thrown.
+     *
+     * @param document         document to copy object to.
+     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
+     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
+     * @return copied object.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public PdfDictionary copyToDocument(PdfDocument document, boolean allowDuplicating) {
+        return super.copyToDocument(document, allowDuplicating);
     }
 
     /**

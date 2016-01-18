@@ -34,20 +34,17 @@ abstract class PdfPrimitiveObject extends PdfObject {
     protected abstract void generateContent();
 
     @Override
-    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
-        return makeIndirect(document, null);
-    }
-
-    @Override
     public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        //TODO log makingIndirect for directObjects
-        if (directOnly) return null;
-        return super.makeIndirect(document, reference);
+        //TODO log makingIndirect directOnly Objects
+        if (!directOnly) {
+            return super.makeIndirect(document, reference);
+        }
+        return (T) this;
     }
 
     @Override
     public <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
-        //TODO log setIndirect for directObjects
+        //TODO log setIndirect for directOnly Objects
         if (!directOnly) {
             super.setIndirectReference(indirectReference);
         }

@@ -134,16 +134,6 @@ public class PdfString extends PdfPrimitiveObject {
         }
     }
 
-
-    @Override
-    public String toString() {
-        if (value == null) {
-            return new String(content, Charset.forName(defaultCharset));
-        } else {
-            return getValue();
-        }
-    }
-
     /**
      * Gets bytes of String-value considering encoding.
      *
@@ -157,6 +147,68 @@ public class PdfString extends PdfPrimitiveObject {
             return PdfEncodings.convertToBytes(value, PdfEncodings.PdfDocEncoding);
         else
             return PdfEncodings.convertToBytes(value, encoding);
+    }
+
+    /**
+     * Marks object to be saved as indirect.
+     *
+     * @param document a document the indirect reference will belong to.
+     * @return object itself.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public PdfString makeIndirect(PdfDocument document) {
+        return super.makeIndirect(document);
+    }
+
+    /**
+     * Marks object to be saved as indirect.
+     *
+     * @param document a document the indirect reference will belong to.
+     * @return object itself.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public PdfString makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+        return super.makeIndirect(document, reference);
+    }
+
+    /**
+     * Copies object to a specified document.
+     * Works only for objects that are read from existing document, otherwise an exception is thrown.
+     *
+     * @param document document to copy object to.
+     * @return copied object.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public PdfString copyToDocument(PdfDocument document) {
+        return super.copyToDocument(document, true);
+    }
+
+    /**
+     * Copies object to a specified document.
+     * Works only for objects that are read from existing document, otherwise an exception is thrown.
+     *
+     * @param document         document to copy object to.
+     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
+     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
+     * @return copied object.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public PdfString copyToDocument(PdfDocument document, boolean allowDuplicating) {
+        return super.copyToDocument(document, allowDuplicating);
+    }
+
+    @Override
+    public String toString() {
+        if (value == null) {
+            return new String(content, Charset.forName(defaultCharset));
+        } else {
+            return getValue();
+        }
     }
 
     /**

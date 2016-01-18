@@ -668,7 +668,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType1Font pdfType1Font = new PdfType1Font((PdfDictionary) pdfDictionary.copyToDocument(pdfDoc));
+        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -705,7 +705,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont((PdfDictionary) pdfDictionary.copyToDocument(pdfDoc));
+        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -742,7 +742,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = PdfFont.createFont((PdfDictionary) pdfDictionary.copyToDocument(pdfDoc));
+        PdfFont pdfFont = PdfFont.createFont(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -766,7 +766,6 @@ public class PdfFontTest extends ExtendedITextTest{
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont1.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeFont1_updated.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1_updated.pdf";
-        final String title = "True Type font iText 6 Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         FileOutputStream fos = new FileOutputStream(filename);
@@ -888,7 +887,7 @@ public class PdfFontTest extends ExtendedITextTest{
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfType1Font pdfType1Font = new PdfType1Font((PdfDictionary) pdfDictionary.copyToDocument(pdfDoc));
+        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
