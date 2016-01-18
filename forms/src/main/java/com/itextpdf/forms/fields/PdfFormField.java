@@ -230,7 +230,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.setFieldName(name);
 
         PdfFormXObject xObject = field.drawTextAppearance(rect, font, fontSize, value);
-        xObject.getResources().addFont(font);
+        xObject.getResources().addFont(doc, font);
         annot.setNormalAppearance(xObject.getPdfObject());
 
         return field;
@@ -315,7 +315,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         field.setValue(value);
 
         PdfFormXObject xObject = field.drawMultiLineTextAppearance(rect, font, fontSize, value);
-        xObject.getResources().addFont(font);
+        xObject.getResources().addFont(doc, font);
         annot.setNormalAppearance(xObject.getPdfObject());
 
         return field;
@@ -651,7 +651,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             appearance = drawMultiLineTextAppearance(bBox.toRectangle(), font, fontSize, value);
         }
 
-        appearance.getResources().addFont(font);
+        appearance.getResources().addFont(getDocument(), font);
         PdfDictionary ap = new PdfDictionary();
         ap.put(PdfName.N, appearance.getPdfObject());
         getPdfObject().put(PdfName.V, new PdfString(value));
@@ -1339,13 +1339,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfWidgetAnnotation widget = getWidgets().get(0);
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-        xObjectOn.getResources().addFont(getFont());
+        xObjectOn.getResources().addFont(getDocument(), getFont());
         widget.setNormalAppearance(new PdfDictionary());
         widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
 
         PdfFormXObject xObjectOff = new PdfFormXObject(rect);
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
-        xObjectOff.getResources().addFont(getFont());
+        xObjectOff.getResources().addFont(getDocument(), getFont());
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
     }
     
@@ -1362,7 +1362,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             drawButton(canvas, 0, 0, width, height, text, font, fontSize);
             setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
-            xObject.getResources().addFont(font);
+            xObject.getResources().addFont(getDocument(), font);
         }
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
 
@@ -1541,7 +1541,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 } else {
                     appearance = drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSz, value);
                 }
-                appearance.getResources().addFont(localFont);
+                appearance.getResources().addFont(getDocument(), localFont);
                 PdfDictionary ap = new PdfDictionary();
                 ap.put(PdfName.N, appearance.getPdfObject());
                 put(PdfName.AP, ap);
@@ -1570,7 +1570,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         PdfFont localFont = (PdfFont) fontAndSize[0];
                         int fontSz = (int) fontAndSize[1];
                         appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, localFont, fontSz);
-                        appearance.getResources().addFont(localFont);
+                        appearance.getResources().addFont(getDocument(), localFont);
                     }
 
                     apDic = new PdfDictionary();

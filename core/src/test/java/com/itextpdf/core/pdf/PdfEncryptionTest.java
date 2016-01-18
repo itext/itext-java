@@ -108,7 +108,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
                 "0 0 Td\n" +
                 "ET\n" +
                 "Q ").getBytes());
-        page.getResources().addFont(PdfFont.createStandardFont(FontConstants.HELVETICA));
+        page.getResources().addFont(document, PdfFont.createStandardFont(FontConstants.HELVETICA));
 
         page.flush();
         document.close();

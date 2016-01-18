@@ -277,7 +277,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(reader1, writer);
         pdfDoc.getPage(1).getResources().getFonts(true);
         PdfFont f = PdfFont.createFont((PdfDictionary) pdfDoc.getPdfObject(6));
-        pdfDoc.getPage(1).getResources().addFont(f);
+        pdfDoc.getPage(1).getResources().addFont(pdfDoc, f);
         int fontCount = pdfDoc.getPage(1).getResources().getFonts(false).size();
         pdfDoc.getPage(1).flush();
         pdfDoc.close();
