@@ -155,6 +155,21 @@ public class Type3Glyph extends PdfCanvas {
         }
     }
 
+    /**
+     * Creates Image XObject from image and adds it to canvas. Performs additional checks to make
+     * sure that we only add mask images to not colorized type 3 fonts.
+     *
+     * @param image    the {@code PdfImageXObject} object
+     * @param a        an element of the transformation matrix
+     * @param b        an element of the transformation matrix
+     * @param c        an element of the transformation matrix
+     * @param d        an element of the transformation matrix
+     * @param e        an element of the transformation matrix
+     * @param f        an element of the transformation matrix
+     * @param inlineImage true if to add image as in-line.
+     *
+     * @return created Image XObject or null in case of in-line image (asInline = true).
+     */
     @Override
     public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean inlineImage) {
         if (!isColor && (!image.isMask() || !(image.getBpc() == 1 || image.getBpc() > 0xff))) {
