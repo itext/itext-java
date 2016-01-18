@@ -13,16 +13,11 @@ import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.xmp.XmlDomWriter;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,6 +26,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Processes XFA forms.
@@ -46,6 +48,9 @@ public class XfaForm {
     private boolean xfaPresent = false;
     private org.w3c.dom.Document domDocument;
     private boolean changed = false;
+    /**
+     * The URI for the XFA Data schema.
+     */
     public static final String XFA_DATA_SCHEMA = "http://www.xfa.org/schema/xfa-data/1.0/";
 
     /**
@@ -107,6 +112,12 @@ public class XfaForm {
         return af == null ? null : af.get(PdfName.XFA);
     }
 
+    /**
+     * Write the XfaForm to the provided PdfDocument.
+     *
+     * @param document the PdfDocument to write the XFA Form to
+     * @throws IOException
+     */
     public void write(PdfDocument document) throws IOException {
         if (isChanged()) {
             setXfaForm(this, document);
