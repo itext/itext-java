@@ -169,7 +169,7 @@ abstract public class PdfObject {
      */
     public boolean isFlushed() {
         PdfIndirectReference indirectReference = getIndirectReference();
-        return (indirectReference != null && indirectReference.checkState(PdfIndirectReference.Flushed));
+        return (indirectReference != null && indirectReference.checkState(Flushed));
     }
 
     /**
@@ -179,7 +179,7 @@ abstract public class PdfObject {
      */
     public boolean isModified() {
         PdfIndirectReference indirectReference = getIndirectReference();
-        return (indirectReference != null && indirectReference.checkState(PdfIndirectReference.Modified));
+        return (indirectReference != null && indirectReference.checkState(Modified));
     }
 
     /**
@@ -202,8 +202,8 @@ abstract public class PdfObject {
     @Override
     public Object clone() {
         PdfObject newObject = newInstance();
-        if (indirectReference != null || checkState(PdfObject.MustBeIndirect)) {
-            newObject.setState(PdfObject.MustBeIndirect);
+        if (indirectReference != null || checkState(MustBeIndirect)) {
+            newObject.setState(MustBeIndirect);
         }
         newObject.copyContent(this, null);
         return newObject;
@@ -234,7 +234,7 @@ abstract public class PdfObject {
         if (document == null)
             throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
 
-        if ((indirectReference != null && indirectReference.getWriter() != null) || checkState(PdfObject.MustBeIndirect)) {
+        if ((indirectReference != null && indirectReference.getWriter() != null) || checkState(MustBeIndirect)) {
             throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
         }
 
@@ -272,7 +272,7 @@ abstract public class PdfObject {
                 PdfObject refTo = ((PdfIndirectReference) obj).getRefersTo();
                 obj = refTo != null ? refTo : obj;
             }
-            boolean isIndirect = obj.getIndirectReference() != null || obj.checkState(PdfObject.MustBeIndirect);
+            boolean isIndirect = obj.getIndirectReference() != null || obj.checkState(MustBeIndirect);
             if (isIndirect && !allowDuplicating) {
                 return (T) obj;
             }
@@ -312,12 +312,12 @@ abstract public class PdfObject {
     //TODO comment! Add note about flush, modified flag and xref.
     public void setModified() {
         if (indirectReference != null)
-            indirectReference.setState(PdfIndirectReference.Modified);
+            indirectReference.setState(Modified);
     }
 
     public void release() {
         if (getReader() != null && indirectReference != null
-                && !indirectReference.checkState(PdfIndirectReference.Flushed)) {
+                && !indirectReference.checkState(Flushed)) {
             indirectReference.refersTo = null;
             indirectReference = null;
         }

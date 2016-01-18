@@ -1205,7 +1205,7 @@ public class PdfDocument implements IEventDispatcher {
     protected void flushFonts() {
         if (appendMode) {
             for (PdfFont font : getDocumentFonts()) {
-                if (font.getPdfObject().getIndirectReference().checkState(PdfIndirectReference.Modified)) {
+                if (font.getPdfObject().getIndirectReference().checkState(PdfObject.Modified)) {
                     font.flush();
                 }
             }

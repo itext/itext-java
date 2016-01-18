@@ -698,7 +698,7 @@ public class PdfReader {
                     obj.setIndirectReference(reference);
                 }
             }
-            objectStream.getIndirectReference().setState(PdfIndirectReference.OriginalObjectStream);
+            objectStream.getIndirectReference().setState(PdfObject.OriginalObjectStream);
         } finally {
             tokens = saveTokens;
         }
@@ -771,7 +771,7 @@ public class PdfReader {
                     return reference;
                 } else {
                     PdfIndirectReference ref = new PdfIndirectReference(pdfDocument,
-                            num, tokens.getGenNr(), 0).setState(PdfIndirectReference.Reading);
+                            num, tokens.getGenNr(), 0).setState(PdfObject.Reading);
                     table.add(ref);
                     return ref;
                 }
@@ -914,7 +914,7 @@ public class PdfReader {
                 PdfIndirectReference reference = xref.get(num);
                 if (reference == null) {
                     reference = new PdfIndirectReference(pdfDocument, num, gen, pos);
-                } else if (reference.checkState(PdfIndirectReference.Reading) && reference.getGenNumber() == gen) {
+                } else if (reference.checkState(PdfObject.Reading) && reference.getGenNumber() == gen) {
                     reference.setOffset(pos);
                 } else {
                     continue;
@@ -1056,13 +1056,13 @@ public class PdfReader {
                 }
                 if (xref.get(base) == null) {
                     xref.add(newReference);
-                } else if (xref.get(base).checkState(PdfIndirectReference.Reading)
+                } else if (xref.get(base).checkState(PdfObject.Reading)
                         && xref.get(base).getObjNumber() == newReference.getObjNumber()
                         && xref.get(base).getGenNumber() == newReference.getGenNumber()) {
                     PdfIndirectReference reference = xref.get(base);
                     reference.setOffset(newReference.getOffset());
                     reference.setObjStreamNumber(newReference.getObjStreamNumber());
-                    reference.clearState(PdfIndirectReference.Reading);
+                    reference.clearState(PdfObject.Reading);
                 }
                 ++start;
             }

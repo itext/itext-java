@@ -32,7 +32,7 @@ class PdfXrefTable {
             capacity = InitialCapacity;
         xref = new PdfIndirectReference[capacity];
         freeReferences = new TreeSet<Integer>();
-        add(new PdfIndirectReference(null, 0, MaxGeneration, 0).<PdfIndirectReference>setState(PdfIndirectReference.Free));
+        add(new PdfIndirectReference(null, 0, MaxGeneration, 0).<PdfIndirectReference>setState(PdfObject.Free));
     }
 
     /**
@@ -76,21 +76,21 @@ class PdfXrefTable {
                 xref[num] = indirectReference;
             }
             indirectReference.setOffset(0);
-            indirectReference.clearState(PdfIndirectReference.Free);
+            indirectReference.clearState(PdfObject.Free);
         } else {
             indirectReference = new PdfIndirectReference(document, ++count);
             add(indirectReference);
         }
-        return indirectReference.setState(PdfIndirectReference.Modified);
+        return indirectReference.setState(PdfObject.Modified);
     }
 
     protected void freeReference(PdfIndirectReference indirectReference) {
         indirectReference.setOffset(0);
-        indirectReference.setState(PdfIndirectReference.Free);
-        if (!indirectReference.checkState(PdfIndirectReference.Flushed)) {
+        indirectReference.setState(PdfObject.Free);
+        if (!indirectReference.checkState(PdfObject.Flushed)) {
             if (indirectReference.refersTo != null) {
                 indirectReference.refersTo.setIndirectReference(null);
-                indirectReference.refersTo.setState(PdfIndirectReference.MustBeIndirect);
+                indirectReference.refersTo.setState(PdfObject.MustBeIndirect);
                 indirectReference.refersTo = null;
             }
             if (indirectReference.getGenNumber() < MaxGeneration) {
@@ -137,9 +137,9 @@ class PdfXrefTable {
         for (int i = 1; i < size(); i++) {
             PdfIndirectReference indirectReference = xref[i];
             if (indirectReference != null) {
-                if ((document.appendMode && !indirectReference.checkState(PdfIndirectReference.Modified)) ||
+                if ((document.appendMode && !indirectReference.checkState(PdfObject.Modified)) ||
                         (indirectReference.isFree() && indirectReference.getGenNumber() == 0) ||
-                        (!indirectReference.checkState(PdfIndirectReference.Flushed))) {
+                        (!indirectReference.checkState(PdfObject.Flushed))) {
                     indirectReference = null;
                 }
             }

@@ -115,8 +115,8 @@ public class PdfWriter extends PdfOutputStream {
             indirectReference.setOffset(getCurrentPos());
             writeToBody(pdfObject);
         }
-        indirectReference.setState(PdfIndirectReference.Flushed);
-        indirectReference.clearState(PdfIndirectReference.MustBeFlushed);
+        indirectReference.setState(PdfObject.Flushed);
+        indirectReference.clearState(PdfObject.MustBeFlushed);
         switch (pdfObject.getType()) {
             case PdfObject.Boolean:
             case PdfObject.Name:
@@ -157,13 +157,13 @@ public class PdfWriter extends PdfOutputStream {
         if (pdfObject != null) {
             PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
             if (indirectReference != null) {
-                if (!indirectReference.checkState(PdfIndirectReference.Flushed)) {
-                    indirectReference.setState(PdfIndirectReference.MustBeFlushed);
+                if (!indirectReference.checkState(PdfObject.Flushed)) {
+                    indirectReference.setState(PdfObject.MustBeFlushed);
                 }
             } else {
                 if (pdfObject.getType() == PdfObject.IndirectReference) {
-                    if (!pdfObject.checkState(PdfIndirectReference.Flushed)) {
-                        pdfObject.setState(PdfIndirectReference.MustBeFlushed);
+                    if (!pdfObject.checkState(PdfObject.Flushed)) {
+                        pdfObject.setState(PdfObject.MustBeFlushed);
                     }
                 } else if (pdfObject.getType() == PdfObject.Array) {
                     markArrayContentToFlush((PdfArray) pdfObject);
@@ -243,7 +243,7 @@ public class PdfWriter extends PdfOutputStream {
             for (int i = 1; i < xref.size(); i++) {
                 PdfIndirectReference indirectReference = xref.get(i);
                 if (indirectReference != null
-                        && indirectReference.checkState(PdfIndirectReference.MustBeFlushed)) {
+                        && indirectReference.checkState(PdfObject.MustBeFlushed)) {
                     PdfObject object = indirectReference.getRefersTo(false);
                     if (object != null) {
                         object.flush();
