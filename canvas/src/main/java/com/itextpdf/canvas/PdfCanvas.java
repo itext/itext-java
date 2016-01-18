@@ -24,7 +24,6 @@ import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfResources;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
-import com.itextpdf.core.pdf.PdfTextArray;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.core.pdf.colorspace.PdfPattern;
@@ -1282,7 +1281,7 @@ public class PdfCanvas {
      *
      * @param lineCapStyle
      * @return current canvas.
-     * @see PdfCanvasConstants#LineCapStyle for possible values.
+     * @see PdfCanvasConstants.LineCapStyle for possible values.
      */
     public PdfCanvas setLineCapStyle(int lineCapStyle) {
         if (integersAreEqual(currentGs.getLineCapStyle(), lineCapStyle))
@@ -1301,7 +1300,7 @@ public class PdfCanvas {
      *
      * @param lineJoinStyle
      * @return current canvas.
-     * @see PdfCanvasConstants#LineJoinStyle for possible values.
+     * @see PdfCanvasConstants.LineJoinStyle for possible values.
      */
     public PdfCanvas setLineJoinStyle(int lineJoinStyle) {
         if (integersAreEqual(currentGs.getLineJoinStyle(), lineJoinStyle))
