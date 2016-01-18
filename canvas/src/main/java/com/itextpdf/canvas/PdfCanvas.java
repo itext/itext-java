@@ -180,6 +180,12 @@ public class PdfCanvas {
         this(getPageStream(page), page.getResources(), page.getDocument());
     }
 
+    /**
+     * Creates a PdfCanvas from a PdfFormXObject.
+     *
+     * @param xObj the PdfFormXObject used to create the PdfCanvas
+     * @param document the document to which the resulting content stream will be written
+     */
     public PdfCanvas(PdfFormXObject xObj, PdfDocument document) {
         this(xObj.getPdfObject(), xObj.getResources(), document);
     }
