@@ -48,8 +48,19 @@ import java.util.StringTokenizer;
  */
 public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
+    /**
+     * Flag that designates, if set, that the field can contain multiple lines
+     * of text.
+     */
     public static final int FF_MULTILINE = makeFieldFlag(13);
+    
+    /**
+     * Flag that designates, if set, that the field's contents must be obfuscated.
+     */
     public static final int FF_PASSWORD = makeFieldFlag(14);
+    /**
+     * Size of text in form fields when font size is not explicitly set.
+     */
     public static final int DEFAULT_FONT_SIZE = 12;
     public static final int DA_FONT = 0;
     public static final int DA_SIZE = 1;
@@ -614,8 +625,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Set text field value with given font and size
      * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param value text value
-     * @param font
-     * @param fontSize
+     * @param font a {@link PdfFont}
+     * @param fontSize a positive integer
      * @return the edited field
      */
     public <T extends PdfFormField> T setValue(String value, PdfFont font, int fontSize) {
@@ -1121,6 +1132,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
+    /**
+     * Draws the visual appearance of text in a form field.
+     * 
+     * @param rect the location on the page for the list field
+     * @param font a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @param value the initial value
+     * @return the {@link PdfFormXObject Form XObject} that was drawn
+     */
     public PdfFormXObject drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
@@ -1162,6 +1182,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return xObject;
     }
 
+    
+    /**
+     * Draws the visual appearance of multiline text in a form field.
+     * 
+     * @param rect the location on the page for the list field
+     * @param font a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @param value the initial value
+     * @return the {@link PdfFormXObject Form XObject} that was drawn
+     */
     public PdfFormXObject drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
@@ -1214,6 +1244,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return xObject;
     }
 
+    /**
+     * Draws a border using the borderWidth and borderColor of the form field.
+     * 
+     * @param canvas the {@link PdfCanvas} on which to draw
+     * @param width the width of the rectangle to draw
+     * @param height the height of the rectangle to draw
+     */
     public void drawBorder(PdfCanvas canvas, float width, float height) {
         canvas.saveState();
         if (borderWidth < 0) {
@@ -1241,6 +1278,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.restoreState();
     }
 
+    /**
+     * Draws the appearance of a radio button with a specified value.
+     * @param width the width of the radio button to draw
+     * @param height the height of the radio button to draw
+     * @param value the value of the button
+     */
     public void drawRadioAppearance(float width, float height, String value) {
         PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
@@ -1263,6 +1306,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
     }
 
+    /**
+     * Draws a radio button.
+     * @param canvas the {@link PdfCanvas} on which to draw
+     * @param width the width of the radio button to draw
+     * @param height the height of the radio button to draw
+     * @param on required to be <code>true</code> for fulfilling the drawing operation
+     */
     public void drawRadioField(PdfCanvas canvas, final float x, final float y, final float width, final float height, final boolean on) {
         canvas.saveState();
         if (on) {
@@ -1425,6 +1475,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param visibility
+     * @return the edited field
+     */
     public <T extends PdfFormField> T setVisibility(int visibility) {
         switch (visibility) {
             case HIDDEN:
@@ -1443,7 +1498,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This method regenerates appearance stream of the field. Use it if you changed any field parameters and didn't use setValue method which generates appearance by itself.
+     * This method regenerates appearance stream of the field. Use it if you
+     * changed any field parameters and didn't use setValue method which
+     * generates appearance by itself.
+     * @return whether or not the regeneration was successful.
      */
     public boolean regenerateField() {
         PdfName type = getFormType();
@@ -1560,39 +1618,87 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     public void setBorderWidth(float borderWidth) {
         this.borderWidth = borderWidth;
-        //regenerateField();
     }
 
+    /**
+     * Sets the Border Color.
+     * 
+     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param color the new value for the Border Color
+     * @return the edited field
+     */
     public <T extends PdfFormField> T setBorderColor(Color color) {
         borderColor = color;
         regenerateField();
         return (T) this;
     }
 
+    
+    /**
+     * Sets the ReadOnly flag, specifying whether or not the field can be changed.
+     * 
+     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param readOnly if <code>true</code>, then the field cannot be changed.
+     * @return the edited field
+     */
     public <T extends PdfFormField> T setReadOnly(boolean readOnly) {
         return setFieldFlag(FF_READ_ONLY, readOnly);
     }
 
+    /**
+     * Gets the ReadOnly flag, specifying whether or not the field can be changed.
+     * @return <code>true</code> if the field cannot be changed.
+     */
     public boolean isReadOnly() {
         return getFieldFlag(FF_READ_ONLY);
     }
 
+    /**
+     * Sets the Required flag, specifying whether or not the field must be filled in.
+     * 
+     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param required if <code>true</code>, then the field must be filled in.
+     * @return the edited field
+     */
     public <T extends PdfFormField> T setRequired(boolean required) {
         return setFieldFlag(FF_REQUIRED, required);
     }
 
+    /**
+     * Gets the Required flag, specifying whether or not the field must be filled in.
+     * @return <code>true</code> if the field must be filled in.
+     */
     public boolean isRequired() {
         return getFieldFlag(FF_REQUIRED);
     }
 
+    /**
+     * Sets the NoExport flag, specifying whether or not exporting is forbidden.
+     * 
+     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param noExport if <code>true</code>, then exporting is <em>forbidden</em>
+     * @return the edited field
+     */
     public <T extends PdfFormField> T setNoExport(boolean noExport) {
         return setFieldFlag(FF_NO_EXPORT, noExport);
     }
 
+    /**
+     * Gets the NoExport attribute.
+     * 
+     * @return whether exporting the value following a form action is forbidden.
+     */
     public boolean isNoExport() {
         return getFieldFlag(FF_NO_EXPORT);
     }
 
+    /**
+     * Specifies on which page the form field's widget must be shown.
+     * 
+     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param pageNum the page number
+     * @return the edited field
+     */
     public <T extends PdfFormField> T setPage(int pageNum){
         if (!getWidgets().isEmpty()) {
             PdfAnnotation annot = getWidgets().get(0);
@@ -1603,6 +1709,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
+    /**
+     * Gets the appearance state names.
+     * 
+     * @return an array of Strings containing the names of the appearance states
+     */
     public String[] getAppearanceStates() {
         Set<String> names = new HashSet<>();
         PdfString stringOpt = getPdfObject().getAsString(PdfName.Opt);
@@ -1659,6 +1770,22 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return names.toArray(out);
     }
 
+    /**
+     * Sets an appearance for (the widgets related to) the form field.
+     * 
+     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param appearanceType the type of appearance stream to be added
+     * <ul>
+     *     <li> PdfName.N: normal appearance</li>
+     *     <li> PdfName.R: rollover appearance</li>
+     *     <li> PdfName.D: down appearance</li>
+     * </ul>
+     * @param appearanceState the state of the form field that needs to be true
+     *     for the appearance to be used. Differentiates between several streams 
+     *     of the same type.
+     * @param appearanceStream the appearance instructions, as a {@link PdfStream}
+     * @return the edited field
+     */
     public <T extends PdfFormField> T setAppearance(PdfName appearanceType, String appearanceState, PdfStream appearanceStream) {
         PdfWidgetAnnotation widget = getWidgets().get(0);
         PdfDictionary dic;
