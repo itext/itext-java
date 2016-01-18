@@ -21,14 +21,14 @@ import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.forms.xfa.Xml2Som;
 
-import org.w3c.dom.Node;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.w3c.dom.Node;
 
 /**
  * This class represents the static form technology AcroForm on a PDF file.
@@ -512,6 +512,13 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return fields.get(fieldName);
     }
 
+    /**
+     * Gets the attribute generateAppearance, which tells {@link #flatFields()}
+     * to generate an appearance Stream for all {@link PdfFormField form field}s
+     * that don't have one.
+     *
+     * @return bolean value indicating if the appearances need to be generated
+     */
     public boolean isGenerateAppearance() {
         return generateAppearance;
     }
