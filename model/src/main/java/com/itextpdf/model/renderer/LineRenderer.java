@@ -39,8 +39,8 @@ public class LineRenderer extends AbstractRenderer {
 
             if (childRenderer instanceof TextRenderer) {
                 // Delete these properties in case of relayout. We might have applied them during justify().
-                childRenderer.deleteProperty(Property.CHARACTER_SPACING);
-                childRenderer.deleteProperty(Property.WORD_SPACING);
+                childRenderer.deleteOwnProperty(Property.CHARACTER_SPACING);
+                childRenderer.deleteOwnProperty(Property.WORD_SPACING);
             } else if (childRenderer instanceof TabRenderer) {
                 if (nextTabStop != null) {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);

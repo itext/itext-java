@@ -34,7 +34,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
     }
 
     @Override
-    public void deleteProperty(Property property) {
+    public void deleteOwnProperty(Property property) {
         properties.remove(property);
     }
 

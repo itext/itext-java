@@ -1,10 +1,8 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -19,14 +17,13 @@ import com.itextpdf.model.element.Table;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.model.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

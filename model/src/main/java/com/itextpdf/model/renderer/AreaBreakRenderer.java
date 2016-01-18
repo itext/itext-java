@@ -78,7 +78,7 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
-    public void deleteProperty(Property property) {
+    public void deleteOwnProperty(Property property) {
 
     }
 

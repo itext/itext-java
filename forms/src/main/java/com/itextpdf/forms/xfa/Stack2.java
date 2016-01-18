@@ -7,7 +7,7 @@ import java.util.EmptyStackException;
  * Another stack implementation. The main use is to facilitate
  * the porting to other languages.
  */
-public  class Stack2<T> extends ArrayList<T> {
+public class Stack2<T> extends ArrayList<T> {
     private static final long serialVersionUID = -7451476576174095212L;
 
     /**

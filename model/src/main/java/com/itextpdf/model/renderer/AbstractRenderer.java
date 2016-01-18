@@ -90,7 +90,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public void deleteProperty(Property property) {
+    public void deleteOwnProperty(Property property) {
         properties.remove(property);
     }
 

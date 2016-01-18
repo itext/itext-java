@@ -48,7 +48,7 @@ public class ListRenderer extends BlockRenderer {
         Float symbolIndent = (Float)modelElement.getProperty(Property.LIST_SYMBOL_INDENT);
         listItemNum = 0;
         for (IRenderer childRenderer : childRenderers) {
-            childRenderer.deleteProperty(Property.MARGIN_LEFT);
+            childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
             childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
             if (childRenderer.getModelElement() instanceof ListItem) {
                 IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);

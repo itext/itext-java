@@ -14,7 +14,7 @@ public class CanvasArtifact extends CanvasTag {
 
     /**
      * Creates a CanvasArtifact object, which is a {@link CanvasTag} with a role
-     * of {@link PdfName.Artifact Artifact}.
+     * of {@link PdfName#Artifact Artifact}.
      */
     public CanvasArtifact() {
         super(PdfName.Artifact);

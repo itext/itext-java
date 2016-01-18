@@ -105,7 +105,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
     }
 
     @Override
-    public void deleteProperty(Property property) {
+    public void deleteOwnProperty(Property property) {
         properties.remove(property);
     }
 
