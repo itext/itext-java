@@ -95,6 +95,11 @@ public class Type3Glyph extends PdfCanvas {
         this.ury = ury;
     }
 
+    /**
+     * Indicates if the glyph color specified in the glyph description or not.
+     *
+     * @return whether the glyph color is specified in the glyph description or not
+     */
     public boolean isColor() {
         return isColor;
     }
