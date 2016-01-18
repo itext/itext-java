@@ -1552,23 +1552,23 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest05.pdf", sourceFolder + "cmp_gifImageTest05.pdf", destinationFolder, "diff_"));
     }
 
-    @Test
-    public void kernedTextTest01() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "kernedTextTest01.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
-        PdfPage page = document.addNewPage();
-
-        PdfCanvas canvas = new PdfCanvas(page);
-        String kernableText = "AVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAV";
-        PdfFont font = PdfFont.createStandardFont(document, FontConstants.HELVETICA);
-        canvas.beginText().moveText(50, 600).setFontAndSize(font, 12).showText("Kerning:-" + kernableText).endText();
-        canvas.beginText().moveText(50, 650).setFontAndSize(font, 12).showTextKerned("Kerning:+" + kernableText).endText();
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "kernedTextTest01.pdf", sourceFolder + "cmp_kernedTextTest01.pdf", destinationFolder, "diff_"));
-    }
+//    @Test
+//    public void kernedTextTest01() throws IOException, InterruptedException {
+//        FileOutputStream fos = new FileOutputStream(destinationFolder + "kernedTextTest01.pdf");
+//        PdfWriter writer = new PdfWriter(fos);
+//        PdfDocument document = new PdfDocument(writer);
+//        PdfPage page = document.addNewPage();
+//
+//        PdfCanvas canvas = new PdfCanvas(page);
+//        String kernableText = "AVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAV";
+//        PdfFont font = PdfFont.createStandardFont(document, FontConstants.HELVETICA);
+//        canvas.beginText().moveText(50, 600).setFontAndSize(font, 12).showText("Kerning:-" + kernableText).endText();
+//        canvas.beginText().moveText(50, 650).setFontAndSize(font, 12).showTextKerned("Kerning:+" + kernableText).endText();
+//
+//        document.close();
+//
+//        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "kernedTextTest01.pdf", sourceFolder + "cmp_kernedTextTest01.pdf", destinationFolder, "diff_"));
+//    }
 
     @Test
     public void ccittImageTest01() throws IOException, InterruptedException {
