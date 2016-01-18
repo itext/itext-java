@@ -25,7 +25,11 @@ public class LZWDecoder {
             4095
     };
 
+    /**
+     * Creates an LZWDecoder instance.
+     */
     public LZWDecoder() {
+        // Empty body
     }
 
     /**
@@ -34,7 +38,7 @@ public class LZWDecoder {
      * @param data The compressed data.
      * @param uncompData Array to return the uncompressed data in.
      */
-    public void decode(byte data[], OutputStream uncompData) {
+    public void decode(byte[] data, OutputStream uncompData) {
 
         if(data[0] == (byte)0x00 && data[1] == (byte)0x01) {
             throw new PdfException(PdfException.LzwFlavourNotSupported);
@@ -53,7 +57,7 @@ public class LZWDecoder {
         nextBits = 0;
 
         int code, oldCode = 0;
-        byte string[];
+        byte[] string;
 
         while ((code = getNextCode()) != 257) {
 
@@ -110,20 +114,24 @@ public class LZWDecoder {
 
     /**
      * Write out the string just uncompressed.
+     *
+     * @param string content to write to the uncompressed data
      */
     public void writeString(byte string[]) {
         try {
             uncompData.write(string);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new PdfException(PdfException.LzwDecoderException, e);
         }
     }
 
     /**
      * Add a new string to the string table.
+     *
+     * @param oldString stored string
+     * @param newString string to be appended to the stored string
      */
-    public void addStringToTable(byte oldString[], byte newString) {
+    public void addStringToTable(byte[] oldString, byte newString) {
         int length = oldString.length;
         byte string[] = new byte[length + 1];
         System.arraycopy(oldString, 0, string, 0, length);
@@ -143,6 +151,8 @@ public class LZWDecoder {
 
     /**
      * Add a new string to the string table.
+     *
+     * @param string byte[] to store in the string table
      */
     public void addStringToTable(byte string[]) {
 
@@ -160,6 +170,10 @@ public class LZWDecoder {
 
     /**
      * Append <code>newString</code> to the end of <code>oldString</code>.
+     *
+     * @param oldString string be appended to
+     * @param newString string that is to be appended to oldString
+     * @return combined string
      */
     public byte[] composeString(byte oldString[], byte newString) {
         int length = oldString.length;
@@ -170,12 +184,18 @@ public class LZWDecoder {
         return string;
     }
 
+
     // Returns the next 9, 10, 11 or 12 bits
+    /**
+     * Attempt to get the next code. Exceptions are caught to make
+     * this robust to cases wherein the EndOfInformation code has been
+     * omitted from a strip. Examples of such cases have been observed
+     * in practice.
+     *
+     * @return next code
+     */
     public int getNextCode() {
-        // Attempt to get the next code. The exception is caught to make
-        // this robust to cases wherein the EndOfInformation code has been
-        // omitted from a strip. Examples of such cases have been observed
-        // in practice.
+        //
         try {
             nextData = (nextData << 8) | (data[bytePointer++] & 0xff);
             nextBits += 8;
