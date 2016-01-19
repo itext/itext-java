@@ -5,6 +5,10 @@ import com.itextpdf.core.color.DeviceRgb;
 
 import java.io.IOException;
 
+/**
+ * A Brush bject that holds information about the style, the hatch and the color of
+ * the brush.
+ */
 public class MetaBrush extends MetaObject {
 
     public static final int BS_SOLID = 0;
@@ -23,24 +27,46 @@ public class MetaBrush extends MetaObject {
     int hatch;
     Color color = DeviceRgb.WHITE;
 
+    /**
+     * Creates a MetaBrush object.
+     */
     public MetaBrush() {
         type = META_BRUSH;
     }
 
+    /**
+     * Initializes this MetaBrush object.
+     *
+     * @param in the InputMeta
+     * @throws IOException
+     */
     public void init(InputMeta in) throws IOException {
         style = in.readWord();
         color = in.readColor();
         hatch = in.readWord();
     }
-    
+
+    /**
+     * Get the style of the MetaBrush.
+     *
+     * @return style of the brush
+     */
     public int getStyle() {
         return style;
     }
-    
+
+    /**
+     * Get the hatch pattern of the MetaBrush
+     * @return hatch of the brush
+     */
     public int getHatch() {
         return hatch;
     }
-    
+
+    /**
+     * Get the color of the MetaBrush.
+     * @return color of the brush
+     */
     public Color getColor() {
         return color;
     }
