@@ -103,17 +103,28 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected Color backgroundColor;
     protected Color borderColor;
 
+    /**
+     * Creates a minimal {@link PdfFormField}.
+     */
     protected PdfFormField() {
         this(new PdfDictionary());
         put(PdfName.FT, getFormType());
     }
 
+    /**
+     * Creates a form field as a parent of a {@link PdfWidgetAnnotation}.
+     * @param widget the widget which will be a kid of the {@link PdfFormField}
+     */
     protected PdfFormField(PdfWidgetAnnotation widget) {
         this(new PdfDictionary());
         addKid(widget);
         put(PdfName.FT, getFormType());
     }
 
+    /**
+     * Creates a form field as a wrapper object around a {@link PdfDictionary}.
+     * @param pdfObject the dictionary to be wrapped
+     */
     public PdfFormField(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -1462,6 +1473,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 endText();
     }
 
+    /**
+     * Gets the current font of the form field.
+     * @return the current {@link PdfFont font}
+     */
     public PdfFont getFont() {
         return font;
     }
