@@ -40,6 +40,7 @@ import com.itextpdf.core.pdf.xobject.PdfXObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -151,7 +152,7 @@ public class PdfCanvas {
     protected int mcid = 0;
     
     /** The list where we save/restore the layer depth. */
-    protected ArrayList<Integer> layerDepth;
+    protected List<Integer> layerDepth;
 
     /**
      * Used to identify if gState has changed since last pdf/a check.
@@ -837,7 +838,7 @@ public class PdfCanvas {
      */
     public PdfCanvas arc(final float x1, final float y1, final float x2, final float y2,
                          final float startAng, final float extent) {
-        ArrayList<float[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
+        List<float[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty())
             return this;
         float pt[] = ar.get(0);
@@ -887,7 +888,7 @@ public class PdfCanvas {
      * @param extent   angle extent in degrees.
      * @return a list of float[] with the bezier curves.
      */
-    public static ArrayList<float[]> bezierArc(float x1, float y1, float x2, float y2, final float startAng, final float extent) {
+    public static List<float[]> bezierArc(float x1, float y1, float x2, float y2, final float startAng, final float extent) {
         float tmp;
         if (x1 > x2) {
             tmp = x1;
@@ -915,7 +916,7 @@ public class PdfCanvas {
         float ry = (y2 - y1) / 2f;
         float halfAng = (float) (fragAngle * Math.PI / 360.);
         float kappa = (float) Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
-        ArrayList<float[]> pointList = new ArrayList<>();
+        List<float[]> pointList = new ArrayList<>();
         for (int iter = 0; iter < Nfrag; ++iter) {
             float theta0 = (float) ((startAng + iter * fragAngle) * Math.PI / 180.);
             float theta1 = (float) ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.);

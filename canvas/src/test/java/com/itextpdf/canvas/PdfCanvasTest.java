@@ -50,7 +50,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -101,7 +104,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvas.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -179,7 +182,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -265,7 +268,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -297,7 +300,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithPageFlush.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -329,7 +332,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithFullCompression.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -362,7 +365,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -406,7 +409,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -452,7 +455,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -498,7 +501,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -543,7 +546,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -590,7 +593,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -637,7 +640,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -684,7 +687,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));
@@ -731,7 +734,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
         Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        HashMap<String, String> info = reader.getInfo();
+        Map<String, String> info = reader.getInfo();
         Assert.assertEquals("Author", author, info.get("Author"));
         Assert.assertEquals("Creator", creator, info.get("Creator"));
         Assert.assertEquals("Title", title, info.get("Title"));

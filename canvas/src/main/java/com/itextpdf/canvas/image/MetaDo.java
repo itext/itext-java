@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.util.List;
 
 public class MetaDo {
 
@@ -317,7 +317,7 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    ArrayList<float[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
+                    List<float[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
                     float pt[] = ar.get(0);
@@ -350,7 +350,7 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    ArrayList<float[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
+                    List<float[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
                     float pt[] = ar.get(0);

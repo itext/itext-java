@@ -6,6 +6,7 @@ import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.DeviceRgb;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class MetaState {
@@ -26,7 +27,7 @@ public class MetaState {
     public static final int WINDING = 2;
 
     public Stack<MetaState> savedStates;
-    public ArrayList<MetaObject> MetaObjects;
+    public List<MetaObject> MetaObjects;
     public Point currentPoint;
     public MetaPen currentPen;
     public MetaBrush currentBrush;
@@ -47,8 +48,8 @@ public class MetaState {
 
     /** Creates new MetaState */
     public MetaState() {
-        savedStates = new Stack<MetaState>();
-        MetaObjects = new ArrayList<MetaObject>();
+        savedStates = new Stack<>();
+        MetaObjects = new ArrayList<>();
         currentPoint = new Point(0, 0);
         currentPen = new MetaPen();
         currentBrush = new MetaBrush();

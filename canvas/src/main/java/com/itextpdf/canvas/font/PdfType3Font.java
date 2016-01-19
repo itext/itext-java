@@ -30,7 +30,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     private final boolean[] usedSlot = new boolean[256];
 
-    private final HashMap<Integer, Type3Glyph> charGlyphs = new HashMap<>();
+    private final Map<Integer, Type3Glyph> charGlyphs = new HashMap<>();
 
     private boolean isColor = false;
 
@@ -64,7 +64,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         init();
     }
 
-    public HashMap<Integer, Type3Glyph> getCharGlyphs() {
+    public Map<Integer, Type3Glyph> getCharGlyphs() {
         return charGlyphs;
     }
 
