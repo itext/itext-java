@@ -8,14 +8,13 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
 
     public PdfObjRef(PdfDictionary pdfObject, PdfStructElem parent) {
         super(pdfObject, parent);
-        parent.getDocument().getStructTreeRoot().registerObjRef(this);
     }
 
     public PdfObjRef(PdfAnnotation annot, PdfStructElem parent) {
         super(new PdfDictionary(), parent);
-        ((PdfDictionary) getPdfObject()).put(PdfName.Type, PdfName.OBJR);
-        ((PdfDictionary) getPdfObject()).put(PdfName.Obj, annot.tag().getPdfObject());
-        parent.getDocument().getStructTreeRoot().registerObjRef(this);
+        PdfDictionary dict = (PdfDictionary) getPdfObject();
+        dict.put(PdfName.Type, PdfName.OBJR);
+        dict.put(PdfName.Obj, annot.tag().getPdfObject());
     }
 
     @Override

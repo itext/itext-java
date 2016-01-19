@@ -13,9 +13,10 @@ public class PdfMcrDictionary extends PdfMcr<PdfDictionary> {
 
     public PdfMcrDictionary(PdfPage page, PdfStructElem parent) {
         super(new PdfDictionary(), parent);
-        ((PdfDictionary)getPdfObject()).put(PdfName.Type, PdfName.MCR);
-        ((PdfDictionary)getPdfObject()).put(PdfName.Pg, page.getPdfObject());
-        ((PdfDictionary)getPdfObject()).put(PdfName.MCID, new PdfNumber(page.getNextMcid()));
+        PdfDictionary dict = (PdfDictionary) getPdfObject();
+        dict.put(PdfName.Type, PdfName.MCR);
+        dict.put(PdfName.Pg, page.getPdfObject());
+        dict.put(PdfName.MCID, new PdfNumber(page.getNextMcid()));
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.itextpdf.core.pdf.tagging.PdfMcr;
 import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
+import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,15 +30,19 @@ public class PdfTagStructure {
     protected PdfStructElem documentElem; //?
     protected PdfStructElem currentStructElem;
     protected PdfPage currentPage;
-    protected HashMap<IAccessibleElement, PdfStructElem> incompleteElements;
+    protected HashMap<IAccessibleElement, PdfStructElem> connectedModelToStruct;
+    protected HashMap<PdfDictionary, IAccessibleElement> connectedStructToModel;
 
+    //TODO do not modify tag structure in constructor
     public PdfTagStructure(PdfDocument document) {
         this.document = document;
         if (!document.isTagged()) {
             throw new PdfException(""); //TODO exception
         }
-        incompleteElements = new HashMap<>();
+        connectedModelToStruct = new HashMap<>();
+        connectedStructToModel = new HashMap<>();
 
+        //TODO remove this
         ensureDocumentTagIsOpen();
     }
 
@@ -94,13 +99,13 @@ public class PdfTagStructure {
 
     public PdfTagStructure addTag(int index, IAccessibleElement element, boolean keepConnectedToTag) {
         throwExceptionIfRoleIsInvalid(element.getRole());
-        if (!incompleteElements.containsKey(element)) {
+        if (!connectedModelToStruct.containsKey(element)) {
             currentStructElem = addNewKid(index, element, keepConnectedToTag);
         } else {
-            IPdfStructElem parent = incompleteElements.get(element).getParent();
+            IPdfStructElem parent = connectedModelToStruct.get(element).getParent();
             //TODO thinking in this place that only one element could be child of root. check.
-            if (currentStructElem.getPdfObject() == ((PdfStructElem)parent).getPdfObject()) {
-                currentStructElem = incompleteElements.get(element);
+            if (parent != null && currentStructElem.getPdfObject() == ((PdfStructElem)parent).getPdfObject()) {
+                currentStructElem = connectedModelToStruct.get(element);
             } else {
                 removeConnectionToTag(element);
                 currentStructElem = addNewKid(index, element, keepConnectedToTag);
@@ -124,10 +129,17 @@ public class PdfTagStructure {
         return new PdfTagReference(currentStructElem, this, index);
     }
 
+    //TODO review this
+    public void moveToRoot() {
+        currentStructElem = documentElem;
+    }
+
     public PdfTagStructure moveToParent() {
         if (currentStructElem.getParent() == documentElem) {
             //TODO don't do this
         }
+        // TODO if parent == null, move to the root; log it.
+
         currentStructElem = (PdfStructElem) currentStructElem.getParent();
         return this;
     }
@@ -136,8 +148,10 @@ public class PdfTagStructure {
         IPdfStructElem kid = currentStructElem.getKids().get(kidIndex);
         if (kid instanceof PdfStructElem) {
             currentStructElem = (PdfStructElem) kid;
-        } else {
+        } else if (kid instanceof PdfMcr) {
             throw new PdfException(""); //TODO exception: could not move to marked content references
+        } else {
+            throw new PdfException(""); //TODO exception: could not move to the flushed kid
         }
         return this;
     }
@@ -148,10 +162,14 @@ public class PdfTagStructure {
     }
 
     public PdfTagStructure moveToKid(int /*TODO*/roleIndex, PdfName role) {
+        if (PdfName.MCR.equals(role)) {
+            throw new PdfException(""); //TODO exception: could not move to marked content references
+        }
         List<IPdfStructElem> kids = currentStructElem.getKids();
 
         int k = 0;
         for (int i = 0; i < kids.size(); ++i) {
+            if (kids.get(i) == null)  continue;
             //TODO what if kid - is mcr, but there is some other kid that is structElement. is it possible?
             if (kids.get(i).getRole().equals(role) && k++ == roleIndex) {
                 moveToKid(i);
@@ -162,11 +180,14 @@ public class PdfTagStructure {
         throw new PdfException(""); //TODO exception: no kid with such role
     }
 
+    //returns null for kids that are flushed
     public List<PdfName> getListOfKidsRoles() {
         List<PdfName> roles = new ArrayList<>();
         List<IPdfStructElem> kids = currentStructElem.getKids();
         for (IPdfStructElem kid : kids) {
-            if (kid instanceof PdfStructElem) {
+            if (kid == null) {
+                roles.add(null);
+            } else if (kid instanceof PdfStructElem) {
                 roles.add(kid.getRole());
             } else {
                 roles.add(PdfName.MCR);
@@ -176,32 +197,117 @@ public class PdfTagStructure {
     }
 
     public boolean isConnectedToTag(IAccessibleElement element) {
-        return incompleteElements.containsKey(element);
+        return connectedModelToStruct.containsKey(element);
     }
 
     public PdfTagStructure moveToTag(IAccessibleElement element) {
-        if (!incompleteElements.containsKey(element)) {
+        if (!connectedModelToStruct.containsKey(element)) {
             throw new PdfException(""); //TODO exception: not connected
         }
-        currentStructElem = incompleteElements.get(element);
+        currentStructElem = connectedModelToStruct.get(element);
         return this;
     }
 
     public PdfTagStructure removeConnectionToTag(IAccessibleElement element) {
-        PdfStructElem structElem = incompleteElements.remove(element);
-        if (structElem != null) {
-            //TODO remove mark that struct element couldn't be flushed
-        }
+        PdfStructElem structElem = connectedModelToStruct.remove(element);
+        removeStructToModelConnection(structElem);
         return this;
     }
 
+    //TODO don't forget to call it on document close
     public PdfTagStructure removeAllConnectionsToTags() {
-        for (IAccessibleElement e: incompleteElements.keySet()) {
-            removeConnectionToTag(e);
+        for (PdfStructElem structElem : connectedModelToStruct.values()) {
+            removeStructToModelConnection(structElem);
         }
-        incompleteElements.clear();
+        connectedModelToStruct.clear();
         return this;
     }
+
+    private void removeStructToModelConnection(PdfStructElem structElem) {
+        if (structElem != null) {
+            if (structElem.getParent() == null) { // is flushed
+                flushStructElementAndItKids(structElem);
+            }
+            connectedStructToModel.remove(structElem.getPdfObject());
+        }
+    }
+
+    //-------------------------------------------------------------------------------------------------
+
+
+    public void flushPageTags(PdfPage page) {
+        PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
+        List<PdfMcr> pageMcrs = structTreeRoot.getPageMarkedContentReferences(page);
+        if (pageMcrs != null) {
+            for (PdfMcr mcr : pageMcrs) {
+                PdfStructElem parent = (PdfStructElem) mcr.getParent();
+                flushParentIfBelongsToPage(parent, page);
+            }
+        }
+    }
+
+    private void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
+        if (parent.isFlushed() || connectedStructToModel.containsKey(parent.getPdfObject())) {
+            return;
+        }
+
+        List<IPdfStructElem> kids = parent.getKids();
+        boolean allKidsBelongToPage = true;
+        for (IPdfStructElem kid : kids) {
+            if (kid instanceof PdfMcr) {
+                PdfDictionary kidPage = ((PdfMcr) kid).getPageObject();
+                if (!kidPage.isFlushed() && !kidPage.equals(currentPage.getPdfObject())) {
+                    allKidsBelongToPage = false;
+                    break;
+                }
+            } else if (kid instanceof PdfStructElem) {
+                allKidsBelongToPage = false;
+                break;
+            }
+        }
+
+        if (allKidsBelongToPage) {
+            PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
+            IPdfStructElem parentsParent = parent.getParent();
+            structTreeRoot.flushStructElement(parent);
+            if (parentsParent instanceof PdfStructElem) {
+                flushParentIfBelongsToPage((PdfStructElem)parentsParent, currentPage);
+            }
+        }
+
+        return;
+    }
+
+    public void flushTag() {
+        IAccessibleElement modelElement = connectedStructToModel.remove(currentStructElem.getPdfObject());
+        if (modelElement != null) {
+            connectedModelToStruct.remove(modelElement);
+        }
+
+        //TODO if flushing document level tag?
+        IPdfStructElem parent = currentStructElem.getParent();
+        flushStructElementAndItKids(currentStructElem);
+        if (parent != null && !(parent instanceof PdfStructTreeRoot)) { // parent is not flushed
+            currentStructElem = (PdfStructElem) parent;
+        } else {
+            currentStructElem = documentElem;
+        }
+    }
+
+    private void flushStructElementAndItKids(PdfStructElem elem) {
+        if (connectedStructToModel.containsKey(elem.getPdfObject())) {
+            return;
+        }
+
+        for (IPdfStructElem kid : elem.getKids()) {
+            if (kid instanceof PdfStructElem) {
+                flushStructElementAndItKids((PdfStructElem) kid);
+            }
+        }
+        document.getStructTreeRoot().flushStructElement(elem);
+    }
+
+    //-------------------------------------------------------------------------------------------------
 
     //TODO if strucElement contains properties that have to or better to write to canvas (like E) - add them to the tag here (and may be remove them from the structure element?)
     protected int getNextMcidForStructElem(PdfStructElem elem, int index) {
@@ -235,8 +341,8 @@ public class PdfTagStructure {
         if (rootKids.isEmpty()) {
             documentElem = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Document));
         } else if (rootKids.size() > 1) {
-            //TODO review. may be log something. check this in spec
-            throw new PdfException("according to spec, only one element shall be structTreeRoot child");
+            //TODO not true
+//            throw new PdfException("according to spec, only one element shall be structTreeRoot child");
         }
 
         if (documentElem == null) {
@@ -250,8 +356,8 @@ public class PdfTagStructure {
     private PdfStructElem addNewKid(int index, IAccessibleElement element, boolean keepConnectedToTag) {
         PdfStructElem kid = new PdfStructElem(document, element.getRole());
         if (keepConnectedToTag) {
-            incompleteElements.put(element, kid);
-            //TODO mark currentStructElem as not finished
+            connectedModelToStruct.put(element, kid);
+            connectedStructToModel.put(kid.getPdfObject(), element);
         }
         return currentStructElem.addKid(index, kid);
     }

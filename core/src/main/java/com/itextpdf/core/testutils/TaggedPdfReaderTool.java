@@ -98,8 +98,10 @@ import java.util.Map;
             out.print("</");
             out.print(tag);
             out.println(">");
-        } else {
+        } else if (kid instanceof PdfMcr) {
             parseTag((PdfMcr) kid);
+        } else {
+            out.print(" </flushedKid> ");
         }
     }
 

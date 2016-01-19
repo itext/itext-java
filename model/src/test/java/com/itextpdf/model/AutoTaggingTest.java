@@ -328,6 +328,117 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    /**
+     * Document generation and result is the same in this test as in the textInParagraphTest01, except the partial flushing of
+     * tag structure. So you can check the result by comparing resultant document with the one in textInParagraphTest01.
+     */
+    public void flushingTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        String outFileName = destinationFolder + "flushingTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_flushingTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        pdfDocument.setTagged();
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p = createParagraph1();
+        document.add(p);
+
+        int pageToFlush = 1;
+        for (int i = 0; i < 26; ++i) {
+            if (i % 6 == 5) {
+                pdfDocument.getPage(pageToFlush++).flush();
+            }
+            document.add(createParagraph2());
+        }
+
+        document.close();
+
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
+        assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    /**
+     * Document generation and result is the same in this test as in the tableTest05, except the partial flushing of
+     * tag structure. So you can check the result by comparing resultant document with the one in tableTest05.
+     */
+    public void flushingTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        String outFileName = destinationFolder + "flushingTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_flushingTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(5, true);
+        doc.add(table);
+
+        //TODO solve header/footer problems with tagging. Currently, partial flushing when header/footer is used leads to crash.
+//        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
+//        table.addHeaderCell(cell);
+//        for (int i = 0; i < 5; ++i) {
+//            table.addHeaderCell(new Cell().add("Header " + (i + 1)));
+//        }
+//        cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
+//        table.addFooterCell(cell);
+//        table.setSkipFirstHeader(true);
+//        table.setSkipLastFooter(true);
+
+        int magicalFlushingIndicator = 148;
+        for (int i = 0; i < 350; i++) {
+            if (i % magicalFlushingIndicator == magicalFlushingIndicator - 1) {
+                pdfDocument.getPage(i / magicalFlushingIndicator + 1).flush();
+            }
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.flush();
+        }
+
+        table.complete();
+
+        doc.close();
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
+        assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    /**
+     * Document generation and result is the same in this test as in the tableTest04, except the partial flushing of
+     * tag structure. So you can check the result by comparing resultant document with the one in tableTest04.
+     */
+    public void flushingTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        String outFileName = destinationFolder + "flushingTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_tableTest04.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(5, true);
+
+        doc.add(table);
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 4; j++) {
+                table.addCell(new Cell().add(new Paragraph(String.format("Cell %s, %s", i + 1, j + 1))));
+            }
+
+            if (i % 10 == 0) {
+                table.flush();
+
+                pdfDocument.getTagStructure().flushPageTags(pdfDocument.getPage(1));
+
+                // This is a deliberate additional flush.
+                table.flush();
+            }
+        }
+
+        table.complete();
+
+        doc.close();
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
+        assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     /* TODO
         1. compare by tag structure
         5. lists tests

@@ -106,7 +106,7 @@ public class PdfAFlushingTest extends ITextTest{
     }
 
     @Test
-    public void AddUnusedStreamObjectsTest() throws IOException, InterruptedException, XMPException {
+    public void addUnusedStreamObjectsTest() throws IOException, InterruptedException, XMPException {
         String filenameIn = "docWithUnusedObjects_3.pdf";
 
 

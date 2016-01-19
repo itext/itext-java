@@ -261,6 +261,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Flushes page and it's content stream.
+     * <br>
+     * <br>
+     * If the page belongs to the document which is tagged, page flushing also triggers flushing of the tags,
+     * which are considered to belong to the page. The logic that defines if the given tag (structure element) belongs
+     * to the page is the following: if all the marked content references (dictionary or number references), that are the
+     * descenders of the given structure element, belong to the current page - the tag is considered
+     * to belong to the page. If tag has descenders from several pages - it is flushed, if all other pages except the
+     * current one are flushed.
      */
     @Override
     public void flush() {
@@ -271,18 +279,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Flushes page and it's content stream. If <code>flushXObjects</code> is true the images and FormXObjects
      * associated with this page will also be flushed.
      * <br>
+     * For notes about tag structure flushing see {@link PdfPage#flush() PdfPage#flush() method}.
+     * <br>
      * <br>
      * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushXObjects</code> is true.
+     * // TODO will it? also, add the logger warning in case of failed flush
      * @param flushXObjects if true the images and FormXObjects associated with this page will also be flushed.
      */
     public void flush(boolean flushXObjects) {
         if (isFlushed()) {
             return;
         }
-        if (getDocument().isTagged() && structParents == null) {
-            PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
-            if (n != null)
-                structParents = n.getIntValue();
+        if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
+            getDocument().getTagStructure().flushPageTags(this);
+            getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
         }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
         if (flushXObjects) {
@@ -417,9 +427,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (structParents == null) {
             PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
             if (n != null) {
-                structParents = getPdfObject().getAsNumber(PdfName.StructParents).getIntValue();
+                structParents = n.getIntValue();
             } else {
-                //TODO: may be put in dictionary? or will it be added on flush? check all the page's structParents logic
                 structParents = 0;
             }
         }
@@ -523,6 +532,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private Integer getMcid(List<PdfMcr> mcrs) {
         Integer maxMcid = null;
+        if (mcrs == null)
+            return 0;
+
         for (PdfMcr mcr : mcrs) {
             Integer mcid = mcr.getMcid();
             if (maxMcid == null || (mcid != null && mcid > maxMcid))

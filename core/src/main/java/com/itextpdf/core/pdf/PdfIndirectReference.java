@@ -204,7 +204,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return checkState(Free) || checkState(OriginalObjectStream);
     }
 
-    /*
+    /**
     * Releases indirect reference from the document. Remove link to the referenced indirect object.
     * <p>
     * Note: Be careful when using this method. Do not use this method for wrapper objects,

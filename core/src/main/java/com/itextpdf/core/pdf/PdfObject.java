@@ -95,12 +95,27 @@ abstract public class PdfObject {
     /**
      * Gets the indirect reference associated with the object.
      * The indirect reference is used when flushing object to the document.
-     * If no reference is associated - create a new one.
      *
      * @return indirect reference.
      */
     public PdfIndirectReference getIndirectReference() {
         return indirectReference;
+    }
+
+    /**
+     * Checks if object is indirect.
+     * <br>
+     * Note:
+     * Return value {@true} doesn't necessarily mean that indirect reference of this object
+     * is not null at the moment. Object could be marked as indirect and
+     * be transformed to indirect on flushing.
+     * <br>
+     * E.g. all PdfStreams are transformed to indirect objects when they are written, but they don't always
+     * have indirect references at any given moment.
+     * @return returns {@code true} if object is indirect or is to be indirect in the resultant document.
+     */
+    public boolean isIndirect() {
+        return indirectReference != null || checkState(PdfObject.MustBeIndirect);
     }
 
     /**

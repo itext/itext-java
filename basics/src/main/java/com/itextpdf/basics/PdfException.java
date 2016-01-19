@@ -33,6 +33,7 @@ public class PdfException extends RuntimeException {
     public static final String BytesCanBeAssignedToByteArrayOutputStreamOnly = "bytes.can.be.assigned.to.bytearrayoutputstream.only";
     public static final String BytesCanBeResetInByteArrayOutputStreamOnly = "bytes.can.be.reset.in.bytearrayoutputstream.only";
 
+    public static final String CannotAddKidToTheFlushedElement = "cannot.add.kid.to.the.flushed.element";
     public static final String CannotAddObjectToObjectstream = "cannot.add.object.to.objectstream";
     public static final String CannotAddStructElemToContent = "cannot.add.structelem.to.content";
     public static final String CannotCloseDocument = "cannot.close.document";
@@ -220,6 +221,7 @@ public class PdfException extends RuntimeException {
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
+    public static final String StructElemDictionaryShallBeIndirectObject = "struct.elem.dictionary.shall.be.indirect.object";
     public static final String StructureElementIsNotLinkedToStructParent = "structure.element.is.not.linked.to.structparent";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String StructureElementShallContainPgKey = "structure.element.shall.contain.pg.key";

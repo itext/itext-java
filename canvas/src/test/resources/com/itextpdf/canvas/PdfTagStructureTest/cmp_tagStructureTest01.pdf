@@ -1,0 +1,71 @@
+%PDF-1.7
+%‚„œ”
+10 0 obj
+<</A <</O (random attributes)/hello (world)>>/ActualText (Actual text for span is: Hello World)/K [0 1]/Lang (en-GB)/P 8 0 R/Pg 5 0 R/S /Span/Type /StructElem>>
+endobj
+8 0 obj
+<</K 10 0 R/P 7 0 R/S /P/Type /StructElem>>
+endobj
+7 0 obj
+<</K 8 0 R/P 4 0 R/S /Document/Type /StructElem>>
+endobj
+11 0 obj
+[10 0 R 10 0 R]
+endobj
+6 0 obj
+<</Length 117>>stream
+BT
+/F1 24 Tf
+1 0 0 1 32 512 Tm
+/Span <</MCID 0>> BDC
+(Hello )Tj
+EMC
+/F1 30 Tf
+/Span <</MCID 1>> BDC
+(World)Tj
+EMC
+ET
+
+endstream
+endobj
+5 0 obj
+<</Contents 6 0 R/MediaBox [0 0 595 842]/Parent 2 0 R/Resources <</Font <</F1 9 0 R>>>>/StructParents 0/TrimBox [0 0 595 842]/Type /Page>>
+endobj
+4 0 obj
+<</K [7 0 R]/ParentTree 12 0 R/RoleMap <<>>/Type /StructTreeRoot>>
+endobj
+1 0 obj
+<</MarkInfo <</Marked true>>/Pages 2 0 R/StructTreeRoot 4 0 R/Type /Catalog>>
+endobj
+3 0 obj
+<</CreationDate (D:20160119040557-03'00')/ModDate (D:20160119040557-03'00')/Producer (iTextÆ 6.0.0-SNAPSHOT ©2000-2014 iText Group NV \(AGPL-version\))>>
+endobj
+9 0 obj
+<</BaseFont /Courier/Encoding /WinAnsiEncoding/Subtype /Type1/Type /Font>>
+endobj
+2 0 obj
+<</Count 1/Kids [5 0 R]/Type /Pages>>
+endobj
+12 0 obj
+<</Nums [0 11 0 R]>>
+endobj
+xref
+0 13
+0000000000 65535 f 
+0000000749 00000 n 
+0000001101 00000 n 
+0000000842 00000 n 
+0000000667 00000 n 
+0000000513 00000 n 
+0000000348 00000 n 
+0000000251 00000 n 
+0000000192 00000 n 
+0000001011 00000 n 
+0000000015 00000 n 
+0000000316 00000 n 
+0000001154 00000 n 
+trailer
+<</ID [<4ef32e8c13d689f6e80cba6a05bfa80d><4ef32e8c13d689f6e80cba6a05bfa80d>]/Info 3 0 R/Root 1 0 R/Size 13>>
+startxref
+1191
+%%EOF
