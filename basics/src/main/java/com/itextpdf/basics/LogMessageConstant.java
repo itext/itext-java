@@ -1,5 +1,8 @@
 package com.itextpdf.basics;
 
+/**
+ * Class containing constants to be used in logging.
+ */
 public class LogMessageConstant {
 
     /**
