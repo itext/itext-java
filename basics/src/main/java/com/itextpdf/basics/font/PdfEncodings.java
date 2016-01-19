@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 import java.util.HashMap;
+import java.util.Map;
 
 public class PdfEncodings {
 
@@ -104,7 +105,7 @@ public class PdfEncodings {
 
     public static final IntHashtable pdfEncoding = new IntHashtable();
 
-    private static final HashMap<String, ExtraEncoding> extraEncodings = new HashMap<String, ExtraEncoding>();
+    private static final Map<String, ExtraEncoding> extraEncodings = new HashMap<>();
 
     static {
         for (int k = 128; k < 161; ++k) {

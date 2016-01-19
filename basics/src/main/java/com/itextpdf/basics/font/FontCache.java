@@ -40,7 +40,7 @@ public class FontCache {
     private static final String W_PROP = "W";
     private static final String W2_PROP = "W2";
 
-    private static ConcurrentHashMap<String, FontProgram> fontCache = new ConcurrentHashMap<>();
+    private static Map<String, FontProgram> fontCache = new ConcurrentHashMap<>();
 
     static {
         try {

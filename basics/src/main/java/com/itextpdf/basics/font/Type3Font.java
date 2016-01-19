@@ -4,6 +4,7 @@ import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Type3Font extends FontProgram {
 
@@ -21,7 +22,7 @@ public class Type3Font extends FontProgram {
 
     //TODO remove
     public GlyphLine createGlyphLine(String content) {
-        ArrayList<Glyph> glyphs = new ArrayList<>(content.length());
+        List<Glyph> glyphs = new ArrayList<>(content.length());
         for (int i = 0; i < content.length(); i++) {
             Glyph glyph = codeToGlyph.get(content.charAt(i) & 0xff);
             if (glyph != null) {

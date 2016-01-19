@@ -5,7 +5,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -19,7 +19,7 @@ public class CidFont extends FontProgram {
     public CidFont(String fontName, Set<String> cmaps) {
         compatibleCmaps = cmaps;
         initializeCidFontNameAndStyle(fontName);
-        HashMap<String, Object> fontDesc = CidFontProperties.getAllFonts().get(fontNames.getFontName());
+        Map<String, Object> fontDesc = CidFontProperties.getAllFonts().get(fontNames.getFontName());
         if (fontDesc == null) {
             throw new PdfException("no.such.predefined.font.1").setMessageParams(fontName);
         }
@@ -27,7 +27,7 @@ public class CidFont extends FontProgram {
     }
 
     //TODO sample?
-    public CidFont(String fontName, Set<String> cmaps, HashMap<String, Object> fontDescription) {
+    public CidFont(String fontName, Set<String> cmaps, Map<String, Object> fontDescription) {
         initializeCidFontNameAndStyle(fontName);
         initializeCidFontProperties(fontDescription);
         compatibleCmaps = cmaps;
@@ -92,7 +92,7 @@ public class CidFont extends FontProgram {
         }
     }
 
-    private void initializeCidFontProperties(HashMap<String, Object> fontDesc) {
+    private void initializeCidFontProperties(Map<String, Object> fontDesc) {
         setHMetrics((IntHashtable) fontDesc.get("W"));
         setVMetrics((IntHashtable) fontDesc.get("W2"));
         fontIdentification.setPanose((String) fontDesc.get("Panose"));

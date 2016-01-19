@@ -5,12 +5,13 @@ import com.itextpdf.basics.Utilities;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 public class AdobeGlyphList {
 
-    private static HashMap<Integer, String> unicode2names = new HashMap<>();
-    private static HashMap<String, Integer> names2unicode = new HashMap<>();
+    private static Map<Integer, String> unicode2names = new HashMap<>();
+    private static Map<String, Integer> names2unicode = new HashMap<>();
 
     static {
         InputStream is = null;

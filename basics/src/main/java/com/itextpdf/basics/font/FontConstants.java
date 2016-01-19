@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class FontConstants {
 
-    public static final Set<String> BUILTIN_FONTS_14 = new HashSet<String>();
+    public static final Set<String> BUILTIN_FONTS_14 = new HashSet<>();
 
     static {
         BUILTIN_FONTS_14.add(FontConstants.COURIER);

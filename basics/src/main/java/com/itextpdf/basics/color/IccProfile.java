@@ -50,11 +50,12 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class IccProfile {
     protected byte[] data;
     protected int numComponents;
-    private static HashMap<String, Integer> cstags = new HashMap<String, Integer>();
+    private static Map<String, Integer> cstags = new HashMap<>();
 
     protected IccProfile() {
     }

@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -41,7 +44,7 @@ class TrueTypeFontSubset {
      * is the checksum, position 1 is the offset from the start of the file
      * and position 2 is the length of the table.
      */
-    protected HashMap<String, int[]> tableDirectory;
+    protected Map<String, int[]> tableDirectory;
     /** The file in use. */
     protected RandomAccessFileOrArray rf;
     /** The file name. */
@@ -51,7 +54,7 @@ class TrueTypeFontSubset {
     protected boolean locaShortTable;
     protected int[] locaTable;
     protected Set<Integer> glyphsUsed;
-    protected ArrayList<Integer> glyphsInList;
+    protected List<Integer> glyphsInList;
     protected int tableGlyphOffset;
     protected int[] newLocaTable;
     protected byte[] newLocaTableOut;

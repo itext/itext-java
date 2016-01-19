@@ -18,8 +18,8 @@ public class CidFontProperties {
     /** The path to the font resources. */
     public static final String RESOURCE_PATH_CMAP = FontConstants.RESOURCE_PATH + "cmap/";
 
-    private static final HashMap<String, HashMap<String, Object>> allFonts = new HashMap<String, HashMap<String, Object>>();
-    private static final HashMap<String,Set<String>> registryNames = new HashMap<String,Set<String>>();
+    private static final Map<String, Map<String, Object>> allFonts = new HashMap<>();
+    private static final Map<String, Set<String>> registryNames = new HashMap<>();
 
     static {
         try {
@@ -51,7 +51,7 @@ public class CidFontProperties {
         for (Map.Entry<String,Set<String>> e : registryNames.entrySet()) {
             if (e.getValue().contains(enc)) {
                 String registry = e.getKey();
-                for (Map.Entry<String, HashMap<String, Object>> e1 : allFonts.entrySet()) {
+                for (Map.Entry<String, Map<String, Object>> e1 : allFonts.entrySet()) {
                     if (registry.equals(e1.getValue().get("Registry")))
                         return e1.getKey();
                 }
@@ -60,11 +60,11 @@ public class CidFontProperties {
         return null;
     }
 
-    public static HashMap<String, HashMap<String, Object>> getAllFonts() {
+    public static Map<String, Map<String, Object>> getAllFonts() {
         return allFonts;
     }
 
-    public static HashMap<String, Set<String>> getRegistryNames() {
+    public static Map<String, Set<String>> getRegistryNames() {
         return registryNames;
     }
 
@@ -85,7 +85,7 @@ public class CidFontProperties {
         }
     }
 
-    private static HashMap<String, Object> readFontProperties(String name) throws IOException {
+    private static Map<String, Object> readFontProperties(String name) throws IOException {
         name += ".properties";
         InputStream is = Utilities.getResourceStream(RESOURCE_PATH_CMAP + name);
         Properties p = new Properties();
@@ -95,7 +95,7 @@ public class CidFontProperties {
         p.remove("W");
         IntHashtable W2 = createMetric(p.getProperty("W2"));
         p.remove("W2");
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
         for (Enumeration<Object> e = p.keys(); e.hasMoreElements();) {
             Object obj = e.nextElement();
             map.put((String)obj, p.getProperty((String)obj));

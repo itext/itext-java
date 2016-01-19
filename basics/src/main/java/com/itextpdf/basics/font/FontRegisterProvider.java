@@ -2,13 +2,16 @@ package com.itextpdf.basics.font;
 
 
 import com.itextpdf.basics.PdfException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -23,7 +26,7 @@ class FontRegisterProvider {
     /**
      * This is a map of postscriptfontnames of True Type fonts and the path of their ttf- or ttc-file.
      */
-    private final Hashtable<String, String> trueTypeFonts = new Hashtable<String, String>();
+    private final Map<String, String> trueTypeFonts = new HashMap<String, String>();
 
     private static String[] TTFamilyOrder = {
             "3", "1", "1033",
@@ -35,7 +38,7 @@ class FontRegisterProvider {
     /**
      * This is a map of fontfamilies.
      */
-    private final Hashtable<String, ArrayList<String>> fontFamilies = new Hashtable<String, ArrayList<String>>();
+    private final Map<String, List<String>> fontFamilies = new HashMap<>();
 
     /**
      * This is the default encoding to use.
@@ -66,7 +69,7 @@ class FontRegisterProvider {
         trueTypeFonts.put(FontConstants.TIMES_BOLDITALIC.toLowerCase(), FontConstants.TIMES_BOLDITALIC);
         trueTypeFonts.put(FontConstants.ZAPFDINGBATS.toLowerCase(), FontConstants.ZAPFDINGBATS);
 
-        ArrayList<String> tmp;
+        List<String> tmp;
         tmp = new ArrayList();
         tmp.add(FontConstants.COURIER);
         tmp.add(FontConstants.COURIER_BOLD);
@@ -119,7 +122,7 @@ class FontRegisterProvider {
         if (fontName == null)
             return null;
         String lowerCaseFontName = fontName.toLowerCase();
-        ArrayList<String> tmp = fontFamilies.get(lowerCaseFontName);
+        List<String> tmp = fontFamilies.get(lowerCaseFontName);
         if (tmp != null) {
             synchronized (tmp) {
                 // some bugs were fixed here by Daniel Marczisovszky
@@ -176,7 +179,7 @@ class FontRegisterProvider {
     public void registerFamily(final String familyName, final String fullName, final String path) {
         if (path != null)
             trueTypeFonts.put(fullName, path);
-        ArrayList<String> tmp;
+        List<String> tmp;
         synchronized (fontFamilies) {
             tmp = fontFamilies.get(familyName);
             if (tmp == null) {

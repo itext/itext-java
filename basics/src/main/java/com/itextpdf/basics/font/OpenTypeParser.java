@@ -8,9 +8,9 @@ import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 class OpenTypeParser {
@@ -103,15 +103,15 @@ class OpenTypeParser {
          * is the glyph number and position 1 is the glyph width normalized to 1000 units.
          * {@see TrueTypeFont.UNITS_NORMALIZATION}.
          */
-        HashMap<Integer, int[]> cmap10;
+        Map<Integer, int[]> cmap10;
         /**
          * The map containing the code information for the table 'cmap', encoding 3.1 in Unicode.
          * The key is the code and the value is an {@code int[2]} where position 0
          * is the glyph number and position 1 is the glyph width normalized to 1000 units.
          * {@see TrueTypeFont.UNITS_NORMALIZATION}.
          */
-        HashMap<Integer, int[]> cmap31;
-        HashMap<Integer, int[]> cmapExt;
+        Map<Integer, int[]> cmap31;
+        Map<Integer, int[]> cmapExt;
         boolean fontSpecific = false;
     }
 
@@ -137,7 +137,7 @@ class OpenTypeParser {
     /**
      * All the names of the Names-Table.
      */
-    protected HashMap<Integer, List<String[]>> allNameEntries;
+    protected Map<Integer, List<String[]>> allNameEntries;
 
     /**
      * Indicate, that the font contains 'CFF ' table.
@@ -166,7 +166,7 @@ class OpenTypeParser {
      * is the offset from the start of the file and position 1 is the length
      * of the table.
      */
-    protected HashMap<String, int[]> tables;
+    protected Map<String, int[]> tables;
 
     public OpenTypeParser(byte[] ttf) throws IOException {
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttf));
@@ -212,7 +212,7 @@ class OpenTypeParser {
         return fontName;
     }
 
-    public HashMap<Integer, List<String[]>> getAllNameEntries() {
+    public Map<Integer, List<String[]>> getAllNameEntries() {
         return allNameEntries;
     }
 
@@ -860,8 +860,8 @@ class OpenTypeParser {
      * @return a <CODE>HashMap</CODE> representing this map
      * @throws IOException the font file could not be read
      */
-    private HashMap<Integer, int[]> readFormat0() throws IOException {
-        HashMap<Integer, int[]> h = new LinkedHashMap<>();
+    private Map<Integer, int[]> readFormat0() throws IOException {
+        Map<Integer, int[]> h = new LinkedHashMap<>();
         raf.skipBytes(4);
         for (int k = 0; k < 256; ++k) {
             int[] r = new int[2];
@@ -879,8 +879,8 @@ class OpenTypeParser {
      * @return a <CODE>HashMap</CODE> representing this map
      * @throws IOException the font file could not be read
      */
-    private HashMap<Integer, int[]> readFormat4(boolean fontSpecific) throws IOException {
-        HashMap<Integer, int[]> h = new LinkedHashMap<>();
+    private Map<Integer, int[]> readFormat4(boolean fontSpecific) throws IOException {
+        Map<Integer, int[]> h = new LinkedHashMap<>();
         int table_lenght = raf.readUnsignedShort();
         raf.skipBytes(2);
         int segCount = raf.readUnsignedShort() / 2;
@@ -941,8 +941,8 @@ class OpenTypeParser {
      * @return a <CODE>HashMap</CODE> representing this map
      * @throws IOException the font file could not be read
      */
-    private HashMap<Integer, int[]> readFormat6() throws IOException {
-        HashMap<Integer, int[]> h = new LinkedHashMap<>();
+    private Map<Integer, int[]> readFormat6() throws IOException {
+        Map<Integer, int[]> h = new LinkedHashMap<>();
         raf.skipBytes(4);
         int start_code = raf.readUnsignedShort();
         int code_count = raf.readUnsignedShort();
@@ -955,8 +955,8 @@ class OpenTypeParser {
         return h;
     }
 
-    private HashMap<Integer, int[]> readFormat12() throws IOException {
-        HashMap<Integer, int[]> h = new LinkedHashMap<>();
+    private Map<Integer, int[]> readFormat12() throws IOException {
+        Map<Integer, int[]> h = new LinkedHashMap<>();
         raf.skipBytes(2);
         @SuppressWarnings("unused")
         int table_length = raf.readInt();

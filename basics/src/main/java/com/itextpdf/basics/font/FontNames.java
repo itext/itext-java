@@ -1,7 +1,7 @@
 package com.itextpdf.basics.font;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FontNames {
 
@@ -60,7 +60,7 @@ public class FontNames {
     // Font width Ultra-expanded, 200%
     protected static final int FWIDTH_ULTRA_EXPANDED = 9;
 
-    protected HashMap<Integer, List<String[]>> allNames;
+    protected Map<Integer, List<String[]>> allNames;
 
     // name, ID = 4
     private String[][] fullName;
@@ -166,7 +166,7 @@ public class FontNames {
         return (macStyle & EXTENDED_FLAG) != 0;
     }
 
-    protected void setAllNames(HashMap<Integer, List<String[]>> allNames) {
+    protected void setAllNames(Map<Integer, List<String[]>> allNames) {
         this.allNames = allNames;
     }
 

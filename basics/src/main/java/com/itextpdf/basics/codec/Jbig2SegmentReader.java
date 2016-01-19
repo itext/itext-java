@@ -5,8 +5,8 @@ import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.SortedMap;
-import java.util.SortedSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -49,9 +49,9 @@ public class Jbig2SegmentReader {
     public static final int TABLES = 53; //see 7.4.13.
     public static final int EXTENSION = 62; //see 7.4.14.
 
-    private final SortedMap<Integer, Jbig2Segment> segments = new TreeMap<Integer, Jbig2Segment>();
-    private final SortedMap<Integer, Jbig2Page> pages = new TreeMap<Integer, Jbig2Page>();
-    private final SortedSet<Jbig2Segment> globals = new TreeSet<Jbig2Segment>();
+    private final Map<Integer, Jbig2Segment> segments = new TreeMap<>();
+    private final Map<Integer, Jbig2Page> pages = new TreeMap<>();
+    private final Set<Jbig2Segment> globals = new TreeSet<>();
     private RandomAccessFileOrArray ra;
     private boolean sequential;
     private boolean number_of_pages_known;
@@ -97,7 +97,7 @@ public class Jbig2SegmentReader {
     public static class Jbig2Page {
         public final int page;
         private final Jbig2SegmentReader sr;
-        private final SortedMap<Integer, Jbig2Segment> segs = new TreeMap<Integer, Jbig2Segment>();
+        private final Map<Integer, Jbig2Segment> segs = new TreeMap<>();
         public int pageBitmapWidth = -1;
         public int pageBitmapHeight = -1;
 
@@ -149,7 +149,7 @@ public class Jbig2SegmentReader {
         }
 
         public void addSegment(Jbig2Segment s) {
-            segs.put(Integer.valueOf(s.segmentNumber), s);
+            segs.put(s.segmentNumber, s);
         }
 
     }
@@ -177,14 +177,14 @@ public class Jbig2SegmentReader {
             do {
                 Jbig2Segment tmp = readHeader();
                 readSegment(tmp);
-                segments.put(Integer.valueOf(tmp.segmentNumber), tmp);
+                segments.put(tmp.segmentNumber, tmp);
             } while (this.ra.getPosition() < this.ra.length());
         } else {
             // D.2
             Jbig2Segment tmp;
             do {
                 tmp = readHeader();
-                segments.put(Integer.valueOf(tmp.segmentNumber), tmp);
+                segments.put(tmp.segmentNumber, tmp);
             } while (tmp.type != END_OF_FILE);
             Iterator<Integer> segs = segments.keySet().iterator();
             while (segs.hasNext()) {

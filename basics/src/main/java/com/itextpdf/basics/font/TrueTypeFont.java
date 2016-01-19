@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -302,7 +301,7 @@ public class TrueTypeFont extends FontProgram {
     }
 
     public GlyphLine createGlyphLine(char[] glyphs, Integer length) {
-        ArrayList<Glyph> glyphLine = new ArrayList<>(length);
+        List<Glyph> glyphLine = new ArrayList<>(length);
         for (int k = 0; k < length; k++) {
             int index = glyphs[k];
             Glyph glyph = getGlyphByCode(index);
@@ -338,7 +337,7 @@ public class TrueTypeFont extends FontProgram {
         return fontParser.isCff();
     }
 
-    public HashMap<Integer, int[]> getActiveCmap() {
+    public Map<Integer, int[]> getActiveCmap() {
         OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
         if (cmaps.cmapExt != null) {
             return cmaps.cmapExt;
@@ -501,7 +500,7 @@ public class TrueTypeFont extends FontProgram {
         }
         fontIdentification.setPanose(os_2.panose);
 
-        HashMap<Integer, int[]> cmap = getActiveCmap();
+        Map<Integer, int[]> cmap = getActiveCmap();
         int[] glyphWidths = fontParser.getGlyphWidthsByIndex();
         unicodeToGlyph = new LinkedHashMap<>(cmap.size());
         codeToGlyph = new LinkedHashMap<>(glyphWidths.length);

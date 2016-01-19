@@ -52,8 +52,10 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A class representing an Image File Directory (IFD) from a TIFF 6.0
@@ -98,7 +100,7 @@ public class TIFFDirectory implements Serializable {
     /**
      * A Hashtable indexing the fields by tag number.
      */
-    Hashtable<Integer, Integer> fieldIndex = new Hashtable<Integer, Integer>();
+    Map<Integer, Integer> fieldIndex = new HashMap<>();
 
     /**
      * The offset of this IFD.
@@ -289,7 +291,7 @@ public class TIFFDirectory implements Serializable {
 
                             // Can be multiple strings
                             int index = 0, prevIndex = 0;
-                            ArrayList<String> v = new ArrayList<String>();
+                            List<String> v = new ArrayList<>();
 
                             while (index < count) {
 
@@ -423,7 +425,7 @@ public class TIFFDirectory implements Serializable {
      * Returns true if a tag appears in the directory.
      */
     public boolean isTagPresent(int tag) {
-        return fieldIndex.containsKey(Integer.valueOf(tag));
+        return fieldIndex.containsKey(tag);
     }
 
     /**
@@ -432,11 +434,11 @@ public class TIFFDirectory implements Serializable {
      */
     public int[] getTags() {
         int[] tags = new int[fieldIndex.size()];
-        Enumeration<Integer> e = fieldIndex.keys();
+        Iterator<Integer> e = fieldIndex.keySet().iterator();
         int i = 0;
 
-        while (e.hasMoreElements()) {
-            tags[i++] = e.nextElement();
+        while (e.hasNext()) {
+            tags[i++] = e.next();
         }
 
         return tags;

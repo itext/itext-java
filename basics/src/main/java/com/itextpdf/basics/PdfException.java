@@ -306,7 +306,7 @@ public class PdfException extends RuntimeException {
     }
 
     public PdfException setMessageParams(Object... messageParams) { // TODO: make it to be constructor parameter
-        this.messageParams = new ArrayList<Object>();
+        this.messageParams = new ArrayList<>();
         Collections.addAll(this.messageParams, messageParams);
         return this;
     }

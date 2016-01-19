@@ -5,6 +5,7 @@ import com.itextpdf.basics.font.otf.Glyph;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class FontProgram {
 
@@ -14,8 +15,8 @@ public abstract class FontProgram {
 
     // In case Type1: char code to glyph.
     // In case TrueType: glyph index to glyph.
-    protected HashMap<Integer, Glyph> codeToGlyph = new HashMap<>();
-    protected HashMap<Integer, Glyph> unicodeToGlyph = new HashMap<>();
+    protected Map<Integer, Glyph> codeToGlyph = new HashMap<>();
+    protected Map<Integer, Glyph> unicodeToGlyph = new HashMap<>();
     protected boolean isFontSpecific;
 
     protected FontNames fontNames = new FontNames();

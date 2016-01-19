@@ -7,6 +7,7 @@ import com.itextpdf.basics.io.RandomAccessFileOrArray;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class Type1Font extends FontProgram {
      * Represents the section KernPairs in the AFM file.
      * Key is uni1<<32 + uni2. Value is kerning value.
      */
-    private HashMap<Long, Integer> kernPairs = new HashMap<>();
+    private Map<Long, Integer> kernPairs = new HashMap<>();
 
     /**
      * Types of records in a PFB file. ASCII is 1 and BINARY is 2. They have to appear in the PFB file in this sequence.
