@@ -1,5 +1,8 @@
 package com.itextpdf.core.pdf;
 
+/**
+ * Enum listing all official PDF versions.
+ */
 public enum PdfVersion {
 
     PDF_1_0("PDF-1.0"),
@@ -14,6 +17,11 @@ public enum PdfVersion {
 
     private String value;
 
+    /**
+     * Creates a PdfVersion enum.
+     *
+     * @param value version number
+     */
     PdfVersion(String value) {
         this.value = value;
     }
@@ -23,6 +31,13 @@ public enum PdfVersion {
         return value;
     }
 
+    /**
+     * Creates a PdfVersion enum from a String object if the specified version
+     * can be found.
+     *
+     * @param value version number
+     * @return PdfVersion of the specified version
+     */
     public static PdfVersion fromString(String value) {
         for (PdfVersion version : PdfVersion.values()) {
             if (version.value.equals(value)) {
