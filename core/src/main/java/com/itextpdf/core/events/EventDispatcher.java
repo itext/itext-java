@@ -2,17 +2,22 @@ package com.itextpdf.core.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * IEventDispatcher implementation that forwards Events to registered {@link com.itextpdf.core.events.IEventHandler}
+ * implementations.
+ */
 public class EventDispatcher implements IEventDispatcher {
 
-    protected HashMap<String, ArrayList<IEventHandler>> eventHandlers = new HashMap<String, ArrayList<IEventHandler>>();
+    protected Map<String, ArrayList<IEventHandler>> eventHandlers = new HashMap<>();
 
     @Override
     public void addEventHandler(String type, IEventHandler handler) {
         removeEventHandler(type, handler);
         ArrayList<IEventHandler> handlers = eventHandlers.get(type);
         if (handlers == null) {
-            handlers = new ArrayList<IEventHandler>();
+            handlers = new ArrayList<>();
             eventHandlers.put(type, handlers);
         }
         handlers.add(handler);
