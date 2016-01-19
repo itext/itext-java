@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.navigation.PdfDestination;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,10 +22,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private PdfOutline outlines;
     private boolean replaceNamedDestinations = true;
     //This HashMap contents all pages of the document and outlines associated to them
-    private HashMap<PdfObject, ArrayList<PdfOutline>> pagesWithOutlines = new HashMap<PdfObject, ArrayList<PdfOutline>>();
+    private Map<PdfObject, List<PdfOutline>> pagesWithOutlines = new HashMap<>();
     //This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
     private boolean outlineMode;
-    private HashMap<Object, PdfObject> names = new HashMap<Object, PdfObject>();
+    private Map<Object, PdfObject> names = new HashMap<>();
     private boolean isNamedDestinationsGot = false;
 
     protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) {
@@ -179,8 +180,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return
      * @throws PdfException
      */
-    public HashMap<Object, PdfObject> getNamedDestinations() {
-        HashMap<Object, PdfObject> names = getNamedDestinatnionsFromNames();
+    public Map<Object, PdfObject> getNamedDestinations() {
+        Map<Object, PdfObject> names = getNamedDestinatnionsFromNames();
         names.putAll(getNamedDestinatnionsFromStrings());
         isNamedDestinationsGot = true;
         return names;
@@ -238,7 +239,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * this method return map containing all pages of the document with associated outlines.
       * @return
      */
-    HashMap<PdfObject, ArrayList<PdfOutline>> getPagesWithOutlines() {
+    Map<PdfObject, List<PdfOutline>> getPagesWithOutlines() {
         return pagesWithOutlines;
     }
 
@@ -317,9 +318,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void addOutlineToPage(PdfOutline outline, HashMap<Object, PdfObject> names) {
+    private void addOutlineToPage(PdfOutline outline, Map<Object, PdfObject> names) {
         PdfObject obj = outline.getDestination().getDestinationPage(names);
-        ArrayList<PdfOutline> outs = pagesWithOutlines.get(obj);
+        List<PdfOutline> outs = pagesWithOutlines.get(obj);
         if (outs == null) {
             outs = new ArrayList<PdfOutline>();
             pagesWithOutlines.put(obj, outs);
@@ -327,7 +328,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         outs.add(outline);
     }
 
-    private void getNextItem(PdfDictionary item, PdfOutline parent, HashMap<Object, PdfObject> names) {
+    private void getNextItem(PdfDictionary item, PdfOutline parent, Map<Object, PdfObject> names) {
         PdfOutline outline = new PdfOutline(item.getAsString(PdfName.Title).toUnicodeString(), item, parent);
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {
@@ -350,8 +351,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private HashMap<Object, PdfObject> getNamedDestinatnionsFromNames() {
-        HashMap<Object, PdfObject> names = new HashMap<Object, PdfObject>();
+    private Map<Object, PdfObject> getNamedDestinatnionsFromNames() {
+        Map<Object, PdfObject> names = new HashMap<Object, PdfObject>();
         PdfDictionary destinations = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Dests);
         if(destinations != null){
             Set<PdfName> keys = destinations.keySet();
@@ -367,12 +368,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return names;
     }
 
-    private HashMap<String, PdfObject> getNamedDestinatnionsFromStrings() {
+    private Map<String, PdfObject> getNamedDestinatnionsFromStrings() {
         PdfDictionary dictionary = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Names);
         if(dictionary != null){
             dictionary = dictionary.getAsDictionary(PdfName.Dests);
             if (dictionary != null){
-                HashMap<String, PdfObject> names = readTree(dictionary);
+                Map<String, PdfObject> names = readTree(dictionary);
                 for (Iterator<Map.Entry<String, PdfObject>> it = names.entrySet().iterator(); it.hasNext();) {
                     Map.Entry<String, PdfObject> entry = it.next();
                     PdfArray arr = getNameArray(entry.getValue());
@@ -388,15 +389,15 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return new HashMap<String, PdfObject>();
     }
 
-    private HashMap<String, PdfObject> readTree(PdfDictionary dictionary) {
-        HashMap<String, PdfObject> items = new HashMap<String, PdfObject>();
+    private Map<String, PdfObject> readTree(PdfDictionary dictionary) {
+        Map<String, PdfObject> items = new HashMap<String, PdfObject>();
         if (dictionary != null){
             iterateItems(dictionary, items, null);
         }
         return items;
     }
 
-    private PdfString iterateItems(PdfDictionary dictionary, HashMap<String, PdfObject> items, PdfString leftOver) {
+    private PdfString iterateItems(PdfDictionary dictionary, Map<String, PdfObject> items, PdfString leftOver) {
         PdfArray names = dictionary.getAsArray(PdfName.Names);
         if (names != null){
             for (int k = 0; k < names.size(); k++){

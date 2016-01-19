@@ -181,7 +181,7 @@ public abstract class ClipperBase implements Clipper {
         }
 
         //create a new edge array ...
-        final List<Edge> edges = new ArrayList<Edge>( highI + 1 );
+        final List<Edge> edges = new ArrayList<>( highI + 1 );
         for (int i = 0; i <= highI; i++) {
             edges.add( new Edge() );
         }

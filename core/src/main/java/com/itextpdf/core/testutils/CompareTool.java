@@ -39,7 +39,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -359,7 +358,7 @@ public class CompareTool {
         Arrays.sort(cmpImageFiles, new ImageNameComparator());
         String differentPagesFail = null;
         boolean compareExecIsOk = compareExec != null && new File(compareExec).exists();
-        ArrayList<Integer> diffPages = new ArrayList<Integer>();
+        List<Integer> diffPages = new ArrayList<>();
 
         for (int i = 0; i < cnt; i++) {
             if (equalPages != null && equalPages.contains(i))
@@ -532,7 +531,7 @@ public class CompareTool {
         } catch (IOException e) {
             throw new IOException("File \"" + outPdf + "\" not found", e);
         }
-        List<PdfDictionary> outPages = new ArrayList<PdfDictionary>();
+        List<PdfDictionary> outPages = new ArrayList<>();
         outPagesRef = new ArrayList<>();
         loadPagesFromReader(outDocument, outPages, outPagesRef);
 
@@ -542,7 +541,7 @@ public class CompareTool {
         } catch (IOException e) {
             throw new IOException("File \"" + cmpPdf + "\" not found", e);
         }
-        List<PdfDictionary> cmpPages = new ArrayList<PdfDictionary>();
+        List<PdfDictionary> cmpPages = new ArrayList<>();
         cmpPagesRef = new ArrayList<>();
         loadPagesFromReader(cmpDocument, cmpPages, cmpPagesRef);
 
@@ -550,7 +549,7 @@ public class CompareTool {
             return compareVisually(outPath, differenceImagePrefix, ignoredAreas);
 
         CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
-        List<Integer> equalPages = new ArrayList<Integer>(cmpPages.size());
+        List<Integer> equalPages = new ArrayList<>(cmpPages.size());
         for (int i = 0; i < cmpPages.size(); i++) {
             ObjectPath currentPath = new ObjectPath(cmpPagesRef.get(i), outPagesRef.get(i));
             if (compareDictionariesExtended(outPages.get(i), cmpPages.get(i), currentPath, compareResult))
@@ -706,13 +705,13 @@ public class CompareTool {
             PdfIndirectReference outRefKey = outObj.isIndirectReference() ? (PdfIndirectReference) outObj : outObj.getIndirectReference();
             // References to the same page
             if (cmpPagesRef == null) {
-                cmpPagesRef = new ArrayList<PdfIndirectReference>();
+                cmpPagesRef = new ArrayList<>();
                 for (int i = 1; i <= cmpObj.getDocument().getNumOfPages(); ++i) {
                     cmpPagesRef.add(cmpObj.getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
             if (outPagesRef == null) {
-                outPagesRef = new ArrayList<PdfIndirectReference>();
+                outPagesRef = new ArrayList<>();
                 for (int i = 1; i <= outObj.getDocument().getNumOfPages(); ++i) {
                     outPagesRef.add(outObj.getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
@@ -895,7 +894,7 @@ public class CompareTool {
     }
 
     private List<PdfLinkAnnotation> getLinkAnnotations(int pageNum, PdfDocument document) {
-        List<PdfLinkAnnotation> linkAnnotations = new ArrayList<PdfLinkAnnotation>();
+        List<PdfLinkAnnotation> linkAnnotations = new ArrayList<>();
         List<PdfAnnotation> annotations = document.getCatalog().getPage(pageNum).getAnnotations();
         for (PdfAnnotation annotation : annotations) {
             if(PdfName.Link.equals(annotation.getSubtype())) {
@@ -916,8 +915,8 @@ public class CompareTool {
             else {
                 PdfArray explicitCmpDest = null;
                 PdfArray explicitOutDest = null;
-                HashMap<Object, PdfObject> cmpNamedDestinations = cmpDocument.getCatalog().getNamedDestinations();
-                HashMap<Object, PdfObject> outNamedDestinations = outDocument.getCatalog().getNamedDestinations();
+                Map<Object, PdfObject> cmpNamedDestinations = cmpDocument.getCatalog().getNamedDestinations();
+                Map<Object, PdfObject> outNamedDestinations = outDocument.getCatalog().getNamedDestinations();
                 switch (cmpDestObject.getType()) {
                     case PdfObject.Array:
                         explicitCmpDest = (PdfArray) cmpDestObject;

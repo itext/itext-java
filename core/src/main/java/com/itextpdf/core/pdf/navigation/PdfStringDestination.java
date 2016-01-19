@@ -4,7 +4,7 @@ import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfString;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class PdfStringDestination extends PdfDestination<PdfString> {
 
@@ -17,14 +17,14 @@ public class PdfStringDestination extends PdfDestination<PdfString> {
     }
 
     @Override
-    public PdfObject getDestinationPage(HashMap<Object, PdfObject> names) {
+    public PdfObject getDestinationPage(Map<Object, PdfObject> names) {
         PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());
 
         return array != null ? array.get(0, false) : null;
     }
 
     @Override
-    public PdfDestination replaceNamedDestination(final HashMap<Object, PdfObject> names) {
+    public PdfDestination replaceNamedDestination(final Map<Object, PdfObject> names) {
 
         PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());
         if (array != null){

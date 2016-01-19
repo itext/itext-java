@@ -122,7 +122,7 @@ public class ClipperOffset {
         lowest = new LongPoint();
         lowest.setX( -1l );
         polyNodes = new PolyNode();
-        normals = new ArrayList<DoublePoint>();
+        normals = new ArrayList<>();
     }
 
     public void addPath( Path path, JoinType joinType, EndType endType ) {

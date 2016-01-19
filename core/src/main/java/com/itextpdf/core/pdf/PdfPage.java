@@ -441,7 +441,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public List<PdfAnnotation> getAnnotations() {
-        List<PdfAnnotation> annotations = new ArrayList<PdfAnnotation>();
+        List<PdfAnnotation> annotations = new ArrayList<>();
         PdfArray annots = getPdfObject().getAsArray(PdfName.Annots);
         if (annots != null) {
             for (int i = 0; i < annots.size(); i++) {

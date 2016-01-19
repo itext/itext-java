@@ -6,7 +6,7 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfPage;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class PdfExplicitDestination extends PdfDestination<PdfArray> {
 
@@ -19,12 +19,12 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
     }
 
     @Override
-    public PdfObject getDestinationPage(HashMap<Object, PdfObject> names) {
+    public PdfObject getDestinationPage(Map<Object, PdfObject> names) {
         return getPdfObject().get(0, false);
     }
 
     @Override
-    public PdfDestination replaceNamedDestination(HashMap<Object, PdfObject> names) {
+    public PdfDestination replaceNamedDestination(Map<Object, PdfObject> names) {
         return this;
     }
 

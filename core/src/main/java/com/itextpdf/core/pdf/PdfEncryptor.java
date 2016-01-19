@@ -5,7 +5,7 @@ import com.itextpdf.basics.PdfException;
 import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.Recipient;
@@ -43,7 +43,7 @@ public final class PdfEncryptor {
      *                       values delete the key in the original info dictionary
      * @throws PdfException on error
      */
-    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType, HashMap<String, String> newInfo) {
+    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType, Map<String, String> newInfo) {
         PdfWriter writer = new PdfWriter(os);
         writer.setEncryption(userPassword, ownerPassword, permissions, encryptionType);
         PdfDocument document = new PdfDocument(reader, writer);
@@ -93,7 +93,7 @@ public final class PdfEncryptor {
      *                       values delete the key in the original info dictionary
      * @on error
      */
-    public static void encrypt(PdfReader reader, OutputStream os, final Certificate[] certs, final int[] permissions, final int encryptionType, HashMap<String, String> newInfo) {
+    public static void encrypt(PdfReader reader, OutputStream os, final Certificate[] certs, final int[] permissions, final int encryptionType, Map<String, String> newInfo) {
         PdfWriter writer = new PdfWriter(os);
         writer.setEncryption(certs, permissions, encryptionType);
         PdfDocument document = new PdfDocument(reader, writer);

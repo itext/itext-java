@@ -184,7 +184,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Set<PdfName> getResourceNames() {
-        Set<PdfName> names = new TreeSet<PdfName>(); // TODO: isn't it better to use HashSet? Do we really need certain order?
+        Set<PdfName> names = new TreeSet<>(); // TODO: isn't it better to use HashSet? Do we really need certain order?
         for (PdfName resType : nameToResource.keySet()) {
             names.addAll(getResourceNames(resType));
         }
@@ -210,7 +210,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public List<PdfFont> getFonts(boolean updateFonts) throws IOException {
         if (!updateFonts) {
-            return new ArrayList<PdfFont>(fontsMap.values());
+            return new ArrayList<>(fontsMap.values());
         }
         fontsMap.clear();
         Map<PdfName, PdfObject> fMap = getResource(PdfName.Font);
@@ -221,7 +221,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         if (xMap != null && !xMap.isEmpty()) {
             callXObjectFont(xMap.entrySet(), new HashSet<PdfDictionary>());
         }
-        return new ArrayList<PdfFont>(fontsMap.values());
+        return new ArrayList<>(fontsMap.values());
     }
 
 
@@ -241,7 +241,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         resourceToName.put(resource, resName);
         Map<PdfName, PdfObject> resourceCategory = nameToResource.get(resType);
         if (resourceCategory == null) {
-            nameToResource.put(resType, resourceCategory = new HashMap<PdfName, PdfObject>());
+            nameToResource.put(resType, resourceCategory = new HashMap<>());
         }
         resourceCategory.put(resName, resource);
         PdfDictionary resDictionary = (PdfDictionary) getPdfObject().get(resType);
@@ -294,7 +294,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void addFontFromXObject(Set<Map.Entry<PdfName, PdfObject>> entrySet, HashSet<PdfDictionary> visitedResources) throws IOException {
+    private void addFontFromXObject(Set<Map.Entry<PdfName, PdfObject>> entrySet, Set<PdfDictionary> visitedResources) throws IOException {
         PdfDictionary xObject = new PdfDictionary(entrySet);
         PdfDictionary resources = xObject.getAsDictionary(PdfName.Resources);
         if (resources == null)
@@ -315,7 +315,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void callXObjectFont(Set<Map.Entry<PdfName, PdfObject>> entrySet, HashSet<PdfDictionary> visitedResources) throws IOException {
+    private void callXObjectFont(Set<Map.Entry<PdfName, PdfObject>> entrySet, Set<PdfDictionary> visitedResources) throws IOException {
         for (Map.Entry<PdfName, PdfObject> entry : entrySet) {
             if (entry.getValue().isIndirectReference()) {
                 if (((PdfIndirectReference) entry.getValue()).getRefersTo().isStream()) {

@@ -33,7 +33,7 @@ public class PdfActionOcgState {
     }
 
     public List<PdfObject> getObjectList() {
-        List<PdfObject> states = new ArrayList<PdfObject>();
+        List<PdfObject> states = new ArrayList<>();
         states.add(state);
         states.addAll(ocgs);
         return states;

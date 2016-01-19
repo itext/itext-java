@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.junit.Assert;
@@ -233,7 +234,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(reader);
         PdfDocument pdfDoc1 = new PdfDocument(writer);
 
-        TreeSet<Integer> pages = new TreeSet<Integer>();
+        Set<Integer> pages = new TreeSet<Integer>();
         pages.add(1);
         pages.add(2);
         pages.add(3);

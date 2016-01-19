@@ -79,7 +79,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PolyTree extends PolyNode {
-    private final List<PolyNode> allPolys = new ArrayList<PolyNode>();
+    private final List<PolyNode> allPolys = new ArrayList<>();
 
     public void Clear() {
         allPolys.clear();

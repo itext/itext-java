@@ -2,7 +2,6 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.font.PdfEncodings;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
@@ -86,7 +85,7 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
-    public void setMoreInfo(HashMap<String, String> moreInfo) {
+    public void setMoreInfo(Map<String, String> moreInfo) {
         if (moreInfo != null) {
             for (Map.Entry<String, String> entry : moreInfo.entrySet()) {
                 String key = entry.getKey();

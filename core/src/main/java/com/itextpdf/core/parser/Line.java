@@ -38,7 +38,7 @@ public class Line implements Shape {
     }
 
     public List<Point2D> getBasePoints() {
-        List<Point2D> basePoints = new ArrayList<Point2D>(2);
+        List<Point2D> basePoints = new ArrayList<>(2);
         basePoints.add(p1);
         basePoints.add(p2);
 

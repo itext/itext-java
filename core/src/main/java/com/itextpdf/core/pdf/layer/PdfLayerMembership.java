@@ -52,7 +52,7 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
         if (layers instanceof PdfDictionary)
             return new ArrayList<PdfLayer>() {{add(new PdfLayer((PdfDictionary) layers, getDocument()));}};
         else if (layers instanceof PdfArray) {
-            List<PdfLayer> layerList = new ArrayList<PdfLayer>();
+            List<PdfLayer> layerList = new ArrayList<>();
             for (int ind = 0; ind < ((PdfArray) layers).size(); ind++) {
                 layerList.add(new PdfLayer(((PdfArray) layers).getAsDictionary(ind), getDocument()));
             }

@@ -98,7 +98,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
             throw new IllegalArgumentException("Illegal argument: childLayer");
         childLayer.parent = this;
         if (children == null)
-            children = new ArrayList<PdfLayer>();
+            children = new ArrayList<>();
         children.add(childLayer);
     }
 
@@ -380,7 +380,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @return the list of the current child layers, null if the layer has no children.
      */
     public List<PdfLayer> getChildren() {
-        return children == null ? null : new ArrayList<PdfLayer>(children);
+        return children == null ? null : new ArrayList<>(children);
     }
 
     /**

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PdfOutline {
 
-    private List<PdfOutline> children = new ArrayList<PdfOutline>();
+    private List<PdfOutline> children = new ArrayList<>();
     private String title;
     private PdfDictionary content;
     private PdfDestination destination;
@@ -105,7 +105,7 @@ public class PdfOutline {
         PdfOutline outline = new PdfOutline(title, dictionary, this);
         dictionary.put(PdfName.Title, new PdfString(title));
         dictionary.put(PdfName.Parent, content);
-        if (children.size() != 0){
+        if (!children.isEmpty()){
             if (position != 0){
                 PdfDictionary prevContent = children.get(position-1).getContent();
                 dictionary.put(PdfName.Prev, prevContent);
@@ -156,7 +156,7 @@ public class PdfOutline {
         List<PdfOutline> children = parent.children;
         children.remove(this);
         PdfDictionary parentContent = parent.content;
-        if (children.size() != 0){
+        if (!children.isEmpty()){
             parentContent.put(PdfName.First, children.get(0).content);
             parentContent.put(PdfName.Last, children.get(children.size()-1).content);
         }

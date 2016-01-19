@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -30,7 +31,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected static final byte[] emptyBytes = new byte[0];
 
-    HashMap<Integer, Glyph> notdefGlyphs = new HashMap<>();
+    Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
     //TODO write?
     protected PdfStream toUnicode;
@@ -43,7 +44,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Indicates if all the glyphs and widths for that particular encoding should be included in the document.
      */
     protected boolean subset = true;
-    protected ArrayList<int[]> subsetRanges;
+    protected List<int[]> subsetRanges;
 
     public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws IOException {
         return createStandardFont(FontConstants.HELVETICA, null);
@@ -683,8 +684,8 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return fontStream;
     }
 
-    protected static int[] compactRanges(ArrayList<int[]> ranges) {
-        ArrayList<int[]> simp = new ArrayList<>();
+    protected static int[] compactRanges(List<int[]> ranges) {
+        List<int[]> simp = new ArrayList<>();
         for (int[] range : ranges) {
             for (int j = 0; j < range.length; j += 2) {
                 simp.add(new int[]{Math.max(0, Math.min(range[j], range[j + 1])), Math.min(0xffff, Math.max(range[j], range[j + 1]))});

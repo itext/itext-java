@@ -10,7 +10,6 @@ import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
@@ -20,6 +19,7 @@ import com.itextpdf.core.pdf.PdfString;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
@@ -47,7 +47,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     @Override
     public GlyphLine createGlyphLine(String content) {
-        ArrayList<Glyph> glyphs = new ArrayList<>(content.length());
+        List<Glyph> glyphs = new ArrayList<>(content.length());
         for (int i = 0; i < content.length(); i++) {
             Glyph glyph;
             if (fontEncoding.isFontSpecific()) {

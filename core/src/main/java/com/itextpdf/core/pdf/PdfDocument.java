@@ -113,7 +113,7 @@ public class PdfDocument implements IEventDispatcher {
     */
     protected boolean flushUnusedObjects = false;
 
-    protected Set<PdfFont> documentFonts = new HashSet<PdfFont>();
+    protected Set<PdfFont> documentFonts = new HashSet<>();
 
     protected PdfTagStructure tagStructure;
 
@@ -765,7 +765,7 @@ public class PdfDocument implements IEventDispatcher {
             catalog.getPdfObject().put(PdfName.MarkInfo, new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
                 put(PdfName.Marked, PdfBoolean.PdfTrue);
             }}));
-            structParentIndex = new Integer(0);
+            structParentIndex = 0;
         }
     }
 
@@ -821,7 +821,7 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
-        TreeSet<Integer> pages = new TreeSet<Integer>();
+        Set<Integer> pages = new TreeSet<>();
         for (int i = pageFrom; i <= pageTo; i++) {
             pages.add(i);
         }
@@ -870,7 +870,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) {
+    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) {
         return copyPages(pagesToCopy, toDocument, insertBeforePage, null);
     }
 
@@ -886,12 +886,12 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
+    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         checkClosingStatus();
-        List<PdfPage> copiedPages = new ArrayList<PdfPage>();
-        LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
-        HashMap<PdfPage, List<PdfOutline>> page2Outlines = new HashMap<PdfPage, List<PdfOutline>>();
-        Set<PdfOutline> outlinesToCopy = new HashSet<PdfOutline>();
+        List<PdfPage> copiedPages = new ArrayList<>();
+        Map<PdfPage, PdfPage> page2page = new LinkedHashMap<>();
+        Map<PdfPage, List<PdfOutline>> page2Outlines = new HashMap<>();
+        Set<PdfOutline> outlinesToCopy = new HashSet<>();
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage(pageNum);
             PdfPage newPage = page.copy(toDocument, copier);
@@ -933,7 +933,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument) {
+    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument) {
         return copyPages(pagesToCopy, toDocument, null);
     }
 
@@ -948,7 +948,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(TreeSet<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
 
         return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1, copier);
     }
@@ -1249,9 +1249,9 @@ public class PdfDocument implements IEventDispatcher {
      * @param page2Outlines Map of pages to be copied and outlines associated with them. This map is used for creating destinations in target document.
      * @throws PdfException
      */
-    private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, HashMap<PdfPage, List<PdfOutline>> page2Outlines) {
+    private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, Map<PdfPage, List<PdfOutline>> page2Outlines) {
 
-        HashSet<PdfOutline> outlinesToCopy = new HashSet<PdfOutline>();
+        Set<PdfOutline> outlinesToCopy = new HashSet<>();
         outlinesToCopy.addAll(outlines);
 
         for (PdfOutline outline : outlines) {

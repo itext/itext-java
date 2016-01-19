@@ -6,6 +6,8 @@ import com.itextpdf.basics.io.OutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 class PdfXrefTable {
@@ -31,7 +33,7 @@ class PdfXrefTable {
         if (capacity < 1)
             capacity = InitialCapacity;
         xref = new PdfIndirectReference[capacity];
-        freeReferences = new TreeSet<Integer>();
+        freeReferences = new TreeSet<>();
         add(new PdfIndirectReference(null, 0, MaxGeneration, 0).<PdfIndirectReference>setState(PdfObject.Free));
     }
 
@@ -127,7 +129,7 @@ class PdfXrefTable {
         }
         freeReferences.clear();
 
-        ArrayList<Integer> sections = new ArrayList<Integer>();
+        List<Integer> sections = new ArrayList<>();
         int first = 0;
         int len = 1;
         if (document.appendMode) {

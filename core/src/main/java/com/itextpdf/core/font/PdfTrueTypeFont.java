@@ -7,13 +7,15 @@ import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfStream;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,11 +97,11 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         flushFontData(fontName, subtype);
     }
 
-    protected void addRangeUni(HashSet<Integer> longTag) {
+    protected void addRangeUni(Set<Integer> longTag) {
         if (!subset && (subsetRanges != null || getFontProgram().getDirectoryOffset() > 0)) {
             int[] rg = subsetRanges == null && getFontProgram().getDirectoryOffset() > 0
                     ? new int[]{0, 0xffff} : compactRanges(subsetRanges);
-            HashMap<Integer, int[]> usemap = getFontProgram().getActiveCmap();
+            Map<Integer, int[]> usemap = getFontProgram().getActiveCmap();
             assert usemap != null;
             for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
                 int[] v = e.getValue();
@@ -142,7 +144,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 }
             } else {
                 fontFileName = PdfName.FontFile2;
-                HashSet<Integer> glyphs = new HashSet<>();
+                Set<Integer> glyphs = new HashSet<>();
                 for (int k = 0; k < shortTag.length; k++) {
                     if (shortTag[k] != 0) {
                         Integer uni = fontEncoding.getUnicode(k);

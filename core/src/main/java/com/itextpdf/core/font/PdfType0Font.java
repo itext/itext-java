@@ -33,9 +33,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 
 public class PdfType0Font extends PdfSimpleFont<FontProgram> {
@@ -54,7 +54,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     protected boolean vertical;
     protected CMapEncoding cmapEncoding;
     // TODO HashSet will be enough
-    protected LinkedHashMap<Integer, int[]> longTag;
+    protected Map<Integer, int[]> longTag;
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
 
@@ -308,7 +308,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override
     public GlyphLine createGlyphLine(String content) {
-        ArrayList<Glyph> glyphs = new ArrayList<>();
+        List<Glyph> glyphs = new ArrayList<>();
         //TODO different with type0 and type2 could be removed after simplifying longTag
         if (cidFontType == CidFontType0) {
             int len = content.length();
@@ -849,11 +849,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         return buf.toString();
     }
 
-    protected void addRangeUni(TrueTypeFont ttf, HashMap<Integer, int[]> longTag, boolean includeMetrics) {
+    protected void addRangeUni(TrueTypeFont ttf, Map<Integer, int[]> longTag, boolean includeMetrics) {
         if (!subset && (subsetRanges != null || ttf.getDirectoryOffset() > 0)) {
             int[] rg = subsetRanges == null && ttf.getDirectoryOffset() > 0
                     ? new int[]{0, 0xffff} : compactRanges(subsetRanges);
-            HashMap<Integer, int[]> usemap = ttf.getActiveCmap();
+            Map<Integer, int[]> usemap = ttf.getActiveCmap();
             assert usemap != null;
             for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
                 int[] v = e.getValue();
@@ -1068,7 +1068,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                                     }
                                 }
                             } else if (ob2.isArray()) {
-                                ArrayList<CMapObject> a = (ArrayList<CMapObject>) ob2.getValue();
+                                List<CMapObject> a = (ArrayList<CMapObject>) ob2.getValue();
                                 for (int j = 0; j < a.size(); ++j, ++cid1c) {
                                     String uni = CMapContentParser.decodeCMapObject(a.get(j));
                                     if (uni.length() == 1) {

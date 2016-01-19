@@ -3,7 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 /**
  * Algorithm for construction {@see PdfPages} tree
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 class PdfPagesTree {
     private final int leafSize = 10;
 
-    private ArrayList<PdfDictionary> pageRefs;
-    private ArrayList<PdfPages> parents;
-    private ArrayList<PdfPage> pages;
+    private List<PdfDictionary> pageRefs;
+    private List<PdfPages> parents;
+    private List<PdfPage> pages;
     private PdfDocument document;
     private boolean generated = false;
     private PdfPages root;
@@ -25,9 +25,9 @@ class PdfPagesTree {
      */
     public PdfPagesTree(PdfCatalog pdfCatalog) {
         this.document = pdfCatalog.getDocument();
-        this.pageRefs = new ArrayList<PdfDictionary>();
-        this.parents = new ArrayList<PdfPages>();
-        this.pages = new ArrayList<PdfPage>();
+        this.pageRefs = new ArrayList<>();
+        this.parents = new ArrayList<>();
+        this.pages = new ArrayList<>();
         if (pdfCatalog.getPdfObject().containsKey(PdfName.Pages)) {
             PdfDictionary pages = pdfCatalog.getPdfObject().getAsDictionary(PdfName.Pages);
             if (pages == null)
@@ -126,7 +126,7 @@ class PdfPagesTree {
     public void addPage(PdfPage pdfPage) {
         PdfPages pdfPages;
         if (root != null) { // in this case we save tree structure
-            if (pageRefs.size() == 0) {
+            if (pageRefs.isEmpty()) {
                 pdfPages = root;
             } else {
                 loadPage(pageRefs.size() - 1);
@@ -134,7 +134,7 @@ class PdfPagesTree {
             }
         } else {
             pdfPages = parents.get(parents.size() - 1);
-            if (pdfPages.getCount() % leafSize == 0 && pageRefs.size() != 0) {
+            if (pdfPages.getCount() % leafSize == 0 && !pageRefs.isEmpty()) {
                 pdfPages = new PdfPages(pdfPages.getFrom() + pdfPages.getCount(), document);
                 parents.add(pdfPages);
             }
@@ -229,7 +229,7 @@ class PdfPagesTree {
 
         if (root == null) {
             while (parents.size() != 1) {
-                ArrayList<PdfPages> nextParents = new ArrayList<PdfPages>();
+                List<PdfPages> nextParents = new ArrayList<>();
                 //dynamicLeafSize helps to avoid PdfPages leaf with only one page
                 int dynamicLeafSize = leafSize;
                 PdfPages current = null;
@@ -261,7 +261,7 @@ class PdfPagesTree {
         pages = null;
     }
 
-    protected ArrayList<PdfPages> getParents() {
+    protected List<PdfPages> getParents() {
         return parents;
     }
 
@@ -308,7 +308,7 @@ class PdfPagesTree {
         if (findPdfPages) {
             // handle mix of PdfPage and PdfPages.
             // handle count property!
-            ArrayList<PdfPages> newParents = new ArrayList<PdfPages>(kids.size());
+            List<PdfPages> newParents = new ArrayList<>(kids.size());
             PdfPages lastPdfPages = null;
             for (int i = 0; i < kids.size() && kidsCount > 0; i++) {
                 PdfDictionary pdfPagesObject = kids.getAsDictionary(i);

@@ -3,12 +3,13 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.PdfException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PdfNameTree {
 
     private static final int NodeSize = 40;
 
-    private ArrayList<PdfNode> parents;
+    private List<PdfNode> parents;
     private PdfNode root;
     private PdfDocument document;
 
@@ -80,7 +81,7 @@ public class PdfNameTree {
     public PdfObject generateTree() {
         if (root == null) {
             while (parents.size() != 1) {
-                ArrayList<PdfNode> nextParents = new ArrayList<PdfNode>();
+                List<PdfNode> nextParents = new ArrayList<PdfNode>();
                 PdfNode current = null;
                 for (int i = 0; i < parents.size(); i++) {
                     PdfNode node = parents.get(i);

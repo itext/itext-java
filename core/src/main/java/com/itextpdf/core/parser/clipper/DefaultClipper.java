@@ -639,7 +639,7 @@ public class DefaultClipper extends ClipperBase {
         maxima = null;
         activeEdges = null;
         sortedEdges = null;
-        intersectList = new ArrayList<IntersectNode>();
+        intersectList = new ArrayList<>();
         intersectNodeComparer = new Comparator<IntersectNode>() {
             public int compare(IntersectNode o1, IntersectNode o2) {
                 final long i = o2.getPt().getY() - o1.getPt().getY();
@@ -656,9 +656,9 @@ public class DefaultClipper extends ClipperBase {
         };
 
         usingPolyTree = false;
-        polyOuts = new ArrayList<OutRec>();
-        joins = new ArrayList<Join>();
-        ghostJoins = new ArrayList<Join>();
+        polyOuts = new ArrayList<>();
+        joins = new ArrayList<>();
+        ghostJoins = new ArrayList<>();
         reverseSolution = (REVERSE_SOLUTION & InitOptions) != 0;
         strictlySimple = (STRICTLY_SIMPLE & InitOptions) != 0;
 

@@ -66,7 +66,7 @@ public class ClipperBridge {
      * {@link Point2D} objects.
      */
     public static List<Point2D> convertToFloatPoints(List<Point.LongPoint> points) {
-        List<Point2D> convertedPoints = new ArrayList<Point2D>(points.size());
+        List<Point2D> convertedPoints = new ArrayList<>(points.size());
 
         for (Point.LongPoint point : points) {
             convertedPoints.add(new Point2D.Float(
@@ -83,7 +83,7 @@ public class ClipperBridge {
      * {@link com.itextpdf.core.parser.clipper.Point.LongPoint} objects.
      */
     public static List<Point.LongPoint> convertToLongPoints(List<Point2D> points) {
-        List<Point.LongPoint> convertedPoints = new ArrayList<Point.LongPoint>(points.size());
+        List<Point.LongPoint> convertedPoints = new ArrayList<>(points.size());
 
         for (Point2D point : points) {
             convertedPoints.add(new Point.LongPoint(

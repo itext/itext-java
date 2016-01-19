@@ -12,6 +12,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import org.junit.Assert;
@@ -644,7 +645,7 @@ public class PdfReaderTest extends ExtendedITextTest{
             Assert.assertTrue(content.contains("("+pageNum+")"));
         }
 
-        ArrayList<Integer> pageNums = new ArrayList<Integer>(1000);
+        List<Integer> pageNums = new ArrayList<>(1000);
         for (int i = 0; i < 1000; i++)
             pageNums.add(i+1);
 

@@ -6,6 +6,7 @@ import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Parses the page or form XObject content.
@@ -54,9 +55,9 @@ public class PdfContentStreamParser {
      * @return the same <CODE>ArrayList</CODE> given as argument or a new one
      * @throws IOException on error
      */
-    public ArrayList<PdfObject> parse(ArrayList<PdfObject> ls) throws IOException {
+    public List<PdfObject> parse(List<PdfObject> ls) throws IOException {
         if (ls == null)
-            ls = new ArrayList<PdfObject>();
+            ls = new ArrayList<>();
         else
             ls.clear();
         PdfObject ob = null;

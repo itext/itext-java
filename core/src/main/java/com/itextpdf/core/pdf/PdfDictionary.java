@@ -173,7 +173,7 @@ public class PdfDictionary extends PdfObject {
      * @throws PdfException
      */
     public PdfDictionary clone(List<PdfName> excludeKeys) {
-        Map<PdfName, PdfObject> excluded = new TreeMap<PdfName, PdfObject>();
+        Map<PdfName, PdfObject> excluded = new TreeMap<>();
         for (PdfName key : excludeKeys) {
             PdfObject obj = map.get(key);
             if (obj != null)
@@ -248,7 +248,7 @@ public class PdfDictionary extends PdfObject {
      * @throws PdfException
      */
     public PdfDictionary copyToDocument(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) {
-        Map<PdfName, PdfObject> excluded = new TreeMap<PdfName, PdfObject>();
+        Map<PdfName, PdfObject> excluded = new TreeMap<>();
         for (PdfName key : excludeKeys) {
             PdfObject obj = map.get(key);
             if (obj != null)

@@ -23,7 +23,7 @@ import java.util.TreeMap;
  */
 public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
-    private List<PdfLayer> layers = new ArrayList<PdfLayer>();
+    private List<PdfLayer> layers = new ArrayList<>();
 
     /**
      * Creates a new PdfOCProperties instance by the dictionary it represents.
@@ -95,7 +95,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.D, d);
 
 
-        List<PdfLayer> docOrder = new ArrayList<PdfLayer>(layers);
+        List<PdfLayer> docOrder = new ArrayList<>(layers);
         for (Iterator<PdfLayer> it = docOrder.iterator(); it.hasNext();) {
             PdfLayer layer = it.next();
             if (layer.getParent() != null)
@@ -149,7 +149,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * Note that this is just a new list and modifications to it will not affect anything.
      */
     public List<PdfLayer> getLayers() {
-        return new ArrayList<PdfLayer>(layers);
+        return new ArrayList<>(layers);
     }
 
     /**

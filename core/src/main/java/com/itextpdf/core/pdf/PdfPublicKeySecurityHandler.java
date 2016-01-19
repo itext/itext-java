@@ -14,6 +14,7 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -44,7 +45,7 @@ public class PdfPublicKeySecurityHandler {
 
     static final int SEED_LENGTH = 20;
 
-    private ArrayList<PdfPublicKeyRecipient> recipients = null;
+    private List<PdfPublicKeyRecipient> recipients = null;
 
     private byte[] seed = new byte[SEED_LENGTH];
 
@@ -59,7 +60,7 @@ public class PdfPublicKeySecurityHandler {
             seed = SecureRandom.getSeed(SEED_LENGTH);
         }
 
-        recipients = new ArrayList<PdfPublicKeyRecipient>();
+        recipients = new ArrayList<>();
     }
 
     public void addRecipient(PdfPublicKeyRecipient recipient) {

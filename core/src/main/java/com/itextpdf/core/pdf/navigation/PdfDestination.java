@@ -6,7 +6,8 @@ import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
 import com.itextpdf.core.pdf.PdfString;
 
-import java.util.HashMap;
+import java.util.Map;
+
 
 public abstract class PdfDestination<T extends PdfObject> extends PdfObjectWrapper<T> {
 
@@ -14,9 +15,9 @@ public abstract class PdfDestination<T extends PdfObject> extends PdfObjectWrapp
         super(pdfObject);
     }
 
-    public abstract PdfObject getDestinationPage(HashMap<Object, PdfObject> names);
+    public abstract PdfObject getDestinationPage(Map<Object, PdfObject> names);
 
-    public abstract PdfDestination replaceNamedDestination(HashMap<Object, PdfObject> names);
+    public abstract PdfDestination replaceNamedDestination(Map<Object, PdfObject> names);
 
     public static PdfDestination makeDestination(PdfObject pdfObject) {
 

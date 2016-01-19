@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
     //TODO why do we need this if it simply stores the values, which could be found in the dictionary itself
-    protected HashMap<PdfDictionary, Integer> objRefs = new HashMap<PdfDictionary, Integer>();
+    protected Map<PdfDictionary, Integer> objRefs = new HashMap<>();
 
     /**
      * Contains parent tree entries of the pages that were flushed.
@@ -229,7 +229,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param page2page  association between original page and copied page.
      * @throws PdfException
      */
-    public void copyToDocument(PdfDocument toDocument, LinkedHashMap<PdfPage, PdfPage> page2page) {
+    public void copyToDocument(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
         copyToDocument(toDocument, page2page, false);
     }
 
@@ -241,13 +241,13 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param copyToCurrent indicates if <code>page2page</code> keys and values represent pages from single document
      * @throws PdfException
      */
-    public void copyToDocument(PdfDocument toDocument, LinkedHashMap<PdfPage, PdfPage> page2page, boolean copyToCurrent) {
+    public void copyToDocument(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page, boolean copyToCurrent) {
         if (!toDocument.isTagged())
             return;
         PdfDocument fromDocument = copyToCurrent ? toDocument : getDocument();
-        Set<PdfDictionary> tops = new LinkedHashSet<PdfDictionary>();
-        Set<PdfDictionary> objectsToCopy = new LinkedHashSet<PdfDictionary>();
-        LinkedHashMap<PdfDictionary, PdfDictionary> page2pageDictionaries = new LinkedHashMap<PdfDictionary, PdfDictionary>();
+        Set<PdfDictionary> tops = new LinkedHashSet<>();
+        Set<PdfDictionary> objectsToCopy = new LinkedHashSet<>();
+        Map<PdfDictionary, PdfDictionary> page2pageDictionaries = new LinkedHashMap<>();
         for (Map.Entry<PdfPage, PdfPage> page : page2page.entrySet()) {
             page2pageDictionaries.put(page.getKey().getPdfObject(), page.getValue().getPdfObject());
             List<PdfMcr> mcrs = fromDocument.getStructTreeRoot().getPageMarkedContentReferences(page.getKey());
@@ -285,13 +285,13 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         if (!toDocument.isTagged())
             return;
 
-        List<PdfObject> kids = new ArrayList<PdfObject>();
+        List<PdfObject> kids = new ArrayList<>();
         PdfArray kidsObject = toDocument.getStructTreeRoot().getKidsObject();
         for (int i = 0; i < kidsObject.size(); i++) {
             kids.add(kidsObject.get(i, false));
         }
 
-        LinkedHashMap<PdfPage, PdfPage> page2pageSource = new LinkedHashMap<PdfPage, PdfPage>();
+        Map<PdfPage, PdfPage> page2pageSource = new LinkedHashMap<>();
         for (int i = 1; i < insertBeforePage; i++) {
             PdfPage page = toDocument.getPage(i);
             page2pageSource.put(page, page);
@@ -300,7 +300,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
         copyToDocument(toDocument, page2page);
 
-        page2pageSource = new LinkedHashMap<PdfPage, PdfPage>();
+        page2pageSource = new LinkedHashMap<>();
         for (int i = insertBeforePage; i <= toDocument.getNumOfPages(); i++) {
             PdfPage page = toDocument.getPage(i);
             page2pageSource.put(page, page);

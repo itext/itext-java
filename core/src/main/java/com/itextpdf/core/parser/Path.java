@@ -20,7 +20,7 @@ public class Path {
 
     private static final String START_PATH_ERR_MSG = "Path shall start with \"re\" or \"m\" operator";
 
-    private List<Subpath> subpaths = new ArrayList<Subpath>();
+    private List<Subpath> subpaths = new ArrayList<>();
     private Point2D currentPoint;
 
     public Path() {
@@ -192,7 +192,7 @@ public class Path {
      * @returns Indices of modified subpaths.
      */
     public List<Integer> replaceCloseWithLine() {
-        List<Integer> modifiedSubpathsIndices = new ArrayList<Integer>();
+        List<Integer> modifiedSubpathsIndices = new ArrayList<>();
         int i = 0;
 
             /* It could be replaced with "for" cycle, because IList in C# provides effective

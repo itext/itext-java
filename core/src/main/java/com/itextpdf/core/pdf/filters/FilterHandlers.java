@@ -18,7 +18,7 @@ public final class FilterHandlers {
     /** The default {@link FilterHandler}s used by iText */
     private static final Map<PdfName, FilterHandler> defaults;
     static {
-        HashMap<PdfName, FilterHandler> map = new HashMap<PdfName, FilterHandler>();
+        Map<PdfName, FilterHandler> map = new HashMap<>();
 
         map.put(PdfName.FlateDecode, new FlateDecodeFilter());
         map.put(PdfName.FL, new FlateDecodeFilter());

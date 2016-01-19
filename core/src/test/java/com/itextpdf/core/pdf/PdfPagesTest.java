@@ -8,7 +8,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -236,7 +235,7 @@ public class PdfPagesTest extends ExtendedITextTest{
     }
 
     int verifyIntegrity(PdfPagesTree pagesTree) {
-        ArrayList<PdfPages> parents = pagesTree.getParents();
+        List<PdfPages> parents = pagesTree.getParents();
         int from = 0;
         for (int i = 0; i < parents.size(); i++) {
             if (parents.get(i).getFrom() != from)

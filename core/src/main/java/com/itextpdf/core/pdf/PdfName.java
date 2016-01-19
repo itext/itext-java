@@ -737,7 +737,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     static {
         Field[] fields = PdfName.class.getDeclaredFields();
-        staticNames = new HashMap<String, PdfName>(fields.length);
+        staticNames = new HashMap<>(fields.length);
         final int flags = Modifier.STATIC | Modifier.PUBLIC | Modifier.FINAL;
         try {
             for (Field field : fields) {

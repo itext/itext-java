@@ -16,7 +16,7 @@ import java.util.Set;
 public class Subpath {
 
     private Point2D startPoint;
-    private List<Shape> segments = new ArrayList<Shape>();
+    private List<Shape> segments = new ArrayList<>();
     private boolean closed;
 
     public Subpath() {

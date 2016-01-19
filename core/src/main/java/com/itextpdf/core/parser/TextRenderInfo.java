@@ -42,7 +42,7 @@ public class TextRenderInfo implements EventData {
         this.string = string;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.getCtm());
         this.gs = gs;
-        this.markedContentInfos = new ArrayList<MarkedContentInfo>(markedContentInfo);
+        this.markedContentInfos = new ArrayList<>(markedContentInfo);
         this.fontMatrix = /*gs.getFont().getFontMatrix();*/ new double[] {0.001, 0, 0, 0.001, 0, 0}; // TODO: implement getFontMatrix method
     }
 
@@ -96,7 +96,7 @@ public class TextRenderInfo implements EventData {
      */
     public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
         if (checkTheTopmostLevelOnly) {
-            if (markedContentInfos instanceof ArrayList) {
+            if (markedContentInfos instanceof List) {
                 Integer infoMcid = getMcid();
                 return (infoMcid != null) ? infoMcid == mcid : false;
             }
@@ -114,8 +114,8 @@ public class TextRenderInfo implements EventData {
      * @return the marked content associated with the TextRenderInfo instance.
      */
     public Integer getMcid() {
-        if (markedContentInfos instanceof ArrayList) {
-            ArrayList<MarkedContentInfo> mci = (ArrayList<MarkedContentInfo>)markedContentInfos;
+        if (markedContentInfos instanceof List) {
+            List<MarkedContentInfo> mci = (List<MarkedContentInfo>)markedContentInfos;
             MarkedContentInfo info = mci.size() > 0 ? mci.get(mci.size() - 1) : null;
             return (info != null && info.hasMcid()) ? info.getMcid() : null;
         }
@@ -127,7 +127,7 @@ public class TextRenderInfo implements EventData {
      */
     float getUnscaledWidth(){
         if (unscaledWidth == null)
-            unscaledWidth = Float.valueOf(getPdfStringWidth(string, false));
+            unscaledWidth = getPdfStringWidth(string, false);
         return unscaledWidth;
     }
 
@@ -318,7 +318,7 @@ public class TextRenderInfo implements EventData {
      * @since   5.3.3
      */
     public List<TextRenderInfo> getCharacterRenderInfos(){
-        List<TextRenderInfo> rslt = new ArrayList<TextRenderInfo>(string.getValue().length());
+        List<TextRenderInfo> rslt = new ArrayList<>(string.getValue().length());
         PdfString[] strings = splitString(string);
         float totalWidth = 0;
         for (int i = 0; i < strings.length; i++) {
@@ -389,7 +389,7 @@ public class TextRenderInfo implements EventData {
      * @return          splitted PDF string.
      */
     private PdfString[] splitString(PdfString string) {
-        List<PdfString> strings = new ArrayList<PdfString>();
+        List<PdfString> strings = new ArrayList<>();
         String stringValue = string.getValue();
         for (int i = 0; i < stringValue.length(); i++) {
             PdfString newString = new PdfString(stringValue.substring(i, i + 1), string.getEncoding());

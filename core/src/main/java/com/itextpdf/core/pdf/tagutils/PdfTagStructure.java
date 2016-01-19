@@ -15,9 +15,11 @@ import com.itextpdf.core.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /* TODO
     1. add possibility to specify role mapping through this class
@@ -30,8 +32,8 @@ public class PdfTagStructure {
     protected PdfStructElem documentElem; //?
     protected PdfStructElem currentStructElem;
     protected PdfPage currentPage;
-    protected HashMap<IAccessibleElement, PdfStructElem> connectedModelToStruct;
-    protected HashMap<PdfDictionary, IAccessibleElement> connectedStructToModel;
+    protected Map<IAccessibleElement, PdfStructElem> connectedModelToStruct;
+    protected Map<PdfDictionary, IAccessibleElement> connectedStructToModel;
 
     //TODO do not modify tag structure in constructor
     public PdfTagStructure(PdfDocument document) {

@@ -47,7 +47,7 @@ public class BezierCurve implements Shape {
      * @param controlPoints Curve's control points.
      */
     public BezierCurve(List<Point2D> controlPoints) {
-        this.controlPoints = new ArrayList<Point2D>(controlPoints);
+        this.controlPoints = new ArrayList<>(controlPoints);
     }
 
     /**
@@ -67,7 +67,7 @@ public class BezierCurve implements Shape {
      * @since 5.5.6
      */
     public List<Point2D> getPiecewiseLinearApproximation() {
-        List<Point2D> points = new ArrayList<Point2D>();
+        List<Point2D> points = new ArrayList<>();
         points.add(controlPoints.get(0));
 
         recursiveApproximation(controlPoints.get(0).getX(), controlPoints.get(0).getY(),

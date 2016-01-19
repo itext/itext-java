@@ -1,6 +1,7 @@
 package com.itextpdf.core.events;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,12 +11,12 @@ import java.util.Map;
  */
 public class EventDispatcher implements IEventDispatcher {
 
-    protected Map<String, ArrayList<IEventHandler>> eventHandlers = new HashMap<>();
+    protected Map<String, List<IEventHandler>> eventHandlers = new HashMap<>();
 
     @Override
     public void addEventHandler(String type, IEventHandler handler) {
         removeEventHandler(type, handler);
-        ArrayList<IEventHandler> handlers = eventHandlers.get(type);
+        List<IEventHandler> handlers = eventHandlers.get(type);
         if (handlers == null) {
             handlers = new ArrayList<>();
             eventHandlers.put(type, handlers);
@@ -30,7 +31,7 @@ public class EventDispatcher implements IEventDispatcher {
 
     @Override
     public void dispatchEvent(Event event, boolean delayed) {
-        ArrayList<IEventHandler> handlers = eventHandlers.get(event.getType());
+        List<IEventHandler> handlers = eventHandlers.get(event.getType());
         if (handlers != null) {
             for (IEventHandler handler : handlers) {
                 handler.handleEvent(event);
@@ -45,11 +46,11 @@ public class EventDispatcher implements IEventDispatcher {
 
     @Override
     public void removeEventHandler(String type, IEventHandler handler) {
-        ArrayList<IEventHandler> handlers = eventHandlers.get(type);
+        List<IEventHandler> handlers = eventHandlers.get(type);
         if (handlers == null)
             return;
         handlers.remove(handler);
-        if (handlers.size() == 0)
+        if (handlers.isEmpty())
             eventHandlers.remove(type);
     }
 

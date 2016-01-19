@@ -3,7 +3,7 @@ package com.itextpdf.core.parser;
 import com.itextpdf.core.pdf.PdfLiteral;
 import com.itextpdf.core.pdf.PdfObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Root interface for a series of handlers for content stream operators.
@@ -16,5 +16,5 @@ public interface ContentOperator {
      * @param operator The literal PDF syntax of the operator.
      * @param operands The operands that come with the operator.
      */
-    void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands);
+    void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands);
 }
