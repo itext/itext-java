@@ -247,7 +247,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             if ((entry.getValue().getType() == PdfObject.Number
                     || entry.getValue().getType() == PdfObject.Literal
                     || entry.getValue().getType() == PdfObject.Boolean
-                    || entry.getValue().getType() == PdfObject.Stream
                     || entry.getValue().getType() == PdfObject.Null
                     || entry.getValue().getType() == PdfObject.IndirectReference
                     || entry.getValue().checkState(PdfObject.MustBeIndirect))) {
