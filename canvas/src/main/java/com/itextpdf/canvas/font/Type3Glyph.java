@@ -184,6 +184,11 @@ public class Type3Glyph extends PdfCanvas {
         return super.addImage(image, a, b, c, d, e, f, inlineImage);
     }
 
+    /**
+     * Get the content stream for this canvas object.
+     *
+     * @return PdfStream representing the content stream for this canvas object
+     */
     public PdfStream getContentStream() {
         return contentStream;
     }
