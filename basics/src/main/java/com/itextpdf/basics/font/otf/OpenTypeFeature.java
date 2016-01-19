@@ -19,7 +19,7 @@ public class OpenTypeFeature {
     
     public OpenTypeFeature(OpenTypeFontTableReader openTypeReader, int locationFeatureTable) throws IOException {
         this.openTypeReader = openTypeReader;
-        records = new ArrayList<FeatureRecord>();
+        records = new ArrayList<>();
         openTypeReader.rf.seek(locationFeatureTable);
         TagAndLocation[] tagsLocs = openTypeReader.readTagAndLocations(locationFeatureTable);
         for (TagAndLocation tagLoc : tagsLocs) {

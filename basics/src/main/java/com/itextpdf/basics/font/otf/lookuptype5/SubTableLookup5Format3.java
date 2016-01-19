@@ -4,9 +4,10 @@ import com.itextpdf.basics.font.otf.ContextualSubstRule;
 import com.itextpdf.basics.font.otf.ContextualSubTable;
 import com.itextpdf.basics.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.basics.font.otf.SubstLookupRecord;
+
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Contextual Substitution Subtable: Coverage-based context glyph substitution
@@ -29,10 +30,10 @@ public class SubTableLookup5Format3 extends ContextualSubTable {
     }
 
     public static class SubstRuleFormat3 extends ContextualSubstRule {
-        List<HashSet<Integer>> coverages;
+        List<Set<Integer>> coverages;
         SubstLookupRecord[] substLookupRecords;
 
-        public SubstRuleFormat3(List<HashSet<Integer>> coverages, SubstLookupRecord[] substLookupRecords) {
+        public SubstRuleFormat3(List<Set<Integer>> coverages, SubstLookupRecord[] substLookupRecords) {
             this.coverages = coverages;
             this.substLookupRecords = substLookupRecords;
         }

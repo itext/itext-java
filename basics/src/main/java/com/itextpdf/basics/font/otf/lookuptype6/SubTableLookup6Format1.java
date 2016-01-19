@@ -3,17 +3,18 @@ package com.itextpdf.basics.font.otf.lookuptype6;
 import com.itextpdf.basics.font.otf.ContextualSubstRule;
 import com.itextpdf.basics.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.basics.font.otf.SubstLookupRecord;
+
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Chaining Contextual Substitution Subtable: Simple Chaining Context Glyph Substitution
  */
 public class SubTableLookup6Format1 extends SubTableLookup6 {
-    private HashMap<Integer, List<ContextualSubstRule>> substMap;
+    private Map<Integer, List<ContextualSubstRule>> substMap;
 
-    public SubTableLookup6Format1(OpenTypeFontTableReader openReader, int lookupFlag, HashMap<Integer, List<ContextualSubstRule>> substMap) {
+    public SubTableLookup6Format1(OpenTypeFontTableReader openReader, int lookupFlag, Map<Integer, List<ContextualSubstRule>> substMap) {
         super(openReader, lookupFlag);
         this.substMap = substMap;
     }

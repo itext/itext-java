@@ -3,11 +3,14 @@ package com.itextpdf.basics.font.otf;
 import com.itextpdf.basics.font.otf.lookuptype6.SubTableLookup6Format1;
 import com.itextpdf.basics.font.otf.lookuptype6.SubTableLookup6Format2;
 import com.itextpdf.basics.font.otf.lookuptype6.SubTableLookup6Format3;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * LookupType 6: Chaining Contextual Substitution Subtable
@@ -19,7 +22,7 @@ public class GsubLookupType6 extends GsubLookupType5 {
 
     @Override
     protected void readSubTableFormat1(int subTableLocation) throws IOException {
-        HashMap<Integer, List<ContextualSubstRule>> substMap = new HashMap<>();
+        Map<Integer, List<ContextualSubstRule>> substMap = new HashMap<>();
 
         int coverageOffset = openReader.rf.readUnsignedShort();
         int chainSubRuleSetCount = openReader.rf.readUnsignedShort();
@@ -60,7 +63,7 @@ public class GsubLookupType6 extends GsubLookupType5 {
         int chainSubClassSetCount = openReader.rf.readUnsignedShort();
         int[] chainSubClassSetOffsets = openReader.readUShortArray(chainSubClassSetCount, subTableLocation);
 
-        HashSet<Integer> coverageGlyphIds = new HashSet<>(openReader.readCoverageFormat(subTableLocation + coverageOffset));
+        Set<Integer> coverageGlyphIds = new HashSet<>(openReader.readCoverageFormat(subTableLocation + coverageOffset));
         OtfClass backtrackClassDefinition = openReader.readClassDefinition(subTableLocation + backtrackClassDefOffset);
         OtfClass inputClassDefinition = openReader.readClassDefinition(subTableLocation + inputClassDefOffset);
         OtfClass lookaheadClassDefinition = openReader.readClassDefinition(subTableLocation + lookaheadClassDefOffset);
@@ -112,13 +115,13 @@ public class GsubLookupType6 extends GsubLookupType5 {
         int substCount = openReader.rf.readUnsignedShort();
         SubstLookupRecord[] substLookupRecords = openReader.readSubstLookupRecords(substCount);
 
-        List<HashSet<Integer>> backtrackCoverages = new ArrayList<>(backtrackGlyphCount);
+        List<Set<Integer>> backtrackCoverages = new ArrayList<>(backtrackGlyphCount);
         openReader.readCoverages(backtrackCoverageOffsets, backtrackCoverages);
 
-        List<HashSet<Integer>> inputCoverages = new ArrayList<>(inputGlyphCount);
+        List<Set<Integer>> inputCoverages = new ArrayList<>(inputGlyphCount);
         openReader.readCoverages(inputCoverageOffsets, inputCoverages);
 
-        List<HashSet<Integer>> lookaheadCoverages = new ArrayList<>(lookaheadGlyphCount);
+        List<Set<Integer>> lookaheadCoverages = new ArrayList<>(lookaheadGlyphCount);
         openReader.readCoverages(lookaheadCoverageOffsets, lookaheadCoverages);
 
         SubTableLookup6Format3.SubstRuleFormat3 rule =

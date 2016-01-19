@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -31,7 +32,7 @@ public class OtfReadCommon {
         return readUShortArray(rf, size, 0);
     }
 
-    public static void readCoverages(RandomAccessFileOrArray rf, int[] locations, List<HashSet<Integer>> coverage) throws IOException {
+    public static void readCoverages(RandomAccessFileOrArray rf, int[] locations, List<Set<Integer>> coverage) throws IOException {
         for (int location : locations) {
             coverage.add(new HashSet<>(readCoverageFormat(rf, location)));
         }
@@ -161,7 +162,7 @@ public class OtfReadCommon {
     }
 
     public static List<GposAnchor[]> readBaseArray(OpenTypeFontTableReader tableReader, int classCount, int location) throws IOException {
-        ArrayList<GposAnchor[]> baseArray = new ArrayList<>();
+        List<GposAnchor[]> baseArray = new ArrayList<>();
         tableReader.rf.seek(location);
         int baseCount = tableReader.rf.readUnsignedShort();
         int[] anchorLocations = readUShortArray(tableReader.rf, baseCount * classCount, location);
@@ -174,13 +175,13 @@ public class OtfReadCommon {
     }
 
     public static List<List<GposAnchor[]>> readLigatureArray(OpenTypeFontTableReader tableReader, int classCount, int location) throws IOException {
-        ArrayList<List<GposAnchor[]>> ligatureArray = new ArrayList<>();
+        List<List<GposAnchor[]>> ligatureArray = new ArrayList<>();
         tableReader.rf.seek(location);
         int ligatureCount = tableReader.rf.readUnsignedShort();
         int[] ligatureAttachLocations = readUShortArray(tableReader.rf, ligatureCount, location);
         for (int liga = 0; liga < ligatureCount; ++liga) {
             int ligatureAttachLocation = ligatureAttachLocations[liga];
-            ArrayList<GposAnchor[]> ligatureAttach = new ArrayList<>();
+            List<GposAnchor[]> ligatureAttach = new ArrayList<>();
             tableReader.rf.seek(ligatureAttachLocation);
             int componentCount = tableReader.rf.readUnsignedShort();
             int[] componentRecordsLocation = readUShortArray(tableReader.rf, classCount * componentCount, ligatureAttachLocation);

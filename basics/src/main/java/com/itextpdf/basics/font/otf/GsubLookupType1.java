@@ -3,6 +3,7 @@ package com.itextpdf.basics.font.otf;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * LookupType 1: Single Substitution Subtable
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public class GsubLookupType1 extends OpenTableLookup {
 
-    private HashMap<Integer,Integer> substMap;
+    private Map<Integer,Integer> substMap;
 
     public GsubLookupType1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
         super(openReader, lookupFlag, subTableLocations);

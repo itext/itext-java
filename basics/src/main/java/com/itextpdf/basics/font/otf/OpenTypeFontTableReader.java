@@ -53,6 +53,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -146,7 +147,7 @@ public abstract class OpenTypeFontTableReader {
         if (rec == null) {
             return null;
         }
-        ArrayList<FeatureRecord> ret = new ArrayList<FeatureRecord>();
+        List<FeatureRecord> ret = new ArrayList<FeatureRecord>();
         for (int f : rec.features) {
             ret.add(featuresType.getRecord(f));
         }
@@ -157,7 +158,7 @@ public abstract class OpenTypeFontTableReader {
         if (specific == null) {
             return features;
         }
-        HashSet<String> hs = new HashSet<String>();
+        Set<String> hs = new HashSet<String>();
         Collections.addAll(hs, specific);
         List<FeatureRecord> recs = new ArrayList<FeatureRecord>();
         for (FeatureRecord rec : features) {
@@ -182,7 +183,7 @@ public abstract class OpenTypeFontTableReader {
                 hash.put(idx, 1);
             }
         }
-        ArrayList<OpenTableLookup> ret = new ArrayList<>();
+        List<OpenTableLookup> ret = new ArrayList<>();
         for (int idx : hash.toOrderedKeys()) {
             ret.add(lookupList.get(idx));
         }
@@ -242,7 +243,7 @@ public abstract class OpenTypeFontTableReader {
         return OtfReadCommon.readUShortArray(rf, size);
     }
 
-    protected void readCoverages(int[] locations, List<HashSet<Integer>> coverage) throws IOException {
+    protected void readCoverages(int[] locations, List<Set<Integer>> coverage) throws IOException {
         OtfReadCommon.readCoverages(rf, locations, coverage);
     }
 

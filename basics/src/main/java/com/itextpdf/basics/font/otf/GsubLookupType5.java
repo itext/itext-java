@@ -3,11 +3,14 @@ package com.itextpdf.basics.font.otf;
 import com.itextpdf.basics.font.otf.lookuptype5.SubTableLookup5Format1;
 import com.itextpdf.basics.font.otf.lookuptype5.SubTableLookup5Format2;
 import com.itextpdf.basics.font.otf.lookuptype5.SubTableLookup5Format3;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * LookupType 5: Contextual Substitution Subtable
@@ -78,7 +81,7 @@ public class GsubLookupType5 extends OpenTableLookup {
     }
 
     protected void readSubTableFormat1(int subTableLocation) throws IOException {
-        HashMap<Integer, List<ContextualSubstRule>> substMap = new HashMap<>();
+        Map<Integer, List<ContextualSubstRule>> substMap = new HashMap<>();
 
         int coverageOffset = openReader.rf.readUnsignedShort();
         int subRuleSetCount = openReader.rf.readUnsignedShort();
@@ -112,7 +115,7 @@ public class GsubLookupType5 extends OpenTableLookup {
         int subClassSetCount = openReader.rf.readUnsignedShort();
         int[] subClassSetOffsets = openReader.readUShortArray(subClassSetCount, subTableLocation);
 
-        HashSet<Integer> coverageGlyphIds = new HashSet<>(openReader.readCoverageFormat(subTableLocation + coverageOffset));
+        Set<Integer> coverageGlyphIds = new HashSet<>(openReader.readCoverageFormat(subTableLocation + coverageOffset));
         OtfClass classDefinition = openReader.readClassDefinition(subTableLocation + classDefOffset);
 
         SubTableLookup5Format2 t = new SubTableLookup5Format2(openReader, lookupFlag, coverageGlyphIds, classDefinition);
@@ -153,7 +156,7 @@ public class GsubLookupType5 extends OpenTableLookup {
         int[] coverageOffsets = openReader.readUShortArray(glyphCount, subTableLocation);
         SubstLookupRecord[] substLookupRecords = openReader.readSubstLookupRecords(substCount);
 
-        List<HashSet<Integer>> coverages = new ArrayList<>(glyphCount);
+        List<Set<Integer>> coverages = new ArrayList<>(glyphCount);
         openReader.readCoverages(coverageOffsets, coverages);
 
         SubTableLookup5Format3.SubstRuleFormat3 rule = new SubTableLookup5Format3.SubstRuleFormat3(coverages, substLookupRecords);

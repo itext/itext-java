@@ -4,17 +4,18 @@ import com.itextpdf.basics.font.otf.ContextualSubstRule;
 import com.itextpdf.basics.font.otf.ContextualSubTable;
 import com.itextpdf.basics.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.basics.font.otf.SubstLookupRecord;
+
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contextual Substitution Subtable: Simple context glyph substitution
  */
 public class SubTableLookup5Format1 extends ContextualSubTable {
-    private HashMap<Integer, List<ContextualSubstRule>> substMap;
+    private Map<Integer, List<ContextualSubstRule>> substMap;
 
-    public SubTableLookup5Format1(OpenTypeFontTableReader openReader, int lookupFlag, HashMap<Integer, List<ContextualSubstRule>> substMap) {
+    public SubTableLookup5Format1(OpenTypeFontTableReader openReader, int lookupFlag, Map<Integer, List<ContextualSubstRule>> substMap) {
         super(openReader, lookupFlag);
         this.substMap = substMap;
     }

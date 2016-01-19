@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * LookupType 4: Ligature Substitution Subtable
@@ -19,7 +20,7 @@ public class GsubLookupType4 extends OpenTableLookup {
      * The key is the first character. The first element in the int array is the
      * output ligature
      */
-    private HashMap<Integer,List<int[]>> ligatures;
+    private Map<Integer,List<int[]>> ligatures;
     
     public GsubLookupType4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
         super(openReader, lookupFlag, subTableLocations);
@@ -80,7 +81,7 @@ public class GsubLookupType4 extends OpenTableLookup {
             for (int j = 0; j < ligatureCount; ++j) {
                 ligature[j] = openReader.rf.readUnsignedShort() + ligatureSet[k];
             }
-            ArrayList<int[]> components = new ArrayList<>(ligatureCount);
+            List<int[]> components = new ArrayList<>(ligatureCount);
             for (int j = 0; j < ligatureCount; ++j) {
                 openReader.rf.seek(ligature[j]);
                 int ligGlyph = openReader.rf.readUnsignedShort();

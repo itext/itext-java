@@ -22,7 +22,7 @@ public class OpenTypeScript {
     
     public OpenTypeScript(OpenTypeFontTableReader openTypeReader, int locationScriptTable) throws IOException {
         this.openTypeReader = openTypeReader;
-        records = new ArrayList<ScriptRecord>();
+        records = new ArrayList<>();
         openTypeReader.rf.seek(locationScriptTable);
         TagAndLocation[] tagsLocs = openTypeReader.readTagAndLocations(locationScriptTable);
         for (TagAndLocation tagLoc : tagsLocs) {
