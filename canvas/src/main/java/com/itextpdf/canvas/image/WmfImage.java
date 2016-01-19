@@ -10,14 +10,28 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * Image implementation for WMF, Windows Metafile.
+ */
 public class WmfImage extends Image {
 
     private static final byte[] wmf = new byte[]{(byte) 0xD7, (byte) 0xCD};
 
+    /**
+     * Creates a WmfImage from a file.
+     *
+     * @param fileName pah to the file
+     * @throws MalformedURLException
+     */
     public WmfImage(String fileName) throws MalformedURLException {
         this(Utilities.toURL(fileName));
     }
 
+    /**
+     * Creates a WmfImage from a URL.
+     *
+     * @param url URL to the file
+     */
     public WmfImage(URL url) {
         super(url, WMF);
         byte[] imageType = readImageType(url);
@@ -26,6 +40,10 @@ public class WmfImage extends Image {
         }
     }
 
+    /**
+     * Creates a WmfImage from a byte[].
+     * @param bytes the image bytes
+     */
     public WmfImage(byte[] bytes) {
         super(bytes, WMF);
         byte[] imageType = readImageType(url);
