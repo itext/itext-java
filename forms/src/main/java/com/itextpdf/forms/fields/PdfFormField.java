@@ -1696,10 +1696,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
+    /**
+     * Gets the border width for the field.
+     * 
+     * @return the current border width.
+     */
     public float getBorderWidth() {
         return borderWidth;
     }
 
+    /**
+     * Sets the border width for the field.
+     * 
+     * @param borderWidth the new border width.
+     */
     public void setBorderWidth(float borderWidth) {
         this.borderWidth = borderWidth;
     }
