@@ -1,17 +1,19 @@
 package com.itextpdf.core.xmp;
 
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-
-
+/**
+ * This class writes the DOM structure of the XML to the specified output.
+ */
 public class XmlDomWriter {
 
     /**
@@ -39,6 +41,11 @@ public class XmlDomWriter {
     public XmlDomWriter() {
     } // <init>()
 
+    /**
+     * Creates an XmlDomWriter.
+     *
+     * @param canonical should the writer write canonical output or not
+     */
     public XmlDomWriter(boolean canonical) {
         fCanonical = canonical;
     } // <init>(boolean)

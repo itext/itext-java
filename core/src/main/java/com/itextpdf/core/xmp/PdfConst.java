@@ -1,5 +1,8 @@
 package com.itextpdf.core.xmp;
 
+/**
+ * Class that contains several constants.
+ */
 public class PdfConst {
     /** External Contributors to the resource (other than the authors). */
     public static final String Contributor = "contributor";

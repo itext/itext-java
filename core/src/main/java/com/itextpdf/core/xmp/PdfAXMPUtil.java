@@ -44,8 +44,9 @@
  */
 package com.itextpdf.core.xmp;
 
-
-
+/**
+ * Utilities to construct an XMP for a PDF/A file.
+ */
 public class PdfAXMPUtil {
     /**
      * Part, always 1.
@@ -94,8 +95,4 @@ public class PdfAXMPUtil {
                     "        </rdf:Description>\n" +
                     "      </rdf:RDF>\n" +
                     "    </x:xmpmeta>";
-
-
-
-
 }
