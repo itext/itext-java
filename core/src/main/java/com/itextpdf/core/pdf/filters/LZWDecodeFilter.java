@@ -18,6 +18,12 @@ public class LZWDecodeFilter implements FilterHandler{
         return b;
     }
 
+    /**
+     * Decodes a byte[] according to the LZW encoding.
+     *
+     * @param in byte[] to be decoded
+     * @return decoded byte[]
+     */
     public static byte[] LZWDecode(final byte in[]) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         LZWDecoder lzw = new LZWDecoder();

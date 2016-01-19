@@ -20,6 +20,12 @@ public class ASCIIHexDecodeFilter implements FilterHandler {
         return b;
     }
 
+    /**
+     * Decodes a byte[] according to ASCII Hex encoding.
+     *
+     * @param in byte[] to be decoded
+     * @return decoded byte[]
+     */
     public static byte[] ASCIIHexDecode(final byte in[]) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         boolean first = true;

@@ -19,7 +19,13 @@ public class ASCII85DecodeFilter implements FilterHandler {
         return b;
     }
 
-    public static byte[] ASCII85Decode(final byte in[]) {
+    /**
+     * Decodes the input bytes according to ASCII85.
+     *
+     * @param in the byte[] to be decoded
+     * @return the decoded byte[]
+     */
+    public static byte[] ASCII85Decode(final byte[] in) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int state = 0;
         int chn[] = new int[5];
@@ -51,9 +57,6 @@ public class ASCII85DecodeFilter implements FilterHandler {
                 out.write((byte)r);
             }
         }
-        // We'll ignore the next two lines for the sake of perpetuating broken PDFs
-        //if (state == 1)
-        //    throw new PdfException(PdfException.IllegalLengthInAscii85decode));
         if (state == 2) {
             int r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85 + 85 * 85 * 85  + 85 * 85 + 85;
             out.write((byte)(r >> 24));
