@@ -11,6 +11,9 @@ import com.itextpdf.core.pdf.xobject.PdfXObject;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Helper class for the WmfImage implementation. Assists in the creation of a {@link com.itextpdf.core.pdf.xobject.PdfFormXObject}.
+ */
 public class WmfImageHelper {
 
     /** Scales the WMF font size. The default value is 0.86. */
@@ -22,7 +25,11 @@ public class WmfImageHelper {
     private float plainWidth;
     private float plainHeight;
 
-
+    /**
+     * Creates a helper instance.
+     *
+     * @param wmf the {@link com.itextpdf.canvas.image.WmfImage} object
+     */
     public WmfImageHelper(Image wmf) {
         if (wmf.getOriginalType() != Image.WMF)
             throw new IllegalArgumentException("WMF image expected");
@@ -70,6 +77,13 @@ public class WmfImageHelper {
         }
     }
 
+    /**
+     * Create a PdfXObject based on the WMF image. The PdfXObject will have the dimensions of the
+     * WMF image.
+     *
+     * @param document PdfDocument to add the PdfXObject to
+     * @return PdfXObject based on the WMF image
+     */
     public PdfXObject createPdfForm(PdfDocument document) {
         PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, wmf.getWidth(), wmf.getHeight()));
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
