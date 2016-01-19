@@ -4,6 +4,7 @@ import com.itextpdf.basics.io.PdfTokenizer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CMapParser {
 
@@ -38,7 +39,7 @@ public class CMapParser {
             return;
         PdfTokenizer inp = location.getLocation(cmapName);
         try {
-            ArrayList<CMapObject> list = new ArrayList<CMapObject>();
+            List<CMapObject> list = new ArrayList<>();
             CMapContentParser cp = new CMapContentParser(inp);
             int maxExc = 50;
             while (true) {

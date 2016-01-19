@@ -9,6 +9,7 @@ import com.itextpdf.basics.io.PdfTokenizer.TokenType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CMapContentParser {
@@ -38,7 +39,7 @@ public class CMapContentParser {
      * @param ls an {@code ArrayList} to use. It will be cleared before using.
      * @throws IOException on error
      */
-    public void parse(ArrayList<CMapObject> ls) throws IOException {
+    public void parse(List<CMapObject> ls) throws IOException {
         ls.clear();
         CMapObject ob;
         while ((ob = readObject()) != null) {
@@ -86,7 +87,7 @@ public class CMapContentParser {
      * @throws IOException on error
      */
     public CMapObject readArray() throws IOException {
-        ArrayList<CMapObject> array = new ArrayList<CMapObject>();
+        List<CMapObject> array = new ArrayList<CMapObject>();
         while (true) {
             CMapObject obj = readObject();
             if (obj.isToken()) {

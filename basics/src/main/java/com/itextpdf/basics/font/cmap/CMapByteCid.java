@@ -3,6 +3,7 @@ package com.itextpdf.basics.font.cmap;
 import com.itextpdf.basics.PdfException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author psoares
@@ -20,7 +21,7 @@ public class CMapByteCid extends AbstractCMap {
         }
     }
 
-    private ArrayList<char[]> planes = new ArrayList<char[]>();
+    private List<char[]> planes = new ArrayList<>();
 
     public CMapByteCid() {
         planes.add(new char[256]);

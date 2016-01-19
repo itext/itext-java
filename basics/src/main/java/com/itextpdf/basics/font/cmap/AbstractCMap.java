@@ -3,6 +3,7 @@ package com.itextpdf.basics.font.cmap;
 import com.itextpdf.basics.font.PdfEncodings;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author psoares
@@ -64,7 +65,7 @@ public abstract class AbstractCMap {
             a1[a1.length - 1] = (byte)k;
             String mark = PdfEncodings.convertToString(a1, null);
             if (code.isArray()) {
-                ArrayList<CMapObject> codes = (ArrayList<CMapObject>) code.getValue();
+                List<CMapObject> codes = (ArrayList<CMapObject>) code.getValue();
                 addChar(mark, codes.get(k - start));
             } else if (code.isNumber()) {
                 int nn = (int)code.getValue() + k - start;

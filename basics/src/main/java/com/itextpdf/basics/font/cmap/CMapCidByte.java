@@ -1,13 +1,14 @@
 package com.itextpdf.basics.font.cmap;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author psoares
  */
 public class CMapCidByte extends AbstractCMap {
 
-    private HashMap<Integer, byte[]> map = new HashMap<Integer,byte[]>();
+    private Map<Integer, byte[]> map = new HashMap<>();
     private final byte[] EMPTY = {};
 
     @Override
