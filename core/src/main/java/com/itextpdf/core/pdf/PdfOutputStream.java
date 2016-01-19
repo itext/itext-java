@@ -241,11 +241,25 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     protected void write(PdfDictionary pdfDictionary) {
         writeBytes(openDict);
         for (Map.Entry<PdfName, PdfObject> entry : pdfDictionary.entrySet()) {
+            boolean isAlreadyWriteSpace = false;
             write(entry.getKey());
-            writeSpace();
             PdfObject value = entry.getValue();
+            if ((entry.getValue().getType() == PdfObject.Number
+                    || entry.getValue().getType() == PdfObject.Literal
+                    || entry.getValue().getType() == PdfObject.Boolean
+                    || entry.getValue().getType() == PdfObject.Stream
+                    || entry.getValue().getType() == PdfObject.Null
+                    || entry.getValue().getType() == PdfObject.IndirectReference
+                    || entry.getValue().checkState(PdfObject.MustBeIndirect))) {
+                isAlreadyWriteSpace = true;
+                writeSpace();
+            }
+
             PdfIndirectReference indirectReference;
             if ((indirectReference = value.getIndirectReference()) != null) {
+                if (!isAlreadyWriteSpace) {
+                    writeSpace();
+                }
                 write(indirectReference);
             } else {
                 write(value);
@@ -255,7 +269,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     }
 
     protected void write(PdfIndirectReference indirectReference) {
-        if(document != null && !indirectReference.getDocument().equals(document)){
+        if (document != null && !indirectReference.getDocument().equals(document)) {
             throw new PdfException(PdfException.PdfInderectObjectBelongToOtherPdfDocument);
         }
         if (indirectReference.getRefersTo() == null) {
@@ -309,8 +323,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
     }
 
-    private boolean isNotMetadataPdfStream(PdfStream pdfStream){
-        return  pdfStream.getAsName(PdfName.Type) == null ||
+    private boolean isNotMetadataPdfStream(PdfStream pdfStream) {
+        return pdfStream.getAsName(PdfName.Type) == null ||
                 (pdfStream.getAsName(PdfName.Type) != null && !pdfStream.getAsName(PdfName.Type).equals(PdfName.Metadata));
 
     }
@@ -470,7 +484,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             PdfArray filters = new PdfArray();
             filters.add(PdfName.FlateDecode);
             if (filter instanceof PdfArray) {
-                filters.addAll((PdfArray)filter);
+                filters.addAll((PdfArray) filter);
             } else {
                 filters.add(filter);
             }
