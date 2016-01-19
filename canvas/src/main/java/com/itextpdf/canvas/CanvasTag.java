@@ -67,10 +67,20 @@ public class CanvasTag {
         this(mcr.getRole(), mcr.getMcid());
     }
 
+    /**
+     * Get the role of the tag.
+     *
+     * @return the role of the tag as a PdfName
+     */
     public PdfName getRole() {
         return role;
     }
 
+    /**
+     * Get the marked content id of the tag.
+     *
+     * @return marked content id
+     */
     public Integer getMcid() {
         return mcid;
     }
@@ -131,6 +141,11 @@ public class CanvasTag {
         return properties.get(name);
     }
 
+    /**
+     * Get the properties of the tag.
+     *
+     * @return properties of the tag
+     */
     public PdfDictionary getProperties() {
         return properties;
     }
