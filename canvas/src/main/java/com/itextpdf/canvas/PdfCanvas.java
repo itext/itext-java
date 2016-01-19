@@ -200,62 +200,11 @@ public class PdfCanvas {
         this(doc.getPage(pageNum));
     }
 
-//    /**
-//     * Constructs a kern array for the text in the given font.
-//     * This array may later be used as an argument of a TJ operator
-//     * (@link #showText(PdfArray)}
-//     * @param text The textual contents of the PDF operator
-//     * @param font The font used for rendering the text
-//     * @return An array of text instructions corresponding with the argument for PDF's TJ operator
-//     */
-//    // TODO convert to GlyphLine and call appropriate method?
-//    public static PdfTextArray getKernArray(String text, final PdfFont font) {
-//        PdfTextArray kernArray = new PdfTextArray();
-//        if (text.length() > 0) {
-//            StringBuilder currentStr = new StringBuilder();
-//            char chars[] = text.toCharArray();
-//            currentStr.append(chars[0]);
-//            for (int iter = 1; iter < text.length(); iter++) {
-//                int kern = font.getKerning(chars[iter - 1], chars[iter]);
-//                if (kern == 0) {
-//                    currentStr.append(chars[iter]);
-//                } else {
-//                    kernArray.add(currentStr.toString(), font);
-//                    kernArray.add(-kern);
-//                    currentStr.setLength(0);
-//                    currentStr.append(chars[iter]);
-//                }
-//            }
-//            kernArray.add(currentStr.toString(), font);
-//        }
-//        return kernArray;
-//    }
-//
-//    /**
-//     * Constructs a kern array for the text in the given font.
-//     * This array may later be used as an argument of a TJ operator
-//     * (@link #showText(PdfArray)}
-//     * @param text An array-like object containing textual information
-//     * @param font The font used for rendering the text
-//     * @return An array of text instructions corresponding with the argument for PDF's TJ operator
-//     */
-//    public static PdfTextArray getKernArray(GlyphLine text, final PdfFont font) {
-//        PdfTextArray kernArray = new PdfTextArray();
-//        if (text.size() > 0) {
-//            kernArray.add(font.convertToBytes(text.glyphs.get(text.start)));
-//            for (int iter = text.start + 1; iter < text.end; iter++) {
-//                int kern = font.getKerning(text.glyphs.get(iter - 1), text.glyphs.get(iter));
-//                if (kern == 0) {
-//                    kernArray.add(font.convertToBytes(text.glyphs.get(iter)));
-//                } else {
-//                    kernArray.add(-kern);
-//                    kernArray.add(font.convertToBytes(text.glyphs.get(iter)));
-//                }
-//            }
-//        }
-//        return kernArray;
-//    }
-
+    /**
+     * Get the resources of the page that this canvas belongs to..
+     *
+     * @return PdfResources of the page that this canvas belongs to..
+     */
     public PdfResources getResources() {
         return resources;
     }
@@ -765,44 +714,6 @@ public class PdfCanvas {
         contentStream.getOutputStream().writeBytes(TJ);
         return this;
     }
-
-//    /**
-//     * Shows text applying kerning, if kern pairs are specified for the current font.
-//     *
-//     * @param text the text to show
-//     * @return current canvas
-//     */
-//    public PdfCanvas showTextKerned(String text) {
-//        PdfFont currentFont = currentGs.getFont();
-//        if (currentFont == null) {
-//            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-//        }
-//        if (currentFont.hasKernPairs()) {
-//            showText(getKernArray(text, currentFont));
-//        } else {
-//            showText(text);
-//        }
-//        return this;
-//    }
-
-//    /**
-//     * Shows text applying kerning, if kern pairs are specified for the current font.
-//     *
-//     * @param text the text to show
-//     * @return current canvas
-//     */
-//    public PdfCanvas showTextKerned(GlyphLine text) {
-//        PdfFont currentFont = currentGs.getFont();
-//        if (currentFont == null) {
-//            throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-//        }
-//        if (currentFont.hasKernPairs()) {
-//            showText(getKernArray(text, currentFont));
-//        } else {
-//            showText(text);
-//        }
-//        return this;
-//    }
 
     /**
      * Move the current point <i>(x, y)</i>, omitting any connecting line segment.
@@ -2088,22 +1999,6 @@ public class PdfCanvas {
         tag.addProperties(tagReference.getProperties());
         return openTag(tag);
     }
-
-//    public PdfCanvas openTag(final PdfStructElem structElem) {
-//        List<IPdfStructElem> kids = structElem.getKids();
-//        boolean pdfTagFound = false;
-//        if (kids != null) {
-//            for (IPdfStructElem kid : kids)
-//                if (kid instanceof IPdfTag) {
-//                    openTag((IPdfTag)kid);
-//                    pdfTagFound = true;
-//                    break;
-//                }
-//        }
-//        if (!pdfTagFound)
-//            openTag(structElem.addKid(new PdfMcrNumber()))
-//        return this;
-//    }
 
     /**
      * Manually close a tag, ending a Marked Content sequence. Used primarily for Tagged PDF
