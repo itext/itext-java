@@ -1,19 +1,20 @@
 package com.itextpdf.barcodes.dmcode;
 
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Placement {
     private int nrow;
     private int ncol;
     private short[] array;
-    private static final Hashtable<Integer, short[]> cache = new Hashtable<Integer, short[]>();
+    private static final Map<Integer, short[]> cache = new HashMap<>();
 
     private Placement() {
     }
 
     static public short[] doPlacement(int nrow, int ncol) {
-        Integer key = Integer.valueOf(nrow * 1000 + ncol);
+        int key = nrow * 1000 + ncol;
         short[] pc = cache.get(key);
         if (pc != null)
             return pc;

@@ -10,6 +10,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BarcodePDF417 extends Barcode2D {
 
@@ -1653,7 +1654,7 @@ public class BarcodePDF417 extends Barcode2D {
     }
 
     protected static class SegmentList {
-        protected ArrayList<Segment> list = new ArrayList<Segment>();
+        protected List<Segment> list = new ArrayList<>();
 
         public void add(char type, int start, int end) {
             list.add(new Segment(type, start, end));

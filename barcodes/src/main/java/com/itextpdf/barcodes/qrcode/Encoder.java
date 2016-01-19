@@ -2,6 +2,7 @@ package com.itextpdf.barcodes.qrcode;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -343,7 +344,7 @@ final class Encoder {
         int maxNumEcBytes = 0;
 
         // Since, we know the number of reedsolmon blocks, we can initialize the vector with the number.
-        ArrayList<BlockPair> blocks = new ArrayList<BlockPair>(numRSBlocks);
+        List<BlockPair> blocks = new ArrayList<>(numRSBlocks);
 
         for (int i = 0; i < numRSBlocks; ++i) {
             int[] numDataBytesInBlock = new int[1];

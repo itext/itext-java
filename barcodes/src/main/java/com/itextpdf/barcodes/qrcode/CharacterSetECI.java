@@ -1,6 +1,7 @@
 package com.itextpdf.barcodes.qrcode;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Encapsulates a Character Set ECI, according to "Extended Channel Interpretations" 5.3.1.1
@@ -10,10 +11,10 @@ import java.util.HashMap;
  */
 final class CharacterSetECI {
 
-    private static HashMap<String,CharacterSetECI> NAME_TO_ECI;
+    private static Map<String,CharacterSetECI> NAME_TO_ECI;
 
     private static void initialize() {
-        HashMap<String,CharacterSetECI> n = new HashMap<String, CharacterSetECI>(29);
+        Map<String,CharacterSetECI> n = new HashMap<>(29);
         addCharacterSet(0, "Cp437", n);
         addCharacterSet(1, new String[] {"ISO8859_1", "ISO-8859-1"}, n);
         addCharacterSet(2, "Cp437", n);
@@ -52,12 +53,12 @@ final class CharacterSetECI {
         return value;
     }
 
-    private static void addCharacterSet(int value, String encodingName, HashMap<String,CharacterSetECI> n) {
+    private static void addCharacterSet(int value, String encodingName, Map<String,CharacterSetECI> n) {
         CharacterSetECI eci = new CharacterSetECI(value, encodingName);
         n.put(encodingName, eci);
     }
 
-    private static void addCharacterSet(int value, String[] encodingNames, HashMap<String,CharacterSetECI> n) {
+    private static void addCharacterSet(int value, String[] encodingNames, Map<String,CharacterSetECI> n) {
         CharacterSetECI eci = new CharacterSetECI(value, encodingNames[0]);
         for (int i = 0; i < encodingNames.length; i++) {
             n.put(encodingNames[i], eci);
