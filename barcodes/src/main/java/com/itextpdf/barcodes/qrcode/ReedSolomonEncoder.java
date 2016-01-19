@@ -1,6 +1,7 @@
 package com.itextpdf.barcodes.qrcode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>Implements Reed-Solomon encoding, as the name implies.</p>
@@ -11,14 +12,20 @@ import java.util.ArrayList;
 final class ReedSolomonEncoder {
 
     private final GF256 field;
-    private final ArrayList<GF256Poly> cachedGenerators;
+    private final List<GF256Poly> cachedGenerators;
 
+    /**
+     * Creates a SolomonEncoder object based on a {@link com.itextpdf.barcodes.qrcode.GF256} object.
+     * Only QR codes are supported at the moment.
+     *
+     * @param field the galois field
+     */
     public ReedSolomonEncoder(GF256 field) {
         if (!GF256.QR_CODE_FIELD.equals(field)) {
-            throw new IllegalArgumentException("Only QR Code is supported at this time");
+            throw new UnsupportedOperationException("Only QR Code is supported at this time");
         }
         this.field = field;
-        this.cachedGenerators = new ArrayList<GF256Poly>();
+        this.cachedGenerators = new ArrayList<>();
         cachedGenerators.add(new GF256Poly(field, new int[] { 1 }));
     }
 
@@ -34,6 +41,12 @@ final class ReedSolomonEncoder {
         return cachedGenerators.get(degree);
     }
 
+    /**
+     * Encodes the provided data.
+     *
+     * @param toEncode data to encode
+     * @param ecBytes error correction bytes
+     */
     public void encode(int[] toEncode, int ecBytes) {
         if (ecBytes == 0) {
             throw new IllegalArgumentException("No error correction bytes");
