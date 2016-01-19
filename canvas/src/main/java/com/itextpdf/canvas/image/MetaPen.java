@@ -26,7 +26,7 @@ public class MetaPen extends MetaObject {
      * Creates a MetaPen object.
      */
     public MetaPen() {
-        type = META_PEN;
+        super(META_PEN);
     }
 
     /**

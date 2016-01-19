@@ -31,7 +31,7 @@ public class MetaBrush extends MetaObject {
      * Creates a MetaBrush object.
      */
     public MetaBrush() {
-        type = META_BRUSH;
+        super(META_BRUSH);
     }
 
     /**

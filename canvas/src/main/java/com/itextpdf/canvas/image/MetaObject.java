@@ -9,7 +9,8 @@ public class MetaObject {
     public static final int META_PEN = 1;
     public static final int META_BRUSH = 2;
     public static final int META_FONT = 3;
-    public int type = META_NOT_SUPPORTED;
+
+    private int type = META_NOT_SUPPORTED;
 
     /**
      * Creates a new MetaObject. This constructor doesn't set the type.

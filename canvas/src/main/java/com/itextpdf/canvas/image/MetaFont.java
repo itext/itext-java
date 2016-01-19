@@ -46,7 +46,7 @@ public class MetaFont extends MetaObject {
     FontEncoding encoding = null;
 
     public MetaFont() {
-        type = META_FONT;
+        super(META_FONT);
     }
 
     public void init(InputMeta in) throws IOException {
