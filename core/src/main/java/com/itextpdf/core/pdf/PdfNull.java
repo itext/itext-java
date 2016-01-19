@@ -2,11 +2,17 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.io.OutputStream;
 
+/**
+ * Representation of the null object in the PDF specification.
+ */
 public class PdfNull extends PdfPrimitiveObject {
 
     public static final PdfNull PdfNull = new PdfNull(true);
     private static final byte[] NullContent = OutputStream.getIsoBytes("null");
 
+    /**
+     * Creates a PdfNull instance.
+     */
     public PdfNull() {
         super();
     }
