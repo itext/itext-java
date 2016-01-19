@@ -9,6 +9,7 @@ import com.itextpdf.basics.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +110,7 @@ public class JpegImageHelper {
     private static void updateStream(ByteArrayOutputStream stream, Image image) {
         image.filter = "DCTDecode";
         if (image.getColorTransform() == 0) {
-            HashMap<String, Object> decodeParms = new HashMap<>();
+            Map<String, Object> decodeParms = new HashMap<>();
             decodeParms.put("ColorTransform", 0);
             image.decodeParms = decodeParms;
         }

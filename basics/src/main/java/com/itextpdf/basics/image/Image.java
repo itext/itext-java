@@ -5,7 +5,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.color.IccProfile;
 
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public abstract class Image {
 
     protected float[] decode;
 
-    protected HashMap<String, Object> decodeParms;
+    protected Map<String, Object> decodeParms;
 
     protected boolean inverted = false;
 
@@ -69,7 +69,7 @@ public abstract class Image {
 
     protected String filter;
 
-    protected HashMap<String, Object> imageAttributes;
+    protected Map<String, Object> imageAttributes;
 
     protected Long mySerialId = getSerialId();
 
@@ -246,11 +246,11 @@ public abstract class Image {
         this.XYRatio = XYRatio;
     }
 
-    public HashMap<String, Object> getImageAttributes() {
+    public Map<String, Object> getImageAttributes() {
         return imageAttributes;
     }
 
-    public void setImageAttributes(HashMap<String, Object> imageAttributes) {
+    public void setImageAttributes(Map<String, Object> imageAttributes) {
         this.imageAttributes = imageAttributes;
     }
 
@@ -262,7 +262,7 @@ public abstract class Image {
         this.filter = filter;
     }
 
-    public HashMap<String, Object> getDecodeParms() {
+    public Map<String, Object> getDecodeParms() {
         return decodeParms;
     }
 

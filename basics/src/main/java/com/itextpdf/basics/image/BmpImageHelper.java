@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 public final class BmpImageHelper {
 
@@ -16,7 +17,7 @@ public final class BmpImageHelper {
         BmpImage image;
         int width;
         int height;
-        HashMap<String, Object> additional;
+        Map<String, Object> additional;
 
         // BMP variables
         InputStream inputStream;
@@ -30,7 +31,7 @@ public final class BmpImageHelper {
         boolean isBottomUp;
         int bitsPerPixel;
         int redMask, greenMask, blueMask, alphaMask;
-        HashMap<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         long xPelsPerMeter;
         long yPelsPerMeter;
     }

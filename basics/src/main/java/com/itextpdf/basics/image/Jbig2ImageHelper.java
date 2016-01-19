@@ -10,6 +10,7 @@ import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class Jbig2ImageHelper {
@@ -92,7 +93,7 @@ public class Jbig2ImageHelper {
 
             // in case inline image pdfStream.getDocument() will be null
             if (globals != null /*&& stream.getDocument() != null*/) {
-                HashMap<String, Object> decodeParms = new HashMap<>();
+                Map<String, Object> decodeParms = new HashMap<>();
 //                PdfStream globalsStream = new PdfStream().makeIndirect(pdfStream.getDocument());
 //                globalsStream.getOutputStream().write(globals);
                 decodeParms.put("JBIG2Globals", globals);

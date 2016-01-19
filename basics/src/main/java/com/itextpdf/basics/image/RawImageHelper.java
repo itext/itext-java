@@ -6,10 +6,11 @@ import com.itextpdf.basics.codec.TIFFFaxDecoder;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public final class RawImageHelper {
 
-    public static void updateImageAttributes(RawImage image, HashMap<String, Object> additional, ByteArrayOutputStream baos) {
+    public static void updateImageAttributes(RawImage image, Map<String, Object> additional, ByteArrayOutputStream baos) {
         if (!image.isRawImage())
             throw new IllegalArgumentException("Raw image expected.");
         // will also have the CCITT parameters
@@ -23,7 +24,7 @@ public final class RawImageHelper {
             image.setBpc(1);
             image.setFilter("CCITTFaxDecode");
             int k = typeCCITT - RawImage.CCITTG3_1D;
-            HashMap<String, Object> decodeparms = new HashMap<>();
+            Map<String, Object> decodeparms = new HashMap<>();
             if (k != 0)
                 decodeparms.put("K", k);
             if ((colorSpace & RawImage.CCITT_BLACKIS1) != 0)

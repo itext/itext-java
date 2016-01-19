@@ -17,6 +17,7 @@ import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.DataFormatException;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
@@ -27,7 +28,7 @@ public class TiffImageHelper {
         TiffImage image;
         ByteArrayOutputStream stream;
         boolean jpegProcessing;
-        HashMap<String, Object> additional;
+        Map<String, Object> additional;
     }
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {

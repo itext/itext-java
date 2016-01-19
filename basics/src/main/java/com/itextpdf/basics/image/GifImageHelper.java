@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 public final class GifImageHelper {
 
@@ -266,7 +267,7 @@ public final class GifImageHelper {
             int len = gif.m_curr_table.length;
             colorspace[2] = len / 3 - 1;
             colorspace[3] = PdfEncodings.convertToString(gif.m_curr_table, null);
-            HashMap ad = new HashMap();
+            Map ad = new HashMap();
             ad.put("ColorSpace", colorspace);
             RawImage img = new RawImage(gif.m_out, 0);
             RawImageHelper.updateRawImageParameters(img, gif.iw, gif.ih, 1, gif.m_bpc, gif.m_out);

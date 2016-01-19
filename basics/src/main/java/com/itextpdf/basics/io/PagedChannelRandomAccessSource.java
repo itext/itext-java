@@ -126,7 +126,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
         /**
          * Backing list for managing the MRU
          */
-        private LinkedList<E> queue = new LinkedList<E>();
+        private LinkedList<E> queue = new LinkedList<>();
 
         /**
          * Constructs an MRU with the specified size

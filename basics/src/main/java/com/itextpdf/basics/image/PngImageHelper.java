@@ -12,6 +12,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
@@ -28,7 +29,7 @@ public class PngImageHelper {
         int compressionMethod;
         int filterMethod;
         int interlaceMethod;
-        HashMap<String, Object> additional = new HashMap<>();
+        Map<String, Object> additional = new HashMap<>();
         byte[] imageData;
         byte[] smask;
         byte[] trans;
@@ -217,7 +218,7 @@ public class PngImageHelper {
             } else {
                 RawImageHelper.updateRawImageParameters(png.image, png.width, png.height, components, bpc, png.idat.toByteArray());
                 png.image.setDeflated(true);
-                HashMap<String, Object> decodeparms = new HashMap<>();
+                Map<String, Object> decodeparms = new HashMap<>();
                 decodeparms.put("BitsPerComponent", png.bitDepth);
                 decodeparms.put("Predictor", 15);
                 decodeparms.put("Columns", png.width);
@@ -263,7 +264,7 @@ public class PngImageHelper {
                 return "/DeviceRGB";
         } else {
             Object[] array = new Object[2];
-            HashMap<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             if ((png.colorType & 2) == 0) {
                 if (png.gamma == 1f)
                     return "/DeviceGray";

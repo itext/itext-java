@@ -4,6 +4,7 @@ import com.itextpdf.basics.LogMessageConstant;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ public class Jpeg2000Image extends Image {
 
     public static class Parameters {
         public int numOfComps;
-        public ArrayList<ColorSpecBox> colorSpecBoxes = null;
+        public List<ColorSpecBox> colorSpecBoxes = null;
         public boolean isJp2 = false;
         public boolean isJpxBaseline = false;
         public byte[] bpcBoxData;
