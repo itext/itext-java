@@ -1324,6 +1324,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.restoreState();
     }
 
+    /**
+     * Draws the appearance of a checkbox with a specified state value.
+     * 
+     * @param width the width of the checkbox to draw
+     * @param height the height of the checkbox to draw
+     * @param value the state of the form field that will be drawn
+     */
     public void drawCheckAppearance(float width, float height, String value) {
         PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
@@ -1349,6 +1356,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
     }
     
+    /**
+     * Draws the appearance for a push button.
+     * 
+     * @param width the width of the pushbutton
+     * @param height the width of the pushbutton
+     * @param text the text to display on the button
+     * @param font a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @return a new {@link PdfFormXObject}
+     */
     public PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
@@ -1369,6 +1386,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return xObject;
     }
 
+    /**
+     * Performs the low-level drawing operations to draw a button object.
+     * 
+     * @param canvas the {@link PdfCanvas} of the page to draw on.
+     * @param x the x coordinate of the lower left corner of the button rectangle
+     * @param y the y coordinate of the lower left corner of the button rectangle
+     * @param width the width of the button
+     * @param height the width of the button
+     * @param text the text to display on the button
+     * @param font a {@link PdfFont}
+     * @param fontSize a positive integer
+     */
     public void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font, int fontSize) {
         if (backgroundColor == null) {
             backgroundColor = Color.LIGHT_GRAY;
@@ -1408,8 +1437,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 restoreState();
     }
 
-
-
+    /**
+     * Performs the low-level drawing operations to draw a checkbox object.
+     * 
+     * @param canvas the {@link PdfCanvas} of the page to draw on.
+     * @param width the width of the button
+     * @param height the width of the button
+     * @param fontSize a positive integer
+     * @param on the boolean value of the checkbox
+     */
     public void drawCheckBox(PdfCanvas canvas, float width, float height, int fontSize, boolean on) {
         if (!on) {
             return;
@@ -1430,27 +1466,55 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return font;
     }
 
+    /**
+     * Basic setter for the <code>font</code> property. Regenerates the field
+     * appearance after setting the new value.
+     * @param font the new font to be set
+     */
     public void setFont(PdfFont font) {
         this.font = font;
         regenerateField();
     }
 
+    /**
+     * Basic setter for the <code>fontSize</code> property. Regenerates the
+     * field appearance after setting the new value.
+     * @param fontSize the new font size to be set
+     */
     public void setFontSize(int fontSize) {
         this.fontSize = fontSize;
         regenerateField();
     }
 
+    /**
+     * Combined setter for the <code>font</code> and <code>fontSize</code>
+     * properties. Regenerates the field appearance after setting the new value.
+     * @param font the new font to be set
+     * @param fontSize the new font size to be set
+     */
     public void setFontAndSize(PdfFont font, int fontSize) {
         this.font = font;
         this.fontSize = fontSize;
         regenerateField();
     }
 
-    public void setBackgroundColor(Color color) {
-        backgroundColor = color;
+    /**
+     * Basic setter for the <code>backgroundColor</code> property. Regenerates
+     * the field appearance after setting the new value.
+     * @param backgroundColor the new font to be set
+     */
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
         regenerateField();
     }
 
+    /**
+     * Sets the action on all {@link PdfWidgetAnnotation widgets} of this form field.
+     * 
+     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param action the action
+     * @return the edited field
+     */
     public <T extends PdfFormField> T setAction(PdfAction action) {
         List<PdfWidgetAnnotation> widgets = getWidgets();
         if (widgets != null) {
@@ -1461,6 +1525,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
+    /**
+     * Changes the type of graphical marker used to mark a checkbox as 'on'.
+     * 
+     * @param checkType the new checkbox marker
+     */
     public void setCheckType(int checkType) {
         if (checkType < TYPE_CHECK || checkType > TYPE_STAR) {
             checkType = TYPE_CROSS;
