@@ -17,7 +17,7 @@
 
 package com.itextpdf.model.hyphenation;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>This interface is used to connect the XML pattern file parser to
@@ -45,7 +45,7 @@ public interface IPatternConsumer {
      * @param word word to add as an exception
      * @param hyphenatedword pre-hyphenated word
      */
-    void addException(String word, ArrayList hyphenatedword);
+    void addException(String word, List hyphenatedword);
 
     /**
      * Add hyphenation patterns.

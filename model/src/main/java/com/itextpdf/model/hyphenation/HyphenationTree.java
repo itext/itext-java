@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.xml.sax.InputSource;
 
@@ -47,7 +48,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
     /**
      * This map stores hyphenation exceptions
      */
-    protected HashMap stoplist;
+    protected Map stoplist;
 
     /**
      * This map stores the character classes
@@ -581,7 +582,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
      * @param hyphenatedword a vector of alternating strings and
      * {@link Hyphen hyphen} objects.
      */
-    public void addException(String word, ArrayList hyphenatedword) {
+    public void addException(String word, List hyphenatedword) {
         stoplist.put(word, hyphenatedword);
     }
 
