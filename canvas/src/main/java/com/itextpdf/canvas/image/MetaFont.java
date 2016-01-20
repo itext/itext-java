@@ -5,6 +5,9 @@ import com.itextpdf.basics.font.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * A Meta Font.
+ */
 public class MetaFont extends MetaObject {
     static final String[] fontNames = {
         "Courier", "Courier-Bold", "Courier-Oblique", "Courier-BoldOblique",
@@ -45,10 +48,19 @@ public class MetaFont extends MetaObject {
     FontProgram font = null;
     FontEncoding encoding = null;
 
+    /**
+     * Creates a MetaFont instance.
+     */
     public MetaFont() {
         super(META_FONT);
     }
 
+    /**
+     * Initializes the MetaFont instance.
+     *
+     * @param in InputMeta containing the WMF data
+     * @throws IOException
+     */
     public void init(InputMeta in) throws IOException {
         height = Math.abs(in.readShort());
         in.skip(2);
@@ -78,6 +90,12 @@ public class MetaFont extends MetaObject {
         faceName = faceName.toLowerCase();
     }
 
+    /**
+     * Returns the Font.
+     *
+     * @return the font
+     * @throws IOException
+     */
     public FontProgram getFont() throws IOException {
         if (font != null)
             return font;
@@ -144,22 +162,48 @@ public class MetaFont extends MetaObject {
         return font;
     }
 
+    /**
+     * Returns the encoding used in the MetaFont.
+     *
+     * @return the font encoding
+     */
     public FontEncoding getEncoding() {
         return encoding;
     }
 
+    /**
+     * Returns the angle of the MetaFont.
+     *
+     * @return the angle
+     */
     public float getAngle() {
         return angle;
     }
-    
+
+    /**
+     * Returns a boolean value indicating if the font is underlined or not.
+     *
+     * @return true if the font is underlined
+     */
     public boolean isUnderline() {
         return underline;
     }
-    
+
+    /**
+     * Returns a boolean value indicating if a font has a strikeout.
+     *
+     * @return true if the font set strikeout
+     */
     public boolean isStrikeout() {
         return strikeout;
     }
-    
+
+    /**
+     * Returns the font size.
+     *
+     * @param state the MetaState
+     * @return font size
+     */
     public float getFontSize(MetaState state) {
         return Math.abs(state.transformY(height) - state.transformY(0)) * WmfImageHelper.wmfFontCorrection;
     }
