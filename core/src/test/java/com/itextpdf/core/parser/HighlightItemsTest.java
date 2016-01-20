@@ -7,6 +7,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,9 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(IntegrationTest.class)
 public class HighlightItemsTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/HighlightItemsTest/";
@@ -89,7 +92,7 @@ public class HighlightItemsTest {
 
         MyEventListener myEventListener = singleCharacters ? new MyCharacterEventListener() : new MyEventListener();
         PdfContentStreamProcessor parser = new PdfContentStreamProcessor(myEventListener);
-        for (int pageNum = 1; pageNum <= pdfDocument.getNumOfPages(); pageNum++) {
+        for (int pageNum = 1; pageNum <= pdfDocument.getNumberOfPages(); pageNum++) {
             parser.processPageContent(pdfDocument.getPage(pageNum));
             List<Rectangle> rectangles = myEventListener.getRectangles();
             PdfCanvas canvas = new PdfCanvas(pdfDocument.getPage(pageNum));

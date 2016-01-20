@@ -13,6 +13,7 @@ import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.PdfTextArray;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.AreaBreak;
@@ -25,7 +26,9 @@ import java.io.ByteArrayOutputStream;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(IntegrationTest.class)
 public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStrategyTest {
 
     @Override

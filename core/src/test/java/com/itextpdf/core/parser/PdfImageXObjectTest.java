@@ -1,5 +1,6 @@
 package com.itextpdf.core.parser;
 
+import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfIndirectReference;
 import com.itextpdf.core.pdf.PdfName;
@@ -8,12 +9,13 @@ import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfResources;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
-
-import java.util.Map;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(IntegrationTest.class)
 public class PdfImageXObjectTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/PdfImageXObjectTest/";
@@ -22,7 +24,7 @@ public class PdfImageXObjectTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + filename));
         try{
             PdfResources resources = pdfDocument.getPage(page).getResources();
-            Map<PdfName, PdfObject> xobjets = resources.getResource(PdfName.XObject);
+            PdfDictionary xobjets = resources.getResource(PdfName.XObject);
             PdfObject obj = xobjets.get(new PdfName(objectid));
             if (obj == null) {
                 throw new NullPointerException("Reference " + objectid + " not found - Available keys are " + xobjets.keySet());

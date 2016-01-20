@@ -12,6 +12,7 @@ import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.PdfTextArray;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
@@ -22,7 +23,9 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(IntegrationTest.class)
 public class SimpleTextExtractionStrategyTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/SimpleTextExtractionStrategyTest/";
