@@ -31,12 +31,11 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
         }
         DocTrueTypeFont fontProgram = new DocTrueTypeFont(baseFont);
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
-        int firstChar = firstCharNumber != null ? Math.min(firstCharNumber.getIntValue(), 0) : 0;
+        int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
         int[] widths = DocFontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
 
         for (int i = 0; i < 256; i++) {
-            int width = i - firstChar < widths.length ? widths[i - firstChar] : 0;
-            Glyph glyph = new Glyph(i, width, fontEncoding.getUnicode(i));
+            Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
             if (glyph.getUnicode() != null) {
                 fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
