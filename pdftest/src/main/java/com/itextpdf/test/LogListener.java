@@ -11,7 +11,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.SubstituteLoggerFactory;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -26,7 +28,7 @@ public class LogListener extends TestWatcher {
 
     private final ListAppender<ILoggingEvent> listAppender = new CustomListAppender<ILoggingEvent>();
 
-    private final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+    private final ILoggerFactory lc = LoggerFactory.getILoggerFactory();
 
     private final String LEFT_CURLY_BRACES = "{";
     private final String RIGHT_CURLY_BRACES = "}";
@@ -98,7 +100,11 @@ public class LogListener extends TestWatcher {
     }
 
     private void resetLoggingContext() {
-        lc.reset();
+        if (lc instanceof LoggerContext) {
+            ((LoggerContext) lc).reset();
+        } else if (lc instanceof SubstituteLoggerFactory) {
+            ((SubstituteLoggerFactory) lc).clear();
+        }
     }
 
     private void checkLogMessages(Description description) {
