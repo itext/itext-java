@@ -95,8 +95,10 @@ public class LogListener extends TestWatcher {
     }
 
     private void addAppenderToPackage() {
-        Logger logger = (Logger) LoggerFactory.getLogger(ROOT_ITEXT_PACKAGE);
-        logger.addAppender(listAppender);
+        org.slf4j.Logger logger = LoggerFactory.getLogger(ROOT_ITEXT_PACKAGE);
+        if (logger instanceof Logger) {
+            ((Logger)logger).addAppender(listAppender);
+        }
     }
 
     private void resetLoggingContext() {
