@@ -1,7 +1,6 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;
@@ -28,7 +27,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         // Static layout
-        if (childRenderers.size() != 0 && childRenderers.get(childRenderers.size() - 1) == renderer) {
+        if (!childRenderers.isEmpty() && childRenderers.get(childRenderers.size() - 1) == renderer) {
             List<IRenderer> resultRenderers = new ArrayList<>();
             LayoutResult result = null;
 

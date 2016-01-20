@@ -36,7 +36,7 @@ public class TableRenderer extends AbstractRenderer {
     private Border[][] horizontalBorders;
     private Border[][] verticalBorders;
     private float[] columnWidths = null;
-    private ArrayList<Float> heights = new ArrayList<>();
+    private List<Float> heights = new ArrayList<>();
 
     public TableRenderer(Table modelElement, Table.RowRange rowRange) {
         super(modelElement);
@@ -148,7 +148,7 @@ public class TableRenderer extends AbstractRenderer {
             // added it yet, because we add a cell with rowspan only during the processing of the very last row this cell occupied,
             // but now we have area break and we had to force that cell addition.
             boolean cellWithBigRowspanAdded = false;
-            ArrayList<CellRenderer> currChildRenderers = new ArrayList<>();
+            List<CellRenderer> currChildRenderers = new ArrayList<>();
             // Process in a queue, because we might need to add a cell from the future, i.e. having big rowspan in case of split.
             Queue<CellRendererInfo> cellProcessingQueue = new LinkedList<>();
             for (int col = 0; col < currentRow.length; col++) {
