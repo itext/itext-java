@@ -57,7 +57,7 @@ public class OCSPVerifier extends RootStoreVerifier {
     public List<VerificationOK> verify(X509Certificate signCert,
                                        X509Certificate issuerCert, Date signDate)
             throws GeneralSecurityException, IOException {
-        List<VerificationOK> result = new ArrayList<VerificationOK>();
+        List<VerificationOK> result = new ArrayList<>();
         int validOCSPsFound = 0;
         // first check in the list of OCSP responses that was provided
         if (ocsps != null) {

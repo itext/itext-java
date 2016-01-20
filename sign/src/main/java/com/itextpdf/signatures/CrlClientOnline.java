@@ -1,11 +1,11 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.basics.PdfException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -28,7 +28,7 @@ public class CrlClientOnline implements CrlClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientOnline.class);
 
     /** The URLs of the CRLs. */
-    protected List<URL> urls = new ArrayList<URL>();
+    protected List<URL> urls = new ArrayList<>();
 
     /**
      * Creates a CrlClientOnline instance that will try to find
@@ -106,7 +106,7 @@ public class CrlClientOnline implements CrlClient {
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
         if (checkCert == null)
             return null;
-        List<URL> urllist = new ArrayList<URL>(urls);
+        List<URL> urllist = new ArrayList<>(urls);
         if (urllist.size() == 0) {
             LOGGER.info("Looking for CRL for certificate " + checkCert.getSubjectDN());
             try {
@@ -121,7 +121,7 @@ public class CrlClientOnline implements CrlClient {
                 LOGGER.info("Skipped CRL url: " + e.getMessage());
             }
         }
-        ArrayList<byte[]> ar = new ArrayList<byte[]>();
+        List<byte[]> ar = new ArrayList<>();
         for (URL urlt : urllist) {
             try {
                 LOGGER.info("Checking CRL: " + urlt);

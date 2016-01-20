@@ -45,7 +45,7 @@ public class SignaturePermissions {
     /** Is adding annotations allowed by this signature? */
     boolean annotationsAllowed = true;
     /** Does this signature lock specific fields? */
-    List<FieldLock> fieldLocks = new ArrayList<FieldLock>();
+    List<FieldLock> fieldLocks = new ArrayList<>();
 
     /**
      * Creates an object that can inform you about the type of signature

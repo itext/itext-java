@@ -118,7 +118,7 @@ public class CertificateInfo {
         /**
          * A Map with default symbols.
          */
-        public static final Map<ASN1ObjectIdentifier, String> DefaultSymbols = new HashMap<ASN1ObjectIdentifier, String>();
+        public static final Map<ASN1ObjectIdentifier, String> DefaultSymbols = new HashMap<>();
 
         static {
             DefaultSymbols.put(C, "C");

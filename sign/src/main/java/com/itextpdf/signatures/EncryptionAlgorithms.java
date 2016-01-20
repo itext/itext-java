@@ -1,6 +1,7 @@
 package com.itextpdf.signatures;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class that contains a map with the different encryption algorithms.
@@ -8,7 +9,7 @@ import java.util.HashMap;
 public class EncryptionAlgorithms {
 
     /** Maps IDs of encryption algorithms with its human-readable name. */
-    static final HashMap<String, String> algorithmNames = new HashMap<String, String>();
+    static final Map<String, String> algorithmNames = new HashMap<>();
 
     static {
         algorithmNames.put("1.2.840.113549.1.1.1", "RSA");

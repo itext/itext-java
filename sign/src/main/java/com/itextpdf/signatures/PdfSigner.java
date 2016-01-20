@@ -153,7 +153,7 @@ public class PdfSigner {
     /**
      * Name and content of keys that can only be added in the close() method.
      */
-    protected HashMap<PdfName, PdfLiteral> exclusionLocations;
+    protected Map<PdfName, PdfLiteral> exclusionLocations;
 
     /**
      * Indicates if the pdf document has already been pre-closed.
@@ -477,7 +477,7 @@ public class PdfSigner {
         dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
         cryptoDictionary = dic;
 
-        HashMap<PdfName, Integer> exc = new HashMap<>();
+        Map<PdfName, Integer> exc = new HashMap<>();
         exc.put(PdfName.Contents, new Integer(estimatedSize * 2 + 2));
         preClose(exc);
 
@@ -535,7 +535,7 @@ public class PdfSigner {
         externalSignatureContainer.modifySigningDictionary(dic.getPdfObject());
         cryptoDictionary = dic;
 
-        HashMap<PdfName, Integer> exc = new HashMap<PdfName, Integer>();
+        Map<PdfName, Integer> exc = new HashMap<PdfName, Integer>();
         exc.put(PdfName.Contents, new Integer(estimatedSize * 2 + 2));
         preClose(exc);
 
@@ -580,7 +580,7 @@ public class PdfSigner {
         dic.put(PdfName.Type, PdfName.DocTimeStamp);
         cryptoDictionary = dic;
 
-        HashMap<PdfName,Integer> exc = new HashMap<>();
+        Map<PdfName,Integer> exc = new HashMap<>();
         exc.put(PdfName.Contents, new Integer(contentEstimated * 2 + 2));
         preClose(exc);
         InputStream data = getRangeStream();
@@ -677,7 +677,7 @@ public class PdfSigner {
     protected Collection<byte[]> processCrl(Certificate cert, Collection<CrlClient> crlList) {
         if (crlList == null)
             return null;
-        ArrayList<byte[]> crlBytes = new ArrayList<>();
+        List<byte[]> crlBytes = new ArrayList<>();
         for (CrlClient cc : crlList) {
             if (cc == null)
                 continue;

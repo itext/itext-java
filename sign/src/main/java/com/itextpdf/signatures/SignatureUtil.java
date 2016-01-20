@@ -34,8 +34,8 @@ public class SignatureUtil {
 
     private PdfDocument document;
     private PdfAcroForm acroForm;
-    private HashMap<String, int[]> sigNames;
-    private ArrayList<String> orderedSignatureNames;
+    private Map<String, int[]> sigNames;
+    private List<String> orderedSignatureNames;
     private int totalRevisions;
 
     /**
@@ -159,7 +159,7 @@ public class SignatureUtil {
             return new ArrayList<>(orderedSignatureNames);
         sigNames = new HashMap<>();
         orderedSignatureNames = new ArrayList<>();
-        ArrayList<Object[]> sorter = new ArrayList<>();
+        List<Object[]> sorter = new ArrayList<>();
         for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
             PdfFormField field = entry.getValue();
             PdfDictionary merged = field.getPdfObject();

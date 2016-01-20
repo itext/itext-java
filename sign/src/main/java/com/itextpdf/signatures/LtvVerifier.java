@@ -2,6 +2,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.forms.PdfAcroForm;
+
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPResp;
@@ -15,12 +16,13 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import static com.itextpdf.signatures.LtvVerification.CertificateOption;
+
+import java.util.ArrayList;
 
 /**
  * Verifies the signatures in an LTV document.
@@ -285,7 +287,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     public List<BasicOCSPResp> getOCSPResponsesFromDSS() throws IOException, GeneralSecurityException {
-        List<BasicOCSPResp> ocsps = new ArrayList<BasicOCSPResp>();
+        List<BasicOCSPResp> ocsps = new ArrayList<>();
         if (dss == null)
             return ocsps;
         PdfArray ocsparray = dss.getAsArray(PdfName.OCSPs);

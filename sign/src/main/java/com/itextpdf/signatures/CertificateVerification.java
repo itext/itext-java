@@ -76,7 +76,7 @@ public class CertificateVerification {
      * failed certificate and <CODE>error</CODE> is the error message
      */
     public static List<VerificationException> verifyCertificates(Certificate certs[], KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
-        List<VerificationException> result = new ArrayList<VerificationException>();
+        List<VerificationException> result = new ArrayList<>();
         if (calendar == null)
             calendar = new GregorianCalendar();
         for (int k = 0; k < certs.length; ++k) {

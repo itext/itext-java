@@ -1,11 +1,13 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.basics.PdfException;
+
 import java.security.cert.CRL;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * An implementation of the CrlClient that handles offline
@@ -18,7 +20,7 @@ public class CrlClientOffline implements CrlClient {
     /**
      * The CRL as a byte array.
      */
-    private ArrayList<byte[]> crls = new ArrayList<byte[]>();
+    private List<byte[]> crls = new ArrayList<>();
 
     /**
      * Creates an instance of a CrlClient in case you

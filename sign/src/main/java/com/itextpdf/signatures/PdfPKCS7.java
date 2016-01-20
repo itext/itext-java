@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -103,14 +104,14 @@ public class PdfPKCS7 {
 
         // Copy the certificates
         signCert = (X509Certificate)certChain[0];
-        certs = new ArrayList<Certificate>();
+        certs = new ArrayList<>();
         for (Certificate element : certChain) {
             certs.add(element);
         }
 
 
         // initialize and add the digest algorithms.
-        digestalgos = new HashSet<String>();
+        digestalgos = new HashSet<>();
         digestalgos.add(digestAlgorithmOid);
 
         // find the signing algorithm (RSA or DSA)
@@ -156,7 +157,7 @@ public class PdfPKCS7 {
             certs = cr.engineReadAll();
             signCerts = certs;
             signCert = (X509Certificate)certs.iterator().next();
-            crls = new ArrayList<CRL>();
+            crls = new ArrayList<>();
 
             ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(contentsKey));
             digest = ((ASN1OctetString)in.readObject()).getOctets();
@@ -222,7 +223,7 @@ public class PdfPKCS7 {
             version = ((ASN1Integer)content.getObjectAt(0)).getValue().intValue();
 
             // the digestAlgorithms
-            digestalgos = new HashSet<String>();
+            digestalgos = new HashSet<>();
             Enumeration<ASN1Sequence> e = ((ASN1Set)content.getObjectAt(1)).getObjects();
             while (e.hasMoreElements()) {
                 ASN1Sequence s = e.nextElement();
@@ -1127,9 +1128,9 @@ public class PdfPKCS7 {
      * of certificates and the sign certificate.
      */
     private void signCertificateChain() {
-        ArrayList<Certificate> cc = new ArrayList<Certificate>();
+        List<Certificate> cc = new ArrayList<>();
         cc.add(signCert);
-        ArrayList<Certificate> oc = new ArrayList<Certificate>(certs);
+        List<Certificate> oc = new ArrayList<>(certs);
         for (int k = 0; k < oc.size(); ++k) {
             if (signCert.equals(oc.get(k))) {
                 oc.remove(k);
@@ -1177,7 +1178,7 @@ public class PdfPKCS7 {
      */
     private void findCRL(ASN1Sequence seq) {
         try {
-            crls = new ArrayList<CRL>();
+            crls = new ArrayList<>();
             for (int k = 0; k < seq.size(); ++k) {
                 ByteArrayInputStream ar = new ByteArrayInputStream(seq.getObjectAt(k).toASN1Primitive().getEncoded(ASN1Encoding.DER));
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");

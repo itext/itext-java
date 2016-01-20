@@ -61,7 +61,7 @@ public class CertificateVerifier {
         else {
             signCert.verify(signCert.getPublicKey());
         }
-        List<VerificationOK> result = new ArrayList<VerificationOK>();
+        List<VerificationOK> result = new ArrayList<>();
         if (verifier != null)
             result.addAll(verifier.verify(signCert, issuerCert, signDate));
         return result;

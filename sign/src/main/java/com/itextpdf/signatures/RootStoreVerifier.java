@@ -56,7 +56,7 @@ public class RootStoreVerifier extends CertificateVerifier {
         if (rootStore == null)
             return super.verify(signCert, issuerCert, signDate);
         try {
-            List<VerificationOK> result = new ArrayList<VerificationOK>();
+            List<VerificationOK> result = new ArrayList<>();
             // loop over the trusted anchors in the root store
             for (Enumeration<String> aliases = rootStore.aliases(); aliases.hasMoreElements();) {
                 String alias = aliases.nextElement();
