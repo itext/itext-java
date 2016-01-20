@@ -42,7 +42,7 @@ public class PdfSplitter {
      *         Be warned that these documents are not closed.
      */
     public List<PdfDocument> splitBySize(long size) {
-        List<PageRange> splitRanges = new ArrayList<PageRange>();
+        List<PageRange> splitRanges = new ArrayList<>();
         int currentPage = 1;
         int numOfPages = pdfDocument.getNumOfPages();
 
@@ -90,7 +90,7 @@ public class PdfSplitter {
      * @throws PdfException
      */
     public List<PdfDocument> splitByPageNumbers(List<Integer> pageNumbers) {
-        final List<PdfDocument> splitDocuments = new ArrayList<PdfDocument>();
+        final List<PdfDocument> splitDocuments = new ArrayList<>();
 
         splitByPageNumbers(pageNumbers, new IDocumentReadyListener() {
             @Override
@@ -129,7 +129,7 @@ public class PdfSplitter {
      * @throws PdfException
      */
     public List<PdfDocument> splitByPageCount(int pageCount) {
-        final List<PdfDocument> splitDocuments = new ArrayList<PdfDocument>();
+        final List<PdfDocument> splitDocuments = new ArrayList<>();
 
         splitByPageCount(pageCount, new IDocumentReadyListener() {
             @Override
@@ -150,7 +150,7 @@ public class PdfSplitter {
      * @throws PdfException
      */
     public List<PdfDocument> extractPageRanges(List<PageRange> pageRanges) {
-        List<PdfDocument> splitDocuments = new ArrayList<PdfDocument>();
+        List<PdfDocument> splitDocuments = new ArrayList<>();
 
         for (PageRange currentPageRange : pageRanges) {
             PdfDocument currentPdfDocument = createPdfDocument(currentPageRange);
@@ -201,8 +201,8 @@ public class PdfSplitter {
 
     public static class PageRange {
 
-        private List<Integer> sequenceStarts = new ArrayList<Integer>();
-        private List<Integer> sequenceEnds = new ArrayList<Integer>();
+        private List<Integer> sequenceStarts = new ArrayList<>();
+        private List<Integer> sequenceEnds = new ArrayList<>();
 
         public PageRange() {
         }
@@ -242,7 +242,7 @@ public class PdfSplitter {
         }
 
         public TreeSet<Integer> getAllPages() {
-            TreeSet<Integer> allPages = new TreeSet<Integer>();
+            TreeSet<Integer> allPages = new TreeSet<>();
             for (int ind = 0; ind < sequenceStarts.size(); ind++) {
                 for (int pageInRange = sequenceStarts.get(ind); pageInRange <= sequenceEnds.get(ind); pageInRange++) {
                     allPages.add(pageInRange);
@@ -282,7 +282,7 @@ public class PdfSplitter {
             return Collections.EMPTY_LIST;
         }
 
-        List<PdfDocument> documentList = new ArrayList<PdfDocument>(outlineTitles.size());
+        List<PdfDocument> documentList = new ArrayList<>(outlineTitles.size());
         for (String title : outlineTitles) {
             PdfDocument document = splitByOutline(title);
             if (document != null) {

@@ -31,7 +31,7 @@ public class PdfResourceCounter {
      * @param obj the object we want to examine
      */
     public PdfResourceCounter(PdfObject obj) {
-        resources = new HashMap<Integer, PdfObject>();
+        resources = new HashMap<>();
         process(obj);
     }
 

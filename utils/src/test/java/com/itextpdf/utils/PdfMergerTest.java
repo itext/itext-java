@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -165,14 +166,14 @@ public class PdfMergerTest extends ExtendedITextTest{
         pdfDoc3.setTagged();
 
         PdfMerger merger = new PdfMerger(pdfDoc3);
-        ArrayList<Integer> pages = new ArrayList<Integer>();
+        List<Integer> pages = new ArrayList<>();
         pages.add(3);
         pages.add(2);
         pages.add(1);
         merger.addPages(pdfDoc, pages);
         pdfDoc.close();
 
-        ArrayList<Integer> pages1 = new ArrayList<Integer>();
+        List<Integer> pages1 = new ArrayList<>();
         pages1.add(5);
         pages1.add(9);
         pages1.add(4);

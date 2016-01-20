@@ -7,11 +7,13 @@ import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PdfMerger {
 
     private PdfDocument pdfDocument;
-    private ArrayList<PdfPage> pagesToCopy = new ArrayList<PdfPage>();
+    private List<PdfPage> pagesToCopy = new ArrayList<>();
 
     /**
      * This class is used to merge a number of existing documents into one;
@@ -29,7 +31,7 @@ public class PdfMerger {
      * @throws PdfException
      */
     public void addPages(PdfDocument from, int fromPage, int toPage) {
-        LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
+        Map<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
         for (int pageNum = fromPage; pageNum <= toPage; pageNum++){
             fillListOfPagesToCopy(from, pageNum, page2page);
         }
@@ -42,8 +44,8 @@ public class PdfMerger {
      * @param pages - List of numbers of pages which will be copied.
      * @throws PdfException
      */
-    public void addPages(PdfDocument from, ArrayList<Integer> pages) {
-        LinkedHashMap<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
+    public void addPages(PdfDocument from, List<Integer> pages) {
+        Map<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
         for (Integer pageNum : pages){
             fillListOfPagesToCopy(from, pageNum, page2page);
         }
@@ -67,7 +69,7 @@ public class PdfMerger {
      * @param page2page - map, which contains original page as a key and new page of the new document as a value. This map is used to create StructTreeRoot in the new document.
      * @throws PdfException
      */
-    private void fillListOfPagesToCopy(PdfDocument from, int pageNum, LinkedHashMap<PdfPage, PdfPage> page2page) {
+    private void fillListOfPagesToCopy(PdfDocument from, int pageNum, Map<PdfPage, PdfPage> page2page) {
         PdfPage originalPage = from.getPage(pageNum);
         PdfPage newPage = originalPage.copy(pdfDocument);
         page2page.put(originalPage, newPage);
@@ -80,7 +82,7 @@ public class PdfMerger {
      * @param page2page - map, which contains original page as a key and new page of the new document as a value. This map is used to create StructTreeRoot in the new document.
      * @throws PdfException
      */
-    private void createStructTreeRoot(PdfDocument from, LinkedHashMap<PdfPage, PdfPage> page2page) {
+    private void createStructTreeRoot(PdfDocument from, Map<PdfPage, PdfPage> page2page) {
         PdfStructTreeRoot structTreeRoot = from.getStructTreeRoot();
         if (structTreeRoot != null)
             structTreeRoot.copyToDocument(pdfDocument, page2page);
