@@ -30,14 +30,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PdfA2Checker extends PdfA1Checker{
 
-    protected static final HashSet<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName._3D, PdfName.Sound, PdfName.Screen, PdfName.Movie));
-    protected static final HashSet<PdfName> forbiddenActions = new HashSet<>(Arrays.asList(PdfName.Launch, PdfName.Sound, PdfName.Movie,
+    protected static final Set<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName._3D, PdfName.Sound, PdfName.Screen, PdfName.Movie));
+    protected static final Set<PdfName> forbiddenActions = new HashSet<>(Arrays.asList(PdfName.Launch, PdfName.Sound, PdfName.Movie,
             PdfName.ResetForm, PdfName.ImportData, PdfName.JavaScript, PdfName.Hide, PdfName.SetOCGState, PdfName.Rendition, PdfName.Trans, PdfName.GoTo3DView));
-    protected static final HashSet<PdfName> allowedBlendModes = new HashSet<PdfName>(Arrays.asList(PdfName.Normal,
+    protected static final Set<PdfName> allowedBlendModes = new HashSet<>(Arrays.asList(PdfName.Normal,
             PdfName.Compatible, PdfName.Multiply, PdfName.Screen, PdfName.Overlay,
             PdfName.Darken, PdfName.Lighten, PdfName.ColorDodge, PdfName.ColorBurn,
             PdfName.HardLight, PdfName.SoftLight, PdfName.Difference, PdfName.Exclusion,
@@ -376,7 +378,7 @@ public class PdfA2Checker extends PdfA1Checker{
 
         PdfDictionary oCProperties = catalogDict.getAsDictionary(PdfName.OCProperties);
         if (oCProperties != null) {
-            ArrayList<PdfDictionary> configList = new ArrayList<>();
+            List<PdfDictionary> configList = new ArrayList<>();
             PdfDictionary d = oCProperties.getAsDictionary(PdfName.D);
             if (d != null) {
                 configList.add(d);
@@ -388,14 +390,14 @@ public class PdfA2Checker extends PdfA1Checker{
                 }
             }
 
-            HashSet<PdfObject> ocgs = new HashSet<>();
+            Set<PdfObject> ocgs = new HashSet<>();
             PdfArray ocgsArray = oCProperties.getAsArray(PdfName.OCGs);
             if (ocgsArray != null) {
                 ocgs.addAll(ocgsArray);
             }
 
-            HashSet<String> names = new HashSet<>();
-            HashSet<PdfObject> order = new HashSet<>();
+            Set<String> names = new HashSet<>();
+            Set<PdfObject> order = new HashSet<>();
             for (PdfDictionary config : configList) {
                 PdfString name = config.getAsString(PdfName.Name);
                 if (name == null) {
@@ -547,12 +549,12 @@ public class PdfA2Checker extends PdfA1Checker{
     }
 
     @Override
-    protected HashSet<PdfName> getForbiddenActions() {
+    protected Set<PdfName> getForbiddenActions() {
         return forbiddenActions;
     }
 
     @Override
-    protected HashSet<PdfName> getAllowedNamedActions() {
+    protected Set<PdfName> getAllowedNamedActions() {
         return allowedNamedActions;
     }
 
@@ -764,7 +766,7 @@ public class PdfA2Checker extends PdfA1Checker{
         return altCSIsTheSame;
     }
 
-    private void fillOrderRecursively(PdfArray orderArray, HashSet<PdfObject> order) {
+    private void fillOrderRecursively(PdfArray orderArray, Set<PdfObject> order) {
         for (PdfObject orderItem : orderArray) {
             if (!orderItem.isArray()) {
                 order.add(orderItem);

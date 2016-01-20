@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class PdfAChecker {
     public static final String ICC_COLOR_SPACE_RGB = "RGB ";
@@ -48,7 +49,7 @@ public abstract class PdfAChecker {
      * that shall be checked are able to be changed) shouldn't be marked as checked if they are not to be
      * flushed immediately.
      */
-    protected HashSet<PdfObject> checkedObjects = new HashSet<>();
+    protected Set<PdfObject> checkedObjects = new HashSet<>();
     protected Map<PdfObject, PdfColorSpace> checkedObjectsColorspace = new HashMap<>();
 
     public PdfAChecker(PdfAConformanceLevel conformanceLevel) {
@@ -115,8 +116,8 @@ public abstract class PdfAChecker {
     public abstract void checkRenderingIntent(PdfName intent);
     public abstract void checkExtGState(CanvasGraphicsState extGState);
 
-    protected abstract HashSet<PdfName> getForbiddenActions();
-    protected abstract HashSet<PdfName> getAllowedNamedActions();
+    protected abstract Set<PdfName> getForbiddenActions();
+    protected abstract Set<PdfName> getAllowedNamedActions();
     protected abstract void checkAction(PdfDictionary action);
     protected abstract void checkAnnotation(PdfDictionary annotDic);
     protected abstract void checkCatalogValidEntries(PdfDictionary catalogDict);

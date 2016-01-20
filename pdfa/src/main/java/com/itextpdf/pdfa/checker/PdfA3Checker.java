@@ -8,9 +8,10 @@ import com.itextpdf.core.pdf.PdfAConformanceLevel;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 public class PdfA3Checker extends PdfA2Checker{
-    protected static final HashSet<PdfName> allowedAFRelationships = new HashSet<PdfName>(Arrays.asList(
+    protected static final Set<PdfName> allowedAFRelationships = new HashSet<>(Arrays.asList(
             PdfName.Source, PdfName.Data, PdfName.Alternative,
             PdfName.Supplement, PdfName.Unspecified));
 

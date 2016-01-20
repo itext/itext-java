@@ -19,17 +19,18 @@ import com.itextpdf.pdfa.PdfAConformanceException;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 public class PdfA1Checker extends PdfAChecker {
 
-    protected static final HashSet<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName.Sound, PdfName.Movie, PdfName.FileAttachment));
-    protected static final HashSet<PdfName> contentAnnotations = new HashSet<PdfName>(Arrays.asList(PdfName.Text,
+    protected static final Set<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName.Sound, PdfName.Movie, PdfName.FileAttachment));
+    protected static final Set<PdfName> contentAnnotations = new HashSet<>(Arrays.asList(PdfName.Text,
             PdfName.FreeText, PdfName.Line, PdfName.Square, PdfName.Circle, PdfName.Stamp, PdfName.Ink, PdfName.Popup));
-    protected static final HashSet<PdfName> forbiddenActions = new HashSet<>(Arrays.asList(PdfName.Launch, PdfName.Sound, PdfName.Movie,
+    protected static final Set<PdfName> forbiddenActions = new HashSet<>(Arrays.asList(PdfName.Launch, PdfName.Sound, PdfName.Movie,
             PdfName.ResetForm, PdfName.ImportData, PdfName.JavaScript, PdfName.Hide));
-    protected static final HashSet<PdfName> allowedNamedActions = new HashSet<>(Arrays.asList(PdfName.NextPage,
+    protected static final Set<PdfName> allowedNamedActions = new HashSet<>(Arrays.asList(PdfName.NextPage,
             PdfName.PrevPage, PdfName.FirstPage, PdfName.LastPage));
-    protected static final HashSet<PdfName> allowedRenderingIntents = new HashSet<>(Arrays.asList(PdfName.RelativeColorimetric,
+    protected static final Set<PdfName> allowedRenderingIntents = new HashSet<>(Arrays.asList(PdfName.RelativeColorimetric,
             PdfName.AbsoluteColorimetric, PdfName.Perceptual, PdfName.Saturation));
 
     public PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
@@ -94,12 +95,12 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    protected HashSet<PdfName> getForbiddenActions() {
+    protected Set<PdfName> getForbiddenActions() {
         return forbiddenActions;
     }
 
     @Override
-    protected HashSet<PdfName> getAllowedNamedActions() {
+    protected Set<PdfName> getAllowedNamedActions() {
         return allowedNamedActions;
     }
 
