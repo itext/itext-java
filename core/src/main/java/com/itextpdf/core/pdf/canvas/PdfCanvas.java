@@ -5,6 +5,7 @@ import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
+import com.itextpdf.basics.geom.AffineTransform;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
@@ -298,6 +299,18 @@ public class PdfCanvas {
                 writeFloat(e).writeSpace().
                 writeFloat(f).writeSpace().writeBytes(cm);
         return this;
+    }
+
+    /**
+     * Concatenates the affine transformation matrix to the current matrix
+     * in the content stream managed by this Canvas.
+     * See also {@link #concatMatrix(float, float, float, float, float, float)}
+     * @return current canvas
+     */
+    public PdfCanvas concatMatrix(AffineTransform transform) {
+        float matrix[] = new float[6];
+        transform.getMatrix(matrix);
+        return concatMatrix(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
     }
 
     /**

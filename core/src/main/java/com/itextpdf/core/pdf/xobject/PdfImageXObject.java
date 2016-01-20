@@ -71,7 +71,7 @@ public class PdfImageXObject extends PdfXObject {
 
     @Override
     public PdfImageXObject copy(PdfDocument document) {
-        PdfImageXObject image = new PdfImageXObject((PdfStream) getPdfObject().copyToDocument(document));
+        PdfImageXObject image = new PdfImageXObject(getPdfObject().copyToDocument(document));
         image.width = width;
         image.height = height;
         image.mask = mask;
@@ -103,7 +103,6 @@ public class PdfImageXObject extends PdfXObject {
     }
 
     protected static PdfStream createPdfStream(Image image, PdfImageXObject imageMask) {
-
         PdfStream stream;
         if (image.getOriginalType() == Image.RAW) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
