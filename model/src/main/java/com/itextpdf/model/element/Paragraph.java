@@ -6,6 +6,7 @@ import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.ParagraphRenderer;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class Paragraph extends BlockElement<Paragraph> {
@@ -51,7 +52,7 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     public <T extends Paragraph> T removeTabStop(float tabStopPosition) {
-        TreeMap<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
+        Map<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
         if (tabStops != null) {
             tabStops.remove(tabStopPosition);
         }
@@ -97,7 +98,7 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     private void addTabStopsAsProperty(java.util.List<TabStop> newTabStops) {
-        TreeMap<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
+        Map<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
         if (tabStops == null) {
             tabStops = new TreeMap<>();
             setProperty(Property.TAB_STOPS, tabStops);

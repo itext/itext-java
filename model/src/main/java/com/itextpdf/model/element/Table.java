@@ -20,7 +20,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     protected PdfName role = PdfName.Table;
     protected AccessibleElementProperties tagProperties;
 
-    private ArrayList<Cell[]> rows;
+    private List<Cell[]> rows;
 
     private float[] columnWidths;
     private int currentColumn = 0;
