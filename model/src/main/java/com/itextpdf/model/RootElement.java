@@ -22,6 +22,11 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A generic abstract root element for a PDF object hierarchy.
+ * 
+ * @param <Type> this type
+ */
 public abstract class RootElement<Type extends RootElement> implements IPropertyContainer<Type> {
 
     protected boolean immediateFlush = true;
@@ -36,7 +41,10 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
     protected RootRenderer rootRenderer;
 
     /**
-     * Adds an element to the root. The element is immediately placed to the contents.
+     * Adds an element to the root. The element is immediately placed in the contents.
+     * @param element an element with spacial margins, tabbing, and alignment
+     * @return this element
+     * @see BlockElement
      */
     public Type add(BlockElement element) {
         childElements.add(element);
@@ -44,6 +52,12 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
         return (Type) this;
     }
 
+    /**
+     * Adds an image to the root. The element is immediately placed in the contents.
+     * @param image a graphical image element
+     * @return this element
+     * @see Image
+     */
     public Type add(Image image) {
         childElements.add(image);
         ensureRootRendererNotNull().addChild(image.createRendererSubTree());
@@ -121,10 +135,12 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
 
     /**
      * Convenience method to write a text aligned about the specified point
+     * @param <T> the return type
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
+     * @return this object
      */
     public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign) {
         return showTextAligned(text, x, y, textAlign, 0);
@@ -132,11 +148,13 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
 
     /**
      * Convenience method to write a text aligned about the specified point
+     * @param <T> the return type
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @param angle the angle of rotation applied to the text, in radians
+     * @return this object
      */
     public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, float angle) {
         return showTextAligned(text, x, y, textAlign, Property.VerticalAlignment.BOTTOM, angle);
@@ -144,12 +162,14 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
 
     /**
      * Convenience method to write a text aligned about the specified point
+     * @param <T> the return type
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
      * @param angle the angle of rotation applied to the text, in radians
+     * @return this object
      */
     public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text);
@@ -158,12 +178,14 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
 
     /**
      * Convenience method to write a kerned text aligned about the specified point
+     * @param <T> the return type
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
      * @param angle the angle of rotation applied to the text, in radians
+     * @return this object
      */
     public <T extends RootElement> T showTextAlignedKerned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text).setFontKerning(Property.FontKerning.YES);
@@ -172,6 +194,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
 
     /**
      * Convenience method to write a text aligned about the specified point
+     * @param <T> the return type
      * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
      *          Set width to write multiline text.
      * @param x the point about which the text will be aligned and rotated
@@ -180,6 +203,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
      * @param angle the angle of rotation applied to the text, in radians
+     * @return this object
      */
     public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, int pageNumber, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Div div = new Div();

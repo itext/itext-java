@@ -1,5 +1,11 @@
 package com.itextpdf.model;
 
+/**
+ * An generic Map-like interface that defines methods for storing and retrieving
+ * objects by an enum key of the {@link Property} type.
+ * 
+ * @param <Type> the type of the implementation
+ */
 public interface IPropertyContainer<Type extends IPropertyContainer> {
 
     /**
@@ -20,6 +26,7 @@ public interface IPropertyContainer<Type extends IPropertyContainer> {
     /**
      * Gets the property from this entity. Compared to {@link #getOwnProperty(Property)},
      * this method can check parent's properties, styles, etc, depending on the origin of the instance
+     * @param <T> the return type associated with the property
      * @param property the property to be retrieved
      * @return the value of the given property. {@code null} will be returned if the property value was not found
      */
@@ -28,13 +35,15 @@ public interface IPropertyContainer<Type extends IPropertyContainer> {
     /**
      * Gets own property from this entity. The property must have been set earlier to this entity.
      * If the property is not found, {@code null} will be returned.
-     * @param property he property to be retrieved
+     * @param <T> the return type associated with the property
+     * @param property the property to be retrieved
      * @return the value of the given own property. {@code null} will be returned if the property value was not found
      */
     <T> T getOwnProperty(Property property);
 
     /**
      * Gets the default property from this entity.
+     * @param <T> the return type associated with the property
      * @param property the property to be retrieved
      * @return the default property value. If the default property is not defined, {@code null} will be returned
      */
@@ -42,6 +51,7 @@ public interface IPropertyContainer<Type extends IPropertyContainer> {
 
     /**
      * Sets a property for this entity.
+     * @param <T> the type of this element
      * @param property the property to be set
      * @param value the value of the property
      * @return this element
