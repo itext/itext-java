@@ -8,6 +8,9 @@ import java.io.InputStream;
 
 import org.slf4j.LoggerFactory;
 
+/**
+ * Representation of a stream as described in the PDF Specification.
+ */
 public class PdfStream extends PdfDictionary {
 
     protected int compressionLevel;
@@ -36,6 +39,11 @@ public class PdfStream extends PdfDictionary {
         }
     }
 
+    /**
+     * Creates a PdfStream instance.
+     *
+     * @param bytes bytes to write to the PdfStream
+     */
     public PdfStream(byte[] bytes) {
         this(bytes, PdfWriter.UNDEFINED_COMPRESSION);
     }
@@ -100,6 +108,9 @@ public class PdfStream extends PdfDictionary {
         this(null, compressionLevel);
     }
 
+    /**
+     * Creates an empty PdfStream instance.
+     */
     public PdfStream() {
         this(null);
     }
