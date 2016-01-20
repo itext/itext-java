@@ -50,8 +50,7 @@ public class BorderTest extends ExtendedITextTest {
     public void simpleBordersTest() throws IOException, InterruptedException {
         fileName = "simpleBordersTest.pdf";
         Document doc = createDocument();
-
-
+        
         List list = new List();
 
         ListItem solidBorderItem = new ListItem("solid");

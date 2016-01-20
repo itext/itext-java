@@ -1,7 +1,6 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -13,7 +12,6 @@ import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -245,44 +243,44 @@ public class PdfPagesTest extends ExtendedITextTest{
         return -1;
     }
 
-    @Test@Ignore
-    public void testInheritedResources() throws IOException {
-        String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
-        PdfReader reader1 = new PdfReader(inputFileName1);
-        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
-        PdfPage page = inputPdfDoc1.getPage(1);
-        List<PdfFont> list = page.getResources().getFonts(true);
-        Assert.assertEquals(1, list.size());
-        Assert.assertEquals("ASJKFO+Arial-BoldMT", list.get(0).getFontProgram().getFontNames().getFontName());
-    }
-
-    @Test(expected = PdfException.class)
-    public void testCircularReferencesInResources() throws IOException {
-        String inputFileName1 = sourceFolder + "circularReferencesInResources.pdf";
-        PdfReader reader1 = new PdfReader(inputFileName1);
-        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
-        PdfPage page = inputPdfDoc1.getPage(1);
-        List<PdfFont> list = page.getResources().getFonts(true);
-    }
-
-    @Test@Ignore
-    public void testInheritedResourcesUpdate() throws IOException {
-        String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
-        PdfReader reader1 = new PdfReader(inputFileName1);
-
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "veraPDF-A003-a-pass_new.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
-        PdfDocument pdfDoc = new PdfDocument(reader1, writer);
-        pdfDoc.getPage(1).getResources().getFonts(true);
-        PdfFont f = PdfFont.createFont((PdfDictionary) pdfDoc.getPdfObject(6));
-        pdfDoc.getPage(1).getResources().addFont(pdfDoc, f);
-        int fontCount = pdfDoc.getPage(1).getResources().getFonts(false).size();
-        pdfDoc.getPage(1).flush();
-        pdfDoc.close();
-
-        Assert.assertEquals(2, fontCount);
-    }
+//    @Test@Ignore
+//    public void testInheritedResources() throws IOException {
+//        String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
+//        PdfReader reader1 = new PdfReader(inputFileName1);
+//        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+//        PdfPage page = inputPdfDoc1.getPage(1);
+//        List<PdfFont> list = page.getResources().getFonts(true);
+//        Assert.assertEquals(1, list.size());
+//        Assert.assertEquals("ASJKFO+Arial-BoldMT", list.get(0).getFontProgram().getFontNames().getFontName());
+//    }
+//
+//    @Test(expected = PdfException.class)
+//    public void testCircularReferencesInResources() throws IOException {
+//        String inputFileName1 = sourceFolder + "circularReferencesInResources.pdf";
+//        PdfReader reader1 = new PdfReader(inputFileName1);
+//        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
+//        PdfPage page = inputPdfDoc1.getPage(1);
+//        List<PdfFont> list = page.getResources().getFonts(true);
+//    }
+//
+//    @Test@Ignore
+//    public void testInheritedResourcesUpdate() throws IOException {
+//        String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
+//        PdfReader reader1 = new PdfReader(inputFileName1);
+//
+//        FileOutputStream fos = new FileOutputStream(destinationFolder + "veraPDF-A003-a-pass_new.pdf");
+//        PdfWriter writer = new PdfWriter(fos);
+//        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+//        PdfDocument pdfDoc = new PdfDocument(reader1, writer);
+//        pdfDoc.getPage(1).getResources().getFonts(true);
+//        PdfFont f = PdfFont.createFont((PdfDictionary) pdfDoc.getPdfObject(6));
+//        pdfDoc.getPage(1).getResources().addFont(pdfDoc, f);
+//        int fontCount = pdfDoc.getPage(1).getResources().getFonts(false).size();
+//        pdfDoc.getPage(1).flush();
+//        pdfDoc.close();
+//
+//        Assert.assertEquals(2, fontCount);
+//    }
 
     @Test
     public void getPageByDictionary() throws IOException {
