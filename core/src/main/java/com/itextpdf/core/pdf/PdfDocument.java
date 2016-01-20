@@ -308,7 +308,7 @@ public class PdfDocument implements IEventDispatcher {
         }
     }
 
-    public int getNumOfPdfObjects() {
+    public int getNumberOfPdfObjects() {
         return xref.size();
     }
 
@@ -339,7 +339,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return last page.
      */
     public PdfPage getLastPage() {
-        return getPage(getNumOfPages());
+        return getPage(getNumberOfPages());
     }
 
     /**
@@ -430,9 +430,9 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @return number of pages.
      */
-    public int getNumOfPages() {
+    public int getNumberOfPages() {
         checkClosingStatus();
-        return catalog.getNumOfPages();
+        return catalog.getNumberOfPages();
     }
 
     /**
@@ -441,9 +441,9 @@ public class PdfDocument implements IEventDispatcher {
      * @param page the page.
      * @return page number.
      */
-    public int getPageNum(PdfPage page) {
+    public int getPageNumber(PdfPage page) {
         checkClosingStatus();
-        return catalog.getPageNum(page);
+        return catalog.getPageNumber(page);
     }
 
     /**
@@ -680,7 +680,7 @@ public class PdfDocument implements IEventDispatcher {
                         }
                     }
 
-                    for(int pageNum = 1; pageNum <= getNumOfPages(); pageNum++) {
+                    for(int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
                         getPage(pageNum).flush();
                     }
                     catalog.getPdfObject().flush(false);
@@ -856,7 +856,7 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumOfPages() + 1, copier);
+        return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumberOfPages() + 1, copier);
     }
 
     /**
@@ -897,7 +897,7 @@ public class PdfDocument implements IEventDispatcher {
             PdfPage newPage = page.copy(toDocument, copier);
             copiedPages.add(newPage);
             page2page.put(page, newPage);
-            if (insertBeforePage < toDocument.getNumOfPages() + 1) {
+            if (insertBeforePage < toDocument.getNumberOfPages() + 1) {
                 toDocument.addPage(insertBeforePage, newPage);
             } else {
                 toDocument.addPage(newPage);
@@ -911,7 +911,7 @@ public class PdfDocument implements IEventDispatcher {
             }
         }
         if (toDocument.isTagged()) {
-            if (insertBeforePage > toDocument.getNumOfPages())
+            if (insertBeforePage > toDocument.getNumberOfPages())
                 getStructTreeRoot().copyToDocument(toDocument, page2page);
             else
                 getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
@@ -950,7 +950,7 @@ public class PdfDocument implements IEventDispatcher {
      */
     public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
 
-        return copyPages(pagesToCopy, toDocument, toDocument.getNumOfPages() + 1, copier);
+        return copyPages(pagesToCopy, toDocument, toDocument.getNumberOfPages() + 1, copier);
     }
 
     public boolean isCloseReader() {

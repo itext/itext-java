@@ -27,8 +27,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 
-import javax.sound.midi.Soundbank;
-
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
@@ -69,7 +67,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -118,7 +116,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -162,7 +160,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -207,7 +205,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -254,7 +252,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -298,7 +296,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -341,7 +339,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -383,10 +381,10 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -426,10 +424,10 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -469,10 +467,10 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -512,10 +510,10 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -558,13 +556,13 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 1; i <= pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 1; i <= pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i);
         }
         PdfPage pdfPage = pdfDoc3.getPage(1);
         PdfDictionary root = pdfPage.getPdfObject().getAsDictionary(PdfName.Parent);
         assertEquals("PdfPages kids count", newPageCount, root.getAsArray(PdfName.Kids).size());
-        assertEquals("Number of pages", newPageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", newPageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -612,12 +610,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 1; i <= pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 1; i <= pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i);
         }
         PdfArray rootKids = pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject().getAsArray(PdfName.Kids);
         assertEquals("Page root kids count", 2, rootKids.size());
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -642,7 +640,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2));
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
 
-        for (int i = pdfDoc2.getNumOfPages(); i > 3; i--) {
+        for (int i = pdfDoc2.getNumberOfPages(); i > 3; i--) {
             assertNotNull("Remove page " + i, pdfDoc2.removePage(i));
         }
 
@@ -650,11 +648,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 1; i <= pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 1; i <= pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i);
         }
         assertTrue("Xref size is " + pdfDoc3.getXref().size(), pdfDoc3.getXref().size() < 20);
-        assertEquals("Number of pages", 3, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", 3, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -768,11 +766,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -815,11 +813,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -861,7 +859,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -911,7 +909,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -955,7 +953,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -1001,7 +999,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -1048,7 +1046,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
@@ -1091,10 +1089,10 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -1134,10 +1132,10 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -1177,10 +1175,10 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -1220,10 +1218,10 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
         PdfDocument pdfDoc3 = new PdfDocument(reader3);
-        for (int i = 0; i < pdfDoc3.getNumOfPages(); i++) {
+        for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertEquals("Number of pages", pageCount, pdfDoc3.getNumOfPages());
+        assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
@@ -1492,7 +1490,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         PdfDocument sourceDoc = new PdfDocument(reader);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        sourceDoc.copyPages(1, sourceDoc.getNumOfPages(), pdfDoc);
+        sourceDoc.copyPages(1, sourceDoc.getNumberOfPages(), pdfDoc);
 
         pdfDoc.close();
 

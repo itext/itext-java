@@ -67,7 +67,7 @@ public class IccProfile {
         IccProfile icc = new IccProfile();
         icc.data = data;
         Integer cs;
-        cs = getIccNumOfComponents(data);
+        cs = getIccNumberOfComponents(data);
         int nc = cs == null ? 0 : cs;
         icc.numComponents = nc;
         // invalid ICC
@@ -79,7 +79,7 @@ public class IccProfile {
 
     public static IccProfile getInstance(byte[] data) {
         Integer cs;
-        cs = getIccNumOfComponents(data);
+        cs = getIccNumberOfComponents(data);
         int numComponents = cs == null ? 0 : cs;
         return getInstance(data, numComponents);
     }
@@ -154,7 +154,7 @@ public class IccProfile {
         return deviceClass;
     }
 
-    public static Integer getIccNumOfComponents(byte[] data) {
+    public static Integer getIccNumberOfComponents(byte[] data) {
         return cstags.get(getIccColorSpaceName(data));
     }
 

@@ -153,7 +153,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      */
     public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text);
-        return showTextAligned(p, x, y, pdfDocument.getNumOfPages(), textAlign, vertAlign, angle);
+        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
 
     /**
@@ -167,7 +167,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      */
     public <T extends RootElement> T showTextAlignedKerned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text).setFontKerning(Property.FontKerning.YES);
-        return showTextAligned(p, x, y, pdfDocument.getNumOfPages(), textAlign, vertAlign, angle);
+        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
 
     /**

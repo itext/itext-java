@@ -36,7 +36,7 @@ public class Color {
     public Color(PdfColorSpace colorSpace, float[] colorValue) {
         this.colorSpace = colorSpace;
         if (colorValue == null)
-            this.colorValue = new float[colorSpace.getNumOfComponents()];
+            this.colorValue = new float[colorSpace.getNumberOfComponents()];
         else
             this.colorValue = colorValue;
     }
@@ -65,7 +65,7 @@ public class Color {
         return new DeviceCmyk(c, m, y, k);
     }
 
-    public int getNumOfComponents() {
+    public int getNumberOfComponents() {
         return colorValue.length;
     }
 

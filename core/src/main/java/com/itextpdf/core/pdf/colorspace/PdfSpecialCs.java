@@ -30,7 +30,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumberOfComponents() {
             return 1;
         }
 
@@ -60,13 +60,13 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
         public Separation(PdfDocument document, String name, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(document, new PdfName(name), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
-            if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
+            if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
                 throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumberOfComponents() {
             return 1;
         }
 
@@ -104,13 +104,13 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
         public DeviceN(PdfDocument document, List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(document, new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
-            if (tintTransform.getInputSize() != getNumOfComponents() || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
+            if (tintTransform.getInputSize() != getNumberOfComponents() || tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
                 throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumberOfComponents() {
             return numOfComponents;
         }
 
@@ -144,7 +144,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
         public NChannel(PdfDocument document, List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform, PdfDictionary attributes) {
             this(document, new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject(), attributes);
-            if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumOfComponents()) {
+            if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
                 throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
@@ -168,7 +168,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumberOfComponents() {
             return 0;
         }
     }
@@ -184,8 +184,8 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
-            return PdfColorSpace.makeColorSpace(((PdfArray) getPdfObject()).get(1), getDocument()).getNumOfComponents();
+        public int getNumberOfComponents() {
+            return PdfColorSpace.makeColorSpace(((PdfArray) getPdfObject()).get(1), getDocument()).getNumberOfComponents();
         }
 
         public PdfColorSpace getUnderlyingColorSpace() {

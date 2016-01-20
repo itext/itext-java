@@ -66,16 +66,16 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return pageTree.getPage(pageDictionary);
     }
 
-    public int getNumOfPages() {
-        return pageTree.getNumOfPages();
+    public int getNumberOfPages() {
+        return pageTree.getNumberOfPages();
     }
 
-    public int getPageNum(PdfPage page) {
-        return pageTree.getPageNum(page);
+    public int getPageNumber(PdfPage page) {
+        return pageTree.getPageNumber(page);
     }
 
-    public int getPageNum(PdfDictionary pageDictionary) {
-        return pageTree.getPageNum(pageDictionary);
+    public int getPageNumber(PdfDictionary pageDictionary) {
+        return pageTree.getPageNumber(pageDictionary);
     }
 
     public boolean removePage(PdfPage page) {

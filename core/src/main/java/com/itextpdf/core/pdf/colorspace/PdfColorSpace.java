@@ -13,7 +13,7 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
         super(pdfObject);
     }
 
-    abstract public int getNumOfComponents();
+    abstract public int getNumberOfComponents();
 
     static public PdfColorSpace makeColorSpace(PdfObject pdfObject, PdfDocument document) {
         if (pdfObject.isIndirectReference())

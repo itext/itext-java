@@ -46,7 +46,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumberOfComponents() {
             return 1;
         }
     }
@@ -79,7 +79,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumberOfComponents() {
             return 3;
         }
     }
@@ -110,7 +110,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumberOfComponents() {
             return 3;
         }
     }
@@ -135,7 +135,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         }
 
         @Override
-        public int getNumOfComponents() {
+        public int getNumberOfComponents() {
             return ((PdfArray) getPdfObject()).getAsStream(1).getAsInt(PdfName.Action.N);
         }
 

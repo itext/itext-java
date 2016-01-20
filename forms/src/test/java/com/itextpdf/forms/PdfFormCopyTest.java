@@ -17,7 +17,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -48,9 +47,9 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument doc3 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename3)));
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(filename)));
 
-        doc3.copyPages(1, doc3.getNumOfPages(), pdfDoc, new PdfPageFormCopier());
-        doc2.copyPages(1, doc2.getNumOfPages(), pdfDoc, new PdfPageFormCopier());
-        doc1.copyPages(1, doc1.getNumOfPages(), pdfDoc, new PdfPageFormCopier());
+        doc3.copyPages(1, doc3.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+        doc2.copyPages(1, doc2.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+        doc1.copyPages(1, doc1.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
 
         pdfDoc.close();
 
@@ -66,7 +65,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument doc1 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename)));
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(filename)));
 
-        doc1.copyPages(1, doc1.getNumOfPages(), pdfDoc, new PdfPageFormCopier());
+        doc1.copyPages(1, doc1.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
 
         pdfDoc.close();
 
@@ -82,7 +81,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument doc1 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename)));
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(filename)));
 
-        doc1.copyPages(1, doc1.getNumOfPages(), pdfDoc, new PdfPageFormCopier());
+        doc1.copyPages(1, doc1.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
 
         pdfDoc.close();
 
@@ -102,8 +101,8 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument doc2 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename2)));
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(filename)));
 
-        doc1.copyPages(1, doc1.getNumOfPages(), pdfDoc, new PdfPageFormCopier());
-        doc2.copyPages(1, doc2.getNumOfPages(), pdfDoc, new PdfPageFormCopier());
+        doc1.copyPages(1, doc1.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+        doc2.copyPages(1, doc2.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
 
         pdfDoc.close();
 
@@ -122,8 +121,8 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument srcDoc = new PdfDocument(new PdfReader(new FileInputStream(srcFilename)));
         PdfDocument destDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
-        srcDoc.copyPages(1, srcDoc.getNumOfPages(), destDoc, new PdfPageFormCopier());
-        srcDoc.copyPages(1, srcDoc.getNumOfPages(), destDoc, new PdfPageFormCopier());
+        srcDoc.copyPages(1, srcDoc.getNumberOfPages(), destDoc, new PdfPageFormCopier());
+        srcDoc.copyPages(1, srcDoc.getNumberOfPages(), destDoc, new PdfPageFormCopier());
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(destDoc, false);
         Assert.assertEquals(1, form.getFields().size());

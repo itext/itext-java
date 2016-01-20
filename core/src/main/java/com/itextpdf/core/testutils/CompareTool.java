@@ -248,7 +248,7 @@ public class CompareTool {
         String message = null;
         PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf));
         PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf));
-        for (int i = 0; i < outDocument.getNumOfPages() && i < cmpDocument.getNumOfPages(); i++) {
+        for (int i = 0; i < outDocument.getNumberOfPages() && i < cmpDocument.getNumberOfPages(); i++) {
             List<PdfLinkAnnotation> outLinks = getLinkAnnotations(i + 1, outDocument);
             List<PdfLinkAnnotation> cmpLinks = getLinkAnnotations(i + 1, cmpDocument);
 
@@ -598,7 +598,7 @@ public class CompareTool {
     }
 
     private void loadPagesFromReader(PdfDocument doc, List<PdfDictionary> pages, List<PdfIndirectReference> pagesRef) {
-        int numOfPages = doc.getCatalog().getNumOfPages();
+        int numOfPages = doc.getCatalog().getNumberOfPages();
         for (int i = 0; i < numOfPages; ++i) {
             pages.add(doc.getCatalog().getPage(i + 1).getPdfObject());
             pagesRef.add(pages.get(i).getIndirectReference());
@@ -706,13 +706,13 @@ public class CompareTool {
             // References to the same page
             if (cmpPagesRef == null) {
                 cmpPagesRef = new ArrayList<>();
-                for (int i = 1; i <= cmpObj.getDocument().getNumOfPages(); ++i) {
+                for (int i = 1; i <= cmpObj.getDocument().getNumberOfPages(); ++i) {
                     cmpPagesRef.add(cmpObj.getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
             if (outPagesRef == null) {
                 outPagesRef = new ArrayList<>();
-                for (int i = 1; i <= outObj.getDocument().getNumOfPages(); ++i) {
+                for (int i = 1; i <= outObj.getDocument().getNumberOfPages(); ++i) {
                     outPagesRef.add(outObj.getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
@@ -980,7 +980,7 @@ public class CompareTool {
         PdfIndirectReference pageReference = (PdfIndirectReference) explicitDest.get(0, false);
 
         PdfDocument doc = pageReference.getDocument();
-        for (int i = 1; i <= doc.getNumOfPages(); ++i) {
+        for (int i = 1; i <= doc.getNumberOfPages(); ++i) {
             if (doc.getPage(i).getPdfObject().getIndirectReference().equals(pageReference))
                 return i;
         }

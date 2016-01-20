@@ -197,7 +197,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     @Override
     public void flush() {
-        for (int i = 0; i < getDocument().getNumOfPages(); ++i) {
+        for (int i = 0; i < getDocument().getNumberOfPages(); ++i) {
             createParentTreeEntryForPage(getDocument().getPage(i + 1));
         }
         createParentTree();
@@ -301,7 +301,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         copyToDocument(toDocument, page2page);
 
         page2pageSource = new LinkedHashMap<>();
-        for (int i = insertBeforePage; i <= toDocument.getNumOfPages(); i++) {
+        for (int i = insertBeforePage; i <= toDocument.getNumberOfPages(); i++) {
             PdfPage page = toDocument.getPage(i);
             page2pageSource.put(page, page);
         }

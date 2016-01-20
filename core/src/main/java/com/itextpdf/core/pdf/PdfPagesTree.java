@@ -73,7 +73,7 @@ class PdfPagesTree {
      * @return the {@code PdfPage} object, that wraps {@code pageDictionary}.
      */
     public PdfPage getPage(PdfDictionary pageDictionary) {
-        int pageNum = getPageNum(pageDictionary);
+        int pageNum = getPageNumber(pageDictionary);
         if (pageNum > 0) {
             return getPage(pageNum);
         }
@@ -85,7 +85,7 @@ class PdfPagesTree {
      * Gets total number of @see PdfPages.
      * @return total number of pages
      */
-    public int getNumOfPages() {
+    public int getNumberOfPages() {
         return pageRefs.size();
     }
 
@@ -93,7 +93,7 @@ class PdfPagesTree {
      * Returns the index of the first occurrence of the specified page
      * in this tree, or 0 if this tree does not contain the page.
      */
-    public int getPageNum(PdfPage page) {
+    public int getPageNumber(PdfPage page) {
         return pages.indexOf(page) + 1;
     }
 
@@ -101,7 +101,7 @@ class PdfPagesTree {
      * Returns the index of the first occurrence of the page in this tree
      * specified by it's PdfDictionary, or 0 if this tree does not contain the page.
      */
-    public int getPageNum(PdfDictionary pageDictionary) {
+    public int getPageNumber(PdfDictionary pageDictionary) {
         int pageNum = pageRefs.indexOf(pageDictionary);
         if (pageNum >= 0) {
             return pageNum + 1;
@@ -204,7 +204,7 @@ class PdfPagesTree {
      * @return <tt>true</tt> if this list contained the specified page
      */
     public boolean removePage(PdfPage pdfPage) {
-        int pageNum = getPageNum(pdfPage) - 1;
+        int pageNum = getPageNumber(pdfPage) - 1;
         if (pageNum < 0)
             return false;
         if (!pdfPage.getPdfObject().isFlushed()) {
@@ -270,7 +270,7 @@ class PdfPagesTree {
     }
 
     protected PdfPages findPageParent(PdfPage pdfPage) {
-        int pageNum = getPageNum(pdfPage) - 1;
+        int pageNum = getPageNumber(pdfPage) - 1;
         int parentIndex = findPageParent(pageNum);
         return parents.get(parentIndex);
     }

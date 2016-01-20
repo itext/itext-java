@@ -1043,9 +1043,9 @@ public class PdfSigner {
         int pageNumber = 0;
         PdfDictionary pageDict = widget.getPdfObject().getAsDictionary(PdfName.P);
         if (pageDict != null) {
-            pageNumber = document.getCatalog().getPageNum(pageDict);
+            pageNumber = document.getCatalog().getPageNumber(pageDict);
         } else {
-            for (int i = 1; i <= document.getNumOfPages() && pageNumber == 0; ++i) {
+            for (int i = 1; i <= document.getNumberOfPages() && pageNumber == 0; ++i) {
                 PdfArray annots = document.getPage(i).getPdfObject().getAsArray(PdfName.Annots);
                 if (annots == null) continue;
 

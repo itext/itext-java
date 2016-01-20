@@ -154,8 +154,8 @@ public class PdfSplitterTest extends ExtendedITextTest{
         listTitles.add("Syncing iPod Content from Your iTunes Library");
         listTitles.add("Restoring or Transferring Your iPhone Settings");
         List<PdfDocument> list = splitter.splitByOutlines(listTitles);
-        Assert.assertEquals(1,list.get(0).getNumOfPages());
-        Assert.assertEquals(2,list.get(1).getNumOfPages());
+        Assert.assertEquals(1,list.get(0).getNumberOfPages());
+        Assert.assertEquals(2,list.get(1).getNumberOfPages());
         list.get(0).close();
         list.get(1).close();
     }

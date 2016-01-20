@@ -40,7 +40,7 @@ public class DocumentRenderer extends RootRenderer {
     protected LayoutArea getNextArea(LayoutResult overflowResult) {
         moveToNextPage();
         PageSize customPageSize = overflowResult != null ? overflowResult.getNewPageSize() : null;
-        while (document.getPdfDocument().getNumOfPages() >= currentPageNumber && document.getPdfDocument().getPage(currentPageNumber).isFlushed()) {
+        while (document.getPdfDocument().getNumberOfPages() >= currentPageNumber && document.getPdfDocument().getPage(currentPageNumber).isFlushed()) {
             currentPageNumber++;
         }
         PageSize lastPageSize = ensureDocumentHasNPages(currentPageNumber, customPageSize);
@@ -87,7 +87,7 @@ public class DocumentRenderer extends RootRenderer {
      */
     private PageSize ensureDocumentHasNPages(int n, PageSize customPageSize) {
         PageSize lastPageSize = null;
-        while (document.getPdfDocument().getNumOfPages() < n) {
+        while (document.getPdfDocument().getNumberOfPages() < n) {
             lastPageSize = addNewPage(customPageSize);
         }
         return lastPageSize;

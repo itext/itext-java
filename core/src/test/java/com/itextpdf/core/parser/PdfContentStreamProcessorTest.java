@@ -24,7 +24,7 @@ public class PdfContentStreamProcessorTest extends ExtendedITextTest {
 
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "yaxiststar.pdf"), new PdfWriter(new ByteArrayOutputStream()));
 
-        for (int i = 1; i <= document.getNumOfPages(); ++i) {
+        for (int i = 1; i <= document.getNumberOfPages(); ++i) {
             PdfPage page = document.getPage(i);
 
             PdfContentStreamProcessor processor = new PdfContentStreamProcessor(new EventListener() {

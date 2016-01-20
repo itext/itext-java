@@ -300,7 +300,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
 
-        source.copyPages(6, source.getNumOfPages(), destination);
+        source.copyPages(6, source.getNumberOfPages(), destination);
         source.copyPages(1, 5, destination);
 
         destination.close();
@@ -322,7 +322,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfDocument destination = new PdfDocument(writer);
 
 
-        source.copyPages(6, source.getNumOfPages(), destination);
+        source.copyPages(6, source.getNumberOfPages(), destination);
         source.copyPages(1, 5, destination);
 
         destination.close();
@@ -347,7 +347,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
 
-        for (int i = 1; i <= source.getNumOfPages(); i++)
+        for (int i = 1; i <= source.getNumberOfPages(); i++)
             source.copyPages(i, i, destination);
 
         destination.close();
@@ -391,7 +391,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
 
-        source.copyPages(1, source.getNumOfPages(), destination);
+        source.copyPages(1, source.getNumberOfPages(), destination);
 
         destination.close();
         source.close();

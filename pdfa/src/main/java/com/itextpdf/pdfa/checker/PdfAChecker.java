@@ -184,7 +184,7 @@ public abstract class PdfAChecker {
     }
 
     private void checkPages(PdfCatalog catalog) {
-        for (int i = 1; i <= catalog.getNumOfPages(); i++) {
+        for (int i = 1; i <= catalog.getNumberOfPages(); i++) {
             checkPage(catalog.getPage(i));
         }
     }

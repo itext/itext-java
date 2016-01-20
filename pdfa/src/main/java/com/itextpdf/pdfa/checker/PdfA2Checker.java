@@ -787,7 +787,7 @@ public class PdfA2Checker extends PdfA1Checker{
         if (defaultCs instanceof PdfDeviceCs)
             throw new PdfAConformanceException(PdfAConformanceException.ColorSpace1ShallBeDeviceIndependent).setMessageParams(defaultCsName.toString());
 
-        if (defaultCs.getNumOfComponents() != numOfComponents)
+        if (defaultCs.getNumberOfComponents() != numOfComponents)
             throw new PdfAConformanceException(PdfAConformanceException.ColorSpace1ShallHave2Components).setMessageParams(defaultCsName.toString(), numOfComponents);
 
         checkColorSpace(defaultCs, currentColorSpaces, false, fill);

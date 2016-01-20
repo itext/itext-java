@@ -80,8 +80,8 @@ public class Document extends RootElement<Document> {
         }
 
         try {
-            while (pdfDocument.getNumOfPages() > 0)
-                pdfDocument.removePage(pdfDocument.getNumOfPages());
+            while (pdfDocument.getNumberOfPages() > 0)
+                pdfDocument.removePage(pdfDocument.getNumberOfPages());
         } catch (Exception exc) {
             throw new RuntimeException(exc);
         }

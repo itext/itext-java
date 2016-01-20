@@ -21,8 +21,8 @@ public class IccBased extends Color {
      */
     public IccBased(PdfDocument document, InputStream iccStream) {
         this(new PdfCieBasedCs.IccBased(document, iccStream), null);
-        colorValue = new float[getNumOfComponents()];
-        for (int i = 0; i < getNumOfComponents(); i++)
+        colorValue = new float[getNumberOfComponents()];
+        for (int i = 0; i < getNumberOfComponents(); i++)
             colorValue[i] = 0f;
     }
 
@@ -40,7 +40,7 @@ public class IccBased extends Color {
 
     public IccBased(PdfDocument document, InputStream iccStream, float[] range, float[] value) {
         this(new PdfCieBasedCs.IccBased(document, iccStream, range), value);
-        if (getNumOfComponents() * 2 != range.length)
+        if (getNumberOfComponents() * 2 != range.length)
             throw new PdfException(PdfException.InvalidRangeArray, this);
     }
 

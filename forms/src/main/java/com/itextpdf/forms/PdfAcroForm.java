@@ -157,7 +157,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     public void addField(PdfFormField field) {
         PdfPage page;
-        if (document.getNumOfPages() == 0){
+        if (document.getNumberOfPages() == 0){
             document.addNewPage();
         }
         page = document.getLastPage();
@@ -938,7 +938,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     private PdfPage getPage(PdfDictionary pageDic) {
         PdfPage page;
-        for (int i = 1; i <= document.getNumOfPages(); i++) {
+        for (int i = 1; i <= document.getNumberOfPages(); i++) {
             page = document.getPage(i);
             if (page.getPdfObject() == pageDic) {
                 return page;
@@ -952,7 +952,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (pageDic != null) {
             return getPage(pageDic);
         }
-        for (int i = 1; i <= document.getNumOfPages(); i++) {
+        for (int i = 1; i <= document.getNumberOfPages(); i++) {
             PdfPage page = document.getPage(i);
             if (!page.isFlushed()) {
                 PdfArray annotations = page.getPdfObject().getAsArray(PdfName.Annots);

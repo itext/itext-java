@@ -44,7 +44,7 @@ public class PdfSplitter {
     public List<PdfDocument> splitBySize(long size) {
         List<PageRange> splitRanges = new ArrayList<>();
         int currentPage = 1;
-        int numOfPages = pdfDocument.getNumOfPages();
+        int numOfPages = pdfDocument.getNumberOfPages();
 
         while (currentPage <= numOfPages) {
             PageRange nextRange = getNextRange(currentPage, numOfPages, size);
@@ -68,7 +68,7 @@ public class PdfSplitter {
         int currentPageNumber = 1;
 
         for (int ind = 0; ind <= pageNumbers.size(); ind++) {
-            int nextPageNumber = ind == pageNumbers.size() ? pdfDocument.getNumOfPages() + 1 : pageNumbers.get(ind);
+            int nextPageNumber = ind == pageNumbers.size() ? pdfDocument.getNumberOfPages() + 1 : pageNumbers.get(ind);
             if (ind == 0 && nextPageNumber == 1)
                 continue;
 
@@ -111,8 +111,8 @@ public class PdfSplitter {
      * @throws PdfException
      */
     public void splitByPageCount(int pageCount, IDocumentReadyListener documentReady) {
-        for (int startPage = 1; startPage <= pdfDocument.getNumOfPages(); startPage += pageCount) {
-            int endPage = Math.min(startPage + pageCount - 1, pdfDocument.getNumOfPages());
+        for (int startPage = 1; startPage <= pdfDocument.getNumberOfPages(); startPage += pageCount) {
+            int endPage = Math.min(startPage + pageCount - 1, pdfDocument.getNumberOfPages());
 
             PageRange currentPageRange = new PageRange().addPageSequence(startPage, endPage);
             PdfDocument currentDocument = createPdfDocument(currentPageRange);
@@ -300,17 +300,17 @@ public class PdfSplitter {
 
         PdfDocument toDocument = createPdfDocument(null);
 
-        int size = pdfDocument.getNumOfPages();
+        int size = pdfDocument.getNumberOfPages();
         for (int i = 1; i <= size; i++) {
             PdfPage pdfPage = pdfDocument.getPage(i);
             List<PdfOutline> outlineList = pdfPage.getOutlines(false);
             if (outlineList != null) {
                 for (PdfOutline pdfOutline : outlineList) {
                     if (pdfOutline.getTitle().equals(outlineTitle)) {
-                        startPage = pdfDocument.getPageNum(pdfPage);
+                        startPage = pdfDocument.getPageNumber(pdfPage);
                         PdfOutline nextOutLine = getAbsoluteTreeNextOutline(pdfOutline);
                         if (nextOutLine != null) {
-                            endPage = pdfDocument.getPageNum(getPageByOutline(i, nextOutLine)) - 1;
+                            endPage = pdfDocument.getPageNumber(getPageByOutline(i, nextOutLine)) - 1;
                         } else {
                             endPage = size;
                         }
@@ -333,7 +333,7 @@ public class PdfSplitter {
     }
 
     private PdfPage getPageByOutline(int fromPage, PdfOutline outline) {
-        int size = pdfDocument.getNumOfPages();
+        int size = pdfDocument.getNumberOfPages();
         for (int i = fromPage; i <= size; i++) {
             PdfPage pdfPage = pdfDocument.getPage(i);
             List<PdfOutline> outlineList = pdfPage.getOutlines(false);
