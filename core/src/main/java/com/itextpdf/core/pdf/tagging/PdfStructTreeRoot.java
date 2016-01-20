@@ -281,7 +281,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param page2page        association between original page and copied page.
      * @throws PdfException
      */
-    public void copyToDocument(PdfDocument toDocument, int insertBeforePage, LinkedHashMap<PdfPage, PdfPage> page2page) {
+    public void copyToDocument(PdfDocument toDocument, int insertBeforePage, Map<PdfPage, PdfPage> page2page) {
         if (!toDocument.isTagged())
             return;
 

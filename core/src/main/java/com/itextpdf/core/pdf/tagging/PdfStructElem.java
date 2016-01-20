@@ -235,7 +235,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     @Override
     public List<IPdfStructElem> getKids() {
         PdfObject k = getK();
-        List<IPdfStructElem> kids = new ArrayList<IPdfStructElem>();
+        List<IPdfStructElem> kids = new ArrayList<>();
         if (k != null) {
             if (k.isArray()) {
                 PdfArray a = (PdfArray) k;
