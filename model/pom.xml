@@ -29,6 +29,12 @@
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
+            <artifactId>typography</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
             <artifactId>pdftest</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

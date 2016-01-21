@@ -496,48 +496,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     }
 
-    public boolean hasKernPairs() {
-        FontProgram fontProgram = getFontProgram();
-        return fontProgram != null && fontProgram.hasKernPairs();
-    }
-
-    public int getKerning(Glyph glyph1, Glyph glyph2) {
-        FontProgram fontProgram = getFontProgram();
-        if (fontProgram != null) {
-            return fontProgram.getKerning(glyph1, glyph2);
-        } else {
-            return 0;
-        }
-    }
-
-    public int getKerning(int char1, int char2) {
-        FontProgram fontProgram = getFontProgram();
-        if (fontProgram != null) {
-            return fontProgram.getKerning(char1, char2);
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Applies kerning to this {@see GlyphLine} using advance glyph transformations
-     * @param text the {@see GlyphLine} to be kerned
-     * @return {@code true}, if any kern positioning applied
-     */
-    public boolean applyKerning(GlyphLine text) {
-        boolean transformed = false;
-        if (text.size() > 0) {
-            for (int iter = 1; iter < text.size(); iter++) {
-                int kern = getKerning(text.glyphs.get(iter - 1), text.glyphs.get(iter));
-                if (kern != 0) {
-                    text.glyphs.set(iter - 1, new Glyph(text.glyphs.get(iter - 1), 0, 0, kern, 0, 0));
-                    transformed = true;
-                }
-            }
-        }
-        return transformed;
-    }
-
     public FontProgram getFontProgram() {
         throw new UnsupportedOperationException("not implemented yet");
     }

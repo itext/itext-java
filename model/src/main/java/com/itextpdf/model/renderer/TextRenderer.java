@@ -14,9 +14,6 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.model.Property;
-import com.itextpdf.model.bidi.BidiAlgorithm;
-import com.itextpdf.model.bidi.BidiBracketMap;
-import com.itextpdf.model.bidi.BidiCharacterMap;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.model.hyphenation.Hyphenation;
 import com.itextpdf.model.hyphenation.HyphenationConfig;
@@ -26,6 +23,10 @@ import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.layout.LayoutResult;
 import com.itextpdf.model.layout.TextLayoutResult;
 import com.itextpdf.model.splitting.ISplitCharacters;
+import com.itextpdf.typography.bidi.BidiAlgorithm;
+import com.itextpdf.typography.bidi.BidiBracketMap;
+import com.itextpdf.typography.bidi.BidiCharacterMap;
+import com.itextpdf.typography.shaping.Shaper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,53 +82,55 @@ public class TextRenderer extends AbstractRenderer {
         float italicSkewAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
         float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
         Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
-
-        if (!otfFeaturesApplied) {
-            if (script != null && isOtfFont(font)) {
-                ((TrueTypeFont)font.getFontProgram()).setScriptForOTF(script);
-                ((TrueTypeFont)font.getFontProgram()).applyOtfScript(text);
-                ((TrueTypeFont)font.getFontProgram()).applyLigaFeature(text, true);
-            }
-
-            if (fontKerning == Property.FontKerning.YES) {
-                font.applyKerning(text);
-            }
-
-            otfFeaturesApplied = true;
-        }
-
-        line = new GlyphLine(text);
-        line.start = line.end = -1;
-
         Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
-        if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
-            byte direction;
-            switch (baseDirection) {
-                case LEFT_TO_RIGHT:
-                    direction = 0;
-                    break;
-                case RIGHT_TO_LEFT:
-                    direction = 1;
-                    break;
-                case DEFAULT_BIDI:
-                default:
-                    direction = 2;
-                    break;
+
+        boolean typographyModuleInitialized = true;
+
+        if (typographyModuleInitialized) {
+            if (!otfFeaturesApplied) {
+                if (script != null && isOtfFont(font)) {
+                    Shaper.applyOtfScript((TrueTypeFont)font.getFontProgram(), text, script);
+                }
+
+                if (fontKerning == Property.FontKerning.YES) {
+                    Shaper.applyKerning(font.getFontProgram(), text);
+                }
+
+                otfFeaturesApplied = true;
             }
 
-            int[] unicodeIds = new int[text.end - text.start];
-            for (int i = text.start; i < text.end; i++) {
-                assert text.glyphs.get(i).getChars().length > 0;
-                // we assume all the chars will have the same bidi group
-                // we also assume pairing symbols won't get merged with other ones
-                int unicode = text.glyphs.get(i).getChars()[0];
-                unicodeIds[i - text.start] = unicode;
+            line = new GlyphLine(text);
+            line.start = line.end = -1;
+
+            if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
+                byte direction;
+                switch (baseDirection) {
+                    case LEFT_TO_RIGHT:
+                        direction = 0;
+                        break;
+                    case RIGHT_TO_LEFT:
+                        direction = 1;
+                        break;
+                    case DEFAULT_BIDI:
+                    default:
+                        direction = 2;
+                        break;
+                }
+
+                int[] unicodeIds = new int[text.end - text.start];
+                for (int i = text.start; i < text.end; i++) {
+                    assert text.glyphs.get(i).getChars().length > 0;
+                    // we assume all the chars will have the same bidi group
+                    // we also assume pairing symbols won't get merged with other ones
+                    int unicode = text.glyphs.get(i).getChars()[0];
+                    unicodeIds[i - text.start] = unicode;
+                }
+                byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start);
+                byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
+                int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
+                BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
+                levels = bidiReorder.getLevels(new int[]{text.end - text.start});
             }
-            byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start);
-            byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
-            int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
-            BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
-            levels = bidiReorder.getLevels(new int[] {text.end - text.start});
         }
 
         FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
@@ -333,26 +336,28 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
-        if (baseDirection != Property.BaseDirection.NO_BIDI) {
-            byte[] lineLevels = new byte[line.end - line.start];
-            System.arraycopy(levels, line.start, lineLevels, 0, line.end -  line.start);
-            int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
-            List<Glyph> reorderedLine = new ArrayList<>(line.end - line.start);
-            for (int i = 0; i < line.end - line.start; i++) {
-                reorderedLine.add(line.glyphs.get(line.start + reorder[i]));
+        if (typographyModuleInitialized) {
+            if (baseDirection != Property.BaseDirection.NO_BIDI) {
+                byte[] lineLevels = new byte[line.end - line.start];
+                System.arraycopy(levels, line.start, lineLevels, 0, line.end - line.start);
+                int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
+                List<Glyph> reorderedLine = new ArrayList<>(line.end - line.start);
+                for (int i = 0; i < line.end - line.start; i++) {
+                    reorderedLine.add(line.glyphs.get(line.start + reorder[i]));
 
-                // Mirror RTL glyphs
-                if (levels[line.start + reorder[i]] % 2 == 1) {
-                    if (reorderedLine.get(i).getUnicode() != null) {
-                        reorderedLine.set(i, font.getGlyph(BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())));
+                    // Mirror RTL glyphs
+                    if (levels[line.start + reorder[i]] % 2 == 1) {
+                        if (reorderedLine.get(i).getUnicode() != null) {
+                            reorderedLine.set(i, font.getGlyph(BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())));
+                        }
                     }
                 }
-            }
-            line = new GlyphLine(reorderedLine, 0, line.end - line.start);
+                line = new GlyphLine(reorderedLine, 0, line.end - line.start);
 
-            // Don't forget to update the line for the split renderer
-            if (result.getStatus() == LayoutResult.PARTIAL) {
-                ((TextRenderer)result.getSplitRenderer()).line = line;
+                // Don't forget to update the line for the split renderer
+                if (result.getStatus() == LayoutResult.PARTIAL) {
+                    ((TextRenderer) result.getSplitRenderer()).line = line;
+                }
             }
         }
 
