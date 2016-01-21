@@ -5,7 +5,14 @@ package com.itextpdf.model.hyphenation;
  */
 public class HyphenationConfig {
 
+    /**
+     * The Hyphenator object.
+     */
     protected Hyphenator hyphenator;
+
+    /**
+     * The hyphenation symbol used when hyphenating.
+     */
     protected char hyphenSymbol = '-';
 
     /**
@@ -48,10 +55,20 @@ public class HyphenationConfig {
         return hyphenator != null ? hyphenator.hyphenate(word) : null;
     }
 
+    /**
+     * Gets the hyphenation symbol.
+     *
+     * @return the hyphenation symbol
+     */
     public char getHyphenSymbol() {
         return hyphenSymbol;
     }
 
+    /**
+     * Sets the hyphenation symbol to the specified value.
+     *
+     * @param hyphenSymbol the new hyphenation symbol
+     */
     public void setHyphenSymbol(char hyphenSymbol) {
         this.hyphenSymbol = hyphenSymbol;
     }
