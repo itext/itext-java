@@ -626,10 +626,11 @@ public class MetaDo {
     }
 
     /**
+     * Return true if the pen style is null and if it isn't a brush.
      *
-     *
-     * @param isRectangle
-     * @return
+     * @param isRectangle value to decide how to change the state. If true state.setLineJoinRectangle(cb) is called,
+     *                    if false state.setLineJoinPolygon(cb) is called.
+     * @return true if the pen style is null and if it isn't a brush
      */
     public boolean isNullStrokeFill(boolean isRectangle) {
         MetaPen pen = state.getCurrentPen();
@@ -755,11 +756,25 @@ public class MetaDo {
         return os.toByteArray();
     }
 
+    /**
+     * Writes the specified value to the specified outputstream as a word.
+     *
+     * @param os outputstream to write the word to
+     * @param v value to be written
+     * @throws IOException
+     */
     public static void writeWord(OutputStream os, int v) throws IOException {
         os.write(v & 0xff);
         os.write(v >>> 8 & 0xff);
     }
 
+    /**
+     * Writes the specified value to the specified outputstream as a dword.
+     *
+     * @param os outputstream to write the dword to
+     * @param v value to be written
+     * @throws IOException
+     */
     public static void writeDWord(OutputStream os, int v) throws IOException {
         writeWord(os, v & 0xffff);
         writeWord(os, v >>> 16 & 0xffff);
