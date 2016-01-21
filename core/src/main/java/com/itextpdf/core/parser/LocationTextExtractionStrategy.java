@@ -17,10 +17,27 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      */
     private final List<TextChunk> locationalResult = new ArrayList<>();
 
+    private final TextChunkLocationStrategy tclStrat;
+
     /**
      * Creates a new text extraction renderer.
      */
     public LocationTextExtractionStrategy() {
+        this(new TextChunkLocationStrategy() {
+            public TextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline) {
+                return new TextChunkLocationDefaultImp(baseline.getStartPoint(), baseline.getEndPoint(), renderInfo.getSingleSpaceWidth());
+            }
+        });
+    }
+
+    /**
+     * Creates a new text extraction renderer, with a custom strategy for
+     * creating new TextChunkLocation objects based on the input of the
+     * TextRenderInfo.
+     * @param strat the custom strategy
+     */
+    public LocationTextExtractionStrategy(TextChunkLocationStrategy strat) {
+        tclStrat = strat;
     }
 
     @Override
@@ -33,8 +50,8 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
                 Matrix riseOffsetTransform = new Matrix(0, -renderInfo.getRise());
                 segment = segment.transformBy(riseOffsetTransform);
             }
-            TextChunk location = new TextChunk(renderInfo.getText(), segment.getStartPoint(), segment.getEndPoint(), renderInfo.getSingleSpaceWidth());
-            locationalResult.add(location);
+            TextChunk tc = new TextChunk(renderInfo.getText(), tclStrat.createLocation(renderInfo, segment));
+            locationalResult.add(tc);
         }
     }
 
@@ -86,22 +103,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      * @return true if the two chunks represent different words (i.e. should have a space between them).  False otherwise.
      */
     protected boolean isChunkAtWordBoundary(TextChunk chunk, TextChunk previousChunk) {
-
-        /**
-         * Here we handle a very specific case which in PDF may look like:
-         * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
-         * The font's charSpace width is 0.232 and it's compensated with charSpacing of 0.232.
-         * And a resultant TextChunk.charSpaceWidth comes to TextChunk constructor as 0.
-         * In this case every chunk is considered as a word boundary and space is added.
-         * We should consider charSpaceWidth equal (or close) to zero as a no-space.
-         */
-        if (chunk.getCharSpaceWidth() < 0.1f)
-            return false;
-
-        float dist = chunk.distanceFromEndOf(previousChunk);
-
-        return dist < -chunk.getCharSpaceWidth() || dist > chunk.getCharSpaceWidth() / 2.0f;
-
+        return chunk.getLocation().isAtWordBoundary(previousChunk.getLocation());
     }
 
     /**
@@ -134,125 +136,62 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         }
     }
 
+    public interface TextChunkLocationStrategy {
+        TextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline);
+    }
+
+    public interface TextChunkLocation {
+
+        float distParallelEnd();
+
+        float distParallelStart();
+
+        int distPerpendicular();
+
+        float getCharSpaceWidth();
+
+        Vector getEndLocation();
+
+        Vector getStartLocation();
+
+        int orientationMagnitude();
+
+        boolean sameLine(TextChunkLocation as);
+
+        float distanceFromEndOf(TextChunkLocation other);
+
+        boolean isAtWordBoundary(TextChunkLocation previous);
+    }
+
     /**
      * Represents a chunk of text, it's orientation, and location relative to the orientation vector
      */
     public static class TextChunk implements Comparable<TextChunk> {
-        /**
-         * the text of the chunk
-         */
+        /** the text of the chunk */
         private final String text;
-        /**
-         * the starting location of the chunk
-         */
-        private final Vector startLocation;
-        /**
-         * the ending location of the chunk
-         */
-        private final Vector endLocation;
-        /**
-         * unit vector in the orientation of the chunk
-         */
-        private final Vector orientationVector;
-        /**
-         * the orientation as a scalar for quick sorting
-         */
-        private final int orientationMagnitude;
-        /**
-         * perpendicular distance to the orientation unit vector (i.e. the Y position in an unrotated coordinate system)
-         * we round to the nearest integer to handle the fuzziness of comparing floats
-         */
-        private final int distPerpendicular;
-        /**
-         * distance of the start of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system)
-         */
-        private final float distParallelStart;
-        /**
-         * distance of the end of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system)
-         */
-        private final float distParallelEnd;
-        /**
-         * the width of a single space character in the font of the chunk
-         */
-        private final float charSpaceWidth;
+        private final TextChunkLocation location;
 
-        public TextChunk(String string, Vector startLocation, Vector endLocation, float charSpaceWidth) {
+        public TextChunk(String string, TextChunkLocation loc) {
             this.text = string;
-            this.startLocation = startLocation;
-            this.endLocation = endLocation;
-            this.charSpaceWidth = charSpaceWidth;
-
-            Vector oVector = endLocation.subtract(startLocation);
-            if (oVector.length() == 0) {
-                oVector = new Vector(1, 0, 0);
-            }
-            orientationVector = oVector.normalize();
-            orientationMagnitude = (int) (Math.atan2(orientationVector.get(Vector.I2), orientationVector.get(Vector.I1)) * 1000);
-
-            // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
-            // the two vectors we are crossing are in the same plane, so the result will be purely
-            // in the z-axis (out of plane) direction, so we just take the I3 component of the result
-            Vector origin = new Vector(0, 0, 1);
-            distPerpendicular = (int) (startLocation.subtract(origin)).cross(orientationVector).get(Vector.I3);
-
-            distParallelStart = orientationVector.dot(startLocation);
-            distParallelEnd = orientationVector.dot(endLocation);
-        }
-
-        /**
-         * @return the start location of the text
-         */
-        public Vector getStartLocation() {
-            return startLocation;
-        }
-
-        /**
-         * @return the end location of the text
-         */
-        public Vector getEndLocation() {
-            return endLocation;
+            this.location = loc;
         }
 
         /**
          * @return the text captured by this chunk
          */
-        public String getText() {
+        public String getText(){
             return text;
         }
 
-        /**
-         * @return the width of a single space character as rendered by this chunk
-         */
-        public float getCharSpaceWidth() {
-            return charSpaceWidth;
+        public TextChunkLocation getLocation() {
+            return location;
         }
 
-        private void printDiagnostics() {
-            System.out.println("Text (@" + startLocation + " -> " + endLocation + "): " + text);
-            System.out.println("orientationMagnitude: " + orientationMagnitude);
-            System.out.println("distPerpendicular: " + distPerpendicular);
-            System.out.println("distParallel: " + distParallelStart);
-        }
-
-        /**
-         * @param as the location to compare to
-         * @return true is this location is on the the same line as the other
-         */
-        public boolean sameLine(TextChunk as) {
-            return orientationMagnitude == as.orientationMagnitude && distPerpendicular == as.distPerpendicular;
-        }
-
-        /**
-         * Computes the distance between the end of 'other' and the beginning of this chunk
-         * in the direction of this chunk's orientation vector.  Note that it's a bad idea
-         * to call this for chunks that aren't on the same line and orientation, but we don't
-         * explicitly check for that condition for performance reasons.
-         *
-         * @param other the other {@link TextChunk}
-         * @return the number of spaces between the end of 'other' and the beginning of this chunk
-         */
-        public float distanceFromEndOf(TextChunk other) {
-            return distParallelStart - other.distParallelEnd;
+        private void printDiagnostics(){
+            System.out.println("Text (@" + location.getStartLocation() + " -> " + location.getEndLocation() + "): " + text);
+            System.out.println("orientationMagnitude: " + location.orientationMagnitude());
+            System.out.println("distPerpendicular: " + location.distPerpendicular());
+            System.out.println("distParallel: " + location.distParallelStart());
         }
 
         /**
@@ -265,13 +204,127 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             if (this == rhs) return 0; // not really needed, but just in case
 
             int result;
-            result = Integer.compare(orientationMagnitude, rhs.orientationMagnitude);
+            result = Integer.compare(location.orientationMagnitude(), rhs.location.orientationMagnitude());
             if (result != 0) return result;
 
-            result = Integer.compare(distPerpendicular, rhs.distPerpendicular);
+            result = Integer.compare(location.distPerpendicular(), rhs.location.distPerpendicular());
             if (result != 0) return result;
 
-            return Float.compare(distParallelStart, rhs.distParallelStart);
+            return Float.compare(location.distParallelStart(), rhs.location.distParallelStart());
+        }
+
+        private boolean sameLine(TextChunk lastChunk) {
+            return getLocation().sameLine(lastChunk.getLocation());
+        }
+    }
+
+    private static class TextChunkLocationDefaultImp implements TextChunkLocation {
+
+        /** the starting location of the chunk */
+        private final Vector startLocation;
+        /** the ending location of the chunk */
+        private final Vector endLocation;
+        /** unit vector in the orientation of the chunk */
+        private final Vector orientationVector;
+        /** the orientation as a scalar for quick sorting */
+        private final int orientationMagnitude;
+        /** perpendicular distance to the orientation unit vector (i.e. the Y position in an unrotated coordinate system)
+         * we round to the nearest integer to handle the fuzziness of comparing floats */
+        private final int distPerpendicular;
+        /** distance of the start of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system) */
+        private final float distParallelStart;
+        /** distance of the end of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system) */
+        private final float distParallelEnd;
+        /** the width of a single space character in the font of the chunk */
+        private final float charSpaceWidth;
+
+        public TextChunkLocationDefaultImp(Vector startLocation, Vector endLocation, float charSpaceWidth) {
+            this.startLocation = startLocation;
+            this.endLocation = endLocation;
+            this.charSpaceWidth = charSpaceWidth;
+
+            Vector oVector = endLocation.subtract(startLocation);
+            if (oVector.length() == 0) {
+                oVector = new Vector(1, 0, 0);
+            }
+            orientationVector = oVector.normalize();
+            orientationMagnitude = (int)(Math.atan2(orientationVector.get(Vector.I2), orientationVector.get(Vector.I1))*1000);
+
+            // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
+            // the two vectors we are crossing are in the same plane, so the result will be purely
+            // in the z-axis (out of plane) direction, so we just take the I3 component of the result
+            Vector origin = new Vector(0,0,1);
+            distPerpendicular = (int)(startLocation.subtract(origin)).cross(orientationVector).get(Vector.I3);
+
+            distParallelStart = orientationVector.dot(startLocation);
+            distParallelEnd = orientationVector.dot(endLocation);
+        }
+
+
+        public int orientationMagnitude() {return orientationMagnitude;}
+        public int distPerpendicular() {return distPerpendicular;}
+        public float distParallelStart() {return distParallelStart; }
+        public float distParallelEnd() { return distParallelEnd;}
+
+
+        /**
+         * @return the start location of the text
+         */
+        public Vector getStartLocation(){
+            return startLocation;
+        }
+
+        /**
+         * @return the end location of the text
+         */
+        public Vector getEndLocation(){
+            return endLocation;
+        }
+
+        /**
+         * @return the width of a single space character as rendered by this chunk
+         */
+        public float getCharSpaceWidth() {
+            return charSpaceWidth;
+        }
+
+
+        /**
+         * @param as the location to compare to
+         * @return true is this location is on the the same line as the other
+         */
+        public boolean sameLine(TextChunkLocation as){
+            return orientationMagnitude() == as.orientationMagnitude() && distPerpendicular() == as.distPerpendicular();
+        }
+
+        /**
+         * Computes the distance between the end of 'other' and the beginning of this chunk
+         * in the direction of this chunk's orientation vector.  Note that it's a bad idea
+         * to call this for chunks that aren't on the same line and orientation, but we don't
+         * explicitly check for that condition for performance reasons.
+         * @param other
+         * @return the number of spaces between the end of 'other' and the beginning of this chunk
+         */
+        public float distanceFromEndOf(TextChunkLocation other){
+            float distance = distParallelStart() - other.distParallelEnd();
+            return distance;
+        }
+
+        public boolean isAtWordBoundary(TextChunkLocation previous){
+            /**
+             * Here we handle a very specific case which in PDF may look like:
+             * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
+             * The font's charSpace width is 0.232 and it's compensated with charSpacing of 0.232.
+             * And a resultant TextChunk.charSpaceWidth comes to TextChunk constructor as 0.
+             * In this case every chunk is considered as a word boundary and space is added.
+             * We should consider charSpaceWidth equal (or close) to zero as a no-space.
+             */
+            if (getCharSpaceWidth() < 0.1f)
+                return false;
+
+            float dist = distanceFromEndOf(previous);
+
+            return dist < -getCharSpaceWidth() || dist > getCharSpaceWidth()/2.0f;
         }
     }
 
