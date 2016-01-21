@@ -8,15 +8,14 @@ import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class EncodingTest {
@@ -42,7 +41,7 @@ public class EncodingTest {
                 moveText(36, 750).
                 setFontAndSize(font, 72).
                 showText("\uD835\uDD59\uD835\uDD56\uD835\uDD5D\uD835\uDD5D\uD835\uDD60\uD83D\uDE09\uD835\uDD68" +
-                "\uD835\uDD60\uD835\uDD63\uD835\uDD5D\uD835\uDD55").
+                        "\uD835\uDD60\uD835\uDD63\uD835\uDD5D\uD835\uDD55").
                 endText().
                 restoreState();
         canvas.release();
@@ -50,7 +49,6 @@ public class EncodingTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
-
 
 
     @Test
@@ -67,7 +65,8 @@ public class EncodingTest {
                 beginText().
                 moveText(36, 806).
                 setFontAndSize(font, 12).
-                showText("Міръ Peace").
+                        // Міръ Peace
+                        showText("\u041C\u0456\u0440\u044A Peace").
                 endText().
                 restoreState();
         doc.close();
@@ -143,7 +142,7 @@ public class EncodingTest {
                 beginText().
                 moveText(36, 786).
                 setFontAndSize(font, 36).
-                showText("Å \u1987").
+                showText("\u00C5 \u1987").
                 endText().
                 restoreState();
         font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.WINANSI, true);
@@ -174,7 +173,7 @@ public class EncodingTest {
                 beginText().
                 moveText(36, 786).
                 setFontAndSize(font, 36).
-                showText("Å \u1987").
+                showText("\u00C5 \u1987").
                 endText().
                 restoreState();
 
@@ -183,7 +182,8 @@ public class EncodingTest {
         Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
-    @Test @Ignore("Should we update built-in font's descriptor in case not standard font encoding?")
+    @Test
+    @Ignore("Should we update built-in font's descriptor in case not standard font encoding?")
     public void symbolDefaultFontTest() throws IOException, InterruptedException {
         String fileName = "symbolDefaultFontTest.pdf";
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
@@ -191,9 +191,9 @@ public class EncodingTest {
 
         PdfFont font = PdfFont.createFont(FontConstants.SYMBOL, PdfEncodings.WINANSI);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        String str = new String();
+        String str = "";
         for (int i = 32; i <= 100; i++) {
-            str += (char)i;
+            str += (char) i;
         }
         canvas.
                 saveState().
@@ -205,7 +205,7 @@ public class EncodingTest {
 
         str = "";
         for (int i = 101; i <= 190; i++) {
-            str += (char)i;
+            str += (char) i;
         }
         canvas.
                 saveState().
@@ -216,7 +216,7 @@ public class EncodingTest {
                 endText();
         str = "";
         for (int i = 191; i <= 254; i++) {
-            str += (char)i;
+            str += (char) i;
         }
         canvas.
                 beginText().
@@ -237,9 +237,9 @@ public class EncodingTest {
 
         PdfFont font = PdfFont.createFont(sourceFolder + "Symbols1.ttf", true);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        String str = new String();
+        String str = "";
         for (int i = 32; i <= 65; i++) {
-            str+= (char)i;
+            str += (char) i;
         }
         canvas.
                 saveState().
@@ -251,7 +251,7 @@ public class EncodingTest {
 
         str = "";
         for (int i = 65; i <= 190; i++) {
-            str+= (char)i;
+            str += (char) i;
         }
         canvas.
                 saveState().
@@ -262,7 +262,7 @@ public class EncodingTest {
                 endText();
         str = "";
         for (int i = 191; i <= 254; i++) {
-            str+= (char)i;
+            str += (char) i;
         }
         canvas.
                 beginText().
@@ -286,7 +286,7 @@ public class EncodingTest {
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         StringBuilder builder = new StringBuilder();
         for (int i = 32; i <= 100; i++) {
-            builder.append((char)i);
+            builder.append((char) i);
         }
         String str = builder.toString();
         canvas.
@@ -299,7 +299,7 @@ public class EncodingTest {
 
         str = "";
         for (int i = 101; i <= 190; i++) {
-            str+= (char)i;
+            str += (char) i;
         }
         canvas.
                 saveState().
@@ -310,7 +310,7 @@ public class EncodingTest {
                 endText();
         str = "";
         for (int i = 191; i <= 254; i++) {
-            str+= (char)i;
+            str += (char) i;
         }
         canvas.
                 beginText().
