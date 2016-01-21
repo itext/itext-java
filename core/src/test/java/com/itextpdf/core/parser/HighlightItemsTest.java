@@ -120,7 +120,7 @@ public class HighlightItemsTest {
                 float x2 = Math.max(startPoint.get(0), endPoint.get(0));
                 float y1 = Math.min(startPoint.get(1), endPoint.get(1));
                 float y2 = Math.max(startPoint.get(1), endPoint.get(1));
-                rectangles.add(new Rectangle(x1, y1, x2, y2));
+                rectangles.add(new Rectangle(x1, y1, x2 - x1, y2 - y1));
             }
         }
 

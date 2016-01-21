@@ -108,10 +108,6 @@ public class PdfContentStreamParser {
                 tokeniser.throwError(PdfException.DictionaryKey1IsNotAName, tokeniser.getStringValue());
             PdfName name = new PdfName(tokeniser.getStringValue());
             PdfObject obj = readObject();
-            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                tokeniser.throwError(PdfException.UnexpectedGtGt);
-            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndArray)
-                tokeniser.throwError(PdfException.UnexpectedCloseBracket);
             dic.put(name, obj);
         }
         return dic;
