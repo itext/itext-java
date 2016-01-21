@@ -43,7 +43,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
         }
         DocType1Font fontProgram = new DocType1Font(baseFont);
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
-        int firstChar = firstCharNumber != null ? Math.min(firstCharNumber.getIntValue(), 0) : 0;
+        int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
         int[] widths = DocFontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
 
         for (int i = 0; i < 256; i++) {
