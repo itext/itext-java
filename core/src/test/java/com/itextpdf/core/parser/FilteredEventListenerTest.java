@@ -4,6 +4,7 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class FilteredEventListenerTest {
+public class FilteredEventListenerTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/FilteredEventListenerTest/";
 

@@ -10,13 +10,14 @@ import com.itextpdf.core.pdf.PdfResources;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class PdfImageXObjectTest {
+public class PdfImageXObjectTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/PdfImageXObjectTest/";
 

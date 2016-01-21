@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class HighlightItemsTest {
+public class HighlightItemsTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/HighlightItemsTest/";
     private static final String outputPath = "./target/com/itextpdf/core/parser/HighlightItemsTest/";

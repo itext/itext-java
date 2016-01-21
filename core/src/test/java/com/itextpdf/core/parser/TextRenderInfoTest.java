@@ -9,6 +9,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.Document;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Paragraph;
+import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,7 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class TextRenderInfoTest {
+public class TextRenderInfoTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/TextRenderInfoTest/";
 
