@@ -88,8 +88,16 @@ public class MetaDo {
     public static final int META_CREATEBRUSHINDIRECT   = 0x02FC;
     public static final int META_CREATEREGION          = 0x06FF;
 
+    /**
+     * PdfCanvas of the MetaDo object.
+     */
     public PdfCanvas cb;
+
+    /**
+     * The InputMeta instance containing the data.
+     */
     public InputMeta in;
+
     int left;
     int top;
     int right;
@@ -97,11 +105,22 @@ public class MetaDo {
     int inch;
     MetaState state = new MetaState();
 
+    /**
+     * Creates a MetaDo instance.
+     *
+     * @param in inputstream containing the data
+     * @param cb PdfCanvas
+     */
     public MetaDo(InputStream in, PdfCanvas cb) {
         this.cb = cb;
         this.in = new InputMeta(in);
     }
 
+    /**
+     * Reads and processes all the data of the InputMeta.
+     *
+     * @throws IOException
+     */
     public void readAll() throws IOException {
         if (in.readInt() != 0x9AC6CDD7) {
             throw new PdfException(PdfException.NotAPlaceableWindowsMetafile);
@@ -531,6 +550,19 @@ public class MetaDo {
         state.cleanup(cb);
     }
 
+    /**
+     * Output Text at a certain x and y coordinate. Clipped or opaque text isn't supported as of yet.
+     *
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param flag flag indicating clipped or opaque
+     * @param x1 x1-coordinate of the rectangle if clipped or opaque
+     * @param y1 y1-coordinate of the rectangle if clipped or opaque
+     * @param x2 x2-coordinate of the rectangle if clipped or opaque
+     * @param y2 y1-coordinate of the rectangle if clipped or opaque
+     * @param text text to output
+     * @throws IOException
+     */
     public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) throws IOException {
 
         MetaFont font = state.getCurrentFont();
@@ -593,6 +625,12 @@ public class MetaDo {
         cb.restoreState();
     }
 
+    /**
+     *
+     *
+     * @param isRectangle
+     * @return
+     */
     public boolean isNullStrokeFill(boolean isRectangle) {
         MetaPen pen = state.getCurrentPen();
         MetaBrush brush = state.getCurrentBrush();
@@ -609,6 +647,9 @@ public class MetaDo {
         return result;
     }
 
+    /**
+     * Stroke and fill the MetaPen and MetaBrush paths.
+     */
     public void strokeAndFill() {
         MetaPen pen = state.getCurrentPen();
         MetaBrush brush = state.getCurrentBrush();
@@ -644,10 +685,17 @@ public class MetaDo {
         return (float)(s / Math.PI * 180);
     }
 
-    //TODO
+    /**
+     * Wrap a BMP image in an WMF.
+     *
+     * @param image the BMP image to be wrapped
+     * @return the wrapped BMP
+     * @throws IOException
+     */
     public static byte[] wrapBMP(Image image) throws IOException {
-        if (image.getOriginalType() != Image.BMP)
+        if (image.getOriginalType() != Image.BMP) {
             throw new PdfException(PdfException.OnlyBmpCanBeWrappedInWmf);
+        }
         InputStream imgIn;
         byte data[];
         if (image.getData() == null) {
@@ -698,24 +746,9 @@ public class MetaDo {
         writeWord(os, 0);
         writeWord(os, 0);
         os.write(data, 14, data.length - 14);
-        if ((data.length & 1) == 1)
+        if ((data.length & 1) == 1) {
             os.write(0);
-//        writeDWord(os, 14 + sizeBmpWords);
-//        writeWord(os, META_STRETCHDIB);
-//        writeDWord(os, 0x00cc0020);
-//        writeWord(os, 0);
-//        writeWord(os, (int)image.height());
-//        writeWord(os, (int)image.width());
-//        writeWord(os, 0);
-//        writeWord(os, 0);
-//        writeWord(os, (int)image.height());
-//        writeWord(os, (int)image.width());
-//        writeWord(os, 0);
-//        writeWord(os, 0);
-//        os.write(data, 14, data.length - 14);
-//        if ((data.length & 1) == 1)
-//            os.write(0);
-
+        }
         writeDWord(os, 3);
         writeWord(os, 0);
         os.close();
