@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Class to keep the state.
+ */
 public class MetaState {
 
     public static final int TA_NOUPDATECP = 0;
@@ -26,27 +29,100 @@ public class MetaState {
     public static final int ALTERNATE = 1;
     public static final int WINDING = 2;
 
+    /**
+     * Stack of saved states.
+     */
     public Stack<MetaState> savedStates;
+
+    /**
+     * List of MetaObjects.
+     */
     public List<MetaObject> MetaObjects;
+
+    /**
+     * Current Point.
+     */
     public Point currentPoint;
+
+    /**
+     * Current Pen.
+     */
     public MetaPen currentPen;
+
+    /**
+     * Current Brush.
+     */
     public MetaBrush currentBrush;
+
+    /**
+     * Current Font.
+     */
     public MetaFont currentFont;
+
+    /**
+     * The current background color. Default value is DeviceRgb#WHITE.
+     */
     public Color currentBackgroundColor = DeviceRgb.WHITE;
+
+    /**
+     * Current text color. Default value is DeviceRgb#BLACK.
+     */
     public Color currentTextColor = DeviceRgb.BLACK;
+
+    /**
+     * The current background mode. Default value is OPAQUE.
+     */
     public int backgroundMode = OPAQUE;
+
+    /**
+     * Current polygon fill mode. Default value is ALTERNATE.
+     */
     public int polyFillMode = ALTERNATE;
+
+    /**
+     * Curent line join. Default value is 1.
+     */
     public int lineJoin = 1;
+
+    /**
+     * Current text alignment.
+     */
     public int textAlign;
+
+    /**
+     * Current offset for Wx.
+     */
     public int offsetWx;
+
+    /**
+     * Current offset for Wy.
+     */
     public int offsetWy;
+
+    /**
+     * Current extent for Wx.
+     */
     public int extentWx;
+
+    /**
+     * Current extent for Wy.
+     */
     public int extentWy;
+
+    /**
+     * Current x value for scaling.
+     */
     public float scalingX;
+
+    /**
+     * Current y value for scaling.
+     */
     public float scalingY;
 
 
-    /** Creates new MetaState */
+    /**
+     * Creates new MetaState
+     */
     public MetaState() {
         savedStates = new Stack<>();
         MetaObjects = new ArrayList<>();
@@ -56,10 +132,20 @@ public class MetaState {
         currentFont = new MetaFont();
     }
 
+    /**
+     * Clones a new MetaState from the specified MetaState.
+     *
+     * @param state the state to clone
+     */
     public MetaState(MetaState state) {
         setMetaState(state);
     }
 
+    /**
+     * Sets every field of this MetaState to the values of the fields of the specified MetaState.
+     *
+     * @param state state to copy
+     */
     public void setMetaState(MetaState state) {
         savedStates = state.savedStates;
         MetaObjects = state.MetaObjects;
@@ -81,6 +167,11 @@ public class MetaState {
         scalingY = state.scalingY;
     }
 
+    /**
+     * Add a MetaObject to the State.
+     *
+     * @param object MetaObject to be added
+     */
     public void addMetaObject(MetaObject object) {
         for (int k = 0; k < MetaObjects.size(); ++k) {
             if (MetaObjects.get(k) == null) {
@@ -91,6 +182,12 @@ public class MetaState {
         MetaObjects.add(object);
     }
 
+    /**
+     * Select the MetaObject at the specified index and prepare the PdfCanvas.
+     *
+     * @param index position of the MetaObject
+     * @param cb PdfCanvas to prepare
+     */
     public void selectMetaObject(int index, PdfCanvas cb) {
         MetaObject obj = MetaObjects.get(index);
         if (obj == null)
@@ -145,16 +242,32 @@ public class MetaState {
         }
     }
 
+    /**
+     * Deletes the MetaObject at the specified index.
+     *
+     * @param index index of the MetaObject to delete
+     */
     public void deleteMetaObject(int index) {
         MetaObjects.set(index, null);
     }
 
+    /**
+     * Saves the state of this MetaState object.
+     *
+     * @param cb PdfCanvas object on which saveState() will be called
+     */
     public void saveState(PdfCanvas cb) {
         cb.saveState();
         MetaState state = new MetaState(this);
         savedStates.push(state);
     }
 
+    /**
+     * Restores the state to the next state on the saved states stack.
+     *
+     * @param index index of the state to be restored
+     * @param cb PdfCanvas object on which restoreState() will be called
+     */
     public void restoreState(int index, PdfCanvas cb) {
         int pops;
         if (index < 0)
@@ -171,65 +284,144 @@ public class MetaState {
         setMetaState(state);
     }
 
+    /**
+     * Restres the state of the specified PdfCanvas object for as many times as there are saved states on the stack.
+     *
+     * @param cb PdfCanvas object
+     */
     public void cleanup(PdfCanvas cb) {
         int k = savedStates.size();
         while (k-- > 0)
             cb.restoreState();
     }
 
+    /**
+     * Transform the specified value.
+     *
+     * @param x the value to transform
+     * @return the transformed value
+     */
     public float transformX(int x) {
         return ((float)x - offsetWx) * scalingX / extentWx;
     }
 
+    /**
+     * Transform the specified value.
+     *
+     * @param y the value to transform
+     * @return transformed value
+     */
     public float transformY(int y) {
         return (1f - ((float)y - offsetWy) / extentWy) * scalingY;
     }
 
+    /**
+     * Sets the x value for scaling.
+     *
+     * @param scalingX x value for scaling
+     */
     public void setScalingX(float scalingX) {
         this.scalingX = scalingX;
     }
 
+    /**
+     * Sets the y value for scaling.
+     *
+     * @param scalingY y value for scaling
+     */
     public void setScalingY(float scalingY) {
         this.scalingY = scalingY;
     }
 
+    /**
+     * Sets the Wx offset value.
+     *
+     * @param offsetWx Wx offset value
+     */
     public void setOffsetWx(int offsetWx) {
         this.offsetWx = offsetWx;
     }
 
+    /**
+     * Sets the Wy offset value.
+     *
+     * @param offsetWy Wy offset value
+     */
     public void setOffsetWy(int offsetWy) {
         this.offsetWy = offsetWy;
     }
 
+    /**
+     * Sets the Wx extent value.
+     *
+     * @param extentWx Wx extent value
+     */
     public void setExtentWx(int extentWx) {
         this.extentWx = extentWx;
     }
 
+    /**
+     * Sets the Wy extent value.
+     *
+     * @param extentWy Wy extent value
+     */
     public void setExtentWy(int extentWy) {
         this.extentWy = extentWy;
     }
 
+    /**
+     * Transforms the specified angle. If scalingY is less than 0, the angle is multiplied by -1. If scalingX is less
+     * than 0, the angle is subtracted from Math.PI.
+     *
+     * @param angle the angle to transform
+     * @return the transformed angle
+     */
     public float transformAngle(float angle) {
         float ta = scalingY < 0 ? -angle : angle;
         return (float)(scalingX < 0 ? Math.PI - ta : ta);
     }
 
+    /**
+     * Sets the current Point to the specified Point.
+     *
+     * @param p Point to set
+     */
     public void setCurrentPoint(Point p) {
         currentPoint = p;
     }
 
+    /**
+     * Returns the current Point.
+     *
+     * @return current Point
+     */
     public Point getCurrentPoint() {
         return currentPoint;
     }
 
+    /**
+     * Returns the current MetaBrush object.
+     *
+     * @return current MetaBrush
+     */
     public MetaBrush getCurrentBrush() {
         return currentBrush;
     }
 
+    /**
+     * Returns the current MetaPen object.
+     *
+     * @return current MetaPen
+     */
     public MetaPen getCurrentPen() {
         return currentPen;
     }
 
+    /**
+     * Returns the current MetaFont object.
+     *
+     * @return current MetaFont
+     */
     public MetaFont getCurrentFont() {
         return currentFont;
     }
@@ -305,6 +497,11 @@ public class MetaState {
         this.polyFillMode = polyFillMode;
     }
 
+    /**
+     * Sets the line join style to {@link com.itextpdf.canvas.PdfCanvasConstants.LineJoinStyle#MITER} if lineJoin isn't 0.
+     *
+     * @param cb PdfCanvas to set the line join style
+     */
     public void setLineJoinRectangle(PdfCanvas cb) {
         if (lineJoin != 0) {
             lineJoin = 0;
@@ -312,6 +509,11 @@ public class MetaState {
         }
     }
 
+    /**
+     * Sets the line join style to {@link com.itextpdf.canvas.PdfCanvasConstants.LineJoinStyle#ROUND} if lineJoin is 0.
+     *
+     * @param cb PdfCanvas to set the line join style
+     */
     public void setLineJoinPolygon(PdfCanvas cb) {
         if (lineJoin == 0) {
             lineJoin = 1;
@@ -319,6 +521,11 @@ public class MetaState {
         }
     }
 
+    /**
+     * Returns true if lineJoin is 0.
+     *
+     * @return true if lineJoin is 0
+     */
     public boolean getLineNeutral() {
         return lineJoin == 0;
     }
