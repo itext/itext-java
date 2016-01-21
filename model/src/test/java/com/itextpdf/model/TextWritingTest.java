@@ -23,14 +23,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class TextWritingTest extends ExtendedITextTest{
+public class TextWritingTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/TextWritingTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/TextWritingTest/";
 
     @BeforeClass
     static public void beforeClass() {
-       createDestinationFolder(destinationFolder);
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class TextWritingTest extends ExtendedITextTest{
                     setFont(font).
                     setFontSize(6).
                     setFontColor(Color.WHITE).
-                    setBackgroundColor(Color.BLACK, 0,0,0,0);
+                    setBackgroundColor(Color.BLACK, 0, 0, 0, 0);
             p.add(id);
             document.add(p);
         }
@@ -165,7 +165,7 @@ public class TextWritingTest extends ExtendedITextTest{
     }
 
     @Test
-    public void charSpacingTest01() throws IOException,  InterruptedException {
+    public void charSpacingTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "charSpacingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_charSpacingTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

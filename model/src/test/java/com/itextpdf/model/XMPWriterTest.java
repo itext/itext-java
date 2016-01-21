@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class XMPWriterTest extends ExtendedITextTest{
+public class XMPWriterTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/XMPWriterTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/XMPWriterTest/";
@@ -33,7 +33,7 @@ public class XMPWriterTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createPdfTest() throws IOException, XMPException{
+    public void createPdfTest() throws IOException, XMPException {
         String fileName = "xmp_metadata.pdf";
         // step 1
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "xmp_metadata.pdf")));
@@ -54,7 +54,7 @@ public class XMPWriterTest extends ExtendedITextTest{
         document.close();
 
         CompareTool ct = new CompareTool();
-        Assert.assertNull(ct.compareXmp(destinationFolder + fileName, sourceFolder + "cmp_"+fileName, true));
+        Assert.assertNull(ct.compareXmp(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, true));
     }
 
 }

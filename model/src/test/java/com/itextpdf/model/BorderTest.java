@@ -33,6 +33,7 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class BorderTest extends ExtendedITextTest {
+
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/BorderTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/BorderTest/";
     static final public String cmpPrefix = "cmp_";

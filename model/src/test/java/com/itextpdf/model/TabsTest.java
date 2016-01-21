@@ -28,7 +28,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class TabsTest extends ExtendedITextTest{
+public class TabsTest extends ExtendedITextTest {
+
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/model/TabTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/model/TabTest/";
 
@@ -72,7 +73,8 @@ public class TabsTest extends ExtendedITextTest{
         doc.add(p);
 
         float left = doc.getLeftMargin();
-        float right = doc.getRightMargin();float pageWidth = doc.getPdfDocument().getDefaultPageSize().getWidth();
+        float right = doc.getRightMargin();
+        float pageWidth = doc.getPdfDocument().getDefaultPageSize().getWidth();
         Float[] defaultStopPositions = {0f, 50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, pageWidth - left - right};
         drawTabStopsPositions(Arrays.asList(defaultStopPositions), doc, 1, 0, 120);
 
@@ -150,7 +152,7 @@ public class TabsTest extends ExtendedITextTest{
 
         Float[] positions1 = {tabInterval * 2, tabInterval * 3, tabInterval * 4, tabInterval * 5, tabInterval * 6};
         Property.TabAlignment[] alignments1 = {Property.TabAlignment.ANCHOR, Property.TabAlignment.CENTER, Property.TabAlignment.ANCHOR,
-                                                Property.TabAlignment.RIGHT, Property.TabAlignment.ANCHOR};
+                Property.TabAlignment.RIGHT, Property.TabAlignment.ANCHOR};
         Drawable[] leaders1 = {new DottedLine(), null, new DashedLine(), null, new SolidLine()};
         Character[] anchors1 = {' ', null, '\\', null, '.'};
 
@@ -295,7 +297,7 @@ public class TabsTest extends ExtendedITextTest{
     }
 
     private void addTabbedTextToParagraph(Paragraph p, String text, Float[] positions, Property.TabAlignment[] alignments,
-                                          Drawable[] tabLeadings, Character[] tabAnchorCharacters){
+                                          Drawable[] tabLeadings, Character[] tabAnchorCharacters) {
         java.util.List<TabStop> tabStops = new ArrayList<>();
         for (int i = 0; i < positions.length; ++i) {
             TabStop tabStop = new TabStop(positions[i], alignments[i], tabLeadings[i]);
