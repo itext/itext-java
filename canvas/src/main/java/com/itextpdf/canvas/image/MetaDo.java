@@ -17,6 +17,9 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+/**
+ * A class to process WMF files. Used internally by {@link com.itextpdf.canvas.image.WmfImageHelper}.
+ */
 public class MetaDo {
 
     public static final int META_SETBKCOLOR            = 0x0201;
