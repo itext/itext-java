@@ -9,7 +9,7 @@ import com.itextpdf.core.pdf.layer.PdfLayer;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,7 +33,7 @@ public class PdfLayerTest extends ExtendedITextTest{
     }
 
     @Test
-    public void testInStamperMode1() throws IOException, InterruptedException, DocumentException {
+    public void testInStamperMode1() throws IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "input_layered.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "output_copy_layered.pdf")));
         pdfDoc.close();
@@ -41,7 +41,7 @@ public class PdfLayerTest extends ExtendedITextTest{
     }
 
     @Test
-    public void testInStamperMode2() throws IOException, InterruptedException, DocumentException {
+    public void testInStamperMode2() throws IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "input_layered.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "output_layered.pdf")));
 

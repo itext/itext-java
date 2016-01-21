@@ -33,7 +33,7 @@ public class XMPWriterTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createPdfTest() throws IOException, XMPException, com.itextpdf.xmp.XMPException {
+    public void createPdfTest() throws IOException, XMPException{
         String fileName = "xmp_metadata.pdf";
         // step 1
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "xmp_metadata.pdf")));

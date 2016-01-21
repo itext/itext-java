@@ -9,7 +9,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -86,7 +86,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         pdfDoc.close();
     }
     @Test
-    public void addOutlinesToDocumentTest() throws IOException, InterruptedException, DocumentException {
+    public void addOutlinesToDocumentTest() throws IOException, InterruptedException {
         String filename = destinationFolder+"addOutlinesResult.pdf";
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
@@ -187,7 +187,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
     }
 
     @Before
-    public void setupCreateDocWithOutlines() throws IOException, DocumentException, InterruptedException {
+    public void setupCreateDocWithOutlines() throws IOException,  InterruptedException {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder+"documentWithOutlines.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -209,7 +209,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createDocWithOutlines() throws IOException, DocumentException, InterruptedException {
+    public void createDocWithOutlines() throws IOException, InterruptedException {
 
         String filename = destinationFolder + "documentWithOutlines.pdf";
 
@@ -251,7 +251,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
     }
 
     @Test
-    public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException, DocumentException {
+    public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException{
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
         String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
 
@@ -304,7 +304,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
     }
 
     @Test
-    public void addOutlinesWithNamedDestinations02() throws IOException, InterruptedException, DocumentException {
+    public void addOutlinesWithNamedDestinations02() throws IOException, InterruptedException {
         String filename = destinationFolder + "outlinesWithNamedDestinations02.pdf";
 
         FileOutputStream fos = new FileOutputStream(filename);

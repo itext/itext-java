@@ -13,7 +13,7 @@ import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class PositioningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void relativePositioningTest01() throws IOException, InterruptedException, DocumentException {
+    public void relativePositioningTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "relativePositioningTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_relativePositioningTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -58,7 +58,7 @@ public class PositioningTest extends ExtendedITextTest {
     }
 
     @Test
-    public void relativePositioningTest02() throws IOException, InterruptedException, DocumentException {
+    public void relativePositioningTest02() throws IOException, InterruptedException{
         String outFileName = destinationFolder + "relativePositioningTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_relativePositioningTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

@@ -10,7 +10,7 @@ import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rendererTest01() throws IOException, DocumentException, InterruptedException {
+    public void rendererTest01() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "rendererTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_rendererTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

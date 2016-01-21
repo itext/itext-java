@@ -20,7 +20,7 @@ public class PdfPagesTest extends ExtendedITextTest{
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfPagesTest/";
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfPagesTest/";
     static final PdfName PageNum = new PdfName("PageNum");
-    static final com.itextpdf.text.pdf.PdfName PageNum5 = new com.itextpdf.text.pdf.PdfName("PageNum");
+    static final PdfName PageNum5 = new PdfName("PageNum");
 
     @BeforeClass
     public static void setup() {
@@ -218,17 +218,18 @@ public class PdfPagesTest extends ExtendedITextTest{
     }
 
     void verifyPagesOrder(String filename, int numOfPages) throws IOException {
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
 
-        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
+        for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertNotNull(page);
-            com.itextpdf.text.pdf.PdfNumber number = page.getAsNumber(PageNum5);
-            Assert.assertEquals("Page number", i, number.intValue());
+            PdfNumber number = page.getAsNumber(PageNum5);
+            Assert.assertEquals("Page number", i, number.getIntValue());
         }
 
-        Assert.assertEquals("Number of pages", numOfPages, reader.getNumberOfPages());
+        Assert.assertEquals("Number of pages", numOfPages, pdfDocument.getNumberOfPages());
         reader.close();
     }
 

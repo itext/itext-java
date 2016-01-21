@@ -24,6 +24,7 @@ import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfPage;
@@ -40,8 +41,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.BarcodePDF417;
+
 
 import java.awt.Toolkit;
 import java.io.ByteArrayInputStream;
@@ -102,15 +102,16 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvas.pdf");
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        PdfReader reader = new PdfReader(destinationFolder + "simpleCanvas.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
+        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
+        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         reader.close();
     }
 
@@ -180,15 +181,16 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        PdfReader reader = new PdfReader(destinationFolder + fileName);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
+        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
+        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         reader.close();
     }
 
@@ -266,15 +268,16 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + fileName);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        PdfReader reader = new PdfReader(destinationFolder + fileName);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
+        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
+        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         reader.close();
     }
 
@@ -298,15 +301,16 @@ public class PdfCanvasTest extends ExtendedITextTest {
         page1.flush();
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithPageFlush.pdf");
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        PdfReader reader = new PdfReader(destinationFolder + "simpleCanvasWithPageFlush.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
+        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
+        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         reader.close();
     }
 
@@ -330,15 +334,16 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithFullCompression.pdf");
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        PdfReader reader = new PdfReader(destinationFolder + "simpleCanvasWithFullCompression.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
+        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
+        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         reader.close();
     }
 
@@ -363,15 +368,16 @@ public class PdfCanvasTest extends ExtendedITextTest {
         page1.flush();
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf");
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", 1, reader.getNumberOfPages());
-        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+        PdfReader reader = new PdfReader(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
+        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
+        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         reader.close();
     }
 
@@ -407,16 +413,17 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "1000PagesDocument.pdf");
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        PdfReader reader = new PdfReader(destinationFolder + "1000PagesDocument.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
-            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         reader.close();
     }
@@ -453,16 +460,17 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
-            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         reader.close();
     }
@@ -499,16 +507,17 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
-            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         reader.close();
     }
@@ -544,16 +553,17 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
-            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         reader.close();
     }
@@ -591,16 +601,17 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
-            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         reader.close();
     }
@@ -638,16 +649,17 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
-            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         reader.close();
     }
@@ -685,16 +697,17 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
-            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         reader.close();
     }
@@ -732,22 +745,23 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Map<String, String> info = reader.getInfo();
-        Assert.assertEquals("Author", author, info.get("Author"));
-        Assert.assertEquals("Creator", creator, info.get("Creator"));
-        Assert.assertEquals("Title", title, info.get("Title"));
-        Assert.assertEquals("Page count", pageCount, reader.getNumberOfPages());
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getInfo().getPdfObject();
+        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
-            com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(i);
-            Assert.assertEquals(com.itextpdf.text.pdf.PdfName.PAGE, page.get(com.itextpdf.text.pdf.PdfName.TYPE));
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
         reader.close();
     }
 
     @Test
-    public void copyPagesTest1() throws IOException, DocumentException, InterruptedException {
+    public void copyPagesTest1() throws IOException,  InterruptedException {
         String file1 = destinationFolder + "copyPages1_1.pdf";
         String file2 = destinationFolder + "copyPages1_2.pdf";
 
@@ -781,16 +795,24 @@ public class PdfCanvasTest extends ExtendedITextTest {
         page2.flush();
         pdfDoc2.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(file2);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertNotNull(page.get(com.itextpdf.text.pdf.PdfName.PARENT));
+        PdfReader reader = new PdfReader(file2);
+
+        PdfDocument pdfDocument = new PdfDocument(reader);
+
+        for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
+        }
+        reader.close();
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
+        Assert.assertNotNull(page.get(PdfName.Parent));
         reader.close();
         Assert.assertNull(new CompareTool().compareByContent(file1, file2, destinationFolder, "diff_"));
     }
 
     @Test
-    public void copyPagesTest2() throws IOException, DocumentException, InterruptedException {
+    public void copyPagesTest2() throws IOException,  InterruptedException {
         String file1 = destinationFolder + "copyPages2_1.pdf";
         String file2 = destinationFolder + "copyPages2_2.pdf";
 
@@ -824,10 +846,11 @@ public class PdfCanvasTest extends ExtendedITextTest {
         pdfDoc1.close();
         pdfDoc2.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(file2);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        com.itextpdf.text.pdf.PdfDictionary page = reader.getPageN(1);
-        Assert.assertNotNull(page.get(com.itextpdf.text.pdf.PdfName.PARENT));
+        PdfReader reader = new PdfReader(file2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
+        Assert.assertNotNull(page.get(PdfName.Parent));
         reader.close();
 
         CompareTool cmpTool = new CompareTool();
@@ -845,7 +868,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void copyPagesTest3() throws IOException, DocumentException, InterruptedException {
+    public void copyPagesTest3() throws IOException, InterruptedException {
         String file1 = destinationFolder + "copyPages3_1.pdf";
         String file2 = destinationFolder + "copyPages3_2.pdf";
 
@@ -899,7 +922,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void copyPagesTest4() throws IOException, DocumentException, InterruptedException {
+    public void copyPagesTest4() throws IOException,  InterruptedException {
         String file1 = destinationFolder + "copyPages4_1.pdf";
         FileOutputStream fos1 = new FileOutputStream(file1);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -951,7 +974,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
 
     @Test
-    public void copyPagesTest5() throws IOException, DocumentException, InterruptedException {
+    public void copyPagesTest5() throws IOException,  InterruptedException {
 
         int documentCount = 3;
 
@@ -1008,7 +1031,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void copyPagesTest6() throws IOException, DocumentException, InterruptedException {
+    public void copyPagesTest6() throws IOException,  InterruptedException {
         String file1 = destinationFolder + "copyPages6_1.pdf";
         String file2 = destinationFolder + "copyPages6_2.pdf";
         String file3 = destinationFolder + "copyPages6_3.pdf";
@@ -1572,7 +1595,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 //        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "kernedTextTest01.pdf", sourceFolder + "cmp_kernedTextTest01.pdf", destinationFolder, "diff_"));
 //    }
 
-    @Test
+    /*@Test
     public void ccittImageTest01() throws IOException, InterruptedException {
         String filename = "ccittImage01.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
@@ -1598,7 +1621,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
-    }
+    }*/
 
     @Test
     @LogMessages(messages = {

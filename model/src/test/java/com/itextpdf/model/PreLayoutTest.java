@@ -15,7 +15,7 @@ import com.itextpdf.model.renderer.IRenderer;
 import com.itextpdf.model.renderer.ParagraphRenderer;
 import com.itextpdf.model.renderer.TextRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class PreLayoutTest extends ExtendedITextTest{
     }
 
     @Test
-    public void preLayoutTest01() throws IOException, InterruptedException, DocumentException {
+    public void preLayoutTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "preLayoutTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_preLayoutTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -79,7 +79,7 @@ public class PreLayoutTest extends ExtendedITextTest{
     }
 
     @Test
-    public void preLayoutTest02() throws IOException, InterruptedException, DocumentException {
+    public void preLayoutTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "preLayoutTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_preLayoutTest02.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

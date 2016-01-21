@@ -9,7 +9,7 @@ import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -75,16 +75,17 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "stamping1_2.pdf");
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        com.itextpdf.text.pdf.PdfDictionary trailer = reader.getTrailer();
-        com.itextpdf.text.pdf.PdfDictionary info = trailer.getAsDict(com.itextpdf.text.pdf.PdfName.INFO);
-        com.itextpdf.text.pdf.PdfString creator = info.getAsString(com.itextpdf.text.pdf.PdfName.CREATOR);
+        PdfReader reader = new PdfReader(destinationFolder + "stamping1_2.pdf");
+        PdfDocument document = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary trailer = document.getTrailer();
+        PdfDictionary info = trailer.getAsDictionary(PdfName.Info);
+        PdfString creator = info.getAsString(PdfName.Creator);
         assertEquals("iText 7", creator.toString());
-        byte[] bytes = reader.getPageContent(1);
+        byte[] bytes = document.getPage(1).getContentBytes();
         assertEquals("%Hello World\n", new String(bytes));
-        String date = reader.getInfo().get("ModDate");
-        Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
+        String date = document.getInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
+        Calendar cl = PdfDate.decode(date);
         long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
         String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         assertTrue(message, diff < 5000);
@@ -124,11 +125,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "stamping2_2.pdf");
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        byte[] bytes = reader.getPageContent(1);
+        PdfReader reader = new PdfReader(destinationFolder + "stamping2_2.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         assertEquals("%page 1\n", new String(bytes));
-        bytes = reader.getPageContent(2);
+        bytes = pdfDocument.getPage(2).getContentBytes();
         assertEquals("%page 2\n", new String(bytes));
         reader.close();
     }
@@ -168,11 +170,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        byte[] bytes = reader.getPageContent(1);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         assertEquals("%page 1\n", new String(bytes));
-        bytes = reader.getPageContent(2);
+        bytes = pdfDocument.getPage(2).getContentBytes();
         assertEquals("%page 2\n", new String(bytes));
         reader.close();
     }
@@ -213,11 +216,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        assertEquals("Page count", pageCount, reader.getNumberOfPages());
-        for (int i = 1; i < reader.getNumberOfPages(); i++) {
-            byte[] bytes = reader.getPageContent(i);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
+        for (int i = 1; i < pdfDocument.getNumberOfPages(); i++) {
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -260,11 +264,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        assertEquals("Page count", pageCount, reader.getNumberOfPages());
-        for (int i = 1; i < reader.getNumberOfPages(); i++) {
-            byte[] bytes = reader.getPageContent(i);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
+        for (int i = 1; i < pdfDocument.getNumberOfPages(); i++) {
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -304,11 +309,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        byte[] bytes = reader.getPageContent(1);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         assertEquals("%page 1\n", new String(bytes));
-        bytes = reader.getPageContent(2);
+        bytes = pdfDocument.getPage(2).getContentBytes();
         assertEquals("%page 2\n", new String(bytes));
         reader.close();
     }
@@ -347,11 +353,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        byte[] bytes = reader.getPageContent(1);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         assertEquals("%page 1\n", new String(bytes));
-        bytes = reader.getPageContent(2);
+        bytes = pdfDocument.getPage(2).getContentBytes();
         assertEquals("%page 2\n", new String(bytes));
         reader.close();
     }
@@ -390,10 +397,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -433,10 +441,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -476,10 +485,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -519,10 +529,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -568,10 +579,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            byte[] bytes = reader.getPageContent(i);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -621,10 +633,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -658,10 +671,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            byte[] bytes = reader.getPageContent(i);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -776,10 +790,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -823,10 +838,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -867,16 +883,17 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        com.itextpdf.text.pdf.PdfDictionary trailer = reader.getTrailer();
-        com.itextpdf.text.pdf.PdfDictionary info = trailer.getAsDict(com.itextpdf.text.pdf.PdfName.INFO);
-        com.itextpdf.text.pdf.PdfString creator = info.getAsString(com.itextpdf.text.pdf.PdfName.CREATOR);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary trailer = pdfDocument.getTrailer();
+        PdfDictionary info = trailer.getAsDictionary(PdfName.Info);
+        PdfString creator = info.getAsString(PdfName.Creator);
         assertEquals("iText 7", creator.toString());
-        byte[] bytes = reader.getPageContent(1);
+        byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         assertEquals("%Hello World\n", new String(bytes));
-        String date = reader.getInfo().get("ModDate");
-        Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
+        String date = pdfDocument.getInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
+        Calendar cl = PdfDate.decode(date);
         long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
         String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         assertTrue(message, diff < 5000);
@@ -917,11 +934,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        byte[] bytes = reader.getPageContent(1);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         assertEquals("%page 1\n", new String(bytes));
-        bytes = reader.getPageContent(2);
+        bytes = pdfDocument.getPage(2).getContentBytes();
         assertEquals("%page 2\n", new String(bytes));
         reader.close();
     }
@@ -961,11 +979,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        byte[] bytes = reader.getPageContent(1);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         assertEquals("%page 1\n", new String(bytes));
-        bytes = reader.getPageContent(2);
+        bytes = pdfDocument.getPage(2).getContentBytes();
         assertEquals("%page 2\n", new String(bytes));
         reader.close();
     }
@@ -1007,11 +1026,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        assertEquals("Page count", pageCount, reader.getNumberOfPages());
-        for (int i = 1; i < reader.getNumberOfPages(); i++) {
-            byte[] bytes = reader.getPageContent(i);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
+        for (int i = 1; i < pdfDocument.getNumberOfPages(); i++) {
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -1054,11 +1074,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        assertEquals("Page count", pageCount, reader.getNumberOfPages());
-        for (int i = 1; i < reader.getNumberOfPages(); i++) {
-            byte[] bytes = reader.getPageContent(i);
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
+        for (int i = 1; i < pdfDocument.getNumberOfPages(); i++) {
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -1098,10 +1119,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -1141,10 +1163,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -1184,10 +1207,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -1227,10 +1251,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         verifyPdfPagesCount(pdfDoc3.getCatalog().pageTree.getRoot().getPdfObject());
         pdfDoc3.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(filename2);
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(filename2);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 1; i <= pageCount; i++) {
-            byte[] bytes = reader.getPageContent(i);
+            byte[] bytes = pdfDocument.getPage(i).getContentBytes();
             assertEquals("Page content at page " + i, "%page " + i + "\n", new String(bytes));
         }
         reader.close();
@@ -1316,11 +1341,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDoc2.close();
         pdfDoc1.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copying1_2.pdf");
-        assertEquals("Rebuilt", false, reader.isRebuilt());
-        com.itextpdf.text.pdf.PdfDictionary trailer = reader.getTrailer();
-        com.itextpdf.text.pdf.PdfDictionary info = trailer.getAsDict(com.itextpdf.text.pdf.PdfName.INFO);
-        com.itextpdf.text.pdf.PdfName b = info.getAsName(new com.itextpdf.text.pdf.PdfName("a"));
+        PdfReader reader = new PdfReader(destinationFolder + "copying1_2.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary trailer = pdfDocument.getTrailer();
+        PdfDictionary info = trailer.getAsDictionary(PdfName.Info);
+        PdfName b = info.getAsName(new PdfName("a"));
         assertEquals("/b", b.toString());
         reader.close();
 
@@ -1354,10 +1380,11 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDoc2.close();
         pdfDoc1.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(destinationFolder + "copying2_2.pdf");
-        assertEquals("Rebuilt", false, reader.isRebuilt());
+        PdfReader reader = new PdfReader(destinationFolder + "copying2_2.pdf");
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         for (int i = 0; i < 5; i++) {
-            byte[] bytes = reader.getPageContent(i + 1);
+            byte[] bytes = pdfDocument.getPage(i + 1).getContentBytes();
             assertEquals("%page " + String.valueOf(i * 2 + 1) + "\n", new String(bytes));
         }
         reader.close();
@@ -1416,7 +1443,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException, DocumentException {
+    public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "iphone_user_guide.pdf"));
         String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
 

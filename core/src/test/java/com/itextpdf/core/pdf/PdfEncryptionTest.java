@@ -6,8 +6,7 @@ import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfStamper;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,62 +35,62 @@ public class PdfEncryptionTest extends ExtendedITextTest{
     }
 
     @Test
-    public void encryptWithPasswordStandard128() throws IOException, DocumentException, XMPException {
+    public void encryptWithPasswordStandard128() throws IOException, XMPException {
         String filename = destinationFolder + "encryptWithPasswordStandard128.pdf";
         int encryptionType = PdfWriter.STANDARD_ENCRYPTION_128;
         encryptWithPassword(filename, encryptionType, PdfOutputStream.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordStandard40() throws IOException, DocumentException, XMPException {
+    public void encryptWithPasswordStandard40() throws IOException,  XMPException {
         String filename = destinationFolder + "encryptWithPasswordStandard40.pdf";
         int encryptionType = PdfWriter.STANDARD_ENCRYPTION_40;
         encryptWithPassword(filename, encryptionType, PdfOutputStream.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordStandard128NoCompression() throws IOException, DocumentException, XMPException {
+    public void encryptWithPasswordStandard128NoCompression() throws IOException,  XMPException {
         String filename = destinationFolder + "encryptWithPasswordStandard128NoCompression.pdf";
         int encryptionType = PdfWriter.STANDARD_ENCRYPTION_128;
         encryptWithPassword(filename, encryptionType, PdfOutputStream.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordStandard40NoCompression() throws IOException, DocumentException, XMPException {
+    public void encryptWithPasswordStandard40NoCompression() throws IOException,  XMPException {
         String filename = destinationFolder + "encryptWithPasswordStandard40NoCompression.pdf";
         int encryptionType = PdfWriter.STANDARD_ENCRYPTION_40;
         encryptWithPassword(filename, encryptionType, PdfOutputStream.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes128() throws IOException, DocumentException, XMPException {
+    public void encryptWithPasswordAes128() throws IOException,  XMPException {
         String filename = destinationFolder + "encryptWithPasswordAes128.pdf";
         int encryptionType = PdfWriter.ENCRYPTION_AES_128;
         encryptWithPassword(filename, encryptionType, PdfOutputStream.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes256() throws IOException, DocumentException, XMPException {
+    public void encryptWithPasswordAes256() throws IOException, XMPException {
         String filename = destinationFolder + "encryptWithPasswordAes256.pdf";
         int encryptionType = PdfWriter.ENCRYPTION_AES_256;
         encryptWithPassword(filename, encryptionType, PdfOutputStream.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes128NoCompression() throws IOException, DocumentException, XMPException {
+    public void encryptWithPasswordAes128NoCompression() throws IOException,  XMPException {
         String filename = destinationFolder + "encryptWithPasswordAes128NoCompression.pdf";
         int encryptionType = PdfWriter.ENCRYPTION_AES_128;
         encryptWithPassword(filename, encryptionType, PdfOutputStream.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes256NoCompression() throws IOException, DocumentException, XMPException {
+    public void encryptWithPasswordAes256NoCompression() throws IOException,  XMPException {
         String filename = destinationFolder + "encryptWithPasswordAes256NoCompression.pdf";
         int encryptionType = PdfWriter.ENCRYPTION_AES_256;
         encryptWithPassword(filename, encryptionType, PdfOutputStream.NO_COMPRESSION);
     }
 
-    public void encryptWithPassword(String filename, int encryptionType, int compression) throws XMPException, IOException, DocumentException {
+    public void encryptWithPassword(String filename, int encryptionType, int compression) throws XMPException, IOException  {
         int permissions = com.itextpdf.core.pdf.PdfWriter.ALLOW_SCREENREADERS;
         com.itextpdf.core.pdf.PdfWriter writer = new com.itextpdf.core.pdf.PdfWriter(new FileOutputStream(filename));
         writer.setCompressionLevel(compression);
@@ -113,8 +112,8 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         page.flush();
         document.close();
 
-        iText5Decrypt(filename, OWNER);
-        //iText5Decrypt(filename, USER);
+        iText6Decrypt(filename, OWNER);
+        //iText6Decrypt(filename, USER);
         iText6Decrypt(filename, OWNER, "(Hello world!)");
         //iText6Decrypt(filename, USER, "(Hello world!)");
     }
@@ -129,9 +128,9 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         document.close();
     }
 
-    public void iText5Decrypt(String src, byte[] password) throws IOException, DocumentException {
-        com.itextpdf.text.pdf.PdfReader reader = new com.itextpdf.text.pdf.PdfReader(src, password);
-        PdfStamper stamper = new PdfStamper(reader, new ByteArrayOutputStream());
+    public void iText6Decrypt(String src, byte[] password) throws IOException {
+        PdfReader reader = new PdfReader(src, password);
+        PdfDocument stamper = new PdfDocument(reader, new PdfWriter(new ByteArrayOutputStream()));
         stamper.close();
         reader.close();
     }

@@ -5,6 +5,7 @@ import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.CidFont;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontFactory;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.TrueTypeCollection;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
@@ -27,12 +28,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfEncodings;
-import com.itextpdf.text.pdf.PdfException;
+
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -94,7 +90,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createDocumentWithTrueTypeAsType0() throws IOException, PdfException, InterruptedException {
+    public void createDocumentWithTrueTypeAsType0() throws IOException,  InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0.pdf";
         final String title = "Type0 test";
@@ -437,72 +433,11 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test
-    public void createDocumentWithType1Font5Pfm() throws IOException, DocumentException, InterruptedException {
-        String filename = destinationFolder + "DocumentWithCMR10_5Pfm.pdf";
-        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10_5Pfm.pdf";
-        final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        Document.compress = false;
-        Document document = new Document();
-        com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(document, fos);
-        document.addAuthor(author);
-        document.addCreator(creator);
-        document.addTitle(title);
-        document.open();
-        document.newPage();
-        PdfContentByte cb = writer.getDirectContent();
-        cb.saveState();
-        cb.beginText();
-        cb.moveText(36, 700);
-        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-        byte[] afm = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfm"));
-        cb.setFontAndSize(BaseFont.createFont("CMR10.pfm", "", true, false, afm, pfb), 72);
-        cb.showText("Hello world");
-        cb.endText();
-        cb.restoreState();
-        cb.rectangle(100, 500, 100, 100);
-        cb.fill();
-        document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
-    }
 
     @Test
-    public void createDocumentWithType1Font5Afm() throws IOException, DocumentException, InterruptedException {
-        String filename = destinationFolder + "DocumentWithCMR10_5Afm.pdf";
-        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10_5Afm.pdf";
-        final String title = "Empty iText 6 Document";
-
-        FileOutputStream fos = new FileOutputStream(filename);
-        Document.compress = false;
-        Document document = new Document();
-        com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(document, fos);
-        document.addAuthor(author);
-        document.addCreator(creator);
-        document.addTitle(title);
-        document.open();
-        document.newPage();
-        PdfContentByte cb = writer.getDirectContent();
-        cb.saveState();
-        cb.beginText();
-        cb.moveText(36, 700);
-        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-        byte[] afm = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
-        cb.setFontAndSize(BaseFont.createFont("CMR10.afm", "", true, false, afm, pfb), 72);
-        cb.showText("Hello world");
-        cb.endText();
-        cb.restoreState();
-        cb.rectangle(100, 500, 100, 100);
-        cb.fill();
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
-    }
-
-    @Test
-    public void createDocumentWithTrueTypeFont1() throws IOException, PdfException, InterruptedException {
+    public void createDocumentWithTrueTypeFont1() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1.pdf";
         final String title = "Empty iText 6 Document";
@@ -552,7 +487,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createDocumentWithTrueTypeFont2() throws IOException, PdfException, InterruptedException {
+    public void createDocumentWithTrueTypeFont2() throws IOException,  InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont2.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2.pdf";
         final String title = "Empty iText 6 Document";
@@ -794,7 +729,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test@Ignore
-    public void testUpdateType0FontBasedExistingFont() throws IOException, PdfException, InterruptedException {
+    public void testUpdateType0FontBasedExistingFont() throws IOException,  InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_update.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_update.pdf";
@@ -830,7 +765,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test@Ignore
-    public void testNewType0FontBasedExistingFont() throws IOException, PdfException, InterruptedException {
+    public void testNewType0FontBasedExistingFont() throws IOException,  InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_new.pdf";
@@ -868,7 +803,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test@Ignore
-    public void createDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException, PdfException, InterruptedException {
+    public void createDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException,  InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeAsType0.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0_new.pdf";
@@ -906,7 +841,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createDocumentWithType1WithToUnicodeBasedExistingFont() throws IOException, PdfException, InterruptedException {
+    public void createDocumentWithType1WithToUnicodeBasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "fontWithToUnicode.pdf";
         String filename = destinationFolder + "fontWithToUnicode_new.pdf";
         String cmpFilename = sourceFolder + "cmp_fontWithToUnicode_new.pdf";
@@ -973,7 +908,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    public void stringAscentDescent() throws IOException, PdfException, InterruptedException {
+    public void stringAscentDescent() throws IOException,  InterruptedException {
         int pageCount = 1;
         String filename = destinationFolder + "stringAscentDescent.pdf";
         String cmpFilename = sourceFolder + "cmp_stringAscentDescent.pdf";
@@ -1023,7 +958,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    public void stringAscentDescentLine() throws IOException, PdfException, InterruptedException {
+    public void stringAscentDescentLine() throws IOException,  InterruptedException {
         int pageCount = 1;
         String filename = destinationFolder + "stringAscentDescentLine.pdf";
         String cmpFilename = sourceFolder + "cmp_stringAscentDescentLine.pdf";
@@ -1226,7 +1161,7 @@ public class PdfFontTest extends ExtendedITextTest{
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        PdfFont pdfFont= PdfFont.createRegisteredFont("aller");
+        PdfFont pdfFont = PdfFont.createRegisteredFont("aller");
         Assert.assertTrue(pdfFont instanceof  PdfTrueTypeFont);
         pdfDoc.addNewPage();
         pdfDoc.close();

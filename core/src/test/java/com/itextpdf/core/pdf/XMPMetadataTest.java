@@ -3,7 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.text.pdf.PdfReader;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,10 +41,11 @@ public class XMPMetadataTest extends ExtendedITextTest{
         pdfDoc.setXmpMetadata();
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new PdfReader(destinationFolder +filename);
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Assert.assertEquals(readFile(sourceFolder + "emptyDocumentWithXmp.xml").length, reader.getMetadata().length);
-        Assert.assertNotNull(reader.getPageN(1));
+        PdfReader reader = new PdfReader(destinationFolder +filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assert.assertEquals(readFile(sourceFolder + "emptyDocumentWithXmp.xml").length, pdfDocument.getXmpMetadata().getLength());
+        Assert.assertNotNull(reader.pdfDocument.getPage(1));
         reader.close();
 
     }
@@ -63,10 +64,11 @@ public class XMPMetadataTest extends ExtendedITextTest{
         pdfDoc.setXmpMetadata("abc".getBytes());
         pdfDoc.close();
 
-        com.itextpdf.text.pdf.PdfReader reader = new PdfReader(new ByteArrayInputStream(fos.toByteArray()));
-        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
-        Assert.assertArrayEquals("abc".getBytes(), reader.getMetadata());
-        Assert.assertNotNull(reader.getPageN(1));
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(fos.toByteArray()));
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        Assert.assertArrayEquals("abc".getBytes(), pdfDocument.getXmpMetadata().getBytes());
+        Assert.assertNotNull(pdfDocument.getPage(1));
         reader.close();
 
     }

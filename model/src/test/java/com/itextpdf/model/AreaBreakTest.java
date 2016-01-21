@@ -8,7 +8,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class AreaBreakTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pageBreakTest1() throws IOException, DocumentException, InterruptedException {
+    public void pageBreakTest1() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "pageBreak1.pdf";
         String cmpFileName = sourceFolder + "cmp_pageBreak1.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -44,7 +44,7 @@ public class AreaBreakTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pageBreakTest2() throws IOException, DocumentException, InterruptedException {
+    public void pageBreakTest2() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "pageBreak2.pdf";
         String cmpFileName = sourceFolder + "cmp_pageBreak2.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

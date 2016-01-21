@@ -12,7 +12,7 @@ import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class TextWritingTest extends ExtendedITextTest{
     }
 
     @Test
-    public void textRiseTest01() throws IOException, DocumentException, InterruptedException {
+    public void textRiseTest01() throws IOException, InterruptedException {
         // CountryChunks example
         String outFileName = destinationFolder + "textRiseTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textRiseTest01.pdf";
@@ -61,7 +61,7 @@ public class TextWritingTest extends ExtendedITextTest{
     }
 
     @Test
-    public void textRenderingModeTest01() throws IOException, InterruptedException, DocumentException {
+    public void textRenderingModeTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textRenderingModeTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textRenderingModeTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -165,7 +165,7 @@ public class TextWritingTest extends ExtendedITextTest{
     }
 
     @Test
-    public void charSpacingTest01() throws IOException, DocumentException, InterruptedException {
+    public void charSpacingTest01() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "charSpacingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_charSpacingTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

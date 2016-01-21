@@ -15,7 +15,7 @@ import com.itextpdf.model.element.List;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,7 +39,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
 
     @Test
-    public void justifyAlignmentTest01() throws IOException, DocumentException, InterruptedException {
+    public void justifyAlignmentTest01() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "justifyAlignmentTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -59,7 +59,7 @@ public class AlignmentTest extends ExtendedITextTest {
     }
 
     @Test
-    public void justifyAlignmentTest02() throws IOException, DocumentException, InterruptedException {
+    public void justifyAlignmentTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "justifyAlignmentTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -76,7 +76,7 @@ public class AlignmentTest extends ExtendedITextTest {
     }
 
     @Test
-    public void justifyAlignmentTest03() throws IOException, DocumentException, InterruptedException {
+    public void justifyAlignmentTest03() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "justifyAlignmentTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest03.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
@@ -96,7 +96,7 @@ public class AlignmentTest extends ExtendedITextTest {
     }
 
     @Test
-    public void justifyAlignmentTest04() throws IOException, DocumentException, InterruptedException {
+    public void justifyAlignmentTest04() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "justifyAlignmentTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest04.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));

@@ -73,6 +73,7 @@ public class PdfException extends RuntimeException {
     public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "codabar.must.have.at.least.a.start.and.stop.character";
     public static final String CodabarMustHaveOneAbcdAsStartStopCharacter  = "codabar.must.have.one.of.abcd.as.start.stop.character";
     public static final String CodabarStartStopCharacterAreOnlyExtremes =  "in.codabar.start.stop.characters.are.only.allowed.at.the.extremes";
+    public static final String ColorNotFound = "color.not.found";
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression.1.is.not.supported";
     public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "compression.jpeg.is.only.supported.with.a.single.strip.this.image.has.1.strips";
@@ -255,6 +256,7 @@ public class PdfException extends RuntimeException {
     public static final String UnknownEncryptionTypeVEq1 = "unknown.encryption.type.v.eq.1";
     public static final String UnknownHashAlgorithm1 = "unknown.hash.algorithm.1";
     public static final String UnknownKeyAlgorithm1 = "unknown.key.algorithm.1";
+    public static final String UnknownColorFormatMustBeRGBorRRGGBB = "unknown.color.format.must.be.rgb.or.rrggbb";
     public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";
     public static final String VerificationAlreadyOutput = "verification.already.output";
     public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";

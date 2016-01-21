@@ -16,7 +16,7 @@ import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.text.DocumentException;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,7 +45,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createDocumentFromImages1() throws IOException, DocumentException, InterruptedException {
+    public void createDocumentFromImages1() throws IOException,  InterruptedException {
         final String destinationDocument = destinationFolder + "documentFromImages1.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
         PdfWriter writer = new PdfWriter(fos);
@@ -81,7 +81,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
     })
-    public void createDocumentFromImages2() throws IOException, DocumentException, InterruptedException {
+    public void createDocumentFromImages2() throws IOException,  InterruptedException {
         final String destinationDocument = destinationFolder + "documentFromImages2.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
         PdfWriter writer = new PdfWriter(fos);
@@ -101,7 +101,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createDocumentWithForms() throws IOException, DocumentException, InterruptedException {
+    public void createDocumentWithForms() throws IOException,  InterruptedException {
         final String destinationDocument = destinationFolder + "documentWithForms1.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
         PdfWriter writer = new PdfWriter(fos);

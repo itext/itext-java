@@ -7,11 +7,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.BaseFont;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -55,23 +51,7 @@ public class EncodingTest {
         Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
 
-    @Test
-    public void Cp855EncodingTimesRomanTest() throws IOException, DocumentException, InterruptedException {
-        String filename = "Cp855EncodingTimesRomanTest.pdf";
-        BaseFont bf = BaseFont.createFont(BaseFont.TIMES_ROMAN, "Cp855", true);
-        Document doc = new Document();
 
-        com.itextpdf.text.pdf.PdfWriter.getInstance(doc, new FileOutputStream(outputFolder + filename));
-        doc.open();
-        doc.newPage();
-        Font f = new Font(bf);
-        doc.add(new Paragraph("М", f));
-        doc.add(new Paragraph("и", f));
-        doc.add(new Paragraph("р", f));
-        doc.close();
-
-        new com.itextpdf.testutils.CompareTool().compareByContent(outputFolder + filename, sourceFolder + "cmp_" + filename, outputFolder, "diff");
-    }
 
     @Test
     public void customSimpleEncodingTimesRomanTest() throws IOException, InterruptedException {
