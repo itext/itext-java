@@ -19,6 +19,9 @@ public class Subpath {
     private List<Shape> segments = new ArrayList<>();
     private boolean closed;
 
+    /**
+     * Creates a new SubPath instance.
+     */
     public Subpath() {
     }
 
@@ -125,6 +128,10 @@ public class Subpath {
         return segments.size() == 0 && !closed;
     }
 
+    /**
+     * @return <CODE>true</CODE> if this subpath contains only one point and it is closed,
+     *         <CODE>false</CODE> otherwise
+     */
     public boolean isSinglePointClosed() {
         return segments.size() == 0 && closed;
     }
