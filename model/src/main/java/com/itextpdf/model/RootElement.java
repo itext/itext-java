@@ -129,6 +129,14 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
         return (Type) this;
     }
 
+    /**
+     * Gets the rootRenderer attribute, a specialized {@link IRenderer} that
+     * acts as the root object that other {@link IRenderer renderers} descend
+     * from.
+     * 
+     * @param <T> the (sub)type of the {@link RootRenderer}
+     * @return the {@link RootRenderer} attribute
+     */
     public <T extends RootRenderer> T getRenderer() {
         return (T) rootRenderer;
     }
