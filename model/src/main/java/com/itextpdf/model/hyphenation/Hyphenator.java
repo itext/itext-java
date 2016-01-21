@@ -40,7 +40,9 @@ public final class Hyphenator {
 
     private static final String HYPHENATION_DEFAULT_RESOURCE = "com/itextpdf/hyph/";
 
-    /** logging instance */
+    /**
+     * Logging instance.
+     */
     private static Logger log = LoggerFactory.getLogger(Hyphenator.class);
 
     private static HyphenationTreeCache hTreeCache;
@@ -55,6 +57,7 @@ public final class Hyphenator {
 
     /**
      * Creates a new hyphenator.
+     *
      * @param lang the language
      * @param country the optional country code (may be null or "none")
      * @param leftMin the minimum number of characters before the hyphenation point
@@ -69,6 +72,7 @@ public final class Hyphenator {
 
     /**
      * Creates a new hyphenator.
+     *
      * @param lang the language
      * @param country the optional country code (may be null or "none")
      * @param hyphPathNames the map with user-configured hyphenation pattern file names
@@ -80,6 +84,11 @@ public final class Hyphenator {
         this.hyphPathNames = hyphPathNames;
     }
 
+    /**
+     * Registers additional file directories.
+     *
+     * @param directory directory to register
+     */
     public static synchronized void registerAdditionalHyphenationFileDirectory(String directory) {
         if (additionalHyphenationFileDirectories == null) {
             additionalHyphenationFileDirectories = new ArrayList<>();
@@ -87,7 +96,11 @@ public final class Hyphenator {
         additionalHyphenationFileDirectories.add(directory);
     }
 
-    /** @return the default (static) hyphenation tree cache */
+    /**
+     * Returns the default hyphenation tree cache.
+     *
+     * @return the default (static) hyphenation tree cache
+     */
     public static synchronized HyphenationTreeCache getHyphenationTreeCache() {
         if (hTreeCache == null) {
             hTreeCache = new HyphenationTreeCache();
@@ -96,8 +109,7 @@ public final class Hyphenator {
     }
 
     /**
-     * Clears the default hyphenation tree cache.<br>
-     * This method can be used if the underlying data files are changed at runtime.
+     * Clears the default hyphenation tree cache. This method can be used if the underlying data files are changed at runtime.
      */
     public static synchronized void clearHyphenationTreeCache() {
         hTreeCache = new HyphenationTreeCache();
@@ -107,6 +119,7 @@ public final class Hyphenator {
      * Returns a hyphenation tree for a given language and country,
      * with fallback from (lang,country) to (lang).
      * The hyphenation trees are cached.
+     *
      * @param lang the language
      * @param country the country (may be null or "none")
      * @param hyphPathNames the map with user-configured hyphenation pattern file names
@@ -159,8 +172,8 @@ public final class Hyphenator {
     }
 
     /**
-     * Returns a hyphenation tree for a given language and country
-     * The hyphenation trees are cached.
+     * Returns a hyphenation tree for a given language and country. The hyphenation trees are cached.
+     *
      * @param lang the language
      * @param country the country (may be null or "none")
      * @param hyphPathNames the map with user-configured hyphenation pattern file names
@@ -208,7 +221,8 @@ public final class Hyphenator {
     }
 
     /**
-     * Load tree from xml file using configuration settings
+     * Load tree from xml file using configuration settings.
+     *
      * @param searchDirectory the directory to search the file into
      * @param key language key for the requested hyphenation file
      * @return the requested HyphenationTree or null if it is not available
@@ -228,7 +242,8 @@ public final class Hyphenator {
     }
 
     /**
-     * Load tree from the stream
+     * Load tree from the stream.
+     *
      * @param in the input stream to load the tree from
      * @param name unique key representing country-language combination
      * @return the requested HyphenationTree or null if it is not available
@@ -258,6 +273,7 @@ public final class Hyphenator {
 
     /**
      * Hyphenates a word.
+     *
      * @param lang the language
      * @param country the optional country code (may be null or "none")
      * @param hyphPathNames the map with user-configured hyphenation pattern file names
@@ -300,6 +316,7 @@ public final class Hyphenator {
 
     /**
      * Hyphenates a word.
+     *
      * @param lang the language
      * @param country the optional country code (may be null or "none")
      * @param word the word to hyphenate
@@ -313,6 +330,7 @@ public final class Hyphenator {
 
     /**
      * Hyphenates a word.
+     *
      * @param word the word to hyphenate
      * @return the hyphenation result
      */
