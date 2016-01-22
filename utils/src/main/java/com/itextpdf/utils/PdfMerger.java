@@ -1,8 +1,11 @@
 package com.itextpdf.utils;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.*;
+import com.itextpdf.core.pdf.annot.PdfAnnotation;
+import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.core.pdf.navigation.PdfDestination;
+import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ public class PdfMerger {
         for (int pageNum = fromPage; pageNum <= toPage; pageNum++){
             fillListOfPagesToCopy(from, pageNum, page2page);
         }
+        copyAnnotations(from, page2page);
         createStructTreeRoot(from, page2page);
     }
 
@@ -49,6 +53,7 @@ public class PdfMerger {
         for (Integer pageNum : pages){
             fillListOfPagesToCopy(from, pageNum, page2page);
         }
+        copyAnnotations(from, page2page);
         createStructTreeRoot(from, page2page);
     }
 
@@ -86,5 +91,47 @@ public class PdfMerger {
         PdfStructTreeRoot structTreeRoot = from.getStructTreeRoot();
         if (structTreeRoot != null)
             structTreeRoot.copyToDocument(pdfDocument, page2page);
+    }
+
+    private void copyAnnotations(PdfDocument fromDocument, Map<PdfPage, PdfPage> page2page) {
+        List<PdfName> excludedKeys = new ArrayList<>();
+        excludedKeys.add(PdfName.Dest);
+        for (Map.Entry<PdfPage, PdfPage> entry : page2page.entrySet()) {
+            for (PdfAnnotation annot : entry.getKey().getAnnotations()) {
+                PdfDestination d;
+                if (annot.getSubtype().equals(PdfName.Link)) {
+                    PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(pdfDocument, excludedKeys, false), pdfDocument);
+                    PdfObject dest =((PdfLinkAnnotation)annot).getDestinationObject();
+                    if (dest != null) {
+                        if (dest.isArray()) {
+                            PdfObject pageObject = ((PdfArray)dest).get(0);
+                            for (PdfPage oldPage : page2page.keySet()) {
+                                if (oldPage.getPdfObject() == pageObject) {
+                                    PdfArray array = new PdfArray((PdfArray)dest);
+                                    array.set(0, page2page.get(oldPage).getPdfObject());
+                                    d = new PdfExplicitDestination(array);
+                                    newAnnot.setDestination(d);
+                                }
+                            }
+                        } else if (dest.isString()) {
+                            PdfArray array = (PdfArray) fromDocument.getCatalog().getNamedDestinations().get(((PdfString) dest).toUnicodeString());
+                            if (array != null) {
+                                PdfObject pageObject = array.get(0);
+                                for (PdfPage oldPage : page2page.keySet()) {
+                                    if (oldPage.getPdfObject() == pageObject) {
+                                        array.set(0, page2page.get(oldPage).getPdfObject());
+                                        d = new PdfExplicitDestination(array);
+                                        newAnnot.setDestination(d);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (newAnnot.getPdfObject().containsKey(PdfName.Dest) || newAnnot.getPdfObject().containsKey(PdfName.A)) {
+                        entry.getValue().addAnnotation(newAnnot);
+                    }
+                }
+            }
+        }
     }
 }

@@ -6,12 +6,23 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 public class PdfWriter extends PdfOutputStream {
 
     private static final byte[] obj = getIsoBytes(" obj\n");
     private static final byte[] endobj = getIsoBytes("\nendobj\n");
+    private HashMap<ByteStore, PdfIndirectReference> streamMap = new HashMap<>();
+    private final HashMap<Integer, Integer> serialized = new HashMap<>();
+
+    /**
+     * Indicates if the writer copy objects in a smart mode. If so PdfDictionary and PdfStream will be hashed
+     * and reused if there's an object with the same content later.
+     */
+    private boolean smartCopyMode;
 
     /**
      * Indicates if to use full compression (using object streams).
@@ -76,6 +87,16 @@ public class PdfWriter extends PdfOutputStream {
      */
     public PdfWriter setCompressionLevel(int compressionLevel) {
         this.compressionLevel = compressionLevel;
+        return this;
+    }
+
+    /**
+     * Sets the smart copy mode.
+     * @param smartCopyMode
+     * @return
+     */
+    public PdfWriter setSmartCopyMode(boolean smartCopyMode) {
+        this.smartCopyMode = smartCopyMode;
         return this;
     }
 
@@ -198,6 +219,13 @@ public class PdfWriter extends PdfOutputStream {
             copiedObjects.put(copyObjectKey, newObject.makeIndirect(document).getIndirectReference());
         }
         newObject.copyContent(object, document);
+
+        if (smartCopyMode) {
+            PdfObject copiedObject = smartCopyObject(newObject);
+            if (copiedObject != null) {
+                return copiedObject;
+            }
+        }
         return newObject;
     }
 
@@ -289,5 +317,168 @@ public class PdfWriter extends PdfOutputStream {
         int result = object.getIndirectReference().hashCode();
         result = 31 * result + object.getDocument().hashCode();
         return result;
+    }
+
+    private PdfObject smartCopyObject(PdfObject object) {
+        ByteStore streamKey;
+        if (object.isStream()) {
+            streamKey = new ByteStore((PdfStream) object, serialized);
+            PdfIndirectReference streamRef = streamMap.get(streamKey);
+            if (streamRef != null) {
+                return  streamRef;
+            }
+            streamMap.put(streamKey, object.getIndirectReference());
+        } else if (object.isDictionary()) {
+            streamKey = new ByteStore((PdfDictionary) object, serialized);
+            PdfIndirectReference streamRef = streamMap.get(streamKey);
+            if (streamRef != null) {
+                return streamRef.getRefersTo();
+            }
+            streamMap.put(streamKey, object.getIndirectReference());
+        }
+
+        return null;
+    }
+
+    static class ByteStore {
+        private final byte[] b;
+        private final int hash;
+        private MessageDigest md5;
+
+        private void serObject(PdfObject obj, int level, ByteBuffer bb, HashMap<Integer, Integer> serialized) {
+            if (level <= 0)
+                return;
+            if (obj == null) {
+                bb.append("$Lnull");
+                return;
+            }
+            PdfIndirectReference ref = null;
+            ByteBuffer savedBb = null;
+
+            if (obj.isIndirectReference()) {
+                ref = (PdfIndirectReference)obj;
+                Integer key = getCopyObjectKey(obj);
+                if (serialized.containsKey(key)) {
+                    bb.append(serialized.get(key));
+                    return;
+                }
+                else {
+                    savedBb = bb;
+                    bb = new ByteBuffer();
+                }
+            }
+
+            if (obj.isStream()) {
+                bb.append("$B");
+                serDic((PdfDictionary) obj, level - 1, bb, serialized);
+                if (level > 0) {
+                    md5.reset();
+                    bb.append(md5.digest(((PdfStream)obj).getBytes(false)));
+                }
+            }
+            else if (obj.isDictionary()) {
+                serDic((PdfDictionary)obj, level - 1, bb, serialized);
+            }
+            else if (obj.isArray()) {
+                serArray((PdfArray)obj, level - 1, bb, serialized);
+            }
+            else if (obj.isString()) {
+                bb.append("$S").append(obj.toString());
+            }
+            else if (obj.isName()) {
+                bb.append("$N").append(obj.toString());
+            }
+            else
+                bb.append("$L").append(obj.toString());
+
+            if (savedBb != null) {
+                Integer key = getCopyObjectKey(ref);
+                if (!serialized.containsKey(key))
+                    serialized.put(key, calculateHash(bb.getBuffer()));
+                savedBb.append(bb);
+            }
+        }
+
+        private void serDic(PdfDictionary dic, int level, ByteBuffer bb, HashMap<Integer, Integer> serialized) {
+            bb.append("$D");
+            if (level <= 0)
+                return;
+            Object[] keys = dic.keySet().toArray();
+            Arrays.sort(keys);
+            for (int k = 0; k < keys.length; ++k) {
+                if(keys[k].equals(PdfName.P) &&(dic.get((PdfName)keys[k]).isIndirectReference() || dic.get((PdfName)keys[k]).isDictionary()) || keys[k].equals(PdfName.Parent)) // ignore recursive call
+                    continue;
+                serObject((PdfObject) keys[k], level, bb, serialized);
+                serObject(dic.get((PdfName) keys[k]), level, bb, serialized);
+
+            }
+        }
+
+        private void serArray(PdfArray array, int level, ByteBuffer bb, HashMap<Integer, Integer> serialized) {
+            bb.append("$A");
+            if (level <= 0)
+                return;
+            for (int k = 0; k < array.size(); ++k) {
+                serObject(array.get(k), level, bb, serialized);
+            }
+        }
+
+        ByteStore(PdfStream str, HashMap<Integer, Integer> serialized) {
+            try {
+                md5 = MessageDigest.getInstance("MD5");
+            }
+            catch (Exception e) {
+                throw new PdfException(e);
+            }
+            ByteBuffer bb = new ByteBuffer();
+            int level = 100;
+            serObject(str, level, bb, serialized);
+            this.b = bb.toByteArray();
+            hash = calculateHash(this.b);
+            md5 = null;
+        }
+
+        ByteStore(PdfDictionary dict, HashMap<Integer, Integer> serialized) {
+            try {
+                md5 = MessageDigest.getInstance("MD5");
+            }
+            catch (Exception e) {
+                throw new PdfException(e);
+            }
+            ByteBuffer bb = new ByteBuffer();
+            int level = 100;
+            serObject(dict, level, bb, serialized);
+            this.b = bb.toByteArray();
+            hash = calculateHash(this.b);
+            md5 = null;
+        }
+
+        private static int calculateHash(byte[] b) {
+            int hash = 0;
+            int len = b.length;
+            for (int k = 0; k < len; ++k)
+                hash = hash * 31 + (b[k] & 0xff);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof ByteStore))
+                return false;
+            if (hashCode() != obj.hashCode())
+                return false;
+            return Arrays.equals(b, ((ByteStore)obj).b);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        protected int getCopyObjectKey(PdfObject object) {
+            int result = object.getIndirectReference().hashCode();
+            result = 31 * result + object.getDocument().hashCode();
+            return result;
+        }
     }
 }

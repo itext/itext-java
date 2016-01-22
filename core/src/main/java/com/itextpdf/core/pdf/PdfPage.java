@@ -7,6 +7,7 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
+import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.core.pdf.tagging.*;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.xmp.XMPException;
@@ -217,7 +218,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, excludedKeys, true);
         PdfPage page = new PdfPage(dictionary, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
-            page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, false), toDocument));
+            if (annot.getSubtype().equals(PdfName.Link)) {
+                getDocument().storeLinkAnnotations(this, (PdfLinkAnnotation) annot);
+            } else {
+                page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, false), toDocument));
+            }
         }
         if (toDocument.isTagged()) {
             page.structParents = toDocument.getNextStructParentIndex();

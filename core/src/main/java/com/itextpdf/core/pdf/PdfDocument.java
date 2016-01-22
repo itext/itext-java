@@ -10,7 +10,10 @@ import com.itextpdf.core.events.IEventDispatcher;
 import com.itextpdf.core.events.IEventHandler;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.pdf.annot.PdfAnnotation;
+import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.core.pdf.filespec.PdfFileSpec;
+import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
@@ -26,14 +29,7 @@ import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class PdfDocument implements IEventDispatcher {
 
@@ -116,6 +112,8 @@ public class PdfDocument implements IEventDispatcher {
     protected Set<PdfFont> documentFonts = new HashSet<>();
 
     protected PdfTagStructure tagStructure;
+
+    private LinkedHashMap<PdfPage, List<PdfLinkAnnotation>> linkAnnotations = new LinkedHashMap<>();
 
     /**
      * Open PDF document in reading mode.
@@ -916,6 +914,9 @@ public class PdfDocument implements IEventDispatcher {
             else
                 getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
         }
+
+        copyAnnotations(toDocument, page2page);
+
         if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2Outlines);
         }
@@ -1057,6 +1058,15 @@ public class PdfDocument implements IEventDispatcher {
             catalog.put(PdfName.Names, names);
         }
         names.put(PdfName.EmbeddedFiles, fileAttachmentTree.getRoot().getPdfObject());
+    }
+
+    protected void storeLinkAnnotations(PdfPage page, PdfLinkAnnotation annotation) {
+        List<PdfLinkAnnotation> pageAnnotations = linkAnnotations.get(page);
+        if (pageAnnotations == null) {
+            pageAnnotations = new ArrayList<>();
+            linkAnnotations.put(page, pageAnnotations);
+        }
+        pageAnnotations.add(annotation);
     }
 
     protected void checkIsoConformance() {
@@ -1241,6 +1251,47 @@ public class PdfDocument implements IEventDispatcher {
         }
     }
 
+    private void copyAnnotations(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
+        List<PdfName> excludedKeys = new ArrayList<>();
+        excludedKeys.add(PdfName.Dest);
+        for (Map.Entry<PdfPage, List<PdfLinkAnnotation>> entry : linkAnnotations.entrySet()) {
+            for (PdfLinkAnnotation annot : entry.getValue()) {
+                PdfDestination d = null;
+                PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, excludedKeys, false), toDocument);
+                PdfObject dest = annot.getDestinationObject();
+                if (dest != null) {
+                    if (dest.isArray()) {
+                        PdfObject pageObject = ((PdfArray)dest).get(0);
+                        for (PdfPage oldPage : page2page.keySet()) {
+                            if (oldPage.getPdfObject() == pageObject) {
+                                PdfArray array = new PdfArray((PdfArray)dest);
+                                array.set(0, page2page.get(oldPage).getPdfObject());
+                                d = new PdfExplicitDestination(array);
+                                newAnnot.setDestination(d);
+                            }
+                        }
+                    } else if (dest.isString()) {
+                        PdfArray array = (PdfArray) getCatalog().getNamedDestinations().get(((PdfString) dest).toUnicodeString());
+                        if (array != null) {
+                            PdfObject pageObject = array.get(0);
+                            for (PdfPage oldPage : page2page.keySet()) {
+                                if (oldPage.getPdfObject() == pageObject) {
+                                    array.set(0, page2page.get(oldPage).getPdfObject());
+                                    d = new PdfExplicitDestination(array);
+                                    newAnnot.setDestination(d);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (newAnnot.getPdfObject().containsKey(PdfName.Dest) || newAnnot.getPdfObject().containsKey(PdfName.A)) {
+                    page2page.get(entry.getKey()).addAnnotation(newAnnot);
+                }
+            }
+        }
+        linkAnnotations.clear();
+    }
+
     /**
      * This method copies all given outlines
      *
@@ -1270,7 +1321,7 @@ public class PdfDocument implements IEventDispatcher {
             rootOutline.setTitle("Outlines");
         }
 
-        cloneOutlines(outlinesToCopy, toDocument, rootOutline, getOutlines(false));
+        cloneOutlines(outlinesToCopy, rootOutline, getOutlines(false));
     }
 
     /**
@@ -1292,18 +1343,17 @@ public class PdfDocument implements IEventDispatcher {
      * This method copies create new outlines in the Document to copy.
      *
      * @param outlinesToCopy - Set of outlines to be copied
-     * @param toDocument     - target Document
      * @param newParent      - new parent outline
      * @param oldParent      - old parent outline
      * @throws PdfException
      */
-    private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfDocument toDocument, PdfOutline newParent, PdfOutline oldParent) {
+    private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfOutline newParent, PdfOutline oldParent) {
 
         for (PdfOutline outline : oldParent.getAllChildren()) {
             if (outlinesToCopy.contains(outline)) {
                 PdfOutline child = newParent.addOutline(outline.getTitle());
                 child.addDestination(outline.getDestination());
-                cloneOutlines(outlinesToCopy, toDocument, child, outline);
+                cloneOutlines(outlinesToCopy, child, outline);
             }
         }
     }
