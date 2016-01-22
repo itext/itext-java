@@ -1,7 +1,9 @@
 package com.itextpdf.core.font;
 
+import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -9,6 +11,9 @@ import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
+
+import java.io.IOException;
+import java.util.Map;
 
 class DocType1Font extends Type1Font implements DocFontProgram {
 
@@ -20,7 +25,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
         super(fontName);
     }
 
-    public static Type1Font createSimpleFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding) {
+    static Type1Font createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding) {
         PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
         String baseFont;
         if (baseFontName != null) {
@@ -42,10 +47,13 @@ class DocType1Font extends Type1Font implements DocFontProgram {
             }
         }
         DocType1Font fontProgram = new DocType1Font(baseFont);
+        PdfDictionary fontDesc = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
+        fontProgram.subtype = fontDesc.getAsName(PdfName.Subtype);
+        fillFontDescriptor(fontProgram, fontDesc);
+
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
         int[] widths = DocFontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
-
         for (int i = 0; i < 256; i++) {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
@@ -53,8 +61,6 @@ class DocType1Font extends Type1Font implements DocFontProgram {
                 fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
             }
         }
-        fillFontDescriptor(fontProgram, fontDictionary.getAsDictionary(PdfName.FontDescriptor));
-
         return fontProgram;
     }
 
@@ -163,6 +169,5 @@ class DocType1Font extends Type1Font implements DocFontProgram {
                 break;
             }
         }
-        font.subtype = fontDesc.getAsName(PdfName.Subtype);
     }
 }

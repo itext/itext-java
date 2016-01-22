@@ -1,7 +1,9 @@
 package com.itextpdf.core.font;
 
+import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.TrueTypeFont;
+import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -10,30 +12,33 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
+import java.io.IOException;
+import java.util.Map;
+
 class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
 
     private PdfStream fontFile;
     private PdfName fontFileName;
     private PdfName subtype;
 
-    private DocTrueTypeFont(String fontName) {
+    private DocTrueTypeFont(PdfDictionary fontDictionary) {
         super();
-        getFontNames().setFontName(fontName);
+        PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
+        if (baseFontName != null) {
+            getFontNames().setFontName(baseFontName.getValue());
+        } else {
+            getFontNames().setFontName(DocFontUtils.createRandomFontName());
+        }
+        subtype = fontDictionary.getAsName(PdfName.Subtype);
     }
 
-    public static TrueTypeFont createSimpleFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding) {
-        PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
-        String baseFont;
-        if (baseFontName != null) {
-            baseFont = baseFontName.getValue();
-        } else {
-            baseFont = DocFontUtils.createRandomFontName();
-        }
-        DocTrueTypeFont fontProgram = new DocTrueTypeFont(baseFont);
+    static TrueTypeFont createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding) {
+        DocTrueTypeFont fontProgram = new DocTrueTypeFont(fontDictionary);
+        fillFontDescriptor(fontProgram, fontDictionary.getAsDictionary(PdfName.FontDescriptor));
+
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
         int[] widths = DocFontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
-
         for (int i = 0; i < 256; i++) {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
@@ -41,10 +46,37 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
                 fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
             }
         }
-        fillFontDescriptor(fontProgram, fontDictionary.getAsDictionary(PdfName.FontDescriptor));
-
         return fontProgram;
     }
+
+    static TrueTypeFont createFontProgram(PdfDictionary fontDictionary, CMapToUnicode toUnicode) {
+        DocTrueTypeFont fontProgram = new DocTrueTypeFont(fontDictionary);
+        PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
+        fillFontDescriptor(fontProgram, fontDescriptor);
+
+        Map<Integer, Integer> cid2Uni = null;
+        try {
+            cid2Uni = toUnicode.createDirectMapping();
+        } catch (IOException ignored) { }
+
+        int dw = fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)
+                ? fontDescriptor.getAsInt(PdfName.DW) : 1000;
+        if (cid2Uni != null) {
+            IntHashtable widths = DocFontUtils.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.Widths));
+            for (Map.Entry<Integer, Integer> entry : cid2Uni.entrySet()) {
+                int width = widths.containsKey(entry.getKey()) ? widths.get(entry.getKey()) : dw;
+                Glyph glyph = new Glyph(entry.getKey(), width, entry.getValue());
+                fontProgram.codeToGlyph.put(entry.getKey(), glyph);
+                fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+            }
+        }
+
+        if (fontProgram.codeToGlyph.get(0) == null) {
+            fontProgram.codeToGlyph.put(0, new Glyph(0, dw, (Integer) null));
+        }
+        return fontProgram;
+    }
+
 
     public PdfStream getFontFile() {
         return fontFile;
@@ -150,10 +182,6 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
                 font.fontFile = fontDesc.getAsStream(fontFile);
                 break;
             }
-        }
-        font.subtype = fontDesc.getAsName(PdfName.Subtype);
-        if (font.subtype == null) {
-            font.subtype = PdfName.TrueType;
         }
     }
 

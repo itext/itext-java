@@ -1,5 +1,7 @@
 package com.itextpdf.core.font;
 
+import com.itextpdf.basics.IntHashtable;
+import com.itextpdf.basics.font.CMapEncoding;
 import com.itextpdf.basics.font.cmap.CMapLocation;
 import com.itextpdf.basics.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.basics.font.cmap.CMapParser;
@@ -13,12 +15,11 @@ import com.itextpdf.core.pdf.PdfStream;
 
 class DocFontUtils {
 
-    static CMapToUnicode processToUnicode(PdfDictionary fontDictionary) {
+    static CMapToUnicode processToUnicode(PdfObject toUnicode) {
         CMapToUnicode cMapToUnicode = null;
-        PdfObject toUni = fontDictionary.get(PdfName.ToUnicode);
-        if (toUni instanceof PdfStream) {
+        if (toUnicode instanceof PdfStream) {
             try {
-                byte[] uniBytes = ((PdfStream) toUni).getBytes();
+                byte[] uniBytes = ((PdfStream) toUnicode).getBytes();
                 CMapLocation lb = new CMapLocationFromBytes(uniBytes);
                 cMapToUnicode = new CMapToUnicode();
                 CMapParser.parseCid("", cMapToUnicode, lb);
@@ -50,4 +51,29 @@ class DocFontUtils {
         return res;
     }
 
+    static IntHashtable convertCompositeWidthsArray(PdfArray widthsArray) {
+        IntHashtable res = new IntHashtable();
+        if (widthsArray == null) {
+            return res;
+        }
+
+        for (int k = 0; k < widthsArray.size(); ++k) {
+            int c1 = widthsArray.getAsInt(k);
+            PdfObject obj = widthsArray.get(++k);
+            if (obj.isArray()) {
+                PdfArray subWidths = (PdfArray)obj;
+                for (int j = 0; j < subWidths.size(); ++j) {
+                    int c2 = subWidths.getAsInt(j);
+                    res.put(c1++, c2);
+                }
+            } else {
+                int c2 = ((PdfNumber)obj).getIntValue();
+                int w = widthsArray.getAsInt(++k);
+                for (; c1 <= c2; ++c1) {
+                    res.put(c1, w);
+                }
+            }
+        }
+        return res;
+    }
 }

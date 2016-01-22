@@ -2,18 +2,13 @@ package com.itextpdf.core.font;
 
 
 import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.FontMetrics;
-import com.itextpdf.basics.font.FontNames;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
-import com.itextpdf.core.pdf.PdfString;
 
 public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
@@ -21,9 +16,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type1);
 
-        CMapToUnicode toUni = DocFontUtils.processToUnicode(fontDictionary);
+        CMapToUnicode toUni = DocFontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
-        fontProgram = DocType1Font.createSimpleFontProgram(fontDictionary, fontEncoding);
+        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding);
 
         if (fontProgram instanceof DocFontProgram) {
             embedded = ((DocFontProgram) fontProgram).getFontFile() != null;

@@ -13,6 +13,7 @@ import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.cmap.CMapContentParser;
 import com.itextpdf.basics.font.cmap.CMapObject;
+import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.geom.Rectangle;
@@ -61,9 +62,19 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     public PdfType0Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type0);
-        init();
-    }
 
+//        cmapEncoding = DocFontUtils.createCMapEncoding(fontDictionary.get(PdfName.Encoding));
+        CMapToUnicode toUnicodeCMap = DocFontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
+
+        PdfDictionary descendantFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
+        fontProgram = DocTrueTypeFont.createFontProgram(descendantFont, toUnicodeCMap);
+        cidFontType = CidFontType2;
+
+        assert fontProgram instanceof DocFontProgram;
+        embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
+        longTag = new LinkedHashMap<>();
+        subset = false;
+    }
 
     public PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
@@ -112,7 +123,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     @Override
-    protected FontProgram initializeTypeFontForCopy(String encodingName)  {
+    protected FontProgram initializeTypeFontForCopy(String encodingName) {
         return null;
     }
 
@@ -209,7 +220,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 if (ttf.getOtfScript() != null) {
                     glyphLine = ttf.createGlyphLine(glyphs, i);
                     if (!ttf.applyOtfScript(glyphLine)) {
-                       glyphLine = null;
+                        glyphLine = null;
                     }
                 } else if (ttf.isApplyLigatures()) {
                     glyphLine = ttf.createGlyphLine(glyphs, i);
@@ -220,11 +231,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 if (glyphLine != null) {
                     glyphs = glyphLineToChars(glyphLine);
                     i = glyphs.length;
-                    for (char ch: glyphs) {
-                        int code = (int)ch;
+                    for (char ch : glyphs) {
+                        int code = (int) ch;
                         if (longTag.get(code) == null) {
                             Glyph glyph = ttf.getGlyphByCode(code);
-                            longTag.put(code, new int[] {code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+                            longTag.put(code, new int[]{code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
                         }
                     }
                 }
@@ -247,7 +258,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             char[] glyphs = new char[glyphLine.glyphs.size()];
             for (int i = 0; i < glyphLine.glyphs.size(); i++) {
                 Glyph glyph = glyphLine.glyphs.get(i);
-                glyphs[i] = (char)glyph.getCode();
+                glyphs[i] = (char) glyph.getCode();
                 int code = glyph.getCode();
                 if (longTag.get(code) == null) {
                     Integer uniChar = glyph.getUnicode();
@@ -270,9 +281,9 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     public byte[] convertToBytes(Glyph glyph) {
         int code = glyph.getCode();
         if (longTag.get(code) == null) {
-            longTag.put(code, new int[] {code, glyph.getWidth(), glyph.getUnicode() !=null ? glyph.getUnicode() : 0});
+            longTag.put(code, new int[]{code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
         }
-        String s = new String(new char[] {(char)glyph.getCode()}, 0, 1);
+        String s = new String(new char[]{(char) glyph.getCode()}, 0, 1);
         try {
             return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
         } catch (UnsupportedEncodingException e) {
@@ -286,7 +297,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         for (int i = from; i <= to; i++) {
             Glyph glyph = text.get(i);
             int code = glyph.getCode();
-            bytes.append((char)glyph.getCode());
+            bytes.append((char) glyph.getCode());
 
             if (longTag.get(code) == null) {
                 longTag.put(code, new int[]{code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
@@ -361,6 +372,35 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
 
         return new GlyphLine(glyphs);
+    }
+
+    @Override
+    public String decode(byte[] textContent) {
+        //TODO now we support only identity-h
+        String cids = PdfEncodings.convertToString(textContent, PdfEncodings.UnicodeBigUnmarked);
+        StringBuilder builder = new StringBuilder(textContent.length);
+        for (int i = 0; i < cids.length(); i++) {
+            Glyph glyph = fontProgram.getGlyphByCode(cids.charAt(i));
+            if (glyph != null && glyph.getUnicode() != 0) {
+                builder.append((char) (int) glyph.getUnicode());
+            } else {
+                builder.append('?');
+            }
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public float getContentWidth(byte[] textContent) {
+        //TODO now we support only identity-h
+        String cids = PdfEncodings.convertToString(textContent, PdfEncodings.UnicodeBigUnmarked);
+        Glyph notdef = fontProgram.getGlyphByCode(0);
+        float width = 0;
+        for (int i = 0; i < cids.length(); i++) {
+            Glyph glyph = fontProgram.getGlyphByCode(cids.charAt(i));
+            width += glyph != null ? glyph.getWidth() : notdef.getWidth();
+        }
+        return width;
     }
 
     @Override
@@ -447,7 +487,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         int[] bbox = getGlyph(ch).getBbox();
         if (bbox != null && bbox[1] < min) {
             min = bbox[1];
-        } else if (bbox ==  null && fontProgram.getFontMetrics().getTypoDescender() < min) {
+        } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
             min = fontProgram.getFontMetrics().getTypoDescender();
         }
 
@@ -506,7 +546,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         return cmapEncoding.isDirect();
     }
 
-    @Override   
+    @Override
     public void flush() {
         flushFontData();
     }
@@ -516,7 +556,9 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     private void flushFontData() {
-        if (cidFontType == CidFontType0) {
+        if (fontProgram instanceof DocFontProgram) {
+            super.flush();
+        } else if (cidFontType == CidFontType0) {
             getPdfObject().put(PdfName.Type, PdfName.Font);
             getPdfObject().put(PdfName.Subtype, PdfName.Type0);
             String name = fontProgram.getFontNames().getFontName();
@@ -597,9 +639,11 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
 
-    /** Generates the CIDFontTyte2 dictionary.
+    /**
+     * Generates the CIDFontTyte2 dictionary.
+     *
      * @param fontDescriptor the indirect reference to the font descriptor
-     * @param fontName   a name of the font
+     * @param fontName       a name of the font
      * @param metrics        the horizontal width metrics
      * @return a stream
      */
@@ -688,7 +732,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             Glyph glyph = fontProgram.getGlyphByCode(metric[0]);
             if (glyph.getChars() != null) {
                 StringBuilder uni = new StringBuilder(glyph.getChars().length);
-                for (char ch: glyph.getChars()) {
+                for (char ch : glyph.getChars()) {
                     uni.append(toHex4(ch));
                 }
                 buf.append(fromTo).append(fromTo).append('<').append(uni.toString()).append('>').append('\n');
@@ -990,7 +1034,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         return hh;
     }
 
-    private void initFontProgramData()  {
+    private void initFontProgramData() {
         longTag = new LinkedHashMap<>();
         String encoding = getPdfObject().getAsName(PdfName.Encoding).getValue();
         String fontName = getPdfObject().getAsArray(PdfName.DescendantFonts).getAsDictionary(0).getAsName(PdfName.BaseFont).getValue();
@@ -1099,7 +1143,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
     }
 
-    private PdfDictionary getCidFontType0(PdfDictionary fontDescriptor)  {
+    private PdfDictionary getCidFontType0(PdfDictionary fontDescriptor) {
         PdfDictionary cidFont = new PdfDictionary();
         cidFont.makeIndirect(getDocument());
         cidFont.put(PdfName.Type, PdfName.Font);

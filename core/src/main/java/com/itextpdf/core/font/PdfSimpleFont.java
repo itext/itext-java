@@ -135,7 +135,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             }
         }
         bytes = Utilities.shortenArray(bytes, ptr);
-        for (byte b: bytes) {
+        for (byte b : bytes) {
             shortTag[b & 0xff] = 1;
         }
         Utilities.writeEscapedString(stream, bytes);
@@ -144,6 +144,29 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     @Override
     public void writeText(String text, PdfOutputStream stream) {
         Utilities.writeEscapedString(stream, convertToBytes(text));
+    }
+
+    @Override
+    public String decode(byte[] textContent) {
+        StringBuilder builder = new StringBuilder(textContent.length);
+        for (byte b : textContent) {
+            Integer uni = fontEncoding.getUnicode(b);
+            if (uni != null) {
+                builder.append((char) (int) uni);
+            }
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public float getContentWidth(byte[] textContent) {
+        float width = 0;
+        for (byte b : textContent) {
+            Integer uni = fontEncoding.getUnicode(b);
+            Glyph glyph = uni != null ? getGlyph(uni) : fontProgram.getGlyphByCode(b);
+            width += glyph != null ? glyph.getWidth() : 0;
+        }
+        return width;
     }
 
     /**
@@ -280,6 +303,10 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     protected void flushFontData(String fontName, PdfName subtype) {
+        if (fontProgram instanceof DocFontProgram) {
+            super.flush();
+            return;
+        }
         getPdfObject().put(PdfName.Subtype, subtype);
         getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
         int firstChar;
@@ -519,7 +546,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         }
     }
 
-    protected  PdfDictionary getNewFontDescriptor(PdfDictionary fromDescriptorDictionary) {
+    protected PdfDictionary getNewFontDescriptor(PdfDictionary fromDescriptorDictionary) {
         PdfDictionary toDescriptorDictionary = new PdfDictionary();
         toDescriptorDictionary.makeIndirect(getDocument());
         toDescriptorDictionary.put(PdfName.Type, PdfName.FontDescriptor);
@@ -617,7 +644,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         if (fontFamily != null) {
             toDescriptorDictionary.put(PdfName.FontFamily, fontFamily);
         }
-
 
 
         PdfDictionary fromStyleDictionary = fromDescriptorDictionary.getAsDictionary(PdfName.Style);

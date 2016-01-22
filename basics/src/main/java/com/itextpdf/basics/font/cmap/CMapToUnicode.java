@@ -13,7 +13,6 @@ import java.util.Map;
  * This class represents a CMap file.
  *
  * @author Ben Litchfield (ben@benlitchfield.com)
- * @since 2.1.4
  */
 public class CMapToUnicode extends AbstractCMap {
 
@@ -135,7 +134,7 @@ public class CMapToUnicode extends AbstractCMap {
         byte[] src = mark.getBytes();
         String dest;
         try {
-            dest = createStringFromBytes(code.toString().getBytes());
+            dest = createStringFromBytes((byte[]) code.getValue());
 
             if (src.length == 1) {
                 singleByteMappings.put(src[0] & 0xff, dest);

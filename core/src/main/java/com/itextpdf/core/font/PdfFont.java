@@ -1,23 +1,10 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.CidFont;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontFactory;
-import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.TrueTypeCollection;
-import com.itextpdf.basics.font.TrueTypeFont;
-import com.itextpdf.basics.font.Type1Font;
+import com.itextpdf.basics.font.*;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfObjectWrapper;
-import com.itextpdf.core.pdf.PdfOutputStream;
-import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,9 +20,6 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
-    //TODO write?
-    protected PdfStream toUnicode;
-
     /**
      * true if the font is to be embedded in the PDF.
      */
@@ -46,8 +30,8 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected boolean subset = true;
     protected List<int[]> subsetRanges;
 
-    public static PdfFont getDefaultFont(PdfDocument pdfDocument) throws IOException {
-        return createStandardFont(FontConstants.HELVETICA, null);
+    public static PdfFont getDefaultFont() throws IOException {
+        return createStandardFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
     }
 
     public static PdfFont createFont(PdfDictionary fontDictionary) {
@@ -376,23 +360,30 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     //TODO abstract
+    public String decode(byte[] textContent) {
+        throw new RuntimeException();
+    }
+
+    //TODO abstract
+    public float getContentWidth(byte[] textContent) {
+        throw new RuntimeException();
+    }
+
+    //TODO abstract
     public byte[] convertToBytes(Glyph glyph) {
         throw new RuntimeException();
     }
 
     //TODO abstract
-    //TODO or writePdfString?
     public void writeText(GlyphLine text, int from, int to, PdfOutputStream stream) {
         throw new RuntimeException();
     }
 
     //TODO abstract
-    //TODO or writePdfString?
     public void writeText(String text, PdfOutputStream stream) {
         throw new RuntimeException();
     }
 
-    //TODO or writePdfString?
     public void writeText(GlyphLine text, PdfOutputStream stream) {
         writeText(text, 0, text.size() - 1, stream);
     }

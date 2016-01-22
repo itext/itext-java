@@ -217,7 +217,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String value, String name) {
         try{
-            return createText(doc, rect, PdfFont.getDefaultFont(doc), DEFAULT_FONT_SIZE, value, name);
+            return createText(doc, rect, PdfFont.getDefaultFont(), DEFAULT_FONT_SIZE, value, name);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -294,7 +294,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, int flags) {
         try{
-            return createChoice(doc, rect, options, value, name, PdfFont.getDefaultFont(doc), DEFAULT_FONT_SIZE, flags);
+            return createChoice(doc, rect, options, value, name, PdfFont.getDefaultFont(), DEFAULT_FONT_SIZE, flags);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -401,7 +401,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption) {
         PdfButtonFormField field;
         try {
-            field = createPushButton(doc, rect, name, caption, PdfFont.getDefaultFont(doc), DEFAULT_FONT_SIZE);
+            field = createPushButton(doc, rect, name, caption, PdfFont.getDefaultFont(), DEFAULT_FONT_SIZE);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -1979,7 +1979,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (font != null) {
                     fontAndSize[0] = font;
                 } else {
-                    fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
+                    fontAndSize[0] = PdfFont.getDefaultFont();
                 }
                 if (fontSize != 0) {
                     fontAndSize[1] = fontSize;
@@ -1991,7 +1991,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (font != null) {
                 fontAndSize[0] = font;
             } else {
-                fontAndSize[0] = PdfFont.getDefaultFont(getDocument());
+                fontAndSize[0] = PdfFont.getDefaultFont();
             }
             if (fontSize != 0) {
                 fontAndSize[1] = fontSize;

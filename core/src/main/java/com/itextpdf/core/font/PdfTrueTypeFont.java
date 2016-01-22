@@ -55,9 +55,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.TrueType);
 
-        CMapToUnicode toUni = DocFontUtils.processToUnicode(fontDictionary);
+        CMapToUnicode toUni = DocFontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
-        fontProgram = DocTrueTypeFont.createSimpleFontProgram(fontDictionary, fontEncoding);
+        fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding);
         embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
         subset = false;
     }

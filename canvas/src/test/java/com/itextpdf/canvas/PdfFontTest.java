@@ -50,6 +50,7 @@ public class PdfFontTest extends ExtendedITextTest{
 
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 6";
+    static final String pangramme = "Amazingly few discothegues provide jukeboxes but it now while sayingly ABEFGHJKNOPQRSTUWYZ?";
 
     @BeforeClass
     static public void beforeClass() {
@@ -105,6 +106,7 @@ public class PdfFontTest extends ExtendedITextTest{
                 setTitle(title);
         String font = fontsFolder + "abserif4_5.ttf";
         PdfFont type0Font = PdfFont.createFont(font, "Identity-H");
+//        type0Font.setSubset(false);
         Assert.assertTrue("PdfType0Font expected", type0Font instanceof PdfType0Font);
         Assert.assertTrue("TrueType expected", type0Font.getFontProgram() instanceof TrueTypeFont);
         PdfPage page = pdfDoc.addNewPage();
@@ -118,6 +120,16 @@ public class PdfFontTest extends ExtendedITextTest{
                 .restoreState()
                 .rectangle(100, 500, 100, 100).fill()
                 .release();
+
+//        new PdfCanvas(page)
+//                .saveState()
+//                .beginText()
+//                .moveText(36, 650)
+//                .setFontAndSize(type0Font, 12)
+//                .showText(pangramme)
+//                .endText()
+//                .restoreState()
+//                .release();
         page.flush();
 
         byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(font));
@@ -802,7 +814,7 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test@Ignore
+    @Test
     public void createDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException,  InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeAsType0.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0_new.pdf";
@@ -821,7 +833,42 @@ public class PdfFontTest extends ExtendedITextTest{
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary);
+        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary.copyToDocument(pdfDoc));
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("New Hello World")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createUpdatedDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException, InterruptedException {
+        String inputFileName1 = sourceFolder + "DocumentWithTrueTypeAsType0.pdf";
+        String filename = destinationFolder + "DocumentWithTrueTypeAsType0_update.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0_update.pdf";
+        final String title = "Type0 font iText 6 Document";
+
+        PdfReader reader = new PdfReader(inputFileName1);
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        PdfType0Font pdfTrueTypeFont = new PdfType0Font((PdfDictionary) pdfDoc.getPdfObject(6));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1169,7 +1216,7 @@ public class PdfFontTest extends ExtendedITextTest{
 
     @Test
     public void testSplitString() throws IOException {
-        PdfFont font = PdfFont.getDefaultFont(null);
+        PdfFont font = PdfFont.getDefaultFont();
         List<String> list1 = font.splitString("Hello", 12, 10);
         Assert.assertTrue(list1.size() == 2);
 

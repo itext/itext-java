@@ -563,7 +563,7 @@ public class PdfSignatureAppearance {
             PdfFont font;
 
             if (layer2Font == null) {
-                font = PdfFont.getDefaultFont(document);
+                font = PdfFont.getDefaultFont();
             } else {
                 font = layer2Font;
             }

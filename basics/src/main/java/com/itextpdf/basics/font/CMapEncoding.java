@@ -15,7 +15,6 @@ public class CMapEncoding {
     private String cmap;
     private String uniMap;
 
-
     // true if CMap is Identity-H/V
     private boolean isDirect;
 

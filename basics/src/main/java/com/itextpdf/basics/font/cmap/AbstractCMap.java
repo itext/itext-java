@@ -72,9 +72,9 @@ public abstract class AbstractCMap {
                 addChar(mark, new CMapObject(CMapObject.Number, nn));
             } else if (code.isString()) {
                 CMapObject s1 = new CMapObject(CMapObject.HexString, sout);
+                addChar(mark, s1);
                 assert sout != null;
                 ++sout[sout.length - 1];
-                addChar(mark, s1);
             }
         }
     }
