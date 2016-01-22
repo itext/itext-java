@@ -23,13 +23,14 @@ import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.layout.LayoutResult;
 import com.itextpdf.model.layout.TextLayoutResult;
 import com.itextpdf.model.splitting.ISplitCharacters;
-import com.itextpdf.typography.bidi.BidiAlgorithm;
-import com.itextpdf.typography.bidi.BidiBracketMap;
-import com.itextpdf.typography.bidi.BidiCharacterMap;
-import com.itextpdf.typography.shaping.Shaper;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TextRenderer extends AbstractRenderer {
 
@@ -84,25 +85,40 @@ public class TextRenderer extends AbstractRenderer {
         Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
         Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
 
-        boolean typographyModuleInitialized = true;
+        boolean typographyModuleInitialized = checkTypographyModulePresence();
 
-        if (typographyModuleInitialized) {
-            if (!otfFeaturesApplied) {
-                if (script != null && isOtfFont(font)) {
-                    Shaper.applyOtfScript((TrueTypeFont)font.getFontProgram(), text, script);
-                }
-
-                if (fontKerning == Property.FontKerning.YES) {
-                    Shaper.applyKerning(font.getFontProgram(), text);
-                }
-
-                otfFeaturesApplied = true;
+        if (!otfFeaturesApplied && script != null && isOtfFont(font)) {
+            if (!typographyModuleInitialized) {
+                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+                logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
+            } else {
+                callMethod("com.itextpdf.typograpry.shaping.Shaper", "applyOtfScript", new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
+                        font.getFontProgram(), text, script);
+                //Shaper.applyOtfScript((TrueTypeFont)font.getFontProgram(), text, script);
             }
+        }
 
-            line = new GlyphLine(text);
-            line.start = line.end = -1;
+        if (!otfFeaturesApplied && fontKerning == Property.FontKerning.YES) {
+            if (!typographyModuleInitialized) {
+                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+                logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
+            } else {
+                callMethod("com.itextpdf.typograpry.shaping.Shaper", "applyKerning", new Class[]{FontProgram.class, GlyphLine.class},
+                        font.getFontProgram(), text);
+                //Shaper.applyKerning(font.getFontProgram(), text);
+            }
+        }
 
-            if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
+        otfFeaturesApplied = true;
+
+        line = new GlyphLine(text);
+        line.start = line.end = -1;
+
+        if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
+            if (!typographyModuleInitialized) {
+                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+                logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
+            } else {
                 byte direction;
                 switch (baseDirection) {
                     case LEFT_TO_RIGHT:
@@ -125,11 +141,21 @@ public class TextRenderer extends AbstractRenderer {
                     int unicode = text.glyphs.get(i).getChars()[0];
                     unicodeIds[i - text.start] = unicode;
                 }
-                byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start);
-                byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
-                int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
-                BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
-                levels = bidiReorder.getLevels(new int[]{text.end - text.start});
+                byte[] types = (byte[]) callMethod("com.itextpdf.typography.bidi.BidiCharacterMap", "getCharacterTypes", new Class[]{int[].class, int.class, int.class},
+                        unicodeIds, 0, text.end - text.start);
+                //byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start;
+                int[] pairTypes = (int[]) callMethod("com.itextpdf.typography.bidi.BidiBracketMap", "getBracketTypes", new Class[]{int[].class, int.class, int.class},
+                        unicodeIds, 0, text.end - text.start);
+                //byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
+                int[] pairValues = (int[]) callMethod("com.itextpdf.typography.bidi.BidiBracketMap", "getBracketValues", new Class[]{int[].class, int.class, int.class},
+                        unicodeIds, 0, text.end - text.start);
+                //int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
+                Object bidiReorder = callConstructor("com.itextpdf.typography.bidi.BidiAlgorithm", new Class[]{byte[].class, int[].class, int[].class, byte.class},
+                        types, pairTypes, pairValues, direction);
+                //BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
+                levels = (byte[]) callMethod("com.itextpdf.typography.bidi.BidiAlgorithm", "getLevels", bidiReorder, new Class[]{int[].class},
+                        new int[]{text.end - text.start});
+                //levels = bidiReorder.getLevels(new int[]{text.end - text.start});
             }
         }
 
@@ -336,11 +362,16 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
-        if (typographyModuleInitialized) {
-            if (baseDirection != Property.BaseDirection.NO_BIDI) {
+        if (baseDirection != Property.BaseDirection.NO_BIDI) {
+            if (!typographyModuleInitialized) {
+                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+                logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
+            } else {
                 byte[] lineLevels = new byte[line.end - line.start];
                 System.arraycopy(levels, line.start, lineLevels, 0, line.end - line.start);
-                int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
+                int[] reorder = (int[]) callMethod("com.itextpdf.typography.bidi.BidiAlgorithm", "computeReordering", new Class[]{byte[].class},
+                        lineLevels);
+                //int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
                 List<Glyph> reorderedLine = new ArrayList<>(line.end - line.start);
                 for (int i = 0; i < line.end - line.start; i++) {
                     reorderedLine.add(line.glyphs.get(line.start + reorder[i]));
@@ -348,7 +379,10 @@ public class TextRenderer extends AbstractRenderer {
                     // Mirror RTL glyphs
                     if (levels[line.start + reorder[i]] % 2 == 1) {
                         if (reorderedLine.get(i).getUnicode() != null) {
-                            reorderedLine.set(i, font.getGlyph(BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())));
+                            int pairedBracket = (int) callMethod("com.itextpdf.typography.bidi.BidiBracketMap", "getPairedBracket", new Class[]{int.class},
+                                    reorderedLine.get(i).getUnicode());
+                            //BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())
+                            reorderedLine.set(i, font.getGlyph(pairedBracket));
                         }
                     }
                 }
@@ -362,10 +396,6 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         return result;
-    }
-
-    private boolean isNewLine(GlyphLine text, int ind) {
-        return text.glyphs.get(ind).getUnicode() != null && text.glyphs.get(ind).getUnicode() == '\n';
     }
 
     @Override
@@ -612,6 +642,42 @@ public class TextRenderer extends AbstractRenderer {
     @Override
     public TextRenderer getNextRenderer() {
         return new TextRenderer((Text) modelElement, null);
+    }
+
+    private boolean checkTypographyModulePresence() {
+        boolean moduleFound = false;
+        try {
+            Class.forName("com.itextpdf.typography.shaping.Shaper");
+            moduleFound = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+        return moduleFound;
+    }
+
+    private Object callMethod(String className, String methodName, Class[] parameterTypes, Object... args) {
+        return callMethod(className, methodName, null, parameterTypes, args);
+    }
+
+    private Object callMethod(String className, String methodName, Object target, Class[] parameterTypes, Object... args) {
+        try {
+            Method method = Class.forName(className).getMethod(methodName, parameterTypes);
+            return method.invoke(target, args);
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    private Object callConstructor(String className, Class[] parameterTypes, Object... args) {
+        try {
+            Constructor constructor = Class.forName(className).getConstructor(parameterTypes);
+            return constructor.newInstance(args);
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    private boolean isNewLine(GlyphLine text, int ind) {
+        return text.glyphs.get(ind).getUnicode() != null && text.glyphs.get(ind).getUnicode() == '\n';
     }
 
     private GlyphLine convertToGlyphLine(String text) {
