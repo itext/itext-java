@@ -324,6 +324,9 @@ public enum Property {
         }
     }
 
+    /**
+     * A specialized class that holds a value and the unit it is measured in.
+     */
     public static class UnitValue {
         public static final int POINT = 1;
         public static final int PERCENT = 2;
@@ -331,15 +334,30 @@ public enum Property {
         protected int unitType;
         protected float value;
 
+        /**
+         * Creates a UnitValue object with a specified type and value.
+         * @param unitType either {@link UnitValue#POINT} or a {@link UnitValue#PERCENT}
+         * @param value the value to be stored.
+         */
         public UnitValue(int unitType, float value) {
             this.unitType = unitType;
             this.value = value;
         }
 
+        /**
+         * Creates a UnitValue POINT object with a specified value.
+         * @param value the value to be stored.
+         * @return a new {@link UnitValue#POINT} {@link UnitValue}
+         */
         public static UnitValue createPointValue(float value) {
             return new UnitValue(POINT, value);
         }
 
+        /**
+         * Creates a UnitValue PERCENT object with a specified value.
+         * @param value the value to be stored.
+         * @return a new {@link UnitValue#PERCENT} {@link UnitValue}
+         */
         public static UnitValue createPercentValue(float value) {
             return new UnitValue(PERCENT, value);
         }

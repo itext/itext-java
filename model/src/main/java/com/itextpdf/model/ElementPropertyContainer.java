@@ -13,6 +13,12 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A generic abstract element that fits in a PDF model object hierarchy. 
+ * A superclass of all {@link IElement model object} implementations.
+ * 
+ * @param <Type> this type
+ */
 public abstract class ElementPropertyContainer<Type extends ElementPropertyContainer> implements IPropertyContainer<Type> {
 
     protected Map<Property, Object> properties = new EnumMap<>(Property.class);
@@ -69,30 +75,82 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
         }
     }
 
+    /**
+     * Gets the width property of the Element.
+     * 
+     * @return the width of the element, with a value and a measurement unit.
+     * @see Property.UnitValue
+     */
     public Property.UnitValue getWidth() {
         return getProperty(Property.WIDTH);
     }
 
+    /**
+     * Sets the width property of the Element, measured in points.
+     * 
+     * @param width a value measured in points.
+     * @return this Element.
+     */
     public Type setWidth(float width) {
         return setProperty(Property.WIDTH, Property.UnitValue.createPointValue(width));
     }
 
+    /**
+     * Sets the width property of the Element, measured in percentage.
+     * 
+     * @param widthPercent a value measured in percentage.
+     * @return this Element.
+     */
     public Type setWidthPercent(float widthPercent) {
         return setProperty(Property.WIDTH, Property.UnitValue.createPercentValue(widthPercent));
     }
 
+    /**
+     * Sets the width property of the Element with a {@link com.itextpdf.model.Property.UnitValue}.
+     * 
+     * @param width a {@link com.itextpdf.model.Property.UnitValue} object
+     * @return this Element.
+     */
     public Type setWidth(Property.UnitValue width) {
         return setProperty(Property.WIDTH, width);
     }
-
+    
+    /**
+     * Gets the height property of the Element.
+     * 
+     * @return the height of the element, as a floating point value.
+     */
     public Float getHeight() {
         return getProperty(Property.HEIGHT);
     }
 
+    /**
+     * Sets the height property of the Element.
+     * 
+     * @param height a floating point value for the new height
+     * @return this Element.
+     */
     public Type setHeight(float height) {
         return setProperty(Property.HEIGHT, height);
     }
 
+    /**
+     * Sets values for a relative repositioning of the Element. Also has as a
+     * side effect that the Element's {@link Property#POSITION} is changed to 
+     * {@link LayoutPosition#RELATIVE relative}.
+     * 
+     * The default implementation in {@link AbstractRenderer} treats
+     * <code>left</code> and <code>top</code> as the most important values. Only
+     * if <code>left == 0</code> will <code>right</code> be used for the
+     * calculation; ditto for top vs. bottom.
+     * 
+     * @param left movement to the left
+     * @param top movement upwards on the page
+     * @param right movement to the right
+     * @param bottom movement downwards on the page
+     * @return this Element.
+     * @see LayoutPosition#RELATIVE
+     */
     public Type setRelativePosition(float left, float top, float right, float bottom) {
         return (Type) setProperty(Property.POSITION, LayoutPosition.RELATIVE).
                 setProperty(Property.LEFT, left).
@@ -101,10 +159,30 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
                 setProperty(Property.BOTTOM, bottom);
     }
 
+    /**
+     * Sets values for a absolute repositioning of the Element. Also has as a
+     * side effect that the Element's {@link Property#POSITION} is changed to 
+     * {@link LayoutPosition#FIXED fixed}.
+     * 
+     * @param x horizontal position on the page
+     * @param y vertical position on the page
+     * @param width a floating point value measured in points.
+     * @return this Element.
+     */
     public Type setFixedPosition(float x, float y, float width) {
         return setFixedPosition(x, y, Property.UnitValue.createPointValue(width));
     }
 
+    /**
+     * Sets values for a absolute repositioning of the Element. Also has as a
+     * side effect that the Element's {@link Property#POSITION} is changed to 
+     * {@link LayoutPosition#FIXED fixed}.
+     * 
+     * @param x horizontal position on the page
+     * @param y vertical position on the page
+     * @param width a {@link com.itextpdf.model.Property.UnitValue}
+     * @return this Element.
+     */
     public Type setFixedPosition(float x, float y, Property.UnitValue width) {
         return (Type) setProperty(Property.POSITION, LayoutPosition.FIXED).
                 setProperty(Property.X, x).
@@ -112,11 +190,33 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
                 setProperty(Property.WIDTH, width);
     }
 
+    /**
+     * Sets values for a absolute repositioning of the Element, on a specific
+     * page. Also has as a side effect that the Element's {@link
+     * Property#POSITION} is changed to {@link LayoutPosition#FIXED fixed}.
+     * 
+     * @param pageNumber the page where the element must be positioned
+     * @param x horizontal position on the page
+     * @param y vertical position on the page
+     * @param width a floating point value measured in points.
+     * @return this Element.
+     */
     public Type setFixedPosition(int pageNumber, float x, float y, float width) {
         return (Type) setFixedPosition(x, y, width).
                 setProperty(Property.PAGE_NUMBER, pageNumber);
     }
 
+    /**
+     * Sets values for a absolute repositioning of the Element, on a specific
+     * page. Also has as a side effect that the Element's {@link
+     * Property#POSITION} is changed to {@link LayoutPosition#FIXED fixed}.
+     * 
+     * @param pageNumber the page where the element must be positioned
+     * @param x horizontal position on the page
+     * @param y vertical position on the page
+     * @param width a floating point value measured in points.
+     * @return this Element.
+     */
     public Type setFixedPosition(int pageNumber, float x, float y, Property.UnitValue width) {
         return (Type) setFixedPosition(x, y, width).
                 setProperty(Property.PAGE_NUMBER, pageNumber);
@@ -128,32 +228,73 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
 //            setProperty(Property.Y, y);
 //    }
 
+    /**
+     * Sets the horizontal alignment of this Element.
+     * 
+     * @param horizontalAlignment an enum value of type {@link com.itextpdf.model.Property.HorizontalAlignment}
+     * @return this Element.
+     */
     public Type setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
         return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
     }
 
+    /**
+     * Sets the font of this Element.
+     * 
+     * @param font a {@link PdfFont font program}
+     * @return this Element.
+     */
     public Type setFont(PdfFont font) {
         return setProperty(Property.FONT, font);
     }
 
+    /**
+     * Sets the font color of this Element.
+     * 
+     * @param fontColor a {@link Color} for the text in this Element.
+     * @return this Element.
+     */
     public Type setFontColor(Color fontColor) {
         return setProperty(Property.FONT_COLOR, fontColor);
     }
 
+    /**
+     * Sets the font size of this Element.
+     * 
+     * @param fontSize a floating point value
+     * @return this Element.
+     */
     public Type setFontSize(float fontSize) {
         return setProperty(Property.FONT_SIZE, fontSize);
     }
 
+    /**
+     * Sets the font size of this Element.
+     * 
+     * @param alignment an enum value of type {@link com.itextpdf.model.Property.TextAlignment}
+     * @return this Element.
+     */
     public Type setTextAlignment(Property.TextAlignment alignment) {
         return setProperty(Property.TEXT_ALIGNMENT, alignment);
     }
 
+    /**
+     * Defines a custom spacing distance between all characters of a textual element.
+     * The character-spacing parameter is added to the glyph’s horizontal or vertical displacement (depending on the writing mode).
+     * 
+     * @param charSpacing a floating point value
+     * @return this Element.
+     */
     public Type setCharacterSpacing(float charSpacing) {
         return setProperty(Property.CHARACTER_SPACING, charSpacing);
     }
 
     /**
-     * The word-spacing parameter is added to the glyph’s horizontal or vertical displacement (depending on the writing mode).
+     * Defines a custom spacing distance between words of a textual element.
+     * This value works exactly like the character spacing, but only kicks in at word boundaries.
+     * 
+     * @param wordSpacing a floating point value
+     * @return this Element.
      */
     public Type setWordSpacing(float wordSpacing) {
         return setProperty(Property.WORD_SPACING, wordSpacing);
@@ -163,15 +304,35 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * Enable or disable kerning.
      * Some fonts may specify kern pairs, i.e. pair of glyphs, between which the amount of horizontal space is adjusted.
      * This adjustment is typically negative, e.g. in "AV" pair the glyphs will typically be moved closer to each other.
+     * 
+     * @param fontKerning an enum value as a boolean wrapper specifying whether or not to apply kerning
+     * @return this Element.
      */
     public Type setFontKerning(Property.FontKerning fontKerning) {
         return setProperty(Property.FONT_KERNING, fontKerning);
     }
 
+    /**
+     * Specifies a background color for the Element.
+     * 
+     * @param backgroundColor the background color
+     * @return this Element.
+     */
     public Type setBackgroundColor(Color backgroundColor) {
         return setBackgroundColor(backgroundColor, 0, 0, 0, 0);
     }
 
+    /**
+     * Specifies a background color for the Element, and extra space that
+     * must be counted as part of the background and therefore colored.
+     * 
+     * @param backgroundColor the background color
+     * @param extraLeft extra coloring to the left side
+     * @param extraTop extra coloring at the top
+     * @param extraRight extra coloring to the right side
+     * @param extraBottom extra coloring at the bottom
+     * @return this Element.
+     */
     public Type setBackgroundColor(Color backgroundColor, float extraLeft, final float extraTop, final float extraRight, float extraBottom) {
         return setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
     }

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A generic abstract root element for a PDF object hierarchy.
+ * A generic abstract root element for a PDF model object hierarchy.
  * 
  * @param <Type> this type
  */
