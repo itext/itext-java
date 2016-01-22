@@ -5,7 +5,7 @@ import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.barcodes.qrcode.QRCodeWriter;
 import com.itextpdf.barcodes.qrcode.WriterException;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDocument;

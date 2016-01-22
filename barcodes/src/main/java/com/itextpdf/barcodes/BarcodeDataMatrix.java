@@ -4,7 +4,7 @@ import com.itextpdf.barcodes.dmcode.DmParams;
 import com.itextpdf.barcodes.dmcode.Placement;
 import com.itextpdf.barcodes.dmcode.ReedSolomon;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDocument;

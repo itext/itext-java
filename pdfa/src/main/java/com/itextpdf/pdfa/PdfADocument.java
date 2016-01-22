@@ -1,7 +1,7 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.canvas.CanvasGraphicsState;
-import com.itextpdf.canvas.PdfCanvasConstants;
+import com.itextpdf.core.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.IsoKey;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;

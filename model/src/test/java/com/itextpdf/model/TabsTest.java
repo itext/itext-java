@@ -1,12 +1,12 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.geom.PageSize;
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
-import com.itextpdf.canvas.draw.DashedLine;
-import com.itextpdf.canvas.draw.DottedLine;
-import com.itextpdf.canvas.draw.Drawable;
-import com.itextpdf.canvas.draw.SolidLine;
+import com.itextpdf.core.pdf.canvas.draw.DashedLine;
+import com.itextpdf.core.pdf.canvas.draw.DottedLine;
+import com.itextpdf.core.pdf.canvas.draw.Drawable;
+import com.itextpdf.core.pdf.canvas.draw.SolidLine;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;

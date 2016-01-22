@@ -1,6 +1,6 @@
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.canvas.CanvasGraphicsState;
+import com.itextpdf.core.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
 import com.itextpdf.core.pdf.PdfArray;

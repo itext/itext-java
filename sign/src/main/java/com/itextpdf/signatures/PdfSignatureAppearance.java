@@ -2,7 +2,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;

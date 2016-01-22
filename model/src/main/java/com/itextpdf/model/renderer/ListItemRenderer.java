@@ -1,7 +1,5 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.core.pdf.tagutils.PdfTagStructure;

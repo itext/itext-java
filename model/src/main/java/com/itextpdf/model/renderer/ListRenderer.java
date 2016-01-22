@@ -1,9 +1,7 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.ListItem;

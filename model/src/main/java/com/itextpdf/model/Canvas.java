@@ -1,7 +1,7 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.model.renderer.CanvasRenderer;

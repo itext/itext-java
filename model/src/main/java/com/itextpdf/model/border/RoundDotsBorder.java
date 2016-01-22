@@ -1,7 +1,7 @@
 package com.itextpdf.model.border;
 
-import com.itextpdf.canvas.PdfCanvas;
-import com.itextpdf.canvas.PdfCanvasConstants;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.color.Color;
 
 public class RoundDotsBorder extends Border {

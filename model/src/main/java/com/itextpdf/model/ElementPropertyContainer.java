@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.canvas.PdfCanvasConstants;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.border.Border;
@@ -473,7 +473,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      *            the position multiplication factor with the font size
      * @param lineCapStyle
      *            the end line cap style. Allowed values are enumerated in
-     *            {@link com.itextpdf.canvas.PdfCanvasConstants.LineCapStyle}
+     *            {@link PdfCanvasConstants.LineCapStyle}
      * @return this element
      */
     public Type setUnderline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {

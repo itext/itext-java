@@ -23,7 +23,6 @@
     <modules>
         <module>basics</module>
         <module>core</module>
-        <module>canvas</module>
         <module>utils</module>
         <module>model</module>
         <module>forms</module>

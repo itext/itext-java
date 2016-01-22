@@ -1,6 +1,6 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
