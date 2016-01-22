@@ -137,6 +137,10 @@ public class PdfTokenizer {
         return new String(outBuf.getInternalBuffer(), 0, outBuf.size());
     }
 
+    public String getDecodedStringValue() {
+        return new String(decodeStringContent(outBuf.getInternalBuffer(), 0, outBuf.size() - 1, isHexString()));
+    }
+
     public boolean tokenValueEqualsTo(byte[] cmp) {
         if (cmp == null)
             return false;
@@ -442,12 +446,118 @@ public class PdfTokenizer {
     }
 
     /**
-     * Is a certain character a whitespace? Currently checks on the following: '0', '9', '10', '12', '13', '32'.
-     * <br />The same as calling {@link #isWhitespace(int, boolean) isWhiteSpace(ch, true)}.
+     * Resolve escape symbols or hexadecimal symbols.
+     * <p/>
+     * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
+     * so we can convert it directly to byte array.
      *
-     * @param ch int
-     * @return boolean
+     * @return byte[] for decrypting or for creating {@link java.lang.String}.
      */
+    protected static byte[] decodeStringContent(byte[] content, int from, int to, boolean hexWriting) {
+        ByteBuffer buffer = new ByteBuffer(to - from + 1);
+        if (hexWriting) {       // <6954657874ae...>
+            for (int i = from; i <= to; ) {
+                int v1 = ByteBuffer.getHex(content[i++]);
+                if (i > to) {
+                    buffer.append(v1 << 4);
+                    break;
+                }
+                int v2 = content[i++];
+                v2 = ByteBuffer.getHex(v2);
+                buffer.append((v1 << 4) + v2);
+            }
+        } else {                // ((iText\( some version)...)
+            for (int i = from; i <= to; ) {
+                int ch = content[i++];
+                if (ch == '\\') {
+                    boolean lineBreak = false;
+                    ch = content[i++];
+                    switch (ch) {
+                        case 'n':
+                            ch = '\n';
+                            break;
+                        case 'r':
+                            ch = '\r';
+                            break;
+                        case 't':
+                            ch = '\t';
+                            break;
+                        case 'b':
+                            ch = '\b';
+                            break;
+                        case 'f':
+                            ch = '\f';
+                            break;
+                        case '(':
+                        case ')':
+                        case '\\':
+                            break;
+                        case '\r':
+                            lineBreak = true;
+                            if (i <= to && content[i++] != '\n') {
+                                i--;
+                            }
+                            break;
+                        case '\n':
+                            lineBreak = true;
+                            break;
+                        default: {
+                            if (ch < '0' || ch > '7') {
+                                break;
+                            }
+                            int octal = ch - '0';
+                            ch = content[i++];
+                            if (ch < '0' || ch > '7') {
+                                i--;
+                                ch = octal;
+                                break;
+                            }
+                            octal = (octal << 3) + ch - '0';
+                            ch = content[i++];
+                            if (ch < '0' || ch > '7') {
+                                i--;
+                                ch = octal;
+                                break;
+                            }
+                            octal = (octal << 3) + ch - '0';
+                            ch = octal & 0xff;
+                            break;
+                        }
+                    }
+                    if (lineBreak)
+                        continue;
+                } else if (ch == '\r') {
+                    // in this case current char is '\n' and we have to skip next '\n' if it presents.
+                    ch = '\n';
+                    if (i <= to && content[i++] != '\n') {
+                        i--;
+                    }
+                }
+                buffer.append(ch);
+            }
+        }
+        return buffer.toByteArray();
+    }
+
+    /**
+     * Resolve escape symbols or hexadecimal symbols.
+     * <p/>
+     * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
+     * so we can convert it directly to byte array.
+     *
+     * @return byte[] for decrypting or for creating {@link java.lang.String}.
+     */
+    public static byte[] decodeStringContent(byte[] content, boolean hexWriting) {
+        return decodeStringContent(content, 0, content.length - 1, hexWriting);
+    }
+
+        /**
+         * Is a certain character a whitespace? Currently checks on the following: '0', '9', '10', '12', '13', '32'.
+         * <br />The same as calling {@link #isWhitespace(int, boolean) isWhiteSpace(ch, true)}.
+         *
+         * @param ch int
+         * @return boolean
+         */
     public static boolean isWhitespace(int ch) {
         return isWhitespace(ch, true);
     }

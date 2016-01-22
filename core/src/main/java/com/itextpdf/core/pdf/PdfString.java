@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.io.ByteBuffer;
+import com.itextpdf.basics.io.PdfTokenizer;
 
 import java.nio.charset.Charset;
 
@@ -63,7 +64,7 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     /**
-     * Only PdfReader could use this method
+     * Only PdfReader can use this method
      */
     protected PdfString(byte[] content, boolean hexWriting) {
         super(content);
@@ -126,7 +127,7 @@ public class PdfString extends PdfPrimitiveObject {
             generateContent();
         }
 
-        byte[] b = decodeContent();
+        byte[] b = PdfTokenizer.decodeStringContent(content, hexWriting);
         if (b.length >= 2 && b[0] == -2 && b[1] == -1) {
             return PdfEncodings.convertToString(b, PdfEncodings.UnicodeBig);
         } else {
@@ -222,7 +223,7 @@ public class PdfString extends PdfPrimitiveObject {
 
     protected void generateValue() {
         assert content != null : "No byte[] content to generate value";
-        value = convertBytesToString(decodeContent());
+        value = convertBytesToString(PdfTokenizer.decodeStringContent(content, hexWriting));
     }
 
     @Override
@@ -236,7 +237,7 @@ public class PdfString extends PdfPrimitiveObject {
     protected PdfString decrypt(PdfEncryption decrypt) {
         if (decrypt != null) {
             assert content != null : "No byte content to decrypt value";
-            byte[] decodedContent = decodeContent();
+            byte[] decodedContent = PdfTokenizer.decodeStringContent(content, hexWriting);
             content = null;
             decrypt.setHashKey(decryptInfoNum, decryptInfoGen);
             value = new String(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
@@ -278,100 +279,6 @@ public class PdfString extends PdfPrimitiveObject {
             ByteBuffer buf = Utilities.createBufferedEscapedString(bytes);
             return buf.toByteArray(1, buf.size() - 2);
         }
-    }
-
-    /**
-     * Resolve escape symbols or hexadecimal symbols.
-     * <p/>
-     * NOTE Due to PdfReference 1.7 part 3.2.3 String value contain ASCII characters,
-     * so we can convert it directly to byte array.
-     *
-     * @return byte[] for decrypting or for creating {@link java.lang.String}.
-     */
-    protected byte[] decodeContent() {
-        ByteBuffer buffer = new ByteBuffer(content.length);
-        if (hexWriting) {       // <6954657874ae...>
-            for (int i = 0; i < content.length; ) {
-                int v1 = ByteBuffer.getHex(content[i++]);
-                if (i == content.length) {
-                    buffer.append(v1 << 4);
-                    break;
-                }
-                int v2 = content[i++];
-                v2 = ByteBuffer.getHex(v2);
-                buffer.append((v1 << 4) + v2);
-            }
-        } else {                // ((iText\( some version)...)
-            for (int i = 0; i < content.length; ) {
-                int ch = content[i++];
-                if (ch == '\\') {
-                    boolean lineBreak = false;
-                    ch = content[i++];
-                    switch (ch) {
-                        case 'n':
-                            ch = '\n';
-                            break;
-                        case 'r':
-                            ch = '\r';
-                            break;
-                        case 't':
-                            ch = '\t';
-                            break;
-                        case 'b':
-                            ch = '\b';
-                            break;
-                        case 'f':
-                            ch = '\f';
-                            break;
-                        case '(':
-                        case ')':
-                        case '\\':
-                            break;
-                        case '\r':
-                            lineBreak = true;
-                            if (i < content.length && content[i++] != '\n') {
-                                i--;
-                            }
-                            break;
-                        case '\n':
-                            lineBreak = true;
-                            break;
-                        default: {
-                            if (ch < '0' || ch > '7') {
-                                break;
-                            }
-                            int octal = ch - '0';
-                            ch = content[i++];
-                            if (ch < '0' || ch > '7') {
-                                i--;
-                                ch = octal;
-                                break;
-                            }
-                            octal = (octal << 3) + ch - '0';
-                            ch = content[i++];
-                            if (ch < '0' || ch > '7') {
-                                i--;
-                                ch = octal;
-                                break;
-                            }
-                            octal = (octal << 3) + ch - '0';
-                            ch = octal & 0xff;
-                            break;
-                        }
-                    }
-                    if (lineBreak)
-                        continue;
-                } else if (ch == '\r') {
-                    // in this case current char is '\n' and we have to skip next '\n' if it presents.
-                    ch = '\n';
-                    if (i < content.length && content[i++] != '\n') {
-                        i--;
-                    }
-                }
-                buffer.append(ch);
-            }
-        }
-        return buffer.toByteArray();
     }
 
     @Override
