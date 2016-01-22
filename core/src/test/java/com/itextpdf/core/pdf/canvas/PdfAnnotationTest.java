@@ -36,12 +36,10 @@ import com.itextpdf.core.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.core.pdf.annot.PdfTextMarkupAnnotation;
 import com.itextpdf.core.pdf.annot.PdfTrapNetworkAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWatermarkAnnotation;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.pdf.filespec.PdfFileSpec;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 

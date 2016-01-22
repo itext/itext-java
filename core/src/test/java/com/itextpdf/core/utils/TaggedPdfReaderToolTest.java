@@ -1,4 +1,4 @@
-package com.itextpdf.core.testutils;
+package com.itextpdf.core.utils;
 
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
@@ -18,8 +18,8 @@ import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
 public class TaggedPdfReaderToolTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/testutils/TaggedPdfReaderToolTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/core/testutils/TaggedPdfReaderToolTest/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/utils/TaggedPdfReaderToolTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/core/utils/TaggedPdfReaderToolTest/";
 
     @Before
     public void setUp() {

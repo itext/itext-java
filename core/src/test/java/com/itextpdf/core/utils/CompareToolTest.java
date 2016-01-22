@@ -1,4 +1,4 @@
-package com.itextpdf.core.testutils;
+package com.itextpdf.core.utils;
 
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -19,8 +19,8 @@ import org.xml.sax.SAXException;
 @Category(IntegrationTest.class)
 public class CompareToolTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/testutils/CompareToolTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/core/testutils/CompareToolTest/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/utils/CompareToolTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/core/utils/CompareToolTest/";
 
     @Before
     public void setUp() {

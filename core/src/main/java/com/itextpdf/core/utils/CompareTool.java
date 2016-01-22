@@ -1,4 +1,4 @@
-package com.itextpdf.core.testutils;
+package com.itextpdf.core.utils;
 
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.geom.Rectangle;
