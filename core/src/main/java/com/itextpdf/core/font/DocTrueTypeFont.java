@@ -56,7 +56,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
 
         Map<Integer, Integer> cid2Uni = null;
         try {
-            cid2Uni = toUnicode.createDirectMapping();
+            cid2Uni = toUnicode != null ? toUnicode.createDirectMapping() : null;
         } catch (IOException ignored) { }
 
         int dw = fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)

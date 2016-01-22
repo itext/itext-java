@@ -68,6 +68,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
         PdfDictionary descendantFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
         fontProgram = DocTrueTypeFont.createFontProgram(descendantFont, toUnicodeCMap);
+        cmapEncoding = new CMapEncoding(PdfEncodings.IDENTITY_H);
         cidFontType = CidFontType2;
 
         assert fontProgram instanceof DocFontProgram;

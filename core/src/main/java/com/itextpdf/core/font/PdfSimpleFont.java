@@ -150,7 +150,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     public String decode(byte[] textContent) {
         StringBuilder builder = new StringBuilder(textContent.length);
         for (byte b : textContent) {
-            Integer uni = fontEncoding.getUnicode(b);
+            Integer uni = fontEncoding.getUnicode(b & 0xff);
             if (uni != null) {
                 builder.append((char) (int) uni);
             }
@@ -162,7 +162,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     public float getContentWidth(byte[] textContent) {
         float width = 0;
         for (byte b : textContent) {
-            Integer uni = fontEncoding.getUnicode(b);
+            Integer uni = fontEncoding.getUnicode(b & 0xff);
             Glyph glyph = uni != null ? getGlyph(uni) : fontProgram.getGlyphByCode(b);
             width += glyph != null ? glyph.getWidth() : 0;
         }
