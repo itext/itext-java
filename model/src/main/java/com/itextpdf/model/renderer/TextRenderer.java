@@ -39,6 +39,9 @@ public class TextRenderer extends AbstractRenderer {
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1/30f;
     private static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
 
+    private static final Logger logger = LoggerFactory.getLogger(TextRenderer.class);
+    private static final String TYPOGRAPHY_PACKAGE = "com.itextpdf.typography.";
+
     protected float yLineOffset;
     protected byte[] levels;
 
@@ -89,10 +92,9 @@ public class TextRenderer extends AbstractRenderer {
 
         if (!otfFeaturesApplied && script != null && isOtfFont(font)) {
             if (!typographyModuleInitialized) {
-                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
                 logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
             } else {
-                callMethod("com.itextpdf.typograpry.shaping.Shaper", "applyOtfScript", new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
+                callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyOtfScript", new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
                         font.getFontProgram(), text, script);
                 //Shaper.applyOtfScript((TrueTypeFont)font.getFontProgram(), text, script);
             }
@@ -100,10 +102,9 @@ public class TextRenderer extends AbstractRenderer {
 
         if (!otfFeaturesApplied && fontKerning == Property.FontKerning.YES) {
             if (!typographyModuleInitialized) {
-                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
                 logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
             } else {
-                callMethod("com.itextpdf.typograpry.shaping.Shaper", "applyKerning", new Class[]{FontProgram.class, GlyphLine.class},
+                callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyKerning", new Class[]{FontProgram.class, GlyphLine.class},
                         font.getFontProgram(), text);
                 //Shaper.applyKerning(font.getFontProgram(), text);
             }
@@ -116,7 +117,6 @@ public class TextRenderer extends AbstractRenderer {
 
         if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
             if (!typographyModuleInitialized) {
-                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
                 logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
             } else {
                 byte direction;
@@ -141,19 +141,19 @@ public class TextRenderer extends AbstractRenderer {
                     int unicode = text.glyphs.get(i).getChars()[0];
                     unicodeIds[i - text.start] = unicode;
                 }
-                byte[] types = (byte[]) callMethod("com.itextpdf.typography.bidi.BidiCharacterMap", "getCharacterTypes", new Class[]{int[].class, int.class, int.class},
+                byte[] types = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiCharacterMap", "getCharacterTypes", new Class[]{int[].class, int.class, int.class},
                         unicodeIds, 0, text.end - text.start);
                 //byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start;
-                int[] pairTypes = (int[]) callMethod("com.itextpdf.typography.bidi.BidiBracketMap", "getBracketTypes", new Class[]{int[].class, int.class, int.class},
+                byte[] pairTypes = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getBracketTypes", new Class[]{int[].class, int.class, int.class},
                         unicodeIds, 0, text.end - text.start);
                 //byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
-                int[] pairValues = (int[]) callMethod("com.itextpdf.typography.bidi.BidiBracketMap", "getBracketValues", new Class[]{int[].class, int.class, int.class},
+                int[] pairValues = (int[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getBracketValues", new Class[]{int[].class, int.class, int.class},
                         unicodeIds, 0, text.end - text.start);
                 //int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
-                Object bidiReorder = callConstructor("com.itextpdf.typography.bidi.BidiAlgorithm", new Class[]{byte[].class, int[].class, int[].class, byte.class},
+                Object bidiReorder = callConstructor(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", new Class[]{byte[].class, byte[].class, int[].class, byte.class},
                         types, pairTypes, pairValues, direction);
                 //BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
-                levels = (byte[]) callMethod("com.itextpdf.typography.bidi.BidiAlgorithm", "getLevels", bidiReorder, new Class[]{int[].class},
+                levels = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", "getLevels", bidiReorder, new Class[]{int[].class},
                         new int[]{text.end - text.start});
                 //levels = bidiReorder.getLevels(new int[]{text.end - text.start});
             }
@@ -364,12 +364,11 @@ public class TextRenderer extends AbstractRenderer {
 
         if (baseDirection != Property.BaseDirection.NO_BIDI) {
             if (!typographyModuleInitialized) {
-                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
                 logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
             } else {
                 byte[] lineLevels = new byte[line.end - line.start];
                 System.arraycopy(levels, line.start, lineLevels, 0, line.end - line.start);
-                int[] reorder = (int[]) callMethod("com.itextpdf.typography.bidi.BidiAlgorithm", "computeReordering", new Class[]{byte[].class},
+                int[] reorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", "computeReordering", new Class[]{byte[].class},
                         lineLevels);
                 //int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
                 List<Glyph> reorderedLine = new ArrayList<>(line.end - line.start);
@@ -379,7 +378,7 @@ public class TextRenderer extends AbstractRenderer {
                     // Mirror RTL glyphs
                     if (levels[line.start + reorder[i]] % 2 == 1) {
                         if (reorderedLine.get(i).getUnicode() != null) {
-                            int pairedBracket = (int) callMethod("com.itextpdf.typography.bidi.BidiBracketMap", "getPairedBracket", new Class[]{int.class},
+                            int pairedBracket = (int) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getPairedBracket", new Class[]{int.class},
                                     reorderedLine.get(i).getUnicode());
                             //BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())
                             reorderedLine.set(i, font.getGlyph(pairedBracket));
@@ -662,15 +661,24 @@ public class TextRenderer extends AbstractRenderer {
         try {
             Method method = Class.forName(className).getMethod(methodName, parameterTypes);
             return method.invoke(target, args);
+        } catch (NoSuchMethodException e) {
+            logger.warn(String.format("Cannot find method %s for class %s", methodName, className));
+        } catch (ClassNotFoundException e) {
+            logger.warn(String.format("Cannot find class %s", className));
         } catch (Exception ignored) {
         }
         return null;
     }
 
     private Object callConstructor(String className, Class[] parameterTypes, Object... args) {
+        Constructor constructor = null;
         try {
-            Constructor constructor = Class.forName(className).getConstructor(parameterTypes);
+            constructor = Class.forName(className).getConstructor(parameterTypes);
             return constructor.newInstance(args);
+        } catch (NoSuchMethodException e) {
+            logger.warn(String.format("Cannot find constructor for class %s", className));
+        } catch (ClassNotFoundException e) {
+            logger.warn(String.format("Cannot find class %s", className));
         } catch (Exception ignored) {
         }
         return null;

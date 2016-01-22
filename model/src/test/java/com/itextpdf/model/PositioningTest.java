@@ -209,40 +209,6 @@ public class PositioningTest extends ExtendedITextTest {
 
     }
 
-    @Test
-    public void showTextAlignedTest03() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "showTextAlignedTest03.pdf";
-        String cmpFileName = sourceFolder + "cmp_showTextAlignedTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
-        Document document = new Document(pdfDocument);
-
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna." +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus." +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.";
-
-        float x = 400, y = 500;
-        Paragraph p = new Paragraph(textContent).setWidth(300f).setMultipliedLeading(1.5f);
-        document.showTextAligned(p, x, y, 1, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE, (float) -(Math.PI / 4));
-        drawCross(new PdfCanvas(pdfDocument.getLastPage()), x, y);
-
-        x = 500; y = 50;
-        document.showTextAligned(textContent, x, y, Property.TextAlignment.RIGHT, (float) -(Math.PI / 3));
-        drawCross(new PdfCanvas(pdfDocument.getLastPage()), x, y);
-
-        x = 150; y = 600;
-        document.showTextAligned("simple text", x, y, Property.TextAlignment.CENTER, (float) (Math.PI / 3));
-        drawCross(new PdfCanvas(pdfDocument.getLastPage()), x, y);
-
-        x = 150; y = 150;
-        document.showTextAlignedKerned("AVAVAVAVAVAVAVVAVA", x, y, Property.TextAlignment.CENTER, Property.VerticalAlignment.TOP, (float) (Math.PI / 3));
-        drawCross(new PdfCanvas(pdfDocument.getLastPage()), x, y);
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
-
-    }
-
     private void drawCross(PdfCanvas canvas, float x, float y) {
         drawLine(canvas, x - 50, y, x + 50, y);
         drawLine(canvas, x, y - 50, x, y + 50);
