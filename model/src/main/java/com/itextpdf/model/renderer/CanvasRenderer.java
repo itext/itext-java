@@ -21,7 +21,7 @@ public class CanvasRenderer extends RootRenderer {
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         if (!resultRenderer.isFlushed()) {
-            resultRenderer.draw(canvas.getPdfDocument(), canvas.getPdfCanvas());
+            resultRenderer.draw(new DrawContext(canvas.getPdfDocument(), canvas.getPdfCanvas()));
         }
     }
 

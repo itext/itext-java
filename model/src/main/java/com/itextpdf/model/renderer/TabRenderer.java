@@ -28,12 +28,12 @@ public class TabRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void draw(PdfDocument document, PdfCanvas canvas) {
+    public void draw(DrawContext drawContext) {
         Drawable leader = getProperty(Property.TAB_LEADER);
         if (leader == null)
             return;
 
-        leader.draw(canvas, occupiedArea.getBBox());
+        leader.draw(drawContext.getCanvas(), occupiedArea.getBBox());
     }
 
     @Override

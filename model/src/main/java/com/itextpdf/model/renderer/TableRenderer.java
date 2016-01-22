@@ -361,7 +361,8 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void draw(PdfDocument document, PdfCanvas canvas) {
+    public void draw(DrawContext drawContext) {
+        PdfDocument document = drawContext.getDocument();
         boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
         if (isTagged) {
             PdfTagStructure tagStructure = document.getTagStructure();
@@ -373,7 +374,7 @@ public class TableRenderer extends AbstractRenderer {
 
             tagStructure.addTag(accessibleElement, true);
 
-            super.draw(document, canvas);
+            super.draw(drawContext);
 
             tagStructure.moveToParent();
             Table modelElement = (Table) getModelElement();
@@ -387,21 +388,21 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
         } else {
-            super.draw(document, canvas);
+            super.draw(drawContext);
         }
     }
 
     @Override
-    public void drawChildren(PdfDocument document, PdfCanvas canvas) {
+    public void drawChildren(DrawContext drawContext) {
         if (headerRenderer != null) {
-            headerRenderer.draw(document, canvas);
+            headerRenderer.draw(drawContext);
         }
 
         Table modelElement = (Table) getModelElement();
-        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
+        boolean isTagged = drawContext.getDocument().isTagged() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
         PdfTagStructure tagStructure = null;
         if (isTagged) {
-            tagStructure = document.getTagStructure();
+            tagStructure = drawContext.getDocument().getTagStructure();
 
             if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
                 if (tagStructure.getListOfKidsRoles().contains(PdfName.TBody)) {
@@ -423,7 +424,7 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
 
-            child.draw(document, canvas);
+            child.draw(drawContext);
 
             if (isTagged) {
                 tagStructure.moveToParent();
@@ -436,10 +437,10 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        drawBorders(canvas);
+        drawBorders(drawContext.getCanvas());
 
         if (footerRenderer != null) {
-            footerRenderer.draw(document, canvas);
+            footerRenderer.draw(drawContext);
         }
     }
 

@@ -21,8 +21,8 @@ public class LinkRenderer extends TextRenderer {
     }
 
     @Override
-    public void draw(PdfDocument document, PdfCanvas canvas){
-        super.draw(document, canvas);
+    public void draw(DrawContext drawContext){
+        super.draw(drawContext);
 
         int position = getPropertyAsInteger(Property.POSITION);
         if (position == LayoutPosition.RELATIVE) {
@@ -43,7 +43,7 @@ public class LinkRenderer extends TextRenderer {
             applyAbsolutePositioningTranslation(true);
         }
 
-        PdfPage page = document.getPage(occupiedArea.getPageNumber());
+        PdfPage page = drawContext.getDocument().getPage(occupiedArea.getPageNumber());
         page.addAnnotation(linkAnnotation);
     }
 

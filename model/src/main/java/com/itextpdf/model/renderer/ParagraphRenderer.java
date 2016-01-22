@@ -246,10 +246,10 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     @Override
-    public void drawChildren(PdfDocument document, PdfCanvas canvas) {
+    public void drawChildren(DrawContext drawContext) {
         if (lines != null) {
             for (LineRenderer line : lines) {
-                line.draw(document, canvas);
+                line.draw(drawContext);
             }
         }
     }

@@ -204,7 +204,8 @@ public class BlockRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void draw(PdfDocument document, PdfCanvas canvas) {
+    public void draw(DrawContext drawContext) {
+        PdfDocument document = drawContext.getDocument();
         applyDestination(document);
         applyAction(document);
 
@@ -232,13 +233,13 @@ public class BlockRenderer extends AbstractRenderer {
             applyAbsolutePositioningTranslation(false);
         }
 
-        beginRotationIfApplied(canvas);
+        beginRotationIfApplied(drawContext.getCanvas());
 
-        drawBackground(document, canvas);
-        drawBorder(document, canvas);
-        drawChildren(document, canvas);
+        drawBackground(drawContext);
+        drawBorder(drawContext);
+        drawChildren(drawContext);
 
-        endRotationIfApplied(canvas);
+        endRotationIfApplied(drawContext.getCanvas());
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);

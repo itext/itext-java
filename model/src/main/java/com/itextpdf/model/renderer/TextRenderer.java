@@ -364,17 +364,17 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void draw(PdfDocument document, PdfCanvas canvas) {
-        super.draw(document, canvas);
+    public void draw(DrawContext drawContext) {
+        super.draw(drawContext);
 
-        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
+        boolean isTagged = drawContext.getDocument().isTagged() && getModelElement() instanceof IAccessibleElement;
         PdfTagStructure tagStructure = null;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
-            tagStructure = document.getTagStructure();
+            tagStructure = drawContext.getDocument().getTagStructure();
             accessibleElement = (IAccessibleElement) getModelElement();
-            if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
-                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+            if (!drawContext.getDocument().getTagStructure().isConnectedToTag(accessibleElement)) {
+                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, drawContext.getDocument());
             }
             tagStructure.addTag(accessibleElement, true);
         }
@@ -404,6 +404,7 @@ public class TextRenderer extends AbstractRenderer {
                 strokeWidth = fontSize / 30;
             }
 
+            PdfCanvas canvas = drawContext.getCanvas();
             if (isTagged) {
                 canvas.openTag(tagStructure.getTagReference());
             }
@@ -480,17 +481,17 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void drawBackground(PdfDocument document, PdfCanvas canvas) {
+    public void drawBackground(DrawContext drawContext) {
         Property.Background background = getProperty(Property.BACKGROUND);
         Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
         float bottomBBoxY = occupiedArea.getBBox().getY();
         float leftBBoxX = occupiedArea.getBBox().getX();
         if (background != null) {
-            canvas.saveState().setFillColor(background.getColor());
-            canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + textRise - background.getExtraBottom(),
+            drawContext.getCanvas().saveState().setFillColor(background.getColor());
+            drawContext.getCanvas().rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + textRise - background.getExtraBottom(),
                     occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
                     occupiedArea.getBBox().getHeight() - textRise + background.getExtraTop() + background.getExtraBottom());
-            canvas.fill().restoreState();
+            drawContext.getCanvas().fill().restoreState();
         }
     }
 

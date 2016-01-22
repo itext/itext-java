@@ -68,7 +68,7 @@ public class DocumentRenderer extends RootRenderer {
             if (pdfDocument.isTagged()) {
                 pdfDocument.getTagStructure().setPage(correspondingPage);
             }
-            resultRenderer.draw(pdfDocument, new PdfCanvas(correspondingPage));
+            resultRenderer.draw(new DrawContext(pdfDocument, new PdfCanvas(correspondingPage)));
         }
     }
 

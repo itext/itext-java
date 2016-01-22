@@ -116,9 +116,10 @@ public class ImageRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void draw(PdfDocument document, PdfCanvas canvas) {
-        super.draw(document, canvas);
+    public void draw(DrawContext drawContext) {
+        super.draw(drawContext);
 
+        PdfDocument document = drawContext.getDocument();
         boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
         PdfTagStructure tagStructure = null;
         if (isTagged) {
@@ -143,14 +144,14 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         if (isTagged) {
-            canvas.openTag(tagStructure.getTagReference());
+            drawContext.getCanvas().openTag(tagStructure.getTagReference());
         }
 
-        canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[1], matrix[2], matrix[3],
+        drawContext.getCanvas().addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[1], matrix[2], matrix[3],
                 fixedXPosition + deltaX, fixedYPosition);
 
         if (isTagged) {
-            canvas.closeTag();
+            drawContext.getCanvas().closeTag();
         }
 
         if (position == LayoutPosition.RELATIVE) {

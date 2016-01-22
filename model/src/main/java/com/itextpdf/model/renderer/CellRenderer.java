@@ -46,7 +46,7 @@ public class CellRenderer extends BlockRenderer {
     }
 
     @Override
-    public void drawBorder(PdfDocument document, PdfCanvas canvas) {
+    public void drawBorder(DrawContext drawContext) {
         // Do nothing here. Border drawing for tables is done on TableRenderer.
     }
 

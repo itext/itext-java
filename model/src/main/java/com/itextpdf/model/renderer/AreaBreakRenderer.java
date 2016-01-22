@@ -33,7 +33,7 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
-    public void draw(PdfDocument document, PdfCanvas canvas) {
+    public void draw(DrawContext drawContext) {
         throw new UnsupportedOperationException();
     }
 

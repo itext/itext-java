@@ -26,7 +26,7 @@ public interface IRenderer extends IPropertyContainer<IRenderer> {
      * {@link TextRenderer} uses {@link com.itextpdf.model.layout.TextLayoutResult} as its result.
      *
      * This method can be called standalone to learn how much area the renderer subtree needs, or can be called
-     * before {@link #draw(PdfDocument, PdfCanvas)}, to prepare the renderer to be flushed to the output stream.
+     * before {@link #draw(DrawContext)}, to prepare the renderer to be flushed to the output stream.
      *
      * @param layoutContext the description of layout area and any other additional information
      * @return result of the layout process
@@ -36,10 +36,11 @@ public interface IRenderer extends IPropertyContainer<IRenderer> {
     /**
      * Flushes the renderer subtree contents, i.e. draws itself on canvas,
      * adds necessary objects to the {@link PdfDocument} etc.
-     * @param document the {@link PdfDocument} to which the renderer subtree if flushed
-     * @param canvas the {@link PdfCanvas} on which the renderer subtree is drawn
+     * @param drawContext contains the {@link PdfDocument} to which the renderer subtree if flushed,
+     *                    the {@link PdfCanvas} on which the renderer subtree is drawn and other additional parameters
+     *                    needed to perform drawing
      */
-    void draw(PdfDocument document, PdfCanvas canvas);
+    void draw(DrawContext drawContext);
 
     /**
      * Gets the resultant occupied area after the last call to the {@link #layout(LayoutContext)} method.
@@ -56,7 +57,7 @@ public interface IRenderer extends IPropertyContainer<IRenderer> {
     List<IRenderer> getChildRenderers();
 
     /**
-     * Indicates whether this renderer is flushed or not, i.e. if {@link #draw(PdfDocument, PdfCanvas)} has already
+     * Indicates whether this renderer is flushed or not, i.e. if {@link #draw(DrawContext)} has already
      * been called.
      */
     boolean isFlushed();

@@ -173,18 +173,18 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public void draw(PdfDocument document, PdfCanvas canvas) {
-        applyDestination(document);
-        applyAction(document);
+    public void draw(DrawContext drawContext) {
+        applyDestination(drawContext.getDocument());
+        applyAction(drawContext.getDocument());
 
         int position = getPropertyAsInteger(Property.POSITION);
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(false);
         }
 
-        drawBackground(document, canvas);
-        drawBorder(document, canvas);
-        drawChildren(document, canvas);
+        drawBackground(drawContext);
+        drawBorder(drawContext);
+        drawChildren(drawContext);
 
         if (position == LayoutPosition.RELATIVE) {
             applyAbsolutePositioningTranslation(true);
@@ -193,14 +193,14 @@ public abstract class AbstractRenderer implements IRenderer {
         flushed = true;
     }
 
-    public void drawBackground(PdfDocument document, PdfCanvas canvas) {
+    public void drawBackground(DrawContext drawContext) {
         Property.Background background = getProperty(Property.BACKGROUND);
         if (background != null) {
 
             Rectangle bBox = getOccupiedAreaBBox();
 
             Rectangle backgroundArea = applyMargins(bBox, false);
-            canvas.saveState().setFillColor(background.getColor()).
+            drawContext.getCanvas().saveState().setFillColor(background.getColor()).
                     rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
                             backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
                             backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
@@ -208,13 +208,13 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    public void drawChildren(PdfDocument document, PdfCanvas canvas) {
+    public void drawChildren(DrawContext drawContext) {
         for (IRenderer child : childRenderers) {
-            child.draw(document, canvas);
+            child.draw(drawContext);
         }
     }
 
-    public void drawBorder(PdfDocument document, PdfCanvas canvas) {
+    public void drawBorder(DrawContext drawContext) {
         Border[] borders = getBorders();
         boolean gotBorders = false;
 
@@ -236,6 +236,7 @@ public abstract class AbstractRenderer implements IRenderer {
             float x2 = bBox.getX() + bBox.getWidth();
             float y2 = bBox.getY() + bBox.getHeight();
 
+            PdfCanvas canvas = drawContext.getCanvas();
             if (borders[0] != null) {
                 canvas.saveState();
                 borders[0].draw(canvas, x1, y2, x2, y2, leftWidth, rightWidth);
