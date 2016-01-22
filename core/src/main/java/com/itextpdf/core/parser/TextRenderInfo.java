@@ -66,7 +66,7 @@ public class TextRenderInfo implements EventData {
      */
     public String getText(){
         if (text == null)
-            text = decode(string);
+            text = gs.getFont().decode(string.getValueBytes());
         return text;
     }
 
@@ -342,22 +342,9 @@ public class TextRenderInfo implements EventData {
         if (singleCharString == false)
             throw new UnsupportedOperationException();
         float[] result = new float[2];
-        String decoded = decode(string);
-        result[0] = (float)((gs.getFont().getWidth(getCharCode(decoded)) * fontMatrix[0]));
-        result[1] = decoded.equals(" ") ? gs.getWordSpacing() : 0;
+        result[0] = (float)((gs.getFont().getContentWidth(string.getValueBytes()) * fontMatrix[0]));
+        result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
         return result;
-    }
-
-    /**
-     * Decodes a PdfString (which will contain glyph ids encoded in the font's encoding)
-     * based on the active font, and determine the unicode equivalent
-     * @param in	the String that needs to be encoded
-     * @return	    the encoded String
-     */
-    private String decode(PdfString in){
-        /*byte[] bytes = in.getBytes(); TODO: IMPLEMENT PdfFont.decode and correct this
-        return gs.font.decode(bytes, 0, bytes.length);*/
-        return in.getValue();
     }
 
     /**
@@ -393,7 +380,7 @@ public class TextRenderInfo implements EventData {
         String stringValue = string.getValue();
         for (int i = 0; i < stringValue.length(); i++) {
             PdfString newString = new PdfString(stringValue.substring(i, i + 1), string.getEncoding());
-            String text = decode(newString);
+            String text = gs.getFont().decode(string.getValueBytes());
             if (text.length() == 0 && i < stringValue.length() - 1) {
                 newString = new PdfString(stringValue.substring(i, i + 2), string.getEncoding());
                 i++;
