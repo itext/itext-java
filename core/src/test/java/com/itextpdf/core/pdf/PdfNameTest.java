@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.test.ITextTest;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
 import org.junit.Test;

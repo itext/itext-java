@@ -3,7 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 

@@ -9,7 +9,7 @@ import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfResources;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

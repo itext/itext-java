@@ -18,7 +18,7 @@ import com.itextpdf.core.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.core.pdf.tagging.PdfObjRef;
 import com.itextpdf.core.pdf.tagging.PdfStructElem;
 import com.itextpdf.core.testutils.CompareTool;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;

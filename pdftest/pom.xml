@@ -16,12 +16,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>basics</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>

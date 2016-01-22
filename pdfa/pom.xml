@@ -17,6 +17,12 @@
     <dependencies>
         <dependency>
             <groupId>com.itextpdf</groupId>
+            <artifactId>pdftest</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

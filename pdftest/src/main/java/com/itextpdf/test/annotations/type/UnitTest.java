@@ -1,4 +1,4 @@
-package com.itextpdf.core.testutils.annotations.type;
+package com.itextpdf.test.annotations.type;
 
 /**
  * Unit Tests are used to check individual units of source code. A unit test

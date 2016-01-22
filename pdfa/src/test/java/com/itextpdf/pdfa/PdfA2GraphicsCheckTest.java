@@ -15,7 +15,7 @@ import com.itextpdf.core.pdf.PdfOutputIntent;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.core.pdf.extgstate.PdfExtGState;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 
 import java.io.ByteArrayOutputStream;

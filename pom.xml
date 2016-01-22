@@ -54,10 +54,10 @@
         <jacoco.version>0.7.5.201505241946</jacoco.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <integrationtests>com.itextpdf.core.testutils.annotations.type.IntegrationTest</integrationtests>
-        <performancetests>com.itextpdf.core.testutils.annotations.type.PerformanceTest</performancetests>
-        <sampletests>com.itextpdf.core.testutils.annotations.type.SampleTest</sampletests>
-        <unittests>com.itextpdf.core.testutils.annotations.type.UnitTest</unittests>
+        <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
+        <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
+        <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
+        <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
         <logback.version>1.1.3</logback.version>
         <jfreechart.version>1.0.19</jfreechart.version>
         <hsqldb.version>2.3.3</hsqldb.version>

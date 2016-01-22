@@ -16,7 +16,7 @@ import com.itextpdf.core.pdf.annot.PdfPopupAnnotation;
 import com.itextpdf.core.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.core.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 
 import java.io.FileInputStream;

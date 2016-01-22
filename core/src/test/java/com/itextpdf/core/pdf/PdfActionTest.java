@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.pdf.action.PdfAction;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.FileOutputStream;

@@ -7,4 +7,4 @@
  * @author Amedee Van Gasse
  *
  */
-package com.itextpdf.core.testutils.annotations.type;
+package com.itextpdf.test.annotations.type;

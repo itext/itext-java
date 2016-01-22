@@ -1,6 +1,5 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
@@ -10,7 +9,7 @@ import com.itextpdf.core.pdf.PdfOutputIntent;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.CompareTool;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 
 import java.io.ByteArrayOutputStream;
@@ -20,9 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;

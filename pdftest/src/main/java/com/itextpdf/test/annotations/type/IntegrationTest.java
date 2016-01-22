@@ -1,4 +1,4 @@
-package com.itextpdf.core.testutils.annotations.type;
+package com.itextpdf.test.annotations.type;
 
 /**
  * Tests that cover more functionality than a simple Unit Test. Contrary to Unit

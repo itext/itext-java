@@ -1,4 +1,4 @@
-package com.itextpdf.core.testutils.annotations.type;
+package com.itextpdf.test.annotations.type;
 
 /**
  * Tests that can take longer than a couple of milliseconds to run. These tests

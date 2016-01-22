@@ -3,7 +3,7 @@ package com.itextpdf.pdfa;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.basics.test.ITextTest;
+import com.itextpdf.test.ITextTest;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
 import com.itextpdf.core.pdf.PdfArray;
@@ -17,7 +17,7 @@ import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 
 import java.io.FileInputStream;

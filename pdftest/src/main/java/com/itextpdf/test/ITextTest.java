@@ -1,4 +1,4 @@
-package com.itextpdf.basics.test;
+package com.itextpdf.test;
 
 
 import java.io.ByteArrayOutputStream;

@@ -1,4 +1,4 @@
-package com.itextpdf.core.testutils.annotations.type;
+package com.itextpdf.test.annotations.type;
 
 /**
  * Performance Tests generate performance metrics: speed, memory usage, disk

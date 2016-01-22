@@ -1,4 +1,4 @@
-package com.itextpdf.core.testutils.annotations.type;
+package com.itextpdf.test.annotations.type;
 
 /**
  * Sample Tests give a <a href="http://sscce.org/">Short, Self Contained,
