@@ -813,7 +813,6 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
     public void createDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeAsType0.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0_new.pdf";
