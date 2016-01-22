@@ -1,6 +1,6 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
@@ -8,7 +8,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfOutputIntent;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 

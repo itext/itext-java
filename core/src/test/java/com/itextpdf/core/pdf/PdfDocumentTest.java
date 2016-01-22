@@ -3,7 +3,7 @@ package com.itextpdf.core.pdf;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
-import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;

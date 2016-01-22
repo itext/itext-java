@@ -1,6 +1,6 @@
 package com.itextpdf.model.border;
 
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.DeviceCmyk;
 import com.itextpdf.core.color.DeviceGray;

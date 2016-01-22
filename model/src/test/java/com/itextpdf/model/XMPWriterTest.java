@@ -3,7 +3,7 @@ package com.itextpdf.model;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.core.xmp.XMPConst;
 import com.itextpdf.core.xmp.XMPException;

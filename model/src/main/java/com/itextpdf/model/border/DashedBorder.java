@@ -1,6 +1,6 @@
 package com.itextpdf.model.border;
 
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 
 public class DashedBorder extends Border {

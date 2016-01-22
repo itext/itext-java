@@ -1,12 +1,12 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.testutils.CompareTool;
+import com.itextpdf.core.utils.CompareTool;
 
 
 import java.io.File;

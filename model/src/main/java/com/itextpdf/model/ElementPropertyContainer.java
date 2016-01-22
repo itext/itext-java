@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.canvas.PdfCanvasConstants;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.model.border.Border;
@@ -337,22 +337,47 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
         return setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
     }
 
+    /**
+     * Sets a border for all four edges of this Element with customizable color, width, pattern type.
+     * @param border a customized {@link Border}
+     * @return this Element.
+     */
     public Type setBorder(Border border) {
         return setProperty(Property.BORDER, border);
     }
 
+    /**
+     * Sets a border for the upper limit of this Element with customizable color, width, pattern type.
+     * @param border a customized {@link Border}
+     * @return this Element.
+     */
     public Type setBorderTop(Border border) {
         return setProperty(Property.BORDER_TOP, border);
     }
 
+    /**
+     * Sets a border for the right limit of this Element with customizable color, width, pattern type.
+     * @param border a customized {@link Border}
+     * @return this Element.
+     */
     public Type setBorderRight(Border border) {
         return setProperty(Property.BORDER_RIGHT, border);
     }
 
+    /**
+     * Sets a border for the bottom limit of this Element with customizable color, width, pattern type.
+     * @param border a customized {@link Border}
+     * @return this Element.
+     */
     public Type setBorderBottom(Border border) {
         return setProperty(Property.BORDER_BOTTOM, border);
     }
 
+    /**
+     * Sets a border for the left limit of this Element with customizable color, width, pattern type.
+     * @param border a customized {@link Border}
+     * @return this Element.
+     */
     public Type setBorderLeft(Border border) {
         return setProperty(Property.BORDER_LEFT, border);
     }
@@ -360,6 +385,8 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
     /**
      * Sets a rule for splitting strings when they don't fit into one line.
      * The default implementation is {@link com.itextpdf.model.splitting.DefaultSplitCharacters}
+     * @param splitCharacters an implementation of {@link ISplitCharacters}
+     * @return this Element.
      */
     public Type setSplitCharacters(ISplitCharacters splitCharacters) {
         return setProperty(Property.SPLIT_CHARACTERS, splitCharacters);
@@ -367,31 +394,73 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
 
     /**
      * Gets a rule for splitting strings when they don't fit into one line.
+     * @return the current string splitting rule, an implementation of {@link ISplitCharacters}
      */
     public ISplitCharacters getSplitCharacters() {
         return getProperty(Property.SPLIT_CHARACTERS);
     }
 
+    /**
+     * Gets the text rendering mode, a variable that determines whether showing
+     * text causes glyph outlines to be stroked, filled, used as a clipping
+     * boundary, or some combination of the three.
+     * @return the current text rendering mode
+     * @see com.itextpdf.core.parser.PdfCanvasConstants.TextRenderingMode
+     */
     public Integer getTextRenderingMode() {
         return getProperty(Property.TEXT_RENDERING_MODE);
     }
 
+    /**
+     * Sets the text rendering mode, a variable that determines whether showing
+     * text causes glyph outlines to be stroked, filled, used as a clipping
+     * boundary, or some combination of the three.
+     * @param textRenderingMode an <code>int</code> value
+     * @return this Element.
+     * @see com.itextpdf.core.parser.PdfCanvasConstants.TextRenderingMode
+     */
     public Type setTextRenderingMode(int textRenderingMode) {
         return setProperty(Property.TEXT_RENDERING_MODE, textRenderingMode);
     }
 
+    /**
+     * Gets the stroke color for the current element.
+     * The stroke color is the color of the outlines or edges of a shape.
+     * 
+     * @return the current stroke color
+     */
     public Color getStrokeColor() {
         return getProperty(Property.STROKE_COLOR);
     }
 
+    /**
+     * Sets the stroke color for the current element.
+     * The stroke color is the color of the outlines or edges of a shape.
+     * 
+     * @param strokeColor a new stroke color
+     * @return this Element.
+     */
     public Type setStrokeColor(Color strokeColor) {
         return setProperty(Property.STROKE_COLOR, strokeColor);
     }
 
+    /**
+     * Gets the stroke width for the current element.
+     * The stroke width is the width of the outlines or edges of a shape.
+     * 
+     * @return the current stroke width
+     */
     public Float getStrokeWidth() {
         return getProperty(Property.STROKE_WIDTH);
     }
 
+    /**
+     * Sets the stroke width for the current element.
+     * The stroke width is the width of the outlines or edges of a shape.
+     * 
+     * @param strokeWidth a new stroke width
+     * @return this Element.
+     */
     public Type setStrokeWidth(float strokeWidth) {
         return setProperty(Property.STROKE_WIDTH, strokeWidth);
     }
@@ -503,12 +572,19 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
     /**
      * Sets a custom hyphenation configuration which will hyphenate words automatically accordingly to the
      * language and country.
+     * @param hyphenationConfig
      * @return this element
      */
     public Type setHyphenation(HyphenationConfig hyphenationConfig) {
         return setProperty(Property.HYPHENATION, hyphenationConfig);
     }
 
+    /**
+     * Sets the writing system for this text element.
+     * 
+     * @param script a new script type
+     * @return this Element.
+     */
     public Type setFontScript(Character.UnicodeScript script) {
         return setProperty(Property.FONT_SCRIPT, script);
     }

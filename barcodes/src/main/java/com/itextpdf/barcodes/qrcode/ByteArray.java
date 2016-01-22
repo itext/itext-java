@@ -12,16 +12,29 @@ final class ByteArray {
     private byte[] bytes;
     private int size;
 
+    /**
+     * Creates a new ByteArray instance with size 0.
+     */
     public ByteArray() {
         bytes = null;
         size = 0;
     }
 
+    /**
+     * Creates a new ByteArray instance of the specified size.
+     *
+     * @param size size of the array
+     */
     public ByteArray(int size) {
         bytes = new byte[size];
         this.size = size;
     }
 
+    /**
+     * Creates a new ByteArray instance based on an existing byte[].
+     *
+     * @param byteArray the byte[]
+     */
     public ByteArray(byte[] byteArray) {
         bytes = byteArray;
         size = bytes.length;
