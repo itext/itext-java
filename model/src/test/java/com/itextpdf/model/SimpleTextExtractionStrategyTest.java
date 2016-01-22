@@ -1,4 +1,4 @@
-package com.itextpdf.core.parser;
+package com.itextpdf.model;
 
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.geom.AffineTransform;
@@ -6,6 +6,10 @@ import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.parser.GlyphTextEventListener;
+import com.itextpdf.core.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.core.parser.TextExtractionStrategy;
+import com.itextpdf.core.parser.TextExtractor;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfString;
@@ -13,7 +17,6 @@ import com.itextpdf.core.pdf.PdfTextArray;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.model.Document;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
@@ -29,7 +32,7 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
 
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/SimpleTextExtractionStrategyTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/model/SimpleTextExtractionStrategyTest/";
 
     String TEXT1 = "TEXT1 TEXT1";
     String TEXT2 = "TEXT2 TEXT2";

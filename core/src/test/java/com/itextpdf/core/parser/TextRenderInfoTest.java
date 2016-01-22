@@ -1,18 +1,10 @@
 package com.itextpdf.core.parser;
 
-import com.itextpdf.basics.geom.PageSize;
-import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
-import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.model.Document;
-import com.itextpdf.model.element.AreaBreak;
-import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -33,11 +25,8 @@ public class TextRenderInfoTest extends ExtendedITextTest {
 
     @Test
     public void testCharacterRenderInfos() throws Exception {
-        byte[] bytes = createSimplePdf(new Rectangle(792,612), "ABCD");
-        //TestResourceUtils.saveBytesToFile(bytes, new File("C:/temp/out.pdf"));
-
         PdfContentStreamProcessor parser = new PdfContentStreamProcessor(new CharacterPositionEventListener());
-        parser.processPageContent(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(FIRST_PAGE));
+        parser.processPageContent(new PdfDocument(new PdfReader(sourceFolder + "simple_text.pdf")).getPage(FIRST_PAGE));
     }
 
     /**
@@ -138,19 +127,6 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         public Set<EventType> getSupportedEvents() {
             return new LinkedHashSet<>(Collections.singletonList(EventType.RENDER_TEXT));
         }
-    }
-
-    private byte[] createSimplePdf(Rectangle pageSize, final String... text) throws Exception {
-        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-
-        final Document document = new Document(new PdfDocument(new PdfWriter(byteStream)), new PageSize(pageSize));
-        for (String string : text) {
-            document.add(new Paragraph(string));
-            document.add(new AreaBreak());
-        }
-
-        document.close();
-        return byteStream.toByteArray();
     }
 
 }

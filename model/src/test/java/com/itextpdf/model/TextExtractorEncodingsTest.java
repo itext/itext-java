@@ -1,13 +1,13 @@
-package com.itextpdf.core.parser;
+package com.itextpdf.model;
 
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.parser.TextExtractor;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.model.Document;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
@@ -23,7 +23,7 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class TextExtractorEncodingsTest extends ExtendedITextTest {
 
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/TextExtractorEncodingsTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/model/TextExtractorEncodingsTest/";
 
     /**
      * Basic Latin characters, with Unicode values less than 128

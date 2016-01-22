@@ -1,4 +1,4 @@
-package com.itextpdf.core.parser;
+package com.itextpdf.model;
 
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.geom.AffineTransform;
@@ -7,6 +7,10 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.parser.LocationTextExtractionStrategy;
+import com.itextpdf.core.parser.TextExtractionStrategy;
+import com.itextpdf.core.parser.TextExtractor;
+import com.itextpdf.core.parser.Vector;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfString;
@@ -14,8 +18,6 @@ import com.itextpdf.core.pdf.PdfTextArray;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
-import com.itextpdf.model.Document;
-import com.itextpdf.model.Property;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
