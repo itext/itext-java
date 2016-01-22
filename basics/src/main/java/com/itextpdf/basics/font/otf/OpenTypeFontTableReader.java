@@ -206,30 +206,22 @@ public abstract class OpenTypeFontTableReader {
     public int getUnitsPerEm() {
         return unitsPerEm;
     }
+
+    public LanguageRecord getLanguageRecord(String otfScriptTag) {
+        LanguageRecord languageRecord = null;
+        if (otfScriptTag != null) {
+            for (ScriptRecord record : getScriptRecords()) {
+                if (otfScriptTag.equals(record.tag)) {
+                    languageRecord = record.defaultLanguage;
+                    break;
+                }
+            }
+        }
+        return languageRecord;
+    }
     
 	protected abstract OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
 			throws IOException;
-
-	private void readLookupListTable(int lookupListTableLocation)
-			throws IOException {
-        lookupList = new ArrayList<>();
-		rf.seek(lookupListTableLocation);
-		int lookupCount = rf.readUnsignedShort();
-		int[] lookupTableLocations = readUShortArray(lookupCount, lookupListTableLocation);
-		// read LookUp tables
-        for (int lookupLocation : lookupTableLocations) {
-            readLookupTable(lookupLocation);
-        }
-	}
-
-	private void readLookupTable(int lookupTableLocation) throws IOException {
-		rf.seek(lookupTableLocation);
-		int lookupType = rf.readUnsignedShort();
-		int lookupFlag = rf.readUnsignedShort();
-		int subTableCount = rf.readUnsignedShort();
-		int[] subTableLocations = readUShortArray(subTableCount, lookupTableLocation);
-        lookupList.add(readLookupTable(lookupType, lookupFlag, subTableLocations));
-	}
 
     protected final OtfClass readClassDefinition(int classLocation) throws IOException {
         return new OtfClass(rf, classLocation);
@@ -266,5 +258,25 @@ public abstract class OpenTypeFontTableReader {
             tagslLocs[k] = tl;
         }
         return tagslLocs;
+    }
+
+    private void readLookupListTable(int lookupListTableLocation) throws IOException {
+        lookupList = new ArrayList<>();
+        rf.seek(lookupListTableLocation);
+        int lookupCount = rf.readUnsignedShort();
+        int[] lookupTableLocations = readUShortArray(lookupCount, lookupListTableLocation);
+        // read LookUp tables
+        for (int lookupLocation : lookupTableLocations) {
+            readLookupTable(lookupLocation);
+        }
+    }
+
+    private void readLookupTable(int lookupTableLocation) throws IOException {
+        rf.seek(lookupTableLocation);
+        int lookupType = rf.readUnsignedShort();
+        int lookupFlag = rf.readUnsignedShort();
+        int subTableCount = rf.readUnsignedShort();
+        int[] subTableLocations = readUShortArray(subTableCount, lookupTableLocation);
+        lookupList.add(readLookupTable(lookupType, lookupFlag, subTableLocations));
     }
 }

@@ -10,7 +10,6 @@ import com.itextpdf.basics.font.TrueTypeCollection;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.canvas.font.PdfType3Font;
 import com.itextpdf.canvas.font.Type3Glyph;
 import com.itextpdf.core.font.PdfFont;
@@ -29,7 +28,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,7 +40,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class PdfFontTest extends ExtendedITextTest{
+public class PdfFontTest extends ExtendedITextTest {
     static final public int PageCount = 1;
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/canvas/PdfFontTest/";
     static final public String fontsFolder = "./src/test/resources/com/itextpdf/canvas/fonts/";
@@ -54,7 +52,7 @@ public class PdfFontTest extends ExtendedITextTest{
 
     @BeforeClass
     static public void beforeClass() {
-       createDestinationFolder(destinationFolder);
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -91,7 +89,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createDocumentWithTrueTypeAsType0() throws IOException,  InterruptedException {
+    public void createDocumentWithTrueTypeAsType0() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0.pdf";
         final String title = "Type0 test";
@@ -446,8 +444,6 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
 
-
-
     @Test
     public void createDocumentWithTrueTypeFont1() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
@@ -499,7 +495,7 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createDocumentWithTrueTypeFont2() throws IOException,  InterruptedException {
+    public void createDocumentWithTrueTypeFont2() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont2.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2.pdf";
         final String title = "Empty iText 6 Document";
@@ -553,7 +549,8 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test@Ignore
+    @Test
+    @Ignore
     public void testNewType3FontBasedExistingFont() throws IOException, InterruptedException {
         String inputFileName = sourceFolder + "type3Font.pdf";
         String outputFileName = destinationFolder + "new_type3Font.pdf";
@@ -565,7 +562,6 @@ public class PdfFontTest extends ExtendedITextTest{
         pdfWriter.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument inputPdfDoc = new PdfDocument(reader);
         PdfDocument outputPdfDoc = new PdfDocument(pdfWriter);
-
 
 
         outputPdfDoc.getInfo().setAuthor(author).
@@ -593,7 +589,7 @@ public class PdfFontTest extends ExtendedITextTest{
 
         Assert.assertEquals(6, pdfType3Font.getCharGlyphs().size());
 
-       Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }
 
     @Test
@@ -740,8 +736,9 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test@Ignore
-    public void testUpdateType0FontBasedExistingFont() throws IOException,  InterruptedException {
+    @Test
+    @Ignore
+    public void testUpdateType0FontBasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_update.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_update.pdf";
@@ -776,8 +773,9 @@ public class PdfFontTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test@Ignore
-    public void testNewType0FontBasedExistingFont() throws IOException,  InterruptedException {
+    @Test
+    @Ignore
+    public void testNewType0FontBasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_new.pdf";
@@ -815,7 +813,8 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    public void createDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException,  InterruptedException {
+    @Ignore
+    public void createDocumentWithTrueTypeAsType0BasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeAsType0.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0_new.pdf";
@@ -955,102 +954,6 @@ public class PdfFontTest extends ExtendedITextTest{
     }
 
     @Test
-    public void stringAscentDescent() throws IOException,  InterruptedException {
-        int pageCount = 1;
-        String filename = destinationFolder + "stringAscentDescent.pdf";
-        String cmpFilename = sourceFolder + "cmp_stringAscentDescent.pdf";
-        final String title = "Type0 test";
-
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
-        PdfDocument pdfDoc = new PdfDocument(writer);
-
-        pdfDoc.getInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
-        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
-        PdfFont font = PdfFont.createFont(ttf, "Identity-H");
-        ((TrueTypeFont)font.getFontProgram()).setApplyLigatures(true);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            String[] lines = new String[] {
-                    "aaaa", "bbbb", "yyyy", "gggg", "ffff", "abcd", "abyghfl", "ABCD", "XIJY"
-            };
-            int fontsize = 48;
-            int lineOffset = 700;
-            for (String line: lines) {
-                int ascent = font.getAscent(line) * fontsize / 1000;
-                int descent = font.getDescent(line) * fontsize / 1000;
-                canvas.saveState();
-                canvas.rectangle(36, lineOffset + descent, 200, ascent - descent).fill();
-                canvas.setFillColor(DeviceRgb.WHITE);
-                canvas.saveState()
-                        .beginText()
-                        .moveText(36, lineOffset)
-                        .setFontAndSize(font, fontsize)
-                        .showText(line)
-                        .endText()
-                        .restoreState();
-                canvas.restoreState();
-                lineOffset -= 60;
-            }
-            canvas.release();
-            page.flush();
-        }
-        pdfDoc.close();
-
-        Assert.assertNull(new CompareTool().compareVisually(filename, cmpFilename, destinationFolder, "diff_"));
-    }
-
-    @Test
-    public void stringAscentDescentLine() throws IOException,  InterruptedException {
-        int pageCount = 1;
-        String filename = destinationFolder + "stringAscentDescentLine.pdf";
-        String cmpFilename = sourceFolder + "cmp_stringAscentDescentLine.pdf";
-        final String title = "Type0 test";
-
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
-        PdfDocument pdfDoc = new PdfDocument(writer);
-
-        pdfDoc.getInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
-        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
-        PdfFont font = PdfFont.createFont(ttf, "Identity-H");
-        ((TrueTypeFont)font.getFontProgram()).setApplyLigatures(true);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            int fontsize = 12;
-            int lineOffset = 700;
-            String line = "work, and Mrs. Dursley gossiped away happily as she wrestled a screaming Dudley into his high";
-            int ascent = font.getAscent(line) * fontsize / 1000;
-            int descent = font.getDescent(line) * fontsize / 1000;
-            canvas.saveState();
-            canvas.setFillColor(DeviceRgb.BLUE);
-            canvas.rectangle(36, lineOffset + descent, 520, ascent - descent).fill();
-            canvas.setFillColor(DeviceRgb.WHITE);
-            canvas.saveState()
-                    .beginText()
-                    .moveText(36, lineOffset)
-                    .setFontAndSize(font, fontsize)
-                    .showText(line)
-                    .endText()
-                    .restoreState();
-            canvas.restoreState();
-            canvas.release();
-            page.flush();
-        }
-        pdfDoc.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
-    }
-
-@Test
     public void createWrongAfm1() throws IOException, InterruptedException {
         String message = "";
         try {
@@ -1080,7 +983,7 @@ public class PdfFontTest extends ExtendedITextTest{
     public void createWrongPfb() throws IOException, InterruptedException {
         byte[] afm = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         PdfFont font = PdfFont.createType1Font(afm, afm, null);
-        byte[] streamContent = ((PdfType1Font)font).getFontProgram().getFontStreamBytes();
+        byte[] streamContent = ((PdfType1Font) font).getFontProgram().getFontStreamBytes();
         Assert.assertTrue("Empty stream content expected", streamContent == null);
     }
 
@@ -1137,7 +1040,7 @@ public class PdfFontTest extends ExtendedITextTest{
 
         String font = fontsFolder + "uming.ttc";
 
-        PdfFont pdfTrueTypeFont = PdfFont.createFont(font,  0, "WinAnsi", true);
+        PdfFont pdfTrueTypeFont = PdfFont.createFont(font, 0, "WinAnsi", true);
 
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -1191,10 +1094,10 @@ public class PdfFontTest extends ExtendedITextTest{
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        for(String name : PdfFont.getRegisteredFonts()){
+        for (String name : PdfFont.getRegisteredFonts()) {
             PdfFont pdfFont = PdfFont.createRegisteredFont(name);
-            if(pdfFont == null)
-                Assert.assertTrue("Font {"+name+"} can't be empty",false);
+            if (pdfFont == null)
+                Assert.assertTrue("Font {" + name + "} can't be empty", false);
         }
 
         pdfDoc.addNewPage();
@@ -1209,7 +1112,7 @@ public class PdfFontTest extends ExtendedITextTest{
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfFont pdfFont = PdfFont.createRegisteredFont("aller");
-        Assert.assertTrue(pdfFont instanceof  PdfTrueTypeFont);
+        Assert.assertTrue(pdfFont instanceof PdfTrueTypeFont);
         pdfDoc.addNewPage();
         pdfDoc.close();
     }

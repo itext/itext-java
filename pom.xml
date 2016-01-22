@@ -36,6 +36,7 @@
         <module>pdftest</module>
         
         <module>hyph</module>
+        
     </modules>
 
     <properties>

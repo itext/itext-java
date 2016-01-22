@@ -215,30 +215,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     }
                     glyphs[i++] = (char) glyph.getCode();
                 }
-
-                GlyphLine glyphLine = null;
-                if (ttf.getOtfScript() != null) {
-                    glyphLine = ttf.createGlyphLine(glyphs, i);
-                    if (!ttf.applyOtfScript(glyphLine)) {
-                        glyphLine = null;
-                    }
-                } else if (ttf.isApplyLigatures()) {
-                    glyphLine = ttf.createGlyphLine(glyphs, i);
-                    if (!ttf.applyLigaFeature(glyphLine, false)) {
-                        glyphLine = null;
-                    }
-                }
-                if (glyphLine != null) {
-                    glyphs = glyphLineToChars(glyphLine);
-                    i = glyphs.length;
-                    for (char ch : glyphs) {
-                        int code = (int) ch;
-                        if (longTag.get(code) == null) {
-                            Glyph glyph = ttf.getGlyphByCode(code);
-                            longTag.put(code, new int[]{code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
-                        }
-                    }
-                }
             }
 
             String s = new String(glyphs, 0, i);

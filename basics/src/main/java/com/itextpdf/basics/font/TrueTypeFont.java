@@ -3,24 +3,15 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.font.indic.IndicCluster;
-import com.itextpdf.basics.font.indic.IndicConfig;
-import com.itextpdf.basics.font.indic.IndicShaper;
-import com.itextpdf.basics.font.otf.FeatureRecord;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.basics.font.otf.GlyphSubstitutionTableReader;
-import com.itextpdf.basics.font.otf.LanguageRecord;
-import com.itextpdf.basics.font.otf.OpenTableLookup;
-import com.itextpdf.basics.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.basics.font.otf.OpenTypeGdefTableReader;
-import com.itextpdf.basics.font.otf.ScriptRecord;
 
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +31,6 @@ public class TrueTypeFont extends FontProgram {
     private GlyphSubstitutionTableReader gsubTable;
     private GlyphPositioningTableReader gposTable;
     private OpenTypeGdefTableReader gdefTable;
-
-    private boolean applyLigatures = false;
-    private Character.UnicodeScript script = null;
-    private String otfScriptTag = null;
 
     /**
      * The map containing the kerning information. It represents the content of
@@ -79,225 +66,6 @@ public class TrueTypeFont extends FontProgram {
     TrueTypeFont(byte[] ttc, int ttcIndex) throws IOException {
         fontParser = new OpenTypeParser(ttc, ttcIndex);
         initializeFontProperties();
-    }
-
-    public boolean isApplyLigatures() {
-        return applyLigatures;
-    }
-
-    public void setApplyLigatures(boolean applyLigatures) {
-        this.applyLigatures = applyLigatures;
-    }
-
-    public void setScriptForOTF(Character.UnicodeScript script) {
-        this.script = script;
-        switch (script) {
-            case LATIN:
-                otfScriptTag = "latn";
-                break;
-            case ARABIC:
-                otfScriptTag = "arab";
-                break;
-            case DEVANAGARI:
-                otfScriptTag = "dev2"; // TODO there is also old-style "deva" implementation
-                break;
-            default:
-                otfScriptTag = null;
-                break;
-        }
-    }
-
-    public String getOtfScript() {
-        return otfScriptTag;
-    }
-
-    public boolean applyOtfScript(GlyphLine glyphLine) {
-        if (otfScriptTag == null) {
-            return false;
-        }
-        if (gsubTable != null) {
-            LanguageRecord gsubLanguageRecord = getGsubLanguageRecord();
-            if (gsubLanguageRecord == null) {
-                return false;
-            }
-            boolean transformed = false;
-
-            if (Character.UnicodeScript.ARABIC.equals(script)) {
-                List<OpenTableLookup> init = null;
-                List<OpenTableLookup> medi = null;
-                List<OpenTableLookup> fina = null;
-                List<OpenTableLookup> rlig = null;
-                for (int featureIndex : gsubLanguageRecord.features) {
-                    FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
-                    switch (feature.tag) {
-                        case "init":
-                            init = gsubTable.getLookups(new FeatureRecord[]{feature});
-                            break;
-                        case "medi":
-                            medi = gsubTable.getLookups(new FeatureRecord[]{feature});
-                            break;
-                        case "fina":
-                            fina = gsubTable.getLookups(new FeatureRecord[]{feature});
-                            break;
-                        case "rlig":
-                            rlig = gsubTable.getLookups(new FeatureRecord[]{feature});
-                            break;
-                    }
-                }
-
-                if (applyInitMediFinaShaping(glyphLine, init, medi, fina)) {
-                    transformed = true;
-                }
-                if (applyRligFeature(glyphLine, rlig)) {
-                    transformed = true;
-                }
-            } else if (Character.UnicodeScript.DEVANAGARI.equals(script)) {
-                List<IndicCluster> clusters = IndicShaper.splitDevanagariGlyphLineIntoClusters(glyphLine);
-
-                // Note that both GPOS and GSUB features are here. We assume the tags do not intersect
-                Map<String, List<OpenTableLookup>> features = new LinkedHashMap<>();
-                for (int featureIndex : gsubLanguageRecord.features) {
-                    FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
-                    List<OpenTableLookup> lookups = gsubTable.getLookups(new FeatureRecord[]{feature});
-                    features.put(feature.tag, lookups);
-                }
-
-                if (gposTable != null) {
-                    LanguageRecord gposLanguageRecord = getGposLanguageRecord();
-                    for (int featureIndex : gposLanguageRecord.features) {
-                        FeatureRecord feature = gposTable.getFeatureRecords().get(featureIndex);
-                        List<OpenTableLookup> lookups = gposTable.getLookups(new FeatureRecord[]{feature});
-                        features.put(feature.tag, lookups);
-                    }
-                }
-
-                if (clusters != null && clusters.size() > 0) {
-                    for (IndicCluster cluster : clusters) {
-                        //IndicShaper.setIndicProperties(cluster);
-
-                        IndicConfig devanagariConfig = new IndicConfig.DevanagariConfig();
-                        boolean isOldSpec = devanagariConfig.hasOldSpec() && !otfScriptTag.endsWith("2");
-
-                        // TODO should we apply features by cluster or by whole glyph line?
-
-                        // Localized forms
-                        transform(features.get("locl"), cluster);
-
-                        /* The Indic specs do not require ccmp, but we apply it here since if
-                         * there is a use of it, it's typically at the beginning. */
-                        transform(features.get("ccmp"), cluster);
-
-                        IndicShaper.initialReordering(cluster, devanagariConfig, features.get("rphf"), features.get("pref"), isOldSpec, script);
-
-                        // Basic Shaping forms
-                        String[] basicShapingForms = new String[] {"nukt", "akhn", "rphf", "rkrf", "blwf", "half", "vatu", "cjct"};
-                        for (String feature : basicShapingForms) {
-                            transform(features.get(feature), cluster);
-                        }
-
-                        IndicShaper.finalReordering(cluster, devanagariConfig, script);
-
-                        String[] presentationForms = new String[] {"pres", "abvs", "blws", "psts", "haln"};
-                        for (String feature : presentationForms) {
-                            transform(features.get(feature), cluster);
-                        }
-
-                        String[] discretionary = new String[] {"calt", "clig"};
-                        for (String feature : discretionary) {
-                            transform(features.get(feature), cluster);
-                        }
-
-                        String[] positioning = new String[] {"dist", "abvm", "blwm"};
-                        for (String feature : positioning) {
-                            transform(features.get(feature), cluster);
-                        }
-                    }
-
-                    GlyphLine newGlyphLine = new GlyphLine();
-                    newGlyphLine.glyphs = new ArrayList<>();
-                    for (int i = 0; i < glyphLine.start; i++) {
-                        newGlyphLine.add(glyphLine.glyphs.get(i));
-                    }
-                    int lastFinish = glyphLine.start;
-                    for (IndicCluster cluster : clusters) {
-                        if (cluster.originalGlyphLineStart > lastFinish) {
-                            for (int j = lastFinish; j < cluster.originalGlyphLineStart; j++) {
-                                newGlyphLine.add(glyphLine.glyphs.get(j));
-                            }
-                        }
-                        int startActualTextPos = newGlyphLine.glyphs.size();
-                        for (int j = 0; j < cluster.glyphs.size(); j++) {
-                            newGlyphLine.add(cluster.glyphs.get(j));
-                        }
-                        newGlyphLine.setActualText(startActualTextPos, newGlyphLine.glyphs.size(), cluster.getActualText());
-                        lastFinish = cluster.originalGlyphLineEnd;
-                    }
-                    for (int j = lastFinish; j < glyphLine.end; j++) {
-                        newGlyphLine.add(glyphLine.glyphs.get(j));
-                    }
-                    int newGlyphLineEnd = newGlyphLine.glyphs.size();
-                    for (int j = glyphLine.end; j < glyphLine.glyphs.size(); j++) {
-                        newGlyphLine.add(glyphLine.glyphs.get(j));
-                    }
-
-                    glyphLine.glyphs.clear();
-                    glyphLine.glyphs.addAll(newGlyphLine.glyphs);
-                    if (glyphLine.actualText != null) {
-                        glyphLine.actualText.clear();
-                    }
-                    if (newGlyphLine.actualText != null) {
-                        if (glyphLine.actualText == null) {
-                            glyphLine.actualText = new ArrayList<>();
-                        }
-                        glyphLine.actualText.addAll(newGlyphLine.actualText);
-                    }
-                    glyphLine.end = newGlyphLineEnd;
-                    transformed = true;
-                }
-            }
-            return transformed;
-        }
-        return false;
-    }
-
-    public boolean applyLigaFeature(GlyphLine glyphLine, boolean scriptSpecific) {
-        if (gsubTable != null) {
-            List<FeatureRecord> ligaFeatures = new ArrayList<>();
-
-            if (scriptSpecific) {
-                LanguageRecord languageRecord = getGsubLanguageRecord();
-                if (languageRecord == null) {
-                    return false;
-                }
-                for (int featureIndex : languageRecord.features) {
-                    FeatureRecord feature = gsubTable.getFeatureRecords().get(featureIndex);
-                    if (feature.tag.equals("liga")) {
-                        ligaFeatures.add(feature);
-                    }
-                }
-            } else {
-                for (FeatureRecord featureRecord : gsubTable.getFeatureRecords()) {
-                    if (featureRecord.tag.equals("liga")) {
-                        ligaFeatures.add(featureRecord);
-                    }
-                }
-            }
-
-            if (ligaFeatures.size() > 0) {
-                boolean transformed = false;
-                if (glyphLine != null) {
-                    List<OpenTableLookup> lookups = gsubTable.getLookups(ligaFeatures.toArray(new FeatureRecord[ligaFeatures.size()]));
-                    for (OpenTableLookup lookup : lookups) {
-                        if (lookup != null && lookup.transformLine(glyphLine)) {
-                            transformed = true;
-                        }
-                        glyphLine.idx = 0;
-                    }
-                }
-                return transformed;
-            }
-        }
-        return false;
     }
 
     public GlyphLine createGlyphLine(char[] glyphs, Integer length) {
@@ -392,6 +160,14 @@ public class TrueTypeFont extends FontProgram {
         return fontParser.directoryOffset;
     }
 
+    public GlyphSubstitutionTableReader getGsubTable() {
+        return gsubTable;
+    }
+
+    public GlyphPositioningTableReader getGposTable() {
+        return gposTable;
+    }
+
     public byte[] getSubset(Set<Integer> glyphs, boolean subset) {
         try {
             return fontParser.getSubset(glyphs, subset);
@@ -424,7 +200,6 @@ public class TrueTypeFont extends FontProgram {
     }
 
     private void initializeFontProperties() throws IOException {
-
         // initialize sfnt tables
         OpenTypeParser.HeaderTable head = fontParser.getHeadTable();
         OpenTypeParser.HorizontalHeader hhea = fontParser.getHheaTable();
@@ -529,142 +304,6 @@ public class TrueTypeFont extends FontProgram {
         readGposTable();
 
         isVertical = false;
-    }
-
-    private List<Integer> splitArabicGlyphLineIntoWords(GlyphLine glyphLine, List<OpenTableLookup> medi, List<OpenTableLookup> fina) {
-        List<Integer> words = new ArrayList<>(glyphLine.glyphs.size());
-        boolean started = false;
-        for (int i = 0; i < glyphLine.glyphs.size(); i++) {
-            Glyph medialForm = transform(medi, glyphLine.glyphs.get(i));
-            Glyph finalForm = transform(fina, glyphLine.glyphs.get(i));
-            if (medialForm == null || (finalForm != null && medialForm.getCode() == finalForm.getCode())) {
-                if (started) {
-                    // if the glyph has no fina form, it is not an arabic glyph
-                    words.add(finalForm != null ? i + 1 : i);
-                    started = false;
-                }
-            } else {
-                if (!started) {
-                    words.add(i);
-                    started = true;
-                }
-            }
-        }
-        if (words.size() % 2 != 0) {
-            words.add(glyphLine.glyphs.size());
-        }
-        return words;
-    }
-
-    private boolean applyInitMediFinaShaping(GlyphLine glyphLine, List<OpenTableLookup> init, List<OpenTableLookup> medi, List<OpenTableLookup> fina) {
-        if (init == null || medi == null || fina == null) {
-            return false;
-        }
-        boolean transformed = false;
-        List<Integer> words = splitArabicGlyphLineIntoWords(glyphLine, medi, fina);
-        for (OpenTableLookup lookup : init) {
-            if (lookup != null) {
-                for (int i = 0; i < words.size(); i += 2) {
-                    if (words.get(i) + 1 != words.get(i + 1)) {
-                        glyphLine.idx = words.get(i);
-                        if (lookup.transformOne(glyphLine)) {
-                            transformed = true;
-                        }
-                    }
-                }
-            }
-        }
-        for (OpenTableLookup lookup : medi) {
-            if (lookup != null) {
-                for (int i = 0; i < words.size(); i += 2) {
-                    for (int k = words.get(i) + 1; k < words.get(i + 1) - 1; k++) {
-                        glyphLine.idx = k;
-                        if (lookup.transformOne(glyphLine)) {
-                            transformed = true;
-                        }
-                    }
-                }
-            }
-        }
-        for (OpenTableLookup lookup : fina) {
-            if (lookup != null) {
-                for (int i = 0; i < words.size(); i += 2) {
-                    if (words.get(i) + 1 != words.get(i + 1)) {
-                        glyphLine.idx = words.get(i + 1) - 1;
-                        if (lookup.transformOne(glyphLine)) {
-                            transformed = true;
-                        }
-                    }
-                }
-            }
-        }
-        return transformed;
-    }
-
-    private boolean applyRligFeature(GlyphLine glyphLine, List<OpenTableLookup> rlig) {
-        boolean transformed = false;
-        if (glyphLine != null && rlig != null) {
-            for (OpenTableLookup lookup : rlig) {
-                if (lookup != null && lookup.transformLine(glyphLine)) {
-                    transformed = true;
-                }
-            }
-        }
-        return transformed;
-    }
-
-    private Glyph transform(List<OpenTableLookup> feature, Glyph glyph) {
-        if (feature != null) {
-            for (OpenTableLookup lookup : feature) {
-                if (lookup != null) {
-                    if (lookup.hasSubstitution(glyph.getCode())) {
-                        GlyphLine gl = new GlyphLine();
-                        gl.start = 0;
-                        gl.end = 1;
-                        gl.idx = 0;
-                        gl.glyphs = Arrays.asList(glyph);
-                        lookup.transformOne(gl);
-                        return gl.glyphs.get(0);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean transform(List<OpenTableLookup> feature, GlyphLine glyphLine) {
-        boolean transformed = false;
-        if (feature != null) {
-            for (OpenTableLookup lookup : feature) {
-                if (lookup != null) {
-                    if (lookup.transformLine(glyphLine)) {
-                        transformed = true;
-                    }
-                }
-            }
-        }
-        return transformed;
-    }
-
-    private LanguageRecord getGsubLanguageRecord() {
-        return getLanguageRecord(gsubTable);
-    }
-
-    private LanguageRecord getGposLanguageRecord() {
-        return getLanguageRecord(gposTable);
-    }
-
-    private LanguageRecord getLanguageRecord(OpenTypeFontTableReader table) {
-        LanguageRecord languageRecord = null;
-        if (otfScriptTag != null) {
-            for (ScriptRecord record : table.getScriptRecords()) {
-                if (otfScriptTag.equals(record.tag)) {
-                    languageRecord = record.defaultLanguage;
-                    break;
-                }
-            }
-        }
-        return languageRecord;
     }
 
 }
