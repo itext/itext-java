@@ -1,7 +1,10 @@
 package com.itextpdf.basics.font.cmap;
 
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -130,21 +133,18 @@ public class CMapToUnicode extends AbstractCMap {
 
     @Override
     void addChar(String mark, CMapObject code) {
-
-        byte[] src = mark.getBytes();
-        String dest;
         try {
-            dest = createStringFromBytes((byte[]) code.getValue());
-
-            if (src.length == 1) {
-                singleByteMappings.put(src[0] & 0xff, dest);
-            } else if (src.length == 2) {
-                int intSrc = src[0] & 0xFF;
+            String dest = createStringFromStringValue((String) code.getValue());
+            if (mark.length() == 1) {
+                singleByteMappings.put((int) mark.charAt(0), dest);
+            } else if (mark.length() == 2) {
+                int intSrc = mark.charAt(0);
                 intSrc <<= 8;
-                intSrc |= src[1] & 0xFF;
+                intSrc |= mark.charAt(1);
                 doubleByteMappings.put(intSrc, dest);
             } else {
-                throw new RuntimeException();
+                Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
+                logger.warn(LogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
             }
         } catch (IOException e) {
             throw new RuntimeException();
@@ -152,12 +152,12 @@ public class CMapToUnicode extends AbstractCMap {
 
     }
 
-    private String createStringFromBytes(byte[] bytes) throws IOException {
-        String retval = null;
-        if (bytes.length == 1) {
-            retval = new String(bytes);
+    private String createStringFromStringValue(String str) throws IOException {
+        String retval;
+        if (str.length() == 1) {
+            retval = str;
         } else {
-            retval = new String(bytes, "UTF-16BE");
+            retval = new String(str.getBytes(), "UTF-16BE");
         }
         return retval;
     }

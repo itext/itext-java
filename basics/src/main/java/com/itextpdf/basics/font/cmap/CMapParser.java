@@ -1,6 +1,9 @@
 package com.itextpdf.basics.font.cmap;
 
+import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.io.PdfTokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,6 +88,9 @@ public class CMapParser {
                     parseCid(list.get(0).toString(), cmap, location, level + 1);
                 }
             }
+        } catch (Exception ex) {
+            Logger logger = LoggerFactory.getLogger(CMapParser.class);
+            logger.error(LogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
         } finally {
             inp.close();
         }

@@ -352,13 +352,20 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     @Override
-    public String decode(byte[] textContent) {
+    public String decode(PdfString content) {
         //TODO now we support only identity-h
-        String cids = PdfEncodings.convertToString(textContent, PdfEncodings.UnicodeBigUnmarked);
-        StringBuilder builder = new StringBuilder(textContent.length);
-        for (int i = 0; i < cids.length(); i++) {
-            Glyph glyph = fontProgram.getGlyphByCode(cids.charAt(i));
-            if (glyph != null && glyph.getUnicode() != 0) {
+        String cids = content.getValue();
+        StringBuilder builder = new StringBuilder(cids.length() / 2);
+        for (int i = 0; i < cids.length(); i ++) {
+            int code = cids.charAt(i++);
+            if (i == cids.length()) {
+                //allowed only two bytes per code
+                continue;
+            }
+            code <<= 8;
+            code |= cids.charAt(i);
+            Glyph glyph = fontProgram.getGlyphByCode(code);
+            if (glyph != null && glyph.getUnicode() != null) {
                 builder.append((char) (int) glyph.getUnicode());
             } else {
                 builder.append('?');
@@ -368,13 +375,18 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     @Override
-    public float getContentWidth(byte[] textContent) {
+    public float getContentWidth(PdfString content) {
         //TODO now we support only identity-h
-        String cids = PdfEncodings.convertToString(textContent, PdfEncodings.UnicodeBigUnmarked);
+        String cids = content.getValue();
         Glyph notdef = fontProgram.getGlyphByCode(0);
         float width = 0;
         for (int i = 0; i < cids.length(); i++) {
-            Glyph glyph = fontProgram.getGlyphByCode(cids.charAt(i));
+            int code = cids.charAt(i++);
+            if (i < cids.length()) {
+                code <<= 8;
+                code |= cids.charAt(i);
+            }
+            Glyph glyph = fontProgram.getGlyphByCode(code);
             width += glyph != null ? glyph.getWidth() : notdef.getWidth();
         }
         return width;

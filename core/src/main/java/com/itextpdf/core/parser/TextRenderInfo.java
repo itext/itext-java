@@ -66,7 +66,7 @@ public class TextRenderInfo implements EventData {
      */
     public String getText(){
         if (text == null)
-            text = gs.getFont().decode(string.getValueBytes());
+            text = gs.getFont().decode(string);
         return text;
     }
 
@@ -342,7 +342,7 @@ public class TextRenderInfo implements EventData {
         if (singleCharString == false)
             throw new UnsupportedOperationException();
         float[] result = new float[2];
-        result[0] = (float)((gs.getFont().getContentWidth(string.getValueBytes()) * fontMatrix[0]));
+        result[0] = (float)((gs.getFont().getContentWidth(string) * fontMatrix[0]));
         result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
         return result;
     }
@@ -380,7 +380,7 @@ public class TextRenderInfo implements EventData {
         String stringValue = string.getValue();
         for (int i = 0; i < stringValue.length(); i++) {
             PdfString newString = new PdfString(stringValue.substring(i, i + 1), string.getEncoding());
-            String text = gs.getFont().decode(string.getValueBytes());
+            String text = gs.getFont().decode(newString);
             if (text.length() == 0 && i < stringValue.length() - 1) {
                 newString = new PdfString(stringValue.substring(i, i + 2), string.getEncoding());
                 i++;

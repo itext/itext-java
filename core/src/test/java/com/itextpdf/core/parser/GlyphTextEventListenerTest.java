@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class GlyphTextEventListenerTest extends ExtendedITextTest {
+    public class GlyphTextEventListenerTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/GlyphTextEventListenerTest/";
 

@@ -137,8 +137,8 @@ public class PdfTokenizer {
         return new String(outBuf.getInternalBuffer(), 0, outBuf.size());
     }
 
-    public String getDecodedStringValue() {
-        return new String(decodeStringContent(outBuf.getInternalBuffer(), 0, outBuf.size() - 1, isHexString()));
+    public byte[] getDecodedStringContent() {
+        return decodeStringContent(outBuf.getInternalBuffer(), 0, outBuf.size() - 1, isHexString());
     }
 
     public boolean tokenValueEqualsTo(byte[] cmp) {

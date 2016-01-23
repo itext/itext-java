@@ -148,7 +148,7 @@ public class PdfContentStreamParser {
             case StartArray:
                 return readArray();
             case String:
-                PdfString str = new PdfString(tokeniser.getDecodedStringValue(), null).setHexWriting(tokeniser.isHexString());
+                PdfString str = new PdfString(tokeniser.getDecodedStringContent()).setHexWriting(tokeniser.isHexString());
                 return str;
             case Name:
                 return new PdfName(tokeniser.getByteContent());

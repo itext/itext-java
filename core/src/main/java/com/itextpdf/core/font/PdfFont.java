@@ -360,12 +360,12 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     //TODO abstract
-    public String decode(byte[] textContent) {
+    public String decode(PdfString content) {
         throw new RuntimeException();
     }
 
     //TODO abstract
-    public float getContentWidth(byte[] textContent) {
+    public float getContentWidth(PdfString content) {
         throw new RuntimeException();
     }
 
