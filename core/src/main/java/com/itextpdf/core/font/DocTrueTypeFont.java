@@ -62,7 +62,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
         int dw = fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)
                 ? fontDescriptor.getAsInt(PdfName.DW) : 1000;
         if (cid2Uni != null) {
-            IntHashtable widths = DocFontUtils.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.Widths));
+            IntHashtable widths = DocFontUtils.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
             for (Map.Entry<Integer, Integer> entry : cid2Uni.entrySet()) {
                 int width = widths.containsKey(entry.getKey()) ? widths.get(entry.getKey()) : dw;
                 Glyph glyph = new Glyph(entry.getKey(), width, entry.getValue());
