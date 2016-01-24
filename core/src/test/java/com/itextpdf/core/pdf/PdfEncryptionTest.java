@@ -25,7 +25,9 @@ public class PdfEncryptionTest extends ExtendedITextTest{
     /** Owner password. */
     public static byte[] OWNER = "World".getBytes();
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/PdfEncryptionTest/";
+    static final String author = "Alexander Chingarev";
+    static final String creator = "iText 6";
+
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/PdfEncryptionTest/";
 
     @BeforeClass
@@ -95,7 +97,9 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         com.itextpdf.core.pdf.PdfWriter writer = new com.itextpdf.core.pdf.PdfWriter(new FileOutputStream(filename));
         writer.setCompressionLevel(compression);
         writer.setEncryption(USER, OWNER, permissions, encryptionType);
-        com.itextpdf.core.pdf.PdfDocument document = new com.itextpdf.core.pdf.PdfDocument(writer);
+        PdfDocument document = new PdfDocument(writer);
+        document.getInfo().setAuthor(author).
+                setCreator(creator);
         document.setXmpMetadata();
         PdfPage page = document.addNewPage();
         page.getFirstContentStream().getOutputStream().writeBytes(("q\n" +
@@ -120,11 +124,15 @@ public class PdfEncryptionTest extends ExtendedITextTest{
 
     public void iText6Decrypt(String src, byte[] password, String pageContent) throws IOException {
         PdfReader reader = new com.itextpdf.core.pdf.PdfReader(src, password);
-        PdfWriter writer = new com.itextpdf.core.pdf.PdfWriter(new ByteArrayOutputStream());
-        PdfDocument document = new com.itextpdf.core.pdf.PdfDocument(reader, writer);
-
+        PdfDocument document = new com.itextpdf.core.pdf.PdfDocument(reader);
+        String author = document.getInfo().getAuthor();
+        String creator = document.getInfo().getCreator();
         PdfPage page = document.getPage(1);
-        Assert.assertTrue("Expected content \n" + pageContent, new String(page.getStreamBytes(0)).contains(pageContent));
+
+        Assert.assertTrue("Expected content: \n" + pageContent, new String(page.getStreamBytes(0)).contains(pageContent));
+        Assert.assertEquals("Encrypted author", this.author, document.getInfo().getAuthor());
+        Assert.assertEquals("Encrypted creator", this.creator, document.getInfo().getCreator());
+
         document.close();
     }
 
