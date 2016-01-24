@@ -69,6 +69,14 @@ public class CMapObject {
      */
     @Override
     public String toString() {
+        if (type == String || type == HexString) {
+            byte[] content = (byte[]) value;
+            StringBuilder str = new StringBuilder(content.length);
+            for (byte b: content) {
+                str.append((char)(b & 0xff));
+            }
+            return str.toString();
+        }
         return value.toString();
     }
 }

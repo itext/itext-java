@@ -116,13 +116,13 @@ public class CMapContentParser {
             case StartDic:
                 return readDictionary();
             case StartArray:
-                return new CMapObject(CMapObject.Array, readArray());
+                return readArray();
             case String:
                 CMapObject obj;
                 if (tokeniser.isHexString()) {
-                    obj = new CMapObject(CMapObject.HexString, decodeHexString(tokeniser.getByteContent()));
+                    obj = new CMapObject(CMapObject.HexString, PdfTokenizer.decodeStringContent(tokeniser.getByteContent(), true));
                 } else {
-                    obj = new CMapObject(CMapObject.String, decodeString(tokeniser.getByteContent()));
+                    obj = new CMapObject(CMapObject.String, PdfTokenizer.decodeStringContent(tokeniser.getByteContent(), false));
                 }
                 return obj;
             case Name:
@@ -198,96 +198,6 @@ public class CMapContentParser {
         int high = n / 0x400 + 0xd800;
         int low = n % 0x400 + 0xdc00;
         return "[<" + toHex4(high) + toHex4(low) + ">]";
-    }
-
-    protected static String decodeHexString(byte[] content) {
-        StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < content.length; ) {
-            int v1 = ByteBuffer.getHex(content[i++]);
-            if (i == content.length) {
-                buffer.append((char)(v1 << 4));
-                break;
-            }
-            int v2 = content[i++];
-            v2 = ByteBuffer.getHex(v2);
-            buffer.append((char)((v1 << 4) + v2));
-        }
-        return buffer.toString();
-    }
-
-    protected static String decodeString(byte[] content) {
-        StringBuilder buffer = new StringBuilder(content.length);
-        for (int i = 0; i < content.length; ) {
-            //with operator '& 0xff' we convert unsigned byte to integer (-128 byte to 128 int)
-            int ch = content[i++] & 0xff;
-            if (ch == '\\') {
-                boolean lineBreak = false;
-                ch = content[i++] & 0xff;
-                switch (ch) {
-                    case 'n':
-                        ch = '\n';
-                        break;
-                    case 'r':
-                        ch = '\r';
-                        break;
-                    case 't':
-                        ch = '\t';
-                        break;
-                    case 'b':
-                        ch = '\b';
-                        break;
-                    case 'f':
-                        ch = '\f';
-                        break;
-                    case '(':
-                    case ')':
-                    case '\\':
-                        break;
-                    case '\r':
-                        lineBreak = true;
-                        if (i < content.length && content[i++] != '\n') {
-                            i--;
-                        }
-                        break;
-                    case '\n':
-                        lineBreak = true;
-                        break;
-                    default: {
-                        if (ch < '0' || ch > '7') {
-                            break;
-                        }
-                        int octal = ch - '0';
-                        ch = content[i++] & 0xff;
-                        if (ch < '0' || ch > '7') {
-                            i--;
-                            ch = octal;
-                            break;
-                        }
-                        octal = (octal << 3) + ch - '0';
-                        ch = content[i++] & 0xff;
-                        if (ch < '0' || ch > '7') {
-                            i--;
-                            ch = octal;
-                            break;
-                        }
-                        octal = (octal << 3) + ch - '0';
-                        ch = octal & 0xff;
-                        break;
-                    }
-                }
-                if (lineBreak) {
-                    continue;
-                }
-            } else if (ch == '\r') {
-                // in this case current char is '\n' and we have to skip next '\n' if it presents.
-                ch = '\n';
-                if (i < content.length && content[i++] != '\n') {
-                    i--;
-                }
-            }
-            buffer.append((char)ch);
-        }
-        return buffer.toString();
     }
 
     public static String decodeCMapObject(CMapObject cMapObject) {

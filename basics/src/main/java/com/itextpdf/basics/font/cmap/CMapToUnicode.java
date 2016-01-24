@@ -134,7 +134,7 @@ public class CMapToUnicode extends AbstractCMap {
     @Override
     void addChar(String mark, CMapObject code) {
         try {
-            String dest = createStringFromStringValue((String) code.getValue());
+            String dest = createStringFromBytes((byte[])code.getValue());
             if (mark.length() == 1) {
                 singleByteMappings.put((int) mark.charAt(0), dest);
             } else if (mark.length() == 2) {
@@ -152,12 +152,13 @@ public class CMapToUnicode extends AbstractCMap {
 
     }
 
-    private String createStringFromStringValue(String str) throws IOException {
+    private String createStringFromBytes(byte[] bytes) throws IOException {
         String retval;
-        if (str.length() == 1) {
-            retval = str;
+        if (bytes.length == 1) {
+            retval = String.valueOf((char)(bytes[0] & 0xFF));
         } else {
-            retval = new String(str.getBytes(), "UTF-16BE");
+            char[] chars = new char[]{(char)(bytes[0] & 0xFF), (char)(bytes[1] & 0xFF)};
+            retval = new String(chars);
         }
         return retval;
     }
