@@ -423,7 +423,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         canvas.openTag(new CanvasTag(link.addKid(new PdfMcrNumber(page, link))));
         canvas.setFillColorRgb(0, 0, 1).showText("here");
         PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(document, new Rectangle(80, 508, 40, 18)).setColor(new float[] {0, 0, 1}).setBorder(new PdfArray(new float[]{0, 0, 1}));
-        page.addAnnotation(linkAnnotation);
+        page.addAnnotation(-1, linkAnnotation, false);
         link.addKid(new PdfObjRef(linkAnnotation, link));
         canvas.closeTag();
 

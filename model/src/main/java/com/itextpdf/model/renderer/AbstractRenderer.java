@@ -2,6 +2,7 @@ package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.CanvasArtifact;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfArray;
@@ -11,6 +12,7 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
@@ -199,12 +201,20 @@ public abstract class AbstractRenderer implements IRenderer {
 
             Rectangle bBox = getOccupiedAreaBBox();
 
+            boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+            if (isTagged) {
+                drawContext.getCanvas().openTag(new CanvasArtifact());
+            }
             Rectangle backgroundArea = applyMargins(bBox, false);
             drawContext.getCanvas().saveState().setFillColor(background.getColor()).
                     rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
                             backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
                             backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
                     fill().restoreState();
+
+            if (isTagged) {
+                drawContext.getCanvas().closeTag();
+            }
         }
     }
 
@@ -236,7 +246,12 @@ public abstract class AbstractRenderer implements IRenderer {
             float x2 = bBox.getX() + bBox.getWidth();
             float y2 = bBox.getY() + bBox.getHeight();
 
+            boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
             PdfCanvas canvas = drawContext.getCanvas();
+            if (isTagged) {
+                canvas.openTag(new CanvasArtifact());
+            }
+
             if (borders[0] != null) {
                 canvas.saveState();
                 borders[0].draw(canvas, x1, y2, x2, y2, leftWidth, rightWidth);
@@ -256,6 +271,10 @@ public abstract class AbstractRenderer implements IRenderer {
                 canvas.saveState();
                 borders[3].draw(canvas, x1, y1, x1, y2, bottomWidth, topWidth);
                 canvas.restoreState();
+            }
+
+            if (isTagged) {
+                canvas.closeTag();
             }
         }
     }

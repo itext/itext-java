@@ -288,10 +288,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * <br>
      * <br>
      * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushXObjects</code> is true.
-     * // TODO will it? also, add the logger warning in case of failed flush
      * @param flushXObjects if true the images and FormXObjects associated with this page will also be flushed.
      */
     public void flush(boolean flushXObjects) {
+        // TODO log warning in case of failed flush in pdfa document case
         if (isFlushed()) {
             return;
         }
@@ -418,7 +418,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public int getNextMcid() {
         if (!getDocument().isTagged()) {
-            throw new PdfException(""); //TODO exception message
+            throw new PdfException(PdfException.MustBeATaggedDocument);
         }
         if (mcid == null) {
             PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
@@ -458,19 +458,25 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfPage addAnnotation(PdfAnnotation annotation) {
-        PdfArray annots = getAnnots(true);
-        annots.add(annotation.setPage(this).getPdfObject());
-        return this;
+        return addAnnotation(-1, annotation, true);
     }
 
-    public PdfPage addAnnotation(int index, PdfAnnotation annotation) {
-        if (getAnnotsSize() <= index)
-            return addAnnotation(annotation);
-        else {
-            PdfArray annots = getAnnots(true);
-            annots.add(index, annotation.setPage(this).getPdfObject());
-            return this;
+    public PdfPage addAnnotation(int index, PdfAnnotation annotation, boolean tagAnnotation) {
+        if (getDocument().isTagged() && tagAnnotation) {
+            PdfPage prevPage = getDocument().getTagStructure().getCurrentPage();
+            getDocument().getTagStructure().setPage(this).addAnnotationTag(annotation);
+            if (prevPage != null) {
+                getDocument().getTagStructure().setPage(prevPage);
+            }
         }
+
+        PdfArray annots = getAnnots(true);
+        if (index == -1) {
+            annots.add(annotation.setPage(this).getPdfObject());
+        } else {
+            annots.add(index, annotation.setPage(this).getPdfObject());
+        }
+        return this;
     }
 
     public int getAnnotsSize() {

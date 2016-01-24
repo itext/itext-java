@@ -782,7 +782,7 @@ public class PdfDocument implements IEventDispatcher {
         }
 
         if (!isTagged()) {
-            throw new PdfException("");//TODO exception
+            throw new PdfException(PdfException.MustBeATaggedDocument);
         }
 
         tagStructure = new PdfTagStructure(this);

@@ -209,23 +209,28 @@ public class BlockRenderer extends AbstractRenderer {
         applyDestination(document);
         applyAction(document);
 
-        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
+        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
             accessibleElement = (IAccessibleElement) getModelElement();
-            if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
-                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+            PdfName role = accessibleElement.getRole();
+            if (role != null && !PdfName.Artifact.equals(role)) {
+                if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+                    AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
 
-                if (accessibleElement.getRole().equals(PdfName.TD)) {
-                    AccessibleAttributesApplier.applyTableAttributes(this);
+                    if (role.equals(PdfName.TD)) {
+                        AccessibleAttributesApplier.applyTableAttributes(this);
+                    }
+
+                    if (role.equals(PdfName.List)) {
+                        AccessibleAttributesApplier.applyListAttributes(this);
+                    }
+
                 }
-
-                if (accessibleElement.getRole().equals(PdfName.List)) {
-                    AccessibleAttributesApplier.applyListAttributes(this);
-                }
-
+                document.getTagStructure().addTag(accessibleElement, true);
+            } else {
+                isTagged = false;
             }
-            document.getTagStructure().addTag(accessibleElement, true);
         }
 
         int position = getPropertyAsInteger(Property.POSITION);

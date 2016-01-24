@@ -146,11 +146,7 @@ public class PdfCanvas {
      * a counter variable for the marked content stack.
      */
     protected int mcDepth;
-    /**
-     * Keeps track of the current Marked Content ID.
-     */
-    protected int mcid = 0;
-    
+
     /** The list where we save/restore the layer depth. */
     protected List<Integer> layerDepth;
 
@@ -2040,6 +2036,15 @@ public class PdfCanvas {
     public PdfCanvas writeLiteral(final float n) {
         contentStream.getOutputStream().writeFloat(n);
         return this;
+    }
+
+    /**
+     * Please, use this method with caution and only if you know what you are doing.
+     * Manipulating with underlying stream object of canvas could lead to corruption of it's data.
+     * @return the content stream to which this canvas object writes.
+     */
+    public PdfStream getContentStream() {
+        return contentStream;
     }
 
     /**

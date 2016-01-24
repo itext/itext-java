@@ -6,6 +6,9 @@ import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.canvas.CanvasArtifact;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
@@ -400,16 +403,26 @@ public class TextRenderer extends AbstractRenderer {
     public void draw(DrawContext drawContext) {
         super.draw(drawContext);
 
-        boolean isTagged = drawContext.getDocument().isTagged() && getModelElement() instanceof IAccessibleElement;
+        PdfDocument document = drawContext.getDocument();
+        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+        boolean isArtifact = false;
         PdfTagStructure tagStructure = null;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
-            tagStructure = drawContext.getDocument().getTagStructure();
             accessibleElement = (IAccessibleElement) getModelElement();
-            if (!drawContext.getDocument().getTagStructure().isConnectedToTag(accessibleElement)) {
-                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, drawContext.getDocument());
+            PdfName role = accessibleElement.getRole();
+            if (role != null && !PdfName.Artifact.equals(role)) {
+                tagStructure = document.getTagStructure();
+                if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+                    AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+                }
+                tagStructure.addTag(accessibleElement, true);
+            } else {
+                isTagged = false;
+                if (PdfName.Artifact.equals(role)) {
+                    isArtifact = true;
+                }
             }
-            tagStructure.addTag(accessibleElement, true);
         }
 
         int position = getPropertyAsInteger(Property.POSITION);
@@ -440,6 +453,8 @@ public class TextRenderer extends AbstractRenderer {
             PdfCanvas canvas = drawContext.getCanvas();
             if (isTagged) {
                 canvas.openTag(tagStructure.getTagReference());
+            } else if (isArtifact) {
+                canvas.openTag(new CanvasArtifact());
             }
             canvas.saveState().beginText().setFontAndSize(font, fontSize);
 
@@ -485,7 +500,7 @@ public class TextRenderer extends AbstractRenderer {
 
             canvas.showText(output);
             canvas.endText().restoreState();
-            if (isTagged) {
+            if (isTagged || isArtifact) {
                 canvas.closeTag();
             }
 
@@ -520,11 +535,19 @@ public class TextRenderer extends AbstractRenderer {
         float bottomBBoxY = occupiedArea.getBBox().getY();
         float leftBBoxX = occupiedArea.getBBox().getX();
         if (background != null) {
-            drawContext.getCanvas().saveState().setFillColor(background.getColor());
-            drawContext.getCanvas().rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + textRise - background.getExtraBottom(),
+            boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+            PdfCanvas canvas = drawContext.getCanvas();
+            if (isTagged) {
+                canvas.openTag(new CanvasArtifact());
+            }
+            canvas.saveState().setFillColor(background.getColor());
+            canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + textRise - background.getExtraBottom(),
                     occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
                     occupiedArea.getBBox().getHeight() - textRise + background.getExtraTop() + background.getExtraBottom());
-            drawContext.getCanvas().fill().restoreState();
+            canvas.fill().restoreState();
+            if (isTagged) {
+                canvas.closeTag();
+            }
         }
     }
 

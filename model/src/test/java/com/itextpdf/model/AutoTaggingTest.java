@@ -1,11 +1,17 @@
 package com.itextpdf.model;
 
 import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.geom.PageSize;
+import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.core.color.Color;
+import com.itextpdf.core.color.DeviceGray;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.Cell;
@@ -227,10 +233,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    /* TODO: incorrect header/footer tag structure
-        1. If first header is skipped - header appears after TBody or TFoot
-        2. THead/TFoot row cells are all contained in single row, even when header/footer is repeated on every page.
-     */
     public void tableTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest05.pdf";
@@ -265,9 +267,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    /* TODO: incorrect cell tags order when rowspan is used
-        1. The tag of cell with rowspan is always the last in the TR
-     */
     public void tableTest06() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest06.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest06.pdf";
@@ -329,10 +328,58 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     @Test
+    public void artifactTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFileName = destinationFolder + "artifactTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_artifactTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        String watermarkText = "WATERMARK";
+        Paragraph watermark = new Paragraph(watermarkText);
+        watermark.setFontColor(new DeviceGray(0.75f)).setFontSize(72);
+        document.showTextAligned(watermark, PageSize.A4.getWidth() / 2, PageSize.A4.getHeight() / 2, 1, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE, (float) (Math.PI / 4));
+
+        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
+                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
+        document.add(new Paragraph(textContent + textContent + textContent));
+        document.add(new Paragraph(textContent + textContent + textContent));
+
+        document.close();
+
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void artifactTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFileName = destinationFolder + "artifactTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_artifactTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        document.add(new Paragraph("Hello world"));
+
+        Table table = new Table(5);
+        for (int i = 0; i < 25; ++i) {
+            table.addCell(String.valueOf(i));
+        }
+        table.setRole(PdfName.Artifact);
+        document.add(table);
+
+        document.close();
+
+        new CompareTool().compareTagStructures(outFileName, cmpFileName);
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     /**
      * Document generation and result is the same in this test as in the textInParagraphTest01, except the partial flushing of
      * tag structure. So you can check the result by comparing resultant document with the one in textInParagraphTest01.
      */
+    @Test
     public void flushingTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         String outFileName = destinationFolder + "flushingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_flushingTest01.pdf";
@@ -358,11 +405,11 @@ public class AutoTaggingTest extends ExtendedITextTest {
         assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @Test
     /**
      * Document generation and result is the same in this test as in the tableTest05, except the partial flushing of
      * tag structure. So you can check the result by comparing resultant document with the one in tableTest05.
      */
+    @Test
     public void flushingTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         String outFileName = destinationFolder + "flushingTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_flushingTest02.pdf";
@@ -374,16 +421,16 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Table table = new Table(5, true);
         doc.add(table);
 
-        //TODO solve header/footer problems with tagging. Currently, partial flushing when header/footer is used leads to crash.
-//        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
-//        table.addHeaderCell(cell);
-//        for (int i = 0; i < 5; ++i) {
-//            table.addHeaderCell(new Cell().add("Header " + (i + 1)));
-//        }
-//        cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
-//        table.addFooterCell(cell);
-//        table.setSkipFirstHeader(true);
-//        table.setSkipLastFooter(true);
+//        TODO solve header/footer problems with tagging. Currently, partial flushing when header/footer is used leads to crash.
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)"));
+        table.addHeaderCell(cell);
+        for (int i = 0; i < 5; ++i) {
+            table.addHeaderCell(new Cell().add("Header " + (i + 1)));
+        }
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page"));
+        table.addFooterCell(cell);
+        table.setSkipFirstHeader(true);
+        table.setSkipLastFooter(true);
 
         int magicalFlushingIndicator = 148;
         for (int i = 0; i < 350; i++) {
@@ -401,11 +448,11 @@ public class AutoTaggingTest extends ExtendedITextTest {
         assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @Test
     /**
      * Document generation and result is the same in this test as in the tableTest04, except the partial flushing of
      * tag structure. So you can check the result by comparing resultant document with the one in tableTest04.
      */
+    @Test
     public void flushingTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         String outFileName = destinationFolder + "flushingTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest04.pdf";
@@ -438,11 +485,6 @@ public class AutoTaggingTest extends ExtendedITextTest {
         new CompareTool().compareTagStructures(outFileName, cmpFileName);
         assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-
-    /* TODO
-        1. compare by tag structure
-        5. lists tests
-     */
 
     private Paragraph createParagraph1() throws IOException {
         PdfFont font = PdfFont.createStandardFont(FontConstants.HELVETICA_BOLD);

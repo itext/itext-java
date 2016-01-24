@@ -121,6 +121,9 @@ public class Cell extends BlockElement<Cell> {
     @Override
     public void setRole(PdfName role) {
         this.role = role;
+        if (PdfName.Artifact.equals(role)) {
+            propagateArtifactRoleToChildElements();
+        }
     }
 
     @Override

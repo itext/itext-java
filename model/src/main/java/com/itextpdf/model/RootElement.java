@@ -6,6 +6,7 @@ import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.element.Div;
 import com.itextpdf.model.element.IElement;
@@ -246,6 +247,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
             p.setMultipliedLeading(1);
         }
         div.add(p.setMargins(0, 0, 0, 0));
+        div.setRole(PdfName.Artifact);
         this.add(div);
 
         return (T) this;

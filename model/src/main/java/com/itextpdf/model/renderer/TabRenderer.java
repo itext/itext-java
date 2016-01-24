@@ -1,6 +1,7 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.pdf.canvas.CanvasArtifact;
 import com.itextpdf.core.pdf.canvas.draw.Drawable;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Tab;
@@ -31,7 +32,16 @@ public class TabRenderer extends AbstractRenderer {
         if (leader == null)
             return;
 
+        boolean isTagged = drawContext.isTaggingEnabled();
+        if (isTagged) {
+            drawContext.getCanvas().openTag(new CanvasArtifact());
+        }
+
         leader.draw(drawContext.getCanvas(), occupiedArea.getBBox());
+
+        if (isTagged) {
+            drawContext.getCanvas().closeTag();
+        }
     }
 
     @Override

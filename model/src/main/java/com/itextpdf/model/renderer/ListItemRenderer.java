@@ -33,16 +33,21 @@ public class ListItemRenderer extends BlockRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
-        boolean isTagged = drawContext.getDocument().isTagged() && getModelElement() instanceof IAccessibleElement;
+        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         PdfTagStructure tagStructure = null;
         if (isTagged) {
             tagStructure = drawContext.getDocument().getTagStructure();
             IAccessibleElement modelElement = (IAccessibleElement) getModelElement();
-            boolean lBodyTagIsCreated = tagStructure.isConnectedToTag(modelElement);
-            if (!lBodyTagIsCreated) {
-                tagStructure.addTag(PdfName.LI);
+            PdfName role = modelElement.getRole();
+            if (role != null && !PdfName.Artifact.equals(role)) {
+                boolean lBodyTagIsCreated = tagStructure.isConnectedToTag(modelElement);
+                if (!lBodyTagIsCreated) {
+                    tagStructure.addTag(PdfName.LI);
+                } else {
+                    tagStructure.moveToTag(modelElement).moveToParent();
+                }
             } else {
-                tagStructure.moveToTag(modelElement).moveToParent();
+                isTagged = false;
             }
         }
 

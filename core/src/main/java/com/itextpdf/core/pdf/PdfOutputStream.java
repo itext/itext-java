@@ -244,12 +244,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             boolean isAlreadyWriteSpace = false;
             write(entry.getKey());
             PdfObject value = entry.getValue();
-            if ((entry.getValue().getType() == PdfObject.Number
-                    || entry.getValue().getType() == PdfObject.Literal
-                    || entry.getValue().getType() == PdfObject.Boolean
-                    || entry.getValue().getType() == PdfObject.Null
-                    || entry.getValue().getType() == PdfObject.IndirectReference
-                    || entry.getValue().checkState(PdfObject.MustBeIndirect))) {
+            if ((value.getType() == PdfObject.Number
+                    || value.getType() == PdfObject.Literal
+                    || value.getType() == PdfObject.Boolean
+                    || value.getType() == PdfObject.Null
+                    || value.getType() == PdfObject.IndirectReference
+                    || value.checkState(PdfObject.MustBeIndirect))) {
                 isAlreadyWriteSpace = true;
                 writeSpace();
             }

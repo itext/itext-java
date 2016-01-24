@@ -1,6 +1,7 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
@@ -13,6 +14,7 @@ public class Link extends Text {
     public Link(String text, PdfLinkAnnotation linkAnnotation) {
         super(text);
         this.linkAnnotation = linkAnnotation;
+        setRole(PdfName.Link);
     }
 
     public Link(String text, PdfAction action) {

@@ -604,6 +604,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName StdCF = createDirectName("StdCF");
     public static final PdfName StemV = createDirectName("StemV");
     public static final PdfName StemH = createDirectName("StemH");
+    public static final PdfName Stm = createDirectName("Stm");
     public static final PdfName StmF = createDirectName("StmF");
     public static final PdfName StrF = createDirectName("StrF");
     public static final PdfName StrikeOut = createDirectName("StrikeOut");

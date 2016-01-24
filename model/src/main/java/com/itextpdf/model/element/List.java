@@ -91,6 +91,9 @@ public class List extends BlockElement<List> {
     @Override
     public void setRole(PdfName role) {
         this.role = role;
+        if (PdfName.Artifact.equals(role)) {
+            propagateArtifactRoleToChildElements();
+        }
     }
 
     @Override

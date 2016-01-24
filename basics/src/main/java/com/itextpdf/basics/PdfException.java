@@ -53,11 +53,15 @@ public class PdfException extends RuntimeException {
     public static final String CannotFlushObject = "cannot.flush.object";
     public static final String CannotHandleBoxSizesHigherThan2_32 = "cannot.handle.box.sizes.higher.than.2.32";
     public static final String CannotInflateTiffImage = "cannot.inflate.tiff.image";
+    public static final String CannotMoveToFlushedKid = "cannot.move.to.flushed.kid";
+    public static final String CannotMoveToMarkedContentReference = "cannot.move.to.marked.content.reference";
+    public static final String CannotMoveToParentCurrentElementIsRoot = "cannot.move.to.parent.current.element.is.root";
     public static final String CannotOpenDocument = "cannot.open.document";
     public static final String CannotParseContentStream = "could.not.parse.content.stream";
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "cannot.read.a.stream.in.order.to.append.new.bytes.reason.1";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
     public static final String CannotReadTiffImage = "cannot.read.tiff.image";
+    public static final String CannotRebuildTagStructureWhenItWasPartlyFlushed = "cannot.rebuild.tag.structure.when.it.was.partly.flushed";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotSplitDocumentThatIsBeingWritten = "cannot.split.document.that.is.being.written";
     public static final String CannotWriteByte = "cannot.write.byte";
@@ -131,6 +135,7 @@ public class PdfException extends RuntimeException {
     public static final String GifImageException = "gif.image.exception";
     public static final String GtNotExpected = "gt.not.expected";
     public static final String GifSignatureNotFound = "gif.signature.not.found";
+    public static final String GivenAccessibleElementIsNotConnectedToAnyTag = "given.accessible.element.is.not.connected.to.any.tag";
     public static final String IllegalValueForPredictorInTiffFile = "illegal.value.for.predictor.in.tiff.file";
     public static final String IllegalCharacterInAsciihexdecode = "illegal.character.in.asciihexdecode";
     public static final String IllegalCharacterInAscii85decode = "illegal.character.in.ascii85decode";
@@ -183,10 +188,12 @@ public class PdfException extends RuntimeException {
     public static final String MacroSegmentIdMustBeGtZero = "macrosegmentid.must.be.gt.0";
     public static final String MacroSegmentIdMustBeLtMacroSegmentCount = "macrosegmentid.must.be.lt.macrosegmentcount";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
+    public static final String MustBeATaggedDocument = "must.be.a.tagged.document";
     public static final String NumberOfEntriesInThisXrefSubsectionNotFound = "number.of.entries.in.this.xref.subsection.not.found";
     public static final String NameAlreadyExistsInTheNameTree = "name.already.exist.in.the.name.tree";
     public static final String NoCompatibleEncryptionFound = "no.compatible.encryption.found";
     public static final String NoCryptoDictionaryDefined = "no.crypto.dictionary.defined";
+    public static final String NoKidWithSuchRole = "no.kid.with.such.role";
     public static final String NotAPlaceableWindowsMetafile = "not.a.placeable.windows.metafile";
     public static final String NotAValidPkcs7ObjectNotASequence = "not.a.valid.pkcs.7.object.not.a.sequence";
     public static final String NotAValidPkcs7ObjectNotSignedData = "not.a.valid.pkcs.7.object.not.signed.data";
@@ -196,10 +203,11 @@ public class PdfException extends RuntimeException {
     public static final String OcspStatusIsUnknown = "ocsp.status.is.unknown";
     public static final String OnlyBmpCanBeWrappedInWmf = "only.bmp.can.be.wrapped.in.wmf";
     public static final String OperatorEINotFoundAfterEndOfImageData = "operator.EI.not.found.after.end.of.image.data";
-    public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.instead";
     public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "page.1.cannot.be.added.to.document.2.because.it.belongs.to.document.3";
+    public static final String PageIsNotSetForThePdfTagStructure = "page.is.not.set.for.the.pdf.tag.structure";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
-    public static final String PdfEncodings = "pdf.encodings";
+    public static final String PageWasAlreadyFlushed = "the.page.was.already.flushed";
+    public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.instead";public static final String PdfEncodings = "pdf.encodings";
     public static final String PdfEncryption = "pdf.encryption";
     public static final String PdfDecryption = "pdf.decryption";
     public static final String PdfFormXobjectHasInvalidBbox = "pdf.form.xobject.has.invalid.bbox";
@@ -219,6 +227,7 @@ public class PdfException extends RuntimeException {
     public static final String PrematureEofWhileReadingJpg = "premature.eof.while.reading.jpg";
     public static final String ResourcesCannotBeNull = "resources.cannot.be.null";
     public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "resources.do.not.contain.extgstate.entry.unable.to.process.operator.1";
+    public static final String RoleIsNotMappedWithAnyStandardRole = "role.is.not.mapped.with.any.standard.role";
     public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";

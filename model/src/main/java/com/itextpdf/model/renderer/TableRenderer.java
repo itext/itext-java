@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
+import com.itextpdf.model.element.AbstractElement;
 import com.itextpdf.model.element.Cell;
 import com.itextpdf.model.element.Table;
 import com.itextpdf.model.layout.LayoutArea;
@@ -98,7 +99,6 @@ public class TableRenderer extends AbstractRenderer {
         boolean headerShouldBeApplied = !rows.isEmpty() && (!isOriginalNonSplitRenderer || isFirstHeader && !tableModel.isSkipFirstHeader());
         if (headerElement != null && headerShouldBeApplied) {
             headerRenderer = (TableRenderer) headerElement.createRendererSubTree().setParent(this);
-            headerRenderer.isLastRendererForModelElement = false;
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this);
@@ -110,7 +110,6 @@ public class TableRenderer extends AbstractRenderer {
         Table footerElement = tableModel.getFooter();
         if (footerElement != null) {
             footerRenderer = (TableRenderer) footerElement.createRendererSubTree().setParent(this);
-            footerRenderer.isLastRendererForModelElement = false;
             LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this);
@@ -363,8 +362,10 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     public void draw(DrawContext drawContext) {
         PdfDocument document = drawContext.getDocument();
-        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
-        if (isTagged) {
+        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+        if (isTagged
+                && ((IAccessibleElement) getModelElement()).getRole() != null
+                && !((IAccessibleElement) getModelElement()).getRole().equals(PdfName.Artifact)) {
             PdfTagStructure tagStructure = document.getTagStructure();
 
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
@@ -372,20 +373,29 @@ public class TableRenderer extends AbstractRenderer {
                 AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
             }
 
-            tagStructure.addTag(accessibleElement, true);
+
+            Table modelElement = (Table) getModelElement();
+            boolean toRemoveConnectionsWithTags = isLastRendererForModelElement && modelElement.isComplete();
+            if (accessibleElement.getRole().equals(PdfName.THead) || accessibleElement.getRole().equals(PdfName.TFoot)) {
+                for (IRenderer renderer : childRenderers) {
+                    if (renderer instanceof AbstractRenderer) {
+                        ((AbstractRenderer) renderer).isLastRendererForModelElement = toRemoveConnectionsWithTags;
+                    }
+                }
+            }
+
+            //footer/header tags order processing
+            if (accessibleElement.getRole().equals(PdfName.THead)) {
+                tagStructure.addTag(0, accessibleElement, true);
+            } else {
+                tagStructure.addTag(accessibleElement, true);
+            }
 
             super.draw(drawContext);
 
             tagStructure.moveToParent();
-            Table modelElement = (Table) getModelElement();
-            if (isLastRendererForModelElement && modelElement.isComplete()) {
+            if (toRemoveConnectionsWithTags) {
                 tagStructure.removeConnectionToTag(accessibleElement);
-                if (modelElement.getHeader() != null) {
-                    tagStructure.removeConnectionToTag(modelElement.getHeader());
-                }
-                if (modelElement.getFooter() != null) {
-                    tagStructure.removeConnectionToTag(modelElement.getFooter());
-                }
             }
         } else {
             super.draw(drawContext);
@@ -394,22 +404,30 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     public void drawChildren(DrawContext drawContext) {
+        Table modelElement = (Table) getModelElement();
+        boolean isTheVeryLast = isLastRendererForModelElement && modelElement.isComplete();
+
         if (headerRenderer != null) {
+            headerRenderer.isLastRendererForModelElement = isTheVeryLast;
             headerRenderer.draw(drawContext);
         }
 
-        Table modelElement = (Table) getModelElement();
-        boolean isTagged = drawContext.getDocument().isTagged() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
+        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
         PdfTagStructure tagStructure = null;
         if (isTagged) {
-            tagStructure = drawContext.getDocument().getTagStructure();
+            PdfName role = modelElement.getRole();
+            if (role != null && !PdfName.Artifact.equals(role)) {
+                tagStructure = drawContext.getDocument().getTagStructure();
 
-            if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
-                if (tagStructure.getListOfKidsRoles().contains(PdfName.TBody)) {
-                    tagStructure.moveToKid(PdfName.TBody);
-                } else {
-                    tagStructure.addTag(PdfName.TBody);
+                if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
+                    if (tagStructure.getListOfKidsRoles().contains(PdfName.TBody)) {
+                        tagStructure.moveToKid(PdfName.TBody);
+                    } else {
+                        tagStructure.addTag(PdfName.TBody);
+                    }
                 }
+            } else {
+                isTagged = false;
             }
         }
 
@@ -440,6 +458,7 @@ public class TableRenderer extends AbstractRenderer {
         drawBorders(drawContext.getCanvas());
 
         if (footerRenderer != null) {
+            footerRenderer.isLastRendererForModelElement = isTheVeryLast;
             footerRenderer.draw(drawContext);
         }
     }

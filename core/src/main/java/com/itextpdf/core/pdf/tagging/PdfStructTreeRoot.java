@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
-    //TODO why do we need this if it simply stores the values, which could be found in the dictionary itself
     protected Map<PdfDictionary, Integer> objRefs = new HashMap<>();
 
     /**
@@ -201,6 +200,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             createParentTreeEntryForPage(getDocument().getPage(i + 1));
         }
         createParentTree();
+        getDocument().getTagStructure().removeAllConnectionsToTags();
         flushAllKids(this);
         super.flush();
     }
@@ -351,7 +351,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      */
     private void unregisterAllMcrs() {
         if (flushOccurred) {
-            throw new PdfException(""); //TODO can't rebuild tag structure after something was flushed
+            throw new PdfException(PdfException.CannotRebuildTagStructureWhenItWasPartlyFlushed);
         }
         pageToPageMcrs = null;
         parentTreeEntries = new TreeMap<>();

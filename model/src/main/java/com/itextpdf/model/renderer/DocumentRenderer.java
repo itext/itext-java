@@ -4,8 +4,12 @@ import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.io.OutputStream;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfPage;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.Document;
+import com.itextpdf.model.IPropertyContainer;
+import com.itextpdf.model.element.AbstractElement;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutResult;
 
@@ -68,7 +72,7 @@ public class DocumentRenderer extends RootRenderer {
             if (pdfDocument.isTagged()) {
                 pdfDocument.getTagStructure().setPage(correspondingPage);
             }
-            resultRenderer.draw(new DrawContext(pdfDocument, new PdfCanvas(correspondingPage)));
+            resultRenderer.draw(new DrawContext(pdfDocument, new PdfCanvas(correspondingPage), pdfDocument.isTagged()));
         }
     }
 

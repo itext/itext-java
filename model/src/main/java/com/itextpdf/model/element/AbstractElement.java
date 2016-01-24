@@ -1,5 +1,7 @@
 package com.itextpdf.model.element;
 
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.ElementPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.Style;
@@ -83,4 +85,18 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
     }
 
     protected abstract IRenderer makeNewRenderer();
+
+    /**
+     * Marks all child elements as artifacts recursively.
+     */
+    protected void propagateArtifactRoleToChildElements() {
+        for (IElement child : childElements) {
+            if (child instanceof AbstractElement) {
+                if (child instanceof IAccessibleElement) {
+                    ((IAccessibleElement) child).setRole(PdfName.Artifact);
+                }
+            }
+        }
+    }
+
 }

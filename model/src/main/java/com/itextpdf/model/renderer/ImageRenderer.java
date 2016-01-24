@@ -4,6 +4,9 @@ import com.itextpdf.basics.geom.AffineTransform;
 import com.itextpdf.basics.geom.Point2D;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.canvas.CanvasArtifact;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
@@ -118,13 +121,22 @@ public class ImageRenderer extends AbstractRenderer {
         super.draw(drawContext);
 
         PdfDocument document = drawContext.getDocument();
-        boolean isTagged = document.isTagged() && getModelElement() instanceof IAccessibleElement;
+        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+        boolean isArtifact = false;
         PdfTagStructure tagStructure = null;
         if (isTagged) {
             tagStructure = document.getTagStructure();
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
-            tagStructure.addTag(accessibleElement);
+            PdfName role = accessibleElement.getRole();
+            if (role != null && !PdfName.Artifact.equals(role)) {
+                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+                tagStructure.addTag(accessibleElement);
+            } else {
+                isTagged = false;
+                if (PdfName.Artifact.equals(role)) {
+                    isArtifact = true;
+                }
+            }
         }
 
         applyMargins(occupiedArea.getBBox(), false);
@@ -141,15 +153,18 @@ public class ImageRenderer extends AbstractRenderer {
             fixedXPosition = occupiedArea.getBBox().getX();
         }
 
+        PdfCanvas canvas = drawContext.getCanvas();
         if (isTagged) {
-            drawContext.getCanvas().openTag(tagStructure.getTagReference());
+            canvas.openTag(tagStructure.getTagReference());
+        } else if (isArtifact) {
+            canvas.openTag(new CanvasArtifact());
         }
 
-        drawContext.getCanvas().addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[1], matrix[2], matrix[3],
+        canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[1], matrix[2], matrix[3],
                 fixedXPosition + deltaX, fixedYPosition);
 
-        if (isTagged) {
-            drawContext.getCanvas().closeTag();
+        if (isTagged || isArtifact) {
+            canvas.closeTag();
         }
 
         if (position == LayoutPosition.RELATIVE) {

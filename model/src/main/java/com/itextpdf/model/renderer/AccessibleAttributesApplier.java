@@ -39,7 +39,7 @@ public class AccessibleAttributesApplier {
 
         applyCommonLayoutAttributes(renderer, attributes);
         if (tagType == PdfStructElem.BlockLevel) {
-            applyBlockLevelLayoutAttributes(role, renderer, attributes);
+            applyBlockLevelLayoutAttributes(role, renderer, attributes, doc);
         }
         if (tagType == PdfStructElem.InlineLevel) {
             applyInlineLevelLayoutAttributes(renderer, attributes);
@@ -118,7 +118,7 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static void applyBlockLevelLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDictionary attributes) {
+    private static void applyBlockLevelLayoutAttributes(PdfName role, AbstractRenderer renderer, PdfDictionary attributes, PdfDocument doc) {
         Float[] margins = {renderer.getPropertyAsFloat(Property.MARGIN_TOP),
                 renderer.getPropertyAsFloat(Property.MARGIN_BOTTOM),
                 renderer.getPropertyAsFloat(Property.MARGIN_LEFT),
@@ -159,9 +159,12 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.TextAlign, transformTextAlignmentValueToName(textAlignment));
         }
 
-        //TODO when multiple renderers of the same model element will be handled properly, check that bbox is set only when element lies on the single page
-        Rectangle bbox = renderer.getOccupiedArea().getBBox();
-        attributes.put(PdfName.BBox, new PdfArray(bbox));
+        boolean connectedToTag = doc.getTagStructure().isConnectedToTag((IAccessibleElement) renderer.getModelElement());
+        boolean elementIsOnSinglePage = !connectedToTag && renderer.isLastRendererForModelElement;
+        if (elementIsOnSinglePage) {
+            Rectangle bbox = renderer.getOccupiedArea().getBBox();
+            attributes.put(PdfName.BBox, new PdfArray(bbox));
+        }
 
         if (role.equals(PdfName.TH) || role.equals(PdfName.TD) || role.equals(PdfName.Table)) {
             Property.UnitValue width = renderer.getProperty(Property.WIDTH);

@@ -25,7 +25,7 @@ public class PdfTagReference {
     }
 
     public Integer createNextMcid() {
-        return tagStructure.getNextMcidForStructElem(referencedTag, insertIndex);
+        return tagStructure.createNextMcidForStructElem(referencedTag, insertIndex);
     }
 
     public PdfTagReference addProperty(PdfName name, PdfObject value) {

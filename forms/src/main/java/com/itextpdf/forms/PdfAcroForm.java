@@ -788,7 +788,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     }
                     array.add(parent);
                 } else {
-                    page.addAnnotation(annot);
+                    page.addAnnotation(-1, annot, false);
                 }
             } else {
                 PdfArray otherKids = (dict).getAsArray(PdfName.Kids);

@@ -26,6 +26,9 @@ public class Div extends BlockElement<Div> {
     @Override
     public void setRole(PdfName role) {
         this.role = role;
+        if (PdfName.Artifact.equals(role)) {
+            propagateArtifactRoleToChildElements();
+        }
     }
 
     @Override
