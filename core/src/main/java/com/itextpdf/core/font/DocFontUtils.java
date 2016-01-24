@@ -26,6 +26,10 @@ class DocFontUtils {
             } catch (Exception e) {
                 cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
             }
+        } else if (toUnicode instanceof PdfName) {
+            if (toUnicode.equals(PdfName.IdentityH)) {
+                cMapToUnicode = CMapToUnicode.getIdentity();
+            }
         }
         return cMapToUnicode;
     }

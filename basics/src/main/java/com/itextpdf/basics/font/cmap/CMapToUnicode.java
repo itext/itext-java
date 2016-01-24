@@ -70,7 +70,6 @@ public class CMapToUnicode extends AbstractCMap {
         String result = null;
         Integer key;
         if (length == 1) {
-
             key = code[offset] & 0xff;
             result = singleByteMappings.get(key);
         } else if (length == 2) {
@@ -78,7 +77,6 @@ public class CMapToUnicode extends AbstractCMap {
             intKey <<= 8;
             intKey += code[offset + 1] & 0xff;
             key = intKey;
-
             result = doubleByteMappings.get(key);
         }
 

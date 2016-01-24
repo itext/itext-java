@@ -334,6 +334,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ICCBased = createDirectName("ICCBased");
     public static final PdfName ID = createDirectName("ID");
     public static final PdfName Identity = createDirectName("Identity");
+    public static final PdfName IdentityH = createDirectName("Identity-H");
     public static final PdfName Inset = createDirectName("Inset");
     public static final PdfName Image = createDirectName("Image");
     public static final PdfName ImageMask = createDirectName("ImageMask");
