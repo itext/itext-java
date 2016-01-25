@@ -29,6 +29,8 @@ public class PdfNameTree {
             PdfDictionary nameTree = names.getAsDictionary(treeType);
             if (nameTree != null) {
                 root = new PdfNode(nameTree);
+            } else {
+                root = new PdfNode(document);
             }
             parents.add(root);
         } else {
