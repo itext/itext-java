@@ -43,6 +43,7 @@ public class TextRenderer extends AbstractRenderer {
 
     private static final Logger logger = LoggerFactory.getLogger(TextRenderer.class);
     private static final String TYPOGRAPHY_PACKAGE = "com.itextpdf.typography.";
+    private static final boolean TYPOGRAPHY_MODULE_INITIALIZED = checkTypographyModulePresence();
 
     protected float yLineOffset;
     protected byte[] levels;
@@ -90,10 +91,8 @@ public class TextRenderer extends AbstractRenderer {
         Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
         Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
 
-        boolean typographyModuleInitialized = checkTypographyModulePresence();
-
         if (!otfFeaturesApplied && script != null && isOtfFont(font)) {
-            if (!typographyModuleInitialized) {
+            if (!TYPOGRAPHY_MODULE_INITIALIZED) {
                 logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
             } else {
                 callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyOtfScript", new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
@@ -103,7 +102,7 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         if (!otfFeaturesApplied && fontKerning == Property.FontKerning.YES) {
-            if (!typographyModuleInitialized) {
+            if (!TYPOGRAPHY_MODULE_INITIALIZED) {
                 logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
             } else {
                 callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyKerning", new Class[]{FontProgram.class, GlyphLine.class},
@@ -118,7 +117,7 @@ public class TextRenderer extends AbstractRenderer {
         line.start = line.end = -1;
 
         if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
-            if (!typographyModuleInitialized) {
+            if (!TYPOGRAPHY_MODULE_INITIALIZED) {
                 logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
             } else {
                 byte direction;
@@ -365,7 +364,7 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         if (baseDirection != Property.BaseDirection.NO_BIDI) {
-            if (!typographyModuleInitialized) {
+            if (!TYPOGRAPHY_MODULE_INITIALIZED) {
                 logger.warn("Cannot find advanced typography module, which was implicitly required by one of the model properties");
             } else {
                 byte[] lineLevels = new byte[line.end - line.start];
@@ -666,7 +665,7 @@ public class TextRenderer extends AbstractRenderer {
         return new TextRenderer((Text) modelElement, null);
     }
 
-    private boolean checkTypographyModulePresence() {
+    private static boolean checkTypographyModulePresence() {
         boolean moduleFound = false;
         try {
             Class.forName("com.itextpdf.typography.shaping.Shaper");
