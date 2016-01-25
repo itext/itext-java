@@ -1,4 +1,4 @@
-package com.itextpdf.core.pdf.canvas.image;
+package com.itextpdf.core.pdf.canvas.wmf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontProgram;
@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
- * A class to process WMF files. Used internally by {@link com.itextpdf.core.pdf.canvas.image.WmfImageHelper}.
+ * A class to process WMF files. Used internally by {@link com.itextpdf.core.pdf.canvas.wmf.WmfImageHelper}.
  */
 public class MetaDo {
 
@@ -781,5 +781,39 @@ public class MetaDo {
     public static void writeDWord(OutputStream os, int v) throws IOException {
         writeWord(os, v & 0xffff);
         writeWord(os, v >>> 16 & 0xffff);
+    }
+
+    /**
+     * Represents a 2-dimensional point.
+     */
+    static class Point {
+
+        /**
+         * The X value of the point.
+         */
+        public int x;
+
+        /**
+         * The Y value of the point.
+         */
+        public int y;
+
+        /**
+         * Creates a point without coordinates.
+         */
+        public Point() {
+            // empty body
+        }
+
+        /**
+         * Creates a point and sets the two values as its coordinates.
+         *
+         * @param x the X value of the point
+         * @param y the Y value of the point
+         */
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 }

@@ -8,7 +8,7 @@ import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.io.OutputStream;
-import com.itextpdf.core.pdf.canvas.image.WmfImageHelper;
+import com.itextpdf.core.pdf.canvas.wmf.WmfImageHelper;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.PatternColor;
 import com.itextpdf.core.font.PdfFont;

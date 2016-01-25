@@ -1,4 +1,4 @@
-package com.itextpdf.core.pdf.canvas.image;
+package com.itextpdf.core.pdf.canvas.wmf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.geom.Rectangle;
@@ -28,7 +28,7 @@ public class WmfImageHelper {
     /**
      * Creates a helper instance.
      *
-     * @param wmf the {@link com.itextpdf.core.pdf.canvas.image.WmfImage} object
+     * @param wmf the {@link com.itextpdf.core.pdf.canvas.wmf.WmfImage} object
      */
     public WmfImageHelper(Image wmf) {
         if (wmf.getOriginalType() != Image.WMF)

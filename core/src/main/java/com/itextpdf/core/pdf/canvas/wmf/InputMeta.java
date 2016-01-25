@@ -1,4 +1,4 @@
-package com.itextpdf.core.pdf.canvas.image;
+package com.itextpdf.core.pdf.canvas.wmf;
 
 import com.itextpdf.basics.Utilities;
 import com.itextpdf.core.color.Color;

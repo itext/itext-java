@@ -17,7 +17,7 @@ import com.itextpdf.core.color.IccBased;
 import com.itextpdf.core.color.Indexed;
 import com.itextpdf.core.color.Lab;
 import com.itextpdf.core.color.Separation;
-import com.itextpdf.core.pdf.canvas.image.WmfImage;
+import com.itextpdf.core.pdf.canvas.wmf.WmfImage;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
