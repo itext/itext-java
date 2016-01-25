@@ -7,6 +7,7 @@ import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType1Font;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.element.Div;
 import com.itextpdf.model.element.IElement;
@@ -102,7 +103,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
                 case FONT_SIZE:
                     return (T) new Integer(12);
                 case TEXT_RENDERING_MODE:
-                    return (T) Integer.valueOf(Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL);
+                    return (T) Integer.valueOf(PdfCanvasConstants.TextRenderingMode.FILL);
                 case TEXT_RISE:
                     return (T) new Float(0);
                 case SPACING_RATIO:

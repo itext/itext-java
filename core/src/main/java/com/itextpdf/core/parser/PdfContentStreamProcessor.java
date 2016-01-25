@@ -18,6 +18,7 @@ import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 
 import java.io.IOException;
 import java.util.ArrayList;

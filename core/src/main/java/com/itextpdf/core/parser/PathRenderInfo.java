@@ -1,5 +1,7 @@
 package com.itextpdf.core.parser;
 
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
+
 /**
  * Contains information relating to painting current path.
  *

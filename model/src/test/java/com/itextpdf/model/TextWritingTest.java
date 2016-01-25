@@ -6,6 +6,7 @@ import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.AreaBreak;
@@ -69,19 +70,19 @@ public class TextWritingTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Text text1 = new Text("This is a fill and stroke text").
-                setTextRenderingMode(Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE).
+                setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE).
                 setStrokeColor(Color.RED).
                 setStrokeWidth(0.1f);
         document.add(new Paragraph().add(text1));
 
         Text text2 = new Text("This is a stroke-only text").
-                setTextRenderingMode(Property.TextRenderingMode.TEXT_RENDERING_MODE_STROKE).
+                setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE).
                 setStrokeColor(Color.GREEN).
                 setStrokeWidth(0.3f);
         document.add(new Paragraph(text2));
 
         Text text3 = new Text("This is a colorful text").
-                setTextRenderingMode(Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE).
+                setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE).
                 setStrokeColor(Color.BLUE).
                 setStrokeWidth(0.3f).
                 setFontColor(Color.GREEN).

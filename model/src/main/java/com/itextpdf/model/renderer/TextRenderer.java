@@ -13,6 +13,7 @@ import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfType0Font;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.model.Property;
@@ -445,7 +446,7 @@ public class TextRenderer extends AbstractRenderer {
             Float strokeWidth = null;
 
             if (boldSimulation) {
-                textRenderingMode = Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE;
+                textRenderingMode = PdfCanvasConstants.TextRenderingMode.FILL_STROKE;
                 strokeWidth = fontSize / 30;
             }
 
@@ -463,10 +464,10 @@ public class TextRenderer extends AbstractRenderer {
                 canvas.moveText(leftBBoxX, getYLine());
             }
 
-            if (textRenderingMode != Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL) {
+            if (textRenderingMode != PdfCanvasConstants.TextRenderingMode.FILL) {
                 canvas.setTextRenderingMode(textRenderingMode);
             }
-            if (textRenderingMode == Property.TextRenderingMode.TEXT_RENDERING_MODE_STROKE || textRenderingMode == Property.TextRenderingMode.TEXT_RENDERING_MODE_FILL_STROKE) {
+            if (textRenderingMode == PdfCanvasConstants.TextRenderingMode.STROKE || textRenderingMode == PdfCanvasConstants.TextRenderingMode.FILL_STROKE) {
                 if (strokeWidth == null) {
                     strokeWidth = getPropertyAsFloat(Property.STROKE_WIDTH);
                 }

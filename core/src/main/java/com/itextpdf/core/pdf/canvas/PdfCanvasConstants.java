@@ -95,4 +95,11 @@ public class PdfCanvasConstants {
          */
         public static final int BEVEL = 2;
     }
+
+    public static class FillingRule {
+
+        public static final int NONZERO_WINDING = 1;
+
+        public static final int EVEN_ODD = 2;
+    }
 }

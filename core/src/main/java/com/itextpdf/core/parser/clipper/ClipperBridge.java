@@ -1,7 +1,7 @@
 package com.itextpdf.core.parser.clipper;
 
 import com.itextpdf.basics.geom.Point2D;
-import com.itextpdf.core.parser.PdfCanvasConstants;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.parser.Subpath;
 
 import java.util.ArrayList;
@@ -134,8 +134,8 @@ public class ClipperBridge {
     /**
      * Converts iText filling rule constant into the corresponding constant
      * of the Clipper library .
-     * @param fillingRule Either {@link com.itextpdf.core.parser.PdfCanvasConstants.FillingRule#NONZERO_WINDING} or
-     *                    {@link com.itextpdf.core.parser.PdfCanvasConstants.FillingRule#EVEN_ODD}.
+     * @param fillingRule Either {@link com.itextpdf.core.pdf.canvas.PdfCanvasConstants.FillingRule#NONZERO_WINDING} or
+     *                    {@link com.itextpdf.core.pdf.canvas.PdfCanvasConstants.FillingRule#EVEN_ODD}.
      * @return Clipper fill type constant.
      */
     public static Clipper.PolyFillType getFillType(int fillingRule) {

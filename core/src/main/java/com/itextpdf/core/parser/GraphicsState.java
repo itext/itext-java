@@ -10,6 +10,7 @@ import com.itextpdf.core.parser.clipper.ClipperBridge;
 import com.itextpdf.core.parser.clipper.DefaultClipper;
 import com.itextpdf.core.parser.clipper.PolyTree;
 import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 
 import java.util.Arrays;
 import java.util.List;
