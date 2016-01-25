@@ -1,7 +1,7 @@
 package com.itextpdf.core.parser;
 
-import com.itextpdf.core.testutils.annotations.type.UnitTest;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
 import org.junit.Test;

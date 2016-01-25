@@ -73,11 +73,6 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
-    public static final String DOCUMENT_ALREADY_HAS_FIELD = "The document already has field {0}. Annotations of the fields with this name will be added to the existing one as children. If you want to have separate fields, please, rename them manually before copying.";
-
-    /**
-     * Log message.
-     */
     public static final String UNKNOWN_ERROR_WHILE_PROCESSING_CMAP = "Unknown error while processing CMap.";
 
     /**

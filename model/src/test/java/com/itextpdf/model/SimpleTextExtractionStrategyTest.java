@@ -4,7 +4,6 @@ import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.geom.AffineTransform;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.parser.GlyphTextEventListener;
 import com.itextpdf.core.parser.SimpleTextExtractionStrategy;
@@ -15,11 +14,12 @@ import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.PdfTextArray;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.core.testutils.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -195,6 +195,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
         String text1 = TextExtractor.getTextFromPage(pdfDocument.getPage(1), new SimpleTextExtractionStrategy()) +
                 "\n" +
                 TextExtractor.getTextFromPage(pdfDocument.getPage(2), new SimpleTextExtractionStrategy());
+        TextExtractor.getTextFromPage(pdfDocument.getPage(2), new SimpleTextExtractionStrategy());
         String text2 = TextExtractor.getTextFromPage(pdfDocument.getPage(1), new GlyphTextEventListener(new SimpleTextExtractionStrategy())) +
                 "\n" +
                 TextExtractor.getTextFromPage(pdfDocument.getPage(2), new GlyphTextEventListener(new SimpleTextExtractionStrategy()));
