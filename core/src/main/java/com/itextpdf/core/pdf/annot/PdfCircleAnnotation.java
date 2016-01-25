@@ -2,17 +2,16 @@ package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 
 public class PdfCircleAnnotation extends PdfMarkupAnnotation {
 
-    public PdfCircleAnnotation(PdfDocument document, Rectangle rect) {
-        super(document, rect);
+    public PdfCircleAnnotation(Rectangle rect) {
+        super(rect);
     }
 
-    public PdfCircleAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfCircleAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     @Override

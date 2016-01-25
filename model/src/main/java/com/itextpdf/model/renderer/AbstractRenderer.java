@@ -408,7 +408,7 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void applyAction(PdfDocument document){
         PdfAction action = getProperty(Property.ACTION);
         if (action != null) {
-            PdfLinkAnnotation link = new PdfLinkAnnotation(document, getOccupiedArea().getBBox());
+            PdfLinkAnnotation link = new PdfLinkAnnotation(getOccupiedArea().getBBox());
             link.setAction(action);
             Border border = getProperty(Property.BORDER);
             if (border != null) {

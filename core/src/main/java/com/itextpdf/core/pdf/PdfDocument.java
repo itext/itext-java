@@ -1257,7 +1257,7 @@ public class PdfDocument implements IEventDispatcher {
         for (Map.Entry<PdfPage, List<PdfLinkAnnotation>> entry : linkAnnotations.entrySet()) {
             for (PdfLinkAnnotation annot : entry.getValue()) {
                 PdfDestination d = null;
-                PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, excludedKeys, false), toDocument);
+                PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, excludedKeys, false));
                 PdfObject dest = annot.getDestinationObject();
                 if (dest != null) {
                     if (dest.isArray()) {

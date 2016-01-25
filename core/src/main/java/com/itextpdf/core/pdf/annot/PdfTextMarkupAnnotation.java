@@ -3,7 +3,6 @@ package com.itextpdf.core.pdf.annot;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 
 public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
@@ -16,30 +15,30 @@ public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
     public static final PdfName MarkupStrikeout = PdfName.StrikeOut;
     public static final PdfName MarkupSquiggly = PdfName.Squiggly;
 
-    public PdfTextMarkupAnnotation(PdfDocument document, Rectangle rect, PdfName subtype, float quadPoints[]) {
-        super(document, rect);
+    public PdfTextMarkupAnnotation(Rectangle rect, PdfName subtype, float quadPoints[]) {
+        super(rect);
         setSubtype(subtype);
         setQuadPoints(new PdfArray(quadPoints));
     }
 
-    public PdfTextMarkupAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfTextMarkupAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
-    static public PdfTextMarkupAnnotation createHighLight(PdfDocument document, Rectangle rect, float quadPoints[]) {
-        return new PdfTextMarkupAnnotation(document, rect, MarkupHighlight, quadPoints);
+    public static PdfTextMarkupAnnotation createHighLight(Rectangle rect, float quadPoints[]) {
+        return new PdfTextMarkupAnnotation(rect, MarkupHighlight, quadPoints);
     }
 
-    static public PdfTextMarkupAnnotation createUnderline(PdfDocument document, Rectangle rect, float quadPoints[]) {
-        return new PdfTextMarkupAnnotation(document, rect, MarkupUnderline, quadPoints);
+    public static PdfTextMarkupAnnotation createUnderline(Rectangle rect, float quadPoints[]) {
+        return new PdfTextMarkupAnnotation(rect, MarkupUnderline, quadPoints);
     }
 
-    static public PdfTextMarkupAnnotation createStrikeout(PdfDocument document, Rectangle rect, float quadPoints[]) {
-        return new PdfTextMarkupAnnotation(document, rect, MarkupStrikeout, quadPoints);
+    public static PdfTextMarkupAnnotation createStrikeout(Rectangle rect, float quadPoints[]) {
+        return new PdfTextMarkupAnnotation(rect, MarkupStrikeout, quadPoints);
     }
 
-    static public PdfTextMarkupAnnotation createSquiggly(PdfDocument document, Rectangle rect, float quadPoints[]) {
-        return new PdfTextMarkupAnnotation(document, rect, MarkupSquiggly, quadPoints);
+    public static PdfTextMarkupAnnotation createSquiggly(Rectangle rect, float quadPoints[]) {
+        return new PdfTextMarkupAnnotation(rect, MarkupSquiggly, quadPoints);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
         return getPdfObject().getAsName(PdfName.Subtype);
     }
 
-    private void setSubtype(PdfName subtype){
+    private void setSubtype(PdfName subtype) {
         put(PdfName.Subtype, subtype);
     }
 

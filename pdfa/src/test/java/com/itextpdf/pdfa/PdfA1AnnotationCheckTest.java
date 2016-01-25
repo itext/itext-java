@@ -39,7 +39,7 @@ public class PdfA1AnnotationCheckTest {
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);
-        PdfAnnotation annot = new PdfFileAttachmentAnnotation(doc, rect);
+        PdfAnnotation annot = new PdfFileAttachmentAnnotation(rect);
         page.addAnnotation(annot);
         doc.close();
     }
@@ -53,7 +53,7 @@ public class PdfA1AnnotationCheckTest {
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);
-        PdfMarkupAnnotation annot = new PdfTextAnnotation(doc, rect);
+        PdfMarkupAnnotation annot = new PdfTextAnnotation(rect);
         annot.setFlag(PdfAnnotation.Print);
         annot.setOpacity(new PdfNumber(0.5));
 
@@ -70,7 +70,7 @@ public class PdfA1AnnotationCheckTest {
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);
-        PdfMarkupAnnotation annot = new PdfTextAnnotation(doc, rect);
+        PdfMarkupAnnotation annot = new PdfTextAnnotation(rect);
         annot.setFlag(0);
 
         page.addAnnotation(annot);
@@ -86,7 +86,7 @@ public class PdfA1AnnotationCheckTest {
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);
-        PdfMarkupAnnotation annot = new PdfTextAnnotation(doc, rect);
+        PdfMarkupAnnotation annot = new PdfTextAnnotation(rect);
         annot.setFlag(PdfAnnotation.Print);
         annot.setFlag(PdfAnnotation.Invisible);
 
@@ -103,7 +103,7 @@ public class PdfA1AnnotationCheckTest {
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);
-        PdfAnnotation annot = new PdfWidgetAnnotation(doc, rect);
+        PdfAnnotation annot = new PdfWidgetAnnotation(rect);
         annot.setFlag(PdfAnnotation.Print);
 
         PdfStream s = new PdfStream("Hello World".getBytes());
@@ -123,7 +123,7 @@ public class PdfA1AnnotationCheckTest {
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);
-        PdfAnnotation annot = new PdfWidgetAnnotation(doc, rect);
+        PdfAnnotation annot = new PdfWidgetAnnotation(rect);
         annot.setFlag(PdfAnnotation.Print);
 
         annot.setNormalAppearance(new PdfDictionary());
@@ -141,7 +141,7 @@ public class PdfA1AnnotationCheckTest {
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);
-        PdfMarkupAnnotation annot = new PdfTextAnnotation(doc, rect);
+        PdfMarkupAnnotation annot = new PdfTextAnnotation(rect);
         annot.setFlags(PdfAnnotation.Print | PdfAnnotation.NoZoom | PdfAnnotation.NoRotate);
 
         page.addAnnotation(annot);
@@ -157,7 +157,7 @@ public class PdfA1AnnotationCheckTest {
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);
-        PdfAnnotation annot = new PdfStampAnnotation(doc, rect);
+        PdfAnnotation annot = new PdfStampAnnotation(rect);
         annot.setFlag(PdfAnnotation.Print);
 
         page.addAnnotation(annot);
@@ -175,7 +175,7 @@ public class PdfA1AnnotationCheckTest {
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 100, 100);
-        PdfAnnotation annot = new PdfStampAnnotation(doc, rect);
+        PdfAnnotation annot = new PdfStampAnnotation(rect);
         annot.setFlag(PdfAnnotation.Print);
         annot.setContents("Hello world");
 

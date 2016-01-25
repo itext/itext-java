@@ -3,7 +3,6 @@ package com.itextpdf.core.pdf.annot;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 
 public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
@@ -14,22 +13,22 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     public static final PdfName Polygon = PdfName.Polygon;
     public static final PdfName PolyLine = PdfName.PolyLine;
 
-    public PdfPolyGeomAnnotation(PdfDocument document, Rectangle rect, PdfName subtype, float vertices[]) {
-        super(document, rect);
+    public PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float vertices[]) {
+        super(rect);
         setSubtype(subtype);
         setVertices(vertices);
     }
 
-    public PdfPolyGeomAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfPolyGeomAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
-    static public PdfPolyGeomAnnotation createPolygon(PdfDocument document, Rectangle rect, float vertices[]) {
-        return new PdfPolyGeomAnnotation(document, rect, Polygon, vertices);
+    public static PdfPolyGeomAnnotation createPolygon(Rectangle rect, float vertices[]) {
+        return new PdfPolyGeomAnnotation(rect, Polygon, vertices);
     }
 
-    static public PdfPolyGeomAnnotation createPolyLine(PdfDocument document, Rectangle rect, float vertices[]) {
-        return new PdfPolyGeomAnnotation(document, rect, PolyLine, vertices);
+    public static PdfPolyGeomAnnotation createPolyLine(Rectangle rect, float vertices[]) {
+        return new PdfPolyGeomAnnotation(rect, PolyLine, vertices);
     }
 
     @Override

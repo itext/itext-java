@@ -6,7 +6,6 @@ import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDate;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
@@ -15,8 +14,8 @@ import java.util.List;
 
 public class PdfTrapNetworkAnnotation extends PdfAnnotation {
 
-    public PdfTrapNetworkAnnotation(PdfDocument document, Rectangle rect, PdfFormXObject appearanceStream) {
-        super(document, rect);
+    public PdfTrapNetworkAnnotation(Rectangle rect, PdfFormXObject appearanceStream) {
+        super(rect);
         if (appearanceStream.getProcessColorModel() == null) {
             throw new PdfException("Process color model must be set in appearance stream for Trap Network annotation!");
         }
@@ -24,8 +23,8 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
         setFlags(PdfAnnotation.Print | PdfAnnotation.ReadOnly);
     }
 
-    public PdfTrapNetworkAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfTrapNetworkAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     public PdfName getSubtype() {

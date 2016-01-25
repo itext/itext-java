@@ -1,6 +1,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
@@ -12,12 +13,12 @@ import com.itextpdf.forms.PdfSigFieldLockDictionary;
  */
 public class PdfSignatureFormField extends PdfFormField {
 
-    protected PdfSignatureFormField() {
-        super();
+    protected PdfSignatureFormField(PdfDocument pdfDocument) {
+        super(pdfDocument);
     }
 
-    protected PdfSignatureFormField(PdfWidgetAnnotation widget) {
-        super(widget);
+    protected PdfSignatureFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
+        super(widget, pdfDocument);
     }
 
     protected PdfSignatureFormField(PdfDictionary pdfObject) {

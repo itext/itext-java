@@ -766,7 +766,7 @@ public class PdfSigner {
             sigField.put(PdfName.AP, ap);
             sigField.setModified();
         } else {
-            PdfWidgetAnnotation widget = new PdfWidgetAnnotation(document, appearance.getPageRect());
+            PdfWidgetAnnotation widget = new PdfWidgetAnnotation(appearance.getPageRect());
             widget.setFlags(PdfAnnotation.Print | PdfAnnotation.Locked);
 
             PdfSignatureFormField sigField = PdfFormField.createSignature(document);

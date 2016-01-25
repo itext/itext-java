@@ -3,7 +3,6 @@ package com.itextpdf.core.pdf.annot;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfString;
 
@@ -16,13 +15,13 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     public static final int Centered = 1;
     public static final int RightJustified = 2;
 
-    public PdfFreeTextAnnotation(PdfDocument document, Rectangle rect, String appearanceString) {
-        super(document, rect);
+    public PdfFreeTextAnnotation(Rectangle rect, String appearanceString) {
+        super(rect);
         setDrawnAfter(new PdfString(appearanceString));
     }
 
-    public PdfFreeTextAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfFreeTextAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     @Override

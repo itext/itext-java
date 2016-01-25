@@ -53,7 +53,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * of text.
      */
     public static final int FF_MULTILINE = makeFieldFlag(13);
-    
+
     /**
      * Flag that designates, if set, that the field's contents must be obfuscated.
      */
@@ -70,17 +70,29 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static final int ALIGN_CENTER = 1;
     public static final int ALIGN_RIGHT = 2;
 
-    /** A field with the symbol check */
+    /**
+     * A field with the symbol check
+     */
     public static final int TYPE_CHECK = 1;
-    /** A field with the symbol circle */
+    /**
+     * A field with the symbol circle
+     */
     public static final int TYPE_CIRCLE = 2;
-    /** A field with the symbol cross */
+    /**
+     * A field with the symbol cross
+     */
     public static final int TYPE_CROSS = 3;
-    /** A field with the symbol diamond */
+    /**
+     * A field with the symbol diamond
+     */
     public static final int TYPE_DIAMOND = 4;
-    /** A field with the symbol square */
+    /**
+     * A field with the symbol square
+     */
     public static final int TYPE_SQUARE = 5;
-    /** A field with the symbol star */
+    /**
+     * A field with the symbol star
+     */
     public static final int TYPE_STAR = 6;
 
     public static final int HIDDEN = 1;
@@ -104,25 +116,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected Color borderColor;
 
     /**
-     * Creates a minimal {@link PdfFormField}.
-     */
-    protected PdfFormField() {
-        this(new PdfDictionary());
-        put(PdfName.FT, getFormType());
-    }
-
-    /**
-     * Creates a form field as a parent of a {@link PdfWidgetAnnotation}.
-     * @param widget the widget which will be a kid of the {@link PdfFormField}
-     */
-    protected PdfFormField(PdfWidgetAnnotation widget) {
-        this(new PdfDictionary());
-        addKid(widget);
-        put(PdfName.FT, getFormType());
-    }
-
-    /**
      * Creates a form field as a wrapper object around a {@link PdfDictionary}.
+     *
      * @param pdfObject the dictionary to be wrapped
      */
     public PdfFormField(PdfDictionary pdfObject) {
@@ -130,8 +125,29 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Creates a minimal {@link PdfFormField}.
+     */
+    protected PdfFormField(PdfDocument pdfDocument) {
+        this(new PdfDictionary().makeIndirect(pdfDocument));
+        put(PdfName.FT, getFormType());
+    }
+
+    /**
+     * Creates a form field as a parent of a {@link PdfWidgetAnnotation}.
+     *
+     * @param widget the widget which will be a kid of the {@link PdfFormField}
+     */
+    protected PdfFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
+        this(new PdfDictionary().makeIndirect(pdfDocument));
+        widget.makeIndirect(pdfDocument);
+        addKid(widget);
+        put(PdfName.FT, getFormType());
+    }
+
+    /**
      * Makes a field flag by bit position. Bit positions are numbered 1 to 32.
      * But position 0 corresponds to flag 1, position 3 corresponds to flag 4 etc.
+     *
      * @param bitPosition bit position of a flag in range 1 to 32 from the pdf specification.
      * @return corresponding field flag.
      */
@@ -142,27 +158,28 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates an empty form field without a predefined set of layout or
      * behavior.
+     *
      * @param doc the {@link PdfDocument} to create the field in
      * @return a new {@link PdfFormField}
      */
     public static PdfFormField createEmptyField(PdfDocument doc) {
-        PdfFormField field = new PdfFormField().makeIndirect(doc);
-        return field;
+        return new PdfFormField(doc);
     }
 
     /**
      * Creates an empty {@link PdfButtonFormField button form field} with custom
      * behavior and layout, on a specified location.
-     * @param doc the {@link PdfDocument} to create the button field in
-     * @param rect the location on the page for the button
+     *
+     * @param doc   the {@link PdfDocument} to create the button field in
+     * @param rect  the location on the page for the button
      * @param flags an <code>int</code>, containing a set of binary behavioral
-     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
-     *     flags you require.
+     *              flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *              flags you require.
      * @return a new {@link PdfButtonFormField}
      */
     public static PdfButtonFormField createButton(PdfDocument doc, Rectangle rect, int flags) {
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfButtonFormField field = new PdfButtonFormField(annot).makeIndirect(doc);
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        PdfButtonFormField field = new PdfButtonFormField(annot, doc);
         field.setFieldFlags(flags);
         return field;
     }
@@ -170,53 +187,55 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates an empty {@link PdfButtonFormField button form field} with custom
      * behavior and layout.
-     * @param doc the {@link PdfDocument} to create the button field in
+     *
+     * @param doc   the {@link PdfDocument} to create the button field in
      * @param flags an <code>int</code>, containing a set of binary behavioral
-     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
-     *     flags you require.
+     *              flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *              flags you require.
      * @return a new {@link PdfButtonFormField}
      */
     public static PdfButtonFormField createButton(PdfDocument doc, int flags) {
-        PdfButtonFormField field = new PdfButtonFormField().makeIndirect(doc);
+        PdfButtonFormField field = new PdfButtonFormField(doc);
         field.setFieldFlags(flags);
         return field;
     }
 
     /**
      * Creates an empty {@link PdfTextFormField text form field}.
+     *
      * @param doc the {@link PdfDocument} to create the text field in
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc) {
-        return new PdfTextFormField().makeIndirect(doc);
+        return new PdfTextFormField(doc);
     }
 
     /**
      * Creates an empty {@link PdfTextFormField text form field}.
-     * @param doc the {@link PdfDocument} to create the text field in
+     *
+     * @param doc  the {@link PdfDocument} to create the text field in
      * @param rect the location on the page for the text field
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect) {
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfTextFormField field = new PdfTextFormField(annot).makeIndirect(doc);
-
-        return field;
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        return new PdfTextFormField(annot, doc);
 
     }
 
     /**
      * Creates a named {@link PdfTextFormField text form field} with an initial
-     *     value, and the form's default font specified in
-     *     {@link PdfAcroform#getDefaultResources}.
-     * @param doc the {@link PdfDocument} to create the text field in
-     * @param rect the location on the page for the text field
+     * value, and the form's default font specified in
+     * {@link com.itextpdf.forms.PdfAcroForm#getDefaultResources}.
+     *
+     * @param doc   the {@link PdfDocument} to create the text field in
+     * @param rect  the location on the page for the text field
      * @param value the initial value
-     * @param name the name of the form field
+     * @param name  the name of the form field
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String value, String name) {
-        try{
+        try {
             return createText(doc, rect, PdfFont.getDefaultFont(), DEFAULT_FONT_SIZE, value, name);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
@@ -225,18 +244,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a named {@link PdfTextFormField text form field} with an initial
-     *     value, with a specified font and font size.
-     * @param doc the {@link PdfDocument} to create the text field in
-     * @param rect the location on the page for the text field
-     * @param font a {@link PdfFont}
+     * value, with a specified font and font size.
+     *
+     * @param doc      the {@link PdfDocument} to create the text field in
+     * @param rect     the location on the page for the text field
+     * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
-     * @param value the initial value
-     * @param name the name of the form field
+     * @param value    the initial value
+     * @param name     the name of the form field
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, PdfFont font, int fontSize, String value, String name) {
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfTextFormField field = new PdfTextFormField(annot).makeIndirect(doc);
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        PdfTextFormField field = new PdfTextFormField(annot, doc);
         field.setValue(value);
         field.setFieldName(name);
 
@@ -249,14 +269,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates an empty {@link PdfChoiceFormField choice form field}.
-     * @param doc the {@link PdfDocument} to create the choice field in
+     *
+     * @param doc   the {@link PdfDocument} to create the choice field in
      * @param flags an <code>int</code>, containing a set of binary behavioral
-     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
-     *     flags you require.
+     *              flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *              flags you require.
      * @return a new {@link PdfChoiceFormField}
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, int flags) {
-        PdfChoiceFormField field = new PdfChoiceFormField().makeIndirect(doc);
+        PdfChoiceFormField field = new PdfChoiceFormField(doc);
         field.setFieldFlags(flags);
         return field;
     }
@@ -264,16 +285,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates an empty {@link PdfChoiceFormField choice form field} with custom
      * behavior and layout, on a specified location.
-     * @param doc the {@link PdfDocument} to create the choice field in
-     * @param rect the location on the page for the choice field
+     *
+     * @param doc   the {@link PdfDocument} to create the choice field in
+     * @param rect  the location on the page for the choice field
      * @param flags an <code>int</code>, containing a set of binary behavioral
-     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
-     *     flags you require.
+     *              flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *              flags you require.
      * @return a new {@link PdfChoiceFormField}
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, int flags) {
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfChoiceFormField field = new PdfChoiceFormField(annot).makeIndirect(doc);
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        PdfChoiceFormField field = new PdfChoiceFormField(annot, doc);
         field.setFieldFlags(flags);
         return field;
     }
@@ -281,45 +303,47 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a {@link PdfChoiceFormField choice form field} with custom
      * behavior and layout, on a specified location.
-     * @param doc the {@link PdfDocument} to create the choice field in
-     * @param rect the location on the page for the choice field
+     *
+     * @param doc     the {@link PdfDocument} to create the choice field in
+     * @param rect    the location on the page for the choice field
      * @param options an array of {@link PdfString} objects that each represent
-     *     the 'on' state of one of the choices.
-     * @param value the initial value
-     * @param name the name of the form field
-     * @param flags an <code>int</code>, containing a set of binary behavioral
-     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
-     *     flags you require.
+     *                the 'on' state of one of the choices.
+     * @param value   the initial value
+     * @param name    the name of the form field
+     * @param flags   an <code>int</code>, containing a set of binary behavioral
+     *                flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *                flags you require.
      * @return a new {@link PdfChoiceFormField}
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, int flags) {
-        try{
+        try {
             return createChoice(doc, rect, options, value, name, PdfFont.getDefaultFont(), DEFAULT_FONT_SIZE, flags);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
     }
 
-    
+
     /**
      * Creates a {@link PdfChoiceFormField choice form field} with custom
      * behavior and layout, on a specified location.
-     * @param doc the {@link PdfDocument} to create the choice field in
-     * @param rect the location on the page for the choice field
-     * @param options an array of {@link PdfString} objects that each represent
-     *     the 'on' state of one of the choices.
-     * @param value the initial value
-     * @param name the name of the form field
-     * @param font a {@link PdfFont}
+     *
+     * @param doc      the {@link PdfDocument} to create the choice field in
+     * @param rect     the location on the page for the choice field
+     * @param options  an array of {@link PdfString} objects that each represent
+     *                 the 'on' state of one of the choices.
+     * @param value    the initial value
+     * @param name     the name of the form field
+     * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
-     * @param flags an <code>int</code>, containing a set of binary behavioral
-     *     flags. Do binary <code>OR</code> on this <code>int</code> to set the
-     *     flags you require.
+     * @param flags    an <code>int</code>, containing a set of binary behavioral
+     *                 flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *                 flags you require.
      * @return a new {@link PdfChoiceFormField}
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, PdfFont font, int fontSize, int flags) {
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfChoiceFormField field = new PdfChoiceFormField(annot).makeIndirect(doc);
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        PdfChoiceFormField field = new PdfChoiceFormField(annot, doc);
         field.put(PdfName.Opt, options);
         field.setFieldFlags(flags);
         field.setFieldName(name);
@@ -334,29 +358,32 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates an empty {@link PdfSignatureFormField signature form field}.
+     *
      * @param doc the {@link PdfDocument} to create the signature field in
      * @return a new {@link PdfSignatureFormField}
      */
     public static PdfSignatureFormField createSignature(PdfDocument doc) {
-        return new PdfSignatureFormField().makeIndirect(doc);
+        return new PdfSignatureFormField(doc);
     }
 
     /**
      * Creates an empty {@link PdfSignatureFormField signature form field}.
-     * @param doc the {@link PdfDocument} to create the signature field in
+     *
+     * @param doc  the {@link PdfDocument} to create the signature field in
      * @param rect the location on the page for the signature field
      * @return a new {@link PdfSignatureFormField}
      */
     public static PdfSignatureFormField createSignature(PdfDocument doc, Rectangle rect) {
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        return new PdfSignatureFormField(annot).makeIndirect(doc);
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        return new PdfSignatureFormField(annot, doc);
     }
 
     /**
      * Creates a {@link PdfButtonFormField radio group form field}.
-     * @param doc the {@link PdfDocument} to create the radio group in
+     *
+     * @param doc   the {@link PdfDocument} to create the radio group in
      * @param value the initial value
-     * @param name the name of the form field
+     * @param name  the name of the form field
      * @return a new {@link PdfButtonFormField radio group}
      */
     public static PdfButtonFormField createRadioGroup(PdfDocument doc, String value, String name) {
@@ -366,19 +393,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return radio;
     }
 
-    
+
     /**
      * Creates a generic {@link PdfFormField} that is added to a radio group.
-     * @see #createRadioGroup(com.itextpdf.core.pdf.PdfDocument, java.lang.String, java.lang.String) 
-     * @param doc the {@link PdfDocument} to create the radio group in
-     * @param rect the location on the page for the field
+     *
+     * @param doc        the {@link PdfDocument} to create the radio group in
+     * @param rect       the location on the page for the field
      * @param radioGroup the radio button group that this field should belong to
-     * @param value the initial value
+     * @param value      the initial value
      * @return a new {@link PdfFormField}
+     * @see #createRadioGroup(com.itextpdf.core.pdf.PdfDocument, java.lang.String, java.lang.String)
      */
     public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value) {
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfFormField radio = new PdfFormField(annot).makeIndirect(doc);
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        PdfFormField radio = new PdfFormField(annot, doc);
         String name = radioGroup.getValue().toString().substring(1);
         if (name.equals(value)) {
             annot.setAppearanceState(new PdfName(value));
@@ -392,9 +420,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a {@link PdfButtonFormField} as a push button without data.
-     * @param doc the {@link PdfDocument} to create the radio group in
-     * @param rect the location on the page for the field
-     * @param name the name of the form field
+     *
+     * @param doc     the {@link PdfDocument} to create the radio group in
+     * @param rect    the location on the page for the field
+     * @param name    the name of the form field
      * @param caption the text to display on the button
      * @return a new {@link PdfButtonFormField}
      */
@@ -411,17 +440,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a {@link PdfButtonFormField} as a push button without data, with
      * its caption in a custom font.
-     * @param doc the {@link PdfDocument} to create the radio group in
-     * @param rect the location on the page for the field
-     * @param name the name of the form field
-     * @param caption the text to display on the button
-     * @param font a {@link PdfFont}
+     *
+     * @param doc      the {@link PdfDocument} to create the radio group in
+     * @param rect     the location on the page for the field
+     * @param name     the name of the form field
+     * @param caption  the text to display on the button
+     * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
      * @return a new {@link PdfButtonFormField}
      */
     public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption, PdfFont font, int fontSize) {
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfButtonFormField field = new PdfButtonFormField(annot).makeIndirect(doc);
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        PdfButtonFormField field = new PdfButtonFormField(annot, doc);
         field.setPushButton(true);
         field.setFieldName(name);
 
@@ -433,10 +463,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a {@link PdfButtonFormField} as a checkbox.
-     * @param doc the {@link PdfDocument} to create the radio group in
-     * @param rect the location on the page for the field
+     *
+     * @param doc   the {@link PdfDocument} to create the radio group in
+     * @param rect  the location on the page for the field
      * @param value the initial value
-     * @param name the name of the form field
+     * @param name  the name of the form field
      * @return a new {@link PdfButtonFormField checkbox}
      */
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String value, String name) {
@@ -445,16 +476,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a {@link PdfButtonFormField} as a checkbox.
-     * @param doc the {@link PdfDocument} to create the radio group in
-     * @param rect the location on the page for the field
-     * @param value the initial value
-     * @param name the name of the form field
-     * @param checkType the type of checkbox graphic to use. 
+     *
+     * @param doc       the {@link PdfDocument} to create the radio group in
+     * @param rect      the location on the page for the field
+     * @param value     the initial value
+     * @param name      the name of the form field
+     * @param checkType the type of checkbox graphic to use.
      * @return a new {@link PdfButtonFormField checkbox}
      */
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String value, String name, int checkType) {
-        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(doc, rect);
-        PdfFormField check = new PdfButtonFormField(annot).makeIndirect(doc);
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        PdfFormField check = new PdfButtonFormField(annot, doc);
         check.setCheckType(checkType);
         check.setFieldName(name);
         check.setValue(value);
@@ -467,12 +499,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a {@link PdfChoiceFormField combobox} with custom
      * behavior and layout, on a specified location.
-     * @param doc the {@link PdfDocument} to create the combobox in
-     * @param rect the location on the page for the combobox
+     *
+     * @param doc     the {@link PdfDocument} to create the combobox in
+     * @param rect    the location on the page for the combobox
      * @param options a two-dimensional array of Strings which will be converted
-     *     to a PdfArray.
-     * @param value the initial value
-     * @param name the name of the form field
+     *                to a PdfArray.
+     * @param value   the initial value
+     * @param name    the name of the form field
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
     public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[][], String value, String name) {
@@ -482,11 +515,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a {@link PdfChoiceFormField combobox} with custom
      * behavior and layout, on a specified location.
-     * @param doc the {@link PdfDocument} to create the combobox in
-     * @param rect the location on the page for the combobox
+     *
+     * @param doc     the {@link PdfDocument} to create the combobox in
+     * @param rect    the location on the page for the combobox
      * @param options an array of Strings which will be converted to a PdfArray.
-     * @param value the initial value
-     * @param name the name of the form field
+     * @param value   the initial value
+     * @param name    the name of the form field
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
     public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[], String value, String name) {
@@ -496,12 +530,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a {@link PdfChoiceFormField list field} with custom
      * behavior and layout, on a specified location.
-     * @param doc the {@link PdfDocument} to create the choice field in
-     * @param rect the location on the page for the choice field
+     *
+     * @param doc     the {@link PdfDocument} to create the choice field in
+     * @param rect    the location on the page for the choice field
      * @param options a two-dimensional array of Strings which will be converted
-     *     to a PdfArray.
-     * @param value the initial value
-     * @param name the name of the form field
+     *                to a PdfArray.
+     * @param value   the initial value
+     * @param name    the name of the form field
      * @return a new {@link PdfChoiceFormField} as a list field
      */
     public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[][], String value, String name) {
@@ -515,11 +550,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a {@link PdfChoiceFormField list field} with custom
      * behavior and layout, on a specified location.
-     * @param doc the {@link PdfDocument} to create the list field in
-     * @param rect the location on the page for the list field
+     *
+     * @param doc     the {@link PdfDocument} to create the list field in
+     * @param rect    the location on the page for the list field
      * @param options an array of Strings which will be converted to a PdfArray.
-     * @param value the initial value
-     * @param name the name of the form field
+     * @param value   the initial value
+     * @param name    the name of the form field
      * @return a new {@link PdfChoiceFormField} as a list field
      */
     public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[], String value, String name) {
@@ -533,13 +569,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a (subtype of) {@link PdfFormField} object. The type of the object
      * depends on the <code>FT</code> entry in the <code>pdfObject</code> parameter.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>       an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param pdfObject assumed to be either a {@link PdfDictionary}, or a
-     *     {@link PdfIndirectReference} to a {@link PdfDictionary}
-     * @param document the {@link PdfDocument} to create the field in
+     *                  {@link PdfIndirectReference} to a {@link PdfDictionary}
+     * @param document  the {@link PdfDocument} to create the field in
      * @return a new {@link PdfFormField}, or <code>null</code> if
-     *     <code>pdfObject</code> does not contain a <code>FT</code> entry
+     * <code>pdfObject</code> does not contain a <code>FT</code> entry
      */
     public static <T extends PdfFormField> T makeFormField(PdfObject pdfObject, PdfDocument document) {
         T field = null;
@@ -566,7 +602,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Returns the type of the <p>Parent</p> form field, or of the wrapped
      * &lt;PdfDictionary&gt; object.
-     * 
+     *
      * @return the form type, as a {@link PdfName}
      */
     public PdfName getFormType() {
@@ -575,7 +611,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets a value to the field and generating field appearance if needed.
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param value of the field
      * @return the field
      */
@@ -599,8 +636,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets a value to the field and generating field appearance if needed.
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
-     * @param value of the field
+     *
+     * @param <T>                an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param value              of the field
      * @param generateAppearance set this flat to false if you want to keep the appearance of the field generated before
      * @return the field
      */
@@ -609,15 +647,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
             put(PdfName.V, new PdfString(value));
         } else if (PdfName.Btn.equals(formType)) {
-             if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
-                 try{
-                     img = ImageFactory.getImage(Base64.decode(value));
-                 } catch (Exception e) {
-                     text = value;
-                 }
-             } else {
-                 put(PdfName.V, new PdfName(value));
-             }
+            if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
+                try {
+                    img = ImageFactory.getImage(Base64.decode(value));
+                } catch (Exception e) {
+                    text = value;
+                }
+            } else {
+                put(PdfName.V, new PdfName(value));
+            }
         } else {
             put(PdfName.V, new PdfString(value));
         }
@@ -634,9 +672,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Set text field value with given font and size
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
-     * @param value text value
-     * @param font a {@link PdfFont}
+     *
+     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param value    text value
+     * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
      * @return the edited field
      */
@@ -673,13 +712,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the field value and the display string. The display string
      * is used to build the appearance.
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
-     * @param value the field value
+     *
+     * @param <T>     an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param value   the field value
      * @param display the string that is used for the appearance. If <CODE>null</CODE>
-     * the <CODE>value</CODE> parameter will be used
+     *                the <CODE>value</CODE> parameter will be used
      * @return the edited field
      */
-    public <T extends PdfFormField> T setValue (String value, String display) {
+    public <T extends PdfFormField> T setValue(String value, String display) {
         if (display == null) {
             return setValue(value);
         }
@@ -702,8 +742,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets a parent {@link PdfFormField} for the current object.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>    an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param parent another form field that this field belongs to, usually a group field
      * @return the edited field
      */
@@ -713,7 +753,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the parent dictionary.
-     * 
+     *
      * @return another form field that this field belongs to, usually a group field
      */
     public PdfDictionary getParent() {
@@ -722,7 +762,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the kids of this object.
-     * 
+     *
      * @return contents of the dictionary's <code>Kids</code> property, as a {@link PdfArray}
      */
     public PdfArray getKids() {
@@ -732,7 +772,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Adds a new kid to the <code>Kids</code> array property from a
      * {@link PdfFormField}. Also sets the kid's <code>Parent</code> property to this object.
-     * 
+     *
      * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param kid a new {@link PdfFormField} entry for the field's <code>Kids</code> array property
      * @return the edited field
@@ -755,7 +795,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Adds a new kid to the <code>Kids</code> array property from a
      * {@link PdfWidgetAnnotation}. Also sets the kid's <code>Parent</code> property to this object.
-     * 
+     *
      * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param kid a new {@link PdfWidgetAnnotation} entry for the field's <code>Kids</code> array property
      * @return the edited field
@@ -772,8 +812,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Changes the name of the field to the specified value.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>  an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param name the new field name, as a String
      * @return the edited field
      */
@@ -783,6 +823,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the current field name.
+     *
      * @return the current field name, as a {@link PdfString}
      */
     public PdfString getFieldName() {
@@ -792,8 +833,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Changes the alternate name of the field to the specified value. The
      * alternate is a descriptive name to be used by status messages etc.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>  an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param name the new alternate name, as a String
      * @return the edited field
      */
@@ -804,6 +845,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the current alternate name. The alternate is a descriptive name to
      * be used by status messages etc.
+     *
      * @return the current alternate name, as a {@link PdfString}
      */
     public PdfString getAlternativeName() {
@@ -813,8 +855,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Changes the mapping name of the field to the specified value. The
      * mapping name can be used when exporting the form data in the document.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>  an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param name the new alternate name, as a String
      * @return the edited field
      */
@@ -825,6 +867,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the current mapping name. The mapping name can be used when
      * exporting the form data in the document.
+     *
      * @return the current mapping name, as a {@link PdfString}
      */
     public PdfString getMappingName() {
@@ -834,7 +877,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Checks whether a certain flag, or any of a combination of flags, is set
      * for this form field.
-     * 
+     *
      * @param flag an <code>int</code> interpreted as a series of a binary flags
      * @return true if any of the flags specified in the parameter is also set
      * in the form field.
@@ -848,8 +891,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * intended to be used one flag at a time, but this is not technically
      * enforced. To <em>replace</em> the current value, use
      * {@link #setFieldFlags(int)}.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>  an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param flag an <code>int</code> interpreted as a series of a binary flags
      * @return the edited field
      */
@@ -862,11 +905,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * method is intended to be used one flag at a time, but this is not
      * technically enforced. To <em>replace</em> the current value, use
      * {@link #setFieldFlags(int)}.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
-     * @param flag an <code>int</code> interpreted as a series of a binary flags
+     *
+     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param flag  an <code>int</code> interpreted as a series of a binary flags
      * @param value if <code>true</code>, adds the flag(s). if <code>false</code>,
-     *     removes the flag(s).
+     *              removes the flag(s).
      * @return the edited field
      */
     public <T extends PdfFormField> T setFieldFlag(int flag, boolean value) {
@@ -883,6 +926,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * If true, the field can contain multiple lines of text; if false, the field’s text is restricted to a single line.
+     *
      * @return whether the field can span over multiple lines.
      */
     public boolean isMultiline() {
@@ -892,6 +936,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * If true, the field is intended for entering a secure password that should not be echoed visibly to the screen.
      * Characters typed from the keyboard should instead be echoed in some unreadable form, such as asterisks or bullet characters.
+     *
      * @return whether or not the contents of the field must be obfuscated
      */
     public boolean isPassword() {
@@ -902,8 +947,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Sets a flag, or combination of flags, for the form field. This method
      * <em>replaces</em> the previous value. Compare with {@link #setFieldFlag(int)}
      * which <em>adds</em> a flag to the existing flags.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param flags an <code>int</code> interpreted as a series of a binary flags
      * @return the edited field
      */
@@ -913,6 +958,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the current list of PDF form field flags.
+     *
      * @return the current list of flags, encoded as an <code>int</code>
      */
     public int getFieldFlags() {
@@ -931,6 +977,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the current value contained in the form field.
+     *
      * @return the current value, as a {@link PdfObject}
      */
     public PdfObject getValue() {
@@ -939,6 +986,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the current value contained in the form field.
+     *
      * @return the current value, as a {@link String}
      */
     public String getValueAsString() {
@@ -946,7 +994,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (value == null) {
             return "";
         } else if (value instanceof PdfStream) {
-            return new String(((PdfStream)value).getBytes());
+            return new String(((PdfStream) value).getBytes());
         } else if (value instanceof PdfName) {
             return ((PdfName) value).getValue();
         } else if (value instanceof PdfString) {
@@ -958,8 +1006,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the default fallback value for the form field.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param value the default value
      * @return the edited field
      */
@@ -969,6 +1017,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the default fallback value for the form field.
+     *
      * @return the default value
      */
     public PdfObject getDefaultValue() {
@@ -977,9 +1026,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets an additional action for the form field.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
-     * @param key the dictionary key to use for storing the action
+     *
+     * @param <T>    an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param key    the dictionary key to use for storing the action
      * @param action the action
      * @return the edited field
      */
@@ -990,6 +1039,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the currently additional action dictionary for the form field.
+     *
      * @return the additional action dictionary
      */
     public PdfDictionary getAdditionalAction() {
@@ -998,10 +1048,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets options for the form field. Only to be used for checkboxes and radio buttons.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>     an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param options an array of {@link PdfString} objects that each represent
-     *     the 'on' state of one of the choices.
+     *                the 'on' state of one of the choices.
      * @return the edited field
      */
     public <T extends PdfFormField> T setOptions(PdfArray options) {
@@ -1011,6 +1061,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets options for the form field. Should only return usable values for
      * checkboxes and radio buttons.
+     *
      * @return the options, as an {@link PdfArray} of {@link PdfString} objects
      */
     public PdfArray getOptions() {
@@ -1020,7 +1071,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets all {@link PdfWidgetAnnotation} that this form field and its
      * {@link #getKids() kids} refer to.
-     * 
+     *
      * @return a list of {@link PdfWidgetAnnotation}
      */
     public List<PdfWidgetAnnotation> getWidgets() {
@@ -1028,8 +1079,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfName subType = getPdfObject().getAsName(PdfName.Subtype);
         if (subType != null && subType.equals(PdfName.Widget)) {
-            PdfAnnotation widget = PdfAnnotation.makeAnnotation(getPdfObject(), getDocument()); //TODO what?
-            widgets.add((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(getPdfObject(), getDocument()));
+            widgets.add((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(getPdfObject()));
         }
 
         PdfArray kids = getKids();
@@ -1040,7 +1090,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
                 subType = ((PdfDictionary) kid).getAsName(PdfName.Subtype);
                 if (subType != null && subType.equals(PdfName.Widget)) {
-                    widgets.add((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(kid, getDocument()));
+                    widgets.add((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(kid));
                 }
             }
         }
@@ -1051,6 +1101,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets default appearance string containing a sequence of valid page-content graphics or text state operators that
      * define such properties as the field’s text size and color.
+     *
      * @return the default appearance graphics, as a {@link PdfString}
      */
     public PdfString getDefaultAppearance() {
@@ -1060,8 +1111,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets default appearance string containing a sequence of valid page-content graphics or text state operators that
      * define such properties as the field’s text size and color.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>               an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param defaultAppearance a valid sequence of PDF content stream syntax
      * @return the edited field
      */
@@ -1081,6 +1132,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * 0 Left-justified
      * 1 Centered
      * 2 Right-justified
+     *
      * @return the current justification attribute
      */
     public Integer getJustification() {
@@ -1092,7 +1144,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * 0 Left-justified
      * 1 Centered
      * 2 Right-justified
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>           an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param justification the value to set the justification attribute to
      * @return the edited field
      */
@@ -1103,6 +1156,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets a default style string, as described in "Rich Text Strings" section of Pdf spec.
+     *
      * @return the default style, as a {@link PdfString}
      */
     public PdfString getDefaultStyle() {
@@ -1111,8 +1165,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets a default style string, as described in "Rich Text Strings" section of Pdf spec.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>                an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param defaultStyleString a new default style for the form field
      * @return the edited field
      */
@@ -1124,6 +1178,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets a rich text string, as described in "Rich Text Strings" section of Pdf spec.
      * May be either {@link PdfStream} or {@link PdfString}.
+     *
      * @return the current rich text value
      */
     public PdfObject getRichText() {
@@ -1133,8 +1188,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets a rich text string, as described in "Rich Text Strings" section of Pdf spec.
      * May be either {@link PdfStream} or {@link PdfString}.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param richText a new rich text value
      * @return the edited field
      */
@@ -1145,11 +1200,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Draws the visual appearance of text in a form field.
-     * 
-     * @param rect the location on the page for the list field
-     * @param font a {@link PdfFont}
+     *
+     * @param rect     the location on the page for the list field
+     * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
-     * @param value the initial value
+     * @param value    the initial value
      * @return the {@link PdfFormXObject Form XObject} that was drawn
      */
     public PdfFormXObject drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
@@ -1193,14 +1248,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return xObject;
     }
 
-    
+
     /**
      * Draws the visual appearance of multiline text in a form field.
-     * 
-     * @param rect the location on the page for the list field
-     * @param font a {@link PdfFont}
+     *
+     * @param rect     the location on the page for the list field
+     * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
-     * @param value the initial value
+     * @param value    the initial value
      * @return the {@link PdfFormXObject Form XObject} that was drawn
      */
     public PdfFormXObject drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
@@ -1257,9 +1312,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Draws a border using the borderWidth and borderColor of the form field.
-     * 
+     *
      * @param canvas the {@link PdfCanvas} on which to draw
-     * @param width the width of the rectangle to draw
+     * @param width  the width of the rectangle to draw
      * @param height the height of the rectangle to draw
      */
     public void drawBorder(PdfCanvas canvas, float width, float height) {
@@ -1291,9 +1346,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Draws the appearance of a radio button with a specified value.
-     * @param width the width of the radio button to draw
+     *
+     * @param width  the width of the radio button to draw
      * @param height the height of the radio button to draw
-     * @param value the value of the button
+     * @param value  the value of the button
      */
     public void drawRadioAppearance(float width, float height, String value) {
         PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
@@ -1319,10 +1375,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Draws a radio button.
+     *
      * @param canvas the {@link PdfCanvas} on which to draw
-     * @param width the width of the radio button to draw
+     * @param width  the width of the radio button to draw
      * @param height the height of the radio button to draw
-     * @param on required to be <code>true</code> for fulfilling the drawing operation
+     * @param on     required to be <code>true</code> for fulfilling the drawing operation
      */
     public void drawRadioField(PdfCanvas canvas, final float x, final float y, final float width, final float height, final boolean on) {
         canvas.saveState();
@@ -1337,10 +1394,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Draws the appearance of a checkbox with a specified state value.
-     * 
-     * @param width the width of the checkbox to draw
+     *
+     * @param width  the width of the checkbox to draw
      * @param height the height of the checkbox to draw
-     * @param value the state of the form field that will be drawn
+     * @param value  the state of the form field that will be drawn
      */
     public void drawCheckAppearance(float width, float height, String value) {
         PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
@@ -1366,14 +1423,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         xObjectOff.getResources().addFont(getDocument(), getFont());
         widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
     }
-    
+
     /**
      * Draws the appearance for a push button.
-     * 
-     * @param width the width of the pushbutton
-     * @param height the width of the pushbutton
-     * @param text the text to display on the button
-     * @param font a {@link PdfFont}
+     *
+     * @param width    the width of the pushbutton
+     * @param height   the width of the pushbutton
+     * @param text     the text to display on the button
+     * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
      * @return a new {@link PdfFormXObject}
      */
@@ -1399,14 +1456,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Performs the low-level drawing operations to draw a button object.
-     * 
-     * @param canvas the {@link PdfCanvas} of the page to draw on.
-     * @param x the x coordinate of the lower left corner of the button rectangle
-     * @param y the y coordinate of the lower left corner of the button rectangle
-     * @param width the width of the button
-     * @param height the width of the button
-     * @param text the text to display on the button
-     * @param font a {@link PdfFont}
+     *
+     * @param canvas   the {@link PdfCanvas} of the page to draw on.
+     * @param x        the x coordinate of the lower left corner of the button rectangle
+     * @param y        the y coordinate of the lower left corner of the button rectangle
+     * @param width    the width of the button
+     * @param height   the width of the button
+     * @param text     the text to display on the button
+     * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
      */
     public void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font, int fontSize) {
@@ -1450,12 +1507,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Performs the low-level drawing operations to draw a checkbox object.
-     * 
-     * @param canvas the {@link PdfCanvas} of the page to draw on.
-     * @param width the width of the button
-     * @param height the width of the button
+     *
+     * @param canvas   the {@link PdfCanvas} of the page to draw on.
+     * @param width    the width of the button
+     * @param height   the width of the button
      * @param fontSize a positive integer
-     * @param on the boolean value of the checkbox
+     * @param on       the boolean value of the checkbox
      */
     public void drawCheckBox(PdfCanvas canvas, float width, float height, int fontSize, boolean on) {
         if (!on) {
@@ -1463,7 +1520,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         PdfFont ufont = getFont();
         // PdfFont gets all width in 1000 normalized units
-        float sizeCoef = (float)fontSize / FontProgram.UNITS_NORMALIZATION;
+        float sizeCoef = (float) fontSize / FontProgram.UNITS_NORMALIZATION;
         canvas.
                 beginText().
                 setFontAndSize(ufont, fontSize).
@@ -1475,6 +1532,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the current font of the form field.
+     *
      * @return the current {@link PdfFont font}
      */
     public PdfFont getFont() {
@@ -1484,6 +1542,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Basic setter for the <code>font</code> property. Regenerates the field
      * appearance after setting the new value.
+     *
      * @param font the new font to be set
      */
     public void setFont(PdfFont font) {
@@ -1494,6 +1553,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Basic setter for the <code>fontSize</code> property. Regenerates the
      * field appearance after setting the new value.
+     *
      * @param fontSize the new font size to be set
      */
     public void setFontSize(int fontSize) {
@@ -1504,7 +1564,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Combined setter for the <code>font</code> and <code>fontSize</code>
      * properties. Regenerates the field appearance after setting the new value.
-     * @param font the new font to be set
+     *
+     * @param font     the new font to be set
      * @param fontSize the new font size to be set
      */
     public void setFontAndSize(PdfFont font, int fontSize) {
@@ -1516,6 +1577,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Basic setter for the <code>backgroundColor</code> property. Regenerates
      * the field appearance after setting the new value.
+     *
      * @param backgroundColor the new font to be set
      */
     public void setBackgroundColor(Color backgroundColor) {
@@ -1525,8 +1587,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the action on all {@link PdfWidgetAnnotation widgets} of this form field.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>    an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param action the action
      * @return the edited field
      */
@@ -1542,7 +1604,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Changes the type of graphical marker used to mark a checkbox as 'on'.
-     * 
+     *
      * @param checkType the new checkbox marker
      */
     public void setCheckType(int checkType) {
@@ -1553,14 +1615,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         text = typeChars[checkType - 1];
         try {
             font = PdfFont.createStandardFont(FontConstants.ZAPFDINGBATS);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
     }
 
     /**
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param <T>        an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param visibility
      * @return the edited field
      */
@@ -1585,6 +1646,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * This method regenerates appearance stream of the field. Use it if you
      * changed any field parameters and didn't use setValue method which
      * generates appearance by itself.
+     *
      * @return whether or not the regeneration was successful.
      */
     public boolean regenerateField() {
@@ -1592,7 +1654,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         String value = getValueAsString();
 
         if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {
-            try{
+            try {
                 PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
                 PdfStream asNormal = null;
                 if (apDic != null) {
@@ -1610,7 +1672,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Object[] fontAndSize = getFontAndSize(asNormal);
                 PdfFont localFont = (PdfFont) fontAndSize[0];
                 int fontSz = (int) fontAndSize[1];
-                if (fontSz == 0){
+                if (fontSz == 0) {
                     fontSz = DEFAULT_FONT_SIZE;
                 }
 
@@ -1698,7 +1760,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the border width for the field.
-     * 
+     *
      * @return the current border width.
      */
     public float getBorderWidth() {
@@ -1707,7 +1769,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the border width for the field.
-     * 
+     *
      * @param borderWidth the new border width.
      */
     public void setBorderWidth(float borderWidth) {
@@ -1716,8 +1778,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the Border Color.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param color the new value for the Border Color
      * @return the edited field
      */
@@ -1727,11 +1789,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
-    
+
     /**
      * Sets the ReadOnly flag, specifying whether or not the field can be changed.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param readOnly if <code>true</code>, then the field cannot be changed.
      * @return the edited field
      */
@@ -1741,6 +1803,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the ReadOnly flag, specifying whether or not the field can be changed.
+     *
      * @return <code>true</code> if the field cannot be changed.
      */
     public boolean isReadOnly() {
@@ -1749,8 +1812,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the Required flag, specifying whether or not the field must be filled in.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param required if <code>true</code>, then the field must be filled in.
      * @return the edited field
      */
@@ -1760,6 +1823,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the Required flag, specifying whether or not the field must be filled in.
+     *
      * @return <code>true</code> if the field must be filled in.
      */
     public boolean isRequired() {
@@ -1768,8 +1832,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the NoExport flag, specifying whether or not exporting is forbidden.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param noExport if <code>true</code>, then exporting is <em>forbidden</em>
      * @return the edited field
      */
@@ -1779,7 +1843,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the NoExport attribute.
-     * 
+     *
      * @return whether exporting the value following a form action is forbidden.
      */
     public boolean isNoExport() {
@@ -1788,12 +1852,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Specifies on which page the form field's widget must be shown.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
+     *
+     * @param <T>     an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param pageNum the page number
      * @return the edited field
      */
-    public <T extends PdfFormField> T setPage(int pageNum){
+    public <T extends PdfFormField> T setPage(int pageNum) {
         if (!getWidgets().isEmpty()) {
             PdfAnnotation annot = getWidgets().get(0);
             if (annot != null) {
@@ -1805,7 +1869,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the appearance state names.
-     * 
+     *
      * @return an array of Strings containing the names of the appearance states
      */
     public String[] getAppearanceStates() {
@@ -1820,7 +1884,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     PdfString valStr = null;
 
                     if (pdfObject.isArray()) {
-                        valStr = ((PdfArray)pdfObject).getAsString(1);
+                        valStr = ((PdfArray) pdfObject).getAsString(1);
                     } else if (pdfObject.isString()) {
                         valStr = (PdfString) pdfObject;
                     }
@@ -1833,7 +1897,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary dic = getPdfObject();
         dic = dic.getAsDictionary(PdfName.AP);
-        if (dic != null){
+        if (dic != null) {
             dic = dic.getAsDictionary(PdfName.N);
             if (dic != null) {
                 for (PdfName state : dic.keySet()) {
@@ -1866,17 +1930,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets an appearance for (the widgets related to) the form field.
-     * 
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
-     * @param appearanceType the type of appearance stream to be added
-     * <ul>
-     *     <li> PdfName.N: normal appearance</li>
-     *     <li> PdfName.R: rollover appearance</li>
-     *     <li> PdfName.D: down appearance</li>
-     * </ul>
-     * @param appearanceState the state of the form field that needs to be true
-     *     for the appearance to be used. Differentiates between several streams 
-     *     of the same type.
+     *
+     * @param <T>              an internal generic parameter for the return type. Extends {@link PdfFormField}
+     * @param appearanceType   the type of appearance stream to be added
+     *                         <ul>
+     *                         <li> PdfName.N: normal appearance</li>
+     *                         <li> PdfName.R: rollover appearance</li>
+     *                         <li> PdfName.D: down appearance</li>
+     *                         </ul>
+     * @param appearanceState  the state of the form field that needs to be true
+     *                         for the appearance to be used. Differentiates between several streams
+     *                         of the same type.
      * @param appearanceStream the appearance instructions, as a {@link PdfStream}
      * @return the edited field
      */
@@ -1967,7 +2031,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (font != null) {
                     fontAndSize[0] = font;
                 } else {
-                    fontAndSize[0] =  PdfFont.createFont(fontDic.getAsDictionary(fontName));
+                    fontAndSize[0] = PdfFont.createFont(fontDic.getAsDictionary(fontName));
                 }
                 if (fontSize != 0) {
                     fontAndSize[1] = fontSize;
@@ -2042,8 +2106,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         }
                     }
                     stack.clear();
-                }
-                else {
+                } else {
                     stack.add(tk.getStringValue());
                 }
             }

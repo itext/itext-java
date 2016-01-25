@@ -3,7 +3,6 @@ package com.itextpdf.core.pdf.annot;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
@@ -14,12 +13,12 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
     protected PdfAnnotation inReplyTo = null;
     protected PdfPopupAnnotation popup = null;
 
-    public PdfMarkupAnnotation(PdfDocument document, Rectangle rect) {
-        super(document, rect);
+    public PdfMarkupAnnotation(Rectangle rect) {
+        super(rect);
     }
 
-    public PdfMarkupAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfMarkupAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     public PdfString getText() {

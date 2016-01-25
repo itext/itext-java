@@ -18,23 +18,32 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
         The first byte of the audio stream data should be deleted, then wav file will be played correctly.
         Otherwise it will be broken. Other supporting file types don't have such problem.
      */
-    public PdfSoundAnnotation(PdfDocument document, Rectangle rect, PdfStream sound) {
-        super(document, rect);
+    public PdfSoundAnnotation(Rectangle rect, PdfStream sound) {
+        super(rect);
         put(PdfName.Sound, sound);
     }
 
-    public PdfSoundAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfSoundAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     public PdfSoundAnnotation(PdfDocument document, Rectangle rect, InputStream soundStream, float sampleRate, PdfName encoding, int channels, int sampleSizeInBits) throws IOException {
-        super(document, rect);
+        super(rect);
         PdfStream sound = new PdfStream(document, correctInputStreamForWavFile(soundStream));
         sound.put(PdfName.R, new PdfNumber(sampleRate));
         sound.put(PdfName.E, encoding);
         sound.put(PdfName.B, new PdfNumber(sampleSizeInBits));
         sound.put(PdfName.C, new PdfNumber(channels));
         put(PdfName.Sound, sound);
+    }
+
+    @Override
+    public PdfName getSubtype() {
+        return PdfName.Sound;
+    }
+
+    public PdfStream getSound() {
+        return getPdfObject().getAsStream(PdfName.Sound);
     }
 
     private InputStream correctInputStreamForWavFile(InputStream is) throws IOException {
@@ -49,14 +58,5 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
             bufferedIn.read();
         }
         return bufferedIn;
-    }
-
-    @Override
-    public PdfName getSubtype() {
-        return PdfName.Sound;
-    }
-
-    public PdfStream getSound() {
-        return getPdfObject().getAsStream(PdfName.Sound);
     }
 }

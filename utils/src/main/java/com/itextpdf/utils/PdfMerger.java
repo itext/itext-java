@@ -100,7 +100,7 @@ public class PdfMerger {
             for (PdfAnnotation annot : entry.getKey().getAnnotations()) {
                 PdfDestination d;
                 if (annot.getSubtype().equals(PdfName.Link)) {
-                    PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(pdfDocument, excludedKeys, false), pdfDocument);
+                    PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(pdfDocument, excludedKeys, false));
                     PdfObject dest =((PdfLinkAnnotation)annot).getDestinationObject();
                     if (dest != null) {
                         if (dest.isArray()) {

@@ -3,17 +3,16 @@ package com.itextpdf.core.pdf.annot;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfBoolean;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfString;
 
 public class PdfRedactAnnotation extends PdfMarkupAnnotation {
-    public PdfRedactAnnotation(PdfDocument document, Rectangle rect) {
-        super(document, rect);
+    public PdfRedactAnnotation(Rectangle rect) {
+        super(rect);
     }
 
-    public PdfRedactAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfRedactAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     @Override

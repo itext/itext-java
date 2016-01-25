@@ -2,6 +2,7 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
@@ -22,12 +23,12 @@ public class PdfChoiceFormField extends PdfFormField {
     public static final int FF_DO_NOT_SPELL_CHECK = makeFieldFlag(23);
     public static final int FF_COMMIT_ON_SEL_CHANGE = makeFieldFlag(27);
 
-    protected PdfChoiceFormField() {
-        super();
+    protected PdfChoiceFormField(PdfDocument pdfDocument) {
+        super(pdfDocument);
     }
 
-    protected PdfChoiceFormField(PdfWidgetAnnotation widget) {
-        super(widget);
+    protected PdfChoiceFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
+        super(widget, pdfDocument);
     }
 
     protected PdfChoiceFormField(PdfDictionary pdfObject) {

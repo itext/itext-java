@@ -221,7 +221,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             fieldDict.remove(PdfName.Kids);
             kidDict.remove(PdfName.Parent);
             fieldDict.mergeDifferent(kidDict);
-            PdfAnnotation annot = PdfAnnotation.makeAnnotation(fieldDict, document);
+            PdfAnnotation annot = PdfAnnotation.makeAnnotation(fieldDict);
             PdfDictionary pageDic = annot.getPdfObject().getAsDictionary(PdfName.P);
             if (pageDic != null) {
                 PdfArray array = pageDic.getAsArray(PdfName.Annots);
@@ -775,7 +775,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 parent.remove(PdfName.Kids);
                 dict.remove(PdfName.Parent);
                 parent.mergeDifferent(dict);
-                PdfAnnotation annot = PdfAnnotation.makeAnnotation(parent, document);
+                PdfAnnotation annot = PdfAnnotation.makeAnnotation(parent);
                 PdfDictionary pageDic = annot.getPdfObject().getAsDictionary(PdfName.P);
                 if (pageDic != null) {
                     if (pageDic.isFlushed()) {

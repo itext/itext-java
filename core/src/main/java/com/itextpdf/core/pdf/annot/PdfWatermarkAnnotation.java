@@ -2,17 +2,16 @@ package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 
 public class PdfWatermarkAnnotation extends PdfAnnotation {
 
-    public PdfWatermarkAnnotation(PdfDocument document, Rectangle rect) {
-        super(document, rect);
+    public PdfWatermarkAnnotation(Rectangle rect) {
+        super(rect);
     }
 
-    public PdfWatermarkAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfWatermarkAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     @Override

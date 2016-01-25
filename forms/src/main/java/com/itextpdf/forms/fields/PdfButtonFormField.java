@@ -1,6 +1,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
 
@@ -17,12 +18,12 @@ public class PdfButtonFormField extends PdfFormField {
     public final static int FF_PUSH_BUTTON = makeFieldFlag(17);
     public final static int FF_RADIOS_IN_UNISON = makeFieldFlag(26);
 
-    protected PdfButtonFormField() {
-        super();
+    protected PdfButtonFormField(PdfDocument pdfDocument) {
+        super(pdfDocument);
     }
 
-    protected PdfButtonFormField(PdfWidgetAnnotation widget) {
-        super(widget);
+    protected PdfButtonFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
+        super(widget, pdfDocument);
     }
 
     protected PdfButtonFormField(PdfDictionary pdfObject) {

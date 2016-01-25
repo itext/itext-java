@@ -4,19 +4,18 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfBoolean;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 
 public class PdfLineAnnotation extends PdfMarkupAnnotation {
 
-    public PdfLineAnnotation(PdfDocument document, Rectangle rect, float[] line) {
-        super(document, rect);
+    public PdfLineAnnotation(Rectangle rect, float[] line) {
+        super(rect);
         put(PdfName.L, new PdfArray(line));
     }
 
-    public PdfLineAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfLineAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
 
     public boolean getContentsAsCaption() {
         PdfBoolean b = getPdfObject().getAsBoolean(PdfName.Cap);
-        return b == null ? false : b.getValue();
+        return b != null && b.getValue();
     }
 
     public PdfLineAnnotation setContentsAsCaption(boolean contentsAsCaption) {
@@ -99,7 +98,5 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     public PdfLinkAnnotation setCaptionOffset(float[] captionOffset) {
         return setCaptionOffset(new PdfArray(captionOffset));
     }
-
-
 
 }

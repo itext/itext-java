@@ -221,7 +221,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (annot.getSubtype().equals(PdfName.Link)) {
                 getDocument().storeLinkAnnotations(this, (PdfLinkAnnotation) annot);
             } else {
-                page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, false), toDocument));
+                page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, false)));
             }
         }
         if (toDocument.isTagged()) {
@@ -451,7 +451,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots != null) {
             for (int i = 0; i < annots.size(); i++) {
                 PdfDictionary annot = annots.getAsDictionary(i);
-                annotations.add(PdfAnnotation.makeAnnotation(annot, getDocument()).setPage(this));
+                annotations.add(PdfAnnotation.makeAnnotation(annot).setPage(this));
             }
         }
         return annotations;

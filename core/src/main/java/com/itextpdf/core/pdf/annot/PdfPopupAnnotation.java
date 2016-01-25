@@ -2,19 +2,18 @@ package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 
 public class PdfPopupAnnotation extends PdfAnnotation {
 
     protected PdfAnnotation parent;
 
-    public PdfPopupAnnotation(PdfDocument document, Rectangle rect) {
-        super(document, rect);
+    public PdfPopupAnnotation(Rectangle rect) {
+        super(rect);
     }
 
-    public PdfPopupAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfPopupAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     public PdfName getSubtype() {

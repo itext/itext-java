@@ -85,7 +85,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas.showText("Link to page 2. Click here!");
         canvas.endText();
         canvas.release();
-        page1.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 560, 260, 25)).setDestination(PdfExplicitDestination.createFit(page2)).setBorder(new PdfArray(new float[]{0, 0, 1})));
+        page1.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 260, 25)).setDestination(PdfExplicitDestination.createFit(page2)).setBorder(new PdfArray(new float[]{0, 0, 1})));
         page1.flush();
 
         canvas = new PdfCanvas(page2);
@@ -117,7 +117,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas.endText();
         canvas.release();
 
-        page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
+        page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI("http://itextpdf.com")).
                 setBorder(new PdfArray(new float[]{0, 0, 1})).
                 setColor(new PdfArray(new float[]{1, 0, 0})));
@@ -147,15 +147,15 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas.endText();
         canvas.release();
         int[] borders = {0, 0, 1};
-        page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
+        page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
                 setAction(PdfAction.createURI("http://itextpdf.com")).
                 setBorder(new PdfArray(borders)).
                 setColor(new PdfArray(new float[]{1, 0, 0})));
-        page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 540, 300, 25)).
+        page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 540, 300, 25)).
                 setAction(PdfAction.createURI("http://itextpdf.com/node")).
                 setBorder(new PdfArray(borders)).
                 setColor(new PdfArray(new float[]{0, 1, 0})));
-        page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 490, 300, 25)).
+        page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 490, 300, 25)).
                 setAction(PdfAction.createURI("http://itextpdf.com/salesfaq")).
                 setBorder(new PdfArray(borders)).
                 setColor(new PdfArray(new float[]{0, 0, 1})));
@@ -183,8 +183,8 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
 
-        PdfTextAnnotation textannot = new PdfTextAnnotation(document, new Rectangle(100, 600, 50, 40)).setText(new PdfString("Text Annotation 01")).setContents(new PdfString("Some contents..."));
-        PdfPopupAnnotation popupAnnot = new PdfPopupAnnotation(document, new Rectangle(150, 640, 200, 100)).setOpen(true);
+        PdfTextAnnotation textannot = new PdfTextAnnotation(new Rectangle(100, 600, 50, 40)).setText(new PdfString("Text Annotation 01")).setContents(new PdfString("Some contents..."));
+        PdfPopupAnnotation popupAnnot = new PdfPopupAnnotation(new Rectangle(150, 640, 200, 100)).setOpen(true);
         textannot.setPopup(popupAnnot);
         popupAnnot.setParent(textannot);
         page.addAnnotation(textannot);
@@ -225,10 +225,10 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
 
-        PdfCaretAnnotation caret = new PdfCaretAnnotation(pdfDoc1, new Rectangle(36, 745, 350, 20));
+        PdfCaretAnnotation caret = new PdfCaretAnnotation(new Rectangle(36, 745, 350, 20));
         caret.setSymbol(new PdfString("P"));
 
-        PdfPopupAnnotation popup = new PdfPopupAnnotation(pdfDoc1, new Rectangle(36, 445, 100, 100));
+        PdfPopupAnnotation popup = new PdfPopupAnnotation(new Rectangle(36, 445, 100, 100));
         popup.setContents(new PdfString("Popup"));
         popup.setOpen(true);
 
@@ -253,7 +253,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         new PdfCanvas(page).beginText().setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 24).moveText(100, 600).showText("Annotated text").endText().release();
-        PdfFreeTextAnnotation textannot = new PdfFreeTextAnnotation(document, new Rectangle(300, 700, 150, 20), "").
+        PdfFreeTextAnnotation textannot = new PdfFreeTextAnnotation(new Rectangle(300, 700, 150, 20), "").
                 setContents(new PdfString("FreeText annotation")).setColor(new float[]{1, 0, 0});
         textannot.setIntent(PdfName.FreeTextCallout);
         textannot.setCalloutLine(new float[]{120, 616, 180, 680, 300, 710}).setLineEndingStyle(PdfName.OpenArrow);
@@ -272,9 +272,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
 
-        PdfSquareAnnotation square = new PdfSquareAnnotation(document, new Rectangle(100, 700, 100, 100)).setInteriorColor(new float[]{1, 0, 0}).setColor(new float[]{0, 1, 0}).setContents("RED Square");
+        PdfSquareAnnotation square = new PdfSquareAnnotation(new Rectangle(100, 700, 100, 100)).setInteriorColor(new float[]{1, 0, 0}).setColor(new float[]{0, 1, 0}).setContents("RED Square");
         page.addAnnotation(square);
-        PdfCircleAnnotation circle = new PdfCircleAnnotation(document, new Rectangle(300, 700, 100, 100)).setInteriorColor(new float[]{0, 1, 0}).setColor(new float[]{0, 0, 1}).setContents(new PdfString("GREEN Circle"));
+        PdfCircleAnnotation circle = new PdfCircleAnnotation(new Rectangle(300, 700, 100, 100)).setInteriorColor(new float[]{0, 1, 0}).setColor(new float[]{0, 0, 1}).setContents(new PdfString("GREEN Circle"));
         page.addAnnotation(circle);
         page.flush();
 
@@ -296,7 +296,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
 
-        PdfFileAttachmentAnnotation fileAttach = new PdfFileAttachmentAnnotation(pdfDoc1, new Rectangle(100, 100), spec);
+        PdfFileAttachmentAnnotation fileAttach = new PdfFileAttachmentAnnotation(new Rectangle(100, 100), spec);
         fileAttach.setIconName(PdfName.Paperclip);
         page1.addAnnotation(fileAttach);
 
@@ -319,33 +319,33 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
 
         PdfPage page1 = pdfDoc1.addNewPage();
-        PdfStampAnnotation stamp = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 0, 100, 50));
+        PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
         stamp.setStampName(PdfName.Approved);
-        PdfStampAnnotation stamp1 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 50, 100, 50));
+        PdfStampAnnotation stamp1 = new PdfStampAnnotation(new Rectangle(0, 50, 100, 50));
         stamp1.setStampName(PdfName.AsIs);
-        PdfStampAnnotation stamp2 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 100, 100, 50));
+        PdfStampAnnotation stamp2 = new PdfStampAnnotation(new Rectangle(0, 100, 100, 50));
         stamp2.setStampName(PdfName.Confidential);
-        PdfStampAnnotation stamp3 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 150, 100, 50));
+        PdfStampAnnotation stamp3 = new PdfStampAnnotation(new Rectangle(0, 150, 100, 50));
         stamp3.setStampName(PdfName.Departmental);
-        PdfStampAnnotation stamp4 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 200, 100, 50));
+        PdfStampAnnotation stamp4 = new PdfStampAnnotation(new Rectangle(0, 200, 100, 50));
         stamp4.setStampName(PdfName.Draft);
-        PdfStampAnnotation stamp5 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 250, 100, 50));
+        PdfStampAnnotation stamp5 = new PdfStampAnnotation(new Rectangle(0, 250, 100, 50));
         stamp5.setStampName(PdfName.Experimental);
-        PdfStampAnnotation stamp6 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 300, 100, 50));
+        PdfStampAnnotation stamp6 = new PdfStampAnnotation(new Rectangle(0, 300, 100, 50));
         stamp6.setStampName(PdfName.Expired);
-        PdfStampAnnotation stamp7 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 350, 100, 50));
+        PdfStampAnnotation stamp7 = new PdfStampAnnotation(new Rectangle(0, 350, 100, 50));
         stamp7.setStampName(PdfName.Final);
-        PdfStampAnnotation stamp8 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 400, 100, 50));
+        PdfStampAnnotation stamp8 = new PdfStampAnnotation(new Rectangle(0, 400, 100, 50));
         stamp8.setStampName(PdfName.ForComment);
-        PdfStampAnnotation stamp9 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 450, 100, 50));
+        PdfStampAnnotation stamp9 = new PdfStampAnnotation(new Rectangle(0, 450, 100, 50));
         stamp9.setStampName(PdfName.ForPublicRelease);
-        PdfStampAnnotation stamp10 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 500, 100, 50));
+        PdfStampAnnotation stamp10 = new PdfStampAnnotation(new Rectangle(0, 500, 100, 50));
         stamp10.setStampName(PdfName.NotApproved);
-        PdfStampAnnotation stamp11 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 550, 100, 50));
+        PdfStampAnnotation stamp11 = new PdfStampAnnotation(new Rectangle(0, 550, 100, 50));
         stamp11.setStampName(PdfName.NotForPublicRelease);
-        PdfStampAnnotation stamp12 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 600, 100, 50));
+        PdfStampAnnotation stamp12 = new PdfStampAnnotation(new Rectangle(0, 600, 100, 50));
         stamp12.setStampName(PdfName.Sold);
-        PdfStampAnnotation stamp13 = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 650, 100, 50));
+        PdfStampAnnotation stamp13 = new PdfStampAnnotation(new Rectangle(0, 650, 100, 50));
         stamp13.setStampName(PdfName.TopSecret);
         page1.addAnnotation(stamp);
         page1.addAnnotation(stamp1);
@@ -381,7 +381,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
 
         PdfPage page1 = pdfDoc1.addNewPage();
-        PdfStampAnnotation stamp = new PdfStampAnnotation(pdfDoc1, new Rectangle(0, 0, 100, 50));
+        PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
 
         stamp.setStampName(PdfName.StrikeOut);
 
@@ -417,7 +417,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         borderStyle.put(PdfName.Type, PdfName.Border);
         borderStyle.put(PdfName.W, new PdfNumber(3));
 
-        PdfInkAnnotation ink = new PdfInkAnnotation(pdfDoc1, new Rectangle(0, 0, 575, 842), resultArray);
+        PdfInkAnnotation ink = new PdfInkAnnotation(new Rectangle(0, 0, 575, 842), resultArray);
         ink.setBorderStyle(borderStyle);
         float[] rgb = {1, 0, 0};
         PdfArray colors = new PdfArray(rgb);
@@ -456,7 +456,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
 
         float[] points = {36, 765, 109, 765, 36, 746, 109, 746};
-        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createUnderline(pdfDoc1, PageSize.A4, points);
+        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createUnderline(PageSize.A4, points);
         markup.setContents(new PdfString("TextMarkup"));
         float[] rgb = {1, 0, 0};
         PdfArray colors = new PdfArray(rgb);
@@ -494,7 +494,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
 
         float[] points = {36, 765, 109, 765, 36, 746, 109, 746};
-        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createHighLight(pdfDoc1, PageSize.A4, points);
+        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createHighLight(PageSize.A4, points);
         markup.setContents(new PdfString("TextMarkup"));
         float[] rgb = {1, 0, 0};
         PdfArray colors = new PdfArray(rgb);
@@ -532,7 +532,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
 
         float[] points = {36, 765, 109, 765, 36, 746, 109, 746};
-        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createSquiggly(pdfDoc1, PageSize.A4, points);
+        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createSquiggly(PageSize.A4, points);
         markup.setContents(new PdfString("TextMarkup"));
         float[] rgb = {1, 0, 0};
         PdfArray colors = new PdfArray(rgb);
@@ -570,7 +570,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
 
         float[] points = {36, 765, 109, 765, 36, 746, 109, 746};
-        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createStrikeout(pdfDoc1, PageSize.A4, points);
+        PdfTextMarkupAnnotation markup = PdfTextMarkupAnnotation.createStrikeout(PageSize.A4, points);
         markup.setContents(new PdfString("TextMarkup"));
         float[] rgb = {1, 0, 0};
         PdfArray colors = new PdfArray(rgb);
@@ -615,7 +615,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
         canvas.release();
 
-        PdfPrinterMarkAnnotation printer = new PdfPrinterMarkAnnotation(pdfDoc1, PageSize.A4, form);
+        PdfPrinterMarkAnnotation printer = new PdfPrinterMarkAnnotation(PageSize.A4, form);
 
         page1.addAnnotation(printer);
         page1.flush();
@@ -660,7 +660,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas.release();
 
         form.setProcessColorModel(PdfName.DeviceN);
-        PdfTrapNetworkAnnotation trap = new PdfTrapNetworkAnnotation(pdfDoc1, PageSize.A4, form);
+        PdfTrapNetworkAnnotation trap = new PdfTrapNetworkAnnotation(PageSize.A4, form);
 
         page.addAnnotation(trap);
         page.flush();
@@ -702,7 +702,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         sound1.put(PdfName.B, new PdfNumber(16));
         sound1.put(PdfName.C, new PdfNumber(1));
 
-        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), sound1);
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), sound1);
 
         page1.addAnnotation(sound);
         page1.flush();
@@ -745,7 +745,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         sound1.put(PdfName.B, new PdfNumber(16));
         sound1.put(PdfName.C, new PdfNumber(1));
 
-        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), sound1);
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), sound1);
 
         page1.addAnnotation(sound);
         page1.flush();
@@ -842,7 +842,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         soundStream.put(PdfName.B, new PdfNumber(16));
         soundStream.put(PdfName.C, new PdfNumber(2));
 
-        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), soundStream);
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), soundStream);
 
         page1.addAnnotation(sound);
         page1.flush();
@@ -875,7 +875,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
-        PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
+        PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
         PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc1, "c:\\morph\\itext6\\itextpdf\\canvas\\src\\test\\resources\\com\\itextpdf\\canvas\\PdfAnnotationTest\\" + "sample.wav", true);
 
@@ -915,7 +915,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
-        PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
+        PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
 
@@ -955,7 +955,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
-        PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
+        PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, new FileInputStream(sourceFolder + "sample.wav"), null, "sample.wav", null, null, true);
 
@@ -995,7 +995,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
-        PdfScreenAnnotation screen = new PdfScreenAnnotation(pdfDoc1, new Rectangle(100, 100));
+        PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
         InputStream is = new FileInputStream(sourceFolder + "sample.wav");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -1035,7 +1035,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfPage page1 = pdfDoc1.addNewPage();
 
-        PdfWatermarkAnnotation watermark = new PdfWatermarkAnnotation(pdfDoc1, new Rectangle(400, 400, 200, 200));
+        PdfWatermarkAnnotation watermark = new PdfWatermarkAnnotation(new Rectangle(400, 400, 200, 200));
 
         float[] arr = {1, 0, 0, 1, 0, 0};
 
@@ -1083,7 +1083,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         float[] rgb = { 0, 0, 0};
         float[] rgb1 = { 1, 0, 0};
-        PdfRedactAnnotation redact = new PdfRedactAnnotation(pdfDoc1, new Rectangle(180, 531, 120, 49));
+        PdfRedactAnnotation redact = new PdfRedactAnnotation(new Rectangle(180, 531, 120, 49));
 
         PdfFormXObject formD = new PdfFormXObject(new Rectangle(180, 531, 120, 49));
         PdfCanvas canvasD = new PdfCanvas(formD, pdfDoc1);

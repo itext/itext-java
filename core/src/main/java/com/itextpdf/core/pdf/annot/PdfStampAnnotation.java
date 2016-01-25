@@ -2,17 +2,16 @@ package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 
 public class PdfStampAnnotation extends  PdfMarkupAnnotation {
 
-    public PdfStampAnnotation(PdfDocument document, Rectangle rect) {
-        super(document, rect);
+    public PdfStampAnnotation(Rectangle rect) {
+        super(rect);
     }
 
-    public PdfStampAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfStampAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     @Override

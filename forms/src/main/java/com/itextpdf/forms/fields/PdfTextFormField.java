@@ -1,6 +1,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
@@ -16,12 +17,12 @@ public class PdfTextFormField extends PdfFormField {
     public static final int FF_COMB = makeFieldFlag(25);
     public static final int FF_RICH_TEXT = makeFieldFlag(26);
 
-    protected PdfTextFormField() {
-        super();
+    protected PdfTextFormField(PdfDocument pdfDocument) {
+        super(pdfDocument);
     }
 
-    protected PdfTextFormField(PdfWidgetAnnotation widget) {
-        super(widget);
+    protected PdfTextFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
+        super(widget, pdfDocument);
     }
 
     protected PdfTextFormField(PdfDictionary pdfObject) {

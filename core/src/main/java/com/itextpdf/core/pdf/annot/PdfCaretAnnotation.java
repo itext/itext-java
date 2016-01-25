@@ -2,18 +2,17 @@ package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfString;
 
 public class PdfCaretAnnotation extends PdfMarkupAnnotation {
 
-    public PdfCaretAnnotation(PdfDocument document, Rectangle rect) {
-        super(document, rect);
+    public PdfCaretAnnotation(Rectangle rect) {
+        super(rect);
     }
 
-    public PdfCaretAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfCaretAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
     @Override

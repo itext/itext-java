@@ -1,16 +1,13 @@
 package com.itextpdf.core.pdf.annot;
 
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 
 public class PdfLinkAnnotation extends PdfAnnotation {
-
 
     /**
      * Highlight modes.
@@ -20,12 +17,12 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     static public final PdfName Outline = PdfName.O;
     static public final PdfName Push = PdfName.P;
 
-    public PdfLinkAnnotation(PdfDictionary pdfObject, PdfDocument document) {
-        super(pdfObject, document);
+    public PdfLinkAnnotation(PdfDictionary pdfObject) {
+        super(pdfObject);
     }
 
-    public PdfLinkAnnotation(PdfDocument document, Rectangle rect) {
-        super(document, rect);
+    public PdfLinkAnnotation(Rectangle rect) {
+        super(rect);
     }
 
     public PdfName getSubtype() {
