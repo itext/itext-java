@@ -21,19 +21,19 @@
     </scm>
 
     <modules>
+        <module>barcodes</module>
         <module>basics</module>
         <module>core</module>
-        <module>model</module>
         <module>forms</module>
-        <module>sign</module>
-        <module>parsing</module>
-        <module>barcodes</module>
-        <module>pdfa</module>
-        
-        <module>pdftest</module>
-        
         <module>hyph</module>
         
+        <module>model</module>
+        <module>parsing</module>
+        <module>pdfa</module>
+        <module>pdftest</module>
+        
+        
+        <module>sign</module>
         
     </modules>
 
