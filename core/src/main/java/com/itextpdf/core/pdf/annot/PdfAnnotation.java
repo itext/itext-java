@@ -71,11 +71,6 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         mustBeIndirect();
     }
 
-    @Override
-    public PdfDocument getDocument() {
-        throw new Error();
-    }
-
     abstract public PdfName getSubtype();
 
     /**
@@ -304,8 +299,8 @@ abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @param <T>
      * @return annotation itself.
      */
-    public <T extends PdfAnnotation> T tag() {
-        return put(PdfName.StructParent, new PdfNumber(getDocument().getNextStructParentIndex()));
+    public <T extends PdfAnnotation> T tag(PdfDocument pdfDocument) {
+        return put(PdfName.StructParent, new PdfNumber(pdfDocument.getNextStructParentIndex()));
     }
 
     static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject) {

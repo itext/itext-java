@@ -14,7 +14,7 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
         super(new PdfDictionary(), parent);
         PdfDictionary dict = (PdfDictionary) getPdfObject();
         dict.put(PdfName.Type, PdfName.OBJR);
-        dict.put(PdfName.Obj, annot.tag().getPdfObject());
+        dict.put(PdfName.Obj, annot.tag(parent.getDocument()).getPdfObject());
     }
 
     @Override
@@ -29,6 +29,5 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
             page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
         return page;
     }
-
 
 }
