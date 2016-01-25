@@ -101,9 +101,10 @@ public class HighlightItemsTest extends ExtendedITextTest {
             canvas.setLineWidth(0.5f);
             canvas.setStrokeColor(Color.RED);
             for (Rectangle rectangle : rectangles) {
-                canvas.rectangle(rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), rectangle.getHeight());
+                canvas.rectangle(rectangle);
                 canvas.stroke();
             }
+            myEventListener.clear();
         }
 
         pdfDocument.close();
@@ -133,6 +134,10 @@ public class HighlightItemsTest extends ExtendedITextTest {
 
         public List<Rectangle> getRectangles() {
             return rectangles;
+        }
+
+        public void clear() {
+            rectangles.clear();
         }
     }
 
