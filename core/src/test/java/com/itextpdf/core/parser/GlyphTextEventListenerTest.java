@@ -23,9 +23,9 @@ import org.junit.experimental.categories.Category;
 
         float x1, y1, x2, y2;
         x1 = 203;
-        x2 = 224;
-        y1 = 842 - 44;
-        y2 = 842 - 93;
+        x2 = 21;
+        y1 = 749;
+        y2 = 49;
         String extractedText = TextExtractor.getTextFromPage(pdfDocument.getPage(1),
                 new GlyphTextEventListener(new FilteredTextEventListener(new LocationTextExtractionStrategy(),
                         new TextRegionEventFilter(new Rectangle(x1, y1, x2, y2)))));
@@ -50,16 +50,16 @@ import org.junit.experimental.categories.Category;
 
         FilteredEventListener listener = new FilteredEventListener();
         x1 = 122;
-        x2 = 144;
-        y1 = 841.9f - 151;
-        y2 = 841.9f - 163;
+        x2 = 22;
+        y1 = 678.9f;
+        y2 = 12;
         TextExtractionStrategy region1Listener = listener.attachEventListener(new LocationTextExtractionStrategy(),
                 new TextRegionEventFilter(new Rectangle(x1, y1, x2, y2)));
 
         x1 = 156;
-        x2 = 169;
-        y1 = 841.9f - 151;
-        y2 = 841.9f - 163;
+        x2 = 13;
+        y1 = 678.9f;
+        y2 = 12;
         TextExtractionStrategy region2Listener = listener.attachEventListener(new LocationTextExtractionStrategy(),
                 new TextRegionEventFilter(new Rectangle(x1, y1, x2, y2)));
 
