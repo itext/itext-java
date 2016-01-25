@@ -8,6 +8,13 @@ import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.model.renderer.CanvasRenderer;
 import com.itextpdf.model.renderer.RootRenderer;
 
+/**
+ * This class is used for adding content directly onto a specified {@link PdfCanvas}.
+ * {@link Canvas} does not know the concept of a page, so it can't reflow to a 'next' {@link Canvas}.
+ * 
+ * This class effectively acts as a bridge between the high-level <em>model</em>
+ * API and the low-level <em>core</em> API.
+ */
 public class Canvas extends RootElement<Canvas> {
 
     protected PdfCanvas pdfCanvas;
@@ -19,12 +26,25 @@ public class Canvas extends RootElement<Canvas> {
      */
     protected PdfPage page;
 
+    /**
+     * Creates a new Canvas to manipulate a specific document and page.
+     * 
+     * @param pdfCanvas the low-level content stream writer
+     * @param pdfDocument the document that the resulting content stream will be written to
+     * @param rootArea the maximum area that the Canvas may write upon
+     */
     public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea) {
         this.pdfDocument = pdfDocument;
         this.pdfCanvas = pdfCanvas;
         this.rootArea = rootArea;
     }
 
+    /**
+     * Creates a new Canvas to manipulate a specific {@link PdfFormXObject}.
+     * 
+     * @param formXObject the form
+     * @param pdfDocument the document that the resulting content stream will be written to
+     */
     public Canvas(PdfFormXObject formXObject, PdfDocument pdfDocument) {
         this.pdfDocument = pdfDocument;
         this.pdfCanvas = new PdfCanvas(formXObject, pdfDocument);
@@ -43,6 +63,11 @@ public class Canvas extends RootElement<Canvas> {
         return pdfCanvas;
     }
 
+    /**
+     * Sets the {@link IRenderer} for this Canvas.
+     * 
+     * @param canvasRenderer a renderer specific for canvas operations
+     */
     public void setRenderer(CanvasRenderer canvasRenderer) {
         this.rootRenderer = canvasRenderer;
     }
