@@ -1,4 +1,4 @@
-package com.itextpdf.utils;
+package com.itextpdf.core.utils;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.core.pdf.*;

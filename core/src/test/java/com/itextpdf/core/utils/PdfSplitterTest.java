@@ -1,4 +1,4 @@
-package com.itextpdf.utils;
+package com.itextpdf.core.utils;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
@@ -6,6 +6,7 @@ import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.utils.CompareTool;
+import com.itextpdf.core.utils.PdfSplitter;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -27,8 +28,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfSplitterTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/utils/PdfSplitterTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/utils/PdfSplitterTest/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/utils/PdfSplitterTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/core/utils/PdfSplitterTest/";
 
     @BeforeClass
     static public void beforeClass() {

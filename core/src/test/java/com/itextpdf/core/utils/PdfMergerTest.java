@@ -1,10 +1,11 @@
-package com.itextpdf.utils;
+package com.itextpdf.core.utils;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.utils.CompareTool;
+import com.itextpdf.core.utils.PdfMerger;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -28,8 +29,8 @@ import org.xml.sax.SAXException;
 @Category(IntegrationTest.class)
 public class PdfMergerTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/utils/PdfMergerTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/utils/PdfMergerTest/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/utils/PdfMergerTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/core/utils/PdfMergerTest/";
 
     @BeforeClass
     static public void beforeClass() {

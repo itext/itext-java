@@ -1,4 +1,4 @@
-package com.itextpdf.utils;
+package com.itextpdf.core.utils;
 
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;

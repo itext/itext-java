@@ -23,11 +23,9 @@
     <modules>
         <module>basics</module>
         <module>core</module>
-        <module>utils</module>
         <module>model</module>
         <module>forms</module>
         <module>sign</module>
-        <module>xmlsign</module>
         <module>parsing</module>
         <module>barcodes</module>
         <module>pdfa</module>
