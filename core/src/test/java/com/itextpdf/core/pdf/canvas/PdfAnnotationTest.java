@@ -118,7 +118,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas.release();
 
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
-                setAction(PdfAction.createURI(document, "http://itextpdf.com")).
+                setAction(PdfAction.createURI("http://itextpdf.com")).
                 setBorder(new PdfArray(new float[]{0, 0, 1})).
                 setColor(new PdfArray(new float[]{1, 0, 0})));
         page.flush();
@@ -148,15 +148,15 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas.release();
         int[] borders = {0, 0, 1};
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 590, 300, 25)).
-                setAction(PdfAction.createURI(document, "http://itextpdf.com")).
+                setAction(PdfAction.createURI("http://itextpdf.com")).
                 setBorder(new PdfArray(borders)).
                 setColor(new PdfArray(new float[]{1, 0, 0})));
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 540, 300, 25)).
-                setAction(PdfAction.createURI(document, "http://itextpdf.com/node")).
+                setAction(PdfAction.createURI("http://itextpdf.com/node")).
                 setBorder(new PdfArray(borders)).
                 setColor(new PdfArray(new float[]{0, 1, 0})));
         page.addAnnotation(new PdfLinkAnnotation(document, new Rectangle(100, 490, 300, 25)).
-                setAction(PdfAction.createURI(document, "http://itextpdf.com/salesfaq")).
+                setAction(PdfAction.createURI("http://itextpdf.com/salesfaq")).
                 setBorder(new PdfArray(borders)).
                 setColor(new PdfArray(new float[]{0, 0, 1})));
         page.flush();

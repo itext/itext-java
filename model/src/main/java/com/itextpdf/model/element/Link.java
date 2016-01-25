@@ -1,6 +1,7 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
@@ -9,7 +10,9 @@ import com.itextpdf.model.renderer.LinkRenderer;
 
 public class Link extends Text {
 
-    protected PdfLinkAnnotation linkAnnotation;
+    private PdfLinkAnnotation linkAnnotation;
+    private PdfAction pdfAction;
+    private PdfDestination pdfDestination;
 
     public Link(String text, PdfLinkAnnotation linkAnnotation) {
         super(text);
@@ -18,14 +21,26 @@ public class Link extends Text {
     }
 
     public Link(String text, PdfAction action) {
-        this(text, new PdfLinkAnnotation(action.getDocument(), new Rectangle(0, 0, 0, 0)).setAction(action));
+        super(text);
+        this.pdfAction = action;
+        setRole(PdfName.Link);
     }
 
     public Link(String text, PdfDestination destination) {
-        this(text, new PdfLinkAnnotation(destination.getDocument(), new Rectangle(0, 0, 0, 0)).setDestination(destination));
+        super(text);
+        this.pdfDestination = destination;
+        setRole(PdfName.Link);
     }
 
-    public PdfLinkAnnotation getLinkAnnotation(){
+    public PdfLinkAnnotation getLinkAnnotation(PdfDocument pdfDocument) {
+        if (linkAnnotation == null) {
+            linkAnnotation = new PdfLinkAnnotation(pdfDocument, new Rectangle(0, 0, 0, 0));
+            if (pdfAction != null) {
+                linkAnnotation.setAction(pdfAction);
+            } else if (pdfDestination != null) {
+                linkAnnotation.setDestination(pdfDestination);
+            }
+        }
         return linkAnnotation;
     }
 

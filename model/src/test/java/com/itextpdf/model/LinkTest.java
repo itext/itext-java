@@ -44,7 +44,7 @@ public class LinkTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
-        PdfAction action = PdfAction.createURI(pdfDoc, "http://itextpdf.com/", false);
+        PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
 
         Link link = new Link("TestLink", action);
         doc.add(new Paragraph(link));
@@ -75,7 +75,7 @@ public class LinkTest extends ExtendedITextTest{
 
         PdfDestination dest = PdfDestination.makeDestination(array);
 
-        PdfAction action = PdfAction.createGoTo(pdfDoc, dest);
+        PdfAction action = PdfAction.createGoTo(dest);
 
         Link link = new Link("TestLink", action);
         doc.add(new Paragraph(link));

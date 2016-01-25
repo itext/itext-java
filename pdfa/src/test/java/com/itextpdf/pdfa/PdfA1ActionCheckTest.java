@@ -142,7 +142,7 @@ public class PdfA1ActionCheckTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
-        page.setAdditionalAction(PdfName.C, PdfAction.createJavaScript(doc, "js"));
+        page.setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
         doc.close();
     }
@@ -156,7 +156,7 @@ public class PdfA1ActionCheckTest {
         PdfPage page = doc.addNewPage();
         PdfDictionary action = new PdfDictionary();
         action.put(PdfName.S, PdfName.SetState);
-        page.setAdditionalAction(PdfName.C, new PdfAction(action, doc));
+        page.setAdditionalAction(PdfName.C, new PdfAction(action));
 
         doc.close();
     }
@@ -167,7 +167,7 @@ public class PdfA1ActionCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
-        doc.getCatalog().setAdditionalAction(PdfName.C, PdfAction.createJavaScript(doc, "js"));
+        doc.getCatalog().setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
         doc.close();
     }

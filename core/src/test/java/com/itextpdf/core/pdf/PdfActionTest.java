@@ -26,7 +26,7 @@ public class PdfActionTest  extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "actionTest01.pdf"));
         PdfDocument document = createDocument(writer, true);
 
-        document.getCatalog().setOpenAction(PdfAction.createURI(document, "http://itextpdf.com/"));
+        document.getCatalog().setOpenAction(PdfAction.createURI("http://itextpdf.com/"));
 
         document.close();
 
@@ -39,7 +39,7 @@ public class PdfActionTest  extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "actionTest02.pdf"));
         PdfDocument document = createDocument(writer, false);
 
-        document.getPage(2).setAdditionalAction(PdfName.O, PdfAction.createURI(document, "http://itextpdf.com/"));
+        document.getPage(2).setAdditionalAction(PdfName.O, PdfAction.createURI("http://itextpdf.com/"));
 
         document.close();
 

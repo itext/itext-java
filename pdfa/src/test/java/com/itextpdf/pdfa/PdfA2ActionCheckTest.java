@@ -199,7 +199,7 @@ public class PdfA2ActionCheckTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
-        page.setAdditionalAction(PdfName.C, PdfAction.createJavaScript(doc, "js"));
+        page.setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
         doc.close();
     }
@@ -211,7 +211,7 @@ public class PdfA2ActionCheckTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
         doc.addNewPage();
-        doc.getCatalog().setAdditionalAction(PdfName.C, PdfAction.createJavaScript(doc, "js"));
+        doc.getCatalog().setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
         doc.close();
     }
@@ -224,7 +224,7 @@ public class PdfA2ActionCheckTest {
         doc.setXmpMetadata();
         doc.getOutlines(true);
         PdfOutline out = new PdfOutline(doc);
-        out.addOutline("New").addAction(PdfAction.createGoTo(doc, "TestDest"));
+        out.addOutline("New").addAction(PdfAction.createGoTo("TestDest"));
         doc.addNewPage();
 
         doc.close();

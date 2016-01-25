@@ -27,7 +27,7 @@ public class LinkRenderer extends TextRenderer {
             applyAbsolutePositioningTranslation(false);
         }
 
-        PdfLinkAnnotation linkAnnotation = ((Link)modelElement).getLinkAnnotation();
+        PdfLinkAnnotation linkAnnotation = ((Link)modelElement).getLinkAnnotation(drawContext.getDocument());
         linkAnnotation.setRectangle(new PdfArray(occupiedArea.getBBox()));
 
         Border border = getProperty(Property.BORDER);
