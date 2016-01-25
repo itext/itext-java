@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -113,16 +112,6 @@ public class PdfContentStreamProcessor {
         reset();
     }
 
-    private void populateXObjectDoHandlers() {
-        registerXObjectDoHandler(PdfName.Default, new IgnoreXObjectDoHandler());
-        registerXObjectDoHandler(PdfName.Form, new FormXObjectDoHandler());
-
-        if (supportedEvents == null ||
-                supportedEvents.contains(EventType.RENDER_IMAGE)) {
-            registerXObjectDoHandler(PdfName.Image, new ImageXObjectDoHandler());
-        }
-    }
-
     /**
      * Registers a Do handler that will be called when Do for the provided XObject subtype is encountered during content processing.
      * <br>
@@ -139,20 +128,97 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * Gets the font pointed to by the indirect reference. The font may have been cached.
+     * Registers a content operator that will be called when the specified operator string is encountered during content processing.
+     * <br>
+     * If you register an operator, it is a very good idea to pass the call on to the existing registered operator (returned by this call), otherwise you
+     * may inadvertently change the internal behavior of the processor.
      *
-     * @param fontDict
-     * @return the font
-     * @since 5.0.6
+     * @param operatorString the operator id, or DEFAULT_OPERATOR for a catch-all operator
+     * @param operator       the operator that will receive notification when the operator is encountered
+     * @return the existing registered operator, if any
+     * @since 2.1.7
      */
-    private PdfFont getFont(PdfDictionary fontDict) {
-        Integer n = fontDict.getIndirectReference().getObjNumber();
-        PdfFont font = cachedFonts.get(n);
-        if (font == null) {
-            font = PdfFont.createFont(fontDict);
-            cachedFonts.put(n, font);
+    public ContentOperator registerContentOperator(String operatorString, ContentOperator operator) {
+        return operators.put(operatorString, operator);
+    }
+
+    /**
+     * @return {@link java.util.Collection} containing all the registered operators strings
+     * @since 5.5.6
+     */
+    public Collection<String> getRegisteredOperatorStrings() {
+        return new ArrayList<String>(operators.keySet());
+    }
+
+    /**
+     * Resets the graphics state stack, matrices and resources.
+     */
+    public void reset() {
+        gsStack.removeAllElements();
+        gsStack.add(new GraphicsState());
+        textMatrix = null;
+        textLineMatrix = null;
+        resourcesStack = new Stack<>();
+        clip = false;
+        currentPath = new Path();
+    }
+
+    /**
+     * @return the current graphics state
+     */
+    public GraphicsState gs() {
+        return gsStack.peek();
+    }
+
+    /**
+     * Processes PDF syntax.
+     * <b>Note:</b> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
+     *
+     * @param contentBytes the bytes of a content stream
+     * @param resources    the resources of the content stream. Must not be null.
+     */
+    public void processContent(byte[] contentBytes, PdfDictionary resources) {
+        if (resources == null) {
+            throw new PdfException(PdfException.ResourcesCannotBeNull);
         }
-        return font;
+        this.resourcesStack.push(resources);
+        PdfTokenizer tokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
+        PdfContentStreamParser ps = new PdfContentStreamParser(tokeniser, resources);
+        List<PdfObject> operands = new ArrayList<>();
+        try {
+            while (ps.parse(operands).size() > 0) {
+                PdfLiteral operator = (PdfLiteral) operands.get(operands.size() - 1);
+                invokeOperator(operator, operands);
+            }
+        } catch (IOException e) {
+            throw new PdfException(PdfException.CannotParseContentStream, e);
+        }
+
+        this.resourcesStack.pop();
+
+    }
+
+    /**
+     * Processes PDF syntax.
+     * <br/>
+     * <strong>Note:</strong> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
+     *
+     * @param page the page to process
+     */
+    public void processPageContent(PdfPage page) {
+        initClippingPath(page);
+        GraphicsState gs = gs();
+        eventOccurred(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED); // TODO: refactor -1 constants
+        processContent(page.getContentBytes(), page.getResources().getPdfObject());
+    }
+
+    /**
+     * Accessor method for the RenderListener object maintained in this class.
+     * Necessary for implementing custom ContentOperator implementations.
+     * @return the renderListener
+     */
+    public EventListener getRenderListener() {
+        return eventListener;
     }
 
     /**
@@ -260,46 +326,54 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * Registers a content operator that will be called when the specified operator string is encountered during content processing.
-     * <br>
-     * If you register an operator, it is a very good idea to pass the call on to the existing registered operator (returned by this call), otherwise you
-     * may inadvertently change the internal behavior of the processor.
+     * Displays the current path.
      *
-     * @param operatorString the operator id, or DEFAULT_OPERATOR for a catch-all operator
-     * @param operator       the operator that will receive notification when the operator is encountered
-     * @return the existing registered operator, if any
-     * @since 2.1.7
+     * @param operation One of the possible combinations of {@link com.itextpdf.core.parser.PathRenderInfo#STROKE}
+     *                  and {@link com.itextpdf.core.parser.PathRenderInfo#FILL} values or
+     *                  {@link com.itextpdf.core.parser.PathRenderInfo#NO_OP}
+     * @param rule      Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}
+     *                  In case it isn't applicable pass any <CODE>byte</CODE> value.
+     * @since 5.5.7
      */
-    public ContentOperator registerContentOperator(String operatorString, ContentOperator operator) {
-        return operators.put(operatorString, operator);
-    }
+    protected void paintPath(int operation, int rule) {
+        PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, gs());
+        eventListener.eventOccurred(renderInfo, EventType.RENDER_PATH);
 
-    /**
-     * @return {@link java.util.Collection} containing all the registered operators strings
-     * @since 5.5.6
-     */
-    public Collection<String> getRegisteredOperatorStrings() {
-        return new ArrayList<String>(operators.keySet());
-    }
+        if (clip) {
+            clip = false;
+            GraphicsState gs = gs();
+            gs.clip(currentPath, clippingRule);
+            eventListener.eventOccurred(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED); // TODO: refactor -1 constants
+        }
 
-    /**
-     * Resets the graphics state stack, matrices and resources.
-     */
-    public void reset() {
-        gsStack.removeAllElements();
-        gsStack.add(new GraphicsState());
-        textMatrix = null;
-        textLineMatrix = null;
-        resourcesStack = new Stack<>();
-        clip = false;
         currentPath = new Path();
     }
 
+    private void populateXObjectDoHandlers() {
+        registerXObjectDoHandler(PdfName.Default, new IgnoreXObjectDoHandler());
+        registerXObjectDoHandler(PdfName.Form, new FormXObjectDoHandler());
+
+        if (supportedEvents == null ||
+                supportedEvents.contains(EventType.RENDER_IMAGE)) {
+            registerXObjectDoHandler(PdfName.Image, new ImageXObjectDoHandler());
+        }
+    }
+
     /**
-     * @return the current graphics state
+     * Gets the font pointed to by the indirect reference. The font may have been cached.
+     *
+     * @param fontDict
+     * @return the font
+     * @since 5.0.6
      */
-    public GraphicsState gs() {
-        return gsStack.peek();
+    private PdfFont getFont(PdfDictionary fontDict) {
+        Integer n = fontDict.getIndirectReference().getObjNumber();
+        PdfFont font = cachedFonts.get(n);
+        if (font == null) {
+            font = PdfFont.createFont(fontDict);
+            cachedFonts.put(n, font);
+        }
+        return font;
     }
 
     /**
@@ -401,76 +475,10 @@ public class PdfContentStreamProcessor {
         textMatrix = new Matrix(adjustBy, 0).multiply(textMatrix);
     }
 
-    /**
-     * Processes PDF syntax.
-     * <b>Note:</b> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
-     *
-     * @param contentBytes the bytes of a content stream
-     * @param resources    the resources of the content stream. Must not be null.
-     */
-    public void processContent(byte[] contentBytes, PdfDictionary resources) {
-        if (resources == null) {
-            throw new PdfException(PdfException.ResourcesCannotBeNull);
-        }
-        this.resourcesStack.push(resources);
-        PdfTokenizer tokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
-        PdfContentStreamParser ps = new PdfContentStreamParser(tokeniser, resources);
-        List<PdfObject> operands = new ArrayList<>();
-        try {
-            while (ps.parse(operands).size() > 0) {
-                PdfLiteral operator = (PdfLiteral) operands.get(operands.size() - 1);
-                invokeOperator(operator, operands);
-            }
-        } catch (IOException e) {
-            throw new PdfException(PdfException.CannotParseContentStream, e);
-        }
-
-        this.resourcesStack.pop();
-
-    }
-
-    /**
-     * Processes PDF syntax.
-     * <br/>
-     * <strong>Note:</strong> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
-     *
-     * @param page the page to process
-     */
-    public void processPageContent(PdfPage page) {
-        initClippingPath(page);
-        GraphicsState gs = gs();
-        eventOccurred(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED); // TODO: refactor -1 constants
-        processContent(page.getContentBytes(), page.getResources().getPdfObject());
-    }
-
     private void initClippingPath(PdfPage page) {
         Path clippingPath = new Path();
         clippingPath.rectangle(page.getCropBox());
         gs().setClippingPath(clippingPath);
-    }
-
-    /**
-     * Displays the current path.
-     *
-     * @param operation One of the possible combinations of {@link com.itextpdf.core.parser.PathRenderInfo#STROKE}
-     *                  and {@link com.itextpdf.core.parser.PathRenderInfo#FILL} values or
-     *                  {@link com.itextpdf.core.parser.PathRenderInfo#NO_OP}
-     * @param rule      Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}
-     *                  In case it isn't applicable pass any <CODE>byte</CODE> value.
-     * @since 5.5.7
-     */
-    protected void paintPath(int operation, int rule) {
-        PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, gs());
-        eventListener.eventOccurred(renderInfo, EventType.RENDER_PATH);
-
-        if (clip) {
-            clip = false;
-            GraphicsState gs = gs();
-            gs.clip(currentPath, clippingRule);
-            eventListener.eventOccurred(new PathRenderInfo(gs.getClippingPath(), -1, -1, gs), EventType.CLIP_PATH_CHANGED); // TODO: refactor -1 constants
-        }
-
-        currentPath = new Path();
     }
 
     /**
@@ -489,8 +497,7 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfArray array = (PdfArray) operands.get(0);
             float tj = 0;
-            for (Iterator<PdfObject> i = array.listIterator(); i.hasNext(); ) {
-                PdfObject entryObj = i.next();
+            for (PdfObject entryObj : array) {
                 if (entryObj instanceof PdfString) {
                     processor.displayPdfString((PdfString) entryObj);
                     tj = 0;
