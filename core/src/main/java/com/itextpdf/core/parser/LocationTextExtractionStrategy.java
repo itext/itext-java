@@ -10,7 +10,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     /**
      * set to true for debugging
      */
-    static boolean DUMP_STATE = false;
+    private static boolean DUMP_STATE = false;
 
     /**
      * a summary of all found text
@@ -18,6 +18,8 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     private final List<TextChunk> locationalResult = new ArrayList<>();
 
     private final TextChunkLocationStrategy tclStrat;
+
+    private boolean useActualText = false;
 
     /**
      * Creates a new text extraction renderer.
@@ -40,6 +42,27 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         tclStrat = strat;
     }
 
+    /**
+     * Changes the behavior of text extraction so that if the parameter is set to {@code true},
+     * /ActualText marked content property will be used instead of raw decoded bytes.
+     * Beware: the logic is not stable yet.
+     * @param useActualText true to use /ActualText, false otherwise
+     * @return this object
+     */
+    public LocationTextExtractionStrategy setUseActualText(boolean useActualText) {
+        this.useActualText = useActualText;
+        return this;
+    }
+
+    /**
+     * Gets the value of the property which determines if /ActualText will be used when extracting
+     * the text
+     * @return true if /ActualText value is used, false otherwise
+     */
+    public boolean isUseActualText() {
+        return useActualText;
+    }
+
     @Override
     public void eventOccurred(EventData data, EventType type) {
         if (type.equals(EventType.RENDER_TEXT)) {
@@ -50,7 +73,8 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
                 Matrix riseOffsetTransform = new Matrix(0, -renderInfo.getRise());
                 segment = segment.transformBy(riseOffsetTransform);
             }
-            TextChunk tc = new TextChunk(renderInfo.getText(), tclStrat.createLocation(renderInfo, segment));
+            TextChunk tc = new TextChunk(useActualText && renderInfo.getActualText() != null ? renderInfo.getActualText() : renderInfo.getText(),
+                    tclStrat.createLocation(renderInfo, segment));
             locationalResult.add(tc);
         }
     }

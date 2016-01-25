@@ -3,6 +3,7 @@ package com.itextpdf.core.parser;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfString;
 
 /**
  * Represents a Marked Content block in a PDF
@@ -47,6 +48,15 @@ public class MarkedContentInfo {
         }
 
         return id.getIntValue();
+    }
+
+    public String getActualText() {
+        PdfString actualText = dictionary.getAsString(PdfName.ActualText);
+        String result = null;
+        if (actualText != null) {
+            result = actualText.toUnicodeString();
+        }
+        return result;
     }
 
 }

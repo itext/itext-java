@@ -213,11 +213,11 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * Accessor method for the RenderListener object maintained in this class.
+     * Accessor method for the {@link EventListener} object maintained in this class.
      * Necessary for implementing custom ContentOperator implementations.
      * @return the renderListener
      */
-    public EventListener getRenderListener() {
+    public EventListener getEventListener() {
         return eventListener;
     }
 

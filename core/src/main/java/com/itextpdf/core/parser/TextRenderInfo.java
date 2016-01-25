@@ -2,6 +2,7 @@ package com.itextpdf.core.parser;
 
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfString;
 
 import java.io.UnsupportedEncodingException;
@@ -98,7 +99,7 @@ public class TextRenderInfo implements EventData {
         if (checkTheTopmostLevelOnly) {
             if (markedContentInfos instanceof List) {
                 Integer infoMcid = getMcid();
-                return (infoMcid != null) ? infoMcid == mcid : false;
+                return (infoMcid != null) && infoMcid == mcid;
             }
         } else {
             for (MarkedContentInfo info : markedContentInfos) {
@@ -120,15 +121,6 @@ public class TextRenderInfo implements EventData {
             return (info != null && info.hasMcid()) ? info.getMcid() : null;
         }
         return null;
-    }
-
-    /**
-     * @return the unscaled (i.e. in Text space) width of the text
-     */
-    float getUnscaledWidth(){
-        if (unscaledWidth == null)
-            unscaledWidth = getPdfStringWidth(string, false);
-        return unscaledWidth;
     }
 
     /**
@@ -168,17 +160,6 @@ public class TextRenderInfo implements EventData {
         return getUnscaledBaselineWithOffset(descent + gs.getRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
-    private LineSegment getUnscaledBaselineWithOffset(float yOffset){
-        // we need to correct the width so we don't have an extra character and word spaces at the end.  The extra character and word spaces
-        // are important for tracking relative text coordinate systems, but should not be part of the baseline
-        String unicodeStr = string.toUnicodeString();
-
-        float correctedUnscaledWidth = getUnscaledWidth() - (gs.getCharacterSpacing() +
-                (unicodeStr.length() > 0 && unicodeStr.charAt(unicodeStr.length() - 1) == ' ' ? gs.getWordSpacing() : 0)) * gs.getHorizontalScaling();
-
-        return new LineSegment(new Vector(0, yOffset, 1), new Vector(correctedUnscaledWidth, yOffset, 1));
-    }
-
     /**
      * Getter for the font
      * @return the font
@@ -201,27 +182,23 @@ public class TextRenderInfo implements EventData {
     }
 
     /**
-     *
-     * @param width the width, in text space
-     * @return the width in user space
-     * @since 5.3.3
+     * Provides detail useful if a listener needs access to the position of each individual glyph in the text render operation
+     * @return  A list of {@link TextRenderInfo} objects that represent each glyph used in the draw operation. The next effect is if there was a separate Tj opertion for each character in the rendered string
+     * @since   5.3.3
      */
-    private float convertWidthFromTextSpaceToUserSpace(float width){
-        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(width, 0, 1));
-        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
-        return userSpace.getLength();
-    }
-
-    /**
-     *
-     * @param height the height, in text space
-     * @return the height in user space
-     * @since 5.3.3
-     */
-    private float convertHeightFromTextSpaceToUserSpace(float height){
-        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(0, height, 1));
-        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
-        return userSpace.getLength();
+    public List<TextRenderInfo> getCharacterRenderInfos(){
+        List<TextRenderInfo> rslt = new ArrayList<>(string.getValue().length());
+        PdfString[] strings = splitString(string);
+        float totalWidth = 0;
+        for (PdfString str : strings) {
+            float[] widthAndWordSpacing = getWidthAndWordSpacing(str, true);
+            TextRenderInfo subInfo = new TextRenderInfo(this, str, totalWidth);
+            rslt.add(subInfo);
+            totalWidth += (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharacterSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling();
+        }
+        for (TextRenderInfo tri : rslt)
+            tri.getUnscaledWidth();
+        return rslt;
     }
 
     /**
@@ -257,12 +234,71 @@ public class TextRenderInfo implements EventData {
         return gs.getFillColor();
     }
 
-
     /**
      * @return the current stroke color.
      */
     public Color getStrokeColor() {
         return gs.getStrokeColor();
+    }
+
+    /**
+     * Gets /ActualText tag entry value if this text chunk is marked content.
+     * @return /ActualText value
+     */
+    protected String getActualText() {
+        String lastActualText = null;
+        if (markedContentInfos != null) {
+            for (MarkedContentInfo info : markedContentInfos) {
+                if (PdfName.Span.equals(info.getTag())) {
+                    lastActualText = info.getActualText();
+                }
+            }
+        }
+        return lastActualText;
+    }
+
+    /**
+     * @return the unscaled (i.e. in Text space) width of the text
+     */
+    float getUnscaledWidth(){
+        if (unscaledWidth == null)
+            unscaledWidth = getPdfStringWidth(string, false);
+        return unscaledWidth;
+    }
+
+    private LineSegment getUnscaledBaselineWithOffset(float yOffset){
+        // we need to correct the width so we don't have an extra character and word spaces at the end.  The extra character and word spaces
+        // are important for tracking relative text coordinate systems, but should not be part of the baseline
+        String unicodeStr = string.toUnicodeString();
+
+        float correctedUnscaledWidth = getUnscaledWidth() - (gs.getCharacterSpacing() +
+                (unicodeStr.length() > 0 && unicodeStr.charAt(unicodeStr.length() - 1) == ' ' ? gs.getWordSpacing() : 0)) * gs.getHorizontalScaling();
+
+        return new LineSegment(new Vector(0, yOffset, 1), new Vector(correctedUnscaledWidth, yOffset, 1));
+    }
+
+    /**
+     *
+     * @param width the width, in text space
+     * @return the width in user space
+     * @since 5.3.3
+     */
+    private float convertWidthFromTextSpaceToUserSpace(float width){
+        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(width, 0, 1));
+        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
+        return userSpace.getLength();
+    }
+
+    /**
+     *
+     * @param height the height, in text space
+     * @return the height in user space
+     * @since 5.3.3
+     */
+    private float convertHeightFromTextSpaceToUserSpace(float height){
+        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(0, height, 1));
+        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
+        return userSpace.getLength();
     }
 
     /**
@@ -313,33 +349,13 @@ public class TextRenderInfo implements EventData {
     }
 
     /**
-     * Provides detail useful if a listener needs access to the position of each individual glyph in the text render operation
-     * @return  A list of {@link TextRenderInfo} objects that represent each glyph used in the draw operation. The next effect is if there was a separate Tj opertion for each character in the rendered string
-     * @since   5.3.3
-     */
-    public List<TextRenderInfo> getCharacterRenderInfos(){
-        List<TextRenderInfo> rslt = new ArrayList<>(string.getValue().length());
-        PdfString[] strings = splitString(string);
-        float totalWidth = 0;
-        for (int i = 0; i < strings.length; i++) {
-            float[] widthAndWordSpacing = getWidthAndWordSpacing(strings[i], true);
-            TextRenderInfo subInfo = new TextRenderInfo(this, strings[i], totalWidth);
-            rslt.add(subInfo);
-            totalWidth += (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharacterSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling();
-        }
-        for (TextRenderInfo tri : rslt)
-            tri.getUnscaledWidth();
-        return rslt;
-    }
-
-    /**
      * Calculates width and word spacing of a single character PDF string.
      * @param string            a character to calculate width.
      * @param singleCharString  true if PDF string represents single character, false otherwise.
      * @return                  array of 2 items: first item is a character width, second item is a calculated word spacing.
      */
     private float[] getWidthAndWordSpacing(PdfString string, boolean singleCharString) {
-        if (singleCharString == false)
+        if (!singleCharString)
             throw new UnsupportedOperationException();
         float[] result = new float[2];
         result[0] = (float)((gs.getFont().getContentWidth(string) * fontMatrix[0]));
