@@ -45,7 +45,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inFile));
         TextExtractionStrategy start = new SimpleTextExtractionStrategy();
 
-        sb.append(TextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), start));
+        sb.append(PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), start));
 
         String result = sb.substring(0, sb.indexOf("\n"));
         String origText =

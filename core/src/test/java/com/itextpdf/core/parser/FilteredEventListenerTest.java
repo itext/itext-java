@@ -71,7 +71,7 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
         new PdfContentStreamProcessor(listener).processPageContent(pdfDocument.getPage(1));
         String actualText = extractionStrategy.getResultantText();
 
-        String expectedText = TextExtractor.getTextFromPage(pdfDocument.getPage(1), new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilters));
+        String expectedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilters));
 
         Assert.assertEquals(expectedText, actualText);
     }

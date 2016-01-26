@@ -4,9 +4,9 @@ import com.itextpdf.core.pdf.PdfPage;
 
 import java.io.IOException;
 
-public final class TextExtractor {
+public final class PdfTextExtractor {
 
-    private TextExtractor() {
+    private PdfTextExtractor() {
     }
 
     /**
@@ -25,7 +25,7 @@ public final class TextExtractor {
     /**
      * Extract text from a specified page using the default strategy.
      * Node: the default strategy is subject to change. If using a specific strategy
-     * is important, please use {@link TextExtractor#getTextFromPage(PdfPage, TextExtractionStrategy)}.
+     * is important, please use {@link PdfTextExtractor#getTextFromPage(PdfPage, TextExtractionStrategy)}.
      *
      * @param page the page for the text to be extracted from
      * @return the extracted text

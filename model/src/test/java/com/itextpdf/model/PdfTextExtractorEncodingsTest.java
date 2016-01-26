@@ -3,7 +3,7 @@ package com.itextpdf.model;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.parser.TextExtractor;
+import com.itextpdf.core.parser.PdfTextExtractor;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
@@ -21,9 +21,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class TextExtractorEncodingsTest extends ExtendedITextTest {
+public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
 
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/model/TextExtractorEncodingsTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/model/PdfTextExtractorEncodingsTest/";
 
     /**
      * Basic Latin characters, with Unicode values less than 128
@@ -75,9 +75,9 @@ public class TextExtractorEncodingsTest extends ExtendedITextTest {
     private void checkPdf(final byte[] pdfBytes) throws Exception {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(pdfBytes)));
         // Characters from http://unicode.org/charts/PDF/U0000.pdf
-        Assert.assertEquals(TEXT1, TextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+        Assert.assertEquals(TEXT1, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         // Characters from http://unicode.org/charts/PDF/U0080.pdf
-        Assert.assertEquals(TEXT2, TextExtractor.getTextFromPage(pdfDocument.getPage(2)));
+        Assert.assertEquals(TEXT2, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(2)));
     }
 
     protected static PdfFont getTTFont(String encoding, boolean embedded) throws IOException {

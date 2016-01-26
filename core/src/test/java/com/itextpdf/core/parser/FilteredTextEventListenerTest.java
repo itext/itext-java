@@ -27,7 +27,7 @@ public class FilteredTextEventListenerTest extends ExtendedITextTest {
 
     private boolean textIsInRectangle(PdfDocument doc, String text, Rectangle rect) throws Exception {
         FilteredTextEventListener filterListener = new FilteredTextEventListener(new LocationTextExtractionStrategy(), new TextRegionEventFilter(rect));
-        String extractedText = TextExtractor.getTextFromPage(doc.getPage(1), filterListener);
+        String extractedText = PdfTextExtractor.getTextFromPage(doc.getPage(1), filterListener);
         return extractedText.equals(text);
     }
 

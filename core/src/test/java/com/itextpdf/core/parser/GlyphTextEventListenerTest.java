@@ -26,7 +26,7 @@ import org.junit.experimental.categories.Category;
         x2 = 21;
         y1 = 749;
         y2 = 49;
-        String extractedText = TextExtractor.getTextFromPage(pdfDocument.getPage(1),
+        String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1),
                 new GlyphTextEventListener(new FilteredTextEventListener(new LocationTextExtractionStrategy(),
                         new TextRegionEventFilter(new Rectangle(x1, y1, x2, y2)))));
         Assert.assertEquals("1234\nt5678", extractedText);
@@ -36,7 +36,7 @@ import org.junit.experimental.categories.Category;
     public void test02() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "Sample.pdf"));
 
-        String extractedText = TextExtractor.getTextFromPage(pdfDocument.getPage(1),
+        String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1),
                 new GlyphTextEventListener(new FilteredTextEventListener(new LocationTextExtractionStrategy(),
                         new TextRegionEventFilter(new Rectangle(111, 855, 25, 12)))));
         Assert.assertEquals("Your ", extractedText);

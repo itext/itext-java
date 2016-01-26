@@ -8,7 +8,7 @@ import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.parser.LocationTextExtractionStrategy;
 import com.itextpdf.core.parser.TextExtractionStrategy;
-import com.itextpdf.core.parser.TextExtractor;
+import com.itextpdf.core.parser.PdfTextExtractor;
 import com.itextpdf.core.parser.Vector;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
@@ -42,7 +42,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
     public void testYPosition() throws Exception {
         PdfDocument doc = createPdfWithOverlappingTextVertical(new String[]{"A", "B", "C", "D"}, new String[]{"AA", "BB", "CC", "DD"});
 
-        String text = TextExtractor.getTextFromPage(doc.getPage(1), createRenderListenerForTest());
+        String text = PdfTextExtractor.getTextFromPage(doc.getPage(1), createRenderListenerForTest());
 
         Assert.assertEquals("A\nAA\nB\nBB\nC\nCC\nD\nDD", text);
     }
@@ -54,7 +54,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         //TestResourceUtils.openBytesAsPdf(content);
 
-        String text = TextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
         Assert.assertEquals("A AA B BB C CC D DD", text);
 //        Assert.assertEquals("A\tAA\tB\tBB\tC\tCC\tD\tDD", text);
@@ -66,7 +66,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes)));
 
-        String text = TextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
         Assert.assertEquals("A\nB\nC\nD", text);
     }
@@ -78,7 +78,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes)));
 
-        String text = TextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
         Assert.assertEquals("A\nB\nC\nD", text);
     }
@@ -90,7 +90,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes)));
 
-        String text = TextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
         Assert.assertEquals("A\nB\nC\nD", text);
     }
@@ -103,7 +103,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         //TestResourceUtils.saveBytesToFile(content, new File("C:/temp/out.pdf"));
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
 
-        String text = TextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
         Assert.assertEquals("A\nB\nX\nC", text);
     }
 
@@ -112,7 +112,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         byte[] content = createPdfWithNegativeCharSpacing("W", 200, "A");
         //TestResourceUtils.openBytesAsPdf(content);
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
-        String text = TextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
         Assert.assertEquals("WA", text);
     }
 
@@ -136,7 +136,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         byte[] content = createPdfWithSupescript("Hel", "lo");
         //TestResourceUtils.openBytesAsPdf(content);
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
-        String text = TextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
         Assert.assertEquals("Hello", text);
     }
 

@@ -42,7 +42,7 @@ public class PdfContentStreamProcessor {
     protected final EventListener eventListener;
 
     /**
-     * Cache supported events in case the user's {@link EventListener#getSupportedEvents()} method is not very performant
+     * Cache supported events in case the user's {@link EventListener#getSupportedEvents()} method is not very efficient
      **/
     protected final Set<EventType> supportedEvents;
 

@@ -13,9 +13,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class TextExtractorUnicodeIdentityTest extends ExtendedITextTest {
+public class PdfTextExtractorUnicodeIdentityTest extends ExtendedITextTest {
 
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/TextExtractorUnicodeIdentityTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/core/parser/PdfTextExtractorUnicodeIdentityTest/";
 
     @Test
     public void test() throws IOException {
@@ -23,7 +23,7 @@ public class TextExtractorUnicodeIdentityTest extends ExtendedITextTest {
 
         Rectangle rectangle = new Rectangle(71, 708, 154, 9);
         EventFilter filter = new TextRegionEventFilter(rectangle);
-        String txt = TextExtractor.getTextFromPage(pdfDocument.getPage(1), new FilteredTextEventListener(new LocationTextExtractionStrategy(), filter));
+        String txt = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new FilteredTextEventListener(new LocationTextExtractionStrategy(), filter));
         Assert.assertEquals("Pname Dname Email Address", txt);
     }
 
