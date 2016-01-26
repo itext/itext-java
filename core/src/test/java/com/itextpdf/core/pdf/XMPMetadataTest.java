@@ -9,7 +9,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.TimeZone;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,13 +23,18 @@ public class XMPMetadataTest extends ExtendedITextTest{
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/core/pdf/XmpWriterTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/core/pdf/XmpWriterTest/";
 
+    static  public TimeZone CURRENT_USER_TIME_ZONE;
+
     @BeforeClass
     static public void beforeClass() {
         createDestinationFolder(destinationFolder);
+        CURRENT_USER_TIME_ZONE = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Brussels"));
     }
 
     @Test
-    public void createEmptyDocumentWithXmp() throws IOException, XMPException {
+    public void createEmptyDocumentWithXmp() throws Exception {
+
         String filename = "emptyDocumentWithXmp.pdf";
         FileOutputStream fos = new FileOutputStream(destinationFolder +filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -40,7 +47,6 @@ public class XMPMetadataTest extends ExtendedITextTest{
         page.flush();
         pdfDoc.setXmpMetadata();
         pdfDoc.close();
-
         PdfReader reader = new PdfReader(destinationFolder +filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
@@ -49,6 +55,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
         reader.close();
 
     }
+
 
     @Test
     public void createEmptyDocumentWithAbcXmp() throws IOException, XMPException {
@@ -71,6 +78,11 @@ public class XMPMetadataTest extends ExtendedITextTest{
         Assert.assertNotNull(pdfDocument.getPage(1));
         reader.close();
 
+    }
+
+    @AfterClass
+    public static void afterClass(){
+        TimeZone.setDefault(CURRENT_USER_TIME_ZONE);
     }
 
 
