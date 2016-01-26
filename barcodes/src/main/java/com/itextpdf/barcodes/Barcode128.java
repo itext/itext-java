@@ -482,7 +482,7 @@ public class Barcode128 extends Barcode1D {
             } else {
                 fullCode = removeFNC1(code);
             }
-            fontX = font.getWidth(altText != null ? altText : fullCode) * getFontSizeCoef();
+            fontX = font.getWidth(altText != null ? altText : fullCode, size);
         }
         if (codeType == CODE128_RAW) {
             int idx = code.indexOf('\uffff');
@@ -556,7 +556,7 @@ public class Barcode128 extends Barcode1D {
         }
         float fontX = 0;
         if (font != null) {
-            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode) * getFontSizeCoef();
+            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode, size);
         }
         String bCode;
         if (codeType == CODE128_RAW) {

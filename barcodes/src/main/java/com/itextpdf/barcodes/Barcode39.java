@@ -203,7 +203,7 @@ public class Barcode39 extends Barcode1D {
             if (startStopText) {
                 fullCode = "*" + fullCode + "*";
             }
-            fontX = font.getWidth(altText != null ? altText : fullCode) * getFontSizeCoef();
+            fontX = font.getWidth(altText != null ? altText : fullCode, size);
         }
         int len = fCode.length() + 2;
         if (generateChecksum) {
@@ -268,7 +268,7 @@ public class Barcode39 extends Barcode1D {
             if (startStopText) {
                 fullCode = "*" + fullCode + "*";
             }
-            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode) * getFontSizeCoef();
+            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode, size);
         }
         if (generateChecksum) {
             bCode += getChecksum(bCode);

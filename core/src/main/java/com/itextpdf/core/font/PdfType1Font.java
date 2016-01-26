@@ -1,6 +1,5 @@
 package com.itextpdf.core.font;
 
-
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
@@ -12,7 +11,7 @@ import com.itextpdf.core.pdf.PdfStream;
 
 public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
-    public PdfType1Font(PdfDictionary fontDictionary) {
+    PdfType1Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type1);
 
@@ -26,7 +25,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         subset = false;
     }
 
-    public PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
+    PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
         super();
         setFontProgram(type1Font);
         this.embedded = embedded && !type1Font.isBuiltInFont();
@@ -40,16 +39,8 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         }
     }
 
-    public PdfType1Font(Type1Font type1Font, boolean embedded) {
-        this(type1Font, null, embedded);
-    }
-
-    public PdfType1Font(Type1Font type1Font, String encoding) {
+    PdfType1Font(Type1Font type1Font, String encoding) {
         this(type1Font, encoding, false);
-    }
-
-    public PdfType1Font(Type1Font type1Font) {
-        this(type1Font, null, false);
     }
 
     @Override

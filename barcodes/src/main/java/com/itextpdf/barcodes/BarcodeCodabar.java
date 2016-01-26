@@ -131,7 +131,7 @@ public class BarcodeCodabar extends Barcode1D {
             } else {
                 fontY = -baseline + size;
             }
-            fontX = font.getWidth(altText != null ? altText : text) * getFontSizeCoef();
+            fontX = font.getWidth(altText != null ? altText : text, size);
         }
         text = code;
         if (generateChecksum) {
@@ -197,7 +197,7 @@ public class BarcodeCodabar extends Barcode1D {
         }
         float fontX = 0;
         if (font != null) {
-            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode) * getFontSizeCoef();
+            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode, size);
         }
         byte[] bars = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
         int wide = 0;

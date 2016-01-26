@@ -468,7 +468,7 @@ public class BarcodeEAN extends Barcode1D {
             case EAN13:
                 width = x * (11 + 12 * 7);
                 if (font != null) {
-                    width += font.getWidth(code.charAt(0)) * getFontSizeCoef();
+                    width += font.getWidth(code.charAt(0), size);
                 }
                 break;
             case EAN8:
@@ -477,13 +477,13 @@ public class BarcodeEAN extends Barcode1D {
             case UPCA:
                 width = x * (11 + 12 * 7);
                 if (font != null) {
-                    width += font.getWidth(code.charAt(0)) * getFontSizeCoef() + font.getWidth(code.charAt(11)) * getFontSizeCoef();
+                    width += font.getWidth(code.charAt(0), size) + font.getWidth(code.charAt(11), size);
                 }
                 break;
             case UPCE:
                 width = x * (9 + 6 * 7);
                 if (font != null) {
-                    width += font.getWidth(code.charAt(0)) * getFontSizeCoef() + font.getWidth(code.charAt(7)) * getFontSizeCoef();
+                    width += font.getWidth(code.charAt(0), size) + font.getWidth(code.charAt(7), size);
                 }
                 break;
             case SUPP2:
@@ -555,7 +555,7 @@ public class BarcodeEAN extends Barcode1D {
             case UPCA:
             case UPCE:
                 if (font != null) {
-                    barStartX += font.getWidth(code.charAt(0)) * getFontSizeCoef();
+                    barStartX += font.getWidth(code.charAt(0), size);
                 }
                 break;
         }
@@ -621,7 +621,7 @@ public class BarcodeEAN extends Barcode1D {
                     canvas.showText(code.substring(0, 1));
                     for (int k = 1; k < 13; ++k) {
                         String c = code.substring(k, k + 1);
-                        float len = font.getWidth(c) * getFontSizeCoef();
+                        float len = font.getWidth(c, size);
                         float pX = keepBarX + TEXTPOS_EAN13[k - 1] * x - len / 2;
                         canvas.setTextMatrix(pX, textStartY);
                         canvas.showText(c);
@@ -630,7 +630,7 @@ public class BarcodeEAN extends Barcode1D {
                 case EAN8:
                     for (int k = 0; k < 8; ++k) {
                         String c = code.substring(k, k + 1);
-                        float len = font.getWidth(c) * getFontSizeCoef();
+                        float len = font.getWidth(c, size);
                         float pX = TEXTPOS_EAN8[k] * x - len / 2;
                         canvas.setTextMatrix(pX, textStartY);
                         canvas.showText(c);
@@ -641,7 +641,7 @@ public class BarcodeEAN extends Barcode1D {
                     canvas.showText(code.substring(0, 1));
                     for (int k = 1; k < 11; ++k) {
                         String c = code.substring(k, k + 1);
-                        float len = font.getWidth(c) * getFontSizeCoef();
+                        float len = font.getWidth(c, size);
                         float pX = keepBarX + TEXTPOS_EAN13[k] * x - len / 2;
                         canvas.setTextMatrix(pX, textStartY);
                         canvas.showText(c);
@@ -654,7 +654,7 @@ public class BarcodeEAN extends Barcode1D {
                     canvas.showText(code.substring(0, 1));
                     for (int k = 1; k < 7; ++k) {
                         String c = code.substring(k, k + 1);
-                        float len = font.getWidth(c) * getFontSizeCoef();
+                        float len = font.getWidth(c, size);
                         float pX = keepBarX + TEXTPOS_EAN13[k - 1] * x - len / 2;
                         canvas.setTextMatrix(pX, textStartY);
                         canvas.showText(c);
@@ -666,7 +666,7 @@ public class BarcodeEAN extends Barcode1D {
                 case SUPP5:
                     for (int k = 0; k < code.length(); ++k) {
                         String c = code.substring(k, k + 1);
-                        float len = font.getWidth(c) * getFontSizeCoef();
+                        float len = font.getWidth(c, size);
                         float pX = (7.5f + (9 * k)) * x - len / 2;
                         canvas.setTextMatrix(pX, textStartY);
                         canvas.showText(c);

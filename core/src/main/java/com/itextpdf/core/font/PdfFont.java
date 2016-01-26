@@ -1,6 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.*;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
+public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected static final byte[] emptyBytes = new byte[0];
 
@@ -30,7 +31,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     protected boolean subset = true;
     protected List<int[]> subsetRanges;
 
-    public static PdfFont getDefaultFont() throws IOException {
+    public static PdfFont createFont() throws IOException {
         return createStandardFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
     }
 
@@ -103,6 +104,14 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    public static PdfFont createFont(FontProgram fontProgram, String encoding) throws IOException {
+        return createFont(fontProgram, encoding, false);
+    }
+
+    public static PdfFont createFont(FontProgram fontProgram) throws IOException {
+        return createFont(fontProgram, PdfEncodings.WINANSI);
+    }
+
     public static PdfFont createFont(byte[] font, String encoding) throws IOException {
         return createFont(font, encoding, false);
     }
@@ -146,6 +155,10 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfFont createType1Font(String metrics, String binary, String encoding) throws IOException {
         return createType1Font(metrics, binary, encoding, false);
+    }
+
+    public static PdfType3Font createType3Font(PdfDocument document, boolean colorized) throws IOException {
+        return new PdfType3Font(document, colorized);
     }
 
     public static PdfFont createRegisteredFont(String fontName, final String encoding, boolean embedded, int style, boolean cached) throws IOException {
@@ -320,17 +333,13 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
-    //TODO as abstract + comments!
-    public Glyph getGlyph(int unicode) {throw new RuntimeException();}
+    public abstract Glyph getGlyph(int unicode);
 
     public boolean containsGlyph(char unicode) {
         return getGlyph(unicode) != null;
     }
 
-    //TODO remove
-    public GlyphLine createGlyphLine(String content) {
-        throw new RuntimeException();
-    }
+    public abstract GlyphLine createGlyphLine(String content);
 
     /**
      * Converts the text into bytes to be placed in the document.
@@ -340,51 +349,19 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param text the text to convert
      * @return the conversion
      */
-    //TODO abstract
-    public byte[] convertToBytes(String text) {
-        //TODO when implement document fonts, throw exception
-        //throw new IllegalStateException();
-        return PdfEncodings.convertToBytes(text, "");
-    }
+    public abstract byte[] convertToBytes(String text);
 
-    //TODO abstract
-    public byte[] convertToBytes(GlyphLine glyphLine) {
-        // TODO implement correctly for all fonts after moved to GlyphLines without intermediate unicode conversion
-        // convert to printable array
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = glyphLine.start; i < glyphLine.end; i++) {
-//            if (glyphLine.glyphs.get(i).getUnicode() != null) {
-//                sb.append(Utilities.convertFromUtf32(glyphLine.glyphs.get(i).getUnicode()));
-//            }
-//        }
-//        return convertToBytes(sb.toString());
-        throw new RuntimeException();
-    }
+    public abstract byte[] convertToBytes(GlyphLine glyphLine);
 
-    //TODO abstract
-    public String decode(PdfString content) {
-        throw new RuntimeException();
-    }
+    public abstract String decode(PdfString content);
 
-    //TODO abstract
-    public float getContentWidth(PdfString content) {
-        throw new RuntimeException();
-    }
+    public abstract float getContentWidth(PdfString content);
 
-    //TODO abstract
-    public byte[] convertToBytes(Glyph glyph) {
-        throw new RuntimeException();
-    }
+    public abstract byte[] convertToBytes(Glyph glyph);
 
-    //TODO abstract
-    public void writeText(GlyphLine text, int from, int to, PdfOutputStream stream) {
-        throw new RuntimeException();
-    }
+    public abstract void writeText(GlyphLine text, int from, int to, PdfOutputStream stream);
 
-    //TODO abstract
-    public void writeText(String text, PdfOutputStream stream) {
-        throw new RuntimeException();
-    }
+    public abstract void writeText(String text, PdfOutputStream stream);
 
     public void writeText(GlyphLine text, PdfOutputStream stream) {
         writeText(text, 0, text.size() - 1, stream);
@@ -397,23 +374,48 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Returns the width of a certain character of this font in 1000 normalized units.
      *
-     * @param ch a certain character.
+     * @param unicode a certain character.
      * @return a width in Text Space.
      */
-    public int getWidth(int ch) {
-        // TODO abstract method
-        throw new IllegalStateException();
+    //TODO handle DW key
+    public int getWidth(int unicode) {
+        Glyph glyph = getGlyph(unicode);
+        return glyph != null ? glyph.getWidth() : 0;
+    }
+
+    /**
+     * Returns the width of a certain character of this font in points.
+     *
+     * @param unicode a certain character.
+     * @param fontSize the font size.
+     * @return a width in points.
+     */
+    public float getWidth(int unicode, float fontSize) {
+        return getWidth(unicode) * fontSize / FontProgram.UNITS_NORMALIZATION;
     }
 
     /**
      * Returns the width of a string of this font in 1000 normalized units.
      *
-     * @param s a string content.
+     * @param text a string content.
      * @return a width of string in Text Space.
      */
-    public int getWidth(String s) {
-        // TODO abstract method
-        throw new IllegalStateException();
+    public int getWidth(String text) {
+        int total = 0;
+        for (int i = 0; i < text.length(); i++) {
+            int ch;
+            if (Utilities.isSurrogatePair(text, i)) {
+                ch = Utilities.convertToUtf32(text, i);
+                i++;
+            } else {
+                ch = text.charAt(i);
+            }
+            Glyph glyph = getGlyph(ch);
+            if (glyph != null) {
+                total += glyph.getWidth();
+            }
+        }
+        return total;
     }
 
     /**
@@ -423,75 +425,108 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param fontSize the font size
      * @return the width in points
      */
-    public float getWidthPoint(String text, float fontSize) {
+    public float getWidth(String text, float fontSize) {
         return getWidth(text) * fontSize / FontProgram.UNITS_NORMALIZATION;
     }
 
     /**
-     * Gets the width of a {@code char} in points.
-     *
-     * @param ch       the {@code char} to get the width of
-     * @param fontSize the font size
-     * @return the width in points
-     */
-    public float getWidthPoint(int ch, float fontSize) {
-        return getWidth(ch) * fontSize / FontProgram.UNITS_NORMALIZATION;
-    }
-
-    /**
-     * Gets the descent of a {@code String} in normalized 1000 units. The descent will always be
+     * Gets the descent of a {@code String} in points. The descent will always be
      * less than or equal to zero even if all the characters have an higher descent.
      *
      * @param text the {@code String} to get the descent of
-     * @return the descent in normalized 1000 units
+     * @param fontSize the font size
+     * @return the descent in points
      */
-    public int getDescent(String text) {
-        // TODO abstract method
-        throw new IllegalStateException();
+    public int getDescent(String text, float fontSize) {
+        int min = 0;
+        for (int k = 0; k < text.length(); ++k) {
+            int ch;
+            if (Utilities.isSurrogatePair(text, k)) {
+                ch = Utilities.convertToUtf32(text, k);
+                k++;
+            } else {
+                ch = text.charAt(k);
+            }
+            int[] bbox = getGlyph(ch).getBbox();
+            if (bbox != null && bbox[1] < min) {
+                min = bbox[1];
+            } else if (bbox == null && getFontProgram().getFontMetrics().getTypoDescender() < min) {
+                min = getFontProgram().getFontMetrics().getTypoDescender();
+            }
+        }
+        return (int) (min * fontSize / FontProgram.UNITS_NORMALIZATION);
     }
 
     /**
-     * Gets the descent of a char code in normalized 1000 units. The descent will always be
+     * Gets the descent of a char code in points. The descent will always be
      * less than or equal to zero even if all the characters have an higher descent.
      *
-     * @param ch the char code to get the descent of
-     * @return the descent in normalized 1000 units
+     * @param unicode the char code to get the descent of
+     * @param fontSize the font size
+     * @return the descent in points
      */
-    public int getDescent(int ch) {
-        // TODO abstract method
-        throw new IllegalStateException();
+    public int getDescent(int unicode, float fontSize) {
+        int min = 0;
+        int[] bbox = getGlyph(unicode).getBbox();
+        if (bbox != null && bbox[1] < min) {
+            min = bbox[1];
+        } else if (bbox == null && getFontProgram().getFontMetrics().getTypoDescender() < min) {
+            min = getFontProgram().getFontMetrics().getTypoDescender();
+        }
 
+        return (int) (min * fontSize / FontProgram.UNITS_NORMALIZATION);
     }
 
     /**
-     * Gets the ascent of a {@code String} in normalized 1000 units. The ascent will always be
+     * Gets the ascent of a {@code String} in points. The ascent will always be
      * greater than or equal to zero even if all the characters have a lower ascent.
      *
      * @param text the {@code String} to get the ascent of
-     * @return the ascent in normalized 1000 units
+     * @param fontSize the font size
+     * @return the ascent in points
      */
-    public int getAscent(String text) {
-        // TODO abstract method
-        throw new IllegalStateException();
+    public int getAscent(String text, float fontSize) {
+        int max = 0;
+        for (int k = 0; k < text.length(); ++k) {
+            int ch;
+            if (Utilities.isSurrogatePair(text, k)) {
+                ch = Utilities.convertToUtf32(text, k);
+                k++;
+            } else {
+                ch = text.charAt(k);
+            }
+            int[] bbox = getGlyph(ch).getBbox();
+            if (bbox != null && bbox[3] > max) {
+                max = bbox[3];
+            } else if (bbox == null && getFontProgram().getFontMetrics().getTypoAscender() > max) {
+                max = getFontProgram().getFontMetrics().getTypoAscender();
+            }
+        }
 
+        return (int) (max * fontSize / FontProgram.UNITS_NORMALIZATION);
     }
 
     /**
      * Gets the ascent of a char code in normalized 1000 units. The ascent will always be
      * greater than or equal to zero even if all the characters have a lower ascent.
      *
-     * @param ch the char code to get the ascent of
-     * @return the ascent in normalized 1000 units
+     * @param unicode the char code to get the ascent of
+     * @param fontSize the font size
+     * @return the ascent in points
      */
-    public int getAscent(int ch) {
-        // TODO abstract method
-        throw new IllegalStateException();
+    public int getAscent(int unicode, float fontSize) {
+        int max = 0;
+        int[] bbox = getGlyph(unicode).getBbox();
+        if (bbox != null && bbox[3] > max) {
+            max = bbox[3];
+        } else if (bbox == null && getFontProgram().getFontMetrics().getTypoAscender() > max) {
+            max = getFontProgram().getFontMetrics().getTypoAscender();
+        }
 
+        return (int) (max * fontSize / FontProgram.UNITS_NORMALIZATION);
     }
 
-    public FontProgram getFontProgram() {
-        throw new UnsupportedOperationException("not implemented yet");
-    }
+    public abstract FontProgram getFontProgram();
 
     public boolean isEmbedded() {
         return embedded;
@@ -552,7 +587,7 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             if (Character.isWhitespace(ch)) {
                 lastWhiteSpace = i;
             }
-            tokenLength += getWidthPoint(ch, fontSize);
+            tokenLength += getWidth(ch, fontSize);
             if (tokenLength >= maxWidth || ch == '\n') {
                 if(startPos < lastWhiteSpace) {
                     resultString.add(text.substring(startPos, lastWhiteSpace));

@@ -168,6 +168,4 @@ public final class Type3Glyph extends PdfCanvas {
             }
         }
     }
-
-
 }

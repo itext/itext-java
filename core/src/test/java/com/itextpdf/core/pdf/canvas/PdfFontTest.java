@@ -5,7 +5,6 @@ import com.itextpdf.basics.Utilities;
 import com.itextpdf.basics.font.CidFont;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontFactory;
-import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.TrueTypeCollection;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
@@ -165,7 +164,7 @@ public class PdfFontTest extends ExtendedITextTest {
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfType3Font type3 = new PdfType3Font(pdfDoc, false);
+        PdfType3Font type3 = PdfFont.createType3Font(pdfDoc, false);
         Type3Glyph a = type3.addGlyph('A', 600, 0, 0, 600, 700);
         a.setLineWidth(100);
         a.moveTo(5, 5);
@@ -562,7 +561,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType3Font pdfType3Font = new PdfType3Font((PdfDictionary) pdfDoc.getPdfObject(4));
+        PdfType3Font pdfType3Font = (PdfType3Font) PdfFont.createFont((PdfDictionary) pdfDoc.getPdfObject(4));
 
         Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
@@ -605,7 +604,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setTitle(title);
 
         PdfDictionary pdfType3FontDict = (PdfDictionary) inputPdfDoc.getPdfObject(4);
-        PdfType3Font pdfType3Font = new PdfType3Font(pdfType3FontDict.copyToDocument(outputPdfDoc));
+        PdfType3Font pdfType3Font = (PdfType3Font) PdfFont.createFont(pdfType3FontDict.copyToDocument(outputPdfDoc));
 
         Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
@@ -648,7 +647,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary.copyToDocument(pdfDoc));
+        PdfFont pdfType1Font = PdfFont.createFont(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -685,7 +684,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-        PdfTrueTypeFont pdfTrueTypeFont = new PdfTrueTypeFont(pdfDictionary.copyToDocument(pdfDoc));
+        PdfFont pdfTrueTypeFont = PdfFont.createFont(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -791,7 +790,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setTitle(title);
 
         PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(6);
-        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary);
+        PdfFont pdfTrueTypeFont = PdfFont.createFont(pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -830,7 +829,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary.copyToDocument(pdfDoc));
+        PdfFont pdfTrueTypeFont = PdfFont.createFont(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -868,7 +867,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType0Font pdfTrueTypeFont = new PdfType0Font(pdfDictionary.copyToDocument(pdfDoc));
+        PdfFont pdfTrueTypeFont = PdfFont.createFont(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -903,7 +902,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType0Font pdfTrueTypeFont = new PdfType0Font((PdfDictionary) pdfDoc.getPdfObject(6));
+        PdfFont pdfTrueTypeFont = PdfFont.createFont((PdfDictionary) pdfDoc.getPdfObject(6));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -940,7 +939,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary.copyToDocument(pdfDoc));
+        PdfFont pdfType1Font = PdfFont.createFont(pdfDictionary.copyToDocument(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -970,7 +969,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
-        PdfType1Font pdfType1Font = new PdfType1Font(pdfDictionary);
+        PdfFont pdfType1Font = PdfFont.createFont(pdfDictionary);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1155,7 +1154,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void testSplitString() throws IOException {
-        PdfFont font = PdfFont.getDefaultFont();
+        PdfFont font = PdfFont.createFont();
         List<String> list1 = font.splitString("Hello", 12, 10);
         Assert.assertTrue(list1.size() == 2);
 

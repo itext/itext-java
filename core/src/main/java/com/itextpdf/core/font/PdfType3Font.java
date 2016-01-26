@@ -27,7 +27,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
      *
      * @param colorized defines whether the glyph color is specified in the glyph descriptions in the font.
      */
-    public PdfType3Font(PdfDocument document, boolean colorized) {
+    PdfType3Font(PdfDocument document, boolean colorized) {
         super();
         makeIndirect(document);
         subset = true;
@@ -41,7 +41,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
      *
      * @param fontDictionary a dictionary of type <code>/Font</code>
      */
-    public PdfType3Font(PdfDictionary fontDictionary) {
+    PdfType3Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type3);
         subset = true;

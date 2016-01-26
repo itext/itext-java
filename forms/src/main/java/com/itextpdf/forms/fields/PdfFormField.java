@@ -236,7 +236,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String value, String name) {
         try {
-            return createText(doc, rect, PdfFont.getDefaultFont(), DEFAULT_FONT_SIZE, value, name);
+            return createText(doc, rect, PdfFont.createFont(), DEFAULT_FONT_SIZE, value, name);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -317,7 +317,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, int flags) {
         try {
-            return createChoice(doc, rect, options, value, name, PdfFont.getDefaultFont(), DEFAULT_FONT_SIZE, flags);
+            return createChoice(doc, rect, options, value, name, PdfFont.createFont(), DEFAULT_FONT_SIZE, flags);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -430,7 +430,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption) {
         PdfButtonFormField field;
         try {
-            field = createPushButton(doc, rect, name, caption, PdfFont.getDefaultFont(), DEFAULT_FONT_SIZE);
+            field = createPushButton(doc, rect, name, caption, PdfFont.createFont(), DEFAULT_FONT_SIZE);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -1520,12 +1520,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         PdfFont ufont = getFont();
         // PdfFont gets all width in 1000 normalized units
-        float sizeCoef = (float) fontSize / FontProgram.UNITS_NORMALIZATION;
         canvas.
                 beginText().
                 setFontAndSize(ufont, fontSize).
                 resetFillColorRgb().
-                setTextMatrix((width - ufont.getWidth(text) * sizeCoef) / 2, (height - ufont.getAscent(text) * sizeCoef) / 2).
+                setTextMatrix((width - ufont.getWidth(text, fontSize)) / 2, (height - ufont.getAscent(text, fontSize) ) / 2).
                 showText(text).
                 endText();
     }
@@ -1968,10 +1967,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected void drawTextAligned(PdfCanvas canvas, int alignment, String text, float x, float y, PdfFont font, int fontSize) {
         switch (alignment) {
             case ALIGN_CENTER:
-                x = (getRect(getPdfObject()).getWidth() - font.getWidthPoint(text, fontSize)) / 2;
+                x = (getRect(getPdfObject()).getWidth() - font.getWidth(text, fontSize)) / 2;
                 break;
             case ALIGN_RIGHT:
-                x = (getRect(getPdfObject()).getWidth() - font.getWidthPoint(text, fontSize));
+                x = (getRect(getPdfObject()).getWidth() - font.getWidth(text, fontSize));
                 break;
         }
         canvas.setTextMatrix(x, y);
@@ -2043,7 +2042,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (font != null) {
                     fontAndSize[0] = font;
                 } else {
-                    fontAndSize[0] = PdfFont.getDefaultFont();
+                    fontAndSize[0] = PdfFont.createFont();
                 }
                 if (fontSize != 0) {
                     fontAndSize[1] = fontSize;
@@ -2055,7 +2054,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (font != null) {
                 fontAndSize[0] = font;
             } else {
-                fontAndSize[0] = PdfFont.getDefaultFont();
+                fontAndSize[0] = PdfFont.createFont();
             }
             if (fontSize != 0) {
                 fontAndSize[1] = fontSize;

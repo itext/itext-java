@@ -157,7 +157,7 @@ public class BarcodeInter25 extends Barcode1D {
             if (generateChecksum && checksumText) {
                 fullCode += getChecksum(fullCode);
             }
-            fontX = font.getWidth(altText != null ? altText : fullCode) * getFontSizeCoef();
+            fontX = font.getWidth(altText != null ? altText : fullCode, size);
         }
         String fullCode = keepNumbers(code);
         int len = fullCode.length();
@@ -215,7 +215,7 @@ public class BarcodeInter25 extends Barcode1D {
         if (font != null) {
             if (generateChecksum && checksumText)
                 fullCode += getChecksum(fullCode);
-            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode) * getFontSizeCoef();
+            fontX = font.getWidth(fullCode = altText != null ? altText : fullCode, size);
         }
         String bCode = keepNumbers(code);
         if (generateChecksum)

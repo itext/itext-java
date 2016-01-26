@@ -493,12 +493,4 @@ public abstract class Barcode1D {
         float sizeCoef = size / FontProgram.UNITS_NORMALIZATION;
         return font.getFontProgram().getFontMetrics().getTypoDescender() * sizeCoef;
     }
-
-    /**
-     * PdfFont gets the width in normalized 1000 units.
-     * This method helps to include size into width calculation.
-     */
-    protected float getFontSizeCoef() {
-        return size / FontProgram.UNITS_NORMALIZATION;
-    }
 }

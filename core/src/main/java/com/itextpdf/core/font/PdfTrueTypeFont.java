@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
-    public PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
+    PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
         super();
         setFontProgram(ttf);
         this.embedded = embedded;
@@ -43,15 +43,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         }
     }
 
-    public PdfTrueTypeFont(TrueTypeFont ttf, String encoding) {
-        this(ttf, encoding, false);
-    }
-
-    public PdfTrueTypeFont(TrueTypeFont ttf) {
-        this(ttf, null, false);
-    }
-
-    public PdfTrueTypeFont(PdfDictionary fontDictionary) {
+    PdfTrueTypeFont(PdfDictionary fontDictionary) {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.TrueType);
 

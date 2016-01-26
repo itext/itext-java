@@ -48,7 +48,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         for (int i = 0; i < content.length(); i++) {
             Glyph glyph;
             if (fontEncoding.isFontSpecific()) {
-                glyph = fontProgram.getGlyphByCode(content.charAt(i) & 0xff);
+                glyph = fontProgram.getGlyphByCode(content.charAt(i));
             } else {
                 glyph = getGlyph((int) content.charAt(i));
             }
@@ -169,37 +169,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     /**
-     * Returns the width of a certain character of this font.
-     *
-     * @param ch a unicode symbol or font specific code to be checked.
-     * @return a width in Text Space.
-     */
-    @Override
-    public int getWidth(int ch) {
-        // TODO could single unicode symbol be encoded into 2+ bytes in case simple encoding with glyph names?
-        Glyph glyph = getGlyph(ch);
-        return glyph != null ? glyph.getWidth() : 0;
-    }
-
-    /**
-     * Returns the width of a string of this font.
-     *
-     * @param text a Unicode string content.
-     * @return a width of string in Text Space.
-     */
-    @Override
-    public int getWidth(String text) {
-        int total = 0;
-        for (int i = 0; i < text.length(); i++) {
-            Glyph glyph = getGlyph(text.charAt(i));
-            if (glyph != null) {
-                total += glyph.getWidth();
-            }
-        }
-        return total;
-    }
-
-    /**
      * Gets the state of the property.
      *
      * @return value of property forceWidthsOutput
@@ -215,90 +184,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      */
     public void setForceWidthsOutput(boolean forceWidthsOutput) {
         this.forceWidthsOutput = forceWidthsOutput;
-    }
-
-    /**
-     * Gets the descent of a {@code String} in normalized 1000 units. The descent will always be
-     * less than or equal to zero even if all the characters have an higher descent.
-     *
-     * @param text the {@code String} to get the descent of
-     * @return the descent in normalized 1000 units
-     */
-    public int getDescent(String text) {
-        int min = 0;
-        for (int k = 0; k < text.length(); ++k) {
-            Glyph glyph = getGlyph(text.charAt(k));
-            int[] bbox = glyph != null ? glyph.getBbox() : null;
-            if (bbox != null && bbox[1] < min) {
-                min = bbox[1];
-            } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
-                min = fontProgram.getFontMetrics().getTypoDescender();
-            }
-        }
-
-        return min;
-    }
-
-    /**
-     * Gets the descent of a char code in normalized 1000 units. The descent will always be
-     * less than or equal to zero even if all the characters have an higher descent.
-     *
-     * @param ch the char code to get the descent of
-     * @return the descent in normalized 1000 units
-     */
-    public int getDescent(int ch) {
-        int min = 0;
-        Glyph glyph = getGlyph(ch);
-        int[] bbox = glyph != null ? glyph.getBbox() : null;
-        if (bbox != null && bbox[1] < min) {
-            min = bbox[1];
-        } else if (bbox == null && fontProgram.getFontMetrics().getTypoDescender() < min) {
-            min = fontProgram.getFontMetrics().getTypoDescender();
-        }
-
-        return min;
-    }
-
-    /**
-     * Gets the ascent of a {@code String} in normalized 1000 units. The ascent will always be
-     * greater than or equal to zero even if all the characters have a lower ascent.
-     *
-     * @param text the {@code String} to get the ascent of
-     * @return the ascent in normalized 1000 units
-     */
-    public int getAscent(String text) {
-        int max = 0;
-        for (int k = 0; k < text.length(); ++k) {
-            Glyph glyph = getGlyph(text.charAt(k));
-            int[] bbox = glyph != null ? glyph.getBbox() : null;
-            if (bbox != null && bbox[3] > max) {
-                max = bbox[3];
-            } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
-                max = fontProgram.getFontMetrics().getTypoAscender();
-            }
-        }
-
-        return max;
-    }
-
-    /**
-     * Gets the ascent of a char code in normalized 1000 units. The ascent will always be
-     * greater than or equal to zero even if all the characters have a lower ascent.
-     *
-     * @param ch the char code to get the ascent of
-     * @return the ascent in normalized 1000 units
-     */
-    public int getAscent(int ch) {
-        int max = 0;
-        Glyph glyph = getGlyph(ch);
-        int[] bbox = glyph != null ? glyph.getBbox() : null;
-        if (bbox != null && bbox[3] > max) {
-            max = bbox[3];
-        } else if (bbox == null && fontProgram.getFontMetrics().getTypoAscender() > max) {
-            max = fontProgram.getFontMetrics().getTypoAscender();
-        }
-
-        return max;
     }
 
     protected void flushFontData(String fontName, PdfName subtype) {

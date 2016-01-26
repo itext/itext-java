@@ -16,7 +16,7 @@ public class CidFont extends FontProgram {
     private int pdfFontFlags;
     private Set<String> compatibleCmaps;
 
-    public CidFont(String fontName, Set<String> cmaps) {
+    CidFont(String fontName, Set<String> cmaps) {
         compatibleCmaps = cmaps;
         initializeCidFontNameAndStyle(fontName);
         Map<String, Object> fontDesc = CidFontProperties.getAllFonts().get(fontNames.getFontName());
@@ -26,8 +26,7 @@ public class CidFont extends FontProgram {
         initializeCidFontProperties(fontDesc);
     }
 
-    //TODO sample?
-    public CidFont(String fontName, Set<String> cmaps, Map<String, Object> fontDescription) {
+    CidFont(String fontName, Set<String> cmaps, Map<String, Object> fontDescription) {
         initializeCidFontNameAndStyle(fontName);
         initializeCidFontProperties(fontDescription);
         compatibleCmaps = cmaps;
