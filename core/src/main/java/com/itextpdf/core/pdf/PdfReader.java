@@ -1149,6 +1149,9 @@ public class PdfReader {
         }
     }
 
+    public boolean isEncrypted() {
+        return encrypted;
+    }
 
     PdfObject getCryptoRef() {
         return cryptoRef;
