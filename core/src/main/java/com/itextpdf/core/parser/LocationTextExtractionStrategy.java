@@ -164,8 +164,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         TextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline);
     }
 
-    public interface TextChunkLocation {
-
+    public interface TextChunkLocation extends Comparable<TextChunkLocation> {
         float distParallelEnd();
 
         float distParallelStart();
@@ -225,16 +224,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
          */
         @Override
         public int compareTo(TextChunk rhs) {
-            if (this == rhs) return 0; // not really needed, but just in case
-
-            int result;
-            result = Integer.compare(location.orientationMagnitude(), rhs.location.orientationMagnitude());
-            if (result != 0) return result;
-
-            result = Integer.compare(location.distPerpendicular(), rhs.location.distPerpendicular());
-            if (result != 0) return result;
-
-            return Float.compare(location.distParallelStart(), rhs.location.distParallelStart());
+            return location.compareTo(rhs.location);
         }
 
         private boolean sameLine(TextChunk lastChunk) {
@@ -349,6 +339,20 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             float dist = distanceFromEndOf(previous);
 
             return dist < -getCharSpaceWidth() || dist > getCharSpaceWidth()/2.0f;
+        }
+
+        @Override
+        public int compareTo(TextChunkLocation other) {
+            if (this == other) return 0; // not really needed, but just in case
+
+            int rslt;
+            rslt = Integer.compare(orientationMagnitude(), other.orientationMagnitude());
+            if (rslt != 0) return rslt;
+
+            rslt = Integer.compare(distPerpendicular(), other.distPerpendicular());
+            if (rslt != 0) return rslt;
+
+            return Float.compare(distParallelStart(), other.distParallelStart());
         }
     }
 
