@@ -57,7 +57,6 @@ public class TextRenderInfoTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Implement Type3 document fonts")
     public void testType3FontWidth() throws Exception {
         String inFile = "type3font_text.pdf";
         LineSegment origLineSegment = new LineSegment(new Vector(20.3246f, 769.4974f, 1.0f), new Vector(151.22923f, 769.4974f, 1.0f));
@@ -73,7 +72,6 @@ public class TextRenderInfoTest extends ExtendedITextTest {
 
         Assert.assertEquals(renderListener.getLineSegments().get(FIRST_ELEMENT_INDEX).getEndPoint().get(FIRST_ELEMENT_INDEX),
                 origLineSegment.getEndPoint().get(FIRST_ELEMENT_INDEX), 1 / 2f);
-
     }
 
 

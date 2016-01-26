@@ -44,7 +44,7 @@ public class TextRenderInfo implements EventData {
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.getCtm());
         this.gs = gs;
         this.markedContentInfos = new ArrayList<>(markedContentInfo);
-        this.fontMatrix = /*gs.getFont().getFontMatrix();*/ new double[] {0.001, 0, 0, 0.001, 0, 0}; // TODO: implement getFontMatrix method
+        this.fontMatrix = gs.getFont().getFontMatrix();
     }
 
     /**
@@ -59,7 +59,7 @@ public class TextRenderInfo implements EventData {
         this.textToUserSpaceTransformMatrix = new Matrix(horizontalOffset, 0).multiply(parent.textToUserSpaceTransformMatrix);
         this.gs = parent.gs;
         this.markedContentInfos = parent.markedContentInfos;
-        this.fontMatrix = /*gs.getFont().getFontMatrix()*/ new double[] {0.001, 0, 0, 0.001, 0, 0}; // TODO: implement getFontMatrix method
+        this.fontMatrix = gs.getFont().getFontMatrix();
     }
 
     /**
