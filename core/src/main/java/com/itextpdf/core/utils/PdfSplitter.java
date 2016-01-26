@@ -10,7 +10,6 @@ import com.itextpdf.core.pdf.PdfPage;
 import com.itextpdf.core.pdf.PdfWriter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -170,7 +169,7 @@ public class PdfSplitter {
      * @throws PdfException
      */
     public PdfDocument extractPageRange(PageRange pageRange) {
-        return extractPageRanges(Arrays.asList(pageRange)).get(0);
+        return extractPageRanges(Collections.singletonList(pageRange)).get(0);
     }
 
     public PdfDocument getPdfDocument() {
@@ -195,12 +194,11 @@ public class PdfSplitter {
         return newDocument;
     }
 
-    public static interface IDocumentReadyListener {
+    public interface IDocumentReadyListener {
         void documentReady(PdfDocument pdfDocument, PageRange pageRange);
     }
 
     public static class PageRange {
-
         private List<Integer> sequenceStarts = new ArrayList<>();
         private List<Integer> sequenceEnds = new ArrayList<>();
 
@@ -267,6 +265,11 @@ public class PdfSplitter {
             PageRange other = (PageRange) obj;
             return sequenceStarts.equals(other.sequenceStarts) && sequenceEnds.equals(other.sequenceEnds);
         }
+
+        @Override
+        public int hashCode() {
+            return sequenceStarts.hashCode() * 31 + sequenceEnds.hashCode();
+        }
     }
 
     /**
@@ -277,7 +280,6 @@ public class PdfSplitter {
      * @throws PdfException
      */
     public List<PdfDocument> splitByOutlines(List<String> outlineTitles) {
-
         if (outlineTitles == null || outlineTitles.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
@@ -402,6 +404,6 @@ public class PdfSplitter {
     }
 
     private long xrefLength(int size) {
-        return 20l * (size + 1);
+        return 20L * (size + 1);
     }
 }
