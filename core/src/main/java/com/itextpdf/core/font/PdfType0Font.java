@@ -12,20 +12,15 @@ import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.cmap.CMapContentParser;
-import com.itextpdf.basics.font.cmap.CMapObject;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.basics.io.PdfTokenizer;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
-import com.itextpdf.basics.io.RandomAccessSourceFactory;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfLiteral;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfOutputStream;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
@@ -62,10 +57,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     public PdfType0Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type0);
-
-//        cmapEncoding = DocFontUtils.createCMapEncoding(fontDictionary.get(PdfName.Encoding));
-        CMapToUnicode toUnicodeCMap = DocFontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-
+        CMapToUnicode toUnicodeCMap = FontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         PdfDictionary descendantFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
         fontProgram = DocTrueTypeFont.createFontProgram(descendantFont, toUnicodeCMap);
         cmapEncoding = new CMapEncoding(PdfEncodings.IDENTITY_H);
@@ -121,11 +113,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         cmapEncoding = new CMapEncoding(cmap, uniMap);
         longTag = new LinkedHashMap<>();
         cidFontType = CidFontType0;
-    }
-
-    @Override
-    protected FontProgram initializeTypeFontForCopy(String encodingName) {
-        return null;
     }
 
     protected String getUniMapName(String registry) {
@@ -417,7 +404,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     @Override
     protected PdfDictionary getFontDescriptor(String fontName) {
         PdfDictionary fontDescriptor = new PdfDictionary();
-        fontDescriptor.makeIndirect(getDocument());
+        markObjectAsIndirect(fontDescriptor);
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
         fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
         Rectangle fontBBox = new Rectangle(getFontProgram().getFontMetrics().getBbox().clone());
@@ -638,7 +625,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
      */
     public PdfDictionary getCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String fontName, int[][] metrics) {
         PdfDictionary cidFont = new PdfDictionary();
-        cidFont.makeIndirect(getDocument());
+        markObjectAsIndirect(cidFont);
         cidFont.put(PdfName.Type, PdfName.Font);
         // sivan; cff
         cidFont.put(PdfName.FontDescriptor, fontDescriptor);
@@ -731,7 +718,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 "endcmap\n" +
                 "CMapName currentdict /CMap defineresource pop\n" +
                 "end end\n");
-        return new PdfStream(PdfEncodings.convertToBytes(buf.toString(), null)).makeIndirect(getDocument());
+        return new PdfStream(PdfEncodings.convertToBytes(buf.toString(), null));
     }
 
     //TODO optimize memory ussage
@@ -909,232 +896,100 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
     }
 
-    protected void init() {
-        //TODO add CidSet and Panose separately.
-        PdfName baseFont = getPdfObject().getAsName(PdfName.BaseFont);
-        getPdfObject().put(PdfName.Subtype, getPdfObject().getAsName(PdfName.Subtype));
-        getPdfObject().put(PdfName.BaseFont, baseFont);
-        PdfName encoding = getPdfObject().getAsName(PdfName.Encoding);
-        getPdfObject().put(PdfName.Encoding, encoding);
-
-        initFontProgramData();
-
-        PdfDictionary toCidFont = new PdfDictionary();
-        PdfArray fromCidFontArray = getPdfObject().getAsArray(PdfName.DescendantFonts);
-        PdfDictionary fromCidFont = fromCidFontArray.getAsDictionary(0);
-        if (fromCidFont != null) {
-            toCidFont.makeIndirect(getDocument());
-            PdfName subType = fromCidFont.getAsName(PdfName.Subtype);
-            PdfName cidBaseFont = fromCidFont.getAsName(PdfName.BaseFont);
-            PdfObject cidToGidMap = fromCidFont.get(PdfName.CIDToGIDMap);
-            PdfArray w = fromCidFont.getAsArray(PdfName.W);
-            PdfArray w2 = fromCidFont.getAsArray(PdfName.W2);
-            Integer dw = fromCidFont.getAsInt(PdfName.DW);
-
-            toCidFont.put(PdfName.Type, PdfName.Font);
-            toCidFont.put(PdfName.Subtype, subType);
-            toCidFont.put(PdfName.BaseFont, cidBaseFont);
-            fontProgram.getFontNames().setFontName(cidBaseFont.getValue());
-            PdfDictionary fromDescriptorDictionary = fromCidFont.getAsDictionary(PdfName.FontDescriptor);
-            if (fromDescriptorDictionary != null) {
-                PdfDictionary toDescriptorDictionary = getNewFontDescriptor(fromDescriptorDictionary);
-                toCidFont.put(PdfName.FontDescriptor, toDescriptorDictionary);
-                toDescriptorDictionary.flush();
-            }
-
-            if (w != null) {
-                toCidFont.put(PdfName.W, w);
-                if (fontProgram instanceof CidFont) {
-                    ((CidFont) fontProgram).setHMetrics(readWidths(w));
-                }
-            }
-
-            if (w2 != null) {
-                toCidFont.put(PdfName.W2, w2);
-                if (fontProgram instanceof CidFont) {
-                    ((CidFont) fontProgram).setVMetrics(readWidths(w2));
-                }
-            }
-
-            if (dw != null) {
-                toCidFont.put(PdfName.DW, new PdfNumber(dw));
-            }
-
-            if (cidToGidMap != null) {
-                toCidFont.put(PdfName.CIDToGIDMap, cidToGidMap);
-            }
-
-            PdfDictionary toCidInfo = new PdfDictionary();
-            PdfDictionary fromCidInfo = fromCidFont.getAsDictionary(PdfName.CIDSystemInfo);
-            if (fromCidInfo != null) {
-                PdfString registry = fromCidInfo.getAsString(PdfName.Registry);
-                PdfString ordering = fromCidInfo.getAsString(PdfName.Ordering);
-                Integer supplement = fromCidInfo.getAsInt(PdfName.Supplement);
-
-                toCidInfo.put(PdfName.Registry, registry);
-                fontProgram.setRegistry(registry.getValue());
-                toCidInfo.put(PdfName.Ordering, ordering);
-                toCidInfo.put(PdfName.Supplement, new PdfNumber(supplement));
-            }
-            toCidFont.put(PdfName.CIDSystemInfo, fromCidInfo);
-
-            PdfObject toUnicode = getPdfObject().get(PdfName.ToUnicode);
-            if (toUnicode != null) {
-                int dwVal = FontProgram.DEFAULT_WIDTH;
-                if (dw != null) {
-                    dwVal = dw;
-                }
-                IntHashtable widths = readWidths(w);
-                if (toUnicode instanceof PdfStream) {
-                    PdfStream newStream = (PdfStream) toUnicode.clone();
-                    getPdfObject().put(PdfName.ToUnicode, newStream);
-                    newStream.flush();
-                    fillMetrics(((PdfStream) toUnicode).getBytes(), widths, dwVal);
-                } else if (toUnicode instanceof PdfString) {
-                    fillMetricsIdentity(widths, dwVal);
-                }
-            }
-        }
-
-        getPdfObject().put(PdfName.DescendantFonts, new PdfArray(toCidFont));
-        toCidFont.flush();
-    }
-
-    private IntHashtable readWidths(PdfArray ws) {
-        IntHashtable hh = new IntHashtable();
-        if (ws == null)
-            return hh;
-        for (int k = 0; k < ws.size(); ++k) {
-            int c1 = ws.getAsInt(k);
-            PdfObject obj = ws.get(++k);
-            if (obj.isArray()) {
-                PdfArray a2 = (PdfArray) obj;
-                for (int j = 0; j < a2.size(); ++j) {
-                    int c2 = a2.getAsInt(j);
-                    hh.put(c1++, c2);
-                }
-            } else {
-                int c2 = ((PdfNumber) obj).getIntValue();
-                int w = ws.getAsInt(++k);
-                for (; c1 <= c2; ++c1)
-                    hh.put(c1, w);
-            }
-        }
-        return hh;
-    }
-
-    private void initFontProgramData() {
-        longTag = new LinkedHashMap<>();
-        String encoding = getPdfObject().getAsName(PdfName.Encoding).getValue();
-        String fontName = getPdfObject().getAsArray(PdfName.DescendantFonts).getAsDictionary(0).getAsName(PdfName.BaseFont).getValue();
-        if (CidFontProperties.isCidFont(fontName, encoding)) {
-            fontProgram = new CidFont(fontName, null);
-            vertical = encoding.endsWith(FontConstants.V_SYMBOL);
-            String uniMap = getUniMapName(fontProgram.getRegistry());
-            cmapEncoding = new CMapEncoding(encoding, uniMap);
-            cidFontType = CidFontType0;
-        } else {
-            cmapEncoding = new CMapEncoding(encoding);
-            cidFontType = CidFontType2;
-            //TODO Document font refactoring
-            //fontProgram = new TrueTypeFont(encoding);
-            throw new RuntimeException();
-        }
-    }
-
-    private void fillMetrics(byte[] touni, IntHashtable widths, int dw) {
-        try {
-            CMapContentParser ps = new CMapContentParser(new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(touni))));
-            CMapObject ob;
-            boolean notFound = true;
-            int nestLevel = 0;
-            int maxExc = 50;
-            while ((notFound || nestLevel > 0)) {
-                try {
-                    ob = ps.readObject();
-                } catch (Exception ex) {
-                    if (--maxExc < 0) break;
-                    continue;
-                }
-                if (ob == null) break;
-                if (ob.getType() == 5) {
-                    if (ob.toString().equals("begin")) {
-                        notFound = false;
-                        nestLevel++;
-                    } else if (ob.toString().equals("end")) {
-                        nestLevel--;
-                    } else if (ob.toString().equals("beginbfchar")) {
-                        while (true) {
-                            CMapObject nx = ps.readObject();
-                            if (nx.toString().equals("endbfchar")) break;
-                            String cid = CMapContentParser.decodeCMapObject(nx);
-                            String uni = CMapContentParser.decodeCMapObject(ps.readObject());
-                            if (uni.length() == 1) {
-                                int cidc = cid.charAt(0);
-                                int unic = uni.charAt(uni.length() - 1);
-                                int w = dw;
-                                if (widths.containsKey(cidc)) {
-                                    w = widths.get(cidc);
-                                }
-                                longTag.put(unic, new int[]{cidc, w});
-                            }
-                        }
-                    } else if (ob.toString().equals("beginbfrange")) {
-                        while (true) {
-                            CMapObject nx = ps.readObject();
-                            if (nx.toString().equals("endbfrange")) break;
-                            String cid1 = CMapContentParser.decodeCMapObject(nx);
-                            String cid2 = CMapContentParser.decodeCMapObject(ps.readObject());
-                            int cid1c = cid1.charAt(0);
-                            int cid2c = cid2.charAt(0);
-                            CMapObject ob2 = ps.readObject();
-                            if (ob2.isString()) {
-                                String uni = CMapContentParser.decodeCMapObject(ob2);
-                                if (uni.length() == 1) {
-                                    int unic = uni.charAt(uni.length() - 1);
-                                    for (; cid1c <= cid2c; cid1c++, unic++) {
-                                        int w = dw;
-                                        if (widths.containsKey(cid1c)) {
-                                            w = widths.get(cid1c);
-                                        }
-                                        longTag.put(unic, new int[]{cid1c, w});
-                                    }
-                                }
-                            } else if (ob2.isArray()) {
-                                List<CMapObject> a = (ArrayList<CMapObject>) ob2.getValue();
-                                for (int j = 0; j < a.size(); ++j, ++cid1c) {
-                                    String uni = CMapContentParser.decodeCMapObject(a.get(j));
-                                    if (uni.length() == 1) {
-                                        int unic = uni.charAt(uni.length() - 1);
-                                        int w = dw;
-                                        if (widths.containsKey(cid1c)) {
-                                            w = widths.get(cid1c);
-                                        }
-                                        longTag.put(unic, new int[]{cid1c, w});
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void fillMetricsIdentity(IntHashtable widths, int dw) {
-        for (int i = 0; i < 65536; i++) {
-            int w = dw;
-            if (widths.containsKey(i))
-                w = widths.get(i);
-            longTag.put(i, new int[]{i, w});
-        }
-    }
+//    protected void init() {
+//        //TODO add CidSet and Panose separately.
+//        PdfName baseFont = getPdfObject().getAsName(PdfName.BaseFont);
+//        getPdfObject().put(PdfName.Subtype, getPdfObject().getAsName(PdfName.Subtype));
+//        getPdfObject().put(PdfName.BaseFont, baseFont);
+//        PdfName encoding = getPdfObject().getAsName(PdfName.Encoding);
+//        getPdfObject().put(PdfName.Encoding, encoding);
+//
+//        initFontProgramData();
+//
+//        PdfDictionary toCidFont = new PdfDictionary();
+//        PdfArray fromCidFontArray = getPdfObject().getAsArray(PdfName.DescendantFonts);
+//        PdfDictionary fromCidFont = fromCidFontArray.getAsDictionary(0);
+//        if (fromCidFont != null) {
+//            toCidFont.makeIndirect(getDocument());
+//            PdfName subType = fromCidFont.getAsName(PdfName.Subtype);
+//            PdfName cidBaseFont = fromCidFont.getAsName(PdfName.BaseFont);
+//            PdfObject cidToGidMap = fromCidFont.get(PdfName.CIDToGIDMap);
+//            PdfArray w = fromCidFont.getAsArray(PdfName.W);
+//            PdfArray w2 = fromCidFont.getAsArray(PdfName.W2);
+//            Integer dw = fromCidFont.getAsInt(PdfName.DW);
+//
+//            toCidFont.put(PdfName.Type, PdfName.Font);
+//            toCidFont.put(PdfName.Subtype, subType);
+//            toCidFont.put(PdfName.BaseFont, cidBaseFont);
+//            fontProgram.getFontNames().setFontName(cidBaseFont.getValue());
+//            PdfDictionary fromDescriptorDictionary = fromCidFont.getAsDictionary(PdfName.FontDescriptor);
+//            if (fromDescriptorDictionary != null) {
+//                PdfDictionary toDescriptorDictionary = getNewFontDescriptor(fromDescriptorDictionary);
+//                toCidFont.put(PdfName.FontDescriptor, toDescriptorDictionary);
+//                toDescriptorDictionary.flush();
+//            }
+//
+//            if (w != null) {
+//                toCidFont.put(PdfName.W, w);
+//                if (fontProgram instanceof CidFont) {
+//                    ((CidFont) fontProgram).setHMetrics(readWidths(w));
+//                }
+//            }
+//
+//            if (w2 != null) {
+//                toCidFont.put(PdfName.W2, w2);
+//                if (fontProgram instanceof CidFont) {
+//                    ((CidFont) fontProgram).setVMetrics(readWidths(w2));
+//                }
+//            }
+//
+//            if (dw != null) {
+//                toCidFont.put(PdfName.DW, new PdfNumber(dw));
+//            }
+//
+//            if (cidToGidMap != null) {
+//                toCidFont.put(PdfName.CIDToGIDMap, cidToGidMap);
+//            }
+//
+//            PdfDictionary toCidInfo = new PdfDictionary();
+//            PdfDictionary fromCidInfo = fromCidFont.getAsDictionary(PdfName.CIDSystemInfo);
+//            if (fromCidInfo != null) {
+//                PdfString registry = fromCidInfo.getAsString(PdfName.Registry);
+//                PdfString ordering = fromCidInfo.getAsString(PdfName.Ordering);
+//                Integer supplement = fromCidInfo.getAsInt(PdfName.Supplement);
+//
+//                toCidInfo.put(PdfName.Registry, registry);
+//                fontProgram.setRegistry(registry.getValue());
+//                toCidInfo.put(PdfName.Ordering, ordering);
+//                toCidInfo.put(PdfName.Supplement, new PdfNumber(supplement));
+//            }
+//            toCidFont.put(PdfName.CIDSystemInfo, fromCidInfo);
+//
+//            PdfObject toUnicode = getPdfObject().get(PdfName.ToUnicode);
+//            if (toUnicode != null) {
+//                int dwVal = FontProgram.DEFAULT_WIDTH;
+//                if (dw != null) {
+//                    dwVal = dw;
+//                }
+//                IntHashtable widths = readWidths(w);
+//                if (toUnicode instanceof PdfStream) {
+//                    PdfStream newStream = (PdfStream) toUnicode.clone();
+//                    getPdfObject().put(PdfName.ToUnicode, newStream);
+//                    newStream.flush();
+//                    fillMetrics(((PdfStream) toUnicode).getBytes(), widths, dwVal);
+//                } else if (toUnicode instanceof PdfString) {
+//                    fillMetricsIdentity(widths, dwVal);
+//                }
+//            }
+//        }
+//
+//        getPdfObject().put(PdfName.DescendantFonts, new PdfArray(toCidFont));
+//        toCidFont.flush();
+//    }
 
     private PdfDictionary getCidFontType0(PdfDictionary fontDescriptor) {
         PdfDictionary cidFont = new PdfDictionary();
-        cidFont.makeIndirect(getDocument());
+        markObjectAsIndirect(cidFont);
         cidFont.put(PdfName.Type, PdfName.Font);
         cidFont.put(PdfName.Subtype, PdfName.CIDFontType0);
         cidFont.put(PdfName.BaseFont, new PdfName(fontProgram.getFontNames().getFontName() + fontProgram.getFontNames().getStyle()));
@@ -1159,15 +1014,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         cidInfo.put(PdfName.Supplement, new PdfNumber(cmapEncoding.getSupplement()));
         cidFont.put(PdfName.CIDSystemInfo, cidInfo);
         return cidFont;
-    }
-
-    private char[] glyphLineToChars(GlyphLine glyphLine) {
-        int length = glyphLine.end - glyphLine.start;
-        char[] glyphs = new char[length];
-        for (int k = 0; k < length; k++) {
-            glyphs[k] = (char) glyphLine.glyphs.get(glyphLine.start + k).getCode();
-        }
-        return glyphs;
     }
 
     private static class MetricComparator implements Comparator<int[]> {

@@ -319,10 +319,10 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     //TODO as abstract + comments!
-    public Glyph getGlyph(int ch) {throw new RuntimeException();}
+    public Glyph getGlyph(int unicode) {throw new RuntimeException();}
 
-    public boolean containsGlyph(char ch) {
-        return getGlyph(ch) != null;
+    public boolean containsGlyph(char unicode) {
+        return getGlyph(unicode) != null;
     }
 
     //TODO remove

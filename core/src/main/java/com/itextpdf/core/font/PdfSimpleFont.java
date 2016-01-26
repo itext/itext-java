@@ -1,26 +1,23 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.font.*;
-import com.itextpdf.basics.font.cmap.CMapLocation;
-import com.itextpdf.basics.font.cmap.CMapLocationFromBytes;
-import com.itextpdf.basics.font.cmap.CMapParser;
-import com.itextpdf.basics.font.cmap.CMapToUnicode;
+import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.basics.font.FontEncoding;
+import com.itextpdf.basics.font.FontMetrics;
+import com.itextpdf.basics.font.FontNames;
+import com.itextpdf.basics.font.FontProgram;
+import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfOutputStream;
-import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
@@ -310,7 +307,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             return;
         }
         getPdfObject().put(PdfName.Subtype, subtype);
-        getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
+        if (fontName != null) {
+            getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
+        }
         int firstChar;
         int lastChar;
         for (firstChar = 0; firstChar < 256; ++firstChar) {
@@ -323,7 +322,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             firstChar = 255;
             lastChar = 255;
         }
-        if (!subset || !embedded) {
+        if (!isSubset() || !isEmbedded()) {
             firstChar = 0;
             lastChar = shortTag.length - 1;
             for (int k = 0; k < shortTag.length; ++k) {
@@ -342,33 +341,33 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         if (fontEncoding.hasDifferences()) {
             // trim range of symbols
             for (int k = firstChar; k <= lastChar; ++k) {
-                if (!FontConstants.notdef.equals(fontEncoding.getDifferences(k))) {
+                if (!FontConstants.notdef.equals(fontEncoding.getDifference(k))) {
                     firstChar = k;
                     break;
                 }
             }
             for (int k = lastChar; k >= firstChar; --k) {
-                if (!FontConstants.notdef.equals(fontEncoding.getDifferences(k))) {
+                if (!FontConstants.notdef.equals(fontEncoding.getDifference(k))) {
                     lastChar = k;
                     break;
                 }
             }
             PdfDictionary enc = new PdfDictionary();
             enc.put(PdfName.Type, PdfName.Encoding);
-            PdfArray dif = new PdfArray();
+            PdfArray diff = new PdfArray();
             boolean gap = true;
             for (int k = firstChar; k <= lastChar; ++k) {
                 if (shortTag[k] != 0) {
                     if (gap) {
-                        dif.add(new PdfNumber(k));
+                        diff.add(new PdfNumber(k));
                         gap = false;
                     }
-                    dif.add(new PdfName(fontEncoding.getDifferences(k)));
+                    diff.add(new PdfName(fontEncoding.getDifference(k)));
                 } else {
                     gap = true;
                 }
             }
-            enc.put(PdfName.Differences, dif);
+            enc.put(PdfName.Differences, diff);
             getPdfObject().put(PdfName.Encoding, enc);
         } else if (!fontEncoding.isFontSpecific()) {
             getPdfObject().put(PdfName.Encoding, PdfEncodings.CP1252.equals(fontEncoding.getBaseEncoding())
@@ -376,7 +375,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                     : PdfName.MacRomanEncoding);
         }
 
-        if (forceWidthsOutput || !isBuiltInFont() || fontEncoding.hasDifferences()) {
+        if (isForceWidthsOutput() || !isBuiltInFont() || fontEncoding.hasDifferences()) {
             getPdfObject().put(PdfName.FirstChar, new PdfNumber(firstChar));
             getPdfObject().put(PdfName.LastChar, new PdfNumber(lastChar));
             PdfArray wd = new PdfArray();
@@ -413,13 +412,13 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         FontMetrics fontMetrics = fontProgram.getFontMetrics();
         FontNames fontNames = fontProgram.getFontNames();
         PdfDictionary fontDescriptor = new PdfDictionary();
-        fontDescriptor.makeIndirect(getDocument());
+        markObjectAsIndirect(fontDescriptor);
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
+        fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
         fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontMetrics.getTypoAscender()));
         fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
         fontDescriptor.put(PdfName.Descent, new PdfNumber(fontMetrics.getTypoDescender()));
         fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontMetrics.getBbox().clone()));
-        fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
         fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
         fontDescriptor.put(PdfName.StemV, new PdfNumber(fontMetrics.getStemV()));
         if (fontMetrics.getXHeight() > 0) {
@@ -449,346 +448,4 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     protected void setFontProgram(T fontProgram) {
         this.fontProgram = fontProgram;
     }
-
-    //TODO remove
-    protected abstract T initializeTypeFontForCopy(String encodingName);
-
-    //TODO remove
-//    protected abstract T initializeTypeFont(String fontName, String encodingName);
-
-    protected void init() {
-        PdfName baseFont = getPdfObject().getAsName(PdfName.BaseFont);
-        getPdfObject().put(PdfName.Subtype, getPdfObject().getAsName(PdfName.Subtype));
-        getPdfObject().put(PdfName.BaseFont, baseFont);
-        PdfObject encodingObj = getPdfObject().get(PdfName.Encoding);
-        initFontProgram(encodingObj);
-        fontProgram.getFontNames().setFontName(baseFont.getValue());
-        if (encodingObj == null) {
-            if (FontConstants.BUILTIN_FONTS_14.contains(baseFont.getValue())) {
-                fillEncoding(baseFont);
-            } else {
-                fillEncoding(null);
-                CMapToUnicode toUnicode = processToUnicode();
-                if (toUnicode != null) {
-                    Map<Integer, Integer> rm = null;
-                    try {
-                        rm = toUnicode.createReverseMapping();
-                    } catch (IOException e) {
-
-                    }
-                    for (Map.Entry<Integer, Integer> kv : rm.entrySet()) {
-                        //TODO Document font refactoring
-//                        fontProgram.getEncoding().getSpecialMap().put(kv.getKey(), kv.getValue());
-//                        fontProgram.getEncoding().setUnicodeDifferences(kv.getValue(), (char)kv.getKey().intValue());
-                    }
-                }
-            }
-
-        } else if (encodingObj.isDictionary()) {
-
-            PdfDictionary encDic = (PdfDictionary) encodingObj;
-            PdfName baseEncoding = encDic.getAsName(PdfName.BaseEncoding);
-            PdfDictionary enc = new PdfDictionary();
-            enc.put(PdfName.Type, PdfName.Encoding);
-            PdfArray diff = encDic.getAsArray(PdfName.Differences);
-
-            if (diff != null) {
-                enc.put(PdfName.Differences, diff);
-            }
-
-            if (baseEncoding == null) {
-                fillEncoding(null);
-            } else {
-                fillEncoding(baseEncoding);
-                enc.put(PdfName.BaseEncoding, baseEncoding);
-            }
-
-            getPdfObject().put(PdfName.Encoding, enc);
-            fillDifference(diff);
-        } else if (encodingObj.isName()) {
-            getPdfObject().put(PdfName.Encoding, encodingObj);
-            fillEncoding((PdfName) encodingObj);
-        }
-
-        PdfNumber firstChar = getPdfObject().getAsNumber(PdfName.FirstChar);
-        PdfNumber lastChar = getPdfObject().getAsNumber(PdfName.LastChar);
-
-        if (lastChar != null && firstChar != null) {
-            getPdfObject().put(PdfName.FirstChar, firstChar);
-            getPdfObject().put(PdfName.LastChar, lastChar);
-        }
-
-        PdfArray widths = getPdfObject().getAsArray(PdfName.Widths);
-        // TODO Document font refactoring
-//        if (widths != null) {
-//            getPdfObject().put(PdfName.Widths, widths);
-//            fontProgram.setWidths(getFillWidths(widths, firstChar, lastChar));
-//        }
-
-        // TODO Document font refactoring
-//        if (FontConstants.BUILTIN_FONTS_14.contains(fontProgram.getFontNames().getFontName())) {
-//            fontProgram = initializeTypeFont(fontProgram.getFontNames().getFontName(), fontEncoding.getBaseEncoding());
-//        }
-
-        PdfObject toUnicode = getPdfObject().get(PdfName.ToUnicode);
-        if (toUnicode != null) {
-            if (toUnicode instanceof PdfStream) {
-                PdfStream newStream = (PdfStream) toUnicode.clone();
-                getPdfObject().put(PdfName.ToUnicode, newStream);
-                newStream.flush();
-            }
-        }
-
-
-        PdfDictionary fromDescriptorDictionary = getPdfObject().getAsDictionary(PdfName.FontDescriptor);
-        if (fromDescriptorDictionary != null) {
-            PdfDictionary toDescriptorDictionary = getNewFontDescriptor(fromDescriptorDictionary);
-            getPdfObject().put(PdfName.FontDescriptor, toDescriptorDictionary);
-            toDescriptorDictionary.flush();
-        }
-    }
-
-    protected PdfDictionary getNewFontDescriptor(PdfDictionary fromDescriptorDictionary) {
-        PdfDictionary toDescriptorDictionary = new PdfDictionary();
-        toDescriptorDictionary.makeIndirect(getDocument());
-        toDescriptorDictionary.put(PdfName.Type, PdfName.FontDescriptor);
-        toDescriptorDictionary.put(PdfName.FontName, fromDescriptorDictionary.getAsName(PdfName.FontName));
-
-        PdfName subtype = fromDescriptorDictionary.getAsName(PdfName.Subtype);
-        if (subtype != null) {
-            toDescriptorDictionary.put(PdfName.Subtype, subtype);
-        }
-
-        PdfNumber ascent = fromDescriptorDictionary.getAsNumber(PdfName.Ascent);
-        if (ascent != null) {
-            toDescriptorDictionary.put(PdfName.Ascent, ascent);
-            fontProgram.getFontMetrics().setTypoAscender(ascent.getIntValue());
-        }
-
-        PdfNumber descent = fromDescriptorDictionary.getAsNumber(PdfName.Descent);
-        if (descent != null) {
-            toDescriptorDictionary.put(PdfName.Descent, ascent);
-            fontProgram.getFontMetrics().setTypoDescender(descent.getIntValue());
-        }
-
-        PdfNumber capHeight = fromDescriptorDictionary.getAsNumber(PdfName.CapHeight);
-        if (capHeight != null) {
-            toDescriptorDictionary.put(PdfName.CapHeight, capHeight);
-            fontProgram.getFontMetrics().setCapHeight(capHeight.getIntValue());
-        }
-
-        PdfNumber italicAngle = fromDescriptorDictionary.getAsNumber(PdfName.ItalicAngle);
-        if (italicAngle != null) {
-            toDescriptorDictionary.put(PdfName.ItalicAngle, italicAngle);
-            fontProgram.getFontMetrics().setItalicAngle(italicAngle.getIntValue());
-        }
-
-        PdfNumber stemV = fromDescriptorDictionary.getAsNumber(PdfName.StemV);
-        if (stemV != null) {
-            toDescriptorDictionary.put(PdfName.StemV, stemV);
-            fontProgram.getFontMetrics().setStemV(stemV.getIntValue());
-        }
-
-        PdfNumber fontWeight = fromDescriptorDictionary.getAsNumber(PdfName.FontWeight);
-        if (fontWeight != null) {
-            toDescriptorDictionary.put(PdfName.FontWeight, fontWeight);
-        }
-
-
-        PdfNumber flags = fromDescriptorDictionary.getAsNumber(PdfName.Flags);
-        if (flags != null) {
-            toDescriptorDictionary.put(PdfName.Flags, flags);
-        }
-
-        PdfStream fileStream = fromDescriptorDictionary.getAsStream(PdfName.FontFile);
-        if (fileStream != null) {
-            PdfStream newFileStream = (PdfStream) fileStream.clone();
-            toDescriptorDictionary.put(PdfName.FontFile, newFileStream);
-            newFileStream.flush();
-        }
-
-        PdfStream fileStream2 = fromDescriptorDictionary.getAsStream(PdfName.FontFile2);
-        if (fileStream2 != null) {
-            PdfStream newFileStream = (PdfStream) fileStream2.clone();
-            toDescriptorDictionary.put(PdfName.FontFile2, newFileStream);
-            newFileStream.flush();
-        }
-
-        PdfStream fileStream3 = fromDescriptorDictionary.getAsStream(PdfName.FontFile3);
-        if (fileStream3 != null) {
-            PdfStream newFileStream = (PdfStream) fileStream3.clone();
-            toDescriptorDictionary.put(PdfName.FontFile3, newFileStream);
-            newFileStream.flush();
-        }
-
-        PdfNumber leading = fromDescriptorDictionary.getAsNumber(PdfName.Leading);
-        if (leading != null) {
-            toDescriptorDictionary.put(PdfName.Leading, leading);
-        }
-
-        PdfNumber missingWidth = fromDescriptorDictionary.getAsNumber(PdfName.MissingWidth);
-        if (missingWidth != null) {
-            toDescriptorDictionary.put(PdfName.MissingWidth, missingWidth);
-        }
-
-        PdfNumber xHeight = fromDescriptorDictionary.getAsNumber(PdfName.XHeight);
-        if (xHeight != null) {
-            toDescriptorDictionary.put(PdfName.XHeight, xHeight);
-            fontProgram.getFontMetrics().setXHeight(xHeight.getIntValue());
-        }
-
-        PdfName fontStretch = fromDescriptorDictionary.getAsName(PdfName.FontStretch);
-        if (fontStretch != null) {
-            toDescriptorDictionary.put(PdfName.FontStretch, fontStretch);
-        }
-
-        PdfString fontFamily = fromDescriptorDictionary.getAsString(PdfName.FontFamily);
-        if (fontFamily != null) {
-            toDescriptorDictionary.put(PdfName.FontFamily, fontFamily);
-        }
-
-
-        PdfDictionary fromStyleDictionary = fromDescriptorDictionary.getAsDictionary(PdfName.Style);
-        if (fromStyleDictionary != null) {
-            PdfDictionary toStyleDictionary = new PdfDictionary();
-            PdfString panose = fromStyleDictionary.getAsString(PdfName.Panose);
-            toStyleDictionary.put(PdfName.Panose, panose);
-            toDescriptorDictionary.put(PdfName.Style, toStyleDictionary);
-            fontProgram.getFontIdentification().setPanose(panose.toString());
-        }
-
-
-        PdfArray bbox = fromDescriptorDictionary.getAsArray(PdfName.FontBBox);
-        toDescriptorDictionary.put(PdfName.FontBBox, bbox);
-
-        if (bbox != null) {
-            int llx = bbox.getAsNumber(0).getIntValue();
-            int lly = bbox.getAsNumber(1).getIntValue();
-            int urx = bbox.getAsNumber(2).getIntValue();
-            int ury = bbox.getAsNumber(3).getIntValue();
-            if (llx > urx) {
-                int t = llx;
-                llx = urx;
-                urx = t;
-            }
-            if (lly > ury) {
-                int t = lly;
-                lly = ury;
-                ury = t;
-            }
-            fontProgram.getFontMetrics().getBbox().setBbox(llx, lly, urx, ury);
-        }
-
-        return toDescriptorDictionary;
-    }
-
-    private String getEncodingName(PdfName encoding) {
-        String encodingName = PdfEncodings.WINANSI;
-        if (PdfName.MacRomanEncoding.equals(encoding)) {
-            encodingName = PdfEncodings.MACROMAN;
-        } else if (FontConstants.SYMBOL.equals(encoding.getValue())) {
-            encodingName = FontConstants.SYMBOL;
-        } else if (FontConstants.ZAPFDINGBATS.equals(encoding.getValue())) {
-            encodingName = FontConstants.ZAPFDINGBATS;
-        }
-        return encodingName;
-    }
-
-    private void initFontProgram(PdfObject encoding) {
-        if (encoding == null) {
-            fontProgram = initializeTypeFontForCopy(PdfEncodings.EmptyString);
-        } else if (encoding.isName()) {
-            PdfName encodingPdfName = (PdfName) encoding;
-            fontProgram = initializeTypeFontForCopy(getEncodingName(encodingPdfName));
-        } else if (encoding.isDictionary()) {
-            PdfDictionary encDic = (PdfDictionary) encoding;
-            PdfName baseEncodingName = encDic.getAsName(PdfName.BaseEncoding);
-            if (baseEncodingName == null) {
-                fontProgram = initializeTypeFontForCopy(PdfEncodings.EmptyString);
-            } else {
-                fontProgram = initializeTypeFontForCopy(getEncodingName(baseEncodingName));
-            }
-        }
-    }
-
-    // TODO Document font refactoring
-    private void fillEncoding(PdfName encoding) {
-//        String encodingString = encoding != null ? encoding.getValue() : null;
-//        if (encoding == null && isSymbolic()) {
-//            for (int k = 0; k < 256; ++k) {
-//                fontProgram.getEncoding().getSpecialMap().put(k, k);
-//                fontProgram.getEncoding().setUnicodeDifferences(k, (char) k);
-//            }
-//        } else if (PdfName.MacRomanEncoding.equals(encoding) || PdfName.WinAnsiEncoding.equals(encoding)
-//                || FontConstants.SYMBOL.equals(encodingString) || FontConstants.ZAPFDINGBATS.equals(encodingString)) {
-//
-//            byte[] b = new byte[256];
-//            for (int k = 0; k < 256; ++k) {
-//                b[k] = (byte) k;
-//            }
-//
-//            String cv = PdfEncodings.convertToString(b, fontProgram.getEncoding().getBaseEncoding());
-//            char[] arr = cv.toCharArray();
-//            for (int k = 0; k < 256; ++k) {
-//                fontProgram.getEncoding().getSpecialMap().put(arr[k], k);
-//                fontProgram.getEncoding().setUnicodeDifferences(k, arr[k]);
-//            }
-//        } else {
-//            for (int k = 0; k < 256; ++k) {
-//                fontProgram.getEncoding().getSpecialMap().put(PdfEncodings.standardEncoding[k], k);
-//                fontProgram.getEncoding().setUnicodeDifferences(k, (char) PdfEncodings.standardEncoding[k]);
-//            }
-//        }
-    }
-
-    // TODO Document font refactoring
-    private void fillDifference(PdfArray diffs) {
-//        if (diffs != null) {
-//            int currentNumber = 0;
-//            for (int k = 0; k < diffs.size(); ++k) {
-//                PdfObject obj = diffs.get(k);
-//                if (obj.isNumber())
-//                    currentNumber = ((PdfNumber) obj).getIntValue();
-//                else {
-//                    Integer c = AdobeGlyphList.nameToUnicode(((PdfName) obj).getValue());
-//                    if (c != null) {
-//                        fontProgram.getEncoding().getSpecialMap().put(c, currentNumber);
-//                        fontProgram.getEncoding().setDifferences(currentNumber, ((PdfName) obj).getValue());
-//                        fontProgram.getEncoding().setUnicodeDifferences(currentNumber, (char) (int)c);
-//                    } else {
-//                        CMapToUnicode toUnicode = processToUnicode();
-//                        if (toUnicode == null) {
-//                            toUnicode = new CMapToUnicode();
-//                        }
-//
-//                        final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
-//                        if ((unicode != null) && (unicode.length() == 1)) {
-//                            fontProgram.getEncoding().getSpecialMap().put(unicode.charAt(0), currentNumber);
-//                            fontProgram.getEncoding().setDifferences(currentNumber, String.valueOf(unicode.charAt(0)));
-//                            fontProgram.getEncoding().setUnicodeDifferences(unicode.charAt(0), (char) currentNumber);
-//                        }
-//                    }
-//                    ++currentNumber;
-//                }
-//            }
-//        }
-    }
-
-    private CMapToUnicode processToUnicode() {
-        CMapToUnicode cMapToUnicode = null;
-        PdfObject toUni = getPdfObject().get(PdfName.ToUnicode);
-        if (toUni instanceof PdfStream) {
-            try {
-                byte[] uniBytes = ((PdfStream) toUni).getBytes();
-                CMapLocation lb = new CMapLocationFromBytes(uniBytes);
-                cMapToUnicode = new CMapToUnicode();
-                CMapParser.parseCid("", cMapToUnicode, lb);
-            } catch (Exception e) {
-                cMapToUnicode = null;
-            }
-        }
-        return cMapToUnicode;
-    }
-
-
 }

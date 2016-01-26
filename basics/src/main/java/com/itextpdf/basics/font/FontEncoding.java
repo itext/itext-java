@@ -54,6 +54,18 @@ public class FontEncoding {
         return encoding;
     }
 
+    public static FontEncoding createEmptyFontEncoding() {
+        FontEncoding encoding = new FontEncoding();
+        encoding.baseEncoding = null;
+        encoding.fontSpecific = false;
+        encoding.differences = new String[256];
+        for (int ch = 0; ch < 256; ch++) {
+            encoding.unicodeDifferences.put(ch, ch);
+        }
+        return encoding;
+    }
+
+
     /**
      * This encoding will base on font encoding (FontSpecific encoding in Type 1 terminology)
      */
@@ -76,6 +88,21 @@ public class FontEncoding {
         return fontSpecific;
     }
 
+    public boolean addSymbol(int code, int unicode) {
+        if (code < 0 || code > 255) {
+            return false;
+        }
+        String glyphName = AdobeGlyphList.unicodeToName(unicode);
+        if (glyphName != null) {
+            unicodeToCode.put(unicode, code);
+            codeToUnicode[code] = unicode;
+            differences[code] = glyphName;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public Integer getUnicode(int index) {
         return codeToUnicode[index];
     }
@@ -88,7 +115,7 @@ public class FontEncoding {
         return differences != null;
     }
 
-    public String getDifferences(int index) {
+    public String getDifference(int index) {
         return differences != null ? differences[index] : null;
     }
 
@@ -128,11 +155,35 @@ public class FontEncoding {
      * Check whether a unicode symbol or font specific code can be converted
      * to {@code byte} according to the encoding.
      *
-     * @param ch a unicode symbol or font specific code to be checked.
-     * @return {@code true} if {@code ch}
+     * @param unicode a unicode symbol or font specific code to be checked.
+     * @return {@code true} if {@code ch} could be encoded.
      */
-    public boolean canEncode(int ch) {
-        return unicodeToCode.containsKey(ch);
+    public boolean canEncode(int unicode) {
+        return unicodeToCode.containsKey(unicode);
+    }
+
+    /**
+     * Check whether a {@code byte} code can be converted
+     * to unicode symbol according to the encoding.
+     *
+     * @param code a byte code to be checked.
+     * @return {@code true} if {@code code} could be decoded.
+     */
+    public boolean canDecode(byte code) {
+        return codeToUnicode[code & 0xFF] != null;
+    }
+
+    /**
+     * Gets first empty code, that could use with {@see addSymbol()}
+     * @return code from 1 to 255 or -1 if all slots are busy.
+     */
+    public int getFirstEmptyCode() {
+        for (int i = 1; i < codeToUnicode.length; i++) {
+            if (codeToUnicode[i] == null) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     protected void fillCustomEncoding() {

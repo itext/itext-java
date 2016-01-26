@@ -13,7 +13,7 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfStream;
 
-class DocFontUtils {
+class FontUtils {
 
     static CMapToUnicode processToUnicode(PdfObject toUnicode) {
         CMapToUnicode cMapToUnicode = null;
@@ -36,7 +36,7 @@ class DocFontUtils {
 
     static String createRandomFontName() {
         StringBuilder s = new StringBuilder("");
-        for (int k = 0; k < 10; ++k) {
+        for (int k = 0; k < 7; ++k) {
             s.append((char) (Math.random() * 26 + 'A'));
         }
         return s.toString();

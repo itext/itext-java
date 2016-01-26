@@ -27,7 +27,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
         if (baseFontName != null) {
             getFontNames().setFontName(baseFontName.getValue());
         } else {
-            getFontNames().setFontName(DocFontUtils.createRandomFontName());
+            getFontNames().setFontName(FontUtils.createRandomFontName());
         }
         subtype = fontDictionary.getAsName(PdfName.Subtype);
     }
@@ -38,7 +38,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
 
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
-        int[] widths = DocFontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
+        int[] widths = FontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
         for (int i = 0; i < 256; i++) {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
@@ -62,7 +62,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
         int dw = fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)
                 ? fontDescriptor.getAsInt(PdfName.DW) : 1000;
         if (cid2Uni != null) {
-            IntHashtable widths = DocFontUtils.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
+            IntHashtable widths = FontUtils.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
             for (Map.Entry<Integer, Integer> entry : cid2Uni.entrySet()) {
                 int width = widths.containsKey(entry.getKey()) ? widths.get(entry.getKey()) : dw;
                 Glyph glyph = new Glyph(entry.getKey(), width, entry.getValue());
@@ -132,20 +132,13 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
             font.setFontWidth(fontStretch.getValue());
         }
 
-
         PdfArray bboxValue = fontDesc.getAsArray(PdfName.FontBBox);
-
         if (bboxValue != null) {
             int[] bbox = new int[4];
-            //llx
-            bbox[0] = bboxValue.getAsNumber(0).getIntValue();
-            //lly
-            bbox[1] = bboxValue.getAsNumber(1).getIntValue();
-            //urx
-            bbox[2] = bboxValue.getAsNumber(2).getIntValue();
-            //ury
-            bbox[3] = bboxValue.getAsNumber(3).getIntValue();
-
+            bbox[0] = bboxValue.getAsNumber(0).getIntValue(); //llx
+            bbox[1] = bboxValue.getAsNumber(1).getIntValue();//lly
+            bbox[2] = bboxValue.getAsNumber(2).getIntValue();//urx
+            bbox[3] = bboxValue.getAsNumber(3).getIntValue();//ury
             if (bbox[0] > bbox[2]) {
                 int t = bbox[0];
                 bbox[0] = bbox[2];

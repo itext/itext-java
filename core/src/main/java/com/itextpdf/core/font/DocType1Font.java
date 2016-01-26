@@ -31,7 +31,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
         if (baseFontName != null) {
             baseFont = baseFontName.getValue();
         } else {
-            baseFont = DocFontUtils.createRandomFontName();
+            baseFont = FontUtils.createRandomFontName();
         }
         if (!fontDictionary.containsKey(PdfName.FontDescriptor)) {
             Type1Font type1StdFont;
@@ -53,7 +53,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
 
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
-        int[] widths = DocFontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
+        int[] widths = FontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
         for (int i = 0; i < 256; i++) {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);

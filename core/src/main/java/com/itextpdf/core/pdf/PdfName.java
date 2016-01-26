@@ -759,6 +759,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     public PdfName(String value) {
         super();
+        assert value != null;
         this.value = value;
     }
 

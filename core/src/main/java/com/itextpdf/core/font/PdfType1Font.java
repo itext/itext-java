@@ -16,7 +16,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type1);
 
-        CMapToUnicode toUni = DocFontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
+        CMapToUnicode toUni = FontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding);
 
@@ -68,27 +68,18 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     }
 
     @Override
-    protected Type1Font initializeTypeFontForCopy(String encodingName) {
-        throw new RuntimeException("Not implemented");
-    }
-
-//    @Override
-//    protected Type1Font initializeTypeFont(String fontName, String encodingName) {
-//        return Type1Font.createFont(fontName, encodingName);
-//    }
-
-    public Glyph getGlyph(int ch) {
-        if (fontEncoding.canEncode(ch)) {
+    public Glyph getGlyph(int unicode) {
+        if (fontEncoding.canEncode(unicode)) {
             Glyph glyph;
             if (fontEncoding.isFontSpecific()) {
-                glyph = getFontProgram().getGlyphByCode(ch);
+                glyph = getFontProgram().getGlyphByCode(unicode);
             } else {
-                glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(ch));
-                if (glyph == null && (glyph = notdefGlyphs.get(ch)) == null) {
+                glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode));
+                if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
                     // Handle special layout characters like sfthyphen (00AD).
                     // This glyphs will be skipped while converting to bytes
-                    glyph = new Glyph(-1, 0, ch);
-                    notdefGlyphs.put(ch, glyph);
+                    glyph = new Glyph(-1, 0, unicode);
+                    notdefGlyphs.put(unicode, glyph);
                 }
             }
             return glyph;
@@ -105,6 +96,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
      * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
      * otherwise the font is read and output in a PdfStream object.
      */
+    @Override
     protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
             if (fontProgram instanceof DocFontProgram) {

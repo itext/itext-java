@@ -55,22 +55,23 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.TrueType);
 
-        CMapToUnicode toUni = DocFontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
+        CMapToUnicode toUni = FontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding);
         embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
         subset = false;
     }
 
-    public Glyph getGlyph(int ch) {
-        if (fontEncoding.canEncode(ch)) {
-            Glyph glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(ch));
+    @Override
+    public Glyph getGlyph(int unicode) {
+        if (fontEncoding.canEncode(unicode)) {
+            Glyph glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode));
             //TODO TrueType what if font is specific?
-            if (glyph == null && (glyph = notdefGlyphs.get(ch)) == null) {
+            if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
                 Glyph notdef = getFontProgram().getGlyphByCode(0);
                 if (notdef != null) {
-                    glyph = new Glyph(getFontProgram().getGlyphByCode(0), ch);
-                    notdefGlyphs.put(ch, glyph);
+                    glyph = new Glyph(getFontProgram().getGlyphByCode(0), unicode);
+                    notdefGlyphs.put(unicode, glyph);
                 }
             }
             return glyph;
@@ -78,6 +79,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         return null;
     }
 
+    //TODO make subtype class member and simplify this method
     @Override
     public void flush() {
         PdfName subtype;
@@ -124,6 +126,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         }
     }
 
+    @Override
     protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
             PdfName fontFileName;
@@ -174,10 +177,5 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 fontDescriptor.put(fontFileName, fontStream);
             }
         }
-    }
-
-    @Override
-    protected TrueTypeFont initializeTypeFontForCopy(String encodingName) {
-        throw new RuntimeException();
     }
 }

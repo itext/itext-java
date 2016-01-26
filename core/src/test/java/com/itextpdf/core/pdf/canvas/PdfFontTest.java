@@ -166,18 +166,18 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         PdfType3Font type3 = new PdfType3Font(pdfDoc, false);
-        Type3Glyph a = type3.createGlyph('A', 600, 0, 0, 600, 700);
+        Type3Glyph a = type3.addGlyph('A', 600, 0, 0, 600, 700);
         a.setLineWidth(100);
         a.moveTo(5, 5);
         a.lineTo(300, 695);
         a.lineTo(595, 5);
         a.closePathFillStroke();
 
-        Type3Glyph space = type3.createGlyph(' ', 600, 0, 0, 600, 700);
+        Type3Glyph space = type3.addGlyph(' ', 600, 0, 0, 600, 700);
         space.setLineWidth(10);
         space.closePathFillStroke();
 
-        Type3Glyph e = type3.createGlyph('E', 600, 0, 0, 600, 700);
+        Type3Glyph e = type3.addGlyph('E', 600, 0, 0, 600, 700);
         e.setLineWidth(100);
         e.moveTo(595, 5);
         e.lineTo(5, 5);
@@ -186,13 +186,13 @@ public class PdfFontTest extends ExtendedITextTest {
         e.lineTo(595, 695);
         e.stroke();
 
-        Type3Glyph tilde = type3.createGlyph('~', 600, 0, 0, 600, 700);
+        Type3Glyph tilde = type3.addGlyph('~', 600, 0, 0, 600, 700);
         tilde.setLineWidth(100);
         tilde.moveTo(595, 5);
         tilde.lineTo(5, 5);
         tilde.stroke();
 
-        Type3Glyph symbol233 = type3.createGlyph('\u00E9', 600, 0, 0, 600, 700);
+        Type3Glyph symbol233 = type3.addGlyph('\u00E9', 600, 0, 0, 600, 700);
         symbol233.setLineWidth(100);
         symbol233.moveTo(540, 5);
         symbol233.lineTo(5, 340);
@@ -218,10 +218,6 @@ public class PdfFontTest extends ExtendedITextTest {
         // reading and comparing text
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument document = new PdfDocument(reader);
-        PdfPage page = document.getPage(PageCount);
-        String content = PdfEncodings.convertToString(page.getContentStream(0).getBytes(), "PDF");
-        Assert.assertTrue(content.contains("(" + testString + ")"));
-
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
@@ -549,8 +545,7 @@ public class PdfFontTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test
-    @Ignore
+    @Test @Ignore
     public void testNewType3FontBasedExistingFont() throws IOException, InterruptedException {
         String inputFileName = sourceFolder + "type3Font.pdf";
         String outputFileName = destinationFolder + "new_type3Font.pdf";
@@ -570,7 +565,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfType3Font pdfType3Font = new PdfType3Font((PdfDictionary) inputPdfDoc.getPdfObject(4));
 
-        Type3Glyph newGlyph = pdfType3Font.createGlyph('\u00F6', 600, 0, 0, 600, 700);
+        Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
         newGlyph.moveTo(540, 5);
         newGlyph.lineTo(5, 840);
@@ -587,7 +582,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
         outputPdfDoc.close();
 
-        Assert.assertEquals(6, pdfType3Font.getCharGlyphs().size());
+        Assert.assertEquals(6, pdfType3Font.getFontProgram().getGlyphsCount());
 
         Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
     }

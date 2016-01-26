@@ -139,4 +139,11 @@ public class PdfObjectWrapper<T extends PdfObject> {
             pdfObject.setState(PdfObject.MustBeIndirect);
         }
     }
+
+    //TODO or move that method to PdfObject?
+    protected void markObjectAsIndirect(PdfObject pdfObject) {
+        if (pdfObject.getIndirectReference() == null) {
+            pdfObject.setState(PdfObject.MustBeIndirect);
+        }
+    }
 }
