@@ -5,6 +5,7 @@ import com.itextpdf.basics.geom.AffineTransform;
 import com.itextpdf.basics.geom.PageSize;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.parser.GlyphTextEventListener;
 import com.itextpdf.core.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.core.parser.TextExtractionStrategy;
@@ -217,7 +218,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
         PdfFormXObject template = new PdfFormXObject(new Rectangle(100, 100));
         new PdfCanvas(template, pdfDocument).
                 beginText().
-                setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 12).
+                setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 12).
                 moveText(5, template.getHeight() - 5).
                 showText(xobjectText).
                 endText();
@@ -238,7 +239,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
         document.setDefaultPageSize(new PageSize(612, 792));
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
-        PdfFont font = PdfFont.createStandardFont(FontConstants.HELVETICA);
+        PdfFont font = PdfFontFactory.createStandardFont(FontConstants.HELVETICA);
 
         canvas.beginText().
                 setFontAndSize(font, 12);
@@ -268,7 +269,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
         document.setDefaultPageSize(new PageSize(612, 792));
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
-        PdfFont font = PdfFont.createStandardFont(FontConstants.HELVETICA);
+        PdfFont font = PdfFontFactory.createStandardFont(FontConstants.HELVETICA);
 
         float x = document.getDefaultPageSize().getWidth() / 2;
         float y = document.getDefaultPageSize().getHeight() / 2;

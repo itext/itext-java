@@ -3,7 +3,6 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.codec.Base64;
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
@@ -11,6 +10,7 @@ import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.color.Color;
@@ -236,7 +236,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String value, String name) {
         try {
-            return createText(doc, rect, PdfFont.createFont(), DEFAULT_FONT_SIZE, value, name);
+            return createText(doc, rect, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, value, name);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -317,7 +317,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, int flags) {
         try {
-            return createChoice(doc, rect, options, value, name, PdfFont.createFont(), DEFAULT_FONT_SIZE, flags);
+            return createChoice(doc, rect, options, value, name, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, flags);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -430,7 +430,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption) {
         PdfButtonFormField field;
         try {
-            field = createPushButton(doc, rect, name, caption, PdfFont.createFont(), DEFAULT_FONT_SIZE);
+            field = createPushButton(doc, rect, name, caption, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -1613,7 +1613,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         this.checkType = checkType;
         text = typeChars[checkType - 1];
         try {
-            font = PdfFont.createStandardFont(FontConstants.ZAPFDINGBATS);
+            font = PdfFontFactory.createStandardFont(FontConstants.ZAPFDINGBATS);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -2030,7 +2030,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (font != null) {
                     fontAndSize[0] = font;
                 } else {
-                    fontAndSize[0] = PdfFont.createFont(fontDic.getAsDictionary(fontName));
+                    fontAndSize[0] = PdfFontFactory.createFont(fontDic.getAsDictionary(fontName));
                 }
                 if (fontSize != 0) {
                     fontAndSize[1] = fontSize;
@@ -2042,7 +2042,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (font != null) {
                     fontAndSize[0] = font;
                 } else {
-                    fontAndSize[0] = PdfFont.createFont();
+                    fontAndSize[0] = PdfFontFactory.createFont();
                 }
                 if (fontSize != 0) {
                     fontAndSize[1] = fontSize;
@@ -2054,7 +2054,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (font != null) {
                 fontAndSize[0] = font;
             } else {
-                fontAndSize[0] = PdfFont.createFont();
+                fontAndSize[0] = PdfFontFactory.createFont();
             }
             if (fontSize != 0) {
                 fontAndSize[1] = fontSize;

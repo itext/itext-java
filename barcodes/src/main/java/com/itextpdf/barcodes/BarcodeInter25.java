@@ -5,9 +5,9 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
-import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
 
 import java.awt.Image;
@@ -57,7 +57,7 @@ public class BarcodeInter25 extends Barcode1D {
         try {
             x = 0.8f;
             n = 2;
-            font = PdfFont.createStandardFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+            font = PdfFontFactory.createStandardFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
             size = 8;
             baseline = size;
             barHeight = size * 3;

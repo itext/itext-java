@@ -2,6 +2,7 @@ package com.itextpdf.core.pdf.canvas;
 
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
@@ -47,7 +48,7 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         PdfExtGState egs = new PdfExtGState();
         egs.getPdfObject().put(PdfName.LW, new PdfNumber(5));
         PdfArray font = new PdfArray();
-        PdfFont pdfFont = PdfFont.createStandardFont(FontConstants.COURIER);
+        PdfFont pdfFont = PdfFontFactory.createStandardFont(FontConstants.COURIER);
         //TODO if uncomment - exception will generated
         //pdfFont.flush();
         font.add(pdfFont.getPdfObject());

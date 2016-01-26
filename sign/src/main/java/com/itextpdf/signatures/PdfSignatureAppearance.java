@@ -2,6 +2,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -563,7 +564,7 @@ public class PdfSignatureAppearance {
             PdfFont font;
 
             if (layer2Font == null) {
-                font = PdfFont.createFont();
+                font = PdfFontFactory.createFont();
             } else {
                 font = layer2Font;
             }

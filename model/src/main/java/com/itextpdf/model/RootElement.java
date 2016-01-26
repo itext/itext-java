@@ -1,10 +1,7 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontFactory;
-import com.itextpdf.basics.font.Type1Font;
 import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.font.PdfType1Font;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
@@ -92,7 +89,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
             switch (property) {
                 case FONT:
                     if (defaultFont == null) {
-                        defaultFont = PdfFont.createFont();
+                        defaultFont = PdfFontFactory.createFont();
                     }
                     return (T) defaultFont;
                 case SPLIT_CHARACTERS:

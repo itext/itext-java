@@ -1,7 +1,7 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Image;
 import com.itextpdf.model.element.ListItem;
@@ -120,13 +120,13 @@ public class ListRenderer extends BlockRenderer {
                     @Override
                     public void draw(DrawContext drawContext) {
                         try {
-                            setProperty(Property.FONT, PdfFont.createStandardFont(constantFont));
+                            setProperty(Property.FONT, PdfFontFactory.createStandardFont(constantFont));
                         } catch (IOException exc) {}
                         super.draw(drawContext);
                     }
                 }.setParent(this);
                 try {
-                    textRenderer.setProperty(Property.FONT, PdfFont.createStandardFont(constantFont));
+                    textRenderer.setProperty(Property.FONT, PdfFontFactory.createStandardFont(constantFont));
                 } catch (IOException exc) {}
             } else {
                 textRenderer = new TextRenderer(textElement).setParent(this);

@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf.canvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.DeviceGray;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;
@@ -147,7 +148,7 @@ public class CanvasGraphicsState {
             if (this.font != null && this.font.getPdfObject() == fontDictionary) {
 
             } else {
-                this.font = PdfFont.createFont(fontDictionary);
+                this.font = PdfFontFactory.createFont(fontDictionary);
             }
             Float fntSz = fnt.getAsFloat(1);
             if (fntSz != null)

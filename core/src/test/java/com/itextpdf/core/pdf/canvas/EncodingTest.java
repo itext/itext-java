@@ -3,6 +3,7 @@ package com.itextpdf.core.pdf.canvas;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.utils.CompareTool;
@@ -33,7 +34,7 @@ public class EncodingTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFont.createFont(sourceFolder + "DejaVuSans.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "DejaVuSans.ttf", PdfEncodings.IDENTITY_H);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
                 saveState().
@@ -57,7 +58,7 @@ public class EncodingTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "# simple 1 0020 041c 0456 0440 044a 0050 0065 0061 0063", true);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
@@ -80,7 +81,7 @@ public class EncodingTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFont.createFont(FontConstants.TIMES_ROMAN,
+        PdfFont font = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN,
                 "# full 'A' Aring 0041 'E' Egrave 0045 32 space 0020");
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
@@ -102,7 +103,7 @@ public class EncodingTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFont.createFont(FontConstants.HELVETICA,
+        PdfFont font = PdfFontFactory.createFont(FontConstants.HELVETICA,
                 "# full 'A' Aring 0041 'E' abc11 0045 32 space 0020");
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
@@ -114,7 +115,7 @@ public class EncodingTest {
                 endText().
                 restoreState();
 
-        font = PdfFont.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+        font = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
         canvas.
                 saveState().
                 beginText().
@@ -135,7 +136,7 @@ public class EncodingTest {
         String fileName = "notdefInTrueTypeFontTest.pdf";
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", "# simple 32 0020 00C5 1987", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "# simple 32 0020 00C5 1987", true);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
                 saveState().
@@ -145,7 +146,7 @@ public class EncodingTest {
                 showText("\u00C5 \u1987").
                 endText().
                 restoreState();
-        font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.WINANSI, true);
+        font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.WINANSI, true);
         canvas.
                 saveState().
                 beginText().
@@ -166,7 +167,7 @@ public class EncodingTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
                 saveState().
@@ -189,7 +190,7 @@ public class EncodingTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFont.createFont(FontConstants.SYMBOL, PdfEncodings.WINANSI);
+        PdfFont font = PdfFontFactory.createFont(FontConstants.SYMBOL, PdfEncodings.WINANSI);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         String str = "";
         for (int i = 32; i <= 100; i++) {
@@ -235,7 +236,7 @@ public class EncodingTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFont.createFont(sourceFolder + "Symbols1.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", true);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         String str = "";
         for (int i = 32; i <= 65; i++) {
@@ -282,7 +283,7 @@ public class EncodingTest {
         PdfWriter writer = new PdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFont.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         StringBuilder builder = new StringBuilder();
         for (int i = 32; i <= 100; i++) {

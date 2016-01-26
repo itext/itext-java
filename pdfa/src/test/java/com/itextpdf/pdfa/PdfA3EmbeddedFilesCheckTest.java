@@ -1,5 +1,6 @@
 package com.itextpdf.pdfa;
 
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.*;
@@ -28,7 +29,7 @@ public class PdfA3EmbeddedFilesCheckTest {
         pdfDocument.setXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
@@ -56,7 +57,7 @@ public class PdfA3EmbeddedFilesCheckTest {
         pdfDocument.setXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
@@ -84,7 +85,7 @@ public class PdfA3EmbeddedFilesCheckTest {
         pdfDocument.setXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
@@ -111,7 +112,7 @@ public class PdfA3EmbeddedFilesCheckTest {
         pdfDocument.setXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()

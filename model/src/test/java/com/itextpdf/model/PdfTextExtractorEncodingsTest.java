@@ -3,6 +3,7 @@ package com.itextpdf.model;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.parser.PdfTextExtractor;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
@@ -41,7 +42,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
      */
     @Test
     public void testStandardFont() throws Exception {
-        PdfFont font = PdfFont.createStandardFont(FontConstants.TIMES_ROMAN);
+        PdfFont font = PdfFontFactory.createStandardFont(FontConstants.TIMES_ROMAN);
         byte[] pdfBytes = createPdf(font);
         checkPdf(pdfBytes);
     }
@@ -81,7 +82,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
     }
 
     protected static PdfFont getTTFont(String encoding, boolean embedded) throws IOException {
-        return PdfFont.createFont(sourceFolder + "FreeSans.ttf", encoding, true);
+        return PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", encoding, true);
     }
 
     private static byte[] createPdf(PdfFont font)

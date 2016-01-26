@@ -9,6 +9,7 @@ import com.itextpdf.core.color.DeviceCmyk;
 import com.itextpdf.core.color.DeviceGray;
 import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfLiteral;
@@ -370,7 +371,7 @@ public class PdfContentStreamProcessor {
         Integer n = fontDict.getIndirectReference().getObjNumber();
         PdfFont font = cachedFonts.get(n);
         if (font == null) {
-            font = PdfFont.createFont(fontDict);
+            font = PdfFontFactory.createFont(fontDict);
             cachedFonts.put(n, font);
         }
         return font;

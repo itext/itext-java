@@ -3,7 +3,7 @@ package com.itextpdf.core.pdf.canvas;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
@@ -62,7 +62,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfPage page1 = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page1));
@@ -79,7 +79,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfPage page2 = document.addNewPage();
         canvas = new PdfCanvas(page2);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 24);
+        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page2));
@@ -114,7 +114,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
@@ -147,7 +147,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfPage page1 = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page1));
@@ -164,7 +164,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfPage page2 = document.addNewPage();
         canvas = new PdfCanvas(page2);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.HELVETICA), 24);
+        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page2));
@@ -204,7 +204,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
@@ -233,7 +233,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         List<PdfMcr> elems = document.getStructTreeRoot().getPageMarkedContentReferences(page);
 
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 24);
+        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 490);
 
         //Inserting span between of 2 existing ones.
@@ -411,7 +411,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 14);
+        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 14);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));
@@ -452,7 +452,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFont.createStandardFont(FontConstants.COURIER), 14);
+        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 14);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.P));
         PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.core.pdf.PdfName.Span, page));

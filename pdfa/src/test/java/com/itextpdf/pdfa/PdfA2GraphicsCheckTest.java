@@ -1,6 +1,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.color.Color;
@@ -89,7 +90,7 @@ public class PdfA2GraphicsCheckTest {
 
         String shortText = "text";
 
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
         canvas.setFontAndSize(font, 12);
         canvas.setFillColor(Color.RED).beginText().showText(shortText).endText();
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
@@ -161,7 +162,7 @@ public class PdfA2GraphicsCheckTest {
 
         String shortText = "text";
 
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
         canvas.setFontAndSize(font, 12);
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.CLIP);
         canvas.setFillColor(Color.RED).beginText().showText(shortText).endText();
@@ -188,7 +189,7 @@ public class PdfA2GraphicsCheckTest {
 
         String shortText = "text";
 
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
         canvas.setFontAndSize(font, 12);
         canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
         canvas.setFillColor(Color.RED);
@@ -212,7 +213,7 @@ public class PdfA2GraphicsCheckTest {
 
         String shortText = "text";
 
-        PdfFont font = PdfFont.createFont(sourceFolder + "FreeSans.ttf", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", true);
         canvas.setFontAndSize(font, 12);
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
         canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
