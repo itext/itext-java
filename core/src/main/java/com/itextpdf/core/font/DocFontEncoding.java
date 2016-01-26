@@ -14,13 +14,16 @@ class DocFontEncoding extends FontEncoding {
     protected DocFontEncoding() {
     }
 
-    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode) {
+    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode, boolean fillBaseEncoding) {
         if (encoding != null) {
             if (encoding.isName()) {
                 return FontEncoding.createFontEncoding(((PdfName) encoding).getValue());
             } else if (encoding.isDictionary()) {
                 DocFontEncoding fontEncoding = new DocFontEncoding();
-                fillBaseEncoding(fontEncoding, ((PdfDictionary) encoding).getAsName(PdfName.BaseEncoding));
+                fontEncoding.differences = new String[256];
+                if (fillBaseEncoding) {
+                    fillBaseEncoding(fontEncoding, ((PdfDictionary) encoding).getAsName(PdfName.BaseEncoding));
+                }
                 fillDifferences(fontEncoding, ((PdfDictionary) encoding).getAsArray(PdfName.Differences), toUnicode);
                 return fontEncoding;
             }
@@ -28,11 +31,14 @@ class DocFontEncoding extends FontEncoding {
         return FontEncoding.createFontSpecificEncoding();
     }
 
+    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode) {
+        return createDocFontEncoding(encoding, toUnicode, true);
+    }
+
     private static void fillBaseEncoding(DocFontEncoding fontEncoding, PdfName baseEncodingName) {
         if (baseEncodingName != null) {
             fontEncoding.baseEncoding = baseEncodingName.getValue();
         }
-        fontEncoding.differences = new String[256];
         if (PdfName.MacRomanEncoding.equals(baseEncodingName) || PdfName.WinAnsiEncoding.equals(baseEncodingName)
                 || PdfName.Symbol.equals(baseEncodingName) || PdfName.ZapfDingbats.equals(baseEncodingName)) {
             String enc = PdfEncodings.WINANSI;

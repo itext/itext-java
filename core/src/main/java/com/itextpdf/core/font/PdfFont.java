@@ -41,6 +41,8 @@ public class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             return new PdfType0Font(fontDictionary);
         } else if (checkFontDictionary(fontDictionary, PdfName.TrueType, false)) {
             return new PdfTrueTypeFont(fontDictionary);
+        } else if (checkFontDictionary(fontDictionary, PdfName.Type3, false)) {
+            return new PdfType3Font(fontDictionary);
         } else {
             throw new PdfException(PdfException.DictionaryNotContainFontData);
         }

@@ -1,6 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
+import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.geom.Rectangle;
@@ -8,6 +9,7 @@ import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
 
 /**
  * Low-level API class for Type 3 fonts.
@@ -28,9 +30,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
     public PdfType3Font(PdfDocument document, boolean colorized) {
         super();
         makeIndirect(document);
+        subset = true;
+        embedded = true;
         fontProgram = new Type3FontProgram(colorized);
         fontEncoding = FontEncoding.createEmptyFontEncoding();
-        subset = true;
     }
 
     /**
@@ -41,7 +44,31 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
     public PdfType3Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type3);
+        subset = true;
+        embedded = true;
         fontProgram = new Type3FontProgram(false);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), null, false);
+        Rectangle fontBBoxRec = getPdfObject().getAsArray(PdfName.FontBBox).toRectangle();
+        PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
+        PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
+        fontProgram.getFontMetrics().getBbox()
+                .setBbox(fontBBoxRec.getX(), fontBBoxRec.getY(), fontBBoxRec.getWidth(), fontBBoxRec.getHeight());
+        PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
+        int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
+        int[] widths = FontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
+        double[] fontMatrix = new double[6];
+        for (int i = 0; i < fontMatrixArray.size(); i++) {
+            fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
+        }
+        setFontMatrix(fontMatrix);
+
+        for (PdfName glyphName : charProcsDic.keySet()) {
+            Integer unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
+            if (unicode != null && fontEncoding.canEncode(unicode)) {
+                int code = fontEncoding.convertToByte(unicode);
+                fontProgram.addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName)));
+            }
+        }
     }
 
     public Type3Glyph getType3Glyph(int unicode) {
@@ -131,7 +158,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         }
         PdfDictionary charProcs = new PdfDictionary();
         for (int i = 0; i < 256; i++) {
-            if (fontEncoding.canDecode((byte) i)) {
+            if (fontEncoding.canDecode(i)) {
                 Type3Glyph glyph = getType3Glyph(fontEncoding.getUnicode(i));
                 charProcs.put(new PdfName(fontEncoding.getDifference(i)), glyph.getContentStream());
             }
@@ -141,53 +168,4 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
         super.flushFontData(null, PdfName.Type3);
     }
-
-//    protected void init() {
-//        Rectangle fontBBoxRec = getPdfObject().getAsArray(PdfName.FontBBox).toRectangle();
-//        PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
-//        PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
-//        differences = getPdfObject().getAsDictionary(PdfName.Encoding).getAsArray(PdfName.Differences);
-//        if (differences == null) {
-//            differences = new PdfArray();
-//        }
-//        fontProgram.getFontMetrics().getBbox()
-//                .setBbox(fontBBoxRec.getX(), fontBBoxRec.getY(), fontBBoxRec.getWidth(), fontBBoxRec.getHeight());
-//        int width[] = getWidths();
-//        double[] fontMatrix = new double[6];
-//        for (int i = 0; i < fontMatrixArray.size(); i++) {
-//            fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
-//        }
-//        fontProgram.setFontMatrix(fontMatrix);
-//
-//        for (int i = 0; i < width.length; i++) {
-//            if (width[i] != 0) {
-//                fontProgram.addGlyph(i, width[i], null);
-//                usedSlot[i] = true;
-//            }
-//        }
-//
-//        Iterator<Map.Entry<PdfName, PdfObject>> it = charProcsDic.entrySet().iterator();
-//        //TODO switch to by name iteration
-//        while (it.hasNext()) {
-//            Map.Entry<PdfName, PdfObject> procsEntry = it.next();
-//            Integer val = AdobeGlyphList.nameToUnicode(procsEntry.getKey().getValue());
-//            if (val != null) {
-//                charGlyphs.put(val, new Type3Glyph(((PdfStream) ((PdfIndirectReference) procsEntry.getValue()).getRefersTo())));
-//            }
-//
-//        }
-//    }
-//
-//    private int[] getWidths() {
-//        PdfArray newWidths = getPdfObject().getAsArray(PdfName.Widths);
-//        PdfNumber first = getPdfObject().getAsNumber(PdfName.FirstChar);
-//        PdfNumber last = getPdfObject().getAsNumber(PdfName.LastChar);
-//        int f = first.getIntValue();
-//        int nSize = f + newWidths.size();
-//        int[] tmp = new int[nSize];
-//        for (int k = 0; k < newWidths.size(); ++k) {
-//            tmp[f + k] = newWidths.getAsInt(k);
-//        }
-//        return tmp;
-//    }
 }

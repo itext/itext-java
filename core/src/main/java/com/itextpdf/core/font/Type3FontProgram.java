@@ -44,8 +44,6 @@ public class Type3FontProgram extends FontProgram {
         return type3Glyphs.size();
     }
 
-
-
     void addGlyph(int code, int unicode, int width, int[] bbox, Type3Glyph type3Glyph) {
         Glyph glyph = new Glyph(code, width, unicode, bbox);
         codeToGlyph.put(code, glyph);

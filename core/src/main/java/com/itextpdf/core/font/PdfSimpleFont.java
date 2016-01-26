@@ -85,7 +85,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             } else {
                 for (Glyph glyph : glyphLine.glyphs) {
                     if (fontEncoding.canEncode(glyph.getUnicode())) {
-                        bytes[ptr++] = fontEncoding.convertToByte(glyph.getUnicode());
+                        bytes[ptr++] = (byte) fontEncoding.convertToByte(glyph.getUnicode());
                     }
                 }
             }
@@ -106,7 +106,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             bytes[0] = (byte) glyph.getCode();
         } else {
             if (fontEncoding.canEncode(glyph.getUnicode())) {
-                bytes[0] = fontEncoding.convertToByte(glyph.getUnicode());
+                bytes[0] = (byte) fontEncoding.convertToByte(glyph.getUnicode());
             } else {
                 return emptyBytes;
             }
@@ -127,7 +127,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         } else {
             for (int i = from; i <= to; i++) {
                 if (fontEncoding.canEncode(text.get(i).getUnicode())) {
-                    bytes[ptr++] = fontEncoding.convertToByte(text.get(i).getUnicode());
+                    bytes[ptr++] = (byte) fontEncoding.convertToByte(text.get(i).getUnicode());
                 }
             }
         }

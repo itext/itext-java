@@ -134,7 +134,7 @@ public class FontEncoding {
         byte[] bytes = new byte[text.length()];
         for (int i = 0; i < text.length(); i++) {
             if (unicodeToCode.containsKey(text.charAt(i))) {
-                bytes[ptr++] = convertToByte(text.charAt(i));
+                bytes[ptr++] = (byte)convertToByte(text.charAt(i));
             }
         }
         return Utilities.shortenArray(bytes, ptr);
@@ -144,11 +144,11 @@ public class FontEncoding {
      * Converts a unicode symbol or font specific code
      * to {@code byte} according to the encoding.
      *
-     * @param ch a unicode symbol or FontSpecif code to be converted.
+     * @param unicode a unicode symbol or FontSpecif code to be converted.
      * @return a {@code byte} representing the conversion according to the encoding
      */
-    public byte convertToByte(int ch) {
-        return (byte) unicodeToCode.get(ch);
+    public int convertToByte(int unicode) {
+        return unicodeToCode.get(unicode);
     }
 
     /**
@@ -169,8 +169,8 @@ public class FontEncoding {
      * @param code a byte code to be checked.
      * @return {@code true} if {@code code} could be decoded.
      */
-    public boolean canDecode(byte code) {
-        return codeToUnicode[code & 0xFF] != null;
+    public boolean canDecode(int code) {
+        return codeToUnicode[code] != null;
     }
 
     /**

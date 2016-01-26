@@ -545,11 +545,52 @@ public class PdfFontTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
-    @Test @Ignore
+    @Test
+    public void testUpdateType3FontBasedExistingFont() throws IOException, InterruptedException {
+        String inputFileName = sourceFolder + "type3Font.pdf";
+        String outputFileName = destinationFolder + "type3Font_update.pdf";
+        String cmpOutputFileName = sourceFolder + "cmp_type3Font_update.pdf";
+        final String title = "Type3 font iText 6 Document";
+
+        PdfReader reader = new PdfReader(inputFileName);
+        PdfWriter writer = new PdfWriter(new FileOutputStream(outputFileName));
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        PdfType3Font pdfType3Font = new PdfType3Font((PdfDictionary) pdfDoc.getPdfObject(4));
+
+        Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
+        newGlyph.setLineWidth(100);
+        newGlyph.moveTo(540, 5);
+        newGlyph.lineTo(5, 840);
+        newGlyph.stroke();
+
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(pdfType3Font, 12)
+                .moveText(50, 800)
+                .showText("AAAAAA EEEE ~ é ö")
+                .endText();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertEquals(6, pdfType3Font.getFontProgram().getGlyphsCount());
+
+        Assert.assertNull(new CompareTool().compareByContent(outputFileName, cmpOutputFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void testNewType3FontBasedExistingFont() throws IOException, InterruptedException {
         String inputFileName = sourceFolder + "type3Font.pdf";
-        String outputFileName = destinationFolder + "new_type3Font.pdf";
-        String cmpOutputFileName = sourceFolder + "cmp_new_type3Font.pdf";
+        String outputFileName = destinationFolder + "type3Font_new.pdf";
+        String cmpOutputFileName = sourceFolder + "cmp_type3Font_new.pdf";
         final String title = "Type3 font iText 6 Document";
 
         PdfReader reader = new PdfReader(inputFileName);
@@ -563,7 +604,8 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfType3Font pdfType3Font = new PdfType3Font((PdfDictionary) inputPdfDoc.getPdfObject(4));
+        PdfDictionary pdfType3FontDict = (PdfDictionary) inputPdfDoc.getPdfObject(4);
+        PdfType3Font pdfType3Font = new PdfType3Font(pdfType3FontDict.copyToDocument(outputPdfDoc));
 
         Type3Glyph newGlyph = pdfType3Font.addGlyph('\u00F6', 600, 0, 0, 600, 700);
         newGlyph.setLineWidth(100);
