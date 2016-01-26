@@ -174,7 +174,24 @@ public class PdfCanvas {
      * @param page page to create canvas from.
      */
     public PdfCanvas(PdfPage page) {
+        this(page, page.getDocument().getReader() != null && page.getDocument().getWriter() != null &&
+                page.getContentStreamCount() > 0 && page.getLastContentStream().getLength() > 0);
+    }
+
+    /**
+     * Convenience method for fast PdfCanvas creation by a certain page.
+     *
+     * @param page page to create canvas from.
+     * @param wrapOldContent true to wrap all old content streams into q/Q operators so that the state of old
+     *                       content streams would not affect the new one
+     */
+    public PdfCanvas(PdfPage page, boolean wrapOldContent) {
         this(getPageStream(page), page.getResources(), page.getDocument());
+        if (wrapOldContent) {
+            // Wrap old content in q/Q in order not to get unexpected results because of the CTM
+            page.newContentStreamBefore().getOutputStream().writeBytes(OutputStream.getIsoBytes("q\n"));
+            contentStream.getOutputStream().writeBytes(OutputStream.getIsoBytes("Q\n"));
+        }
     }
 
     /**

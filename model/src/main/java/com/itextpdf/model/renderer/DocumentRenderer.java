@@ -1,15 +1,10 @@
 package com.itextpdf.model.renderer;
 
 import com.itextpdf.basics.geom.PageSize;
-import com.itextpdf.basics.io.OutputStream;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.model.Document;
-import com.itextpdf.model.IPropertyContainer;
-import com.itextpdf.model.element.AbstractElement;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutResult;
 
@@ -56,23 +51,21 @@ public class DocumentRenderer extends RootRenderer {
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         if (!resultRenderer.isFlushed()) {
-            ensureDocumentHasNPages(resultRenderer.getOccupiedArea().getPageNumber(), null);
             int pageNum = resultRenderer.getOccupiedArea().getPageNumber();
+
             PdfDocument pdfDocument = document.getPdfDocument();
+            ensureDocumentHasNPages(pageNum, null);
             PdfPage correspondingPage = pdfDocument.getPage(pageNum);
 
-            if(pdfDocument.getReader() != null && pdfDocument.getWriter() != null){
-                if(!wrappedContentPage.contains(pageNum)) {
-                    correspondingPage.newContentStreamBefore().getOutputStream().writeBytes(OutputStream.getIsoBytes("q\n"));
-                    correspondingPage.newContentStreamAfter().getOutputStream().writeBytes(OutputStream.getIsoBytes("Q\n"));
-                    wrappedContentPage.add(pageNum);
-                }
-            }
+            boolean wrapOldContent = pdfDocument.getReader() != null && pdfDocument.getWriter() != null &&
+                    correspondingPage.getContentStreamCount() > 0 && correspondingPage.getLastContentStream().getLength() > 0 &&
+                    !wrappedContentPage.contains(pageNum) && pdfDocument.getNumberOfPages() >= pageNum;
+            wrappedContentPage.add(pageNum);
 
             if (pdfDocument.isTagged()) {
                 pdfDocument.getTagStructure().setPage(correspondingPage);
             }
-            resultRenderer.draw(new DrawContext(pdfDocument, new PdfCanvas(correspondingPage), pdfDocument.isTagged()));
+            resultRenderer.draw(new DrawContext(pdfDocument, new PdfCanvas(correspondingPage, wrapOldContent), pdfDocument.isTagged()));
         }
     }
 
