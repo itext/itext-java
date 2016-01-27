@@ -43,7 +43,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
- * This class represents a single field or field group in an {@link PdfAcroForm
+ * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
  * AcroForm}.
  */
 public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
@@ -451,6 +451,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfButtonFormField field = new PdfButtonFormField(annot, doc);
         field.setPushButton(true);
         field.setFieldName(name);
+        field.font = font;
+        field.fontSize = fontSize;
 
         PdfFormXObject xObject = field.drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), caption, font, fontSize);
         annot.setNormalAppearance(xObject.getPdfObject());
