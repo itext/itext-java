@@ -26,6 +26,15 @@ import com.itextpdf.core.xmp.XMPMetaFactory;
 import com.itextpdf.core.xmp.XMPUtils;
 import com.itextpdf.core.xmp.options.SerializeOptions;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -46,16 +55,6 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -123,12 +122,21 @@ public class CompareTool {
     }
 
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws InterruptedException, IOException {
-        return compareByContent(outPdf, cmpPdf, outPath, differenceImagePrefix, null);
+        return compareByContent(outPdf, cmpPdf, outPath, differenceImagePrefix, null, null, null);
+    }
+
+    public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
+        return compareByContent(outPdf, cmpPdf, outPath, differenceImagePrefix, null, outPass, cmpPass);
     }
 
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
-        return compareByContent(outPath, differenceImagePrefix, ignoredAreas);
+        return compareByContent(outPath, differenceImagePrefix, ignoredAreas, null, null);
+    }
+
+    public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
+        init(outPdf, cmpPdf);
+        return compareByContent(outPath, differenceImagePrefix, ignoredAreas, outPass, cmpPass);
     }
 
     public boolean compareDictionaries(PdfDictionary outDict, PdfDictionary cmpDict) throws IOException {
@@ -219,11 +227,11 @@ public class CompareTool {
         return compareXmls(new FileInputStream(xmlFilePath1), new FileInputStream(xmlFilePath2));
     }
 
-    public String compareDocumentInfo(String outPdf, String cmpPdf) throws IOException {
+    public String compareDocumentInfo(String outPdf, String cmpPdf, byte[] outPass, byte[] cmpPass) throws IOException {
         System.out.print("[itext] INFO  Comparing document info.......");
         String message = null;
-        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf));
-        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf));
+        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf, outPass));
+        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf, cmpPass));
         String[] cmpInfo = convertInfo(cmpDocument.getInfo());
         String[] outInfo = convertInfo(outDocument.getInfo());
         for (int i = 0; i < cmpInfo.length; ++i) {
@@ -241,6 +249,10 @@ public class CompareTool {
             System.out.println("Fail");
         System.out.flush();
         return message;
+    }
+
+    public String compareDocumentInfo(String outPdf, String cmpPdf) throws IOException {
+        return compareDocumentInfo(outPdf, cmpPdf, null, null);
     }
 
     public String compareLinkAnnotations(String outPdf, String cmpPdf) throws IOException {
@@ -524,10 +536,15 @@ public class CompareTool {
     }
 
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
+        return compareByContent(outPath, differenceImagePrefix, ignoredAreas, null, null);
+    }
+
+
+    private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
         System.out.print("[itext] INFO  Comparing by content..........");
         PdfDocument outDocument;
         try {
-            outDocument = new PdfDocument(new PdfReader(outPdf));
+            outDocument = new PdfDocument(new PdfReader(outPdf, outPass));
         } catch (IOException e) {
             throw new IOException("File \"" + outPdf + "\" not found", e);
         }
@@ -537,7 +554,7 @@ public class CompareTool {
 
         PdfDocument cmpDocument;
         try {
-            cmpDocument = new PdfDocument(new PdfReader(cmpPdf));
+            cmpDocument = new PdfDocument(new PdfReader(cmpPdf, cmpPass));
         } catch (IOException e) {
             throw new IOException("File \"" + cmpPdf + "\" not found", e);
         }
