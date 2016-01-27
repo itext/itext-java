@@ -26,7 +26,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
         super();
-        newFont = false;
         setFontProgram(ttf);
         this.embedded = embedded;
         FontNames fontNames = ttf.getFontNames();
