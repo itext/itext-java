@@ -1,10 +1,14 @@
 package com.itextpdf.core.font;
 
+import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.core.pdf.*;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * This class allow to parse document font's encoding.
@@ -28,7 +32,14 @@ class DocFontEncoding extends FontEncoding {
                 return fontEncoding;
             }
         }
-        return FontEncoding.createFontSpecificEncoding();
+        if (toUnicode != null) {
+            DocFontEncoding fontEncoding = new DocFontEncoding();
+            fontEncoding.differences = new String[256];
+            fillDifferences(fontEncoding, toUnicode);
+            return fontEncoding;
+        } else {
+            return FontEncoding.createFontSpecificEncoding();
+        }
     }
 
     public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode) {
@@ -57,6 +68,7 @@ class DocFontEncoding extends FontEncoding {
     }
 
     private static void fillDifferences(DocFontEncoding fontEncoding, PdfArray diffs, CMapToUnicode toUnicode) {
+        IntHashtable byte2uni = toUnicode != null ? toUnicode.createDirectMapping() : new IntHashtable();
         if (diffs != null) {
             int currentNumber = 0;
             for (int k = 0; k < diffs.size(); ++k) {
@@ -65,24 +77,36 @@ class DocFontEncoding extends FontEncoding {
                     currentNumber = ((PdfNumber) obj).getIntValue();
                 } else {
                     String glyphName = ((PdfName) obj).getValue();
-                    Integer c = AdobeGlyphList.nameToUnicode(glyphName);
-                    if (c != null) {
-                        fontEncoding.codeToUnicode[currentNumber] = c;
-                        fontEncoding.unicodeToCode.put(c, currentNumber);
+                    Integer unicode = AdobeGlyphList.nameToUnicode(glyphName);
+                    if (unicode != null) {
+                        fontEncoding.codeToUnicode[currentNumber] = unicode;
+                        fontEncoding.unicodeToCode.put(unicode, currentNumber);
                         fontEncoding.differences[currentNumber] = glyphName;
-                        fontEncoding.unicodeDifferences.put(currentNumber, (char) (int) c);
+                        fontEncoding.unicodeDifferences.put(currentNumber, unicode);
                     } else {
-                        final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
-                        if ((unicode != null) && (unicode.length() == 1)) {
-                            fontEncoding.codeToUnicode[currentNumber] = (int) unicode.charAt(0);
-                            fontEncoding.unicodeToCode.put(unicode.charAt(0), currentNumber);
+                        if (byte2uni.contains(currentNumber)) {
+                            unicode = byte2uni.get(currentNumber);
+                            fontEncoding.codeToUnicode[currentNumber] = unicode;
+                            fontEncoding.unicodeToCode.put(unicode, currentNumber);
                             fontEncoding.differences[currentNumber] = glyphName;
-                            fontEncoding.unicodeDifferences.put(currentNumber, unicode.charAt(0));
+                            fontEncoding.unicodeDifferences.put(currentNumber, unicode);
                         }
                     }
                     currentNumber++;
                 }
             }
+        }
+    }
+
+    private static void fillDifferences(DocFontEncoding fontEncoding, CMapToUnicode toUnicode) {
+        IntHashtable byte2uni = toUnicode.createDirectMapping();
+        for(Integer code : byte2uni.getKeys()) {
+            int unicode = byte2uni.get(code);
+            String glyphName = AdobeGlyphList.unicodeToName(unicode);
+            fontEncoding.codeToUnicode[code] = unicode;
+            fontEncoding.unicodeToCode.put(unicode, code);
+            fontEncoding.differences[code] = glyphName;
+            fontEncoding.unicodeDifferences.put(unicode, unicode);
         }
     }
 }

@@ -128,7 +128,7 @@ public class IntHashtable implements Cloneable {
      */
     public boolean contains(int value) {
 
-        Entry tab[] = table;
+        Entry[] tab = table;
         for (int i = tab.length; i-- > 0;) {
             for (Entry e = tab[i]; e != null; e = e.next) {
                 if (e.value == value) {
@@ -165,7 +165,7 @@ public class IntHashtable implements Cloneable {
      * @see #contains(int)
      */
     public boolean containsKey(int key) {
-        Entry tab[] = table;
+        Entry[] tab = table;
         int index = (key & 0x7FFFFFFF) % tab.length;
         for (Entry e = tab[index]; e != null; e = e.next) {
             if (e.key == key) {
@@ -185,7 +185,7 @@ public class IntHashtable implements Cloneable {
      * @see     #put(int, int)
      */
     public int get(int key) {
-        Entry tab[] = table;
+        Entry[] tab = table;
         int index = (key & 0x7FFFFFFF) % tab.length;
         for (Entry e = tab[index]; e != null; e = e.next) {
             if (e.key == key) {
@@ -204,7 +204,7 @@ public class IntHashtable implements Cloneable {
      *          this hashtable.
      * @see     #put(int, int)
     public ArrayList<Integer> getValues(int key) {
-    Entry tab[] = table;
+    Entry[] tab = table;
     int index = (key & 0x7FFFFFFF) % tab.length;
     for (Entry e = tab[index]; e != null; e = e.next) {
     if (e.key == key) {
@@ -226,10 +226,10 @@ public class IntHashtable implements Cloneable {
      */
     protected void rehash() {
         int oldCapacity = table.length;
-        Entry oldMap[] = table;
+        Entry[] oldMap = table;
 
         int newCapacity = oldCapacity * 2 + 1;
-        Entry newMap[] = new Entry[newCapacity];
+        Entry[] newMap = new Entry[newCapacity];
 
         threshold = (int) (newCapacity * loadFactor);
         table = newMap;
@@ -263,7 +263,7 @@ public class IntHashtable implements Cloneable {
      */
     public int put(int key, int value) {
         // Makes sure the key is not already in the hashtable.
-        Entry tab[] = table;
+        Entry[] tab = table;
         int index = (key & 0x7FFFFFFF) % tab.length;
         for (Entry e = tab[index]; e != null; e = e.next) {
             if (e.key == key) {
@@ -301,7 +301,7 @@ public class IntHashtable implements Cloneable {
      *          or <code>null</code> if the key did not have a mapping.
      */
     public int remove(int key) {
-        Entry tab[] = table;
+        Entry[] tab = table;
         int index = (key & 0x7FFFFFFF) % tab.length;
         for (Entry e = tab[index], prev = null; e != null; prev = e, e = e.next) {
             if (e.key == key) {
@@ -323,7 +323,7 @@ public class IntHashtable implements Cloneable {
      * <p>Clears this hashtable so that it contains no keys.</p>
      */
     public void clear() {
-        Entry tab[] = table;
+        Entry[] tab = table;
         for (int index = tab.length; --index >= 0;) {
             tab[index] = null;
         }
@@ -414,13 +414,13 @@ public class IntHashtable implements Cloneable {
     }
 
     public int[] toOrderedKeys() {
-        int res[] = getKeys();
+        int[] res = getKeys();
         Arrays.sort(res);
         return res;
     }
 
     public int[] getKeys() {
-        int res[] = new int[count];
+        int[] res = new int[count];
         int ptr = 0;
         int index = table.length;
         Entry entry = null;

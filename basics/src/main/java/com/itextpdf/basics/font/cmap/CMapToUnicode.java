@@ -1,6 +1,7 @@
 package com.itextpdf.basics.font.cmap;
 
 
+import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.Utilities;
 import org.slf4j.Logger;
@@ -99,8 +100,8 @@ public class CMapToUnicode extends AbstractCMap {
         return result;
     }
 
-    public Map<Integer, Integer> createDirectMapping() throws IOException {
-        Map<Integer, Integer> result = new HashMap<>();
+    public IntHashtable createDirectMapping() {
+        IntHashtable result = new IntHashtable();
         for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
             result.put(entry.getKey(), convertToInt(entry.getValue()));
         }
@@ -110,14 +111,13 @@ public class CMapToUnicode extends AbstractCMap {
         return result;
     }
 
-    private int convertToInt(String s) throws IOException {
-        byte[] b = s.getBytes("UTF-16BE");
+    private int convertToInt(String s) {
         int value = 0;
-        for (int i = 0; i < b.length - 1; i++) {
-            value += b[i] & 0xff;
+        for (int i = 0; i < s.length() - 1; i++) {
+            value += s.charAt(i);
             value <<= 8;
         }
-        value += b[b.length - 1] & 0xff;
+        value += s.charAt(s.length() - 1);
         return value;
     }
 

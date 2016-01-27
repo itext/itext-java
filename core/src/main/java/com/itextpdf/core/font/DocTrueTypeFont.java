@@ -12,9 +12,6 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
 
-import java.io.IOException;
-import java.util.Map;
-
 class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
 
     private PdfStream fontFile;
@@ -53,20 +50,15 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
         DocTrueTypeFont fontProgram = new DocTrueTypeFont(fontDictionary);
         PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         fillFontDescriptor(fontProgram, fontDescriptor);
-
-        Map<Integer, Integer> cid2Uni = null;
-        try {
-            cid2Uni = toUnicode != null ? toUnicode.createDirectMapping() : null;
-        } catch (IOException ignored) { }
-
+        IntHashtable cid2Uni = toUnicode != null ? toUnicode.createDirectMapping() : null;
         int dw = fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)
                 ? fontDescriptor.getAsInt(PdfName.DW) : 1000;
         if (cid2Uni != null) {
             IntHashtable widths = FontUtils.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
-            for (Map.Entry<Integer, Integer> entry : cid2Uni.entrySet()) {
-                int width = widths.containsKey(entry.getKey()) ? widths.get(entry.getKey()) : dw;
-                Glyph glyph = new Glyph(entry.getKey(), width, entry.getValue());
-                fontProgram.codeToGlyph.put(entry.getKey(), glyph);
+            for (int cid : cid2Uni.getKeys()) {
+                int width = widths.containsKey(cid) ? widths.get(cid) : dw;
+                Glyph glyph = new Glyph(cid, width, cid2Uni.get(cid));
+                fontProgram.codeToGlyph.put(cid, glyph);
                 fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
             }
         }

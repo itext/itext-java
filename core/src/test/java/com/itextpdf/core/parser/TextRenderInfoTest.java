@@ -37,7 +37,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
      * @throws java.lang.Exception
      */
     @Test
-    @Ignore("Seems to be a problem with decode")
+//    @Ignore("Seems to be a problem with decode")
     public void testUnicodeEmptyString() throws Exception {
         StringBuilder sb = new StringBuilder();
         String inFile = "japanese_text.pdf";

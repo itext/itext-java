@@ -343,7 +343,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         //TODO now we support only identity-h
         String cids = content.getValue();
         StringBuilder builder = new StringBuilder(cids.length() / 2);
-        for (int i = 0; i < cids.length(); i ++) {
+        for (int i = 0; i < cids.length(); i++) {
             int code = cids.charAt(i++);
             if (i == cids.length()) {
                 //allowed only two bytes per code
