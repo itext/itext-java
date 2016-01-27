@@ -54,13 +54,19 @@ class DocType1Font extends Type1Font implements DocFontProgram {
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
         int[] widths = FontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
+        fontProgram.avgWidth = 0;
+        int glyphsWithWidths = 0;
         for (int i = 0; i < 256; i++) {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
             if (glyph.getUnicode() != null) {
                 fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
             }
+            if (widths[i] > 0) {
+                glyphsWithWidths++;
+            }
         }
+        fontProgram.avgWidth /= glyphsWithWidths;
         return fontProgram;
     }
 

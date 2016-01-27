@@ -286,6 +286,8 @@ public class Type1Font extends FontProgram {
                 throw new PdfException("missing.startcharmetrics.in.the.metrics.file");
             }
         }
+        avgWidth = 0;
+        int widthCount = 0;
         while ((line = raf.readLine()) != null) {
             StringTokenizer tok = new StringTokenizer(line);
             if (!tok.hasMoreTokens()) {
@@ -335,9 +337,10 @@ public class Type1Font extends FontProgram {
             if (unicode != null) {
                 unicodeToGlyph.put(unicode, glyph);
             }
+            avgWidth += WX;
+            widthCount++;
         }
-
-
+        avgWidth /= widthCount;
         if (startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {

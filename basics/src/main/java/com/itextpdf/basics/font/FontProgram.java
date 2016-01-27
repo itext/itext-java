@@ -12,7 +12,6 @@ public abstract class FontProgram {
     public static final int DEFAULT_WIDTH = 1000;
     public static final int UNITS_NORMALIZATION = 1000;
 
-
     // In case Type1: char code to glyph.
     // In case TrueType: glyph index to glyph.
     protected Map<Integer, Glyph> codeToGlyph = new HashMap<>();
@@ -23,6 +22,7 @@ public abstract class FontProgram {
     protected FontMetrics fontMetrics = new FontMetrics();
     protected FontIdentification fontIdentification = new FontIdentification();
 
+    protected int avgWidth;
 
     /**
      * The font's encoding name. This encoding is 'StandardEncoding' or 'AdobeStandardEncoding' for a font
@@ -67,6 +67,10 @@ public abstract class FontProgram {
     public int getWidth(int unicode) {
         Glyph glyph = getGlyph(unicode);
         return glyph != null ? glyph.getWidth() : 0;
+    }
+
+    public int getAvgWidth() {
+        return avgWidth;
     }
 
     /**

@@ -19,6 +19,11 @@ public class CidFont extends FontProgram {
     CidFont(String fontName, Set<String> cmaps) {
         compatibleCmaps = cmaps;
         initializeCidFontNameAndStyle(fontName);
+        avgWidth = 0;
+        for(int code : hMetrics.getKeys()) {
+            avgWidth += hMetrics.get(code);
+        }
+        avgWidth /= hMetrics.size();
         Map<String, Object> fontDesc = CidFontProperties.getAllFonts().get(fontNames.getFontName());
         if (fontDesc == null) {
             throw new PdfException("no.such.predefined.font.1").setMessageParams(fontName);
