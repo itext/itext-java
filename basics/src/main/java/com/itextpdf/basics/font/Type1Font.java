@@ -340,7 +340,9 @@ public class Type1Font extends FontProgram {
             avgWidth += WX;
             widthCount++;
         }
-        avgWidth /= widthCount;
+        if (widthCount != 0) {
+            avgWidth /= widthCount;
+        }
         if (startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {

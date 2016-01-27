@@ -302,7 +302,9 @@ public class TrueTypeFont extends FontProgram {
             avgWidth += glyph.getWidth();
         }
 
-        avgWidth /= codeToGlyph.size();
+        if (codeToGlyph.size() != 0) {
+            avgWidth /= codeToGlyph.size();
+        }
 
         readGdefTable();
         readGsubTable();

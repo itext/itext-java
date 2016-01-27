@@ -7,9 +7,9 @@ import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.parser.GlyphTextEventListener;
+import com.itextpdf.core.parser.PdfTextExtractor;
 import com.itextpdf.core.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.core.parser.TextExtractionStrategy;
-import com.itextpdf.core.parser.PdfTextExtractor;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfString;
@@ -27,7 +27,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -190,7 +189,6 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Seems to be a problem with decode")
     public void extractFromIsoTc171() throws IOException {
         if (this.getClass() != SimpleTextExtractionStrategyTest.class)
             return;

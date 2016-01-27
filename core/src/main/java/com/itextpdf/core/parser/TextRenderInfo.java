@@ -309,9 +309,11 @@ public class TextRenderInfo implements EventData {
      */
     private float getUnscaledFontSpaceWidth(){
         char charToUse = ' ';
-        if (gs.getFont().getWidth(charToUse) == 0)
-            charToUse = '\u00A0';
-        return getStringWidth(String.valueOf(charToUse));
+        if (gs.getFont().getWidth(charToUse) == 0) {
+            return gs.getFont().getFontProgram().getAvgWidth() / 1000f;
+        } else {
+            return getStringWidth(String.valueOf(charToUse));
+        }
     }
 
     /**

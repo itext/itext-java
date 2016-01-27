@@ -1,9 +1,7 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.Type1Font;
-import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -11,9 +9,6 @@ import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfStream;
 import com.itextpdf.core.pdf.PdfString;
-
-import java.io.IOException;
-import java.util.Map;
 
 class DocType1Font extends Type1Font implements DocFontProgram {
 
@@ -64,9 +59,12 @@ class DocType1Font extends Type1Font implements DocFontProgram {
             }
             if (widths[i] > 0) {
                 glyphsWithWidths++;
+                fontProgram.avgWidth += widths[i];
             }
         }
-        fontProgram.avgWidth /= glyphsWithWidths;
+        if (glyphsWithWidths != 0) {
+            fontProgram.avgWidth /= glyphsWithWidths;
+        }
         return fontProgram;
     }
 
