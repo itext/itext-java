@@ -54,21 +54,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
 
-    PdfType0Font(PdfDictionary fontDictionary) {
-        super(fontDictionary);
-        checkFontDictionary(fontDictionary, PdfName.Type0);
-        CMapToUnicode toUnicodeCMap = FontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        PdfDictionary descendantFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
-        fontProgram = DocTrueTypeFont.createFontProgram(descendantFont, toUnicodeCMap);
-        cmapEncoding = new CMapEncoding(PdfEncodings.IDENTITY_H);
-        cidFontType = CidFontType2;
-
-        assert fontProgram instanceof DocFontProgram;
-        embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
-        longTag = new LinkedHashMap<>();
-        subset = false;
-    }
-
     PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
         if (!cmap.equals(PdfEncodings.IDENTITY_H) && !cmap.equals(PdfEncodings.IDENTITY_V)) {
@@ -113,6 +98,21 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         cmapEncoding = new CMapEncoding(cmap, uniMap);
         longTag = new LinkedHashMap<>();
         cidFontType = CidFontType0;
+    }
+
+    PdfType0Font(PdfDictionary fontDictionary) {
+        super(fontDictionary);
+        checkFontDictionary(fontDictionary, PdfName.Type0);
+        newFont = false;
+        CMapToUnicode toUnicodeCMap = FontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
+        PdfDictionary descendantFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
+        fontProgram = DocTrueTypeFont.createFontProgram(descendantFont, toUnicodeCMap);
+        cmapEncoding = new CMapEncoding(PdfEncodings.IDENTITY_H);
+        cidFontType = CidFontType2;
+        assert fontProgram instanceof DocFontProgram;
+        embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
+        longTag = new LinkedHashMap<>();
+        subset = false;
     }
 
     protected String getUniMapName(String registry) {
@@ -409,7 +409,10 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override
     public void flush() {
-        flushFontData();
+        if (newFont) {
+            flushFontData();
+        }
+        super.flush();
     }
 
     @Override //TODO
@@ -417,9 +420,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     private void flushFontData() {
-        if (fontProgram instanceof DocFontProgram) {
-            super.flush();
-        } else if (cidFontType == CidFontType0) {
+        if (cidFontType == CidFontType0) {
             getPdfObject().put(PdfName.Type, PdfName.Font);
             getPdfObject().put(PdfName.Subtype, PdfName.Type0);
             String name = fontProgram.getFontNames().getFontName();

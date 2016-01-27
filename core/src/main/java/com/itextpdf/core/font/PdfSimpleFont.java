@@ -187,10 +187,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     protected void flushFontData(String fontName, PdfName subtype) {
-        if (fontProgram instanceof DocFontProgram) {
-            super.flush();
-            return;
-        }
         getPdfObject().put(PdfName.Subtype, subtype);
         if (fontName != null) {
             getPdfObject().put(PdfName.BaseFont, new PdfName(fontName));
@@ -281,7 +277,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             getPdfObject().put(PdfName.FontDescriptor, fontDescriptor);
             fontDescriptor.flush();
         }
-        super.flush();
     }
 
     protected boolean isBuiltInFont() {

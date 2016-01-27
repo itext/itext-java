@@ -26,6 +26,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
         super();
+        newFont = false;
         setFontProgram(ttf);
         this.embedded = embedded;
         FontNames fontNames = ttf.getFontNames();
@@ -45,8 +46,8 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     PdfTrueTypeFont(PdfDictionary fontDictionary) {
         super(fontDictionary);
+        newFont = false;
         checkFontDictionary(fontDictionary, PdfName.TrueType);
-
         CMapToUnicode toUni = FontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding);
@@ -74,21 +75,25 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     //TODO make subtype class member and simplify this method
     @Override
     public void flush() {
-        PdfName subtype;
-        String fontName;
-        if (fontProgram instanceof DocFontProgram) {
-            subtype = ((DocFontProgram) fontProgram).getSubtype();
-            fontName = fontProgram.getFontNames().getFontName();
-        } else if (fontProgram.isCff()) {
-            subtype = PdfName.Type1;
-            fontName = fontProgram.getFontNames().getFontName();
-        } else {
-            subtype = PdfName.TrueType;
-            fontName = subset
-                    ? createSubsetPrefix() + fontProgram.getFontNames().getFontName()
-                    : fontProgram.getFontNames().getFontName();
+        if (newFont) {
+            PdfName subtype;
+            String fontName;
+//            if (fontProgram instanceof DocFontProgram) {
+//                subtype = ((DocFontProgram) fontProgram).getSubtype();
+//                fontName = fontProgram.getFontNames().getFontName();
+//            } else
+            if (fontProgram.isCff()) {
+                subtype = PdfName.Type1;
+                fontName = fontProgram.getFontNames().getFontName();
+            } else {
+                subtype = PdfName.TrueType;
+                fontName = subset
+                        ? createSubsetPrefix() + fontProgram.getFontNames().getFontName()
+                        : fontProgram.getFontNames().getFontName();
+            }
+            flushFontData(fontName, subtype);
         }
-        flushFontData(fontName, subtype);
+        super.flush();
     }
 
     protected void addRangeUni(Set<Integer> longTag) {

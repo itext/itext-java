@@ -11,20 +11,6 @@ import com.itextpdf.core.pdf.PdfStream;
 
 public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
-    PdfType1Font(PdfDictionary fontDictionary) {
-        super(fontDictionary);
-        checkFontDictionary(fontDictionary, PdfName.Type1);
-
-        CMapToUnicode toUni = FontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
-        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding);
-
-        if (fontProgram instanceof DocFontProgram) {
-            embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
-        }
-        subset = false;
-    }
-
     PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
         super();
         setFontProgram(type1Font);
@@ -43,6 +29,20 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         this(type1Font, encoding, false);
     }
 
+    PdfType1Font(PdfDictionary fontDictionary) {
+        super(fontDictionary);
+        newFont = false;
+        checkFontDictionary(fontDictionary, PdfName.Type1);
+        CMapToUnicode toUni = FontUtils.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
+        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding);
+
+        if (fontProgram instanceof DocFontProgram) {
+            embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
+        }
+        subset = false;
+    }
+
     @Override
     public boolean isSubset() {
         return subset;
@@ -55,7 +55,10 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     public void flush() {
-        flushFontData(fontProgram.getFontNames().getFontName(), PdfName.Type1);
+        if (newFont) {
+            flushFontData(fontProgram.getFontNames().getFontName(), PdfName.Type1);
+        }
+        super.flush();
     }
 
     @Override

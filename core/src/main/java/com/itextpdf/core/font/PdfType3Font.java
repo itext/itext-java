@@ -167,5 +167,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         getPdfObject().put(PdfName.FontMatrix, new PdfArray(getFontMatrix()));
         getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
         super.flushFontData(null, PdfName.Type3);
+        super.flush();
     }
 }

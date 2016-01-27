@@ -20,6 +20,11 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
     /**
+     * false, if the font comes from PdfDocument.
+     */
+    protected boolean newFont = true;
+
+    /**
      * true if the font is to be embedded in the PDF.
      */
     protected boolean embedded = false;
