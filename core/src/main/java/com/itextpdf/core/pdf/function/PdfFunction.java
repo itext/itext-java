@@ -8,6 +8,7 @@ import com.itextpdf.core.pdf.PdfNumber;
 import com.itextpdf.core.pdf.PdfObject;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
 import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 
 import java.util.List;
 
@@ -22,12 +23,17 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
         return ((PdfDictionary)getPdfObject()).getAsInt(PdfName.FunctionType);
     }
 
+    public boolean checkCompatibilityWithColorSpace(PdfColorSpace alternateSpace) {
+        return true;
+    }
+
     public int getInputSize() {
         return ((PdfDictionary)getPdfObject()).getAsArray(PdfName.Domain).size() / 2;
     }
 
     public int getOutputSize() {
-        return ((PdfDictionary)getPdfObject()).getAsArray(PdfName.Range).size() / 2;
+        PdfArray range = ((PdfDictionary)getPdfObject()).getAsArray(PdfName.Range);
+        return range == null ? 0 : range.size() / 2;
     }
 
     static public class Type0 extends PdfFunction<PdfStream> {
@@ -42,6 +48,11 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
 
         public Type0(PdfDocument document, PdfArray domain, PdfArray range, PdfArray size, PdfNumber bitsPerSample, PdfNumber order, PdfArray encode, PdfArray decode, byte[] samples) {
             this(makeType0(document, domain, range, size, bitsPerSample, order, encode, decode, samples), document);
+        }
+
+        @Override
+        public boolean checkCompatibilityWithColorSpace(PdfColorSpace alternateSpace) {
+            return getInputSize() == 1 && getOutputSize() == alternateSpace.getNumberOfComponents();
         }
 
         private static PdfStream makeType0(PdfDocument document, PdfArray domain, PdfArray range, PdfArray size, PdfNumber bitsPerSample, PdfNumber order, PdfArray encode, PdfArray decode, byte[] samples) {
@@ -131,6 +142,11 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
 
         public Type4(PdfDocument document, PdfArray domain, PdfArray range, byte[] ps) {
             this(makeType4(document, domain, range, ps), document);
+        }
+
+        @Override
+        public boolean checkCompatibilityWithColorSpace(PdfColorSpace alternateSpace) {
+            return getInputSize() == 1 && getOutputSize() == alternateSpace.getNumberOfComponents();
         }
 
         private static PdfStream makeType4(PdfDocument document, PdfArray domain, PdfArray range, byte[] ps) {

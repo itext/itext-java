@@ -60,7 +60,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
         public Separation(PdfDocument document, String name, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(document, new PdfName(name), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
-            if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
+            if (!tintTransform.checkCompatibilityWithColorSpace(alternateSpace)) {
                 throw new PdfException(PdfException.FunctionIsNotCompatibleWitColorSpace, this);
             }
         }
