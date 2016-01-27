@@ -14,7 +14,6 @@ public abstract class ITextTest {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     public static void createDestinationFolder(String path) {
-
         File fpath = new File(path);
         fpath.mkdirs();
     }
@@ -27,7 +26,6 @@ public abstract class ITextTest {
     }
 
     public static void deleteDirectory(String path) {
-
         File fpath = new File(path);
         if (fpath.exists() && fpath.listFiles() != null) {
             for (File f : fpath.listFiles()) {
@@ -43,7 +41,6 @@ public abstract class ITextTest {
     }
 
     protected byte[] readFile(String filename) throws IOException {
-
         FileInputStream input = new FileInputStream(filename);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[8192];
@@ -56,7 +53,6 @@ public abstract class ITextTest {
     }
 
     protected String createStringByEscaped(byte[] bytes) {
-
         String[] chars = (new String(bytes)).substring(1).split("#");
         StringBuilder buf = new StringBuilder(chars.length);
         for (String ch : chars) {

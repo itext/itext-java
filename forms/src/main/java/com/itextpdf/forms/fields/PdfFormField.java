@@ -230,13 +230,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc   the {@link PdfDocument} to create the text field in
      * @param rect  the location on the page for the text field
-     * @param value the initial value
      * @param name  the name of the form field
+     * @param value the initial value
      * @return a new {@link PdfTextFormField}
      */
-    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String value, String name) {
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value) {
         try {
-            return createText(doc, rect, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, value, name);
+            return createText(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
@@ -248,21 +248,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc      the {@link PdfDocument} to create the text field in
      * @param rect     the location on the page for the text field
+     * @param name     the name of the form field
+     * @param value    the initial value
      * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
-     * @param value    the initial value
-     * @param name     the name of the form field
      * @return a new {@link PdfTextFormField}
      */
-    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, PdfFont font, int fontSize, String value, String name) {
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfTextFormField field = new PdfTextFormField(annot, doc);
+        field.font = font;
+        field.fontSize = fontSize;
         field.setValue(value);
         field.setFieldName(name);
-
-        PdfFormXObject xObject = field.drawTextAppearance(rect, font, fontSize, value);
-        xObject.getResources().addFont(doc, font);
-        annot.setNormalAppearance(xObject.getPdfObject());
 
         return field;
     }
@@ -306,23 +304,22 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc     the {@link PdfDocument} to create the choice field in
      * @param rect    the location on the page for the choice field
+     * @param name    the name of the form field
+     * @param value   the initial value
      * @param options an array of {@link PdfString} objects that each represent
      *                the 'on' state of one of the choices.
-     * @param value   the initial value
-     * @param name    the name of the form field
      * @param flags   an <code>int</code>, containing a set of binary behavioral
      *                flags. Do binary <code>OR</code> on this <code>int</code> to set the
      *                flags you require.
      * @return a new {@link PdfChoiceFormField}
      */
-    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, int flags) {
+    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfArray options, int flags) {
         try {
-            return createChoice(doc, rect, options, value, name, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, flags);
+            return createChoice(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, options, flags);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }
     }
-
 
     /**
      * Creates a {@link PdfChoiceFormField choice form field} with custom
@@ -330,18 +327,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc      the {@link PdfDocument} to create the choice field in
      * @param rect     the location on the page for the choice field
-     * @param options  an array of {@link PdfString} objects that each represent
-     *                 the 'on' state of one of the choices.
-     * @param value    the initial value
      * @param name     the name of the form field
+     * @param value    the initial value
      * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
+     * @param options  an array of {@link PdfString} objects that each represent
+     *                 the 'on' state of one of the choices.
      * @param flags    an <code>int</code>, containing a set of binary behavioral
      *                 flags. Do binary <code>OR</code> on this <code>int</code> to set the
      *                 flags you require.
      * @return a new {@link PdfChoiceFormField}
      */
-    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, PdfArray options, String value, String name, PdfFont font, int fontSize, int flags) {
+    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, PdfArray options, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfChoiceFormField field = new PdfChoiceFormField(annot, doc);
         field.put(PdfName.Opt, options);
@@ -382,11 +379,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Creates a {@link PdfButtonFormField radio group form field}.
      *
      * @param doc   the {@link PdfDocument} to create the radio group in
-     * @param value the initial value
      * @param name  the name of the form field
+     * @param value the initial value
      * @return a new {@link PdfButtonFormField radio group}
      */
-    public static PdfButtonFormField createRadioGroup(PdfDocument doc, String value, String name) {
+    public static PdfButtonFormField createRadioGroup(PdfDocument doc, String name, String value) {
         PdfButtonFormField radio = createButton(doc, PdfButtonFormField.FF_RADIO);
         radio.setFieldName(name);
         radio.put(PdfName.V, new PdfName(value));
@@ -466,12 +463,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc   the {@link PdfDocument} to create the radio group in
      * @param rect  the location on the page for the field
-     * @param value the initial value
      * @param name  the name of the form field
+     * @param value the initial value
      * @return a new {@link PdfButtonFormField checkbox}
      */
-    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String value, String name) {
-        return createCheckBox(doc, rect, value, name, PdfButtonFormField.TYPE_CROSS);
+    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value) {
+        return createCheckBox(doc, rect, name, value, PdfButtonFormField.TYPE_CROSS);
     }
 
     /**
@@ -479,12 +476,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc       the {@link PdfDocument} to create the radio group in
      * @param rect      the location on the page for the field
-     * @param value     the initial value
      * @param name      the name of the form field
+     * @param value     the initial value
      * @param checkType the type of checkbox graphic to use.
      * @return a new {@link PdfButtonFormField checkbox}
      */
-    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String value, String name, int checkType) {
+    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value, int checkType) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfFormField check = new PdfButtonFormField(annot, doc);
         check.setCheckType(checkType);
@@ -502,14 +499,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc     the {@link PdfDocument} to create the combobox in
      * @param rect    the location on the page for the combobox
+     * @param name    the name of the form field
+     * @param value   the initial value
      * @param options a two-dimensional array of Strings which will be converted
      *                to a PdfArray.
-     * @param value   the initial value
-     * @param name    the name of the form field
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
-    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[][], String value, String name) {
-        return createChoice(doc, rect, processOptions(options), value, name, PdfChoiceFormField.FF_COMBO);
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String options[][]) {
+        return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO);
     }
 
     /**
@@ -518,13 +515,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc     the {@link PdfDocument} to create the combobox in
      * @param rect    the location on the page for the combobox
-     * @param options an array of Strings which will be converted to a PdfArray.
-     * @param value   the initial value
      * @param name    the name of the form field
+     * @param value   the initial value
+     * @param options an array of Strings which will be converted to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
-    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String options[], String value, String name) {
-        return createChoice(doc, rect, processOptions(options), value, name, PdfChoiceFormField.FF_COMBO);
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String options[]) {
+        return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO);
     }
 
     /**
@@ -533,18 +530,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc     the {@link PdfDocument} to create the choice field in
      * @param rect    the location on the page for the choice field
+     * @param name    the name of the form field
+     * @param value   the initial value
      * @param options a two-dimensional array of Strings which will be converted
      *                to a PdfArray.
-     * @param value   the initial value
-     * @param name    the name of the form field
      * @return a new {@link PdfChoiceFormField} as a list field
      */
-    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[][], String value, String name) {
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String options[][]) {
         StringBuilder text = new StringBuilder();
         for (String[] option : options) {
             text.append(option[1]).append('\n');
         }
-        return createChoice(doc, rect, processOptions(options), text.toString(), name, 0);
+        return createChoice(doc, rect, name, text.toString(), processOptions(options), 0);
     }
 
     /**
@@ -553,17 +550,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param doc     the {@link PdfDocument} to create the list field in
      * @param rect    the location on the page for the list field
-     * @param options an array of Strings which will be converted to a PdfArray.
-     * @param value   the initial value
      * @param name    the name of the form field
+     * @param value   the initial value
+     * @param options an array of Strings which will be converted to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a list field
      */
-    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String options[], String value, String name) {
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String options[]) {
         StringBuilder text = new StringBuilder();
         for (String option : options) {
             text.append(option).append('\n');
         }
-        return createChoice(doc, rect, processOptions(options), text.toString(), name, 0);
+        return createChoice(doc, rect, name, text.toString(), processOptions(options), 0);
     }
 
     /**
@@ -645,7 +642,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public <T extends PdfFormField> T setValue(String value, boolean generateAppearance) {
         PdfName formType = getFormType();
         if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
-            put(PdfName.V, new PdfString(value));
+            put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
         } else if (PdfName.Btn.equals(formType)) {
             if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 try {
@@ -657,7 +654,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 put(PdfName.V, new PdfName(value));
             }
         } else {
-            put(PdfName.V, new PdfString(value));
+            put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
         }
 
         if (PdfName.Btn.equals(formType) && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) == 0) {
@@ -704,7 +701,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         appearance.getResources().addFont(getDocument(), font);
         PdfDictionary ap = new PdfDictionary();
         ap.put(PdfName.N, appearance.getPdfObject());
-        getPdfObject().put(PdfName.V, new PdfString(value));
+        getPdfObject().put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
 
         return put(PdfName.AP, ap);
     }
@@ -726,7 +723,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         setValue(display, true);
         PdfName formType = getFormType();
         if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
-            put(PdfName.V, new PdfString(value));
+            put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
         } else if (PdfName.Btn.equals(formType)) {
             if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 text = value;
@@ -734,7 +731,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 put(PdfName.V, new PdfName(value));
             }
         } else {
-            put(PdfName.V, new PdfString(value));
+            put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
         }
 
         return (T) this;
@@ -1199,337 +1196,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Draws the visual appearance of text in a form field.
-     *
-     * @param rect     the location on the page for the list field
-     * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
-     * @param value    the initial value
-     * @return the {@link PdfFormXObject Form XObject} that was drawn
-     */
-    public PdfFormXObject drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
-        PdfStream stream = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
-
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
-
-        float height = rect.getHeight();
-        float width = rect.getWidth();
-        drawBorder(canvas, width, height);
-        if (isPassword()) {
-            value = obfuscatePassword(value);
-        }
-
-        canvas.
-                beginVariableText().
-                saveState().
-                newPath().
-                beginText().
-                setFontAndSize(font, fontSize);
-        if (color != null) {
-            canvas.setFillColor(color);
-        } else {
-            canvas.resetFillColorRgb();
-        }
-        Integer justification = getJustification();
-        if (justification == null) {
-            justification = 0;
-        }
-        drawTextAligned(canvas, justification, value, 2, height / 2 - fontSize * 0.3f, font, fontSize);
-        canvas.
-                endText().
-                restoreState().
-                endVariableText();
-
-
-        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
-
-        return xObject;
-    }
-
-
-    /**
-     * Draws the visual appearance of multiline text in a form field.
-     *
-     * @param rect     the location on the page for the list field
-     * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
-     * @param value    the initial value
-     * @return the {@link PdfFormXObject Form XObject} that was drawn
-     */
-    public PdfFormXObject drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
-        PdfStream stream = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
-
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
-
-        float width = rect.getWidth();
-        float height = rect.getHeight();
-
-        List<String> strings = font.splitString(value, fontSize, width - 6);
-
-        value = "";
-        for (String str : strings) {
-            value += str + '\n';
-        }
-        value = value.substring(0, value.length() - 1);
-
-        drawBorder(canvas, width, height);
-        canvas.
-                beginVariableText().
-                saveState().
-                rectangle(3, 3, width - 6, height - 6).
-                clip().
-                newPath().
-                beginText().
-                setFontAndSize(font, fontSize);
-        if (color != null) {
-            canvas.setFillColor(color);
-        } else {
-            canvas.resetFillColorRgb();
-        }
-
-        canvas.setTextMatrix(4, 5);
-        StringTokenizer tokenizer = new StringTokenizer(value, "\n");
-        while (tokenizer.hasMoreTokens()) {
-            height -= fontSize * 1.2;
-            canvas.
-                    setTextMatrix(3, height).
-                    showText(tokenizer.nextToken());
-        }
-        canvas.
-                endText().
-                restoreState().
-                endVariableText();
-
-
-        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
-        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
-
-        return xObject;
-    }
-
-    /**
-     * Draws a border using the borderWidth and borderColor of the form field.
-     *
-     * @param canvas the {@link PdfCanvas} on which to draw
-     * @param width  the width of the rectangle to draw
-     * @param height the height of the rectangle to draw
-     */
-    public void drawBorder(PdfCanvas canvas, float width, float height) {
-        canvas.saveState();
-        if (borderWidth < 0) {
-            borderWidth = 0;
-        }
-        if (borderColor == null) {
-            borderColor = Color.BLACK;
-        }
-
-        if (backgroundColor != null) {
-            canvas.
-                    setFillColor(backgroundColor).
-                    rectangle(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth).
-                    fill();
-        }
-
-        if (borderWidth > 0) {
-            borderWidth = Math.max(1, borderWidth);
-            canvas.
-                    setStrokeColor(borderColor).
-                    setLineWidth(borderWidth).
-                    rectangle(0, 0, width, height).
-                    stroke();
-        }
-        canvas.restoreState();
-    }
-
-    /**
-     * Draws the appearance of a radio button with a specified value.
-     *
-     * @param width  the width of the radio button to draw
-     * @param height the height of the radio button to draw
-     * @param value  the value of the button
-     */
-    public void drawRadioAppearance(float width, float height, String value) {
-        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-        drawBorder(canvasOn, width, height);
-        drawRadioField(canvasOn, 0, 0, width, height, true);
-
-        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
-        drawBorder(canvasOff, width, height);
-
-        Rectangle rect = new Rectangle(0, 0, width, height);
-        PdfWidgetAnnotation widget = getWidgets().get(0);
-        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
-        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-        widget.setNormalAppearance(new PdfDictionary());
-        widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
-
-        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
-        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
-        widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
-    }
-
-    /**
-     * Draws a radio button.
-     *
-     * @param canvas the {@link PdfCanvas} on which to draw
-     * @param width  the width of the radio button to draw
-     * @param height the height of the radio button to draw
-     * @param on     required to be <code>true</code> for fulfilling the drawing operation
-     */
-    public void drawRadioField(PdfCanvas canvas, final float x, final float y, final float width, final float height, final boolean on) {
-        canvas.saveState();
-        if (on) {
-            canvas.
-                    resetFillColorRgb().
-                    circle(width / 2, height / 2, Math.min(width, height) / 4).
-                    fill();
-        }
-        canvas.restoreState();
-    }
-
-    /**
-     * Draws the appearance of a checkbox with a specified state value.
-     *
-     * @param width  the width of the checkbox to draw
-     * @param height the height of the checkbox to draw
-     * @param value  the state of the form field that will be drawn
-     */
-    public void drawCheckAppearance(float width, float height, String value) {
-        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-        drawBorder(canvasOn, width, height);
-        drawCheckBox(canvasOn, width, height, DEFAULT_FONT_SIZE, true);
-
-        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
-        drawBorder(canvasOff, width, height);
-        drawCheckBox(canvasOff, width, height, DEFAULT_FONT_SIZE, false);
-
-        Rectangle rect = new Rectangle(0, 0, width, height);
-        PdfWidgetAnnotation widget = getWidgets().get(0);
-        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
-        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-        xObjectOn.getResources().addFont(getDocument(), getFont());
-        widget.setNormalAppearance(new PdfDictionary());
-        widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
-
-        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
-        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
-        xObjectOff.getResources().addFont(getDocument(), getFont());
-        widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
-    }
-
-    /**
-     * Draws the appearance for a push button.
-     *
-     * @param width    the width of the pushbutton
-     * @param height   the width of the pushbutton
-     * @param text     the text to display on the button
-     * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
-     * @return a new {@link PdfFormXObject}
-     */
-    public PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
-        PdfStream stream = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
-
-        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-
-        if (img != null) {
-            PdfImageXObject imgXObj = new PdfImageXObject(img);
-            canvas.addXObject(imgXObj, width, 0, 0, height, 0, 0);
-            xObject.getResources().addImage(imgXObj);
-        } else {
-            drawButton(canvas, 0, 0, width, height, text, font, fontSize);
-            setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
-            xObject.getResources().addFont(getDocument(), font);
-        }
-        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
-
-        return xObject;
-    }
-
-    /**
-     * Performs the low-level drawing operations to draw a button object.
-     *
-     * @param canvas   the {@link PdfCanvas} of the page to draw on.
-     * @param x        the x coordinate of the lower left corner of the button rectangle
-     * @param y        the y coordinate of the lower left corner of the button rectangle
-     * @param width    the width of the button
-     * @param height   the width of the button
-     * @param text     the text to display on the button
-     * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
-     */
-    public void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font, int fontSize) {
-        if (backgroundColor == null) {
-            backgroundColor = Color.LIGHT_GRAY;
-        }
-        canvas.
-                saveState().
-                setStrokeColor(Color.BLACK).
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                rectangle(x, y, width, height).
-                stroke().
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                setFillColor(backgroundColor).
-                rectangle(x + 0.5f, y + 0.5f, width - 1, height - 1).
-                fill().
-                setStrokeColor(Color.WHITE).
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                moveTo(x + 1, y + 1).
-                lineTo(x + 1, y + height - 1).
-                lineTo(x + width - 1, y + height - 1).
-                stroke().
-                setStrokeColor(Color.GRAY).
-                setLineWidth(1).
-                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
-                moveTo(x + 1, y + 1).
-                lineTo(x + width - 1, y + 1).
-                lineTo(x + width - 1, y + height - 1).
-                stroke().
-                resetFillColorRgb().
-                beginText().
-                setFontAndSize(font, fontSize).
-                setTextMatrix(0, y + (height - fontSize) / 2).
-                showText(text).
-                endText().
-                restoreState();
-    }
-
-    /**
-     * Performs the low-level drawing operations to draw a checkbox object.
-     *
-     * @param canvas   the {@link PdfCanvas} of the page to draw on.
-     * @param width    the width of the button
-     * @param height   the width of the button
-     * @param fontSize a positive integer
-     * @param on       the boolean value of the checkbox
-     */
-    public void drawCheckBox(PdfCanvas canvas, float width, float height, int fontSize, boolean on) {
-        if (!on) {
-            return;
-        }
-        PdfFont ufont = getFont();
-        // PdfFont gets all width in 1000 normalized units
-        canvas.
-                beginText().
-                setFontAndSize(ufont, fontSize).
-                resetFillColorRgb().
-                setTextMatrix((width - ufont.getWidth(text, fontSize)) / 2, (height - ufont.getAscent(text, fontSize) ) / 2).
-                showText(text).
-                endText();
-    }
-
-    /**
      * Gets the current font of the form field.
      *
      * @return the current {@link PdfFont font}
@@ -1788,7 +1454,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
-
     /**
      * Sets the ReadOnly flag, specifying whether or not the field can be changed.
      *
@@ -1964,19 +1629,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
-    protected void drawTextAligned(PdfCanvas canvas, int alignment, String text, float x, float y, PdfFont font, int fontSize) {
-        switch (alignment) {
-            case ALIGN_CENTER:
-                x = (getRect(getPdfObject()).getWidth() - font.getWidth(text, fontSize)) / 2;
-                break;
-            case ALIGN_RIGHT:
-                x = (getRect(getPdfObject()).getWidth() - font.getWidth(text, fontSize));
-                break;
-        }
-        canvas.setTextMatrix(x, y);
-        canvas.showText(text);
-    }
-
     protected Rectangle getRect(PdfDictionary field) {
         PdfArray rect = field.getAsArray(PdfName.Rect);
         if (rect == null) {
@@ -2115,6 +1767,337 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return ret;
     }
 
+    /**
+     * Draws the visual appearance of text in a form field.
+     *
+     * @param rect     the location on the page for the list field
+     * @param font     a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @param value    the initial value
+     * @return the {@link PdfFormXObject Form XObject} that was drawn
+     */
+    protected PdfFormXObject drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
+        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
+
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
+
+        float height = rect.getHeight();
+        float width = rect.getWidth();
+        drawBorder(canvas, width, height);
+        if (isPassword()) {
+            value = obfuscatePassword(value);
+        }
+
+        canvas.
+                beginVariableText().
+                saveState().
+                newPath().
+                beginText().
+                setFontAndSize(font, fontSize);
+        if (color != null) {
+            canvas.setFillColor(color);
+        } else {
+            canvas.resetFillColorRgb();
+        }
+        Integer justification = getJustification();
+        if (justification == null) {
+            justification = 0;
+        }
+        drawTextAligned(canvas, justification, value, 2, height / 2 - fontSize * 0.3f, font, fontSize);
+        canvas.
+                endText().
+                restoreState().
+                endVariableText();
+
+
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
+        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+
+        return xObject;
+    }
+
+
+    /**
+     * Draws the visual appearance of multiline text in a form field.
+     *
+     * @param rect     the location on the page for the list field
+     * @param font     a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @param value    the initial value
+     * @return the {@link PdfFormXObject Form XObject} that was drawn
+     */
+    protected PdfFormXObject drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value) {
+        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
+
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
+
+        float width = rect.getWidth();
+        float height = rect.getHeight();
+
+        List<String> strings = font.splitString(value, fontSize, width - 6);
+
+        value = "";
+        for (String str : strings) {
+            value += str + '\n';
+        }
+        value = value.substring(0, value.length() - 1);
+
+        drawBorder(canvas, width, height);
+        canvas.
+                beginVariableText().
+                saveState().
+                rectangle(3, 3, width - 6, height - 6).
+                clip().
+                newPath().
+                beginText().
+                setFontAndSize(font, fontSize);
+        if (color != null) {
+            canvas.setFillColor(color);
+        } else {
+            canvas.resetFillColorRgb();
+        }
+
+        canvas.setTextMatrix(4, 5);
+        StringTokenizer tokenizer = new StringTokenizer(value, "\n");
+        while (tokenizer.hasMoreTokens()) {
+            height -= fontSize * 1.2;
+            canvas.
+                    setTextMatrix(3, height).
+                    showText(tokenizer.nextToken());
+        }
+        canvas.
+                endText().
+                restoreState().
+                endVariableText();
+
+
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
+        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+
+        return xObject;
+    }
+
+    /**
+     * Draws a border using the borderWidth and borderColor of the form field.
+     *
+     * @param canvas the {@link PdfCanvas} on which to draw
+     * @param width  the width of the rectangle to draw
+     * @param height the height of the rectangle to draw
+     */
+    protected void drawBorder(PdfCanvas canvas, float width, float height) {
+        canvas.saveState();
+        if (borderWidth < 0) {
+            borderWidth = 0;
+        }
+        if (borderColor == null) {
+            borderColor = Color.BLACK;
+        }
+
+        if (backgroundColor != null) {
+            canvas.
+                    setFillColor(backgroundColor).
+                    rectangle(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth).
+                    fill();
+        }
+
+        if (borderWidth > 0) {
+            borderWidth = Math.max(1, borderWidth);
+            canvas.
+                    setStrokeColor(borderColor).
+                    setLineWidth(borderWidth).
+                    rectangle(0, 0, width, height).
+                    stroke();
+        }
+        canvas.restoreState();
+    }
+
+    /**
+     * Draws the appearance of a radio button with a specified value.
+     *
+     * @param width  the width of the radio button to draw
+     * @param height the height of the radio button to draw
+     * @param value  the value of the button
+     */
+    protected void drawRadioAppearance(float width, float height, String value) {
+        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
+        drawBorder(canvasOn, width, height);
+        drawRadioField(canvasOn, 0, 0, width, height, true);
+
+        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
+        drawBorder(canvasOff, width, height);
+
+        Rectangle rect = new Rectangle(0, 0, width, height);
+        PdfWidgetAnnotation widget = getWidgets().get(0);
+        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
+        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
+        widget.setNormalAppearance(new PdfDictionary());
+        widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
+
+        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
+        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
+        widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
+    }
+
+    /**
+     * Draws a radio button.
+     *
+     * @param canvas the {@link PdfCanvas} on which to draw
+     * @param width  the width of the radio button to draw
+     * @param height the height of the radio button to draw
+     * @param on     required to be <code>true</code> for fulfilling the drawing operation
+     */
+    protected void drawRadioField(PdfCanvas canvas, final float x, final float y, final float width, final float height, final boolean on) {
+        canvas.saveState();
+        if (on) {
+            canvas.
+                    resetFillColorRgb().
+                    circle(width / 2, height / 2, Math.min(width, height) / 4).
+                    fill();
+        }
+        canvas.restoreState();
+    }
+
+    /**
+     * Draws the appearance of a checkbox with a specified state value.
+     *
+     * @param width  the width of the checkbox to draw
+     * @param height the height of the checkbox to draw
+     * @param value  the state of the form field that will be drawn
+     */
+    protected void drawCheckAppearance(float width, float height, String value) {
+        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
+        drawBorder(canvasOn, width, height);
+        drawCheckBox(canvasOn, width, height, DEFAULT_FONT_SIZE, true);
+
+        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
+        drawBorder(canvasOff, width, height);
+        drawCheckBox(canvasOff, width, height, DEFAULT_FONT_SIZE, false);
+
+        Rectangle rect = new Rectangle(0, 0, width, height);
+        PdfWidgetAnnotation widget = getWidgets().get(0);
+        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
+        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
+        xObjectOn.getResources().addFont(getDocument(), getFont());
+        widget.setNormalAppearance(new PdfDictionary());
+        widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
+
+        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
+        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
+        xObjectOff.getResources().addFont(getDocument(), getFont());
+        widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
+    }
+
+    /**
+     * Draws the appearance for a push button.
+     *
+     * @param width    the width of the pushbutton
+     * @param height   the width of the pushbutton
+     * @param text     the text to display on the button
+     * @param font     a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @return a new {@link PdfFormXObject}
+     */
+    protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
+        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
+
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
+
+        if (img != null) {
+            PdfImageXObject imgXObj = new PdfImageXObject(img);
+            canvas.addXObject(imgXObj, width, 0, 0, height, 0, 0);
+            xObject.getResources().addImage(imgXObj);
+        } else {
+            drawButton(canvas, 0, 0, width, height, text, font, fontSize);
+            setDefaultAppearance(generateDefaultAppearanceString(font, fontSize));
+            xObject.getResources().addFont(getDocument(), font);
+        }
+        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+
+        return xObject;
+    }
+
+    /**
+     * Performs the low-level drawing operations to draw a button object.
+     *
+     * @param canvas   the {@link PdfCanvas} of the page to draw on.
+     * @param x        the x coordinate of the lower left corner of the button rectangle
+     * @param y        the y coordinate of the lower left corner of the button rectangle
+     * @param width    the width of the button
+     * @param height   the width of the button
+     * @param text     the text to display on the button
+     * @param font     a {@link PdfFont}
+     * @param fontSize a positive integer
+     */
+    protected void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font, int fontSize) {
+        if (backgroundColor == null) {
+            backgroundColor = Color.LIGHT_GRAY;
+        }
+        canvas.
+                saveState().
+                setStrokeColor(Color.BLACK).
+                setLineWidth(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
+                rectangle(x, y, width, height).
+                stroke().
+                setLineWidth(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
+                setFillColor(backgroundColor).
+                rectangle(x + 0.5f, y + 0.5f, width - 1, height - 1).
+                fill().
+                setStrokeColor(Color.WHITE).
+                setLineWidth(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
+                moveTo(x + 1, y + 1).
+                lineTo(x + 1, y + height - 1).
+                lineTo(x + width - 1, y + height - 1).
+                stroke().
+                setStrokeColor(Color.GRAY).
+                setLineWidth(1).
+                setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT).
+                moveTo(x + 1, y + 1).
+                lineTo(x + width - 1, y + 1).
+                lineTo(x + width - 1, y + height - 1).
+                stroke().
+                resetFillColorRgb().
+                beginText().
+                setFontAndSize(font, fontSize).
+                setTextMatrix(0, y + (height - fontSize) / 2).
+                showText(text).
+                endText().
+                restoreState();
+    }
+
+    /**
+     * Performs the low-level drawing operations to draw a checkbox object.
+     *
+     * @param canvas   the {@link PdfCanvas} of the page to draw on.
+     * @param width    the width of the button
+     * @param height   the width of the button
+     * @param fontSize a positive integer
+     * @param on       the boolean value of the checkbox
+     */
+    protected void drawCheckBox(PdfCanvas canvas, float width, float height, int fontSize, boolean on) {
+        if (!on) {
+            return;
+        }
+        PdfFont ufont = getFont();
+        // PdfFont gets all width in 1000 normalized units
+        canvas.
+                beginText().
+                setFontAndSize(ufont, fontSize).
+                resetFillColorRgb().
+                setTextMatrix((width - ufont.getWidth(text, fontSize)) / 2, (height - ufont.getAscent(text, fontSize) ) / 2).
+                showText(text).
+                endText();
+    }
+
     private PdfName getTypeFromParent(PdfDictionary field) {
         PdfDictionary parent = field.getAsDictionary(PdfName.Parent);
         PdfName formType = field.getAsName(PdfName.FT);
@@ -2133,4 +2116,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             pchar[i] = '*';
         return new String(pchar);
     }
+
+    private void drawTextAligned(PdfCanvas canvas, int alignment, String text, float x, float y, PdfFont font, int fontSize) {
+        switch (alignment) {
+            case ALIGN_CENTER:
+                x = (getRect(getPdfObject()).getWidth() - font.getWidth(text, fontSize)) / 2;
+                break;
+            case ALIGN_RIGHT:
+                x = (getRect(getPdfObject()).getWidth() - font.getWidth(text, fontSize));
+                break;
+        }
+        canvas.setTextMatrix(x, y);
+        canvas.showText(text);
+    }
+
 }

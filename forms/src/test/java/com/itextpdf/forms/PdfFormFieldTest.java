@@ -56,7 +56,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         Rectangle rect = new Rectangle(210, 490, 150, 22);
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "some value", "fieldName");
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "fieldName", "some value");
         form.addField(field);
 
         pdfDoc.close();
@@ -80,7 +80,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfPage page = pdfDoc.getFirstPage();
         Rectangle rect = new Rectangle(210, 490, 150, 22);
 
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "some value", "TestField");
+        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "TestField", "some value");
 
         form.addField(field, page);
 
@@ -104,13 +104,13 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(210, 490, 150, 20);
 
         String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
-        PdfChoiceFormField choice = PdfFormField.createComboBox(pdfDoc, rect, options, "First Item", "TestField");
+        PdfChoiceFormField choice = PdfFormField.createComboBox(pdfDoc, rect, "TestField", "First Item", options);
 
         form.addField(choice);
 
         Rectangle rect1 = new Rectangle(210, 250, 150, 90);
 
-        PdfChoiceFormField choice1 = PdfFormField.createList(pdfDoc, rect1, options, "Second Item", "TestField1");
+        PdfChoiceFormField choice1 = PdfFormField.createList(pdfDoc, rect1, "TestField1", "Second Item", options);
         choice1.setMultiSelect(true);
         form.addField(choice1);
 
@@ -136,7 +136,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 700, 20, 20);
         Rectangle rect1 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "1", "TestGroup");
+        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "TestGroup", "1");
 
         PdfFormField.createRadioButton(pdfDoc, rect, group, "1");
         PdfFormField.createRadioButton(pdfDoc, rect1, group, "2");
@@ -144,7 +144,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         form.addField(group);
 
         PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 650, 40, 20), "push", "Capcha");
-        PdfButtonFormField checkBox = PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "1", "TestCheck");
+        PdfButtonFormField checkBox = PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "TestCheck", "1");
 
         form.addField(pushButton);
         form.addField(checkBox);

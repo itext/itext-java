@@ -19,6 +19,4 @@ public abstract class ExtendedITextTest extends ITextTest {
     public void afterTestMethodAction(){
     }
 
-
-
 }
