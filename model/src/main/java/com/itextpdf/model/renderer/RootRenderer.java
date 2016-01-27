@@ -23,7 +23,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         super.addChild(renderer);
 
         if (currentArea == null) {
-            currentArea = getNextArea(null);
+            updateCurrentArea(null);
         }
 
         // Static layout
@@ -44,13 +44,13 @@ public abstract class RootRenderer extends AbstractRenderer {
                             currentPageNumber = nextStoredArea.getPageNumber();
                             nextStoredArea = null;
                         } else {
-                            getNextArea(result);
+                            updateCurrentArea(result);
                         }
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).imageHeight && !currentArea.isEmptyArea()) {
-                            getNextArea(result);
+                            updateCurrentArea(result);
                         }
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
@@ -75,7 +75,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                             continue;
                         }
                         storedArea = currentArea;
-                        getNextArea(result);
+                        updateCurrentArea(result);
                     }
                 }
                 renderer = result.getOverflowRenderer();
@@ -122,7 +122,7 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     protected abstract void flushSingleRenderer(IRenderer resultRenderer);
 
-    protected abstract LayoutArea getNextArea(LayoutResult overflowResult);
+    protected abstract LayoutArea updateCurrentArea(LayoutResult overflowResult);
 
     private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
         alignChildHorizontally(renderer, currentArea.getBBox().getWidth());
