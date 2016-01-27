@@ -3,6 +3,8 @@ package com.itextpdf.basics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class PdfException extends RuntimeException {
 
@@ -16,7 +18,7 @@ public class PdfException extends RuntimeException {
     public static final String _1IsNotAValidPlaceableWindowsMetafile = "1.is.not.a.valid.placeable.windows.metafile";
     public static final String _1MustHave8BitsPerComponent = "1.must.have.8.bits.per.component";
     public static final String _1UnsupportedJpegMarker2 = "1.unsupported.jpeg.marker.2";
-
+    public static final String _1IsNotAnAFMorPfmFontFile = "1.is.not.an.afm.or.pfm.font.file";
 
     public static final String AllFillBitsPrecedingEolCodeMustBe0 = "all.fill.bits.preceding.eol.code.must.be.0";
     public static final String AnnotShallHaveReferenceToPage = "annot.shall.have.reference.to.page";
@@ -75,8 +77,8 @@ public class PdfException extends RuntimeException {
     public static final String CfNotFoundEncryption = "cf.not.found.encryption";
     public static final String CodabarCharacterOneIsIllegal = "the.character.1.is.illegal.in.codabar";
     public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "codabar.must.have.at.least.a.start.and.stop.character";
-    public static final String CodabarMustHaveOneAbcdAsStartStopCharacter  = "codabar.must.have.one.of.abcd.as.start.stop.character";
-    public static final String CodabarStartStopCharacterAreOnlyExtremes =  "in.codabar.start.stop.characters.are.only.allowed.at.the.extremes";
+    public static final String CodabarMustHaveOneAbcdAsStartStopCharacter = "codabar.must.have.one.of.abcd.as.start.stop.character";
+    public static final String CodabarStartStopCharacterAreOnlyExtremes = "in.codabar.start.stop.characters.are.only.allowed.at.the.extremes";
     public static final String ColorNotFound = "color.not.found";
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression.1.is.not.supported";
@@ -207,7 +209,8 @@ public class PdfException extends RuntimeException {
     public static final String PageIsNotSetForThePdfTagStructure = "page.is.not.set.for.the.pdf.tag.structure";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq.1";
     public static final String PageWasAlreadyFlushed = "the.page.was.already.flushed";
-    public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.instead";public static final String PdfEncodings = "pdf.encodings";
+    public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.instead";
+    public static final String PdfEncodings = "pdf.encodings";
     public static final String PdfEncryption = "pdf.encryption";
     public static final String PdfDecryption = "pdf.decryption";
     public static final String PdfFormXobjectHasInvalidBbox = "pdf.form.xobject.has.invalid.bbox";
@@ -278,8 +281,9 @@ public class PdfException extends RuntimeException {
     public static final String YouCannotFlushStructTreeRootManually = "you.cannot.flush.structtreeroot.manually";
 
     protected Object object;
-    protected String composedMessage;
     private List<Object> messageParams;
+
+    private final String ERROR_MESSAGE_LOCALE_PATH = "com.itextpdf.basics.l10n.error.exception_messages";
 
     public PdfException(String message) {
         super(message);
@@ -305,15 +309,7 @@ public class PdfException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        if (messageParams != null) {
-            StringBuilder builder = new StringBuilder(super.getMessage());
-            builder.append('+');
-            for (Object obj : messageParams) {
-                builder.append(obj.toString()).append('+');
-            }
-            return builder.substring(0, builder.length() - 1);
-        }
-        return super.getMessage();
+        return ResourceLocaleBundle.getMessage(ERROR_MESSAGE_LOCALE_PATH, super.getMessage(), messageParams);
     }
 
     public PdfException setMessageParams(Object... messageParams) { // TODO: make it to be constructor parameter
@@ -322,11 +318,4 @@ public class PdfException extends RuntimeException {
         return this;
     }
 
-    public String getComposedMessage() {
-        return composedMessage;
-    }
-
-    public Object getObject() {
-        return object;
-    }
 }

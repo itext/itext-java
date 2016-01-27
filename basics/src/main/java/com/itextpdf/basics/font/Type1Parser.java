@@ -78,7 +78,7 @@ class Type1Parser {
                 rf.close();
                 return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             } else {
-                throw new PdfException("1.is.not.an.afm.or.pfm.font.file").setMessageParams(afmPath);
+                throw new PdfException(PdfException._1IsNotAnAFMorPfmFontFile).setMessageParams(afmPath);
             }
         } else if (afmData != null) {
             RandomAccessFileOrArray rf = new RandomAccessFileOrArray(sourceFactory.createSource(afmData));

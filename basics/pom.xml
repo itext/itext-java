@@ -32,6 +32,7 @@
                     <include>**/*.afm</include>
                     <include>**/*.html</include>
                     <include>**/*.txt</include>
+                    <include>**/*.properties</include>
                 </includes>
             </resource>
             <resource>

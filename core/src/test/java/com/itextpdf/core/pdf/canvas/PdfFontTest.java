@@ -1003,7 +1003,8 @@ public class PdfFontTest extends ExtendedITextTest {
         } catch (com.itextpdf.basics.PdfException e) {
             message = e.getMessage();
         }
-        Assert.assertEquals("1.is.not.an.afm.or.pfm.font.file+./src/test/resources/com/itextpdf/core/pdf/fonts/cmr10.pfb", message);
+        Assert.assertEquals("./src/test/resources/com/itextpdf/core/pdf/fonts/cmr10.pfb is.not.an.afm.or.pfm.font.file", message);
+
     }
 
     @Test
