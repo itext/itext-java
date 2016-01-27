@@ -89,6 +89,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    public void setRotation(int degAngle) {
+        getPdfObject().put(PdfName.Rotate, new PdfNumber(degAngle));
+    }
+
     public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
         if (index >= count)
