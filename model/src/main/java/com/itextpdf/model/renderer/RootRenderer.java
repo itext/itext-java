@@ -27,13 +27,13 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         // Static layout
-        if (!childRenderers.isEmpty() && childRenderers.get(childRenderers.size() - 1) == renderer) {
+        if (currentArea != null && !childRenderers.isEmpty() && childRenderers.get(childRenderers.size() - 1) == renderer) {
             List<IRenderer> resultRenderers = new ArrayList<>();
             LayoutResult result = null;
 
             LayoutArea storedArea = null;
             LayoutArea nextStoredArea = null;
-            while (renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
+            while (currentArea != null && renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
@@ -80,10 +80,12 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
                 renderer = result.getOverflowRenderer();
             }
-            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
-            currentArea.setEmptyArea(false);
-            if (renderer != null) {
-                processRenderer(renderer, resultRenderers);
+            if (currentArea != null) {
+                currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
+                currentArea.setEmptyArea(false);
+                if (renderer != null) {
+                    processRenderer(renderer, resultRenderers);
+                }
             }
 
             childRenderers.remove(childRenderers.size() - 1);

@@ -36,6 +36,8 @@ public class CanvasRenderer extends RootRenderer {
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         if (currentArea == null) {
             currentArea = new LayoutArea(0, canvas.getRootArea());
+        } else {
+            currentArea = null;
         }
         return currentArea;
     }
