@@ -190,8 +190,9 @@ public class PdfSignatureAppearance {
      * @param pageNumber The page number of the signature field which
      *                   this signature appearance is associated with.
      */
-    public void setPageNumber(int pageNumber) {
+    public PdfSignatureAppearance setPageNumber(int pageNumber) {
         this.page = pageNumber;
+        return this;
     }
 
     /**
@@ -212,9 +213,10 @@ public class PdfSignatureAppearance {
      * @param pageRect The rectangle that represents the position and
      *                 dimension of the signature field in the page.
      */
-    public void setPageRect(Rectangle pageRect) {
+    public PdfSignatureAppearance setPageRect(Rectangle pageRect) {
         this.pageRect = new Rectangle(pageRect);
         this.rect = new Rectangle(pageRect.getWidth(), pageRect.getHeight());
+        return this;
     }
 
     /**
@@ -259,8 +261,9 @@ public class PdfSignatureAppearance {
      *
      * @param renderingMode the rendering mode
      */
-    public void setRenderingMode(RenderingMode renderingMode) {
+    public PdfSignatureAppearance setRenderingMode(RenderingMode renderingMode) {
         this.renderingMode = renderingMode;
+        return this;
     }
 
     /**
@@ -277,8 +280,9 @@ public class PdfSignatureAppearance {
      *
      * @param reason signing reason.
      */
-    public void setReason(String reason) {
+    public PdfSignatureAppearance setReason(String reason) {
         this.reason = reason;
+        return this;
     }
 
     /**
@@ -286,8 +290,9 @@ public class PdfSignatureAppearance {
      *
      * @param reasonCaption A new signing reason caption
      */
-    public void setReasonCaption(String reasonCaption) {
+    public PdfSignatureAppearance setReasonCaption(String reasonCaption) {
         this.reasonCaption = reasonCaption;
+        return this;
     }
 
     /**
@@ -304,8 +309,9 @@ public class PdfSignatureAppearance {
      *
      * @param location A new signing location
      */
-    public void setLocation(String location) {
+    public PdfSignatureAppearance setLocation(String location) {
         this.location = location;
+        return this;
     }
 
     /**
@@ -313,8 +319,9 @@ public class PdfSignatureAppearance {
      *
      * @param locationCaption A new signing location caption
      */
-    public void setLocationCaption(String locationCaption) {
+    public PdfSignatureAppearance setLocationCaption(String locationCaption) {
         this.locationCaption = locationCaption;
+        return this;
     }
 
     /**
@@ -331,8 +338,9 @@ public class PdfSignatureAppearance {
      *
      * @param signatureCreator A new name of the application signing a document
      */
-    public void setSignatureCreator(String signatureCreator){
+    public PdfSignatureAppearance setSignatureCreator(String signatureCreator){
         this.signatureCreator = signatureCreator;
+        return this;
     }
 
     /**
@@ -349,8 +357,9 @@ public class PdfSignatureAppearance {
      *
      * @param contact A new signing contact
      */
-    public void setContact(String contact) {
+    public PdfSignatureAppearance setContact(String contact) {
         this.contact = contact;
+        return this;
     }
 
     /**
@@ -359,8 +368,9 @@ public class PdfSignatureAppearance {
      *
      * @param signCertificate the certificate
      */
-    public void setCertificate(Certificate signCertificate) {
+    public PdfSignatureAppearance setCertificate(Certificate signCertificate) {
         this.signCertificate = signCertificate;
+        return this;
     }
 
     /**
@@ -386,15 +396,17 @@ public class PdfSignatureAppearance {
      *
      * @param signatureGraphic image rendered. If null the mode is defaulted to RenderingMode.DESCRIPTION
      */
-    public void setSignatureGraphic(Image signatureGraphic) {
+    public PdfSignatureAppearance setSignatureGraphic(Image signatureGraphic) {
         this.signatureGraphic = signatureGraphic;
+        return this;
     }
 
     /**
      * Indicates that the existing appearances needs to be reused as layer 0.
      */
-    public void setReuseAppearance(boolean reuseAppearance) {
+    public PdfSignatureAppearance setReuseAppearance(boolean reuseAppearance) {
         this.reuseAppearance = reuseAppearance;
+        return this;
     }
 
     // layer 2
@@ -413,8 +425,9 @@ public class PdfSignatureAppearance {
      *
      * @param image the background image for the layer 2
      */
-    public void setImage(Image image) {
+    public PdfSignatureAppearance setImage(Image image) {
         this.image = image;
+        return this;
     }
 
     /**
@@ -434,8 +447,9 @@ public class PdfSignatureAppearance {
      *
      * @param imageScale the scaling to be applied to the background image
      */
-    public void setImageScale(float imageScale) {
+    public PdfSignatureAppearance setImageScale(float imageScale) {
         this.imageScale = imageScale;
+        return this;
     }
 
     /**
@@ -444,8 +458,9 @@ public class PdfSignatureAppearance {
      * @param text the signature text identifying the signer. If null or not set
      * a standard description will be used
      */
-    public void setLayer2Text(String text) {
+    public PdfSignatureAppearance setLayer2Text(String text) {
         layer2Text = text;
+        return this;
     }
 
     /**
@@ -471,8 +486,9 @@ public class PdfSignatureAppearance {
      *
      * @param layer2Font the n2 and n4 font
      */
-    public void setLayer2Font(PdfFont layer2Font) {
+    public PdfSignatureAppearance setLayer2Font(PdfFont layer2Font) {
         this.layer2Font = layer2Font;
+        return this;
     }
 
     /**
@@ -480,8 +496,9 @@ public class PdfSignatureAppearance {
      *
      * @param fontSize font size
      */
-    public void setLayer2FontSize(float fontSize) {
+    public PdfSignatureAppearance setLayer2FontSize(float fontSize) {
         this.layer2FontSize = fontSize;
+        return this;
     }
 
     /**
@@ -779,8 +796,9 @@ public class PdfSignatureAppearance {
      *
      * @param signDate A new signature date
      */
-    protected void setSignDate(java.util.Calendar signDate) {
+    protected PdfSignatureAppearance setSignDate(java.util.Calendar signDate) {
         this.signDate = signDate;
+        return this;
     }
 
     /**
@@ -788,8 +806,9 @@ public class PdfSignatureAppearance {
      *
      * @param fieldName name of the field
      */
-    protected void setFieldName(String fieldName) {
+    protected PdfSignatureAppearance setFieldName(String fieldName) {
         this.fieldName = fieldName;
+        return this;
     }
 
     private void createBlankN0() {

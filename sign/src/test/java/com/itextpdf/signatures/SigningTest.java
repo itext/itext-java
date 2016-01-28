@@ -135,11 +135,10 @@ public class SigningTest {
         PdfSigner signer = new PdfSigner(reader, new PdfWriter(dest), false);
 
         // Creating the appearance
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance.setReason(reason);
-        appearance.setLocation(location);
-
-        appearance.setReuseAppearance(setReuseAppearance);
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
+            .setReason(reason)
+            .setLocation(location)
+            .setReuseAppearance(setReuseAppearance);
 
         if (rectangleForNewField != null) {
             appearance.setPageRect(rectangleForNewField);
