@@ -57,7 +57,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                         if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {
                             if (Boolean.valueOf(true).equals(result.getOverflowRenderer().getModelElement().getProperty(Property.KEEP_TOGETHER))) {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
-                                Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
+                                Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property will be ignored."));
                                 if (storedArea != null) {
                                     nextStoredArea = currentArea;
@@ -67,7 +67,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 storedArea = currentArea;
                             } else {
                                 result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
-                                Logger logger = LoggerFactory.getLogger(DocumentRenderer.class);
+                                Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                             }
                             renderer = result.getOverflowRenderer();

@@ -206,12 +206,41 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      *          Set width to write multiline text.
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
-     * @param pageNumber the page number to write the text
      * @param textAlign horizontal alignment about the specified point
-     * @param vertAlign vertical alignment about the specified point
-     * @param angle the angle of rotation applied to the text, in radians
      * @return this object
      */
+    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, Property.TextAlignment textAlign) {
+        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, Property.VerticalAlignment.BOTTOM, 0);
+    }
+
+    /**
+     * Convenience method to write a text aligned about the specified point
+     * @param <T> the return type
+     * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
+     *          Set width to write multiline text.
+     * @param x the point about which the text will be aligned and rotated
+     * @param y the point about which the text will be aligned and rotated
+     * @param textAlign horizontal alignment about the specified point
+     * @param vertAlign vertical alignment about the specified point
+     * @return this object
+     */
+    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign) {
+        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, 0);
+    }
+
+        /**
+         * Convenience method to write a text aligned about the specified point
+         * @param <T> the return type
+         * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
+         *          Set width to write multiline text.
+         * @param x the point about which the text will be aligned and rotated
+         * @param y the point about which the text will be aligned and rotated
+         * @param pageNumber the page number to write the text
+         * @param textAlign horizontal alignment about the specified point
+         * @param vertAlign vertical alignment about the specified point
+         * @param angle the angle of rotation applied to the text, in radians
+         * @return this object
+         */
     public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, int pageNumber, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Div div = new Div();
         div.setTextAlignment(textAlign).setVerticalAlignment(vertAlign);

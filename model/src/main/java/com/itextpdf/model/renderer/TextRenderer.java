@@ -564,9 +564,11 @@ public class TextRenderer extends AbstractRenderer {
     public void trimFirst() {
         convertWaitingStringToGlyphLine();
 
-        Glyph glyph;
-        while (text.start < text.end && (glyph = text.glyphs.get(text.start)).getUnicode() != null && Character.isWhitespace(glyph.getUnicode())) {
-            text.start++;
+        if (text != null) {
+            Glyph glyph;
+            while (text.start < text.end && (glyph = text.glyphs.get(text.start)).getUnicode() != null && Character.isWhitespace(glyph.getUnicode())) {
+                text.start++;
+            }
         }
     }
 

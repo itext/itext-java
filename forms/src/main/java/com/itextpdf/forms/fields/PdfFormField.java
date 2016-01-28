@@ -10,14 +10,12 @@ import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.io.PdfTokenizer;
 import com.itextpdf.basics.io.RandomAccessFileOrArray;
 import com.itextpdf.basics.io.RandomAccessSourceFactory;
-import com.itextpdf.core.font.PdfFontFactory;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.DeviceCmyk;
 import com.itextpdf.core.color.DeviceGray;
 import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -32,15 +30,19 @@ import com.itextpdf.core.pdf.PdfString;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;
 import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.model.Canvas;
+import com.itextpdf.model.Property;
+import com.itextpdf.model.element.Paragraph;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -255,14 +257,67 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize) {
+        return createText(doc, rect, name, value, font, fontSize, false);
+    }
+
+    /**
+     * Creates a named {@link PdfTextFormField text form field} with an initial
+     * value, with a specified font and font size.
+     *
+     * @param doc      the {@link PdfDocument} to create the text field in
+     * @param rect     the location on the page for the text field
+     * @param name     the name of the form field
+     * @param value    the initial value
+     * @param font     a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @param multiline  true for multiline text field
+     * @return a new {@link PdfTextFormField}
+     */
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, boolean multiline) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfTextFormField field = new PdfTextFormField(annot, doc);
+        field.setMultiline(multiline);
         field.font = font;
         field.fontSize = fontSize;
         field.setValue(value);
         field.setFieldName(name);
 
         return field;
+    }
+
+    /**
+     * Creates a named {@link PdfTextFormField multilined text form field} with an initial
+     * value, with a specified font and font size.
+     *
+     * @param doc      the {@link PdfDocument} to create the text field in
+     * @param rect     the location on the page for the text field
+     * @param name     the name of the form field
+     * @param value    the initial value
+     * @param font     a {@link PdfFont}
+     * @param fontSize a positive integer
+     * @return a new {@link PdfTextFormField}
+     */
+    public static PdfTextFormField createMultilineText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize) {
+        return createText(doc, rect, name, value, font, fontSize, true);
+    }
+
+    /**
+     * Creates a named {@link PdfTextFormField multiline text form field} with an initial
+     * value, and the form's default font specified in
+     * {@link com.itextpdf.forms.PdfAcroForm#getDefaultResources}.
+     *
+     * @param doc   the {@link PdfDocument} to create the text field in
+     * @param rect  the location on the page for the text field
+     * @param name  the name of the form field
+     * @param value the initial value
+     * @return a new {@link PdfTextFormField}
+     */
+    public static PdfTextFormField createMultilineText(PdfDocument doc, Rectangle rect, String name, String value) {
+        try {
+            return createText(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, true);
+        } catch (IOException e) {
+            throw new PdfException(e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -451,6 +506,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfButtonFormField field = new PdfButtonFormField(annot, doc);
         field.setPushButton(true);
         field.setFieldName(name);
+        field.text = caption;
         field.font = font;
         field.fontSize = fontSize;
 
@@ -625,6 +681,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         kid = ((PdfIndirectReference) kid).getRefersTo();
                     }
                     PdfFormField field = new PdfFormField((PdfDictionary) kid);
+                    field.font = font;
+                    field.fontSize = fontSize;
                     field.setValue(value);
                 }
             }
@@ -1794,31 +1852,37 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.
                 beginVariableText().
                 saveState().
-                newPath().
-                beginText().
-                setFontAndSize(font, fontSize);
+                newPath();
+
+        Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0, 2, 0, 2);
+        setParagraphProperties(paragraph, value);
         if (color != null) {
-            canvas.setFillColor(color);
-        } else {
-            canvas.resetFillColorRgb();
+            paragraph.setFontColor(color);
         }
         Integer justification = getJustification();
         if (justification == null) {
             justification = 0;
         }
-        drawTextAligned(canvas, justification, value, 2, height / 2 - fontSize * 0.3f, font, fontSize);
+        float x = 0;
+        Property.TextAlignment textAlignment = Property.TextAlignment.LEFT;
+        if (justification == ALIGN_RIGHT) {
+            textAlignment = Property.TextAlignment.RIGHT;
+            x = rect.getWidth();
+        } else if (justification == ALIGN_CENTER) {
+            textAlignment = Property.TextAlignment.CENTER;
+            x = rect.getWidth() / 2;
+        }
+        new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height)).showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, Property.VerticalAlignment.MIDDLE);
+
         canvas.
-                endText().
                 restoreState().
                 endVariableText();
-
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
 
         return xObject;
     }
-
 
     /**
      * Draws the visual appearance of multiline text in a form field.
@@ -1838,39 +1902,26 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         float width = rect.getWidth();
         float height = rect.getHeight();
 
-        List<String> strings = font.splitString(value, fontSize, width - 6);
-
-        value = "";
-        for (String str : strings) {
-            value += str + '\n';
-        }
-        value = value.substring(0, value.length() - 1);
-
         drawBorder(canvas, width, height);
         canvas.
                 beginVariableText().
                 saveState().
                 rectangle(3, 3, width - 6, height - 6).
                 clip().
-                newPath().
-                beginText().
-                setFontAndSize(font, fontSize);
-        if (color != null) {
-            canvas.setFillColor(color);
-        } else {
-            canvas.resetFillColorRgb();
-        }
+                newPath();
 
-        canvas.setTextMatrix(4, 5);
-        StringTokenizer tokenizer = new StringTokenizer(value, "\n");
-        while (tokenizer.hasMoreTokens()) {
-            height -= fontSize * 1.2;
-            canvas.
-                    setTextMatrix(3, height).
-                    showText(tokenizer.nextToken());
+        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, width - 6, height - 2));
+        Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
+        setParagraphProperties(paragraph, value);
+        if (value != null && value.length() > 0) {
+            paragraph.setFontScript(Character.UnicodeScript.of(value.charAt(0)));
         }
+        if (color != null) {
+            paragraph.setFontColor(color);
+        }
+        modelCanvas.add(paragraph);
+
         canvas.
-                endText().
                 restoreState().
                 endVariableText();
 
@@ -2067,13 +2118,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 lineTo(x + width - 1, y + 1).
                 lineTo(x + width - 1, y + height - 1).
                 stroke().
-                resetFillColorRgb().
-                beginText().
-                setFontAndSize(font, fontSize).
-                setTextMatrix(0, y + (height - fontSize) / 2).
-                showText(text).
-                endText().
-                restoreState();
+                resetFillColorRgb();
+
+        Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).
+                setVerticalAlignment(Property.VerticalAlignment.MIDDLE);
+        setParagraphProperties(paragraph, text);
+        new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height)).showTextAligned(paragraph, width / 2, height / 2, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE);
+
+        canvas.restoreState();
     }
 
     /**
@@ -2119,17 +2171,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return new String(pchar);
     }
 
-    private void drawTextAligned(PdfCanvas canvas, int alignment, String text, float x, float y, PdfFont font, int fontSize) {
-        switch (alignment) {
-            case ALIGN_CENTER:
-                x = (getRect(getPdfObject()).getWidth() - font.getWidth(text, fontSize)) / 2;
-                break;
-            case ALIGN_RIGHT:
-                x = (getRect(getPdfObject()).getWidth() - font.getWidth(text, fontSize));
-                break;
+    private void setParagraphProperties(Paragraph paragraph, String value) {
+        // TODO this is temporary and will be replaced by script autodetection logic on model level
+        if (value != null && value.length() > 0) {
+            Character.UnicodeScript script = Character.UnicodeScript.of(value.charAt(0));
+            paragraph.setFontScript(script);
+            if (script == Character.UnicodeScript.ARABIC || script == Character.UnicodeScript.HEBREW) {
+                paragraph.setBaseDirection(Property.BaseDirection.RIGHT_TO_LEFT);
+            }
         }
-        canvas.setTextMatrix(x, y);
-        canvas.showText(text);
     }
 
 }
