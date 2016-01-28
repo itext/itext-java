@@ -1318,4 +1318,12 @@ public class PdfReader {
             buffer = null;
         }
     }
+
+    /**
+     * @return byte array of computed user password, or null if not encrypted or no ownerPassword is used.
+     */
+    public byte[] computeUserPassword() {
+        if (!encrypted || !ownerPasswordUsed) return null;
+        return decrypt.computeUserPassword(password);
+    }
 }
