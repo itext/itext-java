@@ -2,6 +2,9 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.Utilities;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,10 +18,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -85,7 +84,7 @@ public class PdfPublicKeySecurityHandler {
         Certificate certificate = recipient.getCertificate();
         //constants permissions: PdfWriter.AllowCopy | PdfWriter.AllowPrinting | PdfWriter.AllowScreenReaders | PdfWriter.AllowAssembly;
         int permission = recipient.getPermission();
-        // NOTE! Added while porting to itext6
+        // NOTE! Added while porting to itext7
         // Previous strange code was:
         // int revision = 3;
         // permission |= revision == 3 ? 0xfffff0c0 : 0xffffffc0;
@@ -127,11 +126,11 @@ public class PdfPublicKeySecurityHandler {
                 EncodedRecipients.add(new PdfLiteral(Utilities.createEscapedString(cms)));
             } catch (GeneralSecurityException e) {
                 EncodedRecipients = null;
-                // break was added while porting to itext6
+                // break was added while porting to itext7
                 break;
             } catch (IOException e) {
                 EncodedRecipients = null;
-                // break was added while porting to itext6
+                // break was added while porting to itext7
                 break;
             }
         }

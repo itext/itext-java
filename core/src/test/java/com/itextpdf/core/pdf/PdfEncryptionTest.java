@@ -116,13 +116,13 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         page.flush();
         document.close();
 
-        iText6Decrypt(filename, OWNER);
-        //iText6Decrypt(filename, USER);
-        iText6Decrypt(filename, OWNER, "(Hello world!)");
-        //iText6Decrypt(filename, USER, "(Hello world!)");
+        iText7Decrypt(filename, OWNER);
+        //iText7Decrypt(filename, USER);
+        iText7Decrypt(filename, OWNER, "(Hello world!)");
+        //iText7Decrypt(filename, USER, "(Hello world!)");
     }
 
-    public void iText6Decrypt(String src, byte[] password, String pageContent) throws IOException {
+    public void iText7Decrypt(String src, byte[] password, String pageContent) throws IOException {
         PdfReader reader = new com.itextpdf.core.pdf.PdfReader(src, password);
         PdfDocument document = new com.itextpdf.core.pdf.PdfDocument(reader);
         String author = document.getInfo().getAuthor();
@@ -136,7 +136,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         document.close();
     }
 
-    public void iText6Decrypt(String src, byte[] password) throws IOException {
+    public void iText7Decrypt(String src, byte[] password) throws IOException {
         PdfReader reader = new PdfReader(src, password);
         PdfDocument stamper = new PdfDocument(reader, new PdfWriter(new ByteArrayOutputStream()));
         stamper.close();
