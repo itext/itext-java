@@ -222,7 +222,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         return new PdfTextFormField(annot, doc);
+    }
 
+    /**
+     * Creates a named {@link PdfTextFormField text form field} with an initial
+     * value, and the form's default font specified in
+     * {@link com.itextpdf.forms.PdfAcroForm#getDefaultResources}.
+     *
+     * @param doc   the {@link PdfDocument} to create the text field in
+     * @param rect  the location on the page for the text field
+     * @param name  the name of the form field
+     * @return a new {@link PdfTextFormField}
+     */
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name) {
+        return createText(doc, rect, name, "");
     }
 
     /**
@@ -1910,7 +1923,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 clip().
                 newPath();
 
-        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, width - 6, height - 2));
+        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, Math.max(0, width - 6), Math.max(0, height - 2)));
         Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
         setParagraphProperties(paragraph, value);
         if (value != null && value.length() > 0) {
