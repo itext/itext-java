@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 class PdfXrefTable {
@@ -189,7 +188,7 @@ class PdfXrefTable {
             xrefStream.put(PdfName.Root, document.getCatalog().getPdfObject());
             PdfArray index = new PdfArray();
             for (Integer section : sections) {
-                index.add(new PdfNumber(section.intValue()));
+                index.add(new PdfNumber(section));
             }
             if (document.appendMode) {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());

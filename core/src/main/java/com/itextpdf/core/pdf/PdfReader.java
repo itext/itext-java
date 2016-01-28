@@ -896,16 +896,19 @@ public class PdfReader {
         int end = 0;
         while (true) {
             tokens.nextValidToken();
-            if (tokens.tokenValueEqualsTo(PdfTokenizer.Trailer))
+            if (tokens.tokenValueEqualsTo(PdfTokenizer.Trailer)) {
                 break;
-            if (tokens.getTokenType() != PdfTokenizer.TokenType.Number)
+            }
+            if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
                 tokens.throwError(PdfException.ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound);
+            }
             int start = tokens.getIntValue();
             tokens.nextValidToken();
-            if (tokens.getTokenType() != PdfTokenizer.TokenType.Number)
+            if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
                 tokens.throwError(PdfException.NumberOfEntriesInThisXrefSubsectionNotFound);
+            }
             end = tokens.getIntValue() + start;
-            for (int num = start; num < end; ++num) {
+            for (int num = start; num < end; num++) {
                 tokens.nextValidToken();
                 long pos = tokens.getLongValue();
                 tokens.nextValidToken();
@@ -916,6 +919,7 @@ public class PdfReader {
                     reference = new PdfIndirectReference(pdfDocument, num, gen, pos);
                 } else if (reference.checkState(PdfObject.Reading) && reference.getGenNumber() == gen) {
                     reference.setOffset(pos);
+                    reference.clearState(PdfObject.Reading);
                 } else {
                     continue;
                 }

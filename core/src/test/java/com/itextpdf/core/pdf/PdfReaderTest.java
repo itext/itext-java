@@ -1486,10 +1486,9 @@ public class PdfReaderTest extends ExtendedITextTest{
 //      trailer
 //      <</Size 27/Root 1 0 R/Info 12 0 R//Prev 245232/XRefStm 244927>>
 //      startxref
-
         Assert.assertFalse(reader.hasFixedXref());
         Assert.assertFalse(reader.hasRebuiltXref());
-
+        Assert.assertTrue(((PdfDictionary)pdfDoc.getPdfObject(1)).containsKey(PdfName.AcroForm));
         pdfDoc.close();
     }
 
