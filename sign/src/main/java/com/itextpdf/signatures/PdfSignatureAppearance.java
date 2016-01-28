@@ -2,22 +2,24 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
-import com.itextpdf.core.font.PdfFontFactory;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.model.Canvas;
+import com.itextpdf.model.Property;
+import com.itextpdf.model.element.Paragraph;
 
 import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * Provides convenient methods to make a signature appearance. Use it in conjunction with {@link PdfSigner}.
@@ -630,19 +632,11 @@ public class PdfSignatureAppearance {
                         signedBy = "";
                     }
 
-                    List<String> splittedText = font.splitString(signedBy, (int) layer2FontSize, signatureRect.getWidth());
                     PdfCanvas canvas = new PdfCanvas(n2, document);
+                    Paragraph paragraph = setParagraphProperties(new Paragraph(signedBy).
+                            setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f), signedBy);
+                    new Canvas(canvas, document, signatureRect).add(paragraph);
 
-                    canvas.setFontAndSize(font, layer2FontSize);
-                    canvas.beginText();
-                    canvas.setTextMatrix(signatureRect.getLeft(), signatureRect.getTop() - layer2FontSize);
-
-                    for (String str : splittedText) {
-                        canvas.newlineText();
-                        canvas.showText(str);
-                    }
-
-                    canvas.endText();
                     break;
                 case GRAPHIC_AND_DESCRIPTION: {
                     if (signatureGraphic == null) {
@@ -702,22 +696,10 @@ public class PdfSignatureAppearance {
             }
 
             if (renderingMode != RenderingMode.GRAPHIC) {
-                List<String> splittedText = font.splitString(text, (int) layer2FontSize, dataRect.getWidth());
                 PdfCanvas canvas = new PdfCanvas(n2, document);
-
-                float x = dataRect.getLeft();
-                float y = dataRect.getTop();
-
-                canvas.setFontAndSize(font, layer2FontSize);
-                canvas.beginText();
-                canvas.setTextMatrix(x, y);
-
-                for (String str : splittedText) {
-                    canvas.moveText(0, -layer2FontSize);
-                    canvas.showText(str);
-                }
-
-                canvas.endText();
+                Paragraph paragraph = setParagraphProperties(new Paragraph(text).
+                        setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f), text);
+                new Canvas(canvas, document, dataRect).add(paragraph);
             }
         }
 
@@ -816,6 +798,18 @@ public class PdfSignatureAppearance {
 
         PdfCanvas canvas = new PdfCanvas(n0, document);
         canvas.writeLiteral("% DSBlank\n");
+    }
+
+    private Paragraph setParagraphProperties(Paragraph paragraph, String value) {
+        // TODO this is temporary and will be replaced by script autodetection logic on model level
+        if (value != null && value.length() > 0) {
+            Character.UnicodeScript script = Character.UnicodeScript.of(value.charAt(0));
+            paragraph.setFontScript(script);
+            if (script == Character.UnicodeScript.ARABIC || script == Character.UnicodeScript.HEBREW) {
+                paragraph.setBaseDirection(Property.BaseDirection.RIGHT_TO_LEFT);
+            }
+        }
+        return paragraph;
     }
 
     /**

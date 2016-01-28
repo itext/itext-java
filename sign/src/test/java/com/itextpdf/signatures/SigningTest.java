@@ -4,6 +4,9 @@ package com.itextpdf.signatures;
 import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.core.utils.CompareTool;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,12 +19,16 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
 
 
 //TODO: add some validation of results in future
@@ -51,9 +58,10 @@ public class SigningTest {
     }
 
     @Test
-    public void simpleSigningTest() throws GeneralSecurityException, IOException {
+    public void simpleSigningTest() throws GeneralSecurityException, IOException, InterruptedException {
         String src = sourceFolder + "simpleDocument.pdf";
-        String dest = destinationFolder + "simpleSignature.pdf";
+        String fileName = "simpleSignature.pdf";
+        String dest = destinationFolder + fileName;
 
         int x = 36;
         int y = 648;
@@ -65,28 +73,45 @@ public class SigningTest {
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_",
+                new HashMap<Integer, List<Rectangle>>() {{
+                    put(1, Arrays.asList(new Rectangle(67, 690, 148, 15)));
+                }}));
     }
 
     @Test
-    public void signingIntoExistingFieldTest01() throws GeneralSecurityException, IOException {
+    public void signingIntoExistingFieldTest01() throws GeneralSecurityException, IOException, InterruptedException {
         String src = sourceFolder + "emptySignature01.pdf"; //field is merged with widget and has /P key
-        String dest = destinationFolder + "filledSignatureFields01.pdf";
+        String fileName = "filledSignatureFields01.pdf";
+        String dest = destinationFolder + fileName;
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_",
+                new HashMap<Integer, List<Rectangle>>() {{
+                    put(1, Arrays.asList(new Rectangle(67, 725, 148, 15)));
+                }}));
     }
 
     @Test
-    public void signingIntoExistingFieldTest02() throws GeneralSecurityException, IOException {
+    public void signingIntoExistingFieldTest02() throws GeneralSecurityException, IOException, InterruptedException {
         String src = sourceFolder + "emptySignature02.pdf"; //field is merged with widget and widget doesn't have /P key
-        String dest = destinationFolder + "filledSignatureFields02.pdf";
+        String fileName = "filledSignatureFields02.pdf";
+        String dest = destinationFolder + fileName;
 
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_",
+                new HashMap<Integer, List<Rectangle>>() {{
+                    put(1, Arrays.asList(new Rectangle(67, 725, 148, 15)));
+                }}));
     }
 
     @Test
