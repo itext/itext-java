@@ -936,7 +936,7 @@ public class PdfReader {
         }
         PdfDictionary trailer = (PdfDictionary) readObject(false);
         PdfNumber xrefSize = (PdfNumber) trailer.get(PdfName.Size);
-        if (xrefSize == null || xrefSize.getIntValue() != end) {
+        if (xrefSize == null || (xrefSize.getIntValue() != end && end > 0)) {
             throw new PdfException(PdfException.InvalidXrefSection);
         }
 

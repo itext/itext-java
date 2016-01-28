@@ -1472,6 +1472,28 @@ public class PdfReaderTest extends ExtendedITextTest{
         pdfDoc.close();
     }
 
+    @Test
+    public void zeroUpdateTest() throws IOException {
+        String filename = sourceFolder + "stationery.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+//      Test such construction:
+//      xref
+//      0 0
+//      trailer
+//      <</Size 27/Root 1 0 R/Info 12 0 R//Prev 245232/XRefStm 244927>>
+//      startxref
+
+        Assert.assertFalse(reader.hasFixedXref());
+        Assert.assertFalse(reader.hasRebuiltXref());
+
+        pdfDoc.close();
+    }
+
+
     private boolean objectTypeEqualTo(PdfObject object, PdfName type) {
         PdfName objectType = ((PdfDictionary)object).getAsName(PdfName.Type);
         return type.equals(objectType);
