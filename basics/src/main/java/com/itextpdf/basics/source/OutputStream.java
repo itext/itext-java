@@ -1,5 +1,7 @@
 package com.itextpdf.basics.source;
 
+import com.itextpdf.basics.IOException;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -308,7 +310,7 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotWriteIntNumber, e);
+            throw new IOException(IOException.CannotWriteIntNumber, e);
         }
     }
 
@@ -318,7 +320,7 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotWriteIntNumber, e);
+            throw new IOException(IOException.CannotWriteIntNumber, e);
         }
     }
 
@@ -349,7 +351,7 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
             write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotWriteFloatNumber, e);
+            throw new IOException(IOException.CannotWriteFloatNumber, e);
         }
     }
 
@@ -358,7 +360,7 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
             write(value);
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotWriteByte, e);
+            throw new IOException(IOException.CannotWriteByte, e);
         }
     }
 
@@ -379,7 +381,7 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
             write(b);
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotWriteBytes, e);
+            throw new IOException(IOException.CannotWriteBytes, e);
         }
     }
 
@@ -388,7 +390,7 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
             write(b, off, len);
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotWriteBytes, e);
+            throw new IOException(IOException.CannotWriteBytes, e);
         }
     }
 
@@ -413,7 +415,7 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
             ((ByteArrayOutputStream) outputStream).assignBytes(bytes, count);
             currentPos = count;
         } else
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BytesCanBeAssignedToByteArrayOutputStreamOnly);
+            throw new IOException(IOException.BytesCanBeAssignedToByteArrayOutputStreamOnly);
     }
 
     public void reset() {
@@ -421,6 +423,6 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
             ((ByteArrayOutputStream) outputStream).reset();
             currentPos = 0;
         } else
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BytesCanBeResetInByteArrayOutputStreamOnly);
+            throw new IOException(IOException.BytesCanBeResetInByteArrayOutputStreamOnly);
     }
 }

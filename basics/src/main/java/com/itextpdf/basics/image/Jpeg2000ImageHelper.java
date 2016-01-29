@@ -1,5 +1,6 @@
 package com.itextpdf.basics.image;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.source.ByteArrayOutputStream;
 
@@ -84,15 +85,15 @@ public final class Jpeg2000ImageHelper {
                 jp2.isJp2 = true;
                 box.type = cio_read(4, is);
                 if (JP2_JP != box.type) {
-                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ExpectedJpMarker);
+                    throw new IOException(IOException.ExpectedJpMarker);
                 }
                 if (0x0d0a870a != cio_read(4, is)) {
-                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ErrorWithJpMarker);
+                    throw new IOException(IOException.ErrorWithJpMarker);
                 }
 
                 jp2_read_boxhdr(box, is);
                 if (JP2_FTYP != box.type) {
-                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ExpectedFtypMarker);
+                    throw new IOException(IOException.ExpectedFtypMarker);
                 }
                 Utilities.skip(is, 8);
                 for (int i = 4; i < box.length / 4; ++i) {
@@ -105,7 +106,7 @@ public final class Jpeg2000ImageHelper {
                 do {
                     if (JP2_JP2H != box.type) {
                         if (box.type == JP2_JP2C) {
-                            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ExpectedJp2hMarker);
+                            throw new IOException(IOException.ExpectedJp2hMarker);
                         }
                         Utilities.skip(is, box.length - 8);
                         jp2_read_boxhdr(box, is);
@@ -113,7 +114,7 @@ public final class Jpeg2000ImageHelper {
                 } while (JP2_JP2H != box.type);
                 jp2_read_boxhdr(box, is);
                 if (JP2_IHDR != box.type) {
-                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ExpectedIhdrMarker);
+                    throw new IOException(IOException.ExpectedIhdrMarker);
                 }
                 image.setHeight(cio_read(4, is));
                 image.setWidth(cio_read(4, is));
@@ -148,10 +149,10 @@ public final class Jpeg2000ImageHelper {
                 image.setHeight(y1 - y0);
                 image.setWidth(x1 - x0);
             } else {
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidJpeg2000File);
+                throw new IOException(IOException.InvalidJpeg2000File);
             }
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.Jpeg2000ImageException, e);
+            throw new IOException(IOException.Jpeg2000ImageException, e);
         } finally {
             if (is != null) {
                 try {
@@ -189,11 +190,11 @@ public final class Jpeg2000ImageHelper {
         box.type = cio_read(4, is);
         if (box.length == 1) {
             if (cio_read(4, is) != 0) {
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotHandleBoxSizesHigherThan2_32);
+                throw new IOException(IOException.CannotHandleBoxSizesHigherThan2_32);
             }
             box.length = cio_read(4, is);
             if (box.length == 0)
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.UnsupportedBoxSizeEqEq0);
+                throw new IOException(IOException.UnsupportedBoxSizeEqEq0);
         } else if (box.length == 0) {
             throw new ZeroBoxSizeException("Unsupported box size == 0");
         }

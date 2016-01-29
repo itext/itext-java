@@ -1,5 +1,6 @@
 package com.itextpdf.basics.font.cmap;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.source.ByteBuffer;
 import com.itextpdf.basics.source.PdfTokenizer;
@@ -57,21 +58,21 @@ public class CMapContentParser {
         Map<String, CMapObject> dic = new HashMap<>();
         while (true) {
             if (!nextValidToken())
-                throw new com.itextpdf.basics.PdfException("unexpected.end.of.file");
+                throw new IOException("unexpected.end.of.file");
             if (tokeniser.getTokenType() == TokenType.EndDic)
                 break;
             if (tokeniser.getTokenType() == TokenType.Other && "def".equals(tokeniser.getStringValue()))
                 continue;
             if (tokeniser.getTokenType() != TokenType.Name)
-                throw new com.itextpdf.basics.PdfException("dictionary.key.1.is.not.a.name").setMessageParams(tokeniser.getStringValue());
+                throw new IOException("dictionary.key.1.is.not.a.name").setMessageParams(tokeniser.getStringValue());
             String name = tokeniser.getStringValue();
             CMapObject obj = readObject();
             if (obj.isToken()) {
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(com.itextpdf.basics.PdfException.UnexpectedGtGt);
+                    tokeniser.throwError(IOException.UnexpectedGtGt);
                 }
                 if (obj.toString().equals("]")) {
-                    tokeniser.throwError(com.itextpdf.basics.PdfException.UnexpectedCloseBracket);
+                    tokeniser.throwError(IOException.UnexpectedCloseBracket);
                 }
             }
             dic.put(name, obj);
@@ -93,7 +94,7 @@ public class CMapContentParser {
                     break;
                 }
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(com.itextpdf.basics.PdfException.UnexpectedGtGt);
+                    tokeniser.throwError(IOException.UnexpectedGtGt);
                 }
             }
             array.add(obj);

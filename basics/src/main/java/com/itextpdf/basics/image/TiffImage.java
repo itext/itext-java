@@ -1,5 +1,6 @@
 package com.itextpdf.basics.image;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.codec.TIFFDirectory;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.basics.source.RandomAccessSource;
@@ -44,7 +45,7 @@ public class TiffImage extends RawImage {
         try {
             return TIFFDirectory.getNumDirectories(raf);
         } catch (Exception e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TiffImageException, e);
+            throw new IOException(IOException.TiffImageException, e);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
-
+import com.itextpdf.core.PdfException;
 import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;

@@ -2,7 +2,7 @@ package com.itextpdf.barcodes;
 
 import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.barcodes.qrcode.ErrorCorrectionLevel;
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfDocument;

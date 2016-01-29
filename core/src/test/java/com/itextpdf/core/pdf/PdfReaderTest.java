@@ -1,15 +1,18 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.source.ByteArrayOutputStream;
 import com.itextpdf.basics.source.OutputStream;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1018,7 +1021,7 @@ public class PdfReaderTest extends ExtendedITextTest{
         //There is a generation number mismatch in xref table and object for 3093
         try{
             document.getPdfObject(3093);
-        } catch (PdfException ex){
+        } catch (com.itextpdf.basics.IOException ex){
             exception = true;
         }
         Assert.assertTrue(exception);

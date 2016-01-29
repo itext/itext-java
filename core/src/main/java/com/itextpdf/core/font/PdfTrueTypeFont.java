@@ -1,6 +1,6 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.FontNames;
 import com.itextpdf.basics.font.TrueTypeFont;

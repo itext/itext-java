@@ -1,7 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
-
+import com.itextpdf.core.PdfException;
 import java.util.ArrayList;
 import java.util.List;
 

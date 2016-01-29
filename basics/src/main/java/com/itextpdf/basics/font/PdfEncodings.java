@@ -1,5 +1,6 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.util.IntHashtable;
 
 import java.io.UnsupportedEncodingException;
@@ -206,7 +207,7 @@ public class PdfEncodings {
             bb.get(br);
             return br;
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfEncodings, e);
+            throw new IOException(IOException.PdfEncodings, e);
         }
     }
 
@@ -258,7 +259,7 @@ public class PdfEncodings {
             bb.get(br);
             return br;
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfEncodings, e);
+            throw new IOException(IOException.PdfEncodings, e);
         }
     }
 
@@ -301,7 +302,7 @@ public class PdfEncodings {
         try {
             return new String(bytes, encoding);
         } catch (UnsupportedEncodingException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfEncodings, e);
+            throw new IOException(IOException.PdfEncodings, e);
         }
     }
 

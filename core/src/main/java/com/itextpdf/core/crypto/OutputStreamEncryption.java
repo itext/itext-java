@@ -1,7 +1,6 @@
 package com.itextpdf.core.crypto;
 
-import com.itextpdf.basics.PdfException;
-
+import com.itextpdf.core.PdfException;
 import java.io.IOException;
 
 public class OutputStreamEncryption extends java.io.OutputStream {

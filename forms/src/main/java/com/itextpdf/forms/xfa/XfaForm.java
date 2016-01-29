@@ -1,7 +1,6 @@
 package com.itextpdf.forms.xfa;
 
-
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -137,6 +136,7 @@ public class XfaForm {
             return;
         }
         PdfObject xfa = getXfaObject(pdfDocument);
+        assert xfa != null;
         if (xfa.isArray()) {
             PdfArray ar = (PdfArray) xfa;
             int t = -1;

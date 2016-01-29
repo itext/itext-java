@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.core.pdf.colorspace.PdfPattern;
@@ -309,7 +309,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 //                callXObjectFont(xobj.entrySet(), visitedResources);
 //                visitedResources.remove(xobj);
 //            } else {
-//                throw new PdfException(PdfException.IllegalResourceTree);
+//                throw new IOException(IOException.IllegalResourceTree);
 //            }
 //        }
 //    }

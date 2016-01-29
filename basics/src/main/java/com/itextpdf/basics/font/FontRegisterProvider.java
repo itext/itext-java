@@ -1,5 +1,6 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,7 +159,7 @@ class FontRegisterProvider {
             try {
                 // the font is a type 1 font or CJK font
                 fontProgram = FontFactory.createFont(fontName, cached);
-            } catch (com.itextpdf.basics.PdfException e) {
+            } catch (IOException e) {
             }
         }
         return fontProgram;
@@ -298,7 +299,7 @@ class FontRegisterProvider {
                 LOGGER.trace(String.format("Registered %s", path));
             }
         } catch (java.io.IOException e){
-            throw new com.itextpdf.basics.PdfException(e);
+            throw new IOException(e);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.source.ByteBuffer;
 import com.itextpdf.core.crypto.AESCipherCBCnoPad;

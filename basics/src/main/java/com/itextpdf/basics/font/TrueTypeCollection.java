@@ -1,5 +1,6 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.basics.source.RandomAccessSourceFactory;
 
@@ -40,7 +41,7 @@ public class TrueTypeCollection {
      */
     public FontProgram getFontByTccIndex(int ttcIndex) throws java.io.IOException {
         if (ttcIndex > TTCSize - 1) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TTCIndexDoesNotExistInFile);
+            throw new IOException(IOException.TTCIndexDoesNotExistInFile);
         }
 
         if (ttcPath != null) {
@@ -70,7 +71,7 @@ public class TrueTypeCollection {
     private void initFontSize() throws java.io.IOException {
         String mainTag = raf.readString(4, PdfEncodings.WINANSI);
         if (!mainTag.equals("ttcf")) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidTTCFile);
+            throw new IOException(IOException.InvalidTTCFile);
         }
         raf.skipBytes(4);
         TTCSize = raf.readInt();
@@ -80,7 +81,7 @@ public class TrueTypeCollection {
         if(path != null) {
             File f = new File(path);
             if ((!f.exists() || !f.isFile())) {
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.FontFileNotFound).setMessageParams(path);
+                throw new IOException(IOException.FontFileNotFound).setMessageParams(path);
             }
         }
     }

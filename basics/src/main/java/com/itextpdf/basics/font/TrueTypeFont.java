@@ -1,5 +1,6 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
@@ -129,7 +130,7 @@ public class TrueTypeFont extends FontProgram {
             }
         } catch (java.io.IOException e) {
             fontStreamBytes = null;
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.IoException, e);
+            throw new IOException(IOException.IoException, e);
         }
         return fontStreamBytes;
     }
@@ -170,7 +171,7 @@ public class TrueTypeFont extends FontProgram {
         try {
             return fontParser.getSubset(glyphs, subset);
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.IoException, e);
+            throw new IOException(IOException.IoException, e);
         }
     }
 

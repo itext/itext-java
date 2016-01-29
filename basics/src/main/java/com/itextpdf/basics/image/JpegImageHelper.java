@@ -1,5 +1,6 @@
 package com.itextpdf.basics.image;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.source.ByteArrayOutputStream;
@@ -90,7 +91,7 @@ public class JpegImageHelper {
             }
             processParameters(is, errorID, image);
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.JpegImageException, e);
+            throw new IOException(IOException.JpegImageException, e);
         } finally {
             if (is != null) {
                 try {
@@ -124,7 +125,7 @@ public class JpegImageHelper {
                 is = image.getUrl().openStream();
                 Utilities.transferBytes(is, stream);
             } catch (java.io.IOException e) {
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.JpegImageException, e);
+                throw new IOException(IOException.JpegImageException, e);
             } finally {
                 if (is != null) {
                     try {
@@ -139,20 +140,20 @@ public class JpegImageHelper {
     /**
      * This method checks if the image is a valid JPEG and processes some parameters.
      *
-     * @throws com.itextpdf.basics.PdfException
+     * @throws IOException
      * @throws java.io.IOException
      */
     private static void processParameters(InputStream is, String errorID, Image image) throws java.io.IOException {
         byte[][] icc = null;
         if (is.read() != 0xFF || is.read() != 0xD8) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1IsNotAValidJpegFile).setMessageParams(errorID);
+            throw new IOException(IOException._1IsNotAValidJpegFile).setMessageParams(errorID);
         }
         boolean firstPass = true;
         int len;
         while (true) {
             int v = is.read();
             if (v < 0)
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PrematureEofWhileReadingJpg);
+                throw new IOException(IOException.PrematureEofWhileReadingJpg);
             if (v == 0xFF) {
                 int marker = is.read();
                 if (firstPass && marker == M_APP0) {
@@ -165,7 +166,7 @@ public class JpegImageHelper {
                     byte bcomp[] = new byte[JFIF_ID.length];
                     int r = is.read(bcomp);
                     if (r != bcomp.length)
-                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1CorruptedJfifMarker).setMessageParams(errorID);
+                        throw new IOException(IOException._1CorruptedJfifMarker).setMessageParams(errorID);
                     boolean found = true;
                     for (int k = 0; k < bcomp.length; ++k) {
                         if (bcomp[k] != JFIF_ID[k]) {
@@ -309,7 +310,7 @@ public class JpegImageHelper {
                 if (markertype == VALID_MARKER) {
                     Utilities.skip(is, 2);
                     if (is.read() != 0x08) {
-                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1MustHave8BitsPerComponent).setMessageParams(errorID);
+                        throw new IOException(IOException._1MustHave8BitsPerComponent).setMessageParams(errorID);
                     }
                     image.setHeight(getShort(is));
                     image.setWidth(getShort(is));
@@ -317,7 +318,7 @@ public class JpegImageHelper {
                     image.setBpc(8);
                     break;
                 } else if (markertype == UNSUPPORTED_MARKER) {
-                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
+                    throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
                 } else if (markertype != NOPARAM_MARKER) {
                     Utilities.skip(is, getShort(is) - 2);
                 }

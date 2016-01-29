@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.canvas.wmf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;

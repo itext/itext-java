@@ -1,7 +1,6 @@
 package com.itextpdf.core.pdf.filters;
 
-import com.itextpdf.basics.PdfException;
-
+import com.itextpdf.core.PdfException;
 import java.io.IOException;
 import java.io.OutputStream;
 

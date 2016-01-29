@@ -1,5 +1,6 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
@@ -35,7 +36,7 @@ public class Type1Font extends FontProgram {
         if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
             return createFont(name);
         } else {
-            throw new com.itextpdf.basics.PdfException("1.is.not.a.standard.type1.font").setMessageParams(name);
+            throw new IOException("1.is.not.a.standard.type1.font").setMessageParams(name);
         }
     }
 
@@ -279,9 +280,9 @@ public class Type1Font extends FontProgram {
         if (!startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new com.itextpdf.basics.PdfException("missing.startcharmetrics.in.1").setMessageParams(metricsPath);
+                throw new IOException("missing.startcharmetrics.in.1").setMessageParams(metricsPath);
             } else {
-                throw new com.itextpdf.basics.PdfException("missing.startcharmetrics.in.the.metrics.file");
+                throw new IOException("missing.startcharmetrics.in.the.metrics.file");
             }
         }
         avgWidth = 0;
@@ -344,9 +345,9 @@ public class Type1Font extends FontProgram {
         if (startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new com.itextpdf.basics.PdfException("missing.endcharmetrics.in.1").setMessageParams(metricsPath);
+                throw new IOException("missing.endcharmetrics.in.1").setMessageParams(metricsPath);
             } else {
-                throw new com.itextpdf.basics.PdfException("missing.endcharmetrics.in.the.metrics.file");
+                throw new IOException("missing.endcharmetrics.in.the.metrics.file");
             }
         }
 
@@ -401,18 +402,18 @@ public class Type1Font extends FontProgram {
         } else if (!endOfMetrics) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new com.itextpdf.basics.PdfException("missing.endfontmetrics.in.1").setMessageParams(metricsPath);
+                throw new IOException("missing.endfontmetrics.in.1").setMessageParams(metricsPath);
             } else {
-                throw new com.itextpdf.basics.PdfException("missing.endfontmetrics.in.the.metrics.file");
+                throw new IOException("missing.endfontmetrics.in.the.metrics.file");
             }
         }
 
         if (startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new com.itextpdf.basics.PdfException("missing.endkernpairs.in.1").setMessageParams(metricsPath);
+                throw new IOException("missing.endkernpairs.in.1").setMessageParams(metricsPath);
             } else {
-                throw new com.itextpdf.basics.PdfException("missing.endkernpairs.in.the.metrics.file");
+                throw new IOException("missing.endkernpairs.in.the.metrics.file");
             }
         }
         raf.close();

@@ -1,5 +1,7 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.IOException;
+
 import java.util.Arrays;
 import java.util.Set;
 
@@ -348,7 +350,7 @@ public class FontFactory {
             if (noThrow) {
                 return null;
             } else {
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.FontIsNotRecognized);
+                throw new IOException(IOException.FontIsNotRecognized);
             }
         }
 
@@ -367,7 +369,7 @@ public class FontFactory {
         } else if (noThrow) {
             return null;
         } else {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.Font1IsNotRecognized).setMessageParams(name);
+            throw new IOException(IOException.Font1IsNotRecognized).setMessageParams(name);
         }
 
         if (cached) {

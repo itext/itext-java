@@ -1,7 +1,6 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.basics.PdfException;
-
+import com.itextpdf.core.PdfException;
 /**
  * Exception that is thrown when the PDF Document doesn't adhere to the PDF/A specification.
  */

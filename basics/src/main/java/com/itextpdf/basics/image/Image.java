@@ -1,5 +1,6 @@
 package com.itextpdf.basics.image;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.color.IccProfile;
 
@@ -189,9 +190,9 @@ public abstract class Image {
 
     public void setImageMask(Image imageMask) {
         if (this.mask)
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ImageMaskCannotContainAnotherImageMask);
+            throw new IOException(IOException.ImageMaskCannotContainAnotherImageMask);
         if (!imageMask.mask)
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ImageMaskIsNotAMaskDidYouDoMakeMask);
+            throw new IOException(IOException.ImageMaskIsNotAMaskDidYouDoMakeMask);
         this.imageMask = imageMask;
     }
 
@@ -201,7 +202,7 @@ public abstract class Image {
 
     public void makeMask() {
         if (!canBeMask())
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ImageCanNotBeAnImageMask);
+            throw new IOException(IOException.ImageCanNotBeAnImageMask);
         mask = true;
     }
 

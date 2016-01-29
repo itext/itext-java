@@ -1,5 +1,7 @@
 package com.itextpdf.basics.font.cmap;
 
+import com.itextpdf.basics.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +76,7 @@ public class CMapByteCid extends AbstractCMap {
             int one = seq[idx] & 0xff;
             char c = plane[one];
             if (c != 0 && (c & 0x8000) == 0)
-                throw new com.itextpdf.basics.PdfException("inconsistent.mapping");
+                throw new IOException("inconsistent.mapping");
             if (c == 0) {
                 planes.add(new char[256]);
                 c = (char)(planes.size() - 1 | 0x8000);
@@ -86,7 +88,7 @@ public class CMapByteCid extends AbstractCMap {
         int one = seq[size] & 0xff;
         char c = plane[one];
         if ((c & 0x8000) != 0)
-            throw new com.itextpdf.basics.PdfException("inconsistent.mapping");
+            throw new IOException("inconsistent.mapping");
         plane[one] = cid;
     }
 }

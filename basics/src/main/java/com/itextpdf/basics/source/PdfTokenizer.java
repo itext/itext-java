@@ -1,5 +1,7 @@
 package com.itextpdf.basics.source;
 
+import com.itextpdf.basics.IOException;
+
 import java.util.Arrays;
 
 public class PdfTokenizer {
@@ -171,7 +173,7 @@ public class PdfTokenizer {
         if (idx < 0) {
             idx = str.indexOf("%FDF-");
             if (idx < 0)
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfHeaderNotFound, this);
+                throw new IOException(IOException.PdfHeaderNotFound, this);
         }
 
         return idx;
@@ -182,7 +184,7 @@ public class PdfTokenizer {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx != 0)
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfHeaderNotFound, this);
+            throw new IOException(IOException.PdfHeaderNotFound, this);
         return str.substring(idx + 1, idx + 8);
     }
 
@@ -191,7 +193,7 @@ public class PdfTokenizer {
         String str = readString(1024);
         int idx = str.indexOf("%FDF-");
         if (idx != 0)
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.FdfStartxrefNotFound, this);
+            throw new IOException(IOException.FdfStartxrefNotFound, this);
     }
 
     public long getStartxref() throws java.io.IOException {
@@ -206,7 +208,7 @@ public class PdfTokenizer {
             if (idx >= 0) return pos + idx;
             pos = pos - arrLength + 9;                  // 9 = "startxref".length()
         }
-        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfStartxrefNotFound, this);
+        throw new IOException(IOException.PdfStartxrefNotFound, this);
     }
 
     public void nextValidToken() throws java.io.IOException {
@@ -302,7 +304,7 @@ public class PdfTokenizer {
             case '>': {
                 ch = file.read();
                 if (ch != '>')
-                    throwError(com.itextpdf.basics.PdfException.GtNotExpected);
+                    throwError(IOException.GtNotExpected);
                 type = TokenType.EndDic;
                 break;
             }
@@ -337,7 +339,7 @@ public class PdfTokenizer {
                     v1 = file.read();
                 }
                 if (v1 < 0 || v2 < 0)
-                    throwError(com.itextpdf.basics.PdfException.ErrorReadingString);
+                    throwError(IOException.ErrorReadingString);
                 break;
             }
             case '%': {
@@ -370,7 +372,7 @@ public class PdfTokenizer {
                     outBuf.append(ch);
                 }
                 if (ch == -1)
-                    throwError(com.itextpdf.basics.PdfException.ErrorReadingString);
+                    throwError(IOException.ErrorReadingString);
                 break;
             }
             default: {
@@ -586,10 +588,10 @@ public class PdfTokenizer {
      */
     public void throwError(String error, Object... messageParams) {
         try {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ErrorAtFilePointer1, new com.itextpdf.basics.PdfException(error).setMessageParams(messageParams))
+            throw new IOException(IOException.ErrorAtFilePointer1, new IOException(error).setMessageParams(messageParams))
                     .setMessageParams(file.getPosition());
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ErrorAtFilePointer1, new com.itextpdf.basics.PdfException(error).setMessageParams(messageParams))
+            throw new IOException(IOException.ErrorAtFilePointer1, new IOException(error).setMessageParams(messageParams))
                     .setMessageParams(error, "no position");
         }
     }

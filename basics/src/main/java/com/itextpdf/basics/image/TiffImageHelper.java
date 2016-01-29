@@ -1,5 +1,6 @@
 package com.itextpdf.basics.image;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.codec.TIFFConstants;
 import com.itextpdf.basics.codec.TIFFDirectory;
@@ -51,7 +52,7 @@ public class TiffImageHelper {
                 is.close();
                 data = stream.toByteArray();
             } catch (java.io.IOException e) {
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TiffImageException, e);
+                throw new IOException(IOException.TiffImageException, e);
             } finally {
                 if (is != null) {
                     try {
@@ -79,11 +80,11 @@ public class TiffImageHelper {
         int page = tiff.image.getPage();
         boolean direct = tiff.image.isDirect();
         if (page < 1)
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PageNumberMustBeGtEq1);
+            throw new IOException(IOException.PageNumberMustBeGtEq1);
         try {
             TIFFDirectory dir = new TIFFDirectory(s, page - 1);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_TILEWIDTH))
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TilesAreNotSupported);
+                throw new IOException(IOException.TilesAreNotSupported);
             int compression = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
             switch (compression) {
                 case TIFFConstants.COMPRESSION_CCITTRLEW:
@@ -225,7 +226,7 @@ public class TiffImageHelper {
                         case TIFFConstants.COMPRESSION_CCITTFAX4:
                             try {
                                 decoder.decodeT6(outBuf, im, 0, height, tiffT6Options);
-                            } catch (com.itextpdf.basics.PdfException e) {
+                            } catch (IOException e) {
                                 if (!recoverFromImageError) {
                                     throw e;
                                 }
@@ -253,7 +254,7 @@ public class TiffImageHelper {
             if (rotation != 0)
                 tiff.image.setRotation(rotation);
         } catch (Exception e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotReadTiffImage);
+            throw new IOException(IOException.CannotReadTiffImage);
         }
     }
 
@@ -272,7 +273,7 @@ public class TiffImageHelper {
                 case TIFFConstants.COMPRESSION_JPEG:
                     break;
                 default:
-                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.Compression1IsNotSupported).setMessageParams(compression);
+                    throw new IOException(IOException.Compression1IsNotSupported).setMessageParams(compression);
             }
             int photometric = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_PHOTOMETRIC);
             switch (photometric) {
@@ -284,7 +285,7 @@ public class TiffImageHelper {
                     break;
                 default:
                     if (compression != TIFFConstants.COMPRESSION_OJPEG && compression != TIFFConstants.COMPRESSION_JPEG)
-                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.Photometric1IsNotSupported).setMessageParams(photometric);
+                        throw new IOException(IOException.Photometric1IsNotSupported).setMessageParams(photometric);
             }
             float rotation = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
@@ -298,7 +299,7 @@ public class TiffImageHelper {
             }
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PLANARCONFIG)
                     && dir.getFieldAsLong(TIFFConstants.TIFFTAG_PLANARCONFIG) == TIFFConstants.PLANARCONFIG_SEPARATE)
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PlanarImagesAreNotSupported);
+                throw new IOException(IOException.PlanarImagesAreNotSupported);
             int extraSamples = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_EXTRASAMPLES))
                 extraSamples = 1;
@@ -315,7 +316,7 @@ public class TiffImageHelper {
                 case 8:
                     break;
                 default:
-                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BitsPerSample1IsNotSupported).setMessageParams(bitsPerSample);
+                    throw new IOException(IOException.BitsPerSample1IsNotSupported).setMessageParams(bitsPerSample);
             }
             int h = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGELENGTH);
             int w = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGEWIDTH);
@@ -346,10 +347,10 @@ public class TiffImageHelper {
                 if (predictorField != null) {
                     predictor = predictorField.getAsInt(0);
                     if (predictor != 1 && predictor != 2) {
-                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.IllegalValueForPredictorInTiffFile);
+                        throw new IOException(IOException.IllegalValueForPredictorInTiffFile);
                     }
                     if (predictor == 2 && bitsPerSample != 8) {
-                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor).setMessageParams(bitsPerSample);
+                        throw new IOException(IOException._1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor).setMessageParams(bitsPerSample);
                     }
                 }
             }
@@ -380,7 +381,7 @@ public class TiffImageHelper {
                 // is often missing
 
                 if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))) {
-                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.MissingTagSForOjpegCompression);
+                    throw new IOException(IOException.MissingTagSForOjpegCompression);
                 }
                 int jpegOffset = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
                 int jpegLength = (int) s.length() - jpegOffset;
@@ -402,7 +403,7 @@ public class TiffImageHelper {
                 tiff.jpegProcessing = true;
             } else if (compression == TIFFConstants.COMPRESSION_JPEG) {
                 if (size.length > 1)
-                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips).setMessageParams(size.length);
+                    throw new IOException(IOException.CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips).setMessageParams(size.length);
                 byte[] jpeg = new byte[(int) size[0]];
                 s.seek(offset[0]);
                 s.readFully(jpeg);
@@ -546,7 +547,7 @@ public class TiffImageHelper {
                 tiff.image.setImageMask(mimg);
             }
         } catch (Exception e) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotGetTiffImageColor);
+            throw new IOException(IOException.CannotGetTiffImageColor);
         }
     }
 
@@ -584,7 +585,7 @@ public class TiffImageHelper {
             zip.write(outBuf, 0, optr);
             mzip.write(mask, 0, mptr);
         } else
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ExtraSamplesAreNotSupported);
+            throw new IOException(IOException.ExtraSamplesAreNotSupported);
     }
 
     private static long[] getArrayLongShort(TIFFDirectory dir, int tag) {
@@ -638,7 +639,7 @@ public class TiffImageHelper {
         try {
             inflater.inflate(inflated);
         } catch (DataFormatException dfe) {
-            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotInflateTiffImage);
+            throw new IOException(IOException.CannotInflateTiffImage);
         }
     }
 

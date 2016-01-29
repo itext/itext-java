@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 
 import java.util.ArrayList;
@@ -543,7 +543,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      * PdfNumbers, if not a PdfException will be thrown.
      *
      * @return Rectangle of the first four values
-     * @throws com.itextpdf.basics.PdfException if one of the first values isn't a PdfNumber
+     * @throws com.itextpdf.core.PdfException if one of the first values isn't a PdfNumber
      */
     public Rectangle toRectangle() {
         try {

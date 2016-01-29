@@ -1,5 +1,6 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.basics.source.RandomAccessSourceFactory;
 import com.itextpdf.basics.util.IntHashtable;
@@ -302,27 +303,27 @@ class OpenTypeParser {
             int dirIdx = ttcIndex;
             if (dirIdx < 0) {
                 if (fileName != null) {
-                    throw new com.itextpdf.basics.PdfException("the.font.index.for.1.must.be.positive").setMessageParams(fileName);
+                    throw new IOException("the.font.index.for.1.must.be.positive").setMessageParams(fileName);
                 } else {
-                    throw new com.itextpdf.basics.PdfException("the.font.index.must.be.positive");
+                    throw new IOException("the.font.index.must.be.positive");
                 }
             }
             String mainTag = readStandardString(4);
             if (!mainTag.equals("ttcf")) {
                 if (fileName != null) {
-                    throw new com.itextpdf.basics.PdfException("1.is.not.a.valid.ttc.file").setMessageParams(fileName);
+                    throw new IOException("1.is.not.a.valid.ttc.file").setMessageParams(fileName);
                 } else {
-                    throw new com.itextpdf.basics.PdfException("not.a.valid.ttc.file");
+                    throw new IOException("not.a.valid.ttc.file");
                 }
             }
             raf.skipBytes(4);
             int dirCount = raf.readInt();
             if (dirIdx >= dirCount) {
                 if (fileName != null) {
-                    throw new com.itextpdf.basics.PdfException("the.font.index.for.1.must.be.between.0.and.2.it.was.3")
+                    throw new IOException("the.font.index.for.1.must.be.between.0.and.2.it.was.3")
                             .setMessageParams(fileName, String.valueOf(dirCount - 1), String.valueOf(dirIdx));
                 } else {
-                    throw new com.itextpdf.basics.PdfException("the.font.index.must.be.between.0.and.1.it.was.2")
+                    throw new IOException("the.font.index.must.be.between.0.and.1.it.was.2")
                             .setMessageParams(String.valueOf(dirCount - 1), String.valueOf(dirIdx));
                 }
             }
@@ -333,9 +334,9 @@ class OpenTypeParser {
         int ttId = raf.readInt();
         if (ttId != 0x00010000 && ttId != 0x4F54544F) {
             if (fileName != null) {
-                throw new com.itextpdf.basics.PdfException("1.is.not.a.valid.ttf.or.otf.file").setMessageParams(fileName);
+                throw new IOException("1.is.not.a.valid.ttf.or.otf.file").setMessageParams(fileName);
             } else {
-                throw new com.itextpdf.basics.PdfException("not.a.valid.ttf.or.otf.file");
+                throw new IOException("not.a.valid.ttf.or.otf.file");
             }
         }
         int num_tables = raf.readUnsignedShort();
@@ -402,9 +403,9 @@ class OpenTypeParser {
         table_location = tables.get("hmtx");
         if (table_location == null) {
             if (fileName != null) {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2").setMessageParams("hmtx", fileName);
+                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("hmtx", fileName);
             } else {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist").setMessageParams("hmtx");
+                throw new IOException("table.1.does.not.exist").setMessageParams("hmtx");
             }
         }
         raf.seek(table_location[0]);
@@ -456,7 +457,7 @@ class OpenTypeParser {
      * Read the glyf bboxes from 'glyf' table.
      *
      * @param unitsPerEm {@code head.unitsPerEm} property, {@see HeaderTable}.
-     * @throws com.itextpdf.basics.PdfException the font is invalid.
+     * @throws IOException the font is invalid.
      * @throws java.io.IOException  the font file could not be read.
      */
     protected int[][] readBbox(int unitsPerEm) throws java.io.IOException {
@@ -464,9 +465,9 @@ class OpenTypeParser {
         tableLocation = tables.get("head");
         if (tableLocation == null) {
             if (fileName != null) {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2").setMessageParams("head", fileName);
+                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("head", fileName);
             } else {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist").setMessageParams("head");
+                throw new IOException("table.1.does.not.exist").setMessageParams("head");
             }
         }
         raf.seek(tableLocation[0] + FontConstants.HEAD_LOCA_FORMAT_OFFSET);
@@ -494,9 +495,9 @@ class OpenTypeParser {
         tableLocation = tables.get("glyf");
         if (tableLocation == null) {
             if (fileName != null) {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
+                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
             } else {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist").setMessageParams("glyf");
+                throw new IOException("table.1.does.not.exist").setMessageParams("glyf");
             }
         }
         int tableGlyphOffset = tableLocation[0];
@@ -529,7 +530,7 @@ class OpenTypeParser {
     /**
      * Extracts the names of the font in all the languages available.
      *
-     * @throws com.itextpdf.basics.PdfException on error
+     * @throws IOException on error
      * @throws java.io.IOException  on error
      */
     private void readNameTable() throws java.io.IOException {
@@ -537,9 +538,9 @@ class OpenTypeParser {
         table_location = tables.get("name");
         if (table_location == null) {
             if (fileName != null) {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2").setMessageParams("name", fileName);
+                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("name", fileName);
             } else {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist").setMessageParams("name");
+                throw new IOException("table.1.does.not.exist").setMessageParams("name");
             }
         }
         allNameEntries = new LinkedHashMap<>();
@@ -580,7 +581,7 @@ class OpenTypeParser {
     /**
      * Read horizontal header, table 'hhea'.
      *
-     * @throws com.itextpdf.basics.PdfException the font is invalid.
+     * @throws IOException the font is invalid.
      * @throws java.io.IOException  the font file could not be read.
      */
     private void readHheaTable() throws java.io.IOException {
@@ -588,9 +589,9 @@ class OpenTypeParser {
         table_location = tables.get("hhea");
         if (table_location == null) {
             if (fileName != null) {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2").setMessageParams("hhea", fileName);
+                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("hhea", fileName);
             } else {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist").setMessageParams("hhea");
+                throw new IOException("table.1.does.not.exist").setMessageParams("hhea");
             }
         }
         raf.seek(table_location[0] + 4);
@@ -611,7 +612,7 @@ class OpenTypeParser {
     /**
      * Read font header, table 'head'.
      *
-     * @throws com.itextpdf.basics.PdfException the font is invalid.
+     * @throws IOException the font is invalid.
      * @throws java.io.IOException  the font file could not be read.
      */
     private void readHeadTable() throws java.io.IOException {
@@ -619,9 +620,9 @@ class OpenTypeParser {
         table_location = tables.get("head");
         if (table_location == null) {
             if (fileName != null) {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2").setMessageParams("head", fileName);
+                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("head", fileName);
             } else {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist").setMessageParams("head");
+                throw new IOException("table.1.does.not.exist").setMessageParams("head");
             }
         }
         raf.seek(table_location[0] + 16);
@@ -640,7 +641,7 @@ class OpenTypeParser {
      * Reads the windows metrics table. The metrics are extracted from the table 'OS/2'.
      * Depends from {@code head.unitsPerEm} property, {@see HeaderTable}.
      *
-     * @throws com.itextpdf.basics.PdfException the font is invalid.
+     * @throws IOException the font is invalid.
      * @throws java.io.IOException  the font file could not be read.
      */
     private void readOs_2Table() throws java.io.IOException {
@@ -648,9 +649,9 @@ class OpenTypeParser {
         table_location = tables.get("OS/2");
         if (table_location == null) {
             if (fileName != null) {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2").setMessageParams("os/2", fileName);
+                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("os/2", fileName);
             } else {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist").setMessageParams("os/2");
+                throw new IOException("table.1.does.not.exist").setMessageParams("os/2");
             }
         }
         os_2 = new WindowsMetrics();
@@ -732,9 +733,9 @@ class OpenTypeParser {
         table_location = tables.get("cmap");
         if (table_location == null) {
             if (fileName != null) {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2").setMessageParams("cmap", fileName);
+                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("cmap", fileName);
             } else {
-                throw new com.itextpdf.basics.PdfException("table.1.does.not.exist").setMessageParams("cmap");
+                throw new IOException("table.1.does.not.exist").setMessageParams("cmap");
             }
         }
         raf.seek(table_location[0]);

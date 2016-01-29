@@ -1,7 +1,6 @@
 package com.itextpdf.core.color;
 
-import com.itextpdf.basics.PdfException;
-
+import com.itextpdf.core.PdfException;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 

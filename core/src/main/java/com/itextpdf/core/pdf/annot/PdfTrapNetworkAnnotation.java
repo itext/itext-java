@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.pdf.PdfArray;

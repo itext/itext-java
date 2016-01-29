@@ -1,5 +1,6 @@
 package com.itextpdf.basics.font;
 
+import com.itextpdf.basics.IOException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.basics.source.RandomAccessSourceFactory;
@@ -50,7 +51,7 @@ class Type1Parser {
                 String resourcePath = FontConstants.RESOURCE_PATH + "afm/" + afmPath + ".afm";
                 is = Utilities.getResourceStream(resourcePath, resourceAnchor.getClass().getClassLoader());
                 if (is == null) {
-                    throw new com.itextpdf.basics.PdfException("1.not.found.as.resource").setMessageParams(resourcePath);
+                    throw new IOException("1.not.found.as.resource").setMessageParams(resourcePath);
                 }
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 int read;
@@ -76,7 +77,7 @@ class Type1Parser {
                 rf.close();
                 return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             } else {
-                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1IsNotAnAFMorPfmFontFile).setMessageParams(afmPath);
+                throw new IOException(IOException._1IsNotAnAFMorPfmFontFile).setMessageParams(afmPath);
             }
         } else if (afmData != null) {
             RandomAccessFileOrArray rf = new RandomAccessFileOrArray(sourceFactory.createSource(afmData));
@@ -87,14 +88,14 @@ class Type1Parser {
                 try {
                     Pfm2afm.convert(rf, ba);
                 } catch (Exception ignored) {
-                    throw new com.itextpdf.basics.PdfException("invalid.afm.or.pfm.font.file");
+                    throw new IOException("invalid.afm.or.pfm.font.file");
                 } finally {
                     rf.close();
                 }
                 return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             }
         } else {
-            throw new com.itextpdf.basics.PdfException("invalid.afm.or.pfm.font.file");
+            throw new IOException("invalid.afm.or.pfm.font.file");
         }
     }
 

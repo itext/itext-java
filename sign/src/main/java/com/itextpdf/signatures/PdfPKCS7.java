@@ -1,6 +1,6 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.basics.PdfException;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.core.pdf.PdfName;
 
 import java.io.ByteArrayInputStream;

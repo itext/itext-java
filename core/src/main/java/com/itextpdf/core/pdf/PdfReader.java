@@ -1,7 +1,6 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.source.ByteBuffer;
 import com.itextpdf.basics.source.PdfTokenizer;
@@ -9,6 +8,7 @@ import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.basics.source.RandomAccessSource;
 import com.itextpdf.basics.source.RandomAccessSourceFactory;
 import com.itextpdf.basics.source.WindowRandomAccessSource;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.core.crypto.BadPasswordException;
 import com.itextpdf.core.pdf.filters.FilterHandler;
 import com.itextpdf.core.pdf.filters.FilterHandlers;
@@ -406,7 +406,7 @@ public class PdfReader {
         }
         try {
             readXref();
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             rebuildXref();
         }
         readDecryptObj();
@@ -1202,7 +1202,7 @@ public class PdfReader {
                         tokens.throwError(PdfException.InvalidOffsetForObject1, reference.toString());
                     }
                     object = readObject(false);
-                } catch (PdfException ex) {
+                } catch (RuntimeException ex) {
                     if (fixXref && reference.getObjStreamNumber() == 0) {
                         fixXref();
                         object = readObject(reference, false);
