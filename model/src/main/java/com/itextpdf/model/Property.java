@@ -1,7 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.core.color.Color;
-import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.color.Color;
 
 /**
  * An enum of property names that are used for graphical properties of model

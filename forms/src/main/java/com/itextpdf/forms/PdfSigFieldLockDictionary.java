@@ -1,11 +1,11 @@
 package com.itextpdf.forms;
 
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfObjectWrapper;
-import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfString;
 
 /**
  * A signature field lock dictionary. Specifies a set of form

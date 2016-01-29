@@ -1,6 +1,6 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.core.PdfException;
+import com.itextpdf.kernel.PdfException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

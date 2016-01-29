@@ -1,6 +1,6 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.core.pdf.canvas.draw.Drawable;
+import com.itextpdf.kernel.pdf.canvas.draw.Drawable;
 import com.itextpdf.model.Property;
 
 public class TabStop {

@@ -1,14 +1,14 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.Image;
-import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.font.PdfFontFactory;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfStream;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.model.Canvas;

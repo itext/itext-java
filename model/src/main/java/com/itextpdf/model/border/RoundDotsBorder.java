@@ -1,8 +1,8 @@
 package com.itextpdf.model.border;
 
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.core.color.Color;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.color.Color;
 
 /**
  * Draws a border with rounded dots aroudn the element it's been set to. For square dots see {@link com.itextpdf.model.border.DottedBorder}.

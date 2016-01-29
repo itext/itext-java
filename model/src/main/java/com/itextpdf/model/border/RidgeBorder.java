@@ -1,9 +1,9 @@
 package com.itextpdf.model.border;
 
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.color.DeviceCmyk;
-import com.itextpdf.core.color.DeviceGray;
-import com.itextpdf.core.color.DeviceRgb;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.color.DeviceCmyk;
+import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.color.DeviceRgb;
 
 public class RidgeBorder extends Border3D {
 

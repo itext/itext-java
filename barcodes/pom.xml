@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>kernel</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

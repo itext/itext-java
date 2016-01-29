@@ -1,6 +1,6 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.model.Canvas;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutResult;

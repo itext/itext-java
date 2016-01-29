@@ -1,11 +1,11 @@
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 
 /**
  * An AcroForm field type representing any type of choice field. Choice fields

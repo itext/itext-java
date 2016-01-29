@@ -1,11 +1,11 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
 import com.itextpdf.model.element.Cell;

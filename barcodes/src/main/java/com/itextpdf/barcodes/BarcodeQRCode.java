@@ -4,12 +4,12 @@ import com.itextpdf.barcodes.qrcode.ByteMatrix;
 import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.barcodes.qrcode.QRCodeWriter;
 import com.itextpdf.barcodes.qrcode.WriterException;
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.color.Color;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.util.Map;
 

@@ -1,14 +1,14 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.core.pdf.IPdfPageExtraCopier;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.PdfString;
-import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.IPdfPageExtraCopier;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 
 import org.slf4j.Logger;

@@ -1,9 +1,9 @@
 package com.itextpdf.model;
 
-import com.itextpdf.core.PdfException;
-import com.itextpdf.core.geom.PageSize;
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.element.IElement;

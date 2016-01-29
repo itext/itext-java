@@ -1,15 +1,15 @@
 package com.itextpdf.model;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.utils.CompareTool;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.core.xmp.XMPConst;
-import com.itextpdf.core.xmp.XMPException;
-import com.itextpdf.core.xmp.XMPMeta;
-import com.itextpdf.core.xmp.XMPMetaFactory;
-import com.itextpdf.core.xmp.options.PropertyOptions;
+import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 

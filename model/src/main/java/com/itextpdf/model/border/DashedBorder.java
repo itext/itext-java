@@ -1,7 +1,7 @@
 package com.itextpdf.model.border;
 
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.color.Color;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.color.Color;
 
 /**
  * Draws a border with dashes around the element it's been set to.

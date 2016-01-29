@@ -1,18 +1,18 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.color.Color;
-import com.itextpdf.core.color.DeviceCmyk;
-import com.itextpdf.core.pdf.PdfAConformanceLevel;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfOutputIntent;
-import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.pdf.extgstate.PdfExtGState;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceCmyk;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;

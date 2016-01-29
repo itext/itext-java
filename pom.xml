@@ -22,8 +22,8 @@
 
     <modules>
         <module>barcodes</module>
-        <module>basics</module>
-        <module>core</module>
+        <module>io</module>
+        <module>kernel</module>
         <module>forms</module>
         <module>hyph</module>
         

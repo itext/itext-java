@@ -1,8 +1,8 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.core.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.ListItem;
 import com.itextpdf.model.layout.LayoutContext;

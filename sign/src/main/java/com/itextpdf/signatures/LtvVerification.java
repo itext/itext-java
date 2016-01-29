@@ -1,19 +1,19 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.core.PdfException;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfCatalog;
-import com.itextpdf.core.pdf.PdfDeveloperExtension;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfIndirectReference;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.core.pdf.PdfStream;
-import com.itextpdf.core.pdf.PdfString;
-import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfCatalog;
+import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.forms.PdfAcroForm;
 
 import java.io.ByteArrayInputStream;

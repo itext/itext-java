@@ -1,6 +1,6 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.forms.PdfAcroForm;
 
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;

@@ -3,12 +3,12 @@ package com.itextpdf.barcodes;
 import com.itextpdf.barcodes.dmcode.DmParams;
 import com.itextpdf.barcodes.dmcode.Placement;
 import com.itextpdf.barcodes.dmcode.ReedSolomon;
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.color.Color;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;

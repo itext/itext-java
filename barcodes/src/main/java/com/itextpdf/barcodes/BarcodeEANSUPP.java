@@ -1,11 +1,11 @@
 package com.itextpdf.barcodes;
 
 
-import com.itextpdf.core.PdfException;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.color.Color;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.color.Color;
 
 
 public class BarcodeEANSUPP extends Barcode1D {

@@ -1,6 +1,6 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.renderer.BlockRenderer;
 

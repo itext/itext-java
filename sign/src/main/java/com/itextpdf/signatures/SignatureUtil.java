@@ -1,18 +1,18 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.core.PdfException;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDate;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDate;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 
@@ -268,7 +268,7 @@ public class SignatureUtil {
 
 
     /**
-     * Converts a {@link com.itextpdf.core.pdf.PdfArray} to an array of longs
+     * Converts a {@link com.itextpdf.kernel.pdf.PdfArray} to an array of longs
      *
      * @param pdfArray PdfArray to be converted
      * @return long[] containing the PdfArray values

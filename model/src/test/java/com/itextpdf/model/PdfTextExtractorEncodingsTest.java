@@ -2,12 +2,12 @@ package com.itextpdf.model;
 
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.font.PdfFontFactory;
-import com.itextpdf.core.parser.PdfTextExtractor;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfReader;
-import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.parser.PdfTextExtractor;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;

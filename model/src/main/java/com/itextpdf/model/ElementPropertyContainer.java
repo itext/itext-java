@@ -1,8 +1,8 @@
 package com.itextpdf.model;
 
-import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.core.color.Color;
-import com.itextpdf.core.font.PdfFont;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.model.border.Border;
 import com.itextpdf.model.hyphenation.HyphenationConfig;
 import com.itextpdf.model.layout.LayoutPosition;
@@ -405,7 +405,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * text causes glyph outlines to be stroked, filled, used as a clipping
      * boundary, or some combination of the three.
      * @return the current text rendering mode
-     * @see com.itextpdf.core.pdf.canvas.PdfCanvasConstants.TextRenderingMode
+     * @see com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode
      */
     public Integer getTextRenderingMode() {
         return getProperty(Property.TEXT_RENDERING_MODE);
@@ -417,7 +417,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * boundary, or some combination of the three.
      * @param textRenderingMode an <code>int</code> value
      * @return this Element.
-     * @see com.itextpdf.core.pdf.canvas.PdfCanvasConstants.TextRenderingMode
+     * @see com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode
      */
     public Type setTextRenderingMode(int textRenderingMode) {
         return setProperty(Property.TEXT_RENDERING_MODE, textRenderingMode);
@@ -542,7 +542,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      *            the position multiplication factor with the font size
      * @param lineCapStyle
      *            the end line cap style. Allowed values are enumerated in
-     *            {@link com.itextpdf.core.pdf.canvas.PdfCanvasConstants.LineCapStyle}
+     *            {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineCapStyle}
      * @return this element
      */
     public Type setUnderline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {

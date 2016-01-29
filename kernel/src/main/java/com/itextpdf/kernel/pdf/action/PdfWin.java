@@ -1,0 +1,28 @@
+package com.itextpdf.kernel.pdf.action;
+
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfString;
+
+/**
+* Created by chin on 2/23/2015.
+*/
+public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
+
+    public PdfWin(PdfDictionary pdfObject) {
+        super(pdfObject);
+    }
+
+    public PdfWin(PdfString f) {
+        this(new PdfDictionary());
+        put(PdfName.F, f);
+    }
+
+    public PdfWin(PdfString f, PdfString d, PdfString o, PdfString p) {
+        this(new PdfDictionary());
+        put(PdfName.F, f).put(PdfName.D, d).put(PdfName.O, o).put(PdfName.P, p);
+    }
+
+
+}

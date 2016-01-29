@@ -1,11 +1,11 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.core.font.PdfFontFactory;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

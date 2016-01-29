@@ -1,8 +1,8 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.canvas.CanvasArtifact;
-import com.itextpdf.core.pdf.canvas.draw.Drawable;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.kernel.pdf.canvas.draw.Drawable;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Tab;
 import com.itextpdf.model.layout.LayoutArea;

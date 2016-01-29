@@ -1,9 +1,9 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 
 import java.util.ArrayList;
 import java.util.List;

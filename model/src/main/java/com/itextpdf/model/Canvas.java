@@ -1,10 +1,10 @@
 package com.itextpdf.model;
 
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.model.renderer.CanvasRenderer;
 import com.itextpdf.model.renderer.RootRenderer;
 
@@ -13,7 +13,7 @@ import com.itextpdf.model.renderer.RootRenderer;
  * {@link Canvas} does not know the concept of a page, so it can't reflow to a 'next' {@link Canvas}.
  * 
  * This class effectively acts as a bridge between the high-level <em>model</em>
- * API and the low-level <em>core</em> API.
+ * API and the low-level <em>kernel</em> API.
  */
 public class Canvas extends RootElement<Canvas> {
 

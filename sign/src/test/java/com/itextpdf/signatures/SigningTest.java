@@ -1,10 +1,10 @@
 package com.itextpdf.signatures;
 
 
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfReader;
-import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.utils.CompareTool;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;

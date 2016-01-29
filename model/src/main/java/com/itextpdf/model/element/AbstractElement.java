@@ -1,7 +1,7 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.model.ElementPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.Style;

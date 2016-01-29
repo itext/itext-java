@@ -1,12 +1,12 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.PdfAConformanceLevel;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfOutputIntent;
-import com.itextpdf.core.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.core.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;

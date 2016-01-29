@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.core.color.Color;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.test.annotations.type.UnitTest;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;

@@ -1,7 +1,7 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
 
 public class Div extends BlockElement<Div> {
 

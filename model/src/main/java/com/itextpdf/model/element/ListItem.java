@@ -1,6 +1,6 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.model.renderer.ListItemRenderer;
 
 public class ListItem extends Div {

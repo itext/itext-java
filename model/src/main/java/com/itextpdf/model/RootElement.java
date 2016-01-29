@@ -1,10 +1,10 @@
 package com.itextpdf.model;
 
-import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.font.PdfFontFactory;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.model.element.BlockElement;
 import com.itextpdf.model.element.Div;
 import com.itextpdf.model.element.IElement;

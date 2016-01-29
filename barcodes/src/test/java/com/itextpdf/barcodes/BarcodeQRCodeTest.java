@@ -2,13 +2,13 @@ package com.itextpdf.barcodes;
 
 import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.barcodes.qrcode.ErrorCorrectionLevel;
-import com.itextpdf.core.PdfException;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.color.Color;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.utils.CompareTool;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
 
 
 import java.io.File;

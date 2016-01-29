@@ -1,8 +1,8 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
 import com.itextpdf.model.element.Link;

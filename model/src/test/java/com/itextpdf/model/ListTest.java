@@ -1,11 +1,11 @@
 package com.itextpdf.model;
 
 import com.itextpdf.io.image.ImageFactory;
-import com.itextpdf.core.color.Color;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.pdf.xobject.PdfImageXObject;
-import com.itextpdf.core.utils.CompareTool;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.AreaBreak;
 import com.itextpdf.model.element.Div;

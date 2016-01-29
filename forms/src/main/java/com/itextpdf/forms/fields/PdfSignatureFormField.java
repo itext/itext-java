@@ -1,10 +1,10 @@
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.forms.PdfSigFieldLockDictionary;
 
 

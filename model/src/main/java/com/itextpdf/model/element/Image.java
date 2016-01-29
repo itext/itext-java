@@ -1,12 +1,12 @@
 package com.itextpdf.model.element;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.AccessibleElementProperties;
-import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.core.pdf.xobject.PdfImageXObject;
-import com.itextpdf.core.pdf.xobject.PdfXObject;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutPosition;
 import com.itextpdf.model.renderer.IRenderer;

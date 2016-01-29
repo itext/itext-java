@@ -1,19 +1,19 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.color.IccProfile;
-import com.itextpdf.core.pdf.canvas.CanvasGraphicsState;
-import com.itextpdf.core.color.Color;
-import com.itextpdf.core.pdf.PdfAConformanceLevel;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfCatalog;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.core.pdf.PdfPage;
-import com.itextpdf.core.pdf.PdfStream;
-import com.itextpdf.core.pdf.PdfString;
-import com.itextpdf.core.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfCatalog;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
 import java.util.ArrayList;
 import java.util.HashMap;

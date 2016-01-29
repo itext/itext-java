@@ -1,10 +1,10 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfObjectWrapper;
-import com.itextpdf.core.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfString;
 
 /**
  * A dictionary that stores the name of the application that signs the PDF.

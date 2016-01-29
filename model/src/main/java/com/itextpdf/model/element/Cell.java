@@ -1,7 +1,7 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.border.Border;
 import com.itextpdf.model.border.SolidBorder;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class Cell extends BlockElement<Cell> {
 
-    private static final Border defaultBorder = new SolidBorder(new com.itextpdf.core.color.DeviceRgb(160, 160, 160), 0.5f);
+    private static final Border defaultBorder = new SolidBorder(new com.itextpdf.kernel.color.DeviceRgb(160, 160, 160), 0.5f);
 
     private int row;
     private int col;

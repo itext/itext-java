@@ -1,31 +1,31 @@
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.core.PdfException;
-import com.itextpdf.core.color.Color;
-import com.itextpdf.core.color.DeviceCmyk;
-import com.itextpdf.core.color.DeviceGray;
-import com.itextpdf.core.color.DeviceRgb;
-import com.itextpdf.core.font.PdfFont;
-import com.itextpdf.core.font.PdfFontFactory;
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfArray;
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfIndirectReference;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfNumber;
-import com.itextpdf.core.pdf.PdfObject;
-import com.itextpdf.core.pdf.PdfObjectWrapper;
-import com.itextpdf.core.pdf.PdfResources;
-import com.itextpdf.core.pdf.PdfStream;
-import com.itextpdf.core.pdf.PdfString;
-import com.itextpdf.core.pdf.action.PdfAction;
-import com.itextpdf.core.pdf.annot.PdfAnnotation;
-import com.itextpdf.core.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.core.pdf.xobject.PdfFormXObject;
-import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceCmyk;
+import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfResources;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
@@ -469,7 +469,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param radioGroup the radio button group that this field should belong to
      * @param value      the initial value
      * @return a new {@link PdfFormField}
-     * @see #createRadioGroup(com.itextpdf.core.pdf.PdfDocument, java.lang.String, java.lang.String)
+     * @see #createRadioGroup(com.itextpdf.kernel.pdf.PdfDocument, java.lang.String, java.lang.String)
      */
     public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);

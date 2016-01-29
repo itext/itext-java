@@ -1,10 +1,10 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.action.PdfAction;
-import com.itextpdf.core.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.core.pdf.navigation.PdfDestination;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.model.renderer.LinkRenderer;
 
 public class Link extends Text {

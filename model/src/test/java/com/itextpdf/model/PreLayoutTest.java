@@ -1,12 +1,12 @@
 package com.itextpdf.model;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.core.geom.PageSize;
-import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.core.font.PdfFontFactory;
-import com.itextpdf.core.pdf.PdfDocument;
-import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.utils.CompareTool;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.model.element.Paragraph;
 import com.itextpdf.model.element.Text;

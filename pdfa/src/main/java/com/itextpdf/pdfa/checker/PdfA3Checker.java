@@ -1,10 +1,10 @@
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
-import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.core.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 
 import java.util.Arrays;
 import java.util.HashSet;

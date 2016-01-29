@@ -1,7 +1,7 @@
 package com.itextpdf.model.border;
 
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.color.Color;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.color.Color;
 
 /**
  * Creates a double border around the element it's set to. The space between the two border lines has

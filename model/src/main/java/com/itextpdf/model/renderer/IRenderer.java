@@ -1,7 +1,7 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.core.pdf.canvas.PdfCanvas;
-import com.itextpdf.core.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.model.IPropertyContainer;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;

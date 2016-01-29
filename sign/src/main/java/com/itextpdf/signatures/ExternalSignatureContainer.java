@@ -1,7 +1,7 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.core.pdf.PdfDictionary;
-import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
 
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
