@@ -409,6 +409,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, PdfArray options, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfChoiceFormField field = new PdfChoiceFormField(annot, doc);
+        field.font = font;
+        field.fontSize = fontSize;
         field.put(PdfName.Opt, options);
         field.setFieldFlags(flags);
         field.setFieldName(name);

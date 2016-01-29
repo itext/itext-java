@@ -565,6 +565,17 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
 
+        // In case of appearance resources and page resources are the same object, it would not be possible to add
+        // the xObject to the page resources. So in that case we would copy page resources and use the copy for
+        // xObject, so that circular reference is avoided.
+        // We copy beforehand firstly not to produce a copy every time, and secondly not to copy all the
+        // xObjects that have already been added to the page resources.
+        Map<Integer, PdfObject> initialPageResourceClones = new LinkedHashMap<>();
+        for (int i = 1; i <= document.getNumberOfPages(); i++) {
+            PdfObject resources = document.getPage(i).getPdfObject().getAsDictionary(PdfName.Resources);
+            initialPageResourceClones.put(i, resources == null ? null : resources.clone());
+        }
+
         PdfPage page;
         for (PdfFormField field : fields) {
             page = getFieldPage(field.getPdfObject());
@@ -604,6 +615,16 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead);
                     }
                     PdfCanvas canvas = new PdfCanvas(page);
+
+                    // Here we avoid circular reference which might occur when page resources and the appearance xObject's
+                    // resources are the same object
+                    PdfObject xObjectResources = xObject.getPdfObject().get(PdfName.Resources);
+                    PdfObject pageResources = page.getResources().getPdfObject();
+                    if (xObjectResources != null && pageResources != null &&
+                            xObjectResources == pageResources) {
+                        xObject.getPdfObject().put(PdfName.Resources, initialPageResourceClones.get(document.getPageNumber(page)));
+                    }
+                    
                     canvas.addXObject(xObject, box.getX(), box.getY());
                 }
             }

@@ -215,7 +215,7 @@ abstract public class PdfObject {
      * @return cloned object.
      */
     @Override
-    public Object clone() {
+    public PdfObject clone() {
         PdfObject newObject = newInstance();
         if (indirectReference != null || checkState(MustBeIndirect)) {
             newObject.setState(MustBeIndirect);
