@@ -4,13 +4,27 @@ import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.color.Color;
 
+/**
+ * Draws a border with rounded dots aroudn the element it's been set to. For square dots see {@link com.itextpdf.model.border.DottedBorder}.
+ */
 public class RoundDotsBorder extends Border {
     private static final float gapModifier = 2.5f;
 
+    /**
+     * Creates a RoundDotsBorder with the specified witµdth and sets the color to black.
+     *
+     * @param width width of the border
+     */
     public RoundDotsBorder(float width) {
         super(width);
     }
 
+    /**
+     * Creates a RoundDotsBorder with the specified witµdth and the specified color.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     */
     public RoundDotsBorder(Color color, float width) {
         super(color, width);
     }

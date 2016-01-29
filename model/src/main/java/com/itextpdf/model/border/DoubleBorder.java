@@ -3,12 +3,30 @@ package com.itextpdf.model.border;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 
+/**
+ * Creates a double border around the element it's set to. The space between the two border lines has
+ * the same width as the two borders. If a background has been set on the element the color will show in
+ * between the two borders.
+ */
 public class DoubleBorder extends Border{
 
+    /**
+     * Creates a DoubleBorder with the specified width for both the two borders as the space in between them.
+     * The color is set to the default: black.
+     *
+     * @param width width of the borders and the space between them
+     */
     public DoubleBorder(float width) {
         super(width);
     }
 
+    /**
+     * Creates a DoubleBorder with the specified width for both the two borders as the space in between them and
+     * the specified color for the two borders. The space in between the two borders is either colorless or will
+     * be filled with the background color of the element, if a color has been set.
+     *
+     * @param width width of the borders and the space between them
+     */
     public DoubleBorder(Color color, float width) {
         super(color, width);
     }
@@ -106,16 +124,12 @@ public class DoubleBorder extends Border{
 
     @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
-//        float x3 = 0, y3 = 0;
-//        float x4 = 0, y4 = 0;
         float thirdOfWidth = width / 3;
 
         Border.Side borderSide = getBorderSide(x1, y1, x2, y2);
 
         switch (borderSide) {
             case TOP:
-                //x1 += thirdOfWidth;
-                //x2 += 2*thirdOfWidth;
                 y1 -= thirdOfWidth;
                 y2 = y1;
                 break;

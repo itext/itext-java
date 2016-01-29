@@ -3,13 +3,28 @@ package com.itextpdf.model.border;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 
+/**
+ * Draws a dotted border around the element it has been set to. Do note that this border draw square dots,
+ * if you want to draw round dots, see {@link com.itextpdf.model.border.RoundDotsBorder}.
+ */
 public class DottedBorder extends Border {
+
     private static final float gapModifier = 1.5f;
 
+    /**
+     * Creates a DotterBorder instance with the specified width. The color is set to the default: black.
+     * @param width width of the border
+     */
     public DottedBorder(float width) {
         super(width);
     }
 
+    /**
+     * Creates a DottedBorder instance with the specified width and color.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     */
     public DottedBorder(Color color, float width) {
         super(color, width);
     }

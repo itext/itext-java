@@ -3,12 +3,26 @@ package com.itextpdf.model.border;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 
+/**
+ * Draws a solid border around the element it's set to.
+ */
 public class SolidBorder extends Border {
 
+    /**
+     * Creates a SolidBorder with the specified width and sets the color to black.
+     *
+     * @param width width of the border
+     */
     public SolidBorder(float width) {
         super(width);
     }
 
+    /**
+     * Creates a SolidBorder with the specified width and the specified color.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     */
     public SolidBorder(Color color, float width) {
         super(color, width);
     }

@@ -3,15 +3,29 @@ package com.itextpdf.model.border;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 
+/**
+ * Draws a border with dashes around the element it's been set to.
+ */
 public class DashedBorder extends Border {
 
     private static final float dashModifier = 5f;
     private static final float gapModifier = 3.5f;
 
+    /**
+     * Creates a DashedBorder with the specified width and sets the color to black.
+     *
+     * @param width width of the border
+     */
     public DashedBorder(float width) {
         super(width);
     }
-    
+
+    /**
+     * Creates a DashedBorder with the specified width and the specified color.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     */
     public DashedBorder(Color color, float width) {
         super(color, width);
     }
