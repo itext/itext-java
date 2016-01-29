@@ -1,6 +1,7 @@
 package com.itextpdf.model;
 
 import com.itextpdf.core.color.Color;
+import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 
 /**
  * An enum of property names that are used for graphical properties of model
@@ -73,7 +74,7 @@ public enum Property {
     TAB_STOPS,
     TEXT_ALIGNMENT(true),
     /**
-     * Use values from {@link PdfCanvasConstants#TextRenderingMode}.
+     * Use values from .
      */
     TEXT_RENDERING_MODE(true),
     TEXT_RISE(true),
