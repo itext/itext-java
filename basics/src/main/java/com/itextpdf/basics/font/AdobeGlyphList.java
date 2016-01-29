@@ -1,6 +1,6 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

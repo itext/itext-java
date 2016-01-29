@@ -1,14 +1,14 @@
 package com.itextpdf.core.pdf.canvas;
 
 import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.font.CidFont;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontFactory;
 import com.itextpdf.basics.font.TrueTypeCollection;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.Type1Font;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 import com.itextpdf.core.font.*;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;

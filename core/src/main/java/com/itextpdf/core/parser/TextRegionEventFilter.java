@@ -1,6 +1,6 @@
 package com.itextpdf.core.parser;
 
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 
 /**
  * This {@link EventFilter} implementation only accepts text render events within the specified

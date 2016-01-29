@@ -44,7 +44,7 @@
  */
 package com.itextpdf.basics.font.otf;
 
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 
 import java.util.Arrays;
 

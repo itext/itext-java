@@ -1,14 +1,11 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.IntHashtable;
+import com.itextpdf.basics.util.IntHashtable;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.core.pdf.*;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * This class allow to parse document font's encoding.

@@ -1,6 +1,6 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.TabStop;
 import com.itextpdf.model.layout.LayoutArea;

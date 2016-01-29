@@ -1,7 +1,7 @@
 package com.itextpdf.signatures;
 
 
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.utils.CompareTool;

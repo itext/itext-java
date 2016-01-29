@@ -1,6 +1,6 @@
 package com.itextpdf.basics.codec;
 
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

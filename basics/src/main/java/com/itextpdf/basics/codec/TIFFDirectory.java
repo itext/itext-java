@@ -46,7 +46,7 @@
 package com.itextpdf.basics.codec;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
 import java.io.EOFException;
 import java.io.IOException;

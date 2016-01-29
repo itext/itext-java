@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf.canvas.wmf;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.image.Image;
 
 import java.io.ByteArrayInputStream;

@@ -1,14 +1,16 @@
 package com.itextpdf.barcodes;
 
-import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfDocument;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Barcode128 extends Barcode1D {
 
@@ -176,7 +178,7 @@ public class Barcode128 extends Barcode1D {
     public static final char STARTB = '\u00cc';
     public static final char STARTC = '\u00cd';
 
-    private static IntHashtable ais = new IntHashtable();
+    private static Map<Integer, Integer> ais = new HashMap<>();
 
     /**
      * Creates new Barcode128
@@ -261,7 +263,9 @@ public class Barcode128 extends Barcode1D {
             for (int k = 2; k < 5; ++k) {
                 if (code.length() < k)
                     break;
-                if ((n = ais.get(Integer.parseInt(code.substring(0, k)))) != 0) {
+                Integer subcode = Integer.parseInt(code.substring(0, k));
+                n = ais.containsKey(subcode) ? ais.get(subcode) : 0;
+                if (n != 0) {
                     idlen = k;
                     break;
                 }

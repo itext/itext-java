@@ -1,14 +1,14 @@
 package com.itextpdf.core.pdf.canvas;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
-import com.itextpdf.basics.geom.AffineTransform;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.AffineTransform;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.io.OutputStream;
+import com.itextpdf.basics.source.OutputStream;
 import com.itextpdf.core.pdf.canvas.wmf.WmfImageHelper;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.PatternColor;

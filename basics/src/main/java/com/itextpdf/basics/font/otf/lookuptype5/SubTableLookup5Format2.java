@@ -5,6 +5,7 @@ import com.itextpdf.basics.font.otf.ContextualSubTable;
 import com.itextpdf.basics.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.basics.font.otf.OtfClass;
 import com.itextpdf.basics.font.otf.SubstLookupRecord;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;

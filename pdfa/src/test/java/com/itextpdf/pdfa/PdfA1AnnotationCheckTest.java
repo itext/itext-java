@@ -1,7 +1,7 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.basics.geom.Rectangle;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.core.geom.Rectangle;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfNumber;

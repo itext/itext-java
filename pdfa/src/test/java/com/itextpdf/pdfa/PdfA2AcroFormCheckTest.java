@@ -1,6 +1,6 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfBoolean;

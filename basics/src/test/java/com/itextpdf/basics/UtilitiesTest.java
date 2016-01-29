@@ -1,5 +1,6 @@
 package com.itextpdf.basics;
 
+import com.itextpdf.basics.util.Utilities;
 import org.junit.Assert;
 import org.junit.Test;
 

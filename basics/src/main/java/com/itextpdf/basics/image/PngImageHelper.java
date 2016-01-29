@@ -1,11 +1,11 @@
 package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.basics.io.ByteBuffer;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteBuffer;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;

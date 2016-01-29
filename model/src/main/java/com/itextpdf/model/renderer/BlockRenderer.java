@@ -1,8 +1,8 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.geom.AffineTransform;
-import com.itextpdf.basics.geom.Point2D;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.AffineTransform;
+import com.itextpdf.core.geom.Point2D;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.*;
 import com.itextpdf.core.pdf.tagutils.IAccessibleElement;

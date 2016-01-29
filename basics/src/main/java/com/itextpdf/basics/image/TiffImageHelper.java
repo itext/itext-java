@@ -9,10 +9,10 @@ import com.itextpdf.basics.codec.TIFFField;
 import com.itextpdf.basics.codec.TIFFLZWDecoder;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
-import com.itextpdf.basics.io.RandomAccessSource;
-import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
+import com.itextpdf.basics.source.RandomAccessSource;
+import com.itextpdf.basics.source.RandomAccessSourceFactory;
 
 import java.io.IOException;
 import java.io.InputStream;

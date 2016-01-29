@@ -1,7 +1,7 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.font.cmap.CMapByteCid;
 import com.itextpdf.basics.font.cmap.CMapCidByte;
 import com.itextpdf.basics.font.cmap.CMapCidUni;

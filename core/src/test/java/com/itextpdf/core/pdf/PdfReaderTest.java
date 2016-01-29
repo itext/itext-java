@@ -2,8 +2,8 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.basics.io.OutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
+import com.itextpdf.basics.source.OutputStream;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;

@@ -1,6 +1,6 @@
 package com.itextpdf.core.parser;
 
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 
 /**
  * Represents a line segment in a particular coordinate system.  This class is immutable.

@@ -3,7 +3,7 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -244,7 +244,7 @@ public class Type1Font extends FontProgram {
                     int lly = (int) Float.parseFloat(tok.nextToken());
                     int urx = (int) Float.parseFloat(tok.nextToken());
                     int ury = (int) Float.parseFloat(tok.nextToken());
-                    fontMetrics.getBbox().setBbox(llx, lly, urx, ury);
+                    fontMetrics.setBbox(llx, lly, urx, ury);
                     break;
                 case "UnderlinePosition":
                     fontMetrics.setUnderlinePosition((int) Float.parseFloat(tok.nextToken()));

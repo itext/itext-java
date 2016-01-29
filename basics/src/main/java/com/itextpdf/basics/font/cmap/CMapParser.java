@@ -1,7 +1,7 @@
 package com.itextpdf.basics.font.cmap;
 
 import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.io.PdfTokenizer;
+import com.itextpdf.basics.source.PdfTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

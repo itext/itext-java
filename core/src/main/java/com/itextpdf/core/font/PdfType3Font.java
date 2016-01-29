@@ -4,7 +4,7 @@ import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.AdobeGlyphList;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -51,8 +51,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         Rectangle fontBBoxRec = getPdfObject().getAsArray(PdfName.FontBBox).toRectangle();
         PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
-        fontProgram.getFontMetrics().getBbox()
-                .setBbox(fontBBoxRec.getX(), fontBBoxRec.getY(), fontBBoxRec.getWidth(), fontBBoxRec.getHeight());
+        fontProgram.getFontMetrics().setBbox((int) fontBBoxRec.getLeft(), (int) fontBBoxRec.getBottom(),
+                (int) fontBBoxRec.getRight(), (int) fontBBoxRec.getTop());
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
         int[] widths = FontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
@@ -120,15 +120,15 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         fontEncoding.addSymbol((byte) code, c);
 
         if (!fontProgram.isColorized()) {
-            Rectangle bbox = fontProgram.getFontMetrics().getBbox();
             if (fontProgram.countOfGlyphs() == 0) {
-                bbox.setBbox(llx, lly, urx, ury);
+                fontProgram.getFontMetrics().setBbox(llx, lly, urx, ury);
             } else {
-                float newLlx = Math.min(bbox.getLeft(), llx);
-                float newLly = Math.min(bbox.getBottom(), lly);
-                float newUrx = Math.max(bbox.getRight(), urx);
-                float newUry = Math.max(bbox.getTop(), ury);
-                bbox.setBbox(newLlx, newLly, newUrx, newUry);
+                int[] bbox = fontProgram.getFontMetrics().getBbox();
+                int newLlx = Math.min(bbox[0], llx);
+                int newLly = Math.min(bbox[1], lly);
+                int newUrx = Math.max(bbox[2], urx);
+                int newUry = Math.max(bbox[3], ury);
+                fontProgram.getFontMetrics().setBbox(newLlx, newLly, newUrx, newUry);
             }
         }
         return glyph;

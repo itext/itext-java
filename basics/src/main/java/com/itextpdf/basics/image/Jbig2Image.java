@@ -3,9 +3,9 @@ package com.itextpdf.basics.image;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.codec.Jbig2SegmentReader;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
-import com.itextpdf.basics.io.RandomAccessSource;
-import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
+import com.itextpdf.basics.source.RandomAccessSource;
+import com.itextpdf.basics.source.RandomAccessSourceFactory;
 
 import java.net.URL;
 

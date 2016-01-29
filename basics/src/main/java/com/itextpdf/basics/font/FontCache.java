@@ -1,8 +1,8 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.IntHashtable;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.font.cmap.AbstractCMap;
 import com.itextpdf.basics.font.cmap.CMapByteCid;
 import com.itextpdf.basics.font.cmap.CMapCidByte;

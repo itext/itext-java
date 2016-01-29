@@ -1,8 +1,8 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.geom.PageSize;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
+import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.core.Version;
 import com.itextpdf.core.crypto.BadPasswordException;
 import com.itextpdf.core.events.EventDispatcher;
@@ -29,7 +29,14 @@ import com.itextpdf.core.xmp.options.SerializeOptions;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PdfDocument implements IEventDispatcher {
 

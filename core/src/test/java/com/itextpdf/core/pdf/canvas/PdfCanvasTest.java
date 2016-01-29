@@ -2,11 +2,11 @@ package com.itextpdf.core.pdf.canvas;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 import com.itextpdf.core.color.CalGray;
 import com.itextpdf.core.color.CalRgb;
 import com.itextpdf.core.color.Color;

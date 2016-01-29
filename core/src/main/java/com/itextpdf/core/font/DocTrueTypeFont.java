@@ -1,6 +1,6 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.IntHashtable;
+import com.itextpdf.basics.util.IntHashtable;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;

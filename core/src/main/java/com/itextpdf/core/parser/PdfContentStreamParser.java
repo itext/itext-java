@@ -1,8 +1,15 @@
 package com.itextpdf.core.parser;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.PdfTokenizer;
-import com.itextpdf.core.pdf.*;
+import com.itextpdf.basics.source.PdfTokenizer;
+import com.itextpdf.core.pdf.PdfArray;
+import com.itextpdf.core.pdf.PdfDictionary;
+import com.itextpdf.core.pdf.PdfLiteral;
+import com.itextpdf.core.pdf.PdfName;
+import com.itextpdf.core.pdf.PdfNumber;
+import com.itextpdf.core.pdf.PdfObject;
+import com.itextpdf.core.pdf.PdfStream;
+import com.itextpdf.core.pdf.PdfString;
 
 import java.io.IOException;
 import java.util.ArrayList;

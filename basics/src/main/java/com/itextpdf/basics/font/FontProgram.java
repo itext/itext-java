@@ -219,7 +219,7 @@ public abstract class FontProgram {
     }
 
     protected void setBbox(int[] bbox) {
-        fontMetrics.getBbox().setBbox(bbox[0], bbox[1], bbox[2], bbox[3]);
+        fontMetrics.setBbox(bbox[0], bbox[1], bbox[2], bbox[3]);
     }
 
     protected void setFontFamily(String fontFamily) {

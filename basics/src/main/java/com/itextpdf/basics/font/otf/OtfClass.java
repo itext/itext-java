@@ -5,8 +5,8 @@
  */
 package com.itextpdf.basics.font.otf;
 
-import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
+import com.itextpdf.basics.util.IntHashtable;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
 import java.io.IOException;
 

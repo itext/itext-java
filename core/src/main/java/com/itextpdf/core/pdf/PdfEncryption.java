@@ -1,8 +1,8 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
-import com.itextpdf.basics.io.ByteBuffer;
+import com.itextpdf.basics.util.Utilities;
+import com.itextpdf.basics.source.ByteBuffer;
 import com.itextpdf.core.crypto.AESCipherCBCnoPad;
 import com.itextpdf.core.crypto.ARCFOUREncryption;
 import com.itextpdf.core.crypto.BadPasswordException;

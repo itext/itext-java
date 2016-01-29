@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.annot;
 
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfBoolean;
 import com.itextpdf.core.pdf.PdfDictionary;

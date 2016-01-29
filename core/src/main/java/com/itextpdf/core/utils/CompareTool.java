@@ -1,7 +1,7 @@
 package com.itextpdf.core.utils;
 
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfBoolean;
 import com.itextpdf.core.pdf.PdfDictionary;
@@ -426,24 +426,24 @@ public class CompareTool {
                 PdfStream outStream = getPageContentStream(pdfOutDoc.getPage(pageNumber));
                 PdfStream cmpStream = getPageContentStream(pdfCmpDoc.getPage(pageNumber));
 
-                outStream.getOutputStream().writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("q\n"));
-                outStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("rg\n"));
-                cmpStream.getOutputStream().writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("q\n"));
-                cmpStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("rg\n"));
+                outStream.getOutputStream().writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("q\n"));
+                outStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("rg\n"));
+                cmpStream.getOutputStream().writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("q\n"));
+                cmpStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("rg\n"));
 
                 for (Rectangle rect : rectangles) {
                     outStream.getOutputStream().writeFloats(new float[]{rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()}).
                             writeSpace().
-                            writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("re\n")).
-                            writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("f\n"));
+                            writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("re\n")).
+                            writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("f\n"));
 
                     cmpStream.getOutputStream().writeFloats(new float[]{rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()}).
                             writeSpace().
-                            writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("re\n")).
-                            writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("f\n"));
+                            writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("re\n")).
+                            writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("f\n"));
                 }
-                outStream.getOutputStream().writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("Q\n"));
-                cmpStream.getOutputStream().writeBytes(com.itextpdf.basics.io.OutputStream.getIsoBytes("Q\n"));
+                outStream.getOutputStream().writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("Q\n"));
+                cmpStream.getOutputStream().writeBytes(com.itextpdf.basics.source.OutputStream.getIsoBytes("Q\n"));
             }
         }
 

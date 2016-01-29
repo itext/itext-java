@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf.xobject;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;

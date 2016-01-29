@@ -1,6 +1,6 @@
 package com.itextpdf.model.layout;
 
-import com.itextpdf.basics.geom.PageSize;
+import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.model.renderer.IRenderer;
 
 public class LayoutResult {

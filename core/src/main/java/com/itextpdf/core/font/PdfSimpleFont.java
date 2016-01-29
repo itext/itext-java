@@ -1,6 +1,6 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.FontEncoding;
 import com.itextpdf.basics.font.FontMetrics;

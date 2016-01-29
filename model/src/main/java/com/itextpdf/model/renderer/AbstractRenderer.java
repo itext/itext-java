@@ -1,6 +1,6 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.canvas.CanvasArtifact;
 import com.itextpdf.core.color.Color;

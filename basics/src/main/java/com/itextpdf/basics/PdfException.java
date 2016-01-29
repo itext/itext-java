@@ -3,8 +3,6 @@ package com.itextpdf.basics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 public class PdfException extends RuntimeException {
 
@@ -312,10 +310,9 @@ public class PdfException extends RuntimeException {
         return ResourceLocaleBundle.getMessage(ERROR_MESSAGE_LOCALE_PATH, super.getMessage(), messageParams);
     }
 
-    public PdfException setMessageParams(Object... messageParams) { // TODO: make it to be constructor parameter
+    public PdfException setMessageParams(Object... messageParams) {
         this.messageParams = new ArrayList<>();
         Collections.addAll(this.messageParams, messageParams);
         return this;
     }
-
 }

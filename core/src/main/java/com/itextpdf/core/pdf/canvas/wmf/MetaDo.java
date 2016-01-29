@@ -2,7 +2,7 @@ package com.itextpdf.core.pdf.canvas.wmf;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
@@ -587,7 +587,7 @@ public class MetaDo {
         float tx = 0;
         float ty = 0;
         float descender = fp.getFontMetrics().getTypoDescender();
-        float ury = fp.getFontMetrics().getBbox().getTop();
+        float ury = fp.getFontMetrics().getBbox()[3];
         cb.saveState();
         cb.concatMatrix(cos, sin, -sin, cos, refX, refY);
         if ((align & MetaState.TA_CENTER) == MetaState.TA_CENTER) {

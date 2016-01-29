@@ -2,9 +2,9 @@ package com.itextpdf.basics.font.cmap;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.io.ByteBuffer;
-import com.itextpdf.basics.io.PdfTokenizer;
-import com.itextpdf.basics.io.PdfTokenizer.TokenType;
+import com.itextpdf.basics.source.ByteBuffer;
+import com.itextpdf.basics.source.PdfTokenizer;
+import com.itextpdf.basics.source.PdfTokenizer.TokenType;
 
 import java.io.IOException;
 import java.util.ArrayList;

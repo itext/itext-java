@@ -14,7 +14,7 @@ public class Type3FontProgram extends FontProgram {
 
     public Type3FontProgram(boolean colorized) {
         this.colorized = colorized;
-        getFontMetrics().getBbox().setBbox(0,0,0,0);
+        getFontMetrics().setBbox(0, 0, 0, 0);
     }
 
     public Type3Glyph getType3Glyph(int unicode) {

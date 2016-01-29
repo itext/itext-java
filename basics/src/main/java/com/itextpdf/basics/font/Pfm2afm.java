@@ -137,7 +137,7 @@
  ********************************************************************/
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -1,8 +1,8 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;

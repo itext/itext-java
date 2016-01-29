@@ -2,7 +2,7 @@ package com.itextpdf.core.font;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.io.OutputStream;
+import com.itextpdf.basics.source.OutputStream;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfStream;

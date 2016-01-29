@@ -1,9 +1,9 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
+import com.itextpdf.basics.util.IntHashtable;
 
 import java.util.Map;
 import java.util.Set;

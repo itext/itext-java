@@ -1,8 +1,8 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.IntHashtable;
+import com.itextpdf.basics.util.IntHashtable;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.font.CFFFontSubset;
 import com.itextpdf.basics.font.CMapEncoding;
 import com.itextpdf.basics.font.CidFont;
@@ -15,7 +15,6 @@ import com.itextpdf.basics.font.cmap.CMapContentParser;
 import com.itextpdf.basics.font.cmap.CMapToUnicode;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
-import com.itextpdf.basics.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfLiteral;
@@ -385,8 +384,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         markObjectAsIndirect(fontDescriptor);
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
         fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
-        Rectangle fontBBox = new Rectangle(getFontProgram().getFontMetrics().getBbox().clone());
-        fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontBBox));
+        fontDescriptor.put(PdfName.FontBBox, new PdfArray(getFontProgram().getFontMetrics().getBbox()));
         fontDescriptor.put(PdfName.Ascent, new PdfNumber(getFontProgram().getFontMetrics().getTypoAscender()));
         fontDescriptor.put(PdfName.Descent, new PdfNumber(getFontProgram().getFontMetrics().getTypoDescender()));
         fontDescriptor.put(PdfName.CapHeight, new PdfNumber(getFontProgram().getFontMetrics().getCapHeight()));

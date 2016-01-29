@@ -1,7 +1,7 @@
 package com.itextpdf.core.utils;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObject;

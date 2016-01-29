@@ -2,8 +2,8 @@ package com.itextpdf.basics.font;
 
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
-import com.itextpdf.basics.io.RandomAccessSourceFactory;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
+import com.itextpdf.basics.source.RandomAccessSourceFactory;
 
 import java.io.File;
 import java.io.IOException;

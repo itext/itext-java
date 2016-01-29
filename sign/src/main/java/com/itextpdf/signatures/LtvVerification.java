@@ -2,7 +2,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.io.ByteBuffer;
+import com.itextpdf.basics.source.ByteBuffer;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfCatalog;
 import com.itextpdf.core.pdf.PdfDeveloperExtension;

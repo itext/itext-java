@@ -6,6 +6,7 @@ import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.font.otf.OpenTableLookup;
 import com.itextpdf.basics.font.otf.OpenTypeFontTableReader;
+
 import java.util.List;
 
 public abstract class SubTableLookup6 extends ContextualSubTable {

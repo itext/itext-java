@@ -1,8 +1,8 @@
 package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
-import com.itextpdf.basics.io.OutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
+import com.itextpdf.basics.source.OutputStream;
 import com.itextpdf.core.crypto.OutputStreamEncryption;
 import com.itextpdf.core.pdf.filters.FlateDecodeFilter;
 

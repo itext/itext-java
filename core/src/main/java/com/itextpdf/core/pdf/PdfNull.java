@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.io.OutputStream;
+import com.itextpdf.basics.source.OutputStream;
 
 /**
  * Representation of the null object in the PDF specification.

@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.IntHashtable;
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.otf.Glyph;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.itextpdf.basics.util.IntHashtable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

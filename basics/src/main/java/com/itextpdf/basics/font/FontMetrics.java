@@ -1,7 +1,5 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.geom.Rectangle;
-
 public class FontMetrics {
 
     protected float normalizationCoef = 1f;
@@ -24,7 +22,7 @@ public class FontMetrics {
     private float italicAngle = 0;
     // llx: head.xMin * normalization; lly: head.yMin * normalization
     // urx: head.xMax * normalization; ury: head.yMax * normalization
-    private Rectangle bbox = new Rectangle(-50, -200, 1050, 1100);
+    private int[] bbox = new int[]{-50, -200, 1000, 900};
     // hhea.Ascender * normalization
     private int ascender;
     // hhea.Descender * normalization
@@ -93,8 +91,15 @@ public class FontMetrics {
         return italicAngle;
     }
 
-    public Rectangle getBbox() {
+    public int[] getBbox() {
         return bbox;
+    }
+
+    public void setBbox(int llx, int lly, int urx, int ury){
+        bbox[0] = llx;
+        bbox[1] = lly;
+        bbox[2] = urx;
+        bbox[3] = ury;
     }
 
     public int getAscender() {
@@ -167,16 +172,14 @@ public class FontMetrics {
 
     protected void setUnitsPerEm(int unitsPerEm) {
         this.unitsPerEm = unitsPerEm;
-        normalizationCoef = (float)FontProgram.UNITS_NORMALIZATION / unitsPerEm;
+        normalizationCoef = (float) FontProgram.UNITS_NORMALIZATION / unitsPerEm;
     }
 
     protected void updateBbox(float llx, float lly, float urx, float ury) {
-        getBbox().setBbox(
-                (int) (llx * normalizationCoef),
-                (int) (lly * normalizationCoef),
-                (int) (urx * normalizationCoef),
-                (int) (ury * normalizationCoef)
-        );
+        bbox[0] = (int) (llx * normalizationCoef);
+        bbox[1] = (int) (lly * normalizationCoef);
+        bbox[2] = (int) (urx * normalizationCoef);
+        bbox[3] = (int) (ury * normalizationCoef);
     }
 
     protected void setMaxGlyphId(int maxGlyphId) {

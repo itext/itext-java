@@ -2,7 +2,7 @@ package com.itextpdf.basics.image;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;

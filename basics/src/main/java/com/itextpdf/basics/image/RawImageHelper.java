@@ -3,7 +3,7 @@ package com.itextpdf.basics.image;
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.codec.TIFFFaxDecoder;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package com.itextpdf.core.parser.clipper;
 
-import com.itextpdf.basics.geom.Point2D;
+import com.itextpdf.core.geom.Point2D;
 import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.parser.Subpath;
 

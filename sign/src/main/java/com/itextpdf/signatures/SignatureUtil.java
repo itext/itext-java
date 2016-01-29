@@ -2,10 +2,10 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.io.RASInputStream;
-import com.itextpdf.basics.io.RandomAccessFileOrArray;
-import com.itextpdf.basics.io.RandomAccessSourceFactory;
-import com.itextpdf.basics.io.WindowRandomAccessSource;
+import com.itextpdf.basics.source.RASInputStream;
+import com.itextpdf.basics.source.RandomAccessFileOrArray;
+import com.itextpdf.basics.source.RandomAccessSourceFactory;
+import com.itextpdf.basics.source.WindowRandomAccessSource;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDate;
 import com.itextpdf.core.pdf.PdfDictionary;

@@ -5,7 +5,7 @@ import com.itextpdf.basics.font.FontProgram;
 import com.itextpdf.basics.font.TrueTypeFont;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.canvas.CanvasArtifact;

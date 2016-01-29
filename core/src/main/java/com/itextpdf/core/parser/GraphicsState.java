@@ -1,8 +1,8 @@
 package com.itextpdf.core.parser;
 
-import com.itextpdf.basics.geom.AffineTransform;
-import com.itextpdf.basics.geom.NoninvertibleTransformException;
-import com.itextpdf.basics.geom.Point2D;
+import com.itextpdf.core.geom.AffineTransform;
+import com.itextpdf.core.geom.NoninvertibleTransformException;
+import com.itextpdf.core.geom.Point2D;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.parser.clipper.Clipper;

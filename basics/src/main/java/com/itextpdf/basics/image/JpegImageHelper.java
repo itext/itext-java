@@ -2,9 +2,9 @@ package com.itextpdf.basics.image;
 
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.color.IccProfile;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;

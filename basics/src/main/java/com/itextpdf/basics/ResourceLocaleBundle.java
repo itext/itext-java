@@ -10,7 +10,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public class ResourceLocaleBundle {
+class ResourceLocaleBundle {
 
     public final static Locale DEFAULT_LOCALE = Locale.ENGLISH;
     public final static Set<String> locales = new HashSet(Arrays.asList("en", "pt", "nl"));

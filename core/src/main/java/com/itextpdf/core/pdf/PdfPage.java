@@ -2,8 +2,8 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.basics.LogMessageConstant;
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.geom.PageSize;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.PageSize;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.events.PdfDocumentEvent;
 import com.itextpdf.core.pdf.action.PdfAction;
 import com.itextpdf.core.pdf.annot.PdfAnnotation;

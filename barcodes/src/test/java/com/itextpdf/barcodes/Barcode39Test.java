@@ -1,7 +1,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.ByteArrayOutputStream;
+import com.itextpdf.basics.source.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfDocument;

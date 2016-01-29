@@ -1,7 +1,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.basics.PdfException;
-import com.itextpdf.basics.io.StreamUtil;
+import com.itextpdf.basics.source.StreamUtil;
 import com.itextpdf.core.pdf.PdfEncryption;
 
 import java.io.BufferedOutputStream;

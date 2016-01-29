@@ -1,7 +1,7 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.IntHashtable;
-import com.itextpdf.basics.Utilities;
+import com.itextpdf.basics.util.IntHashtable;
+import com.itextpdf.basics.util.Utilities;
 
 import java.io.IOException;
 import java.io.InputStream;

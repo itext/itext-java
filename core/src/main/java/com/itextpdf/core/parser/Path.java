@@ -1,8 +1,7 @@
 package com.itextpdf.core.parser;
 
-
-import com.itextpdf.basics.geom.Point2D;
-import com.itextpdf.basics.geom.Rectangle;
+import com.itextpdf.core.geom.Point2D;
+import com.itextpdf.core.geom.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
