@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font.otf;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,7 @@ public class GsubLookupType3 extends OpenTableLookup {
 
     private Map<Integer, int[]> substMap;
 
-    public GsubLookupType3(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
+    public GsubLookupType3(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
         substMap = new HashMap<>();
         readSubTables();
@@ -38,7 +37,7 @@ public class GsubLookupType3 extends OpenTableLookup {
     }
 
     @Override
-    protected void readSubTable(int subTableLocation) throws IOException {
+    protected void readSubTable(int subTableLocation) throws java.io.IOException {
         openReader.rf.seek(subTableLocation);
         int substFormat = openReader.rf.readShort();
         assert substFormat == 1;

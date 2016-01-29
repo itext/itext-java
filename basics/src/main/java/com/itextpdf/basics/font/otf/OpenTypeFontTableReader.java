@@ -47,7 +47,6 @@ package com.itextpdf.basics.font.otf;
 import com.itextpdf.basics.util.IntHashtable;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -73,7 +72,7 @@ public abstract class OpenTypeFontTableReader {
     private final int unitsPerEm;
 
 	public OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation, OpenTypeGdefTableReader gdef,
-                                   Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws IOException {
+                                   Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws java.io.IOException {
 		this.rf = rf;
 		this.tableLocation = tableLocation;
         this.indexGlyphMap = indexGlyphMap;
@@ -122,7 +121,7 @@ public abstract class OpenTypeFontTableReader {
             featuresType = new OpenTypeFeature(this, tableLocation + featureListOffset);
 			// read LookUpList table
 			readLookupListTable(tableLocation + lookupListOffset);
-		} catch (IOException e) {
+		} catch (java.io.IOException e) {
 			throw new FontReadingException("Error reading font file", e);
 		}
 	}
@@ -221,34 +220,34 @@ public abstract class OpenTypeFontTableReader {
     }
     
 	protected abstract OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
-			throws IOException;
+			throws java.io.IOException;
 
-    protected final OtfClass readClassDefinition(int classLocation) throws IOException {
+    protected final OtfClass readClassDefinition(int classLocation) throws java.io.IOException {
         return new OtfClass(rf, classLocation);
     }
     
-    protected final int[] readUShortArray(int size, int location) throws IOException {
+    protected final int[] readUShortArray(int size, int location) throws java.io.IOException {
         return OtfReadCommon.readUShortArray(rf, size, location);
     }
     
-    protected final int[] readUShortArray(int size) throws IOException {
+    protected final int[] readUShortArray(int size) throws java.io.IOException {
         return OtfReadCommon.readUShortArray(rf, size);
     }
 
-    protected void readCoverages(int[] locations, List<Set<Integer>> coverage) throws IOException {
+    protected void readCoverages(int[] locations, List<Set<Integer>> coverage) throws java.io.IOException {
         OtfReadCommon.readCoverages(rf, locations, coverage);
     }
 
 	protected final List<Integer> readCoverageFormat(int coverageLocation)
-			throws IOException {
+			throws java.io.IOException {
         return OtfReadCommon.readCoverageFormat(rf, coverageLocation);
 	}
 
-    protected SubstLookupRecord[] readSubstLookupRecords(int substCount) throws IOException {
+    protected SubstLookupRecord[] readSubstLookupRecords(int substCount) throws java.io.IOException {
         return OtfReadCommon.readSubstLookupRecords(rf, substCount);
     }
 
-    protected TagAndLocation[] readTagAndLocations(int baseLocation) throws IOException {
+    protected TagAndLocation[] readTagAndLocations(int baseLocation) throws java.io.IOException {
         int count = rf.readUnsignedShort();
         TagAndLocation[] tagslLocs = new TagAndLocation[count];
         for (int k = 0; k < count; ++k) {
@@ -260,7 +259,7 @@ public abstract class OpenTypeFontTableReader {
         return tagslLocs;
     }
 
-    private void readLookupListTable(int lookupListTableLocation) throws IOException {
+    private void readLookupListTable(int lookupListTableLocation) throws java.io.IOException {
         lookupList = new ArrayList<>();
         rf.seek(lookupListTableLocation);
         int lookupCount = rf.readUnsignedShort();
@@ -271,7 +270,7 @@ public abstract class OpenTypeFontTableReader {
         }
     }
 
-    private void readLookupTable(int lookupTableLocation) throws IOException {
+    private void readLookupTable(int lookupTableLocation) throws java.io.IOException {
         rf.seek(lookupTableLocation);
         int lookupType = rf.readUnsignedShort();
         int lookupFlag = rf.readUnsignedShort();

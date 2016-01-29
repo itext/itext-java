@@ -1,6 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.BufferUnderflowException;
 import java.security.AccessController;
@@ -31,7 +30,7 @@ class ByteBufferRandomAccessSource implements RandomAccessSource {
      * Note: Because ByteBuffers don't support long indexing, the position must be a valid positive int
      * @param position the position to read the byte from - must be less than Integer.MAX_VALUE
      */
-    public int get(long position) throws IOException {
+    public int get(long position) throws java.io.IOException {
         if (position > Integer.MAX_VALUE)
             throw new IllegalArgumentException("Position must be less than Integer.MAX_VALUE");
         try {
@@ -51,7 +50,7 @@ class ByteBufferRandomAccessSource implements RandomAccessSource {
      * Note: Because ByteBuffers don't support long indexing, the position must be a valid positive int
      * @param position the position to read the byte from - must be less than Integer.MAX_VALUE
      */
-    public int get(long position, byte[] bytes, int off, int len) throws IOException {
+    public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         if (position > Integer.MAX_VALUE)
             throw new IllegalArgumentException("Position must be less than Integer.MAX_VALUE");
 
@@ -77,7 +76,7 @@ class ByteBufferRandomAccessSource implements RandomAccessSource {
      * @see java.io.RandomAccessFile#close()
      * Cleans the mapped bytebuffers and closes the channel
      */
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         clean(byteBuffer);
     }
 

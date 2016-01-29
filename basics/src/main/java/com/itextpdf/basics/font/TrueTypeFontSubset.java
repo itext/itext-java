@@ -1,9 +1,7 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -84,11 +82,11 @@ class TrueTypeFontSubset {
 
     /**
      * Does the actual work of subsetting the font.
-     * @throws IOException on error
+     * @throws java.io.IOException on error
      * @on error
      * @return the subset font
      */
-    byte[] process() throws IOException {
+    byte[] process() throws java.io.IOException {
         try {
             createTableDirectory();
             readLoca();
@@ -104,7 +102,7 @@ class TrueTypeFontSubset {
         }
     }
 
-    protected void assembleFont() throws IOException {
+    protected void assembleFont() throws java.io.IOException {
         int[] tableLocation;
         int fullFontSize = 0;
         String[] tableNames;
@@ -191,12 +189,12 @@ class TrueTypeFontSubset {
         }
     }
 
-    protected void createTableDirectory() throws IOException {
+    protected void createTableDirectory() throws java.io.IOException {
         tableDirectory = new HashMap<>();
         rf.seek(directoryOffset);
         int id = rf.readInt();
         if (id != 0x00010000) {
-            throw new PdfException("1.is.not.a.true.type.file").setMessageParams(fileName);
+            throw new com.itextpdf.basics.PdfException("1.is.not.a.true.type.file").setMessageParams(fileName);
         }
         int num_tables = rf.readUnsignedShort();
         rf.skipBytes(6);
@@ -210,16 +208,16 @@ class TrueTypeFontSubset {
         }
     }
 
-    protected void readLoca() throws IOException {
+    protected void readLoca() throws java.io.IOException {
         int[] tableLocation = tableDirectory.get("head");
         if (tableLocation == null) {
-            throw new PdfException("table.1.does.not.exist.in.2", "head").setMessageParams(fileName);
+            throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2", "head").setMessageParams(fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET] + HEAD_LOCA_FORMAT_OFFSET);
         locaShortTable = rf.readUnsignedShort() == 0;
         tableLocation = tableDirectory.get("loca");
         if (tableLocation == null) {
-            throw new PdfException("table.1.does.not.exist.in.2", "loca").setMessageParams(fileName);
+            throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2", "loca").setMessageParams(fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET]);
         if (locaShortTable) {
@@ -238,7 +236,7 @@ class TrueTypeFontSubset {
         }
     }
 
-    protected void createNewGlyphTables() throws IOException {
+    protected void createNewGlyphTables() throws java.io.IOException {
         newLocaTable = new int[locaTable.length];
         int activeGlyphs[] = new int[glyphsInList.size()];
         for (int k = 0; k < activeGlyphs.length; ++k) {
@@ -287,10 +285,10 @@ class TrueTypeFontSubset {
         }
     }
 
-    protected void flatGlyphs() throws IOException {
+    protected void flatGlyphs() throws java.io.IOException {
         int[] tableLocation = tableDirectory.get("glyf");
         if (tableLocation == null)
-            throw new PdfException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
+            throw new com.itextpdf.basics.PdfException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
         Integer glyph0 = 0;
         if (!glyphsUsed.contains(glyph0)) {
             glyphsUsed.add(glyph0);
@@ -304,7 +302,7 @@ class TrueTypeFontSubset {
         }
     }
 
-    protected void checkGlyphComposite(int glyph) throws IOException {
+    protected void checkGlyphComposite(int glyph) throws java.io.IOException {
         int start = locaTable[glyph];
         if (start == locaTable[glyph + 1]) {// no contour
             return;
@@ -347,15 +345,15 @@ class TrueTypeFontSubset {
      * Reads a {@code String} from the font file as bytes using the Cp1252 encoding.
      * @param length the length of bytes to read
      * @return the {@code String} read
-     * @throws IOException the font file could not be read
+     * @throws java.io.IOException the font file could not be read
      */
-    protected String readStandardString(int length) throws IOException {
+    protected String readStandardString(int length) throws java.io.IOException {
         byte buf[] = new byte[length];
         rf.readFully(buf);
         try {
             return new String(buf, PdfEncodings.WINANSI);
         } catch (Exception e) {
-            throw new PdfException("TrueType font", e);
+            throw new com.itextpdf.basics.PdfException("TrueType font", e);
         }
     }
 

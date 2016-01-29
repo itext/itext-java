@@ -44,13 +44,11 @@
  */
 package com.itextpdf.basics.font.otf;
 
-import java.io.IOException;
-
 /**
  *  
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
-public class FontReadingException extends IOException {
+public class FontReadingException extends java.io.IOException {
     
     private static final long serialVersionUID = 1L;
 
@@ -61,5 +59,4 @@ public class FontReadingException extends IOException {
     public FontReadingException(String message, Exception e) {
         super(message, e);
     }
-
 }

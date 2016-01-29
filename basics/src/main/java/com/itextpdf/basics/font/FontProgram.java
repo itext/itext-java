@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.otf.Glyph;
 
 import java.io.File;
@@ -231,9 +230,8 @@ public abstract class FontProgram {
         if(path != null) {
             File f = new File(path);
             if (!FontConstants.BUILTIN_FONTS_14.contains(path) && (!f.exists() || !f.isFile())) {
-                throw new PdfException(PdfException.FontFileNotFound).setMessageParams(path);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.FontFileNotFound).setMessageParams(path);
             }
         }
     }
-
 }

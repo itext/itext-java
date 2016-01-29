@@ -1,6 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,7 +37,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * @param channel the channel to use as the backing store
      * @throws java.io.IOException if the channel cannot be opened or mapped
      */
-    public PagedChannelRandomAccessSource(FileChannel channel) throws IOException {
+    public PagedChannelRandomAccessSource(FileChannel channel) throws java.io.IOException {
         this(channel, DEFAULT_TOTAL_BUFSIZE, DEFAULT_MAX_OPEN_BUFFERS);
     }
 
@@ -47,9 +46,9 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * @param channel the channel to use as the backing store
      * @param totalBufferSize total buffer size
      * @param maxOpenBuffers open buffers
-     * @throws IOException if the channel cannot be opened or mapped
+     * @throws java.io.IOException if the channel cannot be opened or mapped
      */
-    public PagedChannelRandomAccessSource(final FileChannel channel, final int totalBufferSize, final int maxOpenBuffers) throws IOException {
+    public PagedChannelRandomAccessSource(final FileChannel channel, final int totalBufferSize, final int maxOpenBuffers) throws java.io.IOException {
         super(buildSources(channel, totalBufferSize/maxOpenBuffers));
         this.channel = channel;
         this.bufferSize = totalBufferSize/maxOpenBuffers;
@@ -61,12 +60,12 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * @param channel the underlying channel
      * @param bufferSize the size of each page (the last page may be shorter)
      * @return a list of sources that represent the pages of the channel
-     * @throws IOException if IO fails for any reason
+     * @throws java.io.IOException if IO fails for any reason
      */
-    private static RandomAccessSource[] buildSources(final FileChannel channel, final int bufferSize) throws IOException{
+    private static RandomAccessSource[] buildSources(final FileChannel channel, final int bufferSize) throws java.io.IOException{
         long size = channel.size();
         if (size <= 0)
-            throw new IOException("File size must be greater than zero");
+            throw new java.io.IOException("File size must be greater than zero");
 
         int bufferCount = (int)(size/bufferSize) + (size % bufferSize == 0 ? 0 : 1);
 
@@ -92,7 +91,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * {@inheritDoc}
      * For now, close the source that is no longer being used.  In the future, we may implement an MRU that allows multiple pages to be opened at a time
      */
-    protected void sourceReleased(RandomAccessSource source) throws IOException {
+    protected void sourceReleased(RandomAccessSource source) throws java.io.IOException {
         RandomAccessSource old = mru.enqueue(source);
         if (old != null)
             old.close();
@@ -103,7 +102,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * {@inheritDoc}
      * Ensure that the source is mapped.  In the future, we may implement an MRU that allows multiple pages to be opened at a time
      */
-    protected void sourceInUse(RandomAccessSource source) throws IOException {
+    protected void sourceInUse(RandomAccessSource source) throws java.io.IOException {
         ((MappedChannelRandomAccessSource)source).open();
     }
 
@@ -112,7 +111,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * {@inheritDoc}
      * Cleans the mapped bytebuffers and closes the channel
      */
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         super.close();
         channel.close();
     }

@@ -1,6 +1,5 @@
 package com.itextpdf.basics.image;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.codec.TIFFFaxDecoder;
@@ -10,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.PixelGrabber;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -59,9 +57,9 @@ public final class ImageFactory {
                                     final int typeCCITT, final int parameters, final byte[] data,
                                     final int[] transparency) {
         if (transparency != null && transparency.length != 2)
-            throw new PdfException(PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (typeCCITT != RawImage.CCITTG4 && typeCCITT != RawImage.CCITTG3_1D && typeCCITT != RawImage.CCITTG3_2D)
-            throw new PdfException(PdfException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
         RawImage image = new RawImage(data, Image.RAW);
@@ -76,7 +74,7 @@ public final class ImageFactory {
     public static Image getImage(final int width, final int height, final int components,
                                     final int bpc, final byte[] data, final int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
-            throw new PdfException(PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (components == 1 && bpc == 1) {
             byte g4[] = CCITTG4Encoder.compress(data, width, height);
             return ImageFactory.getImage(width, height, false, RawImage.CCITTG4, RawImage.CCITT_BLACKIS1, g4, transparency);
@@ -85,9 +83,9 @@ public final class ImageFactory {
         image.height = height;
         image.width = width;
         if (components != 1 && components != 3 && components != 4)
-            throw new PdfException(PdfException.ComponentsMustBe1_3Or4);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ComponentsMustBe1_3Or4);
         if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8)
-            throw new PdfException(PdfException.BitsPerComponentMustBe1_2_4or8);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BitsPerComponentMustBe1_2_4or8);
         image.colorSpace = components;
         image.bpc = bpc;
         image.data = data;
@@ -101,7 +99,7 @@ public final class ImageFactory {
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @return RawImage
      */
-    public static Image getImage(final java.awt.Image image, final java.awt.Color color) throws IOException {
+    public static Image getImage(final java.awt.Image image, final java.awt.Color color) throws java.io.IOException {
         return ImageFactory.getImage(image, color, false);
     }
 
@@ -112,7 +110,7 @@ public final class ImageFactory {
      * @param forceBW if <CODE>true</CODE> the image is treated as black and white
      * @return RawImage
      */
-    public static Image getImage(final java.awt.Image image, final java.awt.Color color, boolean forceBW) throws IOException {
+    public static Image getImage(final java.awt.Image image, final java.awt.Color color, boolean forceBW) throws java.io.IOException {
         if (image instanceof BufferedImage) {
             BufferedImage bi = (BufferedImage) image;
             if (bi.getType() == BufferedImage.TYPE_BYTE_BINARY && bi.getColorModel().getPixelSize() == 1) {
@@ -124,10 +122,10 @@ public final class ImageFactory {
         try {
             pg.grabPixels();
         } catch (InterruptedException e) {
-            throw new IOException("Java.awt.image was interrupted. Waiting for pixels");
+            throw new java.io.IOException("Java.awt.image was interrupted. Waiting for pixels");
         }
         if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
-            throw new IOException("Java.awt.image fetch aborted or errored");
+            throw new java.io.IOException("Java.awt.image fetch aborted or errored");
         }
         int w = pg.getWidth();
         int h = pg.getHeight();
@@ -547,7 +545,7 @@ public final class ImageFactory {
             image.data = baos.toByteArray();
             return image;
         }
-        throw new PdfException(PdfException.ImageFormatCannotBeRecognized);
+        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ImageFormatCannotBeRecognized);
     }
 
     private static Image getImageInstance(byte[] bytes, boolean recoverImage) {
@@ -592,7 +590,7 @@ public final class ImageFactory {
             image.data = baos.toByteArray();
             return image;
         }
-        throw new PdfException(PdfException.ImageFormatCannotBeRecognized);
+        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ImageFormatCannotBeRecognized);
     }
 
     private static boolean imageTypeIs(byte[] imageType, byte[] compareWith) {
@@ -614,13 +612,13 @@ public final class ImageFactory {
             byte[] bytes = new byte[8];
             is.read(bytes);
             return bytes;
-        } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.IoException, e);
         } finally {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ignored) { }
+                } catch (java.io.IOException ignored) { }
             }
         }
     }

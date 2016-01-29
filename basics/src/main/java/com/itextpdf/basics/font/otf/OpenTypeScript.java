@@ -1,18 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.itextpdf.basics.font.otf;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author admin
- */
 public class OpenTypeScript {
 
     public final String DEFAULT_SCRIPT = "DFLT";
@@ -20,7 +10,7 @@ public class OpenTypeScript {
     private OpenTypeFontTableReader openTypeReader;
     private List<ScriptRecord> records;
     
-    public OpenTypeScript(OpenTypeFontTableReader openTypeReader, int locationScriptTable) throws IOException {
+    public OpenTypeScript(OpenTypeFontTableReader openTypeReader, int locationScriptTable) throws java.io.IOException {
         this.openTypeReader = openTypeReader;
         records = new ArrayList<>();
         openTypeReader.rf.seek(locationScriptTable);
@@ -76,7 +66,7 @@ public class OpenTypeScript {
         return lang;
     }
     
-    private void readScriptRecord(TagAndLocation tagLoc) throws IOException {
+    private void readScriptRecord(TagAndLocation tagLoc) throws java.io.IOException {
         openTypeReader.rf.seek(tagLoc.location);
         int locationDefaultLanguage = openTypeReader.rf.readUnsignedShort();
         if (locationDefaultLanguage > 0) {
@@ -98,7 +88,7 @@ public class OpenTypeScript {
         records.add(srec);
     }
     
-    private LanguageRecord readLanguageRecord(TagAndLocation tagLoc) throws IOException {
+    private LanguageRecord readLanguageRecord(TagAndLocation tagLoc) throws java.io.IOException {
         LanguageRecord rec = new LanguageRecord();
         //skip lookup order
         openTypeReader.rf.seek(tagLoc.location + 2);

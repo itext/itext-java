@@ -1,6 +1,5 @@
 package com.itextpdf.basics.image;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.codec.CCITTG4Encoder;
 import com.itextpdf.basics.codec.TIFFFaxDecoder;
 import com.itextpdf.basics.source.ByteArrayOutputStream;
@@ -79,9 +78,9 @@ public final class RawImageHelper {
         image.setHeight(height);
         image.setWidth(width);
         if (components != 1 && components != 3 && components != 4)
-            throw new PdfException(PdfException.ComponentsMustBe1_3Or4);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ComponentsMustBe1_3Or4);
         if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8)
-            throw new PdfException(PdfException.BitsPerComponentMustBe1_2_4or8);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BitsPerComponentMustBe1_2_4or8);
         image.setColorSpace(components);
         image.setBpc(bpc);
         image.data = data;
@@ -90,7 +89,7 @@ public final class RawImageHelper {
     protected static void updateRawImageParameters(RawImage image, int width, int height, int components,
                                                 int bpc, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
-            throw new PdfException(PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (components == 1 && bpc == 1) {
             byte g4[] = CCITTG4Encoder.compress(data, width, height);
             updateRawImageParameters(image, width, height, false, RawImage.CCITTG4,
@@ -104,14 +103,14 @@ public final class RawImageHelper {
     protected static void updateRawImageParameters(RawImage image, int width, int height, boolean reverseBits,
                                                 int typeCCITT, int parameters, byte[] data, int transparency[]) {
         if (transparency != null && transparency.length != 2)
-            throw new PdfException(PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         updateCcittImageParameters(image, width, height, reverseBits, typeCCITT, parameters, data);
         image.setTransparency(transparency);
     }
 
     protected static void updateCcittImageParameters(RawImage image, int width, int height, boolean reverseBits, int typeCcitt, int parameters, byte[] data) {
         if (typeCcitt != RawImage.CCITTG4 && typeCcitt != RawImage.CCITTG3_1D && typeCcitt != RawImage.CCITTG3_2D)
-            throw new PdfException(PdfException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
         image.setHeight(height);

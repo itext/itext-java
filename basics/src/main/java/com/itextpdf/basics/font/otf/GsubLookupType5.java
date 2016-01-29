@@ -4,7 +4,6 @@ import com.itextpdf.basics.font.otf.lookuptype5.SubTableLookup5Format1;
 import com.itextpdf.basics.font.otf.lookuptype5.SubTableLookup5Format2;
 import com.itextpdf.basics.font.otf.lookuptype5.SubTableLookup5Format3;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +18,7 @@ public class GsubLookupType5 extends OpenTableLookup {
 
     protected List<ContextualSubTable> subTables;
 
-    protected GsubLookupType5(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
+    protected GsubLookupType5(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
         subTables = new ArrayList<>();
         readSubTables();
@@ -66,7 +65,7 @@ public class GsubLookupType5 extends OpenTableLookup {
     }
 
     @Override
-    protected void readSubTable(int subTableLocation) throws IOException {
+    protected void readSubTable(int subTableLocation) throws java.io.IOException {
         openReader.rf.seek(subTableLocation);
         int substFormat = openReader.rf.readShort();
         if (substFormat == 1) {
@@ -80,7 +79,7 @@ public class GsubLookupType5 extends OpenTableLookup {
         }
     }
 
-    protected void readSubTableFormat1(int subTableLocation) throws IOException {
+    protected void readSubTableFormat1(int subTableLocation) throws java.io.IOException {
         Map<Integer, List<ContextualSubstRule>> substMap = new HashMap<>();
 
         int coverageOffset = openReader.rf.readUnsignedShort();
@@ -109,7 +108,7 @@ public class GsubLookupType5 extends OpenTableLookup {
         subTables.add(new SubTableLookup5Format1(openReader, lookupFlag, substMap));
     }
 
-    protected void readSubTableFormat2(int subTableLocation) throws IOException {
+    protected void readSubTableFormat2(int subTableLocation) throws java.io.IOException {
         int coverageOffset = openReader.rf.readUnsignedShort();
         int classDefOffset = openReader.rf.readUnsignedShort();
         int subClassSetCount = openReader.rf.readUnsignedShort();
@@ -150,7 +149,7 @@ public class GsubLookupType5 extends OpenTableLookup {
 
     }
 
-    protected void readSubTableFormat3(int subTableLocation) throws IOException {
+    protected void readSubTableFormat3(int subTableLocation) throws java.io.IOException {
         int glyphCount = openReader.rf.readUnsignedShort();
         int substCount = openReader.rf.readUnsignedShort();
         int[] coverageOffsets = openReader.readUShortArray(glyphCount, subTableLocation);
@@ -162,5 +161,4 @@ public class GsubLookupType5 extends OpenTableLookup {
         SubTableLookup5Format3.SubstRuleFormat3 rule = new SubTableLookup5Format3.SubstRuleFormat3(coverages, substLookupRecords);
         subTables.add(new SubTableLookup5Format3(openReader, lookupFlag, rule));
     }
-
 }

@@ -139,7 +139,6 @@ package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -152,7 +151,7 @@ public final class Pfm2afm {
     private PrintWriter out;
     
     /** Creates a new instance of Pfm2afm */
-    private Pfm2afm(RandomAccessFileOrArray in, OutputStream out) throws IOException {
+    private Pfm2afm(RandomAccessFileOrArray in, OutputStream out) throws java.io.IOException {
         this.in = in;
         this.out = new PrintWriter(new OutputStreamWriter(out, "ISO-8859-1"));
     }
@@ -163,7 +162,7 @@ public final class Pfm2afm {
      * @param out the AFM file
      * @throws java.io.IOException on error
      */    
-    public static void convert(RandomAccessFileOrArray in, OutputStream out) throws IOException {
+    public static void convert(RandomAccessFileOrArray in, OutputStream out) throws java.io.IOException {
         Pfm2afm p = new Pfm2afm(in, out);
         p.openpfm();
         p.putheader();
@@ -173,7 +172,7 @@ public final class Pfm2afm {
         p.out.flush();
     }
     
-    private String readString(int n) throws IOException {
+    private String readString(int n) throws java.io.IOException {
         byte b[] = new byte[n];
         in.readFully(b);
         int k;
@@ -184,7 +183,7 @@ public final class Pfm2afm {
         return new String(b, 0, k, "ISO-8859-1");
     }
     
-    private String readString() throws IOException {
+    private String readString() throws java.io.IOException {
         StringBuilder buf = new StringBuilder();
         while (true) {
             int c = in.read();
@@ -215,7 +214,7 @@ public final class Pfm2afm {
         out.print(" ;\n");
     }
     
-    private void openpfm() throws IOException {
+    private void openpfm() throws java.io.IOException {
         in.seek(0);
         vers = in.readShortLE();
         h_len = in.readIntLE();
@@ -254,7 +253,7 @@ public final class Pfm2afm {
         res2 = in.readIntLE();
         fontname = in.readIntLE();
         if (h_len != in.length() || extlen != 30 || fontname < 75 || fontname > 512) {
-            throw new IOException("not.a.valid.pfm.file");
+            throw new java.io.IOException("not.a.valid.pfm.file");
         }
         in.seek(psext + 14);
         capheight = in.readShortLE();
@@ -263,7 +262,7 @@ public final class Pfm2afm {
         descender = in.readShortLE();
     }
     
-    private void putheader() throws IOException {
+    private void putheader() throws java.io.IOException {
         out.print("StartFontMetrics 2.0\n");
         if (copyright.length() > 0)
             out.print("Comment " + copyright + '\n');
@@ -352,7 +351,7 @@ public final class Pfm2afm {
         out.print('\n');
     }
     
-    private void putchartab() throws IOException {
+    private void putchartab() throws java.io.IOException {
         int count = lastchar - firstchar + 1;
         int ctabs[] = new int[count];
         in.seek(chartab);
@@ -403,7 +402,7 @@ public final class Pfm2afm {
         
     }
     
-    private void putkerntab() throws IOException {
+    private void putkerntab() throws java.io.IOException {
         if (kernpairs == 0) {
             return;
         }

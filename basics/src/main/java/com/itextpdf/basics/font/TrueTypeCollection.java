@@ -1,12 +1,9 @@
 package com.itextpdf.basics.font;
 
-
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.basics.source.RandomAccessSourceFactory;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Use this class for working with true type collection font (*.ttc)
@@ -20,14 +17,14 @@ public class TrueTypeCollection {
     byte[] ttc;
     boolean cached = false;
 
-    public TrueTypeCollection(byte[] ttc, String encoding) throws IOException {
+    public TrueTypeCollection(byte[] ttc, String encoding) throws java.io.IOException {
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttc));
         this.ttc = ttc;
         this.encoding = encoding;
         initFontSize();
     }
 
-    public TrueTypeCollection(String ttcPath, String encoding) throws IOException {
+    public TrueTypeCollection(String ttcPath, String encoding) throws java.io.IOException {
         checkFilePath(ttcPath);
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(ttcPath));
         this.ttcPath = ttcPath;
@@ -41,9 +38,9 @@ public class TrueTypeCollection {
      * @param ttcIndex the index for the TTC font
      * @return TrueTypeFont
      */
-    public FontProgram getFontByTccIndex(int ttcIndex) throws IOException {
+    public FontProgram getFontByTccIndex(int ttcIndex) throws java.io.IOException {
         if (ttcIndex > TTCSize - 1) {
-            throw new PdfException(PdfException.TTCIndexDoesNotExistInFile);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TTCIndexDoesNotExistInFile);
         }
 
         if (ttcPath != null) {
@@ -70,10 +67,10 @@ public class TrueTypeCollection {
         this.cached = cached;
     }
 
-    private void initFontSize() throws IOException {
+    private void initFontSize() throws java.io.IOException {
         String mainTag = raf.readString(4, PdfEncodings.WINANSI);
         if (!mainTag.equals("ttcf")) {
-            throw new PdfException(PdfException.InvalidTTCFile);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidTTCFile);
         }
         raf.skipBytes(4);
         TTCSize = raf.readInt();
@@ -83,7 +80,7 @@ public class TrueTypeCollection {
         if(path != null) {
             File f = new File(path);
             if ((!f.exists() || !f.isFile())) {
-                throw new PdfException(PdfException.FontFileNotFound).setMessageParams(path);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.FontFileNotFound).setMessageParams(path);
             }
         }
     }

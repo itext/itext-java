@@ -1,18 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.itextpdf.basics.font.otf;
 
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
-import java.io.IOException;
-
-/**
- *
- * @author admin
- */
 public class OpenTypeGdefTableReader {
 
     private final int GLYPH_SKIP_BASE = 1;
@@ -32,7 +21,7 @@ public class OpenTypeGdefTableReader {
         this.tableLocation = tableLocation;
     }
     
-    public void readTable() throws IOException {
+    public void readTable() throws java.io.IOException {
         if (tableLocation > 0) {
             rf.seek(tableLocation);
             rf.readUnsignedInt(); //version, we only support 0x00010000

@@ -45,8 +45,6 @@
 */
 package com.itextpdf.basics.codec;
 
-import com.itextpdf.basics.PdfException;
-
 /**
  * A class for performing LZW decoding.
  */
@@ -85,7 +83,7 @@ public class TIFFLZWDecoder {
     public byte[] decode(byte data[], byte uncompData[], int h) {
 
         if (data[0] == (byte) 0x00 && data[1] == (byte) 0x01) {
-            throw new PdfException(PdfException.Tiff50StyleLzwCodesAreNotSupported);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.Tiff50StyleLzwCodesAreNotSupported);
         }
 
         initializeStringTable();

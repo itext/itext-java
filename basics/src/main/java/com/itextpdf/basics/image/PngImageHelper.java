@@ -1,6 +1,5 @@
 package com.itextpdf.basics.image;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.font.PdfEncodings;
@@ -9,7 +8,6 @@ import com.itextpdf.basics.source.ByteBuffer;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -138,13 +136,13 @@ public class PngImageHelper {
                 image.imageSize = image.getData().length;
             }
             processPng(is, png);
-        } catch (IOException e) {
-            throw new PdfException(PdfException.PngImageException, e);
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PngImageException, e);
         } finally {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ignored) {
+                } catch (java.io.IOException ignored) {
                 }
             }
         }
@@ -158,7 +156,7 @@ public class PngImageHelper {
         RawImageHelper.updateImageAttributes(png.image, png.additional, stream);
     }
 
-    private static void processPng(InputStream is, PngParameters png) throws IOException {
+    private static void processPng(InputStream is, PngParameters png) throws java.io.IOException {
         readPng(is, png);
         try {
             int pal0 = 0;
@@ -246,7 +244,7 @@ public class PngImageHelper {
             png.image.setDpi(png.dpiX, png.dpiY);
             png.image.setXYRatio(png.XYRatio);
         } catch (Exception e) {
-            throw new PdfException(PdfException.PngImageException, e);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PngImageException, e);
         }
     }
 
@@ -320,10 +318,10 @@ public class PngImageHelper {
         }
     }
 
-    private static void readPng(InputStream is, PngParameters png) throws IOException {
+    private static void readPng(InputStream is, PngParameters png) throws java.io.IOException {
         for (int i = 0; i < PNGID.length; i++) {
             if (PNGID[i] != is.read()) {
-                throw new IOException("file.is.not.a.valid.png");
+                throw new java.io.IOException("file.is.not.a.valid.png");
             }
         }
         byte buffer[] = new byte[TRANSFERSIZE];
@@ -331,7 +329,7 @@ public class PngImageHelper {
             int len = getInt(is);
             String marker = getString(is);
             if (len < 0 || !checkMarker(marker))
-                throw new IOException("corrupted.png.file");
+                throw new java.io.IOException("corrupted.png.file");
             if (IDAT.equals(marker)) {
                 int size;
                 while (len != 0) {
@@ -463,7 +461,7 @@ public class PngImageHelper {
                 while (len > 0) {
                     int r = is.read(icccom, p, len);
                     if (r < 0)
-                        throw new IOException("premature.end.of.file");
+                        throw new java.io.IOException("premature.end.of.file");
                     p += r;
                     len -= r;
                 }
@@ -587,7 +585,7 @@ public class PngImageHelper {
                     break;
                 default:
                     // Error -- uknown filter type
-                    throw new PdfException(PdfException.PngFilterUnknown);
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PngFilterUnknown);
             }
 
             processPixels(curr, xOffset, xStep, dstY, passWidth, png);
@@ -839,7 +837,7 @@ public class PngImageHelper {
      * @param        is an <CODE>InputStream</CODE>
      * @return the value of an <CODE>int</CODE>
      */
-    public static int getInt(InputStream is) throws IOException {
+    public static int getInt(InputStream is) throws java.io.IOException {
         return (is.read() << 24) + (is.read() << 16) + (is.read() << 8) + is.read();
     }
 
@@ -849,7 +847,7 @@ public class PngImageHelper {
      * @param        is an <CODE>InputStream</CODE>
      * @return the value of an <CODE>int</CODE>
      */
-    public static int getWord(InputStream is) throws IOException {
+    public static int getWord(InputStream is) throws java.io.IOException {
         return (is.read() << 8) + is.read();
     }
 
@@ -859,12 +857,11 @@ public class PngImageHelper {
      * @param        is an <CODE>InputStream</CODE>
      * @return the value of an <CODE>int</CODE>
      */
-    public static String getString(InputStream is) throws IOException {
+    public static String getString(InputStream is) throws java.io.IOException {
         StringBuilder buf = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             buf.append((char) is.read());
         }
         return buf.toString();
     }
-
 }

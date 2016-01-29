@@ -3,7 +3,6 @@ package com.itextpdf.basics.codec;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +19,6 @@ import java.util.TreeSet;
  *
  * TODO: the indeterminate-segment-size value of dataLength, else?
  *
- * @since 2.1.5
  */
 
 public class Jbig2SegmentReader {
@@ -115,7 +113,7 @@ public class Jbig2SegmentReader {
          * @throws java.io.IOException
          * @return a byte array
          */
-        public byte[] getData(boolean for_embedding) throws IOException {
+        public byte[] getData(boolean for_embedding) throws java.io.IOException {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             for (Integer sn : segs.keySet()) {
                 Jbig2Segment s = segs.get(sn);
@@ -154,7 +152,7 @@ public class Jbig2SegmentReader {
 
     }
 
-    public Jbig2SegmentReader(RandomAccessFileOrArray ra) throws IOException {
+    public Jbig2SegmentReader(RandomAccessFileOrArray ra) throws java.io.IOException {
         this.ra = ra;
     }
 
@@ -164,7 +162,7 @@ public class Jbig2SegmentReader {
         return bc;
     }
 
-    public void read() throws IOException {
+    public void read() throws java.io.IOException {
         if (this.read) {
             throw new IllegalStateException("already.attempted.a.read.on.this.jbig2.file");
         }
@@ -193,7 +191,7 @@ public class Jbig2SegmentReader {
         }
     }
 
-    void readSegment(Jbig2Segment s) throws IOException {
+    void readSegment(Jbig2Segment s) throws java.io.IOException {
         int ptr = (int) ra.getPosition();
 
         if (s.dataLength == 0xffffffffl) {
@@ -222,7 +220,7 @@ public class Jbig2SegmentReader {
         }
     }
 
-    Jbig2Segment readHeader() throws IOException {
+    Jbig2Segment readHeader() throws java.io.IOException {
         int ptr = (int) ra.getPosition();
         // 7.2.1
         int segment_number = ra.readInt();
@@ -326,7 +324,7 @@ public class Jbig2SegmentReader {
         return s;
     }
 
-    void readFileHeader() throws IOException {
+    void readFileHeader() throws java.io.IOException {
         ra.seek(0);
         byte[] idstring = new byte[8];
         ra.read(idstring);
@@ -383,7 +381,7 @@ public class Jbig2SegmentReader {
                 os.write(s.data);
             }
             os.close();
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             e.printStackTrace();
         }
         if (os.size() <= 0) {

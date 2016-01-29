@@ -1,14 +1,12 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.basics.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.basics.font.otf.OpenTypeGdefTableReader;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -46,24 +44,24 @@ public class TrueTypeFont extends FontProgram {
     protected TrueTypeFont() {
     }
 
-    public TrueTypeFont(String path) throws IOException {
+    public TrueTypeFont(String path) throws java.io.IOException {
         checkFilePath(path);
         fontParser = new OpenTypeParser(path);
         initializeFontProperties();
     }
 
-    public TrueTypeFont(byte[] ttf) throws IOException {
+    public TrueTypeFont(byte[] ttf) throws java.io.IOException {
         fontParser = new OpenTypeParser(ttf);
         initializeFontProperties();
     }
 
-    TrueTypeFont(String ttcPath, int ttcIndex) throws IOException {
+    TrueTypeFont(String ttcPath, int ttcIndex) throws java.io.IOException {
         checkFilePath(ttcPath);
         fontParser = new OpenTypeParser(ttcPath, ttcIndex);
         initializeFontProperties();
     }
 
-    TrueTypeFont(byte[] ttc, int ttcIndex) throws IOException {
+    TrueTypeFont(byte[] ttc, int ttcIndex) throws java.io.IOException {
         fontParser = new OpenTypeParser(ttc, ttcIndex);
         initializeFontProperties();
     }
@@ -129,9 +127,9 @@ public class TrueTypeFont extends FontProgram {
             } else {
                 fontStreamBytes = fontParser.getFullFont();
             }
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             fontStreamBytes = null;
-            throw new PdfException(PdfException.IoException, e);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.IoException, e);
         }
         return fontStreamBytes;
     }
@@ -171,12 +169,12 @@ public class TrueTypeFont extends FontProgram {
     public byte[] getSubset(Set<Integer> glyphs, boolean subset) {
         try {
             return fontParser.getSubset(glyphs, subset);
-        } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.IoException, e);
         }
     }
 
-    protected void readGdefTable() throws IOException {
+    protected void readGdefTable() throws java.io.IOException {
         int[] gdef = fontParser.tables.get("GDEF");
         if (gdef != null) {
             gdefTable = new OpenTypeGdefTableReader(fontParser.raf, gdef[0]);
@@ -185,21 +183,21 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
-    protected void readGsubTable() throws IOException {
+    protected void readGsubTable() throws java.io.IOException {
         int[] gsub = fontParser.tables.get("GSUB");
         if (gsub != null) {
             gsubTable = new GlyphSubstitutionTableReader(fontParser.raf, gsub[0], gdefTable, codeToGlyph, fontMetrics.getUnitsPerEm());
         }
     }
 
-    protected void readGposTable() throws IOException {
+    protected void readGposTable() throws java.io.IOException {
         int[] gpos = fontParser.tables.get("GPOS");
         if (gpos != null) {
             gposTable = new GlyphPositioningTableReader(fontParser.raf, gpos[0], gdefTable, codeToGlyph,  fontMetrics.getUnitsPerEm());
         }
     }
 
-    private void initializeFontProperties() throws IOException {
+    private void initializeFontProperties() throws java.io.IOException {
         // initialize sfnt tables
         OpenTypeParser.HeaderTable head = fontParser.getHeadTable();
         OpenTypeParser.HorizontalHeader hhea = fontParser.getHheaTable();
@@ -312,5 +310,4 @@ public class TrueTypeFont extends FontProgram {
 
         isVertical = false;
     }
-
 }

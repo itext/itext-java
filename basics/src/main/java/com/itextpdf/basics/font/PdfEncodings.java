@@ -1,9 +1,7 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.util.IntHashtable;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -207,8 +205,8 @@ public class PdfEncodings {
             byte[] br = new byte[lim];
             bb.get(br);
             return br;
-        } catch (IOException e) {
-            throw new PdfException(PdfException.PdfEncodings, e);
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfEncodings, e);
         }
     }
 
@@ -259,8 +257,8 @@ public class PdfEncodings {
             byte[] br = new byte[lim];
             bb.get(br);
             return br;
-        } catch (IOException e) {
-            throw new PdfException(PdfException.PdfEncodings, e);
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfEncodings, e);
         }
     }
 
@@ -303,7 +301,7 @@ public class PdfEncodings {
         try {
             return new String(bytes, encoding);
         } catch (UnsupportedEncodingException e) {
-            throw new PdfException(PdfException.PdfEncodings, e);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfEncodings, e);
         }
     }
 
@@ -610,6 +608,5 @@ public class PdfEncodings {
         public String byteToChar(byte[] b, String encoding) {
             return null;
         }
-
     }
 }

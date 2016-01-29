@@ -45,11 +45,9 @@
 */
 package com.itextpdf.basics.codec;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
 import java.io.EOFException;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,7 +131,7 @@ public class TIFFDirectory implements Serializable {
      * @param directory the index of the directory to read.
      */
     public TIFFDirectory(RandomAccessFileOrArray stream, int directory)
-            throws IOException {
+            throws java.io.IOException {
 
         long global_save_offset = stream.getPosition();
         long ifd_offset;
@@ -142,13 +140,13 @@ public class TIFFDirectory implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new PdfException(PdfException.BadEndiannessTagNot0x4949Or0x4d4d);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BadEndiannessTagNot0x4949Or0x4d4d);
         }
         isBigEndian = endian == 0x4d4d;
 
         int magic = readUnsignedShort(stream);
         if (magic != 42) {
-            throw new PdfException(PdfException.BadMagicNumberShouldBe42);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BadMagicNumberShouldBe42);
         }
 
         // Get the initial ifd offset as an unsigned int (using a long)
@@ -156,7 +154,7 @@ public class TIFFDirectory implements Serializable {
 
         for (int i = 0; i < directory; i++) {
             if (ifd_offset == 0L) {
-                throw new PdfException(PdfException.DirectoryNumberTooLarge);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.DirectoryNumberTooLarge);
             }
 
             stream.seek(ifd_offset);
@@ -185,13 +183,13 @@ public class TIFFDirectory implements Serializable {
      *                   at the current offset.
      */
     public TIFFDirectory(RandomAccessFileOrArray stream, long ifd_offset, int directory)
-            throws IOException {
+            throws java.io.IOException {
 
         long global_save_offset = stream.getPosition();
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new PdfException(PdfException.BadEndiannessTagNot0x4949Or0x4d4d);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BadEndiannessTagNot0x4949Or0x4d4d);
         }
         isBigEndian = endian == 0x4d4d;
 
@@ -237,7 +235,7 @@ public class TIFFDirectory implements Serializable {
             8  // 12 = double
     };
 
-    private void initialize(RandomAccessFileOrArray stream) throws IOException {
+    private void initialize(RandomAccessFileOrArray stream) throws java.io.IOException {
         long nextTagOffset = 0L;
         long maxOffset = stream.length();
         int i, j;
@@ -538,7 +536,7 @@ public class TIFFDirectory implements Serializable {
     // Methods to read primitive data types from the stream
 
     private short readShort(RandomAccessFileOrArray stream)
-            throws IOException {
+            throws java.io.IOException {
         if (isBigEndian) {
             return stream.readShort();
         } else {
@@ -547,7 +545,7 @@ public class TIFFDirectory implements Serializable {
     }
 
     private int readUnsignedShort(RandomAccessFileOrArray stream)
-            throws IOException {
+            throws java.io.IOException {
         if (isBigEndian) {
             return stream.readUnsignedShort();
         } else {
@@ -556,7 +554,7 @@ public class TIFFDirectory implements Serializable {
     }
 
     private int readInt(RandomAccessFileOrArray stream)
-            throws IOException {
+            throws java.io.IOException {
         if (isBigEndian) {
             return stream.readInt();
         } else {
@@ -565,7 +563,7 @@ public class TIFFDirectory implements Serializable {
     }
 
     private long readUnsignedInt(RandomAccessFileOrArray stream)
-            throws IOException {
+            throws java.io.IOException {
         if (isBigEndian) {
             return stream.readUnsignedInt();
         } else {
@@ -574,7 +572,7 @@ public class TIFFDirectory implements Serializable {
     }
 
     private long readLong(RandomAccessFileOrArray stream)
-            throws IOException {
+            throws java.io.IOException {
         if (isBigEndian) {
             return stream.readLong();
         } else {
@@ -583,7 +581,7 @@ public class TIFFDirectory implements Serializable {
     }
 
     private float readFloat(RandomAccessFileOrArray stream)
-            throws IOException {
+            throws java.io.IOException {
         if (isBigEndian) {
             return stream.readFloat();
         } else {
@@ -592,7 +590,7 @@ public class TIFFDirectory implements Serializable {
     }
 
     private double readDouble(RandomAccessFileOrArray stream)
-            throws IOException {
+            throws java.io.IOException {
         if (isBigEndian) {
             return stream.readDouble();
         } else {
@@ -602,7 +600,7 @@ public class TIFFDirectory implements Serializable {
 
     private static int readUnsignedShort(RandomAccessFileOrArray stream,
                                          boolean isBigEndian)
-            throws IOException {
+            throws java.io.IOException {
         if (isBigEndian) {
             return stream.readUnsignedShort();
         } else {
@@ -612,7 +610,7 @@ public class TIFFDirectory implements Serializable {
 
     private static long readUnsignedInt(RandomAccessFileOrArray stream,
                                         boolean isBigEndian)
-            throws IOException {
+            throws java.io.IOException {
         if (isBigEndian) {
             return stream.readUnsignedInt();
         } else {
@@ -627,18 +625,18 @@ public class TIFFDirectory implements Serializable {
      * given TIFF file, represented by a <code>SeekableStream</code>.
      */
     public static int getNumDirectories(RandomAccessFileOrArray stream)
-            throws IOException {
+            throws java.io.IOException {
         long pointer = stream.getPosition(); // Save stream pointer
 
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new PdfException(PdfException.BadEndiannessTagNot0x4949Or0x4d4d);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BadEndiannessTagNot0x4949Or0x4d4d);
         }
         boolean isBigEndian = endian == 0x4d4d;
         int magic = readUnsignedShort(stream, isBigEndian);
         if (magic != 42) {
-            throw new PdfException(PdfException.BadMagicNumberShouldBe42);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BadMagicNumberShouldBe42);
         }
 
         stream.seek(4L);

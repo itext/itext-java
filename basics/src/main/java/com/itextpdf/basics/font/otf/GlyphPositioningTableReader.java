@@ -2,7 +2,6 @@ package com.itextpdf.basics.font.otf;
 
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -18,13 +17,13 @@ import java.util.Map;
  */
 public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
     public GlyphPositioningTableReader(RandomAccessFileOrArray rf, int gposTableLocation,
-                                       OpenTypeGdefTableReader gdef, Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws IOException {
+                                       OpenTypeGdefTableReader gdef, Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws java.io.IOException {
         super(rf, gposTableLocation, gdef, indexGlyphMap, unitsPerEm);
         startReadingTable();
     }
 
     @Override
-    protected OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations) throws IOException {
+    protected OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         switch (lookupType) {
             case 2:
                 return new GposLookupType2(this, lookupFlag, subTableLocations);

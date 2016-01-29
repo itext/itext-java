@@ -44,8 +44,6 @@
  */
 package com.itextpdf.basics.color;
 
-import com.itextpdf.basics.PdfException;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -63,7 +61,7 @@ public class IccProfile {
     public static IccProfile getInstance(byte[] data, int numComponents) {
         if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
                 || data[38] != 0x73 || data[39] != 0x70)
-            throw new PdfException(PdfException.InvalidIccProfile);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidIccProfile);
         IccProfile icc = new IccProfile();
         icc.data = data;
         Integer cs;
@@ -72,7 +70,7 @@ public class IccProfile {
         icc.numComponents = nc;
         // invalid ICC
         if (nc != numComponents) {
-            throw new PdfException(PdfException.WrongNumberOfComponentsInIccProfile).setMessageParams(nc, numComponents);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.WrongNumberOfComponentsInIccProfile).setMessageParams(nc, numComponents);
         }
         return icc;
     }
@@ -92,13 +90,13 @@ public class IccProfile {
             while (remain > 0) {
                 int n = file.read(head, ptr, remain);
                 if (n < 0)
-                    throw new PdfException(PdfException.InvalidIccProfile);
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidIccProfile);
                 remain -= n;
                 ptr += n;
             }
             if (head[36] != 0x61 || head[37] != 0x63
                     || head[38] != 0x73 || head[39] != 0x70)
-                throw new PdfException(PdfException.InvalidIccProfile);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidIccProfile);
             remain = (head[0] & 0xff) << 24 | (head[1] & 0xff) << 16
                     | (head[2] & 0xff) << 8 | head[3] & 0xff;
             byte[] icc = new byte[remain];
@@ -108,13 +106,13 @@ public class IccProfile {
             while (remain > 0) {
                 int n = file.read(icc, ptr, remain);
                 if (n < 0)
-                    throw new PdfException(PdfException.InvalidIccProfile);
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidIccProfile);
                 remain -= n;
                 ptr += n;
             }
             return getInstance(icc);
         } catch (Exception ex) {
-            throw new PdfException(PdfException.InvalidIccProfile, ex);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidIccProfile, ex);
         }
     }
 
@@ -124,7 +122,7 @@ public class IccProfile {
             fs = new FileInputStream(filename);
             return getInstance(fs);
         } catch (Exception ex) {
-            throw new PdfException(PdfException.InvalidIccProfile, ex);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidIccProfile, ex);
         } finally {
             try {
                 if (fs != null)
@@ -139,7 +137,7 @@ public class IccProfile {
         try {
             colorSpace = new String(data, 16, 4, "US-ASCII");
         } catch (UnsupportedEncodingException e) {
-            throw new PdfException(PdfException.InvalidIccProfile, e);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidIccProfile, e);
         }
         return colorSpace;
     }
@@ -149,7 +147,7 @@ public class IccProfile {
         try {
             deviceClass = new String(data, 12, 4, "US-ASCII");
         } catch (UnsupportedEncodingException e) {
-            throw new PdfException(PdfException.InvalidIccProfile, e);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidIccProfile, e);
         }
         return deviceClass;
     }

@@ -1,6 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 /**
@@ -24,10 +23,10 @@ public class FileChannelRandomAccessSource implements RandomAccessSource {
      * @param channel the channel to use as the backing store
      * @throws java.io.IOException if the channel cannot be opened or mapped
      */
-    public FileChannelRandomAccessSource(FileChannel channel) throws IOException {
+    public FileChannelRandomAccessSource(FileChannel channel) throws java.io.IOException {
         this.channel = channel;
         if(channel.size() == 0)
-            throw new IOException("File size is 0 bytes");
+            throw new java.io.IOException("File size is 0 bytes");
         source = new MappedChannelRandomAccessSource(channel, 0, channel.size());
         source.open();
     }
@@ -37,7 +36,7 @@ public class FileChannelRandomAccessSource implements RandomAccessSource {
      * {@inheritDoc}
      * Cleans the mapped byte buffers and closes the channel
      */
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         source.close();
         channel.close();
     }
@@ -45,14 +44,14 @@ public class FileChannelRandomAccessSource implements RandomAccessSource {
     /**
      * {@inheritDoc}
      */
-    public int get(long position) throws IOException {
+    public int get(long position) throws java.io.IOException {
         return source.get(position);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int get(long position, byte[] bytes, int off, int len) throws IOException {
+    public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         return source.get(position, bytes, off, len);
     }
 

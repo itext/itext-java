@@ -3,7 +3,6 @@ package com.itextpdf.basics.font;
 import com.itextpdf.basics.util.IntHashtable;
 import com.itextpdf.basics.util.Utilities;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -68,7 +67,7 @@ public class CidFontProperties {
         return registryNames;
     }
 
-    private static void loadRegistry() throws IOException {
+    private static void loadRegistry() throws java.io.IOException {
         InputStream is = Utilities.getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
         Properties p = new Properties();
         p.load(is);
@@ -85,7 +84,7 @@ public class CidFontProperties {
         }
     }
 
-    private static Map<String, Object> readFontProperties(String name) throws IOException {
+    private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
         name += ".properties";
         InputStream is = Utilities.getResourceStream(RESOURCE_PATH_CMAP + name);
         Properties p = new Properties();
@@ -114,6 +113,4 @@ public class CidFontProperties {
         }
         return h;
     }
-
-
 }

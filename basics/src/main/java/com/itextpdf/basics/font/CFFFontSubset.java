@@ -1,9 +1,7 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -334,8 +332,8 @@ public class CFFFontSubset extends CFFFont {
             BuildNewLGSubrs(j);
             // Build the new file
             return BuildNewFile(j);
-        } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.IoException, e);
         } finally {
             try {
                 buf.close();
@@ -372,9 +370,9 @@ public class CFFFontSubset extends CFFFont {
     /**
      *Function uses BuildNewIndex to create the new index of the subset charstrings
      * @param FontIndex the font
-     * @throws IOException
+     * @throws java.io.IOException
      */
-    protected void BuildNewCharString(int FontIndex) throws IOException
+    protected void BuildNewCharString(int FontIndex) throws java.io.IOException
     {
         NewCharStringsIndex = BuildNewIndex(fonts[FontIndex].charstringsOffsets,GlyphsUsed,ENDCHAR_OP);
     }
@@ -383,10 +381,10 @@ public class CFFFontSubset extends CFFFont {
      * Function builds the new local & global subsrs indices. IF CID then All of
      * the FD Array lsubrs will be subsetted.
      * @param Font the font
-     * @throws IOException
+     * @throws java.io.IOException
      */
     @SuppressWarnings("unchecked")
-    protected void BuildNewLGSubrs(int Font)throws IOException
+    protected void BuildNewLGSubrs(int Font)throws java.io.IOException
     {
         // If the font is CID then the lsubrs are divided into FontDicts.
         // for each FD array the lsubrs will be subsetted.
@@ -908,9 +906,9 @@ public class CFFFontSubset extends CFFFont {
      * @param Used the Map of the used objects
      * @param OperatorForUnusedEntries the operator inserted into the data stream for unused entries
      * @return the new index subset version
-     * @throws IOException
+     * @throws java.io.IOException
      */
-    protected byte[] BuildNewIndex(int[] Offsets,Map<Integer, int[]> Used,byte OperatorForUnusedEntries) throws IOException
+    protected byte[] BuildNewIndex(int[] Offsets,Map<Integer, int[]> Used,byte OperatorForUnusedEntries) throws java.io.IOException
     {
         int unusedCount = 0;
         int Offset=0;

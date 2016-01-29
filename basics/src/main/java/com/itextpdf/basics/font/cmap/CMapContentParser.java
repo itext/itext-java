@@ -1,12 +1,10 @@
 package com.itextpdf.basics.font.cmap;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.source.ByteBuffer;
 import com.itextpdf.basics.source.PdfTokenizer;
 import com.itextpdf.basics.source.PdfTokenizer.TokenType;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,9 +35,9 @@ public class CMapContentParser {
      * having the command itself as the last element. The returned array will be empty if the
      * end of content was reached.
      * @param ls an {@code ArrayList} to use. It will be cleared before using.
-     * @throws IOException on error
+     * @throws java.io.IOException on error
      */
-    public void parse(List<CMapObject> ls) throws IOException {
+    public void parse(List<CMapObject> ls) throws java.io.IOException {
         ls.clear();
         CMapObject ob;
         while ((ob = readObject()) != null) {
@@ -53,27 +51,27 @@ public class CMapContentParser {
     /**
      * Reads a dictionary. The tokeniser must be positioned past the {@code "<<"} token.
      * @return the dictionary
-     * @throws IOException on error
+     * @throws java.io.IOException on error
      */
-    public CMapObject readDictionary() throws IOException {
+    public CMapObject readDictionary() throws java.io.IOException {
         Map<String, CMapObject> dic = new HashMap<>();
         while (true) {
             if (!nextValidToken())
-                throw new PdfException("unexpected.end.of.file");
+                throw new com.itextpdf.basics.PdfException("unexpected.end.of.file");
             if (tokeniser.getTokenType() == TokenType.EndDic)
                 break;
             if (tokeniser.getTokenType() == TokenType.Other && "def".equals(tokeniser.getStringValue()))
                 continue;
             if (tokeniser.getTokenType() != TokenType.Name)
-                throw new PdfException("dictionary.key.1.is.not.a.name").setMessageParams(tokeniser.getStringValue());
+                throw new com.itextpdf.basics.PdfException("dictionary.key.1.is.not.a.name").setMessageParams(tokeniser.getStringValue());
             String name = tokeniser.getStringValue();
             CMapObject obj = readObject();
             if (obj.isToken()) {
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(PdfException.UnexpectedGtGt);
+                    tokeniser.throwError(com.itextpdf.basics.PdfException.UnexpectedGtGt);
                 }
                 if (obj.toString().equals("]")) {
-                    tokeniser.throwError(PdfException.UnexpectedCloseBracket);
+                    tokeniser.throwError(com.itextpdf.basics.PdfException.UnexpectedCloseBracket);
                 }
             }
             dic.put(name, obj);
@@ -84,9 +82,9 @@ public class CMapContentParser {
     /**
      * Reads an array. The tokeniser must be positioned past the "[" token.
      * @return an array
-     * @throws IOException on error
+     * @throws java.io.IOException on error
      */
-    public CMapObject readArray() throws IOException {
+    public CMapObject readArray() throws java.io.IOException {
         List<CMapObject> array = new ArrayList<CMapObject>();
         while (true) {
             CMapObject obj = readObject();
@@ -95,7 +93,7 @@ public class CMapContentParser {
                     break;
                 }
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(PdfException.UnexpectedGtGt);
+                    tokeniser.throwError(com.itextpdf.basics.PdfException.UnexpectedGtGt);
                 }
             }
             array.add(obj);
@@ -106,9 +104,9 @@ public class CMapContentParser {
     /**
      * Reads a pdf object.
      * @return the pdf object
-     * @throws IOException on error
+     * @throws java.io.IOException on error
      */
-    public CMapObject readObject() throws IOException {
+    public CMapObject readObject() throws java.io.IOException {
         if (!nextValidToken())
             return null;
         TokenType type = tokeniser.getTokenType();
@@ -149,9 +147,9 @@ public class CMapContentParser {
     /**
      * Reads the next token skipping over the comments.
      * @return {@code true} if a token was read, {@code false} if the end of content was reached.
-     * @throws IOException on error.
+     * @throws java.io.IOException on error.
      */
-    public boolean nextValidToken() throws IOException {
+    public boolean nextValidToken() throws java.io.IOException {
         while (tokeniser.nextToken()) {
             if (tokeniser.getTokenType() == TokenType.Comment)
                 continue;

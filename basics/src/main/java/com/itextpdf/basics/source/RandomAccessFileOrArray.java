@@ -3,7 +3,6 @@ package com.itextpdf.basics.source;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.EOFException;
-import java.io.IOException;
 
 public class RandomAccessFileOrArray implements DataInput {
 
@@ -66,9 +65,9 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * Reads a single byte
      * @return the byte, or -1 if EOF is reached
-     * @throws IOException
+     * @throws java.io.IOException
      */
-    public int read() throws IOException {
+    public int read() throws java.io.IOException {
         if(isBack) {
             isBack = false;
             return back & 0xff;
@@ -77,7 +76,7 @@ public class RandomAccessFileOrArray implements DataInput {
         return byteSource.get(byteSourcePosition++);
     }
 
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws java.io.IOException {
         if (len == 0)
             return 0;
         int count = 0;
@@ -99,15 +98,15 @@ public class RandomAccessFileOrArray implements DataInput {
         return count;
     }
 
-    public int read(byte b[]) throws IOException {
+    public int read(byte b[]) throws java.io.IOException {
         return read(b, 0, b.length);
     }
 
-    public void readFully(byte b[]) throws IOException {
+    public void readFully(byte b[]) throws java.io.IOException {
         readFully(b, 0, b.length);
     }
 
-    public void readFully(byte b[], int off, int len) throws IOException {
+    public void readFully(byte b[], int off, int len) throws java.io.IOException {
         int n = 0;
         do {
             int count = read(b, off + n, len - n);
@@ -117,7 +116,7 @@ public class RandomAccessFileOrArray implements DataInput {
         } while (n < len);
     }
 
-    public long skip(long n) throws IOException {
+    public long skip(long n) throws java.io.IOException {
         if (n <= 0) {
             return 0;
         }
@@ -148,51 +147,51 @@ public class RandomAccessFileOrArray implements DataInput {
         return newpos - pos + adj;
     }
 
-    public int skipBytes(int n) throws IOException {
+    public int skipBytes(int n) throws java.io.IOException {
         return (int)skip(n);
     }
 
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         isBack = false;
 
         byteSource.close();
     }
 
-    public long length() throws IOException {
+    public long length() throws java.io.IOException {
         return byteSource.length();
     }
 
-    public void seek(long pos) throws IOException {
+    public void seek(long pos) throws java.io.IOException {
         byteSourcePosition = pos;
         isBack = false;
     }
 
-    public long getPosition() throws IOException {
+    public long getPosition() throws java.io.IOException {
         return byteSourcePosition - (isBack ? 1 : 0);
     }
 
-    public boolean readBoolean() throws IOException {
+    public boolean readBoolean() throws java.io.IOException {
         int ch = this.read();
         if (ch < 0)
             throw new EOFException();
         return (ch != 0);
     }
 
-    public byte readByte() throws IOException {
+    public byte readByte() throws java.io.IOException {
         int ch = this.read();
         if (ch < 0)
             throw new EOFException();
         return (byte)(ch);
     }
 
-    public int readUnsignedByte() throws IOException {
+    public int readUnsignedByte() throws java.io.IOException {
         int ch = this.read();
         if (ch < 0)
             throw new EOFException();
         return ch;
     }
 
-    public short readShort() throws IOException {
+    public short readShort() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
@@ -219,9 +218,9 @@ public class RandomAccessFileOrArray implements DataInput {
      *             16-bit number.
      * @exception  EOFException  if this stream reaches the end before reading
      *               two bytes.
-     * @exception  IOException   if an I/O error occurs.
+     * @exception  java.io.IOException   if an I/O error occurs.
      */
-    public final short readShortLE() throws IOException {
+    public final short readShortLE() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
@@ -229,7 +228,7 @@ public class RandomAccessFileOrArray implements DataInput {
         return (short)((ch2 << 8) + ch1);
     }
 
-    public int readUnsignedShort() throws IOException {
+    public int readUnsignedShort() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
@@ -255,9 +254,9 @@ public class RandomAccessFileOrArray implements DataInput {
      *             unsigned 16-bit integer.
      * @exception  EOFException  if this stream reaches the end before reading
      *               two bytes.
-     * @exception  IOException   if an I/O error occurs.
+     * @exception  java.io.IOException   if an I/O error occurs.
      */
-    public final int readUnsignedShortLE() throws IOException {
+    public final int readUnsignedShortLE() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
@@ -265,7 +264,7 @@ public class RandomAccessFileOrArray implements DataInput {
         return (ch2 << 8) + ch1;
     }
 
-    public char readChar() throws IOException {
+    public char readChar() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
@@ -290,9 +289,9 @@ public class RandomAccessFileOrArray implements DataInput {
      * @return     the next two bytes of this stream as a Unicode character.
      * @exception  EOFException  if this stream reaches the end before reading
      *               two bytes.
-     * @exception  IOException   if an I/O error occurs.
+     * @exception  java.io.IOException   if an I/O error occurs.
      */
-    public final char readCharLE() throws IOException {
+    public final char readCharLE() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
@@ -300,7 +299,7 @@ public class RandomAccessFileOrArray implements DataInput {
         return (char)((ch2 << 8) + ch2);
     }
 
-    public int readInt() throws IOException {
+    public int readInt() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         int ch3 = this.read();
@@ -327,9 +326,9 @@ public class RandomAccessFileOrArray implements DataInput {
      * @return     the next four bytes of this stream, interpreted as an {@code int}.
      * @exception  EOFException  if this stream reaches the end before reading
      *               four bytes.
-     * @exception  IOException   if an I/O error occurs.
+     * @exception  java.io.IOException   if an I/O error occurs.
      */
-    public final int readIntLE() throws IOException {
+    public final int readIntLE() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         int ch3 = this.read();
@@ -355,9 +354,9 @@ public class RandomAccessFileOrArray implements DataInput {
      * @return     the next four bytes of this stream, interpreted as a {@code long}.
      * @exception  EOFException  if this stream reaches the end before reading
      *               four bytes.
-     * @exception  IOException   if an I/O error occurs.
+     * @exception  java.io.IOException   if an I/O error occurs.
      */
-    public final long readUnsignedInt() throws IOException {
+    public final long readUnsignedInt() throws java.io.IOException {
         long ch1 = this.read();
         long ch2 = this.read();
         long ch3 = this.read();
@@ -367,7 +366,7 @@ public class RandomAccessFileOrArray implements DataInput {
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
     }
 
-    public final long readUnsignedIntLE() throws IOException {
+    public final long readUnsignedIntLE() throws java.io.IOException {
         long ch1 = this.read();
         long ch2 = this.read();
         long ch3 = this.read();
@@ -377,33 +376,33 @@ public class RandomAccessFileOrArray implements DataInput {
         return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + ch1);
     }
 
-    public long readLong() throws IOException {
+    public long readLong() throws java.io.IOException {
         return ((long)(readInt()) << 32) + (readInt() & 0xFFFFFFFFL);
     }
 
-    public final long readLongLE() throws IOException {
+    public final long readLongLE() throws java.io.IOException {
         int i1 = readIntLE();
         int i2 = readIntLE();
         return ((long)i2 << 32) + (i1 & 0xFFFFFFFFL);
     }
 
-    public float readFloat() throws IOException {
+    public float readFloat() throws java.io.IOException {
         return Float.intBitsToFloat(readInt());
     }
 
-    public final float readFloatLE() throws IOException {
+    public final float readFloatLE() throws java.io.IOException {
         return Float.intBitsToFloat(readIntLE());
     }
 
-    public double readDouble() throws IOException {
+    public double readDouble() throws java.io.IOException {
         return Double.longBitsToDouble(readLong());
     }
 
-    public final double readDoubleLE() throws IOException {
+    public final double readDoubleLE() throws java.io.IOException {
         return Double.longBitsToDouble(readLongLE());
     }
 
-    public String readLine() throws IOException {
+    public String readLine() throws java.io.IOException {
         StringBuilder input = new StringBuilder();
         int c = -1;
         boolean eol = false;
@@ -433,7 +432,7 @@ public class RandomAccessFileOrArray implements DataInput {
         return input.toString();
     }
 
-    public String readUTF() throws IOException {
+    public String readUTF() throws java.io.IOException {
         return DataInputStream.readUTF(this);
     }
 
@@ -442,16 +441,16 @@ public class RandomAccessFileOrArray implements DataInput {
      * @param length the length of bytes to read
      * @param encoding the given encoding
      * @return the {@code String} read
-     * @throws IOException the font file could not be read
+     * @throws java.io.IOException the font file could not be read
      */
-    public String readString(int length, String encoding) throws IOException {
+    public String readString(int length, String encoding) throws java.io.IOException {
         byte buf[] = new byte[length];
         readFully(buf);
         try {
             return new String(buf, encoding);
         }
         catch (Exception e) {
-            throw new IOException(e);
+            throw new java.io.IOException(e);
         }
     }
 }

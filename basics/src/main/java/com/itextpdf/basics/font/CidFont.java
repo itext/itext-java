@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.font.otf.GlyphLine;
 import com.itextpdf.basics.util.IntHashtable;
@@ -21,7 +20,7 @@ public class CidFont extends FontProgram {
         initializeCidFontNameAndStyle(fontName);
         Map<String, Object> fontDesc = CidFontProperties.getAllFonts().get(fontNames.getFontName());
         if (fontDesc == null) {
-            throw new PdfException("no.such.predefined.font.1").setMessageParams(fontName);
+            throw new com.itextpdf.basics.PdfException("no.such.predefined.font.1").setMessageParams(fontName);
         }
         initializeCidFontProperties(fontDesc);
         avgWidth = 0;

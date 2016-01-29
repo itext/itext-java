@@ -4,7 +4,6 @@ import com.itextpdf.basics.font.otf.lookuptype6.SubTableLookup6Format1;
 import com.itextpdf.basics.font.otf.lookuptype6.SubTableLookup6Format2;
 import com.itextpdf.basics.font.otf.lookuptype6.SubTableLookup6Format3;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,12 +15,12 @@ import java.util.Set;
  * LookupType 6: Chaining Contextual Substitution Subtable
  */
 public class GsubLookupType6 extends GsubLookupType5 {
-    protected GsubLookupType6(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
+    protected GsubLookupType6(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
     }
 
     @Override
-    protected void readSubTableFormat1(int subTableLocation) throws IOException {
+    protected void readSubTableFormat1(int subTableLocation) throws java.io.IOException {
         Map<Integer, List<ContextualSubstRule>> substMap = new HashMap<>();
 
         int coverageOffset = openReader.rf.readUnsignedShort();
@@ -55,7 +54,7 @@ public class GsubLookupType6 extends GsubLookupType5 {
     }
 
     @Override
-    protected void readSubTableFormat2(int subTableLocation) throws IOException {
+    protected void readSubTableFormat2(int subTableLocation) throws java.io.IOException {
         int coverageOffset = openReader.rf.readUnsignedShort();
         int backtrackClassDefOffset = openReader.rf.readUnsignedShort();
         int inputClassDefOffset = openReader.rf.readUnsignedShort();
@@ -105,7 +104,7 @@ public class GsubLookupType6 extends GsubLookupType5 {
     }
 
     @Override
-    protected void readSubTableFormat3(int subTableLocation) throws IOException {
+    protected void readSubTableFormat3(int subTableLocation) throws java.io.IOException {
         int backtrackGlyphCount = openReader.rf.readUnsignedShort();
         int[] backtrackCoverageOffsets = openReader.readUShortArray(backtrackGlyphCount, subTableLocation);
         int inputGlyphCount = openReader.rf.readUnsignedShort();

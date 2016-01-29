@@ -1,13 +1,11 @@
 package com.itextpdf.basics.image;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.source.ByteArrayOutputStream;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -85,36 +83,36 @@ public final class GifImageHelper {
                 is = new ByteArrayInputStream(gif.image.getBytes());
             }
             process(is, gif, lastFrameNumber);
-        } catch (IOException e) {
-            throw new PdfException(PdfException.GifImageException, e);
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.GifImageException, e);
         } finally {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ignore) {
+                } catch (java.io.IOException ignore) {
 
                 }
             }
         }
     }
 
-    private static void process(InputStream is, GifParameters gif, int lastFrameNumber) throws IOException {
+    private static void process(InputStream is, GifParameters gif, int lastFrameNumber) throws java.io.IOException {
         gif.in = new DataInputStream(new BufferedInputStream(is));
         readHeader(gif);
         readContents(gif, lastFrameNumber);
         if (currentFrame <= lastFrameNumber)
-            throw new PdfException(PdfException.CannotFind1Frame).setMessageParams(lastFrameNumber);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.CannotFind1Frame).setMessageParams(lastFrameNumber);
     }
 
     /**
      * Reads GIF file header information.
      */
-    private static void readHeader(GifParameters gif) throws IOException {
+    private static void readHeader(GifParameters gif) throws java.io.IOException {
         StringBuilder id = new StringBuilder("");
         for (int i = 0; i < 6; i++)
             id.append((char)gif.in.read());
         if (!id.toString().startsWith("GIF8")) {
-            throw new PdfException(PdfException.GifSignatureNotFound);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.GifSignatureNotFound);
         }
 
         readLSD(gif);
@@ -126,7 +124,7 @@ public final class GifImageHelper {
     /**
      * Reads Logical Screen Descriptor
      */
-    private static void readLSD(GifParameters gif) throws IOException {
+    private static void readLSD(GifParameters gif) throws java.io.IOException {
 
         // logical screen size
         gif.image.setLogicalWidth(readShort(gif));
@@ -143,7 +141,7 @@ public final class GifImageHelper {
     /**
      * Reads next 16-bit value, LSB first
      */
-    private static int readShort(GifParameters gif) throws IOException {
+    private static int readShort(GifParameters gif) throws java.io.IOException {
         // read 16-bit value, LSB first
         return gif.in.read() | gif.in.read() << 8;
     }
@@ -153,7 +151,7 @@ public final class GifImageHelper {
      *
      * @return number of bytes stored in "buffer"
      */
-    private static int readBlock(GifParameters gif) throws IOException {
+    private static int readBlock(GifParameters gif) throws java.io.IOException {
         gif.blockSize = gif.in.read();
         if (gif.blockSize <= 0)
             return gif.blockSize = 0;
@@ -163,7 +161,7 @@ public final class GifImageHelper {
         return gif.blockSize;
     }
 
-    private static byte[] readColorTable(int bpc, GifParameters gif) throws IOException {
+    private static byte[] readColorTable(int bpc, GifParameters gif) throws java.io.IOException {
         int ncolors = 1 << bpc;
         int nbytes = 3*ncolors;
         bpc = newBpc(bpc);
@@ -187,7 +185,7 @@ public final class GifImageHelper {
         return bpc;
     }
 
-    private static void readContents(GifParameters gif, int lastFrameNumber) throws IOException {
+    private static void readContents(GifParameters gif, int lastFrameNumber) throws java.io.IOException {
         // read GIF file content blocks
         boolean done = false;
         currentFrame = 0;
@@ -228,7 +226,7 @@ public final class GifImageHelper {
     /**
      * Reads next frame image
      */
-    private static void readFrame(GifParameters gif) throws IOException {
+    private static void readFrame(GifParameters gif) throws java.io.IOException {
         gif.ix = readShort(gif);    // (sub)image position & size
         gif.iy = readShort(gif);
         gif.iw = readShort(gif);
@@ -277,11 +275,11 @@ public final class GifImageHelper {
                 img.setTransparency(new int[]{gif.transIndex, gif.transIndex});
             }
         } catch (Exception e) {
-            throw new PdfException(PdfException.GifImageException, e);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.GifImageException, e);
         }
     }
 
-    private static boolean decodeImageData(GifParameters gif) throws IOException {
+    private static boolean decodeImageData(GifParameters gif) throws java.io.IOException {
         int NullCode = -1;
         int npix = gif.iw * gif.ih;
         int available, clear, code_mask, code_size, end_of_information, in_code, old_code,
@@ -448,7 +446,7 @@ public final class GifImageHelper {
     /**
      * Reads Graphics Control Extension values
      */
-    private static void readGraphicControlExt(GifParameters gif) throws IOException {
+    private static void readGraphicControlExt(GifParameters gif) throws java.io.IOException {
         gif.in.read();    // block size
         int packed = gif.in.read();   // packed fields
         gif.dispose = (packed & 0x1c) >> 2;   // disposal method
@@ -464,7 +462,7 @@ public final class GifImageHelper {
      * Skips variable length blocks up to and including
      * next zero length block.
      */
-    private static void skip(GifParameters gif) throws IOException {
+    private static void skip(GifParameters gif) throws java.io.IOException {
         do {
             readBlock(gif);
         } while (gif.blockSize > 0);

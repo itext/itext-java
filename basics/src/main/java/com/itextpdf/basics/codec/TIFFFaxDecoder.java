@@ -45,8 +45,6 @@
 */
 package com.itextpdf.basics.codec;
 
-import com.itextpdf.basics.PdfException;
-
 /**
  * Class that can decode TIFF files.
  */
@@ -656,9 +654,9 @@ public class TIFFFaxDecoder {
 
                     updatePointer(4 - bits);
                 } else if (bits == 0) {     // ERROR
-                    throw new PdfException(PdfException.InvalidCodeEncountered);
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidCodeEncountered);
                 } else if (bits == 15) {    // EOL
-                    throw new PdfException(PdfException.EolCodeWordEncounteredInWhiteRun);
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.EolCodeWordEncounteredInWhiteRun);
                 } else {
                     // 11 bits - 0000 0111 1111 1111 = 0x07ff
                     code = (entry >>> 5) & 0x07ff;
@@ -713,7 +711,7 @@ public class TIFFFaxDecoder {
                         updatePointer(4 - bits);
                     } else if (bits == 15) {
                         // EOL code
-                        throw new PdfException(PdfException.EolCodeWordEncounteredInWhiteRun);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.EolCodeWordEncounteredInWhiteRun);
                     } else {
                         setToBlack(buffer, lineOffset, bitOffset, code);
                         bitOffset += code;
@@ -790,7 +788,7 @@ public class TIFFFaxDecoder {
 
         // The data must start with an EOL code
         if (readEOL(true) != 1) {
-            throw new PdfException(PdfException.FirstScanlineMustBe1dEncoded);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.FirstScanlineMustBe1dEncoded);
         }
 
         int lineOffset = 0;
@@ -892,7 +890,7 @@ public class TIFFFaxDecoder {
 
                         updatePointer(7 - bits);
                     } else {
-                        throw new PdfException(PdfException.InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData);
                     }
                 }
 
@@ -1040,7 +1038,7 @@ public class TIFFFaxDecoder {
                     updatePointer(7 - bits);
                 } else if (code == 11) {
                     if (nextLesserThan8Bits(3) != 7) {
-                        throw new PdfException(PdfException.InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData);
                     }
 
                     int zeros = 0;
@@ -1193,12 +1191,12 @@ public class TIFFFaxDecoder {
                 runLength += code;
                 updatePointer(4 - bits);
             } else if (bits == 0) {     // ERROR
-                throw new PdfException(PdfException.InvalidCodeEncountered);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidCodeEncountered);
             } else if (bits == 15) {    // EOL
                 if (runLength == 0) {
                     isWhite = false;
                 } else {
-                    throw new PdfException(PdfException.EolCodeWordEncounteredInWhiteRun);
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.EolCodeWordEncounteredInWhiteRun);
                 }
             } else {
                 // 11 bits - 0000 0111 1111 1111 = 0x07ff
@@ -1250,7 +1248,7 @@ public class TIFFFaxDecoder {
                     updatePointer(4 - bits);
                 } else if (bits == 15) {
                     // EOL code
-                    throw new PdfException(PdfException.EolCodeWordEncounteredInBlackRun);
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.EolCodeWordEncounteredInBlackRun);
                 } else {
                     runLength += code;
                     updatePointer(9 - bits);
@@ -1297,7 +1295,7 @@ public class TIFFFaxDecoder {
                 }
             }
             if (next12Bits != 1) {
-                throw new PdfException(PdfException.ScanlineMustBeginWithEolCodeWord);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ScanlineMustBeginWithEolCodeWord);
             }
         } else if (fillBits == 1) {
 
@@ -1308,7 +1306,7 @@ public class TIFFFaxDecoder {
             int bitsLeft = 8 - bitPointer;
 
             if (nextNBits(bitsLeft) != 0) {
-                throw new PdfException(PdfException.AllFillBitsPrecedingEolCodeMustBe0);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.AllFillBitsPrecedingEolCodeMustBe0);
             }
 
             // If the number of bitsLeft is less than 8, then to have a 12
@@ -1317,7 +1315,7 @@ public class TIFFFaxDecoder {
             // that.
             if (bitsLeft < 4) {
                 if (nextNBits(8) != 0) {
-                    throw new PdfException(PdfException.AllFillBitsPrecedingEolCodeMustBe0);
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.AllFillBitsPrecedingEolCodeMustBe0);
                 }
             }
 
@@ -1328,7 +1326,7 @@ public class TIFFFaxDecoder {
             while ((n = nextNBits(8)) != 1) {
                 // If not all zeros
                 if (n != 0) {
-                    throw new PdfException(PdfException.AllFillBitsPrecedingEolCodeMustBe0);
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.AllFillBitsPrecedingEolCodeMustBe0);
                 }
             }
         }
@@ -1405,7 +1403,7 @@ public class TIFFFaxDecoder {
                 next2next = flipTable[data[bp + 2] & 0xff];
             }
         } else {
-            throw new PdfException(PdfException.TiffFillOrderTagMustBeEither1Or2);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TiffFillOrderTagMustBeEither1Or2);
         }
 
         int bitsLeft = 8 - bitPointer;
@@ -1465,7 +1463,7 @@ public class TIFFFaxDecoder {
                 }
             }
         } else {
-            throw new PdfException(PdfException.TiffFillOrderTagMustBeEither1Or2);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.TiffFillOrderTagMustBeEither1Or2);
         }
 
         int bitsLeft = 8 - bitPointer;

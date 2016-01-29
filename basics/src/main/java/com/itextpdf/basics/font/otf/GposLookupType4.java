@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font.otf;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +13,7 @@ public class GposLookupType4 extends OpenTableLookup {
 
     private final List<MarkToBase> marksbases;
 
-    public GposLookupType4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
+    public GposLookupType4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
         marksbases = new ArrayList<>();
         readSubTables();
@@ -68,7 +67,7 @@ public class GposLookupType4 extends OpenTableLookup {
     }
 
     @Override
-    protected void readSubTable(int subTableLocation) throws IOException {
+    protected void readSubTable(int subTableLocation) throws java.io.IOException {
         openReader.rf.seek(subTableLocation);
 
         openReader.rf.readUnsignedShort(); //skip format, always 1

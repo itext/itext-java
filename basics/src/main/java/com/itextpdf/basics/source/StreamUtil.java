@@ -1,9 +1,7 @@
 package com.itextpdf.basics.source;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -20,7 +18,7 @@ public final class StreamUtil {
      * @return a byte array containing all of the bytes from the stream
      * @throws java.io.IOException if there is a problem reading from the input stream
      */
-    public static byte[] inputStreamToArray(InputStream is) throws IOException {
+    public static byte[] inputStreamToArray(InputStream is) throws java.io.IOException {
         byte b[] = new byte[8192];
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         while (true) {
@@ -33,7 +31,7 @@ public final class StreamUtil {
         return out.toByteArray();
     }
 
-    public static void CopyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream outs) throws IOException {
+    public static void CopyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream outs) throws java.io.IOException {
         if (length <= 0)
             return;
         long idx = start;

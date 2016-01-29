@@ -1,6 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 /**
@@ -50,7 +49,7 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
      * Map the region of the channel
      * @throws java.io.IOException if there is a problem with creating the map
      */
-    void open() throws IOException {
+    void open() throws java.io.IOException {
         if (source != null)
             return;
 
@@ -59,7 +58,7 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
 
         try{
             source = new ByteBufferRandomAccessSource(channel.map(FileChannel.MapMode.READ_ONLY, offset, length));
-        } catch (IOException e){
+        } catch (java.io.IOException e){
             if (exceptionIsMapFailureException(e))
                 throw new MapFailedException(e);
             throw e;
@@ -67,14 +66,14 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
     }
 
     /**
-     * Utility method that determines whether a given IOException is the result
+     * Utility method that determines whether a given java.io.IOException is the result
      * of a failure to map a memory mapped file.  It would be better if the runtime
      * provided a special exception for this case, but it doesn't, so we have to rely
      * on parsing the exception message.
      * @param e the exception to check
      * @return true if the exception was the result of a failure to map a memory mapped file
      */
-    private static boolean exceptionIsMapFailureException(IOException e){
+    private static boolean exceptionIsMapFailureException(java.io.IOException e){
         if (e.getMessage() != null && e.getMessage().contains("Map failed"))
             return true;
         return false;
@@ -83,18 +82,18 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
     /**
      * {@inheritDoc}
      */
-    public int get(long position) throws IOException {
+    public int get(long position) throws java.io.IOException {
         if (source == null)
-            throw new IOException("RandomAccessSource not opened");
+            throw new java.io.IOException("RandomAccessSource not opened");
         return source.get(position);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int get(long position, byte[] bytes, int off, int len) throws IOException {
+    public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         if (source == null)
-            throw new IOException("RandomAccessSource not opened");
+            throw new java.io.IOException("RandomAccessSource not opened");
         return source.get(position, bytes, off, len);
     }
 
@@ -108,7 +107,7 @@ class MappedChannelRandomAccessSource implements RandomAccessSource {
     /**
      * {@inheritDoc}
      */
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         if (source == null)
             return;
         source.close();

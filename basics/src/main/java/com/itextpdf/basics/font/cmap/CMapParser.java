@@ -5,7 +5,6 @@ import com.itextpdf.basics.source.PdfTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +32,11 @@ public class CMapParser {
 
     private static final int MaxLevel = 10;
 
-    public static void parseCid(String cmapName, AbstractCMap cmap, CMapLocation location) throws IOException {
+    public static void parseCid(String cmapName, AbstractCMap cmap, CMapLocation location) throws java.io.IOException {
         parseCid(cmapName, cmap, location, 0);
     }
 
-    private static void parseCid(String cmapName, AbstractCMap cmap, CMapLocation location, int level) throws IOException {
+    private static void parseCid(String cmapName, AbstractCMap cmap, CMapLocation location, int level) throws java.io.IOException {
         if (level >= MaxLevel)
             return;
         PdfTokenizer inp = location.getLocation(cmapName);

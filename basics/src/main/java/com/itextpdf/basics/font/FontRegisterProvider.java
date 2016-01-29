@@ -1,13 +1,9 @@
 package com.itextpdf.basics.font;
 
-
-import com.itextpdf.basics.PdfException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -104,7 +100,7 @@ class FontRegisterProvider {
      * @param style    the style of this font
      * @return the Font constructed based on the parameters
      */
-    public FontProgram getFont(final String fontName, final int style) throws IOException {
+    public FontProgram getFont(final String fontName, final int style) throws java.io.IOException {
         return getFont(fontName, style, true);
     }
 
@@ -118,7 +114,7 @@ class FontRegisterProvider {
      *                 the cache if new, false if the font is always created new
      * @return the Font constructed based on the parameters
      */
-    public FontProgram getFont(String fontName, int style, boolean cached) throws IOException {
+    public FontProgram getFont(String fontName, int style, boolean cached) throws java.io.IOException {
         if (fontName == null)
             return null;
         String lowerCaseFontName = fontName.toLowerCase();
@@ -151,7 +147,7 @@ class FontRegisterProvider {
 
     }
 
-    protected FontProgram getFontProgram(String fontName, boolean cached) throws IOException {
+    protected FontProgram getFontProgram(String fontName, boolean cached) throws java.io.IOException {
         FontProgram fontProgram = null;
         fontName = trueTypeFonts.get(fontName.toLowerCase());
         // the font is not registered as truetype font
@@ -162,7 +158,7 @@ class FontRegisterProvider {
             try {
                 // the font is a type 1 font or CJK font
                 fontProgram = FontFactory.createFont(fontName, cached);
-            } catch (PdfException e) {
+            } catch (com.itextpdf.basics.PdfException e) {
             }
         }
         return fontProgram;
@@ -301,8 +297,8 @@ class FontRegisterProvider {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace(String.format("Registered %s", path));
             }
-        } catch (IOException e){
-            throw new PdfException(e);
+        } catch (java.io.IOException e){
+            throw new com.itextpdf.basics.PdfException(e);
         }
     }
 
@@ -431,5 +427,4 @@ class FontRegisterProvider {
     public boolean isRegistered(final String fontname) {
         return trueTypeFonts.containsKey(fontname.toLowerCase());
     }
-
 }

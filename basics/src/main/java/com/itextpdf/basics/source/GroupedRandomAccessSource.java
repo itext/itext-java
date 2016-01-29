@@ -1,7 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
-
 /**
  * A RandomAccessSource that is based on a set of underlying sources,
  * treating the sources as if they were a contiguous block of data.
@@ -26,7 +24,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
      * Constructs a new {@link GroupedRandomAccessSource} based on the specified set of sources
      * @param sources the sources used to build this group
      */
-    public GroupedRandomAccessSource(RandomAccessSource[] sources) throws IOException {
+    public GroupedRandomAccessSource(RandomAccessSource[] sources) throws java.io.IOException {
         this.sources = new SourceEntry[sources.length];
 
         long totalSize = 0;
@@ -62,9 +60,9 @@ class GroupedRandomAccessSource implements RandomAccessSource {
      * when the source is no longer the active source
      * @param offset the offset of the byte to look for
      * @return the SourceEntry that contains the byte at the specified offset
-     * @throws IOException if there is a problem with IO (usually the result of the sourceReleased() call)
+     * @throws java.io.IOException if there is a problem with IO (usually the result of the sourceReleased() call)
      */
-    private SourceEntry getSourceEntryForOffset(long offset) throws IOException {
+    private SourceEntry getSourceEntryForOffset(long offset) throws java.io.IOException {
         if (offset >= size)
             return null;
 
@@ -88,18 +86,18 @@ class GroupedRandomAccessSource implements RandomAccessSource {
     /**
      * Called when a given source is no longer the active source.  This gives subclasses the abilty to release resources, if appropriate.
      * @param source the source that is no longer the active source
-     * @throws IOException if there are any problems
+     * @throws java.io.IOException if there are any problems
      */
-    protected void sourceReleased(RandomAccessSource source) throws IOException{
+    protected void sourceReleased(RandomAccessSource source) throws java.io.IOException{
         // by default, do nothing
     }
 
     /**
      * Called when a given source is about to become the active source.  This gives subclasses the abilty to retrieve resources, if appropriate.
      * @param source the source that is about to become the active source
-     * @throws IOException if there are any problems
+     * @throws java.io.IOException if there are any problems
      */
-    protected void sourceInUse(RandomAccessSource source) throws IOException{
+    protected void sourceInUse(RandomAccessSource source) throws java.io.IOException{
         // by default, do nothing
     }
 
@@ -108,7 +106,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
      * The source that contains the byte at position is retrieved, the correct offset into that source computed, then the value
      * from that offset in the underlying source is returned.
      */
-    public int get(long position) throws IOException {
+    public int get(long position) throws java.io.IOException {
         SourceEntry entry = getSourceEntryForOffset(position);
 
         if (entry == null) // we have run out of data to read from
@@ -120,7 +118,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
     /**
      * {@inheritDoc}
      */
-    public int get(long position, byte[] bytes, int off, int len) throws IOException {
+    public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         SourceEntry entry = getSourceEntryForOffset(position);
 
         if (entry == null) // we have run out of data to read from
@@ -162,7 +160,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
      * {@inheritDoc}
      * Closes all of the underlying sources
      */
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         for (SourceEntry entry : sources) {
             entry.source.close();
         }

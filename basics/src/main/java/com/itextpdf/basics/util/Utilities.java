@@ -8,7 +8,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,7 +34,7 @@ public class Utilities {
      * @param size the number of bytes to skip
      * @throws java.io.IOException
      */
-    static public void skip(InputStream is, int size) throws IOException {
+    static public void skip(InputStream is, int size) throws java.io.IOException {
         long n;
         while (size > 0) {
             n = is.skip(size);
@@ -189,7 +188,7 @@ public class Utilities {
         return b;
     }
 
-    public static void transferBytes(InputStream in, java.io.OutputStream out) throws IOException {
+    public static void transferBytes(InputStream in, java.io.OutputStream out) throws java.io.IOException {
         byte[] buffer = new byte[transferSize];
         for (; ; ) {
             int len = in.read(buffer, 0, transferSize);
@@ -205,9 +204,9 @@ public class Utilities {
      *
      * @param is the stream to read
      * @return a byte array containing all of the bytes from the stream
-     * @throws IOException if there is a problem reading from the input stream
+     * @throws java.io.IOException if there is a problem reading from the input stream
      */
-    public static byte[] inputStreamToArray(InputStream is) throws IOException {
+    public static byte[] inputStreamToArray(InputStream is) throws java.io.IOException {
         byte b[] = new byte[8192];
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         while (true) {
@@ -227,9 +226,9 @@ public class Utilities {
      * @param start  start position of source copy from.
      * @param length length copy to.
      * @param outs   the {@code OutputStream} copy to.
-     * @throws IOException on error.
+     * @throws java.io.IOException on error.
      */
-    public static void copyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream outs) throws IOException {
+    public static void copyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream outs) throws java.io.IOException {
         if (length <= 0)
             return;
         long idx = start;

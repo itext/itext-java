@@ -1,13 +1,11 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.basics.source.RandomAccessSourceFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
-import java.io.IOException;
 import java.io.InputStream;
 
 class Type1Parser {
@@ -29,16 +27,16 @@ class Type1Parser {
      * @param pfb the PFB file if the input is made with a <CODE>byte</CODE> array
      * @param metricsPath the name of one of the 14 built-in fonts or the location of an AFM file. The file must end in '.afm'
      * @the AFM file is invalid
-     * @throws IOException the AFM file could not be read
+     * @throws java.io.IOException the AFM file could not be read
      */
-    public Type1Parser(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws IOException {
+    public Type1Parser(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws java.io.IOException {
         this.afmData = afm;
         this.pfbData = pfb;
         this.afmPath = metricsPath;
         this.pfbPath = binaryPath;
     }
 
-    public RandomAccessFileOrArray getMetricsFile() throws IOException {
+    public RandomAccessFileOrArray getMetricsFile() throws java.io.IOException {
         InputStream is = null;
         isBuiltInFont = false;
 
@@ -52,7 +50,7 @@ class Type1Parser {
                 String resourcePath = FontConstants.RESOURCE_PATH + "afm/" + afmPath + ".afm";
                 is = Utilities.getResourceStream(resourcePath, resourceAnchor.getClass().getClassLoader());
                 if (is == null) {
-                    throw new PdfException("1.not.found.as.resource").setMessageParams(resourcePath);
+                    throw new com.itextpdf.basics.PdfException("1.not.found.as.resource").setMessageParams(resourcePath);
                 }
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 int read;
@@ -78,7 +76,7 @@ class Type1Parser {
                 rf.close();
                 return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             } else {
-                throw new PdfException(PdfException._1IsNotAnAFMorPfmFontFile).setMessageParams(afmPath);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1IsNotAnAFMorPfmFontFile).setMessageParams(afmPath);
             }
         } else if (afmData != null) {
             RandomAccessFileOrArray rf = new RandomAccessFileOrArray(sourceFactory.createSource(afmData));
@@ -89,18 +87,18 @@ class Type1Parser {
                 try {
                     Pfm2afm.convert(rf, ba);
                 } catch (Exception ignored) {
-                    throw new PdfException("invalid.afm.or.pfm.font.file");
+                    throw new com.itextpdf.basics.PdfException("invalid.afm.or.pfm.font.file");
                 } finally {
                     rf.close();
                 }
                 return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             }
         } else {
-            throw new PdfException("invalid.afm.or.pfm.font.file");
+            throw new com.itextpdf.basics.PdfException("invalid.afm.or.pfm.font.file");
         }
     }
 
-    public RandomAccessFileOrArray getPostscriptBinary() throws IOException {
+    public RandomAccessFileOrArray getPostscriptBinary() throws java.io.IOException {
         if (pfbData != null) {
             return new RandomAccessFileOrArray(sourceFactory.createSource(pfbData));
         } else if (pfbPath != null && pfbPath.toLowerCase().endsWith(".pfb")) {
@@ -119,7 +117,7 @@ class Type1Parser {
         return afmPath;
     }
 
-    private boolean isAfmFile(RandomAccessFileOrArray raf) throws IOException {
+    private boolean isAfmFile(RandomAccessFileOrArray raf) throws java.io.IOException {
         StringBuilder builder = new StringBuilder(AfmHeader.length());
         for (int i = 0; i < AfmHeader.length(); i++) {
             try {

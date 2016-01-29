@@ -1,23 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.itextpdf.basics.font.otf;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author admin
- */
 public class OpenTypeFeature {
     private OpenTypeFontTableReader openTypeReader;
     private List<FeatureRecord> records;
     
-    public OpenTypeFeature(OpenTypeFontTableReader openTypeReader, int locationFeatureTable) throws IOException {
+    public OpenTypeFeature(OpenTypeFontTableReader openTypeReader, int locationFeatureTable) throws java.io.IOException {
         this.openTypeReader = openTypeReader;
         records = new ArrayList<>();
         openTypeReader.rf.seek(locationFeatureTable);

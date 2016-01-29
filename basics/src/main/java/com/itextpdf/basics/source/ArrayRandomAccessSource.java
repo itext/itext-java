@@ -1,7 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
-
 /**
  * A RandomAccessSource that is based on an underlying byte array
  */
@@ -36,7 +34,7 @@ class ArrayRandomAccessSource implements RandomAccessSource {
         return array.length;
     }
 
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         array = null;
     }
 }

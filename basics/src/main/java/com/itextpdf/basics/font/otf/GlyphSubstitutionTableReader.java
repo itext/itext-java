@@ -2,7 +2,6 @@ package com.itextpdf.basics.font.otf;
 
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -19,13 +18,13 @@ import java.util.Map;
 public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
 
     public GlyphSubstitutionTableReader(RandomAccessFileOrArray rf, int gsubTableLocation, OpenTypeGdefTableReader gdef,
-        Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws IOException {
+        Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws java.io.IOException {
         super(rf, gsubTableLocation, gdef, indexGlyphMap, unitsPerEm);
         startReadingTable();
     }
 
     @Override
-    protected OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations) throws IOException {
+    protected OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         if (lookupType == 7) {
             for (int k = 0; k < subTableLocations.length; ++k) {
                 int location = subTableLocations[k];

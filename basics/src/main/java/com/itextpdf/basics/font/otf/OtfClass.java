@@ -1,24 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.itextpdf.basics.font.otf;
 
 import com.itextpdf.basics.util.IntHashtable;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
-import java.io.IOException;
-
-/**
- *
- * @author admin
- */
 public class OtfClass {
     //key is glyph, value is class inside all 2
     private IntHashtable mapClass = new IntHashtable();
     
-    public OtfClass(RandomAccessFileOrArray rf, int classLocation) throws IOException {
+    public OtfClass(RandomAccessFileOrArray rf, int classLocation) throws java.io.IOException {
         rf.seek(classLocation);
         int classFormat = rf.readUnsignedShort();
         if (classFormat == 1) {
@@ -40,7 +29,7 @@ public class OtfClass {
                 }
             }
         } else {
-            throw new IOException("Invalid class format " + classFormat);
+            throw new java.io.IOException("Invalid class format " + classFormat);
         }
     }
     

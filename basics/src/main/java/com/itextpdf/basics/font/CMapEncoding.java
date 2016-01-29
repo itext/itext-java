@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.font.cmap.CMapByteCid;
 import com.itextpdf.basics.font.cmap.CMapCidByte;
@@ -133,7 +132,7 @@ public class CMapEncoding {
             return bout.toByteArray();
         }
         catch (Exception ex) {
-            throw new PdfException("CMapEncoding", ex);
+            throw new com.itextpdf.basics.PdfException("CMapEncoding", ex);
         }
     }
 

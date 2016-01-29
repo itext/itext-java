@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font.otf;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +15,7 @@ public class GposLookupType2 extends OpenTableLookup {
 
     private List<OpenTableLookup> listRules = new ArrayList<>();
 
-    public GposLookupType2(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws IOException {
+    public GposLookupType2(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
         readSubTables();
     }
@@ -38,7 +37,7 @@ public class GposLookupType2 extends OpenTableLookup {
     }
 
     @Override
-    protected void readSubTable(int subTableLocation) throws IOException {
+    protected void readSubTable(int subTableLocation) throws java.io.IOException {
         openReader.rf.seek(subTableLocation);
         int gposFormat = openReader.rf.readShort();
         switch (gposFormat) {
@@ -58,7 +57,7 @@ public class GposLookupType2 extends OpenTableLookup {
     private static class PairPosAdjustmentFormat1 extends OpenTableLookup {
         private Map<Integer,Map<Integer,PairValueFormat>> gposMap = new HashMap<>();
 
-        public PairPosAdjustmentFormat1(OpenTypeFontTableReader openReader, int lookupFlag, int subtableLocation) throws IOException {
+        public PairPosAdjustmentFormat1(OpenTypeFontTableReader openReader, int lookupFlag, int subtableLocation) throws java.io.IOException {
             super(openReader, lookupFlag, null);
             readFormat(subtableLocation);
         }
@@ -88,7 +87,7 @@ public class GposLookupType2 extends OpenTableLookup {
             return changed;
         }
 
-        protected void readFormat(int subTableLocation) throws IOException {
+        protected void readFormat(int subTableLocation) throws java.io.IOException {
             int coverage = openReader.rf.readUnsignedShort() + subTableLocation;
             int valueFormat1 = openReader.rf.readUnsignedShort();
             int valueFormat2 = openReader.rf.readUnsignedShort();
@@ -111,7 +110,7 @@ public class GposLookupType2 extends OpenTableLookup {
         }
 
         @Override
-        protected void readSubTable(int subTableLocation) throws IOException {
+        protected void readSubTable(int subTableLocation) throws java.io.IOException {
             //never called here
         }
     }
@@ -122,7 +121,7 @@ public class GposLookupType2 extends OpenTableLookup {
         private Set<Integer> coverageSet;
         private Map<Integer,PairValueFormat[]> posSubs = new HashMap<>();
 
-        public PairPosAdjustmentFormat2(OpenTypeFontTableReader openReader, int lookupFlag, int subtableLocation) throws IOException {
+        public PairPosAdjustmentFormat2(OpenTypeFontTableReader openReader, int lookupFlag, int subtableLocation) throws java.io.IOException {
             super(openReader, lookupFlag, null);
             readFormat(subtableLocation);
         }
@@ -154,7 +153,7 @@ public class GposLookupType2 extends OpenTableLookup {
             return true;
         }
 
-        protected void readFormat(int subTableLocation) throws IOException {
+        protected void readFormat(int subTableLocation) throws java.io.IOException {
             int coverage = openReader.rf.readUnsignedShort()+ subTableLocation;
             int valueFormat1 = openReader.rf.readUnsignedShort();
             int valueFormat2 = openReader.rf.readUnsignedShort();
@@ -180,7 +179,7 @@ public class GposLookupType2 extends OpenTableLookup {
         }
 
         @Override
-        protected void readSubTable(int subTableLocation) throws IOException {
+        protected void readSubTable(int subTableLocation) throws java.io.IOException {
             //never called here
         }
     }

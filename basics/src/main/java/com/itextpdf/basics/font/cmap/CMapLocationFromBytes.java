@@ -4,8 +4,6 @@ import com.itextpdf.basics.source.PdfTokenizer;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.basics.source.RandomAccessSourceFactory;
 
-import java.io.IOException;
-
 /**
  * @author psoares
  */
@@ -17,7 +15,7 @@ public class CMapLocationFromBytes implements CMapLocation {
         this.data = data;
     }
 
-    public PdfTokenizer getLocation(String location) throws IOException {
+    public PdfTokenizer getLocation(String location) throws java.io.IOException {
         return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(data)));
     }
 }

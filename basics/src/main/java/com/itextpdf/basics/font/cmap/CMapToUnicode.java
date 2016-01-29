@@ -6,7 +6,6 @@ import com.itextpdf.basics.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +86,7 @@ public class CMapToUnicode extends AbstractCMap {
         return result != null ? result.toCharArray() : null;
     }
 
-    public Map<Integer, Integer> createReverseMapping() throws IOException {
+    public Map<Integer, Integer> createReverseMapping() throws java.io.IOException {
         Map<Integer, Integer> result = new HashMap<>();
         for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
             result.put(convertToInt(entry.getValue()), entry.getKey());
@@ -142,13 +141,13 @@ public class CMapToUnicode extends AbstractCMap {
                 Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
                 logger.warn(LogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
             }
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             throw new RuntimeException();
         }
 
     }
 
-    private String createStringFromBytes(byte[] bytes) throws IOException {
+    private String createStringFromBytes(byte[] bytes) throws java.io.IOException {
         String retval;
         if (bytes.length == 1) {
             retval = String.valueOf((char)(bytes[0] & 0xFF));

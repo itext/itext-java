@@ -1,6 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -31,7 +30,7 @@ public class RASInputStream extends InputStream {
      * {@inheritDoc}
      */
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws java.io.IOException {
         int count = source.get(position, b, off, len);
         position += count;
         return count;
@@ -41,7 +40,7 @@ public class RASInputStream extends InputStream {
      * {@inheritDoc}
      */
     @Override
-    public int read() throws IOException {
+    public int read() throws java.io.IOException {
         return source.get(position++);
     }
 }

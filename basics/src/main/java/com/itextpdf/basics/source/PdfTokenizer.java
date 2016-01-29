@@ -1,8 +1,5 @@
 package com.itextpdf.basics.source;
 
-import com.itextpdf.basics.PdfException;
-
-import java.io.IOException;
 import java.util.Arrays;
 
 public class PdfTokenizer {
@@ -88,32 +85,32 @@ public class PdfTokenizer {
         this.outBuf = new ByteBuffer();
     }
 
-    public void seek(long pos) throws IOException {
+    public void seek(long pos) throws java.io.IOException {
         file.seek(pos);
     }
 
-    public void readFully(byte[] bytes) throws IOException {
+    public void readFully(byte[] bytes) throws java.io.IOException {
         file.readFully(bytes);
     }
 
-    public long getPosition() throws IOException {
+    public long getPosition() throws java.io.IOException {
         return file.getPosition();
     }
 
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         if (closeStream)
             file.close();
     }
 
-    public long length() throws IOException {
+    public long length() throws java.io.IOException {
         return file.length();
     }
 
-    public int read() throws IOException {
+    public int read() throws java.io.IOException {
         return file.read();
     }
 
-    public String readString(int size) throws IOException {
+    public String readString(int size) throws java.io.IOException {
         StringBuilder buf = new StringBuilder();
         int ch;
         while ((size--) > 0) {
@@ -168,36 +165,36 @@ public class PdfTokenizer {
             file.pushBack((byte) ch);
     }
 
-    public int getHeaderOffset() throws IOException {
+    public int getHeaderOffset() throws java.io.IOException {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx < 0) {
             idx = str.indexOf("%FDF-");
             if (idx < 0)
-                throw new PdfException(PdfException.PdfHeaderNotFound, this);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfHeaderNotFound, this);
         }
 
         return idx;
     }
 
-    public String checkPdfHeader() throws IOException {
+    public String checkPdfHeader() throws java.io.IOException {
         file.seek(0);
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx != 0)
-            throw new PdfException(PdfException.PdfHeaderNotFound, this);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfHeaderNotFound, this);
         return str.substring(idx + 1, idx + 8);
     }
 
-    public void checkFdfHeader() throws IOException {
+    public void checkFdfHeader() throws java.io.IOException {
         file.seek(0);
         String str = readString(1024);
         int idx = str.indexOf("%FDF-");
         if (idx != 0)
-            throw new PdfException(PdfException.FdfStartxrefNotFound, this);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.FdfStartxrefNotFound, this);
     }
 
-    public long getStartxref() throws IOException {
+    public long getStartxref() throws java.io.IOException {
         int arrLength = 1024;
         long fileLength = file.length();
         long pos = fileLength - arrLength;
@@ -209,10 +206,10 @@ public class PdfTokenizer {
             if (idx >= 0) return pos + idx;
             pos = pos - arrLength + 9;                  // 9 = "startxref".length()
         }
-        throw new PdfException(PdfException.PdfStartxrefNotFound, this);
+        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PdfStartxrefNotFound, this);
     }
 
-    public void nextValidToken() throws IOException {
+    public void nextValidToken() throws java.io.IOException {
         int level = 0;
         byte[] n1 = null;
         byte[] n2 = null;
@@ -272,7 +269,7 @@ public class PdfTokenizer {
         // case can occur inside an Object Stream.
     }
 
-    public boolean nextToken() throws IOException {
+    public boolean nextToken() throws java.io.IOException {
         int ch;
         outBuf.reset();
         do {
@@ -305,7 +302,7 @@ public class PdfTokenizer {
             case '>': {
                 ch = file.read();
                 if (ch != '>')
-                    throwError(PdfException.GtNotExpected);
+                    throwError(com.itextpdf.basics.PdfException.GtNotExpected);
                 type = TokenType.EndDic;
                 break;
             }
@@ -340,7 +337,7 @@ public class PdfTokenizer {
                     v1 = file.read();
                 }
                 if (v1 < 0 || v2 < 0)
-                    throwError(PdfException.ErrorReadingString);
+                    throwError(com.itextpdf.basics.PdfException.ErrorReadingString);
                 break;
             }
             case '%': {
@@ -373,7 +370,7 @@ public class PdfTokenizer {
                     outBuf.append(ch);
                 }
                 if (ch == -1)
-                    throwError(PdfException.ErrorReadingString);
+                    throwError(com.itextpdf.basics.PdfException.ErrorReadingString);
                 break;
             }
             default: {
@@ -589,10 +586,10 @@ public class PdfTokenizer {
      */
     public void throwError(String error, Object... messageParams) {
         try {
-            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ErrorAtFilePointer1, new com.itextpdf.basics.PdfException(error).setMessageParams(messageParams))
                     .setMessageParams(file.getPosition());
-        } catch (IOException e) {
-            throw new PdfException(PdfException.ErrorAtFilePointer1, new PdfException(error).setMessageParams(messageParams))
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.ErrorAtFilePointer1, new com.itextpdf.basics.PdfException(error).setMessageParams(messageParams))
                     .setMessageParams(error, "no position");
         }
     }
@@ -620,9 +617,9 @@ public class PdfTokenizer {
      *
      * @param buffer @see ByteBuffer
      * @return boolean
-     * @throws IOException
+     * @throws java.io.IOException
      */
-    public boolean readLineSegment(ByteBuffer buffer) throws IOException {
+    public boolean readLineSegment(ByteBuffer buffer) throws java.io.IOException {
         return readLineSegment(buffer, true);
     }
 
@@ -635,9 +632,9 @@ public class PdfTokenizer {
      * @param isNullWhitespace boolean to indicate whether '0' is whitespace or not.
      *                         If in doubt, use true or overloaded method {@link #readLineSegment(com.itextpdf.basics.source.ByteBuffer) readLineSegment(input)}
      * @return boolean
-     * @throws IOException
+     * @throws java.io.IOException
      */
-    public boolean readLineSegment(ByteBuffer buffer, boolean isNullWhitespace) throws IOException {
+    public boolean readLineSegment(ByteBuffer buffer, boolean isNullWhitespace) throws java.io.IOException {
         int c;
         boolean eol = false;
         // ssteward, pdftk-1.10, 040922:
@@ -760,7 +757,7 @@ public class PdfTokenizer {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() throws java.io.IOException {
             buffer = null;
         }
     }

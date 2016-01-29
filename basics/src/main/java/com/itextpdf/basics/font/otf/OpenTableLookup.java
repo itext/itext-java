@@ -1,7 +1,5 @@
 package com.itextpdf.basics.font.otf;
 
-import java.io.IOException;
-
 /**
  *
  * @author psoares
@@ -22,13 +20,13 @@ public abstract class OpenTableLookup {
         return lookupFlag;
     }
     
-    protected void readSubTables() throws IOException {
+    protected void readSubTables() throws java.io.IOException {
 		for (int subTableLocation : subTableLocations) {
 			readSubTable(subTableLocation);
 		}
     }
     
-    protected abstract void readSubTable(int subTableLocation) throws IOException; 
+    protected abstract void readSubTable(int subTableLocation) throws java.io.IOException; 
     
     public abstract boolean transformOne(GlyphLine line);
     

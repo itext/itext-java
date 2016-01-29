@@ -1,7 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
-
 /**
  * A RandomAccessSource that wraps another RandomAccessSource and provides a window of it at a specific offset and over
  * a specific length.  Position 0 becomes the offset position in the underlying source.
@@ -47,7 +45,7 @@ public class WindowRandomAccessSource implements RandomAccessSource {
      * {@inheritDoc}
      * Note that the position will be adjusted to read from the corrected location in the underlying source
      */
-    public int get(long position) throws IOException {
+    public int get(long position) throws java.io.IOException {
         if (position >= length) return -1;
         return source.get(offset + position);
     }
@@ -56,7 +54,7 @@ public class WindowRandomAccessSource implements RandomAccessSource {
      * {@inheritDoc}
      * Note that the position will be adjusted to read from the corrected location in the underlying source
      */
-    public int get(long position, byte[] bytes, int off, int len) throws IOException {
+    public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         if (position >= length)
             return -1;
 
@@ -75,7 +73,7 @@ public class WindowRandomAccessSource implements RandomAccessSource {
     /**
      * {@inheritDoc}
      */
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         source.close();
     }
 }

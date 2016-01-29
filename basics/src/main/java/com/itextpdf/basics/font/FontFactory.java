@@ -1,8 +1,5 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
-
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -19,7 +16,7 @@ public class FontFactory {
      *
      * @return a BaseFont object (Helvetica, Winansi, not embedded)
      */
-    public static FontProgram createFont() throws IOException {
+    public static FontProgram createFont() throws java.io.IOException {
         return createFont(FontConstants.HELVETICA);
     }
 
@@ -68,7 +65,7 @@ public class FontFactory {
      * @param name     the name of the font or its location on file
      * @return returns a new font. This font may come from the cache
      */
-    public static FontProgram createFont(String name) throws IOException {
+    public static FontProgram createFont(String name) throws java.io.IOException {
         return createFont(name, true, null, null, false);
     }
 
@@ -119,7 +116,7 @@ public class FontFactory {
      *                 the cache if new, false if the font is always created new
      * @return returns a new font. This font may come from the cache
      */
-    public static FontProgram createFont(String name, boolean cached) throws IOException {
+    public static FontProgram createFont(String name, boolean cached) throws java.io.IOException {
         return createFont(name, cached, null, null, false);
     }
 
@@ -163,7 +160,7 @@ public class FontFactory {
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(byte[] ttfAfm) throws IOException {
+    public static FontProgram createFont(byte[] ttfAfm) throws java.io.IOException {
         return createFont(null, false, ttfAfm, null);
     }
 
@@ -209,7 +206,7 @@ public class FontFactory {
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(byte[] ttfAfm, byte[] pfb) throws IOException {
+    public static FontProgram createFont(byte[] ttfAfm, byte[] pfb) throws java.io.IOException {
         return createFont(null, false, ttfAfm, pfb);
     }
 
@@ -260,7 +257,7 @@ public class FontFactory {
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(String name, boolean cached, byte[] ttfAfm, byte[] pfb) throws IOException {
+    public static FontProgram createFont(String name, boolean cached, byte[] ttfAfm, byte[] pfb) throws java.io.IOException {
         return createFont(name, cached, ttfAfm, pfb, false);
     }
 
@@ -314,7 +311,7 @@ public class FontFactory {
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(String name, boolean cached, byte[] ttfAfm, byte[] pfb, boolean noThrow) throws IOException {
+    public static FontProgram createFont(String name, boolean cached, byte[] ttfAfm, byte[] pfb, boolean noThrow) throws java.io.IOException {
         String baseName = FontProgram.getBaseName(name);
 
         //yes, we trying to find built-in standard font with original name, not baseName.
@@ -351,7 +348,7 @@ public class FontFactory {
             if (noThrow) {
                 return null;
             } else {
-                throw new PdfException(PdfException.FontIsNotRecognized);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.FontIsNotRecognized);
             }
         }
 
@@ -370,7 +367,7 @@ public class FontFactory {
         } else if (noThrow) {
             return null;
         } else {
-            throw new PdfException(PdfException.Font1IsNotRecognized).setMessageParams(name);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.Font1IsNotRecognized).setMessageParams(name);
         }
 
         if (cached) {
@@ -425,7 +422,7 @@ public class FontFactory {
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(String ttcPath, int ttcIndex, boolean cached) throws IOException {
+    public static FontProgram createFont(String ttcPath, int ttcIndex, boolean cached) throws java.io.IOException {
         if (cached) {
             FontProgram fontFound = FontCache.getFont(ttcPath + ttcIndex);
             if (fontFound != null) {
@@ -440,7 +437,7 @@ public class FontFactory {
         return fontBuilt;
     }
 
-    public static FontProgram createFont(String ttcPath, int ttcIndex) throws IOException {
+    public static FontProgram createFont(String ttcPath, int ttcIndex) throws java.io.IOException {
         return createFont(ttcPath, ttcIndex, false);
     }
 
@@ -484,7 +481,7 @@ public class FontFactory {
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws IOException {
+    public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
 
         if (cached) {
             String ttcNameKey = String.valueOf(Arrays.deepHashCode(new Object[]{ttc})) + ttcIndex;
@@ -502,20 +499,20 @@ public class FontFactory {
         return fontBuilt;
     }
 
-    public static FontProgram createFont(byte[] ttc, int ttcIndex) throws IOException {
+    public static FontProgram createFont(byte[] ttc, int ttcIndex) throws java.io.IOException {
         return createFont(ttc, ttcIndex, false);
     }
 
 
-    public static FontProgram createRegisteredFont(String fontName, int style, boolean cached) throws IOException {
+    public static FontProgram createRegisteredFont(String fontName, int style, boolean cached) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, style, cached);
     }
 
-    public static FontProgram createRegisteredFont(String fontName, int style) throws IOException {
+    public static FontProgram createRegisteredFont(String fontName, int style) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, style);
     }
 
-    public static FontProgram createRegisteredFont(String fontName) throws IOException {
+    public static FontProgram createRegisteredFont(String fontName) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, FontConstants.UNDEFINED);
     }
 
@@ -612,6 +609,4 @@ public class FontFactory {
     public static boolean isRegistered(final String fontname) {
         return fontRegisterProvider.isRegistered(fontname);
     }
-
-
 }

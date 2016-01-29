@@ -1,12 +1,9 @@
 package com.itextpdf.basics.image;
 
-
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.color.IccProfile;
 import com.itextpdf.basics.source.ByteArrayOutputStream;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,13 +89,13 @@ public class JpegImageHelper {
                 errorID = "Byte array";
             }
             processParameters(is, errorID, image);
-        } catch (IOException e) {
-            throw new PdfException(PdfException.JpegImageException, e);
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.JpegImageException, e);
         } finally {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ignore) { }
+                } catch (java.io.IOException ignore) { }
             }
         }
 
@@ -126,13 +123,13 @@ public class JpegImageHelper {
             try {
                 is = image.getUrl().openStream();
                 Utilities.transferBytes(is, stream);
-            } catch (IOException e) {
-                throw new PdfException(PdfException.JpegImageException, e);
+            } catch (java.io.IOException e) {
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.JpegImageException, e);
             } finally {
                 if (is != null) {
                     try {
                         is.close();
-                    } catch (IOException ignored) { }
+                    } catch (java.io.IOException ignored) { }
                 }
             }
         }
@@ -145,17 +142,17 @@ public class JpegImageHelper {
      * @throws com.itextpdf.basics.PdfException
      * @throws java.io.IOException
      */
-    private static void processParameters(InputStream is, String errorID, Image image) throws IOException {
+    private static void processParameters(InputStream is, String errorID, Image image) throws java.io.IOException {
         byte[][] icc = null;
         if (is.read() != 0xFF || is.read() != 0xD8) {
-            throw new PdfException(PdfException._1IsNotAValidJpegFile).setMessageParams(errorID);
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1IsNotAValidJpegFile).setMessageParams(errorID);
         }
         boolean firstPass = true;
         int len;
         while (true) {
             int v = is.read();
             if (v < 0)
-                throw new PdfException(PdfException.PrematureEofWhileReadingJpg);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.PrematureEofWhileReadingJpg);
             if (v == 0xFF) {
                 int marker = is.read();
                 if (firstPass && marker == M_APP0) {
@@ -168,7 +165,7 @@ public class JpegImageHelper {
                     byte bcomp[] = new byte[JFIF_ID.length];
                     int r = is.read(bcomp);
                     if (r != bcomp.length)
-                        throw new PdfException(PdfException._1CorruptedJfifMarker).setMessageParams(errorID);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1CorruptedJfifMarker).setMessageParams(errorID);
                     boolean found = true;
                     for (int k = 0; k < bcomp.length; ++k) {
                         if (bcomp[k] != JFIF_ID[k]) {
@@ -312,7 +309,7 @@ public class JpegImageHelper {
                 if (markertype == VALID_MARKER) {
                     Utilities.skip(is, 2);
                     if (is.read() != 0x08) {
-                        throw new PdfException(PdfException._1MustHave8BitsPerComponent).setMessageParams(errorID);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1MustHave8BitsPerComponent).setMessageParams(errorID);
                     }
                     image.setHeight(getShort(is));
                     image.setWidth(getShort(is));
@@ -320,7 +317,7 @@ public class JpegImageHelper {
                     image.setBpc(8);
                     break;
                 } else if (markertype == UNSUPPORTED_MARKER) {
-                    throw new PdfException(PdfException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
+                    throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
                 } else if (markertype != NOPARAM_MARKER) {
                     Utilities.skip(is, getShort(is) - 2);
                 }
@@ -356,7 +353,7 @@ public class JpegImageHelper {
      * @return an int
      * @throws java.io.IOException
      */
-    private static int getShort(InputStream is) throws IOException {
+    private static int getShort(InputStream is) throws java.io.IOException {
         return (is.read() << 8) + is.read();
     }
 
@@ -384,5 +381,4 @@ public class JpegImageHelper {
         }
         return NOT_A_MARKER;
     }
-
 }

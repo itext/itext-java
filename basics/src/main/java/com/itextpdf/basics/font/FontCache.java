@@ -1,6 +1,5 @@
 package com.itextpdf.basics.font;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.util.IntHashtable;
 import com.itextpdf.basics.util.Utilities;
 import com.itextpdf.basics.font.cmap.AbstractCMap;
@@ -11,7 +10,6 @@ import com.itextpdf.basics.font.cmap.CMapLocationResource;
 import com.itextpdf.basics.font.cmap.CMapParser;
 import com.itextpdf.basics.font.cmap.CMapUniCid;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,9 +19,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- *
- */
 public class FontCache {
 
     /**
@@ -130,7 +125,7 @@ public class FontCache {
         fontCache.put(key, font);
     }
 
-    private static void loadRegistry() throws IOException {
+    private static void loadRegistry() throws java.io.IOException {
         InputStream is = Utilities.getResourceStream(CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
 
         try {
@@ -157,7 +152,7 @@ public class FontCache {
         }
     }
 
-    private static Map<String, Object> readFontProperties(String name) throws IOException {
+    private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
         InputStream is = Utilities.getResourceStream(CMAP_RESOURCE_PATH + name + ".properties");
 
         try {
@@ -191,8 +186,8 @@ public class FontCache {
     private static <T extends AbstractCMap> T parseCmap(String name, T cmap) {
         try {
             CMapParser.parseCid(name, cmap, new CMapLocationResource());
-        } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.IoException, e);
         }
         return cmap;
     }

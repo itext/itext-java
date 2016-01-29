@@ -1,7 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
-
 public class GetBufferedRandomAccessSource implements RandomAccessSource {
 
     private final RandomAccessSource source;
@@ -24,7 +22,7 @@ public class GetBufferedRandomAccessSource implements RandomAccessSource {
     /**
      * {@inheritDoc}
      */
-    public int get(long position) throws IOException {
+    public int get(long position) throws java.io.IOException {
         if (position < getBufferStart || position > getBufferEnd){
             int count = source.get(position, getBuffer, 0, getBuffer.length);
             if (count == -1)
@@ -39,7 +37,7 @@ public class GetBufferedRandomAccessSource implements RandomAccessSource {
     /**
      * {@inheritDoc}
      */
-    public int get(long position, byte[] bytes, int off, int len) throws IOException {
+    public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         return source.get(position, bytes, off, len);
     }
 
@@ -53,10 +51,9 @@ public class GetBufferedRandomAccessSource implements RandomAccessSource {
     /**
      * Does nothing - the underlying source is not closed
      */
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         source.close();
         getBufferStart = -1;
         getBufferEnd = -1;
     }
 }
-

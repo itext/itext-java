@@ -1,6 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
@@ -15,7 +14,7 @@ class RAFRandomAccessSource implements RandomAccessSource {
 
     /**
      * The length of the underling RAF.  Note that the length is cached at construction time to avoid the possibility
-     * of IOExceptions when reading the length.
+     * of java.io.IOExceptions when reading the length.
      */
     private final long length;
 
@@ -24,7 +23,7 @@ class RAFRandomAccessSource implements RandomAccessSource {
      * @param raf the source for this RandomAccessSource
      * @throws java.io.IOException if the RAF can't be read
      */
-    public RAFRandomAccessSource(RandomAccessFile raf) throws IOException {
+    public RAFRandomAccessSource(RandomAccessFile raf) throws java.io.IOException {
         this.raf = raf;
         length = raf.length();
     }
@@ -33,7 +32,7 @@ class RAFRandomAccessSource implements RandomAccessSource {
      * {@inheritDoc}
      */
     // TODO: test to make sure we are handling the length properly (i.e. is raf.length() the last byte in the file, or one past the last byte?)
-    public int get(long position) throws IOException {
+    public int get(long position) throws java.io.IOException {
         if (position > raf.length())
             return -1;
 
@@ -46,7 +45,7 @@ class RAFRandomAccessSource implements RandomAccessSource {
     /**
      * {@inheritDoc}
      */
-    public int get(long position, byte[] bytes, int off, int len) throws IOException {
+    public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         if (position > length)
             return -1;
 
@@ -68,7 +67,7 @@ class RAFRandomAccessSource implements RandomAccessSource {
     /**
      * Closes the underlying RandomAccessFile
      */
-    public void close() throws IOException {
+    public void close() throws java.io.IOException {
         raf.close();
     }
 }

@@ -1,11 +1,9 @@
 package com.itextpdf.basics.font;
 
 import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.otf.Glyph;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -33,31 +31,31 @@ public class Type1Font extends FontProgram {
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
 
-    public static Type1Font createStandardFont(String name) throws IOException {
+    public static Type1Font createStandardFont(String name) throws java.io.IOException {
         if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
             return createFont(name);
         } else {
-            throw new PdfException("1.is.not.a.standard.type1.font").setMessageParams(name);
+            throw new com.itextpdf.basics.PdfException("1.is.not.a.standard.type1.font").setMessageParams(name);
         }
     }
 
-    public static Type1Font createFont(String metricsPath) throws IOException {
+    public static Type1Font createFont(String metricsPath) throws java.io.IOException {
         return new Type1Font(metricsPath, null, null, null);
     }
 
-    public static Type1Font createFont(String metricsPath, String binaryPath) throws IOException {
+    public static Type1Font createFont(String metricsPath, String binaryPath) throws java.io.IOException {
         return new Type1Font(metricsPath, binaryPath, null, null);
     }
 
-    public static Type1Font createFont(byte[] metricsData) throws IOException {
+    public static Type1Font createFont(byte[] metricsData) throws java.io.IOException {
         return new Type1Font(null, null, metricsData, null);
     }
 
-    public static Type1Font createFont(byte[] metricsData, byte[] binaryData) throws IOException {
+    public static Type1Font createFont(byte[] metricsData, byte[] binaryData) throws java.io.IOException {
         return new Type1Font(null, null, metricsData, binaryData);
     }
 
-    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws IOException {
+    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws java.io.IOException {
         checkFilePath(metricsPath);
         checkFilePath(binaryPath);
 
@@ -205,7 +203,7 @@ public class Type1Font extends FontProgram {
         return fontStreamLengths;
     }
 
-    protected void process() throws IOException {
+    protected void process() throws java.io.IOException {
         RandomAccessFileOrArray raf = fontParser.getMetricsFile();
         String line;
         boolean startKernPairs = false;
@@ -281,9 +279,9 @@ public class Type1Font extends FontProgram {
         if (!startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new PdfException("missing.startcharmetrics.in.1").setMessageParams(metricsPath);
+                throw new com.itextpdf.basics.PdfException("missing.startcharmetrics.in.1").setMessageParams(metricsPath);
             } else {
-                throw new PdfException("missing.startcharmetrics.in.the.metrics.file");
+                throw new com.itextpdf.basics.PdfException("missing.startcharmetrics.in.the.metrics.file");
             }
         }
         avgWidth = 0;
@@ -346,9 +344,9 @@ public class Type1Font extends FontProgram {
         if (startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new PdfException("missing.endcharmetrics.in.1").setMessageParams(metricsPath);
+                throw new com.itextpdf.basics.PdfException("missing.endcharmetrics.in.1").setMessageParams(metricsPath);
             } else {
-                throw new PdfException("missing.endcharmetrics.in.the.metrics.file");
+                throw new com.itextpdf.basics.PdfException("missing.endcharmetrics.in.the.metrics.file");
             }
         }
 
@@ -403,18 +401,18 @@ public class Type1Font extends FontProgram {
         } else if (!endOfMetrics) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new PdfException("missing.endfontmetrics.in.1").setMessageParams(metricsPath);
+                throw new com.itextpdf.basics.PdfException("missing.endfontmetrics.in.1").setMessageParams(metricsPath);
             } else {
-                throw new PdfException("missing.endfontmetrics.in.the.metrics.file");
+                throw new com.itextpdf.basics.PdfException("missing.endfontmetrics.in.the.metrics.file");
             }
         }
 
         if (startKernPairs) {
             String metricsPath = fontParser.getAfmPath();
             if (metricsPath != null) {
-                throw new PdfException("missing.endkernpairs.in.1").setMessageParams(metricsPath);
+                throw new com.itextpdf.basics.PdfException("missing.endkernpairs.in.1").setMessageParams(metricsPath);
             } else {
-                throw new PdfException("missing.endkernpairs.in.the.metrics.file");
+                throw new com.itextpdf.basics.PdfException("missing.endkernpairs.in.the.metrics.file");
             }
         }
         raf.close();

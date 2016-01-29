@@ -2,7 +2,6 @@ package com.itextpdf.basics.source;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
@@ -68,7 +67,7 @@ public final class RandomAccessSourceFactory {
         return new ArrayRandomAccessSource(data);
     }
 
-    public RandomAccessSource createSource(RandomAccessFile raf) throws IOException {
+    public RandomAccessSource createSource(RandomAccessFile raf) throws java.io.IOException {
         return new RAFRandomAccessSource(raf);
     }
 
@@ -78,13 +77,13 @@ public final class RandomAccessSourceFactory {
      * @param url the url to read from
      * @return the newly created {@link RandomAccessSource}
      */
-    public RandomAccessSource createSource(URL url) throws IOException{
+    public RandomAccessSource createSource(URL url) throws java.io.IOException{
         InputStream is = url.openStream();
         try {
             return createSource(is);
         }
         finally {
-            try {is.close();}catch(IOException ioe){}
+            try {is.close();}catch(java.io.IOException ioe){}
         }
     }
 
@@ -94,12 +93,12 @@ public final class RandomAccessSourceFactory {
      * @param is the stream to read from
      * @return the newly created {@link RandomAccessSource}
      */
-    public RandomAccessSource createSource(InputStream is) throws IOException{
+    public RandomAccessSource createSource(InputStream is) throws java.io.IOException{
         try {
             return createSource(StreamUtil.inputStreamToArray(is));
         }
         finally {
-            try {is.close();}catch(IOException ioe){}
+            try {is.close();}catch(java.io.IOException ioe){}
         }
     }
 
@@ -113,7 +112,7 @@ public final class RandomAccessSourceFactory {
      * @param filename the name of the file or resource to create the {@link RandomAccessSource} for
      * @return the newly created {@link RandomAccessSource}
      */
-    public RandomAccessSource createBestSource(String filename) throws IOException{
+    public RandomAccessSource createBestSource(String filename) throws java.io.IOException{
         File file = new File(filename);
         if (!file.canRead()){
             if (filename.startsWith("file:/")
@@ -154,15 +153,15 @@ public final class RandomAccessSourceFactory {
             } catch (MapFailedException e){
                 return new RAFRandomAccessSource(raf);
             }
-        } catch (IOException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
+        } catch (java.io.IOException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
             try{
                 raf.close();
-            } catch (IOException ignore){}
+            } catch (java.io.IOException ignore){}
             throw e;
         } catch (RuntimeException e){ // If RAFRandomAccessSource constructor or createBestSource throws, then we must close the RAF we created.
             try{
                 raf.close();
-            } catch (IOException ignore){}
+            } catch (java.io.IOException ignore){}
             throw e;
         }
     }
@@ -175,7 +174,7 @@ public final class RandomAccessSourceFactory {
      * @param channel the name of the file or resource to create the {@link RandomAccessSource} for
      * @return the newly created {@link RandomAccessSource}
      */
-    public RandomAccessSource createBestSource(FileChannel channel) throws IOException{
+    public RandomAccessSource createBestSource(FileChannel channel) throws java.io.IOException{
         if (channel.size() <= PagedChannelRandomAccessSource.DEFAULT_TOTAL_BUFSIZE){ // if less than the fully mapped usage of PagedFileChannelRandomAccessSource, just map the whole thing and be done with it
             return new GetBufferedRandomAccessSource(new FileChannelRandomAccessSource(channel));
         } else {
@@ -183,7 +182,7 @@ public final class RandomAccessSourceFactory {
         }
     }
 
-    public RandomAccessSource createRanged(RandomAccessSource source, long[] ranges) throws IOException{
+    public RandomAccessSource createRanged(RandomAccessSource source, long[] ranges) throws java.io.IOException{
         RandomAccessSource[] sources = new RandomAccessSource[ranges.length/2];
         for(int i = 0; i < ranges.length; i+=2){
             sources[i/2] = new WindowRandomAccessSource(source, ranges[i], ranges[i+1]);
@@ -195,14 +194,14 @@ public final class RandomAccessSourceFactory {
      * Creates a new {@link RandomAccessSource} by reading the specified file/resource into memory
      * @param filename the name of the resource to read
      * @return the newly created {@link RandomAccessSource}
-     * @throws IOException if reading the underling file or stream fails
+     * @throws java.io.IOException if reading the underling file or stream fails
      */
-    private RandomAccessSource createByReadingToMemory(String filename) throws IOException {
+    private RandomAccessSource createByReadingToMemory(String filename) throws java.io.IOException {
         InputStream is = StreamUtil.getResourceStream(filename);
         if (is == null)
-            //throw new IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filename));
+            //throw new java.io.IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filename));
             //TODO
-            throw new IOException();
+            throw new java.io.IOException();
         return createByReadingToMemory(is);
     }
 
@@ -210,16 +209,16 @@ public final class RandomAccessSourceFactory {
      * Creates a new {@link RandomAccessSource} by reading the specified file/resource into memory
      * @param is the name of the resource to read
      * @return the newly created {@link RandomAccessSource}
-     * @throws IOException if reading the underling file or stream fails
+     * @throws java.io.IOException if reading the underling file or stream fails
      */
-    private RandomAccessSource createByReadingToMemory(InputStream is) throws IOException {
+    private RandomAccessSource createByReadingToMemory(InputStream is) throws java.io.IOException {
         try {
             return new ArrayRandomAccessSource(StreamUtil.inputStreamToArray(is));
         }
         finally {
             try {
                 is.close();
-            } catch (IOException ioe) {
+            } catch (java.io.IOException ioe) {
 
             }
         }

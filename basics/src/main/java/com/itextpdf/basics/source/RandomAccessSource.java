@@ -1,7 +1,5 @@
 package com.itextpdf.basics.source;
 
-import java.io.IOException;
-
 /**
  * Represents an abstract source that bytes can be read from.  This class forms the foundation for all byte input in iText.
  * Implementations do not keep track of a current 'position', but rather provide absolute get methods.  Tracking position
@@ -13,7 +11,7 @@ public interface RandomAccessSource {
      * @param position byte position
      * @return the byte, or -1 if EOF is reached
      */
-    public int get(long position) throws IOException;
+    int get(long position) throws java.io.IOException;
 
     /**
      * Gets an array at the specified position.  If the number of bytes requested cannot be read, the bytes that can be
@@ -24,16 +22,16 @@ public interface RandomAccessSource {
      * @param len the number of bytes to read
      * @return the number of bytes actually read, or -1 if the file is at EOF
      */
-    public int get(long position, byte bytes[], int off, int len) throws IOException;
+    int get(long position, byte bytes[], int off, int len) throws java.io.IOException;
 
     /**
      * @return the length of this source
      */
-    public long length();
+    long length();
 
     /**
      * Closes this source. The underlying data structure or source (if any) will also be closed
-     * @throws IOException
+     * @throws java.io.IOException
      */
-    public void close() throws IOException;
+    void close() throws java.io.IOException;
 }

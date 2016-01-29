@@ -1,12 +1,10 @@
 package com.itextpdf.basics.image;
 
-import com.itextpdf.basics.PdfException;
 import com.itextpdf.basics.font.PdfEncodings;
 import com.itextpdf.basics.source.ByteArrayOutputStream;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,13 +96,13 @@ public final class BmpImageHelper {
                 image.setHeight(bmp.height);
                 image.setDpi((int) (bmp.xPelsPerMeter * 0.0254d + 0.5d), (int) (bmp.yPelsPerMeter * 0.0254d + 0.5d));
             }
-        } catch (IOException e){
-            throw new PdfException(PdfException.BmpImageException, e);
+        } catch (java.io.IOException e){
+            throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.BmpImageException, e);
         } finally {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ignored) { }
+                } catch (java.io.IOException ignored) { }
             }
         }
 
@@ -118,7 +116,7 @@ public final class BmpImageHelper {
         bmp.image.data = stream.toByteArray();
     }
 
-    protected static void process(BmpParameters bmp, InputStream stream) throws IOException {
+    protected static void process(BmpParameters bmp, InputStream stream) throws java.io.IOException {
 
         if (bmp.image.isNoHeader() || stream instanceof BufferedInputStream) {
             bmp.inputStream = stream;
@@ -129,7 +127,7 @@ public final class BmpImageHelper {
             // Start File Header
             if (!(readUnsignedByte(bmp.inputStream) == 'B' &&
                     readUnsignedByte(bmp.inputStream) == 'M')) {
-                throw new PdfException(PdfException.InvalidMagicValueForBmpFile);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidMagicValueForBmpFile);
             }
 
             // Read file size
@@ -340,7 +338,7 @@ public final class BmpImageHelper {
                         break;
 
                     default:
-                        throw new PdfException(PdfException.InvalidBmpFileCompression);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidBmpFileCompression);
                 }
             } else if (size == 108) {
                 // Windows 4.x BMP
@@ -532,7 +530,7 @@ public final class BmpImageHelper {
         return np;
     }
 
-    private static boolean getImage(BmpParameters bmp) throws IOException {
+    private static boolean getImage(BmpParameters bmp) throws java.io.IOException {
         byte bdata[]; // buffer for byte data
         //	if (sampleModel.getDataType() == DataBuffer.TYPE_BYTE)
         //	    bdata = (byte[])((DataBufferByte)tile.getDataBuffer()).getData();
@@ -574,7 +572,7 @@ public final class BmpImageHelper {
                         readRLE4(bmp);
                         return true;
                     default:
-                        throw new PdfException(PdfException.InvalidBmpFileCompression);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidBmpFileCompression);
                 }
             case VERSION_3_8_BIT:
                 switch ((int) bmp.compression) {
@@ -585,7 +583,7 @@ public final class BmpImageHelper {
                         readRLE8(bmp);
                         return true;
                     default:
-                        throw new PdfException(PdfException.InvalidBmpFileCompression);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidBmpFileCompression);
                 }
             case VERSION_3_24_BIT:
                 // 24-bit images are not compressed
@@ -611,7 +609,7 @@ public final class BmpImageHelper {
                         readRLE4(bmp);
                         return true;
                     default:
-                        throw new PdfException(PdfException.InvalidBmpFileCompression);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidBmpFileCompression);
                 }
             case VERSION_4_8_BIT:
                 switch ((int) bmp.compression) {
@@ -622,7 +620,7 @@ public final class BmpImageHelper {
                         readRLE8(bmp);
                         return true;
                     default:
-                        throw new PdfException(PdfException.InvalidBmpFileCompression);
+                        throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.InvalidBmpFileCompression);
                 }
             case VERSION_4_16_BIT:
                 read1632Bit(false, bmp);
@@ -652,7 +650,7 @@ public final class BmpImageHelper {
         bmp.additional.put("ColorSpace", colorSpace);
     }
 
-    private static void readPalette(int sizeOfPalette, BmpParameters bmp) throws IOException {
+    private static void readPalette(int sizeOfPalette, BmpParameters bmp) throws java.io.IOException {
         if (sizeOfPalette == 0) {
             return;
         }
@@ -662,7 +660,7 @@ public final class BmpImageHelper {
         while (bytesRead < sizeOfPalette) {
             int r = bmp.inputStream.read(bmp.palette, bytesRead, sizeOfPalette - bytesRead);
             if (r < 0) {
-                throw new PdfException(PdfException.IncompletePalette);
+                throw new com.itextpdf.basics.PdfException(com.itextpdf.basics.PdfException.IncompletePalette);
             }
             bytesRead += r;
         }
@@ -670,7 +668,7 @@ public final class BmpImageHelper {
     }
 
     // Deal with 1 Bit images using IndexColorModels
-    private static void read1Bit(int paletteEntries, BmpParameters bmp) throws IOException {
+    private static void read1Bit(int paletteEntries, BmpParameters bmp) throws java.io.IOException {
         byte bdata[] = new byte[(bmp.width + 7) / 8 * bmp.height];
         int padding = 0;
         int bytesPerScanline = (int) Math.ceil(bmp.width / 8.0d);
@@ -715,7 +713,7 @@ public final class BmpImageHelper {
     }
 
     // Method to read a 4 bit BMP image data
-    private static void read4Bit(int paletteEntries, BmpParameters bmp) throws IOException {
+    private static void read4Bit(int paletteEntries, BmpParameters bmp) throws java.io.IOException {
         byte bdata[] = new byte[(bmp.width + 1) / 2 * bmp.height];
 
         // Padding bytes at the end of each scanline
@@ -761,7 +759,7 @@ public final class BmpImageHelper {
     }
 
     // Method to read 8 bit BMP image data
-    private static void read8Bit(int paletteEntries, BmpParameters bmp) throws IOException {
+    private static void read8Bit(int paletteEntries, BmpParameters bmp) throws java.io.IOException {
         byte bdata[] = new byte[bmp.width * bmp.height];
         // Padding bytes at the end of each scanline
         int padding = 0;
@@ -806,7 +804,7 @@ public final class BmpImageHelper {
     }
 
     // Method to read 24 bit BMP image data
-    private static void read24Bit(byte[] bdata, BmpParameters bmp) throws IOException {
+    private static void read24Bit(byte[] bdata, BmpParameters bmp) throws java.io.IOException {
         // Padding bytes at the end of each scanline
         int padding = 0;
 
@@ -880,7 +878,7 @@ public final class BmpImageHelper {
         return k;
     }
 
-    private static void read1632Bit(boolean is32, BmpParameters bmp) throws IOException {
+    private static void read1632Bit(boolean is32, BmpParameters bmp) throws java.io.IOException {
         int red_mask = findMask(bmp.redMask);
         int red_shift = findShift(bmp.redMask);
         int red_factor = red_mask + 1;
@@ -945,7 +943,7 @@ public final class BmpImageHelper {
         RawImageHelper.updateRawImageParameters(bmp.image, bmp.width, bmp.height, 3, 8, bdata);
     }
 
-    private static void readRLE8(BmpParameters bmp) throws IOException {
+    private static void readRLE8(BmpParameters bmp) throws java.io.IOException {
 
         // If imageSize field is not provided, calculate it.
         int imSize = (int) bmp.imageSize;
@@ -985,7 +983,7 @@ public final class BmpImageHelper {
         indexedModel(val, 8, 4, bmp);
     }
 
-    private static void readRLE4(BmpParameters bmp) throws IOException {
+    private static void readRLE4(BmpParameters bmp) throws java.io.IOException {
         // If imageSize field is not specified, calculate it.
         int imSize = (int) bmp.imageSize;
         if (imSize == 0) {
@@ -1108,31 +1106,31 @@ public final class BmpImageHelper {
     // Windows defined data type reading methods - everything is little endian
 
     // Unsigned 8 bits
-    private static int readUnsignedByte(InputStream stream) throws IOException {
+    private static int readUnsignedByte(InputStream stream) throws java.io.IOException {
         return stream.read() & 0xff;
     }
 
     // Unsigned 2 bytes
-    private static int readUnsignedShort(InputStream stream) throws IOException {
+    private static int readUnsignedShort(InputStream stream) throws java.io.IOException {
         int b1 = readUnsignedByte(stream);
         int b2 = readUnsignedByte(stream);
         return (b2 << 8 | b1) & 0xffff;
     }
 
     // Signed 16 bits
-    private static int readShort(InputStream stream) throws IOException {
+    private static int readShort(InputStream stream) throws java.io.IOException {
         int b1 = readUnsignedByte(stream);
         int b2 = readUnsignedByte(stream);
         return b2 << 8 | b1;
     }
 
     // Unsigned 16 bits
-    private static int readWord(InputStream stream) throws IOException {
+    private static int readWord(InputStream stream) throws java.io.IOException {
         return readUnsignedShort(stream);
     }
 
     // Unsigned 4 bytes
-    private static long readUnsignedInt(InputStream stream) throws IOException {
+    private static long readUnsignedInt(InputStream stream) throws java.io.IOException {
         int b1 = readUnsignedByte(stream);
         int b2 = readUnsignedByte(stream);
         int b3 = readUnsignedByte(stream);
@@ -1142,7 +1140,7 @@ public final class BmpImageHelper {
     }
 
     // Signed 4 bytes
-    private static int readInt(InputStream stream) throws IOException {
+    private static int readInt(InputStream stream) throws java.io.IOException {
         int b1 = readUnsignedByte(stream);
         int b2 = readUnsignedByte(stream);
         int b3 = readUnsignedByte(stream);
@@ -1151,12 +1149,12 @@ public final class BmpImageHelper {
     }
 
     // Unsigned 4 bytes
-    private static long readDWord(InputStream stream) throws IOException {
+    private static long readDWord(InputStream stream) throws java.io.IOException {
         return readUnsignedInt(stream);
     }
 
     // 32 bit signed value
-    private static int readLong(InputStream stream) throws IOException {
+    private static int readLong(InputStream stream) throws java.io.IOException {
         return readInt(stream);
     }
 }
