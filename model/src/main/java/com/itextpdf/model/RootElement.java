@@ -137,7 +137,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @return the {@link RootRenderer} attribute
      */
     public <T extends RootRenderer> T getRenderer() {
-        return (T) rootRenderer;
+        return (T) ensureRootRendererNotNull();
     }
 
     /**
