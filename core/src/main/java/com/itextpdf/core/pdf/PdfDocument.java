@@ -2,7 +2,7 @@ package com.itextpdf.core.pdf;
 
 import com.itextpdf.core.PdfException;
 import com.itextpdf.core.geom.PageSize;
-import com.itextpdf.basics.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.core.Version;
 import com.itextpdf.core.crypto.BadPasswordException;
 import com.itextpdf.core.events.EventDispatcher;

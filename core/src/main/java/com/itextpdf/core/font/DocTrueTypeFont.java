@@ -1,10 +1,10 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.util.IntHashtable;
-import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.TrueTypeFont;
-import com.itextpdf.basics.font.cmap.CMapToUnicode;
-import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.io.util.IntHashtable;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.cmap.CMapToUnicode;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;

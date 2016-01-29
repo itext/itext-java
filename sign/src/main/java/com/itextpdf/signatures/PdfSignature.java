@@ -1,6 +1,6 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDate;
 import com.itextpdf.core.pdf.PdfDictionary;

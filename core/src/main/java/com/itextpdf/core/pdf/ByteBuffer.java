@@ -45,7 +45,7 @@
 package com.itextpdf.core.pdf;
 
 
-import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.io.font.PdfEncodings;
 
 import java.io.IOException;
 import java.io.OutputStream;

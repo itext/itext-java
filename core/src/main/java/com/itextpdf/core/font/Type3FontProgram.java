@@ -1,7 +1,7 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.otf.Glyph;
 
 import java.util.HashMap;
 import java.util.Map;

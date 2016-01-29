@@ -1,14 +1,14 @@
 package com.itextpdf.core.pdf.canvas;
 
-import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.util.Utilities;
-import com.itextpdf.basics.font.CidFont;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontFactory;
-import com.itextpdf.basics.font.TrueTypeCollection;
-import com.itextpdf.basics.font.TrueTypeFont;
-import com.itextpdf.basics.font.Type1Font;
-import com.itextpdf.basics.source.ByteArrayOutputStream;
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.font.CidFont;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontFactory;
+import com.itextpdf.io.font.TrueTypeCollection;
+import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.core.font.*;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -989,7 +989,7 @@ public class PdfFontTest extends ExtendedITextTest {
         try {
             byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
             PdfFontFactory.createType1Font(null, pfb, null);
-        } catch (com.itextpdf.basics.IOException e) {
+        } catch (com.itextpdf.io.IOException e) {
             message = e.getMessage();
         }
         Assert.assertEquals("invalid.afm.or.pfm.font.file", message);
@@ -1000,7 +1000,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String message = "";
         try {
             PdfFontFactory.createType1Font(fontsFolder + "cmr10.pfb", null);
-        } catch (com.itextpdf.basics.IOException e) {
+        } catch (com.itextpdf.io.IOException e) {
             message = e.getMessage();
         }
         Assert.assertEquals("./src/test/resources/com/itextpdf/core/pdf/fonts/cmr10.pfb is.not.an.afm.or.pfm.font.file", message);

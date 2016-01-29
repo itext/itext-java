@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.canvas.wmf;
 
-import com.itextpdf.basics.font.*;
+import com.itextpdf.io.font.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

@@ -1,7 +1,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.color.Color;

@@ -1,9 +1,9 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.font.AdobeGlyphList;
-import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.io.font.AdobeGlyphList;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;

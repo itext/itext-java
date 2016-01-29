@@ -1,11 +1,11 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.FontNames;
-import com.itextpdf.basics.font.TrueTypeFont;
-import com.itextpdf.basics.font.cmap.CMapToUnicode;
-import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontNames;
+import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.cmap.CMapToUnicode;
+import com.itextpdf.io.font.otf.Glyph;
 
 import java.util.Map;
 

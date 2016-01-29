@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.util.Utilities;
+import com.itextpdf.io.util.Utilities;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;

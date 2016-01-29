@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.xobject;
 
-import com.itextpdf.basics.NotImplementedException;
+import com.itextpdf.io.NotImplementedException;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfObjectWrapper;
 import com.itextpdf.core.pdf.PdfStream;

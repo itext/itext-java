@@ -1,7 +1,7 @@
 package com.itextpdf.core.parser;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.source.PdfTokenizer;
+import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfLiteral;

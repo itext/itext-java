@@ -1,6 +1,6 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.core.geom.PageSize;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.font.PdfFontFactory;

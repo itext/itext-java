@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.filespec;
 
-import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.core.pdf.*;
 
 import java.io.FileInputStream;

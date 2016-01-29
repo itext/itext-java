@@ -1,13 +1,5 @@
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.basics.codec.Base64;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.source.PdfTokenizer;
-import com.itextpdf.basics.source.RandomAccessFileOrArray;
-import com.itextpdf.basics.source.RandomAccessSourceFactory;
 import com.itextpdf.core.PdfException;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.DeviceCmyk;
@@ -34,6 +26,14 @@ import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;
+import com.itextpdf.io.codec.Base64;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.model.Canvas;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.element.Paragraph;

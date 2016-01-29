@@ -1,7 +1,7 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.parser.PdfTextExtractor;

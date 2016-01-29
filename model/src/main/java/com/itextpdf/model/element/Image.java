@@ -1,6 +1,6 @@
 package com.itextpdf.model.element;
 
-import com.itextpdf.basics.LogMessageConstant;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.tagutils.AccessibleElementProperties;
 import com.itextpdf.core.pdf.tagutils.IAccessibleElement;
@@ -49,11 +49,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
-    public Image(com.itextpdf.basics.image.Image img) {
+    public Image(com.itextpdf.io.image.Image img) {
         this(new PdfImageXObject(img));
     }
 
-    public Image(com.itextpdf.basics.image.Image img, float x, float y) {
+    public Image(com.itextpdf.io.image.Image img, float x, float y) {
         //@TODO DEVSIX-329
 //        if (img instanceof WmfImage) {
 //            this.xObject = new PdfFormXObject(new WmfImageHelper(img).createPdfForm());
@@ -64,7 +64,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         this(new PdfImageXObject(img), x, y);
     }
 
-    public Image(com.itextpdf.basics.image.Image img, float x, float y, float width) {
+    public Image(com.itextpdf.io.image.Image img, float x, float y, float width) {
         //@TODO DEVSIX-329
 //        if (img instanceof WmfImage) {
 //            this.xObject = new PdfFormXObject(new WmfImageHelper(img).createPdfForm());

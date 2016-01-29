@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf.colorspace;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.color.IccProfile;
+import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;

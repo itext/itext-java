@@ -1,14 +1,14 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.util.Utilities;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.FontMetrics;
-import com.itextpdf.basics.font.FontNames;
-import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.basics.font.otf.GlyphLine;
+import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontMetrics;
+import com.itextpdf.io.font.FontNames;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;

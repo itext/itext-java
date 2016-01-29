@@ -1,7 +1,7 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.font.*;
+import com.itextpdf.io.font.*;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;

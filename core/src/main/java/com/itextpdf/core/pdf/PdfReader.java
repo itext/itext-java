@@ -1,13 +1,13 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.util.Utilities;
-import com.itextpdf.basics.source.ByteBuffer;
-import com.itextpdf.basics.source.PdfTokenizer;
-import com.itextpdf.basics.source.RandomAccessFileOrArray;
-import com.itextpdf.basics.source.RandomAccessSource;
-import com.itextpdf.basics.source.RandomAccessSourceFactory;
-import com.itextpdf.basics.source.WindowRandomAccessSource;
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.core.PdfException;
 import com.itextpdf.core.crypto.BadPasswordException;
 import com.itextpdf.core.pdf.filters.FilterHandler;

@@ -2,11 +2,11 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.core.PdfException;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.basics.source.ByteBuffer;
-import com.itextpdf.basics.source.RASInputStream;
-import com.itextpdf.basics.source.RandomAccessSource;
-import com.itextpdf.basics.source.RandomAccessSourceFactory;
-import com.itextpdf.basics.source.StreamUtil;
+import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.source.RASInputStream;
+import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.source.StreamUtil;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDate;
 import com.itextpdf.core.pdf.PdfDeveloperExtension;

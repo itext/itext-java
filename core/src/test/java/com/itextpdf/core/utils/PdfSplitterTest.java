@@ -1,12 +1,10 @@
 package com.itextpdf.core.utils;
 
-import com.itextpdf.basics.LogMessageConstant;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.core.PdfException;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;
-import com.itextpdf.core.utils.CompareTool;
-import com.itextpdf.core.utils.PdfSplitter;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;

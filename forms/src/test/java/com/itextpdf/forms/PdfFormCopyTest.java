@@ -1,7 +1,7 @@
 package com.itextpdf.forms;
 
-import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.source.ByteArrayOutputStream;
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfReader;
 import com.itextpdf.core.pdf.PdfWriter;

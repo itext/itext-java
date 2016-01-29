@@ -1,9 +1,9 @@
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.basics.color.IccProfile;
+import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.image.Jpeg2000Image;
+import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.Jpeg2000Image;
 import com.itextpdf.core.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.PatternColor;

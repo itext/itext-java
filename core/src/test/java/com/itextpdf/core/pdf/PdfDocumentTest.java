@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -1699,16 +1699,16 @@ public class PdfDocumentTest extends ExtendedITextTest {
     @Test
     public void testImageCompressLevel() throws IOException {
         byte[] b = ImageFactory.getImage(sourceFolder+"berlin2013.jpg").getData();
-        com.itextpdf.basics.source.ByteArrayOutputStream image =  new com.itextpdf.basics.source.ByteArrayOutputStream();
+        com.itextpdf.io.source.ByteArrayOutputStream image =  new com.itextpdf.io.source.ByteArrayOutputStream();
         image.assignBytes(b,b.length);
 
-        ByteArrayOutputStream byteArrayStream1 = new com.itextpdf.basics.source.ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayStream1 = new com.itextpdf.io.source.ByteArrayOutputStream();
         Deflater deflater = new Deflater(9);
         DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream1, deflater);
         image.writeTo(zip);
         zip.close();
 
-        ByteArrayOutputStream byteArrayStream2 = new com.itextpdf.basics.source.ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayStream2 = new com.itextpdf.io.source.ByteArrayOutputStream();
         Deflater deflater2 = new Deflater(-1);
         DeflaterOutputStream zip2 = new DeflaterOutputStream(byteArrayStream2, deflater2);
         image.writeTo(zip2);

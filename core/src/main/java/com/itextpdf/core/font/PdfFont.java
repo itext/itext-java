@@ -1,11 +1,11 @@
 package com.itextpdf.core.font;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.font.FontProgram;
-import com.itextpdf.basics.util.Utilities;
-import com.itextpdf.basics.font.otf.Glyph;
-import com.itextpdf.basics.font.otf.GlyphLine;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfName;

@@ -1,9 +1,9 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.util.Utilities;
-import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.basics.source.ByteBuffer;
-import com.itextpdf.basics.source.PdfTokenizer;
+import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.source.PdfTokenizer;
 
 import java.nio.charset.Charset;
 
@@ -218,7 +218,7 @@ public class PdfString extends PdfPrimitiveObject {
      * @return byte array
      */
     protected byte[] getIsoBytes() {
-        return com.itextpdf.basics.source.OutputStream.getIsoBytes(getValue());
+        return com.itextpdf.io.source.OutputStream.getIsoBytes(getValue());
     }
 
     protected void generateValue() {

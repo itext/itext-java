@@ -2,7 +2,7 @@ package com.itextpdf.core.pdf.canvas.wmf;
 
 import com.itextpdf.core.PdfException;
 import com.itextpdf.core.geom.Rectangle;
-import com.itextpdf.basics.image.Image;
+import com.itextpdf.io.image.Image;
 import com.itextpdf.core.pdf.canvas.PdfCanvas;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.xobject.PdfFormXObject;

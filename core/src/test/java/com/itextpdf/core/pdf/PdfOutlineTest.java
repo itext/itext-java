@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.LogMessageConstant;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.core.pdf.navigation.PdfDestination;
 import com.itextpdf.core.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.core.pdf.navigation.PdfStringDestination;

@@ -1,6 +1,6 @@
 package com.itextpdf.forms;
 
-import com.itextpdf.basics.LogMessageConstant;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.core.pdf.IPdfPageExtraCopier;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;

@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf.canvas;
 
-import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.font.PdfFontFactory;
 import com.itextpdf.core.pdf.PdfArray;

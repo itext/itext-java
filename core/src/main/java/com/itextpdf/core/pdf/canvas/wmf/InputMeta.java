@@ -1,6 +1,6 @@
 package com.itextpdf.core.pdf.canvas.wmf;
 
-import com.itextpdf.basics.util.Utilities;
+import com.itextpdf.io.util.Utilities;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.DeviceRgb;
 

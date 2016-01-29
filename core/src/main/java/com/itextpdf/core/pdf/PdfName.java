@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.source.ByteBuffer;
-import com.itextpdf.basics.source.OutputStream;
+import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.source.OutputStream;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

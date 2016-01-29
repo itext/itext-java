@@ -1,8 +1,8 @@
 package com.itextpdf.core.pdf;
 
-import com.itextpdf.basics.source.PdfTokenizer;
-import com.itextpdf.basics.source.RandomAccessFileOrArray;
-import com.itextpdf.basics.source.RandomAccessSourceFactory;
+import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 

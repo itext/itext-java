@@ -1,6 +1,6 @@
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.basics.color.IccProfile;
+import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.core.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.pdf.PdfAConformanceLevel;

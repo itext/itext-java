@@ -1,6 +1,6 @@
 package com.itextpdf.model.renderer;
 
-import com.itextpdf.basics.LogMessageConstant;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.model.Property;
 import com.itextpdf.model.layout.LayoutArea;
 import com.itextpdf.model.layout.LayoutContext;

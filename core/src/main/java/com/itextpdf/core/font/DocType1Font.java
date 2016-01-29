@@ -1,8 +1,8 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.font.FontEncoding;
-import com.itextpdf.basics.font.Type1Font;
-import com.itextpdf.basics.font.otf.Glyph;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;

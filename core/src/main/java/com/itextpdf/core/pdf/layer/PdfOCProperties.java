@@ -1,7 +1,7 @@
 package com.itextpdf.core.pdf.layer;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.font.PdfEncodings;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;

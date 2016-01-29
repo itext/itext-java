@@ -1,8 +1,8 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.font.FontConstants;
+import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.core.geom.PageSize;
-import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.DeviceGray;
 import com.itextpdf.core.font.PdfFont;

@@ -1,7 +1,7 @@
 package com.itextpdf.model;
 
-import com.itextpdf.basics.LogMessageConstant;
-import com.itextpdf.basics.image.ImageFactory;
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.core.pdf.PdfDocument;
 import com.itextpdf.core.pdf.PdfWriter;
 import com.itextpdf.core.pdf.xobject.PdfImageXObject;

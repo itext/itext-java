@@ -1,9 +1,9 @@
 package com.itextpdf.core.parser;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.source.PdfTokenizer;
-import com.itextpdf.basics.source.RandomAccessFileOrArray;
-import com.itextpdf.basics.source.RandomAccessSourceFactory;
+import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.DeviceCmyk;
 import com.itextpdf.core.color.DeviceGray;

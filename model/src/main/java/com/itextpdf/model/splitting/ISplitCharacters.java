@@ -1,6 +1,6 @@
 package com.itextpdf.model.splitting;
 
-import com.itextpdf.basics.font.otf.GlyphLine;
+import com.itextpdf.io.font.otf.GlyphLine;
 
 /**
  * Interface for customizing the split character.

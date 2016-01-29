@@ -1,10 +1,10 @@
 package com.itextpdf.core.font;
 
-import com.itextpdf.basics.util.IntHashtable;
-import com.itextpdf.basics.font.cmap.CMapLocation;
-import com.itextpdf.basics.font.cmap.CMapLocationFromBytes;
-import com.itextpdf.basics.font.cmap.CMapParser;
-import com.itextpdf.basics.font.cmap.CMapToUnicode;
+import com.itextpdf.io.util.IntHashtable;
+import com.itextpdf.io.font.cmap.CMapLocation;
+import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
+import com.itextpdf.io.font.cmap.CMapParser;
+import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfName;
 import com.itextpdf.core.pdf.PdfNumber;

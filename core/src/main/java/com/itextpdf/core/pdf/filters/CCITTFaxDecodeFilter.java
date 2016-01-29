@@ -1,9 +1,9 @@
 package com.itextpdf.core.pdf.filters;
 
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.codec.TIFFConstants;
-import com.itextpdf.basics.codec.TIFFFaxDecoder;
-import com.itextpdf.basics.codec.TIFFFaxDecompressor;
+import com.itextpdf.io.codec.TIFFConstants;
+import com.itextpdf.io.codec.TIFFFaxDecoder;
+import com.itextpdf.io.codec.TIFFFaxDecompressor;
 import com.itextpdf.core.pdf.PdfBoolean;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfName;

@@ -1,9 +1,9 @@
 package com.itextpdf.core.pdf.xobject;
 
-import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.image.RawImage;
-import com.itextpdf.basics.image.RawImageHelper;
-import com.itextpdf.basics.source.ByteArrayOutputStream;
+import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.RawImage;
+import com.itextpdf.io.image.RawImageHelper;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfBoolean;
 import com.itextpdf.core.pdf.PdfDictionary;

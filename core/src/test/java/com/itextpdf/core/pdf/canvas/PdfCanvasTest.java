@@ -1,12 +1,12 @@
 package com.itextpdf.core.pdf.canvas;
 
-import com.itextpdf.basics.LogMessageConstant;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.core.PdfException;
-import com.itextpdf.basics.util.Utilities;
-import com.itextpdf.basics.font.FontConstants;
-import com.itextpdf.basics.image.Image;
-import com.itextpdf.basics.image.ImageFactory;
-import com.itextpdf.basics.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.core.color.CalGray;
 import com.itextpdf.core.color.CalRgb;
 import com.itextpdf.core.color.Color;
@@ -1526,7 +1526,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest03.pdf", sourceFolder + "cmp_gifImageTest03.pdf", destinationFolder, "diff_"));
     }
 
-    @Test(expected = com.itextpdf.basics.IOException.class)
+    @Test(expected = com.itextpdf.io.IOException.class)
     public void gifImageTest04() throws IOException, InterruptedException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
