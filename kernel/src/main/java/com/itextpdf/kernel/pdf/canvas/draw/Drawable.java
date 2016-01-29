@@ -7,7 +7,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
  * The <code>Drawable</code> defines a drawing operation on a {@link PdfCanvas}
  *
  * This interface allows to customize the 'empty' space in a
- * {@link com.itextpdf.model.element.Tabstop TabStop} through a Strategy design
+ * {@link com.itextpdf.layout.element.Tabstop TabStop} through a Strategy design
  * pattern
  */
 public interface Drawable {

@@ -34,9 +34,9 @@ import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.model.Canvas;
-import com.itextpdf.model.Property;
-import com.itextpdf.model.element.Paragraph;
+import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.Property;
+import com.itextpdf.layout.element.Paragraph;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -2189,7 +2189,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void setParagraphProperties(Paragraph paragraph, String value) {
-        // TODO this is temporary and will be replaced by script autodetection logic on model level
+        // TODO this is temporary and will be replaced by script autodetection logic on layout level
         if (value != null && value.length() > 0) {
             Character.UnicodeScript script = Character.UnicodeScript.of(value.charAt(0));
             paragraph.setFontScript(script);
