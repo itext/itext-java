@@ -1,21 +1,21 @@
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.core.PdfException;
 import com.itextpdf.basics.codec.Base64;
 import com.itextpdf.basics.font.FontConstants;
 import com.itextpdf.basics.font.PdfEncodings;
-import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.basics.image.Image;
 import com.itextpdf.basics.image.ImageFactory;
 import com.itextpdf.basics.source.PdfTokenizer;
 import com.itextpdf.basics.source.RandomAccessFileOrArray;
 import com.itextpdf.basics.source.RandomAccessSourceFactory;
+import com.itextpdf.core.PdfException;
 import com.itextpdf.core.color.Color;
 import com.itextpdf.core.color.DeviceCmyk;
 import com.itextpdf.core.color.DeviceGray;
 import com.itextpdf.core.color.DeviceRgb;
 import com.itextpdf.core.font.PdfFont;
 import com.itextpdf.core.font.PdfFontFactory;
+import com.itextpdf.core.geom.Rectangle;
 import com.itextpdf.core.pdf.PdfArray;
 import com.itextpdf.core.pdf.PdfDictionary;
 import com.itextpdf.core.pdf.PdfDocument;
@@ -229,9 +229,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * value, and the form's default font specified in
      * {@link com.itextpdf.forms.PdfAcroForm#getDefaultResources}.
      *
-     * @param doc   the {@link PdfDocument} to create the text field in
-     * @param rect  the location on the page for the text field
-     * @param name  the name of the form field
+     * @param doc  the {@link PdfDocument} to create the text field in
+     * @param rect the location on the page for the text field
+     * @param name the name of the form field
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name) {
@@ -277,13 +277,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Creates a named {@link PdfTextFormField text form field} with an initial
      * value, with a specified font and font size.
      *
-     * @param doc      the {@link PdfDocument} to create the text field in
-     * @param rect     the location on the page for the text field
-     * @param name     the name of the form field
-     * @param value    the initial value
-     * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
-     * @param multiline  true for multiline text field
+     * @param doc       the {@link PdfDocument} to create the text field in
+     * @param rect      the location on the page for the text field
+     * @param name      the name of the form field
+     * @param value     the initial value
+     * @param font      a {@link PdfFont}
+     * @param fontSize  a positive integer
+     * @param multiline true for multiline text field
      * @return a new {@link PdfTextFormField}
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, boolean multiline) {
@@ -1344,6 +1344,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Changes the type of graphical marker used to mark a checkbox as 'on'.
+     * Notice that in order to complete the change one should call
+     * {@link #regenerateField() regenerateField} method
      *
      * @param checkType the new checkbox marker
      */
@@ -2162,7 +2164,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 beginText().
                 setFontAndSize(ufont, fontSize).
                 resetFillColorRgb().
-                setTextMatrix((width - ufont.getWidth(text, fontSize)) / 2, (height - ufont.getAscent(text, fontSize) ) / 2).
+                setTextMatrix((width - ufont.getWidth(text, fontSize)) / 2, (height - ufont.getAscent(text, fontSize)) / 2).
                 showText(text).
                 endText();
     }
