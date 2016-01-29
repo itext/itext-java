@@ -35,7 +35,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfReader(new FileInputStream(srcFilename)), new PdfWriter(new FileOutputStream(filename)));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        form.flatFields();
+        form.flattenFields();
 
         doc.close();
 

@@ -513,7 +513,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets the attribute generateAppearance, which tells {@link #flatFields()}
+     * Gets the attribute generateAppearance, which tells {@link #flattenFields()}
      * to generate an appearance Stream for all {@link PdfFormField form field}s
      * that don't have one.
      *
@@ -524,7 +524,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets the attribute generateAppearance, which tells {@link #flatFields()}
+     * Sets the attribute generateAppearance, which tells {@link #flattenFields()}
      * to generate an appearance Stream for all {@link PdfFormField form field}s
      * that don't have one.
      * 
@@ -551,7 +551,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * then all fields are flattened. Otherwise only the included fields are
      * flattened.
      */
-    public void flatFields() {
+    public void flattenFields() {
         if (document.isAppendMode()) {
             throw new PdfException(PdfException.FieldFlatteningIsNotSupportedInAppendMode);
         }
