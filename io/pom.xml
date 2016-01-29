@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.itextpdf</groupId>
         <artifactId>root</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>7.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>io</artifactId>
-    <name>iText 6 (Arya) - io</name>
+    <name>iText 7 - io</name>
     <url>http://itextpdf.com/</url>
 
     <dependencies>

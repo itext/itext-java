@@ -5,9 +5,9 @@
 
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>7.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>iText 6 (Arya)</name>
+    <name>iText 7</name>
     <url>http://itextpdf.com/</url>
 
     <organization>
@@ -27,7 +27,7 @@
         <module>forms</module>
         <module>hyph</module>
         
-        <module>model</module>
+        <module>layout</module>
         <module>parsing</module>
         <module>pdfa</module>
         <module>pdftest</module>
