@@ -8,7 +8,7 @@ import org.junit.experimental.categories.Category;
 import java.io.IOException;
 
 @Category(UnitTest.class)
-public class FontFactoryTest {
+public class FontProgramTest {
 
     @Test
     public void exceptionMessageTest() throws IOException {
@@ -17,5 +17,14 @@ public class FontFactoryTest {
         } catch (com.itextpdf.io.IOException ex) {
             Assert.assertEquals("font.file some-font.ttf not.found", ex.getMessage());
         }
+    }
+
+    @Test
+    public void boldTest() throws IOException {
+        FontProgram fp = FontFactory.createFont(FontConstants.HELVETICA);
+        fp.setBold(true);
+        Assert.assertTrue("Bold expected", (fp.getPdfFontFlags() & (1 << 18)) != 0);
+        fp.setBold(false);
+        Assert.assertTrue("Not Bold expected", (fp.getPdfFontFlags() & (1 << 18)) == 0);
     }
 }

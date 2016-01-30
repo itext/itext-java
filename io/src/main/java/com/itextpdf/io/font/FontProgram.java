@@ -215,7 +215,11 @@ public abstract class FontProgram {
     }
 
     protected void setBold(boolean isBold) {
-        fontNames.setMacStyle(fontNames.getMacStyle() | FontNames.BOLD_FLAG);
+        if (isBold) {
+            fontNames.setMacStyle(fontNames.getMacStyle() | FontNames.BOLD_FLAG);
+        } else {
+            fontNames.setMacStyle(fontNames.getMacStyle() & (~FontNames.BOLD_FLAG));
+        }
     }
 
     protected void setBbox(int[] bbox) {
