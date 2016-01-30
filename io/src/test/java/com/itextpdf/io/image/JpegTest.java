@@ -2,9 +2,12 @@ package com.itextpdf.io.image;
 
 import java.io.IOException;
 
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(UnitTest.class)
 public class JpegTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";

@@ -7,9 +7,13 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Random;
 
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(UnitTest.class)
 public class WriteNumbersTest {
 
     private static final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);

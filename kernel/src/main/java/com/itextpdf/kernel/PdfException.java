@@ -1,13 +1,14 @@
 package com.itextpdf.kernel;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class PdfException extends RuntimeException {
 
-    public static final String _1IsAnUnknownGraphicsStateDictionary = "1.is.an.unknown.graphics.state.dictionary";
-    public static final String _1IsNotAValidPlaceableWindowsMetafile = "1.is.not.a.valid.placeable.windows.metafile";
+    public static final String _1IsAnUnknownGraphicsStateDictionary = "{0} is.an.unknown.graphics.state.dictionary";
+    public static final String _1IsNotAValidPlaceableWindowsMetafile = "{0} is.not.a.valid.placeable.windows.metafile";
 
     public static final String AnnotShallHaveReferenceToPage = "annot.shall.have.reference.to.page";
     public static final String AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible = "append.mode.requires.a.document.without.errors.even.if.recovery.was.possible";
@@ -34,24 +35,24 @@ public class PdfException extends RuntimeException {
     public static final String CannotMoveToParentCurrentElementIsRoot = "cannot.move.to.parent.current.element.is.root";
     public static final String CannotOpenDocument = "cannot.open.document";
     public static final String CannotParseContentStream = "could.not.parse.content.stream";
-    public static final String CannotReadAStreamInOrderToAppendNewBytes = "cannot.read.a.stream.in.order.to.append.new.bytes.reason.1";
+    public static final String CannotReadAStreamInOrderToAppendNewBytes = "cannot.read.a.stream.in.order.to.append.new.bytes.reason {0}";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
     public static final String CannotRebuildTagStructureWhenItWasPartlyFlushed = "cannot.rebuild.tag.structure.when.it.was.partly.flushed";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotSplitDocumentThatIsBeingWritten = "cannot.split.document.that.is.being.written";
     public static final String CannotWritePdfStream = "cannot.write.pdf.stream";
     public static final String CantDecodePkcs7SigneddataObject = "can.t.decode.pkcs7signeddata.object";
-    public static final String CantFindSigningCertificateWithSerial1 = "can.t.find.signing.certificate.with.serial.1";
+    public static final String CantFindSigningCertificateWithSerial1 = "can.t.find.signing.certificate.with.serial {0}";
     public static final String CfNotFoundEncryption = "cf.not.found.encryption";
-    public static final String CodabarCharacterOneIsIllegal = "the.character.1.is.illegal.in.codabar";
+    public static final String CodabarCharacterOneIsIllegal = "the.character {0} is.illegal.in.codabar";
     public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "codabar.must.have.at.least.a.start.and.stop.character";
     public static final String CodabarMustHaveOneAbcdAsStartStopCharacter = "codabar.must.have.one.of.abcd.as.start.stop.character";
     public static final String CodabarStartStopCharacterAreOnlyExtremes = "in.codabar.start.stop.characters.are.only.allowed.at.the.extremes";
     public static final String ColorNotFound = "color.not.found";
     public static final String ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters = "content.stream.must.not.invoke.operators.that.specify.colors.or.other.color.related.parameters.in.the.graphics.state";
-    public static final String DecodeParameterType1IsNotSupported = "decode.parameter.type.1.is.not.supported";
+    public static final String DecodeParameterType1IsNotSupported = "decode.parameter.type {0} is.not.supported";
     public static final String DefaultcryptfilterNotFoundEncryption = "defaultcryptfilter.not.found.encryption";
-    public static final String DictionaryKey1IsNotAName = "dictionary.key.1.is.not.a.name";
+    public static final String DictionaryKey1IsNotAName = "dictionary.key {0} is.not.a.name";
     public static final String DictionaryNotContainFontData = "dict.not.contain.font.data";
     public static final String DocumentAlreadyPreClosed = "document.already.pre.closed";
     public static final String DocumentClosedImpossibleExecuteAction = "document.was.closed.it.is.impossible.execute.action";
@@ -65,14 +66,14 @@ public class PdfException extends RuntimeException {
     public static final String EndOfContentStreamReachedBeforeEndOfImageData = "end.of.content.stream.reached.before.end.of.image.data";
     public static final String ErrorReadingObjectStream = "error.reading.objstm";
 
-    public static final String FailedToGetTsaResponseFrom1 = "failed.to.get.tsa.response.from.1";
+    public static final String FailedToGetTsaResponseFrom1 = "failed.to.get.tsa.response.from {0}";
     public static final String FieldFlatteningIsNotSupportedInAppendMode = "field.flattening.is.not.supported.in.append.mode";
-    public static final String FieldIsAlreadySigned = "field.is.already.signed";
+    public static final String FieldIsAlreadySigned = "field.flattening.is.not.supported.in.append.mode";
 
     public static final String FieldNamesCannotContainADot = "field.names.cannot.contain.a.dot";
     public static final String FieldTypeIsNotASignatureFieldType = "the.field.type.is.not.a.signature.field.type";
     public static final String Filter1IsNotSupported = "filter.1.is.not.supported";
-    public static final String FilePosition0CrossReferenceEntryInThisXrefSubsection = "file.position.0.cross.reference.entry.in.this.xref.subsection";
+    public static final String FilePosition0CrossReferenceEntryInThisXrefSubsection = "file.position {0} cross.reference.entry.in.this.xref.subsection";
     public static final String FilterCcittfaxdecodeIsOnlySupportedForImages = "filter.ccittfaxdecode.is.only.supported.for.images";
     public static final String FilterIsNotANameOrArray = "filter.is.not.a.name.or.array";
     public static final String FlushedPageCannotBeAddedOrInserted = "flushed.page.cannot.be.added.or.inserted";
@@ -88,8 +89,8 @@ public class PdfException extends RuntimeException {
     public static final String IllegalPValue = "illegal.p.value";
     public static final String IllegalRValue = "illegal.r.value";
     public static final String IllegalVValue = "illegal.v.value";
-    public static final String InvalidHttpResponse1 = "invalid.http.response.1";
-    public static final String InvalidTsa1ResponseCode2 = "invalid.tsa.1.response.code.2";
+    public static final String InvalidHttpResponse1 = "invalid.http.response {0}";
+    public static final String InvalidTsa1ResponseCode2 = "invalid.tsa {0} response.code {1}";
 
     public static final String IncorrectMcrParent = "incorrect.mcr.parent";
     public static final String IncorrectNumberOfComponents = "incorrect.number.of.components";
@@ -97,11 +98,11 @@ public class PdfException extends RuntimeException {
     public static final String InlineLevelOrIllustrationElementCannotContainKids = "inline.level.or.illustration.element.cannot.contain.kids";
     public static final String InvalidCodewordSize = "invalid.codeword.size";
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "invalid.cross.reference.entry.in.this.xref.subsection";
-    public static final String InvalidIndirectReference1 = "invalid.indirect.reference.1";
-    public static final String InvalidPageStructure1 = "invalid.page.structure.1";
+    public static final String InvalidIndirectReference1 = "invalid.indirect.reference {0}";
+    public static final String InvalidPageStructure1 = "invalid.page.structure {0}";
     public static final String InvalidPageStructurePagesPagesMustBePdfDictionary = "invalid.page.structure.pages.must.be.pdfdictionary";
     public static final String InvalidRangeArray = "invalid.range.array";
-    public static final String InvalidOffsetForObject1 = "invalid.offset.for.object.1";
+    public static final String InvalidOffsetForObject1 = "invalid.offset.for.object {0}";
     public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String InvalidXrefStream = "invalid.xref.stream";
     public static final String IoException = "io.exception";
@@ -126,7 +127,7 @@ public class PdfException extends RuntimeException {
     public static final String OcspStatusIsUnknown = "ocsp.status.is.unknown";
     public static final String OnlyBmpCanBeWrappedInWmf = "only.bmp.can.be.wrapped.in.wmf";
     public static final String OperatorEINotFoundAfterEndOfImageData = "operator.EI.not.found.after.end.of.image.data";
-    public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "page.1.cannot.be.added.to.document.2.because.it.belongs.to.document.3";
+    public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "page {0} cannot.be.added.to.document {1} because.it.belongs.to.document {2}";
     public static final String PageIsNotSetForThePdfTagStructure = "page.is.not.set.for.the.pdf.tag.structure";
     public static final String PageWasAlreadyFlushed = "the.page.was.already.flushed";
     public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.instead";
@@ -143,7 +144,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfVersionNotValid = "pdf.version.not.valid";
     public static final String PngFilterUnknown = "png.filter.unknown";
     public static final String ResourcesCannotBeNull = "resources.cannot.be.null";
-    public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "resources.do.not.contain.extgstate.entry.unable.to.process.operator.1";
+    public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "resources.do.not.contain.extgstate.entry.unable.to.process.operator {0}";
     public static final String RoleIsNotMappedWithAnyStandardRole = "role.is.not.mapped.with.any.standard.role";
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
@@ -153,25 +154,25 @@ public class PdfException extends RuntimeException {
     public static final String TextIsTooBig = "text.is.too.big";
     public static final String TextMustBeEven = "the.text.length.must.be.even";
     public static final String TwoBarcodeMustBeExternally = "the.two.barcodes.must.be.composed.externally";
-    public static final String ThereAreIllegalCharactersForBarcode128In1 = "there.are.illegal.characters.for.barcode.128.in.1";
+    public static final String ThereAreIllegalCharactersForBarcode128In1 = "there.are.illegal.characters.for.barcode.128.in {0}";
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
-    public static final String ThereIsNoFieldInTheDocumentWithSuchName1 = "there.is.no.field.in.the.document.with.such.name.1";
+    public static final String ThereIsNoFieldInTheDocumentWithSuchName1 = "there.is.no.field.in.the.document.with.such.name {0}";
     public static final String ThisPkcs7ObjectHasMultipleSignerinfosOnlyOneIsSupportedAtThisTime = "this.pkcs.7.object.has.multiple.signerinfos.only.one.is.supported.at.this.time";
     public static final String ThisInstanceOfPdfSignerIsAlreadyClosed = "this.instance.of.PdfSigner.is.already.closed";
-    public static final String Tsa1FailedToReturnTimeStampToken2 = "tsa.1.failed.to.return.time.stamp.token.2";
+    public static final String Tsa1FailedToReturnTimeStampToken2 = "tsa {0} failed.to.return.time.stamp.token {1}";
     public static final String TrailerNotFound = "trailer.not.found";
     public static final String TrailerPrevEntryPointsToItsOwnCrossReferenceSection = "trailer.prev.entry.points.to.its.own.cross.reference.section";
     public static final String UnbalancedBeginEndMarkedContentOperators = "unbalanced.begin.end.marked.content.operators";
     public static final String UnbalancedLayerOperators = "unbalanced.layer.operators";
     public static final String UnexpectedCharacter1FoundAfterIDInInlineImage = "unexpected.character.1.found.after.ID.in.inline.image";
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
-    public static final String UnexpectedColorSpace1 = "unexpected.color.space.1";
+    public static final String UnexpectedColorSpace1 = "unexpected.color.space {0}";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
-    public static final String UnknownEncryptionTypeREq1 = "unknown.encryption.type.r.eq.1";
-    public static final String UnknownEncryptionTypeVEq1 = "unknown.encryption.type.v.eq.1";
-    public static final String UnknownHashAlgorithm1 = "unknown.hash.algorithm.1";
-    public static final String UnknownKeyAlgorithm1 = "unknown.key.algorithm.1";
+    public static final String UnknownEncryptionTypeREq1 = "unknown.encryption.type.r.eq {0}";
+    public static final String UnknownEncryptionTypeVEq1 = "unknown.encryption.type.v.eq {0}";
+    public static final String UnknownHashAlgorithm1 = "unknown.hash.algorithm {0}";
+    public static final String UnknownKeyAlgorithm1 = "unknown.key.algorithm {0}";
     public static final String UnknownColorFormatMustBeRGBorRRGGBB = "unknown.color.format.must.be.rgb.or.rrggbb";
     public static final String VerificationAlreadyOutput = "verification.already.output";
     public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";
@@ -207,16 +208,11 @@ public class PdfException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        if (messageParams != null) {
-            StringBuilder builder = new StringBuilder(super.getMessage());
-            builder.append('+');
-            for (Object obj : messageParams) {
-                builder.append(obj.toString()).append('+');
-            }
-            return builder.substring(0, builder.length() - 1);
+        if (messageParams == null || messageParams.isEmpty()) {
+            return super.getMessage();
+        } else {
+            return MessageFormat.format(super.getMessage(), messageParams.toArray());
         }
-        return super.getMessage();
-
     }
 
     public PdfException setMessageParams(Object... messageParams) {

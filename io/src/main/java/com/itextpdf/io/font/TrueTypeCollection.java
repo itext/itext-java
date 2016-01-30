@@ -81,7 +81,7 @@ public class TrueTypeCollection {
         if(path != null) {
             File f = new File(path);
             if ((!f.exists() || !f.isFile())) {
-                throw new IOException(IOException.FontFileNotFound).setMessageParams(path);
+                throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);
             }
         }
     }

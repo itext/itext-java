@@ -226,12 +226,11 @@ public abstract class FontProgram {
         fontNames.setFamilyName(fontFamily);
     }
 
-
     protected  void checkFilePath(String path){
         if(path != null) {
             File f = new File(path);
             if (!FontConstants.BUILTIN_FONTS_14.contains(path) && (!f.exists() || !f.isFile())) {
-                throw new IOException(IOException.FontFileNotFound).setMessageParams(path);
+                throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);
             }
         }
     }
