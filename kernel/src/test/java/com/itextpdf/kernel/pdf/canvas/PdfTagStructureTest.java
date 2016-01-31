@@ -57,7 +57,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         tagStructure.addTag(PdfName.P);
         canvas.beginText();
-        PdfFont standardFont = PdfFontFactory.createStandardFont(FontConstants.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.setFontAndSize(standardFont, 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
 
@@ -83,7 +83,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         tagStructure.addTag(PdfName.P);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         tagStructure.addTag(PdfName.Span);
 
@@ -121,7 +121,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         tagStructure.addTag(PdfName.P);
         canvas.beginText();
-        PdfFont standardFont = PdfFontFactory.createStandardFont(FontConstants.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.setFontAndSize(standardFont, 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
 
@@ -263,7 +263,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         };
         tagStructure.addTag(paragraphElement, true);
         canvas.beginText();
-        PdfFont standardFont = PdfFontFactory.createStandardFont(FontConstants.COURIER);
+        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.setFontAndSize(standardFont, 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
 
@@ -309,7 +309,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         tagStructure.addTag(PdfName.P);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 24);
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
         tagStructure.addTag(PdfName.Span);
 

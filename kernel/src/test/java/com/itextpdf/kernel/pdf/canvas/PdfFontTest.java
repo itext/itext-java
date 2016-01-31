@@ -210,8 +210,6 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.close();
 
         // reading and comparing text
-        PdfReader reader = new PdfReader(new FileInputStream(filename));
-        PdfDocument document = new PdfDocument(reader);
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
@@ -232,7 +230,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        PdfFont pdfFont = PdfFontFactory.createStandardFont(FontConstants.HELVETICA);
+        PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.HELVETICA);
         Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
         canvas.saveState()
                 .beginText()
@@ -263,7 +261,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = PdfFontFactory.createStandardFont(FontConstants.HELVETICA_OBLIQUE);
+        PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.HELVETICA_OBLIQUE);
         Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
 
         PdfPage page = pdfDoc.addNewPage();
@@ -299,7 +297,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = PdfFontFactory.createStandardFont(FontConstants.HELVETICA_BOLDOBLIQUE);
+        PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.HELVETICA_BOLDOBLIQUE);
         Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
 
         PdfPage page = pdfDoc.addNewPage();
@@ -334,7 +332,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = PdfFontFactory.createStandardFont(FontConstants.COURIER_BOLD);
+        PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.COURIER_BOLD);
         Assert.assertTrue("PdfType1Font expected", pdfFont instanceof PdfType1Font);
 
         PdfPage page = pdfDoc.addNewPage();
@@ -368,7 +366,8 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFontFactory.createType1Font(fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb", "FontSpecific", true);
+        PdfFont pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb"),
+                "FontSpecific", true);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
         new PdfCanvas(pdfDoc.addNewPage())
@@ -383,7 +382,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         byte[] afm = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-        pdfType1Font = PdfFontFactory.createType1Font(afm, pfb, "FontSpecific", true);
+        pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(afm, pfb), "FontSpecific", true);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
         new PdfCanvas(pdfDoc.addNewPage())
@@ -414,7 +413,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFontFactory.createType1Font(fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb", "FontSpecific", true);
+        PdfFont pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb"), "FontSpecific", true);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -988,7 +987,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String message = "";
         try {
             byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-            PdfFontFactory.createType1Font(null, pfb, null);
+            FontFactory.createType1Font(null, pfb);
         } catch (com.itextpdf.io.IOException e) {
             message = e.getMessage();
         }
@@ -999,7 +998,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createWrongAfm2() throws IOException, InterruptedException {
         String message = "";
         try {
-            PdfFontFactory.createType1Font(fontsFolder + "cmr10.pfb", null);
+            FontFactory.createType1Font(fontsFolder + "cmr10.pfb", null);
         } catch (com.itextpdf.io.IOException e) {
             message = e.getMessage();
         }
@@ -1013,7 +1012,7 @@ public class PdfFontTest extends ExtendedITextTest {
     })
     public void createWrongPfb() throws IOException, InterruptedException {
         byte[] afm = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
-        PdfFont font = PdfFontFactory.createType1Font(afm, afm, null);
+        PdfFont font = PdfFontFactory.createFont(FontFactory.createType1Font(afm, afm), null);
         byte[] streamContent = ((PdfType1Font) font).getFontProgram().getFontStreamBytes();
         Assert.assertTrue("Empty stream content expected", streamContent == null);
     }
@@ -1030,7 +1029,7 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] afm = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
 
-        Assert.assertTrue("Type1 font expected", FontFactory.createFont(afm, pfb) instanceof Type1Font);
+        Assert.assertTrue("Type1 font expected", FontFactory.createType1Font(afm, pfb) instanceof Type1Font);
     }
 
     @Test
@@ -1048,8 +1047,7 @@ public class PdfFontTest extends ExtendedITextTest {
     @Test
     public void autoDetect5() throws IOException, InterruptedException {
         byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
-        byte[] pfb = Utilities.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-        Assert.assertTrue("TrueType (TTF) expected", FontFactory.createFont(ttf, pfb) instanceof TrueTypeFont);
+        Assert.assertTrue("TrueType (TTF) expected", FontFactory.createFont(ttf) instanceof TrueTypeFont);
     }
 
     @Test

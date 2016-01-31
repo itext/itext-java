@@ -49,7 +49,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         List<Text> pageNumberTexts = new ArrayList<>();
         List<IRenderer> pageNumberRenderers = new ArrayList<>();
 
-        document.setProperty(Property.FONT, PdfFontFactory.createStandardFont(FontConstants.HELVETICA));
+        document.setProperty(Property.FONT, PdfFontFactory.createFont(FontConstants.HELVETICA));
 
         for (int i = 0; i < 200; i++) {
             document.add(new Paragraph("This is just junk text"));
@@ -130,7 +130,7 @@ public class PreLayoutTest extends ExtendedITextTest{
         Paragraph twoColumnParagraph = new Paragraph();
         twoColumnParagraph.setNextRenderer(new TwoColumnParagraphRenderer(twoColumnParagraph));
         Text textElement = new Text(text.toString());
-        twoColumnParagraph.add(textElement).setFont(PdfFontFactory.createStandardFont(FontConstants.HELVETICA));
+        twoColumnParagraph.add(textElement).setFont(PdfFontFactory.createFont(FontConstants.HELVETICA));
         document.add(twoColumnParagraph);
 
         document.add(new Paragraph("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));

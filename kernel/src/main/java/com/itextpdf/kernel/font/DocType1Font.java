@@ -33,7 +33,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
             try {
                 //if there are no font modifiers, cached font could be used,
                 //otherwise a new instance should be created.
-                type1StdFont = createStandardFont(baseFont);
+                type1StdFont = Type1Font.createStandardFont(baseFont);
             } catch (Exception e) {
                 type1StdFont = null;
             }

@@ -61,14 +61,14 @@ public class FontFactory {
      * <p/>
      * This method calls:<br>
      * <PRE>
-     * createFont(name, encoding, embedded, true, null, null);
+     * createFont(name, null, true);
      * </PRE>
      *
-     * @param name     the name of the font or its location on file
+     * @param name the name of the font or its location on file
      * @return returns a new font. This font may come from the cache
      */
     public static FontProgram createFont(String name) throws java.io.IOException {
-        return createFont(name, true, null, null, false);
+        return createFont(name, null, true);
     }
 
     /**
@@ -113,13 +113,13 @@ public class FontFactory {
      * createFont(name, encoding, embedded, true, null, null);
      * </PRE>
      *
-     * @param name     the name of the font or its location on file
-     * @param cached   ttrue if the font comes from the cache or is added to
-     *                 the cache if new, false if the font is always created new
+     * @param font   the name of the font or its location on file
+     * @param cached ttrue if the font comes from the cache or is added to
+     *               the cache if new, false if the font is always created new
      * @return returns a new font. This font may come from the cache
      */
-    public static FontProgram createFont(String name, boolean cached) throws java.io.IOException {
-        return createFont(name, cached, null, null, false);
+    public static FontProgram createFont(String font, boolean cached) throws java.io.IOException {
+        return createFont(font, null, cached);
     }
 
     /**
@@ -156,60 +156,14 @@ public class FontFactory {
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
      *
-     * @param ttfAfm   the true type font or the afm in a byte array
-     *                 an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
-     *                 This parameter is useful for FontFactory that may have to check many invalid font names before finding the right one
+     * @param font the true type font or the afm in a byte array
+     *             an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
+     *             This parameter is useful for FontFactory that may have to check many invalid font names before finding the right one
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(byte[] ttfAfm) throws java.io.IOException {
-        return createFont(null, false, ttfAfm, null);
-    }
-
-
-    /**
-     * Creates a new font. This font can be one of the 14 built in types,
-     * a Type1 font referred to by an AFM or PFM file, a TrueType font (simple or collection) or a CJK font from the
-     * Adobe Asian Font Pack. TrueType fonts and CJK fonts can have an optional style modifier
-     * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
-     * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType collections are addressed by index such as "msgothic.ttc,1".
-     * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p/>
-     * Besides the common encodings described by name, custom encodings
-     * can also be made. These encodings will only work for the single byte fonts
-     * Type1 and TrueType. The encoding string starts with a '#'
-     * followed by "simple" or "full". If "simple" there is a decimal for the first character position and then a list
-     * of hex values representing the Unicode codes that compose that encoding.<br>
-     * The "simple" encoding is recommended for TrueType fonts
-     * as the "full" encoding risks not matching the character with the right glyph
-     * if not done with care.<br>
-     * The "full" encoding is specially aimed at Type1 fonts where the glyphs have to be
-     * described by non standard names like the Tex math fonts. Each group of three elements
-     * compose a code position: the one byte code order in decimal or as 'x' (x cannot be the space), the name and the Unicode character
-     * used to access the glyph. The space must be assigned to character position 32 otherwise
-     * text justification will not work.
-     * <p/>
-     * Example for a "simple" encoding that includes the Unicode
-     * character space, A, B and ecyrillic:
-     * <PRE>
-     * "# simple 32 0020 0041 0042 0454"
-     * </PRE>
-     * <p/>
-     * Example for a "full" encoding for a Type1 Tex font:
-     * <PRE>
-     * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
-     * </PRE>
-     *
-     * @param ttfAfm   the true type font or the afm in a byte array
-     * @param pfb      the pfb in a byte array
-     *                 an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
-     *                 This parameter is useful for FontFactory that may have to check many invalid font names before finding the right one
-     * @return returns a new font. This font may come from the cache but only if cached
-     * is true, otherwise it will always be created new
-     */
-    public static FontProgram createFont(byte[] ttfAfm, byte[] pfb) throws java.io.IOException {
-        return createFont(null, false, ttfAfm, pfb);
+    public static FontProgram createFont(byte[] font) throws java.io.IOException {
+        return createFont(null, font, false);
     }
 
     /**
@@ -251,69 +205,14 @@ public class FontFactory {
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
      *
-     * @param name     the name of the font or its location on file
-     * @param cached   true if the font comes from the cache or is added to
-     *                 the cache if new, false if the font is always created new
-     * @param ttfAfm   the true type font or the afm in a byte array
-     * @param pfb      the pfb in a byte array
+     * @param name   the name of the font or its location on file
+     * @param font   the true type font or the afm in a byte array
+     * @param cached true if the font comes from the cache or is added to
+     *               the cache if new, false if the font is always created new
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(String name, boolean cached, byte[] ttfAfm, byte[] pfb) throws java.io.IOException {
-        return createFont(name, cached, ttfAfm, pfb, false);
-    }
-
-    /**
-     * Creates a new font. This font can be one of the 14 built in types,
-     * a Type1 font referred to by an AFM or PFM file, a TrueType font (simple or collection) or a CJK font from the
-     * Adobe Asian Font Pack. TrueType fonts and CJK fonts can have an optional style modifier
-     * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
-     * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType collections are addressed by index such as "msgothic.ttc,1".
-     * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p/>
-     * The fonts may or may not be cached depending on the flag <CODE>cached</CODE>.
-     * If the <CODE>byte</CODE> arrays are present the font will be
-     * read from them instead of the name. A name is still required to identify
-     * the font type.
-     * <p/>
-     * Besides the common encodings described by name, custom encodings
-     * can also be made. These encodings will only work for the single byte fonts
-     * Type1 and TrueType. The encoding string starts with a '#'
-     * followed by "simple" or "full". If "simple" there is a decimal for the first character position and then a list
-     * of hex values representing the Unicode codes that compose that encoding.<br>
-     * The "simple" encoding is recommended for TrueType fonts
-     * as the "full" encoding risks not matching the character with the right glyph
-     * if not done with care.<br>
-     * The "full" encoding is specially aimed at Type1 fonts where the glyphs have to be
-     * described by non standard names like the Tex math fonts. Each group of three elements
-     * compose a code position: the one byte code order in decimal or as 'x' (x cannot be the space), the name and the Unicode character
-     * used to access the glyph. The space must be assigned to character position 32 otherwise
-     * text justification will not work.
-     * <p/>
-     * Example for a "simple" encoding that includes the Unicode
-     * character space, A, B and ecyrillic:
-     * <PRE>
-     * "# simple 32 0020 0041 0042 0454"
-     * </PRE>
-     * <p/>
-     * Example for a "full" encoding for a Type1 Tex font:
-     * <PRE>
-     * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
-     * </PRE>
-     *
-     * @param name     the name of the font or its location on file
-     * @param cached   true if the font comes from the cache or is added to
-     *                 the cache if new, false if the font is always created new
-     * @param ttfAfm   the true type font or the afm in a byte array
-     * @param pfb      the pfb in a byte array
-     * @param noThrow  if true will not throw an exception if the font is not recognized and will return null, if false will throw
-     *                 an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
-     *                 This parameter is useful for FontFactory that may have to check many invalid font names before finding the right one
-     * @return returns a new font. This font may come from the cache but only if cached
-     * is true, otherwise it will always be created new
-     */
-    public static FontProgram createFont(String name, boolean cached, byte[] ttfAfm, byte[] pfb, boolean noThrow) throws java.io.IOException {
+    public static FontProgram createFont(String name, byte[] font, boolean cached) throws java.io.IOException {
         String baseName = FontProgram.getBaseName(name);
 
         //yes, we trying to find built-in standard font with original name, not baseName.
@@ -330,59 +229,118 @@ public class FontFactory {
         }
 
         if (name == null) {
-            if (pfb != null) {
+            if (font != null) {
                 try {
-                    return Type1Font.createFont(ttfAfm, pfb);
-                } catch (Exception ignored) {
-                }
-            }
-            if (ttfAfm != null) {
-                try {
-                    return new TrueTypeFont(ttfAfm);
+                    return new TrueTypeFont(font);
                 } catch (Exception ignored) {
                 }
 
                 try {
-                    return Type1Font.createFont(ttfAfm);
+                    return new Type1Font(null, null, font, null);
                 } catch (Exception ignored) {
                 }
             }
-            if (noThrow) {
-                return null;
-            } else {
-                throw new IOException(IOException.FontIsNotRecognized);
-            }
+            throw new IOException(IOException.FontIsNotRecognized);
         }
 
         FontProgram fontBuilt;
 
         if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm") || name.toLowerCase().endsWith(".pfm")) {
-            fontBuilt = new Type1Font(name, null, ttfAfm, pfb);
+            fontBuilt = new Type1Font(name, null, font, null);
         } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf") || baseName.toLowerCase().indexOf(".ttc,") > 0) {
-            if (ttfAfm != null) {
-                fontBuilt = new TrueTypeFont(ttfAfm);
+            if (font != null) {
+                fontBuilt = new TrueTypeFont(font);
             } else {
                 fontBuilt = new TrueTypeFont(name);
             }
         } else if (isCidFont) {
             fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
-        } else if (noThrow) {
-            return null;
         } else {
             throw new IOException(IOException.Font1IsNotRecognized).setMessageParams(name);
         }
-
-        if (cached) {
-            fontFound = FontCache.getFont(name);
-            if (fontFound != null) {
-                return fontFound;
-            }
-            FontCache.saveFont(fontBuilt, name);
-        }
-
-        return fontBuilt;
+        return cached ? FontCache.saveFont(fontBuilt, name) : fontBuilt;
     }
 
+    // todo make comment relevant to type 1 font creation
+
+    /**
+     * Creates a new font. This font can be one of the 14 built in types,
+     * a Type1 font referred to by an AFM or PFM file, a TrueType font (simple or collection) or a CJK font from the
+     * Adobe Asian Font Pack. TrueType fonts and CJK fonts can have an optional style modifier
+     * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
+     * example would be "STSong-Light,Bold". Note that this modifiers do not work if
+     * the font is embedded. Fonts in TrueType collections are addressed by index such as "msgothic.ttc,1".
+     * This would get the second font (indexes start at 0), in this case "MS PGothic".
+     * <p/>
+     * The fonts may or may not be cached depending on the flag <CODE>cached</CODE>.
+     * If the <CODE>byte</CODE> arrays are present the font will be
+     * read from them instead of the name. A name is still required to identify
+     * the font type.
+     * <p/>
+     * Besides the common encodings described by name, custom encodings
+     * can also be made. These encodings will only work for the single byte fonts
+     * Type1 and TrueType. The encoding string starts with a '#'
+     * followed by "simple" or "full". If "simple" there is a decimal for the first character position and then a list
+     * of hex values representing the Unicode codes that compose that encoding.<br>
+     * The "simple" encoding is recommended for TrueType fonts
+     * as the "full" encoding risks not matching the character with the right glyph
+     * if not done with care.<br>
+     * The "full" encoding is specially aimed at Type1 fonts where the glyphs have to be
+     * described by non standard names like the Tex math fonts. Each group of three elements
+     * compose a code position: the one byte code order in decimal or as 'x' (x cannot be the space), the name and the Unicode character
+     * used to access the glyph. The space must be assigned to character position 32 otherwise
+     * text justification will not work.
+     * <p/>
+     * Example for a "simple" encoding that includes the Unicode
+     * character space, A, B and ecyrillic:
+     * <PRE>
+     * "# simple 32 0020 0041 0042 0454"
+     * </PRE>
+     * <p/>
+     * Example for a "full" encoding for a Type1 Tex font:
+     * <PRE>
+     * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
+     * </PRE>
+     *
+     * @param name   the name of the font or its location on file
+     * @param cached true if the font comes from the cache or is added to
+     *               the cache if new, false if the font is always created new
+     * @param afm    the afm or pfm metrics file in a byte array
+     * @param pfb    the pfb in a byte array
+     * @return returns a new font. This font may come from the cache but only if cached
+     * is true, otherwise it will always be created new
+     */
+    public static FontProgram createType1Font(String name, byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
+        FontProgram fontProgram;
+        if (cached && name != null) {
+            fontProgram = FontCache.getFont(name);
+            if (fontProgram != null) {
+                return fontProgram;
+            }
+        }
+        fontProgram = new Type1Font(name, null, afm, pfb);
+        return cached && name != null ? FontCache.saveFont(fontProgram, name) : fontProgram;
+    }
+
+    public static FontProgram createType1Font(byte[] afm, byte[] pfb) throws java.io.IOException {
+        return createType1Font(null, afm, pfb, false);
+    }
+
+    public static FontProgram createType1Font(String metricsPath, String binaryPath, boolean cached) throws java.io.IOException {
+        FontProgram fontProgram;
+        if (cached && metricsPath != null) {
+            fontProgram = FontCache.getFont(metricsPath);
+            if (fontProgram != null) {
+                return fontProgram;
+            }
+        }
+        fontProgram = new Type1Font(metricsPath, binaryPath, null, null);
+        return cached && metricsPath != null ? FontCache.saveFont(fontProgram, metricsPath) : fontProgram;
+    }
+
+    public static FontProgram createType1Font(String metricsPath, String binaryPath) throws java.io.IOException {
+        return createType1Font(metricsPath, binaryPath, true);
+    }
 
     /**
      * Creates a new True Type font from ttc file,
@@ -432,15 +390,7 @@ public class FontFactory {
             }
         }
         FontProgram fontBuilt = new TrueTypeFont(ttcPath, ttcIndex);
-        if (cached) {
-            FontCache.saveFont(fontBuilt, ttcPath + ttcIndex);
-        }
-
-        return fontBuilt;
-    }
-
-    public static FontProgram createFont(String ttcPath, int ttcIndex) throws java.io.IOException {
-        return createFont(ttcPath, ttcIndex, false);
+        return cached ? FontCache.saveFont(fontBuilt, ttcPath + ttcIndex) : fontBuilt;
     }
 
     /**
@@ -476,15 +426,16 @@ public class FontFactory {
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
      *
-     * @param ttc      bytes array of ttc font
+     * @param ttcPath  bytes array of ttc font
      * @param ttcIndex the encoding to be applied to this font
-     * @param cached   true if the font comes from the cache or is added to
-     *                 the cache if new, false if the font is always created new
-     * @return returns a new font. This font may come from the cache but only if cached
-     * is true, otherwise it will always be created new
+     * @return returns a new font.
      */
-    public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
+    public static FontProgram createFont(String ttcPath, int ttcIndex) throws java.io.IOException {
+        return createFont(ttcPath, ttcIndex, true);
+    }
 
+    // TODO should we cache fonts based on byte array?
+    static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
         if (cached) {
             String ttcNameKey = String.valueOf(Arrays.deepHashCode(new Object[]{ttc})) + ttcIndex;
             FontProgram fontFound = FontCache.getFont(ttcNameKey);
@@ -494,11 +445,7 @@ public class FontFactory {
         }
         FontProgram fontBuilt = new TrueTypeFont(ttc, ttcIndex);
         String ttcNameKey = String.valueOf(Arrays.deepHashCode(new Object[]{ttc})) + ttcIndex;
-        if (cached) {
-            FontCache.saveFont(fontBuilt, ttcNameKey);
-        }
-
-        return fontBuilt;
+        return cached ? FontCache.saveFont(fontBuilt, ttcNameKey) : fontBuilt;
     }
 
     public static FontProgram createFont(byte[] ttc, int ttcIndex) throws java.io.IOException {

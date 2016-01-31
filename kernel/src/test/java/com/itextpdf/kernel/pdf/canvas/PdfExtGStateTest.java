@@ -48,7 +48,7 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         PdfExtGState egs = new PdfExtGState();
         egs.getPdfObject().put(PdfName.LW, new PdfNumber(5));
         PdfArray font = new PdfArray();
-        PdfFont pdfFont = PdfFontFactory.createStandardFont(FontConstants.COURIER);
+        PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.COURIER);
         //TODO if uncomment - exception will generated
         //pdfFont.flush();
         font.add(pdfFont.getPdfObject());

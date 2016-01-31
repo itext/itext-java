@@ -152,7 +152,7 @@ public class MetaFont extends MetaObject {
             }
         }
         try {
-            font = Type1Font.createStandardFont(fontName);
+            font = FontFactory.createFont(fontName);
             encoding = FontEncoding.createFontEncoding(PdfEncodings.WINANSI);
         }
         catch (Exception e) {

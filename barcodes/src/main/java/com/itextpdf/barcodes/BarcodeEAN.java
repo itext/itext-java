@@ -170,7 +170,7 @@ public class BarcodeEAN extends Barcode1D {
         super(document);
         try {
             x = 0.8f;
-            font = PdfFontFactory.createStandardFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+            font = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
             size = 8;
             baseline = size;
             barHeight = size * 3;

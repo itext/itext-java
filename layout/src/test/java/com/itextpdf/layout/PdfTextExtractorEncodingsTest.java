@@ -42,7 +42,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
      */
     @Test
     public void testStandardFont() throws Exception {
-        PdfFont font = PdfFontFactory.createStandardFont(FontConstants.TIMES_ROMAN);
+        PdfFont font = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN);
         byte[] pdfBytes = createPdf(font);
         checkPdf(pdfBytes);
     }
@@ -82,7 +82,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
     }
 
     protected static PdfFont getTTFont(String encoding, boolean embedded) throws IOException {
-        return PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", encoding, true);
+        return PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", encoding, embedded);
     }
 
     private static byte[] createPdf(PdfFont font)

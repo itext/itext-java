@@ -485,7 +485,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     private Paragraph createParagraph1() throws IOException {
-        PdfFont font = PdfFontFactory.createStandardFont(FontConstants.HELVETICA_BOLD);
+        PdfFont font = PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD);
         Paragraph p = new Paragraph().add("text chunk. ").add("explicitly added separate text chunk");
         Text id = new Text("text chunk with specific font").setFont(font).setFontSize(8).setTextRise(6);
         p.add(id);

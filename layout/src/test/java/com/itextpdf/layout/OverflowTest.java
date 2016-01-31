@@ -44,7 +44,7 @@ public class OverflowTest extends ExtendedITextTest{
             text.append("This is a waaaaay tooo long text...");
         }
 
-        Paragraph p = new Paragraph(text.toString()).setFont(PdfFontFactory.createStandardFont(FontConstants.HELVETICA));
+        Paragraph p = new Paragraph(text.toString()).setFont(PdfFontFactory.createFont(FontConstants.HELVETICA));
         document.add(p);
 
         document.close();

@@ -32,28 +32,12 @@ public class Type1Font extends FontProgram {
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
 
-    public static Type1Font createStandardFont(String name) throws java.io.IOException {
+    protected static Type1Font createStandardFont(String name) throws java.io.IOException {
         if (FontConstants.BUILTIN_FONTS_14.contains(name)) {
-            return createFont(name);
+            return new Type1Font(name, null, null, null);
         } else {
             throw new IOException("1.is.not.a.standard.type1.font").setMessageParams(name);
         }
-    }
-
-    public static Type1Font createFont(String metricsPath) throws java.io.IOException {
-        return new Type1Font(metricsPath, null, null, null);
-    }
-
-    public static Type1Font createFont(String metricsPath, String binaryPath) throws java.io.IOException {
-        return new Type1Font(metricsPath, binaryPath, null, null);
-    }
-
-    public static Type1Font createFont(byte[] metricsData) throws java.io.IOException {
-        return new Type1Font(null, null, metricsData, null);
-    }
-
-    public static Type1Font createFont(byte[] metricsData, byte[] binaryData) throws java.io.IOException {
-        return new Type1Font(null, null, metricsData, binaryData);
     }
 
     protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws java.io.IOException {

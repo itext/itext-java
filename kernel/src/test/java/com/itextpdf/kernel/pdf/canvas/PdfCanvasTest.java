@@ -213,7 +213,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("Hello Helvetica!")
                 .endText()
                 .restoreState();
@@ -222,7 +222,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 700)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA_BOLDOBLIQUE), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA_BOLDOBLIQUE), 16)
                 .showText("Hello Helvetica Bold Oblique!")
                 .endText()
                 .restoreState();
@@ -231,7 +231,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 650)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 16)
                 .showText("Hello Courier!")
                 .endText()
                 .restoreState();
@@ -240,7 +240,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 600)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.TIMES_ITALIC), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.TIMES_ITALIC), 16)
                 .showText("Hello Times Italic!")
                 .endText()
                 .restoreState();
@@ -249,7 +249,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 550)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.SYMBOL), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.SYMBOL), 16)
                 .showText("Hello Ellada!")
                 .endText()
                 .restoreState();
@@ -258,7 +258,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 500)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.ZAPFDINGBATS), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.ZAPFDINGBATS), 16)
                 .showText("Hello ZapfDingbats!")
                 .endText()
                 .restoreState();
@@ -400,7 +400,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -447,7 +447,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -494,7 +494,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -540,7 +540,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.saveState()
                     .beginText()
                     .moveText(36, 650)
-                    .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 16)
+                    .setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 16)
                     .showText("Page " + (i + 1))
                     .endText();
 
@@ -588,7 +588,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -636,7 +636,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -684,7 +684,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -732,7 +732,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                     .saveState()
                     .beginText()
                     .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 72)
+                    .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 72)
                     .showText(Integer.toString(i + 1))
                     .endText()
                     .restoreState();
@@ -770,7 +770,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 12);
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
@@ -822,7 +822,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 12);
+            canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
@@ -877,7 +877,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 12);
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!!!");
         canvas.endText();
@@ -931,7 +931,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 12);
+            canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
@@ -984,7 +984,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.rectangle(100, 600, 100, 100);
             canvas.fill();
             canvas.beginText();
-            canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 12);
+            canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
             canvas.showText(String.format("Page_%d", i + 1));
             canvas.endText();
@@ -1042,7 +1042,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.rectangle(100, 600, 100, 100);
         canvas.fill();
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 12);
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
         canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
         canvas.showText("Hello World!");
         canvas.endText();
@@ -1583,7 +1583,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 //
 //        PdfCanvas canvas = new PdfCanvas(page);
 //        String kernableText = "AVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAV";
-//        PdfFont font = PdfFont.createStandardFont(document, FontConstants.HELVETICA);
+//        PdfFont font = PdfFont.createFont(document, FontConstants.HELVETICA);
 //        canvas.beginText().moveText(50, 600).setFontAndSize(font, 12).showText("Kerning:-" + kernableText).endText();
 //        canvas.beginText().moveText(50, 650).setFontAndSize(font, 12).showTextKerned("Kerning:+" + kernableText).endText();
 //

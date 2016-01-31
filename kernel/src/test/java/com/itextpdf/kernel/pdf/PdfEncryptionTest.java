@@ -111,7 +111,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
                 "0 0 Td\n" +
                 "ET\n" +
                 "Q ").getBytes());
-        page.getResources().addFont(document, PdfFontFactory.createStandardFont(FontConstants.HELVETICA));
+        page.getResources().addFont(document, PdfFontFactory.createFont(FontConstants.HELVETICA));
 
         page.flush();
         document.close();
@@ -125,13 +125,11 @@ public class PdfEncryptionTest extends ExtendedITextTest{
     public void iText7Decrypt(String src, byte[] password, String pageContent) throws IOException {
         PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(src, password);
         PdfDocument document = new com.itextpdf.kernel.pdf.PdfDocument(reader);
-        String author = document.getInfo().getAuthor();
-        String creator = document.getInfo().getCreator();
         PdfPage page = document.getPage(1);
 
         Assert.assertTrue("Expected content: \n" + pageContent, new String(page.getStreamBytes(0)).contains(pageContent));
-        Assert.assertEquals("Encrypted author", this.author, document.getInfo().getAuthor());
-        Assert.assertEquals("Encrypted creator", this.creator, document.getInfo().getCreator());
+        Assert.assertEquals("Encrypted author", author, document.getInfo().getAuthor());
+        Assert.assertEquals("Encrypted creator", creator, document.getInfo().getCreator());
 
         document.close();
     }

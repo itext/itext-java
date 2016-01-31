@@ -1356,7 +1356,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         this.checkType = checkType;
         text = typeChars[checkType - 1];
         try {
-            font = PdfFontFactory.createStandardFont(FontConstants.ZAPFDINGBATS);
+            font = PdfFontFactory.createFont(FontConstants.ZAPFDINGBATS);
         } catch (IOException e) {
             throw new PdfException(e.getLocalizedMessage());
         }

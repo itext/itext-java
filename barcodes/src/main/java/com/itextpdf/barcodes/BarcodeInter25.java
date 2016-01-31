@@ -57,7 +57,7 @@ public class BarcodeInter25 extends Barcode1D {
         try {
             x = 0.8f;
             n = 2;
-            font = PdfFontFactory.createStandardFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+            font = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
             size = 8;
             baseline = size;
             barHeight = size * 3;

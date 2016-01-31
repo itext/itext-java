@@ -78,7 +78,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER_BOLD), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER_BOLD), 14);
         canvas.moveText(100, 600);
         canvas.showText("Page 1");
         canvas.moveText(0, -30);
@@ -90,7 +90,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         canvas = new PdfCanvas(page2);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER_BOLD), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER_BOLD), 14);
         canvas.moveText(100, 600);
         canvas.showText("Page 2");
         canvas.endText();
@@ -111,7 +111,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER_BOLD), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER_BOLD), 14);
         canvas.moveText(100, 600);
         canvas.showText("Click here to go to itextpdf site.");
         canvas.endText();
@@ -137,7 +137,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER_BOLD), 14);
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER_BOLD), 14);
         canvas.moveText(100, 600);
         canvas.showText("Click here to go to itextpdf site.");
         canvas.moveText(0, -50);
@@ -211,7 +211,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("This is a text")
                 .endText()
                 .restoreState();
@@ -220,7 +220,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(236, 750)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("This is an edited text")
                 .endText()
                 .restoreState();
@@ -252,7 +252,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
 
-        new PdfCanvas(page).beginText().setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.COURIER), 24).moveText(100, 600).showText("Annotated text").endText().release();
+        new PdfCanvas(page).beginText().setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24).moveText(100, 600).showText("Annotated text").endText().release();
         PdfFreeTextAnnotation textannot = new PdfFreeTextAnnotation(new Rectangle(300, 700, 150, 20), "").
                 setContents(new PdfString("FreeText annotation")).setColor(new float[]{1, 0, 0});
         textannot.setIntent(PdfName.FreeTextCallout);
@@ -450,7 +450,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("Underline!")
                 .endText()
                 .restoreState();
@@ -488,7 +488,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("Highlight!")
                 .endText()
                 .restoreState();
@@ -526,7 +526,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("Squiggly!")
                 .endText()
                 .restoreState();
@@ -564,7 +564,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 750)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("Strikeout!")
                 .endText()
                 .restoreState();
@@ -600,7 +600,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 790)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("This is Printer Mark annotation:")
                 .endText()
                 .restoreState();
@@ -644,7 +644,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 790)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("This is Trap Network annotation:")
                 .endText()
                 .restoreState();
@@ -871,7 +871,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 105)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
@@ -911,7 +911,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 105)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
@@ -951,7 +951,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 105)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
@@ -991,7 +991,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .saveState()
                 .beginText()
                 .moveText(36, 105)
-                .setFontAndSize(PdfFontFactory.createStandardFont(FontConstants.HELVETICA), 16)
+                .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 16)
                 .showText("Click on the area below to play a sound.")
                 .endText()
                 .restoreState();
