@@ -109,7 +109,7 @@ public class PdfDocument implements IEventDispatcher {
 
     protected boolean isClosing = false;
 
-    protected boolean isSuccessClosing = false;
+    protected boolean closed = false;
 
     /**
     * flag determines whether to write unused objects to result document
@@ -751,11 +751,11 @@ public class PdfDocument implements IEventDispatcher {
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotCloseDocument, e, this);
         }
-        isSuccessClosing = true;
+        closed = true;
     }
 
-    public boolean isSuccessClosing() {
-        return isSuccessClosing;
+    public boolean isClosed() {
+        return closed;
     }
 
     public boolean isTagged() {
@@ -1253,7 +1253,7 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     protected void checkClosingStatus(){
-        if(isSuccessClosing){
+        if(closed){
             throw  new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
         }
     }

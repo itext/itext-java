@@ -156,7 +156,7 @@ public class Document extends RootElement<Document> {
      * @throws PdfException
      */
     protected void checkClosingStatus(){
-        if(getPdfDocument().isSuccessClosing()){
+        if(getPdfDocument().isClosed()){
             throw  new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
         }
     }
