@@ -48,11 +48,15 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         embedded = true;
         fontProgram = new Type3FontProgram(false);
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), null, false);
-        Rectangle fontBBoxRec = getPdfObject().getAsArray(PdfName.FontBBox).toRectangle();
         PdfDictionary charProcsDic = getPdfObject().getAsDictionary(PdfName.CharProcs);
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
-        fontProgram.getFontMetrics().setBbox((int) fontBBoxRec.getLeft(), (int) fontBBoxRec.getBottom(),
-                (int) fontBBoxRec.getRight(), (int) fontBBoxRec.getTop());
+        if (getPdfObject().containsKey(PdfName.FontBBox)) {
+            PdfArray fontBBox = getPdfObject().getAsArray(PdfName.FontBBox);
+            fontProgram.getFontMetrics().setBbox(fontBBox.getAsInt(0), fontBBox.getAsInt(1),
+                    fontBBox.getAsInt(2), fontBBox.getAsInt(3));
+        } else {
+            fontProgram.getFontMetrics().setBbox(0, 0, 0, 0);
+        }
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
         int[] widths = FontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
