@@ -16,6 +16,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String AllColourChannelsInTheJpeg2000DataShallHaveTheSameBitDepth = "all.colour.channels.in.the.jpeg2000.data.shall.have.the.same.bit-depth";
     public static final String AllHalftonesShallHaveHalftonetype1Or5 = "all.halftones.shall.have.halftonetype.1.or.5";
     public static final String AnAnnotationDictionaryShallContainTheFKey = "an.annotation.dictionary.shall.contain.the.f.key";
+    public static final String AnAnnotationDictionaryShallNotContainAAKey = "an.annotation.dictionary.shall.not.contain.aa.key";
     public static final String AnAnnotationDictionaryShallNotContainTheCaKeyWithAValueOtherThan1 = "an.annotation.dictionary.shall.not.contain.the.ca.key.with.a.value.other.than.1";
     public static final String AnExtgstateDictionaryShallNotContainTheHTPKey = "an.extgstate.dictionary.shall.not.contain.the.HTP.key";
     public static final String AnExtgstateDictionaryShallNotContainTheTR2KeyWithAValueOtherThanDefault = "an.extgstate.dictionary.shall.not.contain.the.TR2.key.with.a.value.other.than.default";

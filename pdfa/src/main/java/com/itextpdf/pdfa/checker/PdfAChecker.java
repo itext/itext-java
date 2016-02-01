@@ -14,6 +14,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.pdfa.PdfAConformanceException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -228,10 +229,6 @@ public abstract class PdfAChecker {
                 PdfDictionary annotDic = (PdfDictionary) annot;
                 checkAnnotation(annotDic);
                 PdfDictionary action = annotDic.getAsDictionary(PdfName.A);
-                if (action != null) {
-                    checkAction(action);
-                }
-                action = annotDic.getAsDictionary(PdfName.AA);
                 if (action != null) {
                     checkAction(action);
                 }

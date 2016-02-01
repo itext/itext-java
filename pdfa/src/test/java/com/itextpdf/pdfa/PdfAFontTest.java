@@ -30,7 +30,7 @@ import org.junit.experimental.categories.Category;
 public class PdfAFontTest {
 
     static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    static final String outputDir = "./target/test/PdfA2/";
+    static final String outputDir = "./target/test/PdfAFontTest/";
 
     @BeforeClass
     static public void beforeClass() {

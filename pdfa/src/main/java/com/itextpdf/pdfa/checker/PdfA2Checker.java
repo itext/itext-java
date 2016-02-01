@@ -281,6 +281,10 @@ public class PdfA2Checker extends PdfA1Checker{
             throw new PdfAConformanceException(PdfAConformanceException.WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry);
         }
 
+        if (annotDic.containsKey(PdfName.AA)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AnAnnotationDictionaryShallNotContainAAKey);
+        }
+
         if (checkStructure(conformanceLevel)) {
             if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
                 throw new PdfAConformanceException(PdfAConformanceException.AnnotationOfType1ShouldHaveContentsKey).setMessageParams(subtype);
