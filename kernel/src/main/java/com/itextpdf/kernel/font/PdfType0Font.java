@@ -451,10 +451,10 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     cffBytes = cff.Process(cff.getNames()[0]);
                 }
                 fontStream = getPdfFontStream(cffBytes, new int[]{cffBytes.length});
+                fontStream.put(PdfName.Subtype, new PdfName("CIDFontType0C"));
                 // The PDF Reference manual advises to add -cmap in case CIDFontType0
                 getPdfObject().put(PdfName.BaseFont,
                         new PdfName(String.format("%s-%s", fontName, cmapEncoding.getCmapName())));
-                fontDescriptor.put(PdfName.Subtype, new PdfName("CIDFontType0C"));
                 fontDescriptor.put(PdfName.FontFile3, fontStream);
             } else {
                 byte[] ttfBytes;

@@ -9,7 +9,14 @@ import com.itextpdf.io.font.TrueTypeCollection;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.font.*;
+import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfTrueTypeFont;
+import com.itextpdf.kernel.font.PdfType0Font;
+import com.itextpdf.kernel.font.PdfType1Font;
+import com.itextpdf.kernel.font.PdfType3Font;
+import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
@@ -484,9 +491,9 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createDocumentWithTrueTypeFont2() throws IOException, InterruptedException {
-        String filename = destinationFolder + "DocumentWithTrueTypeFont2.pdf";
-        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2.pdf";
+    public void createDocumentWithTrueTypeOtfFont() throws IOException, InterruptedException {
+        String filename = destinationFolder + "DocumentWithTrueTypeOtfFont.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeOtfFont.pdf";
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
@@ -527,6 +534,61 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .moveText(36, 700)
                 .setFontAndSize(pdfTrueTypeFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithType0OtfFont() throws IOException, InterruptedException {
+        String filename = destinationFolder + "DocumentWithType0OtfFont.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithType0OtfFont.pdf";
+        final String title = "Empty iText 6 Document";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+
+        String font = fontsFolder + "Puritan2.otf";
+
+        PdfFont pdfFont = PdfFontFactory.createFont(font, "Identity-H");
+        Assert.assertTrue("PdfType0Font expected", pdfFont instanceof PdfType0Font);
+        pdfFont.setSubset(true);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfFont, 72)
+                .showText("Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+
+        byte[] ttf = Utilities.inputStreamToArray(new FileInputStream(font));
+        pdfFont = PdfFontFactory.createFont(ttf, "Identity-H");
+        Assert.assertTrue("PdfTrueTypeFont expected", pdfFont instanceof PdfType0Font);
+        pdfFont.setSubset(true);
+        page = pdfDoc.addNewPage();
+        canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfFont, 72)
                 .showText("Hello world")
                 .endText()
                 .restoreState();
@@ -1106,6 +1168,40 @@ public class PdfFontTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
 
+    }
+
+    @Test
+    @Ignore("Invalid subset")
+    public void NotoSansCJKjpTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "NotoSansCJKjpTest.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
+        PdfDocument doc = new PdfDocument(writer);
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
+        //font.setSubset(false);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .setFillColor(DeviceRgb.GREEN)
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 12)
+                .showText(pangramme)
+                .endText()
+                .restoreState();
+        canvas.saveState()
+                .setFillColor(DeviceRgb.RED)
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText("1234567890")
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test

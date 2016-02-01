@@ -119,7 +119,6 @@ public class PdfAFontTest {
     }
 
     @Test
-    @Ignore
     public void fontCheckPdfA1_05() throws IOException, XMPException {
         PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA1_05.pdf"));
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -127,7 +126,7 @@ public class PdfAFontTest {
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKtc-Light.otf", "Identity-H");
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(DeviceRgb.GREEN)
@@ -244,7 +243,7 @@ public class PdfAFontTest {
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKjp-Bold.otf", "Identity-H", true);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKtc-Light.otf", "Identity-H", true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()
