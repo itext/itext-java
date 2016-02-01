@@ -15,7 +15,6 @@ import java.util.Map;
 public final class GifImageHelper {
 
     static final int MaxStackSize = 4096;   // max decoder pixel stack size
-    private static int currentFrame;
 
     private static class GifParameters {
         DataInputStream in;
@@ -55,16 +54,27 @@ public final class GifImageHelper {
         int m_line_stride;
         byte[] fromData;
         URL fromUrl;
+        int currentFrame;
 
         GifImage image;
     }
 
-    public static void processImage(GifImage image, ByteArrayOutputStream stream) {
-        processImage(image, stream, -1);
+    /**
+     * Reads image source and fills GifImage object with parameters (frames, width, height)
+     * @param image GifImage
+     */
+    public static void processImage(GifImage image) {
+        processImage(image, -1);
     }
 
-    public static void processImage(GifImage image, ByteArrayOutputStream stream, int lastFrameNumber) {
+    /**
+     * Reads image source and fills GifImage object with parameters (frames, width, height)
+     * @param image GifImage
+     * @param lastFrameNumber the last frame of the gif image should be read
+     */
+    public static void processImage(GifImage image, int lastFrameNumber) {
         GifParameters gif = new GifParameters();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         gif.image = image;
 
@@ -101,7 +111,7 @@ public final class GifImageHelper {
         gif.in = new DataInputStream(new BufferedInputStream(is));
         readHeader(gif);
         readContents(gif, lastFrameNumber);
-        if (currentFrame <= lastFrameNumber)
+        if (gif.currentFrame <= lastFrameNumber)
             throw new IOException(IOException.CannotFind1Frame).setMessageParams(lastFrameNumber);
     }
 
@@ -189,16 +199,16 @@ public final class GifImageHelper {
     private static void readContents(GifParameters gif, int lastFrameNumber) throws java.io.IOException {
         // read GIF file content blocks
         boolean done = false;
-        currentFrame = 0;
+        gif.currentFrame = 0;
         while (!done) {
             int code = gif.in.read();
             switch (code) {
                 case 0x2C:    // image separator
                     readFrame(gif);
-                    if (currentFrame == lastFrameNumber) {
+                    if (gif.currentFrame == lastFrameNumber) {
                         done = true;
                     }
-                    currentFrame++;
+                    gif.currentFrame++;
                     break;
                 case 0x21:    // extension
                     code = gif.in.read();
