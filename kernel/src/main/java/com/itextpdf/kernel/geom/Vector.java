@@ -1,4 +1,4 @@
-package com.itextpdf.kernel.parser;
+package com.itextpdf.kernel.geom;
 
 import java.util.Arrays;
 

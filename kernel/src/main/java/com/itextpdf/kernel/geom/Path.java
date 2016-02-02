@@ -1,7 +1,4 @@
-package com.itextpdf.kernel.parser;
-
-import com.itextpdf.kernel.geom.Point2D;
-import com.itextpdf.kernel.geom.Rectangle;
+package com.itextpdf.kernel.geom;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,8 +9,6 @@ import java.util.List;
  * to draw lines, define the shapes of filled areas, and specify boundaries for clipping
  * other graphics. A path shall be composed of straight and curved line segments, which
  * may connect to one another or may be disconnected.
- *
- * @since 5.5.6
  */
 public class Path {
 

@@ -1,7 +1,5 @@
-package com.itextpdf.kernel.parser;
+package com.itextpdf.kernel.geom;
 
-
-import com.itextpdf.kernel.geom.Point2D;
 
 import java.util.ArrayList;
 import java.util.HashSet;

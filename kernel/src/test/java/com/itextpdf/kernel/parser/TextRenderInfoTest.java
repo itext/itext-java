@@ -1,5 +1,7 @@
 package com.itextpdf.kernel.parser;
 
+import com.itextpdf.kernel.geom.LineSegment;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;

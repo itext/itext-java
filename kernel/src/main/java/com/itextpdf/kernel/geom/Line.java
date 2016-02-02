@@ -1,6 +1,4 @@
-package com.itextpdf.kernel.parser;
-
-import com.itextpdf.kernel.geom.Point2D;
+package com.itextpdf.kernel.geom;
 
 import java.util.ArrayList;
 import java.util.List;

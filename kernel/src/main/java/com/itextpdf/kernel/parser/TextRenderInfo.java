@@ -2,8 +2,12 @@ package com.itextpdf.kernel.parser;
 
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.LineSegment;
+import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -23,7 +27,7 @@ public class TextRenderInfo implements EventData {
     private final PdfString string;
     private String text = null;
     private final Matrix textToUserSpaceTransformMatrix;
-    private final GraphicsState gs;
+    private final CanvasGraphicsState gs;
     private Float unscaledWidth = null;
     private double[] fontMatrix = null;
     /**
@@ -39,7 +43,7 @@ public class TextRenderInfo implements EventData {
      * @param textMatrix the text matrix at the time of the render operation
      * @param markedContentInfo the marked content sequence, if available
      */
-    TextRenderInfo(PdfString string, GraphicsState gs, Matrix textMatrix, Collection<MarkedContentInfo> markedContentInfo) {
+    TextRenderInfo(PdfString string, CanvasGraphicsState gs, Matrix textMatrix, Collection<MarkedContentInfo> markedContentInfo) {
         this.string = string;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.getCtm());
         this.gs = gs;
@@ -130,11 +134,11 @@ public class TextRenderInfo implements EventData {
      * @since 5.0.2
      */
     public LineSegment getBaseline(){
-        return getUnscaledBaselineWithOffset(0 + gs.getRise()).transformBy(textToUserSpaceTransformMatrix);
+        return getUnscaledBaselineWithOffset(0 + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
     public LineSegment getUnscaledBaseline() {
-        return getUnscaledBaselineWithOffset(0 + gs.getRise());
+        return getUnscaledBaselineWithOffset(0 + gs.getTextRise());
     }
 
     /**
@@ -145,7 +149,7 @@ public class TextRenderInfo implements EventData {
      */
     public LineSegment getAscentLine(){
         float ascent = gs.getFont().getFontProgram().getFontMetrics().getTypoAscender() * gs.getFontSize() / 1000f;
-        return getUnscaledBaselineWithOffset(ascent + gs.getRise()).transformBy(textToUserSpaceTransformMatrix);
+        return getUnscaledBaselineWithOffset(ascent + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
     /**
@@ -157,7 +161,7 @@ public class TextRenderInfo implements EventData {
     public LineSegment getDescentLine(){
         // per getFontDescription() API, descent is returned as a negative number, so we apply that as a normal vertical offset
         float descent = gs.getFont().getFontProgram().getFontMetrics().getTypoDescender() * gs.getFontSize() / 1000f;
-        return getUnscaledBaselineWithOffset(descent + gs.getRise()).transformBy(textToUserSpaceTransformMatrix);
+        return getUnscaledBaselineWithOffset(descent + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
     /**
@@ -176,9 +180,9 @@ public class TextRenderInfo implements EventData {
      * @since 5.3.3
      */
     public float getRise(){
-        if (gs.getRise() == 0) return 0; // optimize the common case
+        if (gs.getTextRise() == 0) return 0; // optimize the common case
 
-        return convertHeightFromTextSpaceToUserSpace(gs.getRise());
+        return convertHeightFromTextSpaceToUserSpace(gs.getTextRise());
     }
 
     /**
@@ -194,7 +198,7 @@ public class TextRenderInfo implements EventData {
             float[] widthAndWordSpacing = getWidthAndWordSpacing(str, true);
             TextRenderInfo subInfo = new TextRenderInfo(this, str, totalWidth);
             rslt.add(subInfo);
-            totalWidth += (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharacterSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling();
+            totalWidth += (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * (gs.getHorizontalScaling() / 100f);
         }
         for (TextRenderInfo tri : rslt)
             tri.getUnscaledWidth();
@@ -224,7 +228,7 @@ public class TextRenderInfo implements EventData {
      * @since iText 5.0.1
      */
     public int getTextRenderMode(){
-        return gs.getRenderMode();
+        return gs.getTextRenderingMode();
     }
 
     /**
@@ -271,8 +275,8 @@ public class TextRenderInfo implements EventData {
         // are important for tracking relative text coordinate systems, but should not be part of the baseline
         String unicodeStr = string.toUnicodeString();
 
-        float correctedUnscaledWidth = getUnscaledWidth() - (gs.getCharacterSpacing() +
-                (unicodeStr.length() > 0 && unicodeStr.charAt(unicodeStr.length() - 1) == ' ' ? gs.getWordSpacing() : 0)) * gs.getHorizontalScaling();
+        float correctedUnscaledWidth = getUnscaledWidth() - (gs.getCharSpacing() +
+                (unicodeStr.length() > 0 && unicodeStr.charAt(unicodeStr.length() - 1) == ' ' ? gs.getWordSpacing() : 0)) * (gs.getHorizontalScaling() / 100f);
 
         return new LineSegment(new Vector(0, yOffset, 1), new Vector(correctedUnscaledWidth, yOffset, 1));
     }
@@ -321,13 +325,13 @@ public class TextRenderInfo implements EventData {
      * @param string    the string that needs measuring
      * @return          the width of a String in text space units
      */
-    private float getStringWidth(String string){
+    private float getStringWidth(String string) {
         float totalWidth = 0;
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
             float w = gs.getFont().getWidth(c) / 1000.0f;
             float wordSpacing = c == 32 ? gs.getWordSpacing() : 0f;
-            totalWidth += (w * gs.getFontSize() + gs.getCharacterSpacing() + wordSpacing) * gs.getHorizontalScaling();
+            totalWidth += (w * gs.getFontSize() + gs.getCharSpacing() + wordSpacing) * (gs.getHorizontalScaling() / 100f);
         }
         return totalWidth;
     }
@@ -340,7 +344,7 @@ public class TextRenderInfo implements EventData {
     private float getPdfStringWidth(PdfString string, boolean singleCharString){
         if (singleCharString) {
             float[] widthAndWordSpacing = getWidthAndWordSpacing(string, singleCharString);
-            return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharacterSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling();
+            return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * (gs.getHorizontalScaling() / 100f);
         } else {
             float totalWidth = 0;
             for (PdfString str : splitString(string)) {

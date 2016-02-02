@@ -1,5 +1,9 @@
 package com.itextpdf.kernel.parser;
 
+import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.Path;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 
 /**
@@ -29,7 +33,7 @@ public class PathRenderInfo implements EventData {
     private Path path;
     private int operation;
     private int rule;
-    private GraphicsState gs;
+    private CanvasGraphicsState gs;
 
     /**
      * @param path      The path to be rendered.
@@ -37,7 +41,7 @@ public class PathRenderInfo implements EventData {
      * @param rule      Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}.
      * @param gs        The graphics state.
      */
-    public PathRenderInfo(Path path, int operation, int rule, GraphicsState gs) {
+    public PathRenderInfo(Path path, int operation, int rule, CanvasGraphicsState gs) {
         this.path = path;
         this.operation = operation;
         this.rule = rule;
@@ -48,9 +52,9 @@ public class PathRenderInfo implements EventData {
      * If the operation is {@link #NO_OP} then the rule is ignored,
      * otherwise {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} is used by default.
      *
-     * See {@link #PathRenderInfo(Path, int, int, GraphicsState)}
+     * See {@link #PathRenderInfo(Path, int, int, CanvasGraphicsState)}
      */
-    public PathRenderInfo(Path path, int operation, GraphicsState gs) {
+    public PathRenderInfo(Path path, int operation, CanvasGraphicsState gs) {
         this(path, operation, PdfCanvasConstants.FillingRule.NONZERO_WINDING, gs);
     }
 
@@ -99,7 +103,7 @@ public class PathRenderInfo implements EventData {
         return gs.getMiterLimit();
     }
 
-    public LineDashPattern getLineDashPattern() {
-        return gs.getLineDashPattern();
+    public PdfArray getLineDashPattern() {
+        return gs.getDashPattern();
     }
 }

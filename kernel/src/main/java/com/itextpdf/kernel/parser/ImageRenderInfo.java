@@ -1,5 +1,7 @@
 package com.itextpdf.kernel.parser;
 
+import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;

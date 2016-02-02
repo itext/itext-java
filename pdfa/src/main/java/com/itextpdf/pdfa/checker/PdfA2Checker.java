@@ -90,8 +90,10 @@ public class PdfA2Checker extends PdfA1Checker{
                 PdfDictionary shadingDictionary = ((PdfPattern.Shading) pattern).getShading();
                 PdfObject colorSpace = shadingDictionary.get(PdfName.ColorSpace);
                 checkColorSpace(PdfColorSpace.makeColorSpace(colorSpace, null), currentColorSpaces, true, true);
-                PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
-                CanvasGraphicsState gState = new CanvasGraphicsState(new PdfExtGState(extGStateDict));
+                final PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
+                CanvasGraphicsState gState = new CanvasGraphicsState() {
+                    { updateFromExtGState(new PdfExtGState(extGStateDict));}
+                };
                 checkExtGState(gState);
             }
         }

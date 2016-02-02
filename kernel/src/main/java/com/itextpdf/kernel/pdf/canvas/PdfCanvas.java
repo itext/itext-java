@@ -292,6 +292,7 @@ public class PdfCanvas {
      * @return current canvas
      */
     public PdfCanvas concatMatrix(float a, float b, float c, float d, float e, float f) {
+        currentGs.updateCtm(a, b, c, d, e, f);
         contentStream.getOutputStream().writeFloat(a).writeSpace().
                 writeFloat(b).writeSpace().
                 writeFloat(c).writeSpace().
@@ -626,8 +627,8 @@ public class PdfCanvas {
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         }
         float fontSize = currentGs.getFontSize() / 1000f;
-        float charSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
-        float scaling = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
+        float charSpacing = currentGs.getCharSpacing();
+        float scaling = currentGs.getHorizontalScaling() / 100f;
         for (Iterator<GlyphLine.GlyphLinePart> iterator = text.iterator(); iterator.hasNext(); ) {
             GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
             if (glyphLinePart.actualText != null) {
@@ -704,9 +705,9 @@ public class PdfCanvas {
 
     private float getSubrangeWidth(GlyphLine text, int from, int to) {
         float fontSize = currentGs.getFontSize() / 1000f;
-        float charSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
-        float wordSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
-        float scaling = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
+        float charSpacing = currentGs.getCharSpacing();
+        float wordSpacing = currentGs.getCharSpacing();
+        float scaling = currentGs.getHorizontalScaling() / 100f;
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
@@ -1471,11 +1472,7 @@ public class PdfCanvas {
             }
             setColorValueOnly = true;
         } else {
-            ++gStateIndex;
-            if (fill)
-                currentGs.setFillColor(newColor);
-            else
-                currentGs.setStrokeColor(newColor);
+            updateGStateColorFields(fill, newColor);
         }
         if (colorSpace instanceof PdfDeviceCs.Gray)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? g : G);
@@ -2276,6 +2273,23 @@ public class PdfCanvas {
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
+    }
+
+    private void updateGStateColorFields(boolean fill, Color newColor) {
+        ++gStateIndex;
+        if (fill) {
+            currentGs.setFillColor(newColor);
+            PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
+            if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
+                currentGs.setFillColorSpace((PdfName) colorSpaceObject);
+            }
+        } else {
+            currentGs.setStrokeColor(newColor);
+            PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
+            if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
+                currentGs.setStrokeColorSpace((PdfName) colorSpaceObject);
+            }
+        }
     }
 
     private static boolean floatsAreEqual(Float f1, Float f2) {

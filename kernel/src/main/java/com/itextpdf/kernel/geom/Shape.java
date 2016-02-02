@@ -1,4 +1,4 @@
-package com.itextpdf.kernel.parser;
+package com.itextpdf.kernel.geom;
 
 import com.itextpdf.kernel.geom.Point2D;
 
@@ -6,8 +6,6 @@ import java.util.List;
 
 /**
  * Represents segment from a PDF path.
- *
- * @since 5.5.6
  */
 public interface Shape {
 
