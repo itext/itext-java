@@ -1795,7 +1795,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return fontAndSize;
     }
 
-    protected static Object[] splitDAelements(String da) {
+    public static Object[] splitDAelements(String da) {
         PdfTokenizer tk = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(PdfEncodings.convertToBytes(da, null))));
         List<String> stack = new ArrayList<>();
         Object ret[] = new Object[3];
