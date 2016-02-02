@@ -1207,7 +1207,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineWidth(float lineWidth) {
-        if (floatsAreEqual(currentGs.getLineWidth(), lineWidth)) {
+        if (currentGs.getLineWidth() == lineWidth) {
             return this;
         }
         ++gStateIndex;
@@ -1227,7 +1227,7 @@ public class PdfCanvas {
      * @see PdfCanvasConstants.LineCapStyle for possible values.
      */
     public PdfCanvas setLineCapStyle(int lineCapStyle) {
-        if (integersAreEqual(currentGs.getLineCapStyle(), lineCapStyle))
+        if (currentGs.getLineCapStyle() == lineCapStyle)
             return this;
         ++gStateIndex;
         currentGs.setLineCapStyle(lineCapStyle);
@@ -1246,7 +1246,7 @@ public class PdfCanvas {
      * @see PdfCanvasConstants.LineJoinStyle for possible values.
      */
     public PdfCanvas setLineJoinStyle(int lineJoinStyle) {
-        if (integersAreEqual(currentGs.getLineJoinStyle(), lineJoinStyle))
+        if (currentGs.getLineJoinStyle()  == lineJoinStyle)
             return this;
         ++gStateIndex;
         currentGs.setLineJoinStyle(lineJoinStyle);
@@ -1264,7 +1264,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setMiterLimit(float miterLimit) {
-        if (floatsAreEqual(currentGs.getMiterLimit(), miterLimit))
+        if (currentGs.getMiterLimit() == miterLimit)
             return this;
         ++gStateIndex;
         currentGs.setMiterLimit(miterLimit);
@@ -1393,7 +1393,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setFlatnessTolerance(float flatnessTolerance) {
-        if (floatsAreEqual(currentGs.getFlatnessTolerance(), flatnessTolerance))
+        if (currentGs.getFlatnessTolerance() == flatnessTolerance)
             return this;
         ++gStateIndex;
         currentGs.setFlatnessTolerance(flatnessTolerance);
@@ -2290,24 +2290,6 @@ public class PdfCanvas {
                 currentGs.setStrokeColorSpace((PdfName) colorSpaceObject);
             }
         }
-    }
-
-    private static boolean floatsAreEqual(Float f1, Float f2) {
-        if (f1 == null && f2 == null)
-            return true;
-        else if (f1 == null || f2 == null)
-            return false;
-        else
-            return Float.compare(f1, f2) == 0;
-    }
-
-    private static boolean integersAreEqual(Integer i1, Integer i2) {
-        if (i1 == null && i2 == null)
-            return true;
-        else if (i1 == null || i2 == null)
-            return false;
-        else
-            return Integer.compare(i1, i2) == 0;
     }
 
     private static PdfStream getPageStream(PdfPage page) {
