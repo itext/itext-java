@@ -72,24 +72,20 @@ public class PdfADocument extends PdfDocument {
         boolean fill = false;
         boolean stroke = false;
 
-        if (gState.getTextRenderingMode() != null) {
-            switch (gState.getTextRenderingMode()) {
-                case PdfCanvasConstants.TextRenderingMode.STROKE:
-                case PdfCanvasConstants.TextRenderingMode.STROKE_CLIP:
-                    stroke = true;
-                    break;
-                case PdfCanvasConstants.TextRenderingMode.FILL:
-                case PdfCanvasConstants.TextRenderingMode.FILL_CLIP:
-                    fill = true;
-                    break;
-                case PdfCanvasConstants.TextRenderingMode.FILL_STROKE:
-                case PdfCanvasConstants.TextRenderingMode.FILL_STROKE_CLIP:
-                    stroke = true;
-                    fill = true;
-                    break;
-            }
-        } else {
-            fill = true;
+        switch (gState.getTextRenderingMode()) {
+            case PdfCanvasConstants.TextRenderingMode.STROKE:
+            case PdfCanvasConstants.TextRenderingMode.STROKE_CLIP:
+                stroke = true;
+                break;
+            case PdfCanvasConstants.TextRenderingMode.FILL:
+            case PdfCanvasConstants.TextRenderingMode.FILL_CLIP:
+                fill = true;
+                break;
+            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE:
+            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE_CLIP:
+                stroke = true;
+                fill = true;
+                break;
         }
 
         IsoKey drawMode = null;

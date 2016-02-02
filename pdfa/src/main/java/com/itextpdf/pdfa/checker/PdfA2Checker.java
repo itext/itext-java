@@ -211,10 +211,10 @@ public class PdfA2Checker extends PdfA1Checker{
         if (extGState.getSoftMask() != null && extGState.getSoftMask() instanceof PdfDictionary) {
             transparencyIsUsed = true;
         }
-        if (extGState.getStrokeOpacity() != null && extGState.getStrokeOpacity() < 1) {
+        if (extGState.getStrokeOpacity() < 1) {
             transparencyIsUsed = true;
         }
-        if (extGState.getFillOpacity() != null && extGState.getFillOpacity() < 1) {
+        if (extGState.getFillOpacity() < 1) {
             transparencyIsUsed = true;
         }
 
