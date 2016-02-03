@@ -67,6 +67,7 @@ public enum Property {
     SPLIT_CHARACTERS(true),
     STROKE_COLOR(true),
     STROKE_WIDTH(true),
+    SKEW,
     TAB_ANCHOR,
     TAB_DEFAULT,
     TAB_LEADER,

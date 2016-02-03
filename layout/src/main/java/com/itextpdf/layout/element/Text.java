@@ -47,6 +47,21 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
         return getProperty(Property.HORIZONTAL_SCALING);
     }
 
+
+    /**
+     * Skews the text to simulate italic and other effects. Try <CODE>alpha=0
+     * </CODE> and <CODE>beta=12</CODE>.
+     *
+     * @param alpha the first angle in degrees
+     * @param beta  the second angle in degrees
+     * @return this <CODE>Text</CODE>
+     */
+    public Text setSkew(float alpha, float beta){
+        alpha = (float) Math.tan(alpha * Math.PI / 180);
+        beta = (float) Math.tan(beta * Math.PI / 180);
+        return setProperty(Property.SKEW, new Float[]{alpha, beta});
+    }
+
     /**
      * The horizontal scaling parameter adjusts the width of glyphs by stretching or
      * compressing them in the horizontal direction.

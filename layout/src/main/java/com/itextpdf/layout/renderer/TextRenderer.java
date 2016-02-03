@@ -39,7 +39,7 @@ public class TextRenderer extends AbstractRenderer {
 
     protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
     private static final float ITALIC_ANGLE = 0.21256f;
-    private static final float BOLD_SIMULATION_STROKE_COEFF = 1/30f;
+    private static final float BOLD_SIMULATION_STROKE_COEFF = 1 / 30f;
     private static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
 
     private static final Logger logger = LoggerFactory.getLogger(TextRenderer.class);
@@ -311,7 +311,7 @@ public class TextRenderer extends AbstractRenderer {
                     if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) {
                         // if the word is too long for a single line we will have to split it
                         wordSplit = true;
-                        if (line.start == - 1) {
+                        if (line.start == -1) {
                             line.start = currentTextPos;
                         }
                         line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
@@ -337,9 +337,9 @@ public class TextRenderer extends AbstractRenderer {
             return result;
         } else {
             if (currentLineHeight > layoutBox.getHeight()) {
-                    applyBorderBox(occupiedArea.getBBox(), true);
-                    applyMargins(occupiedArea.getBBox(), true);
-                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                applyBorderBox(occupiedArea.getBBox(), true);
+                applyMargins(occupiedArea.getBBox(), true);
+                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
             }
 
             yLineOffset = currentLineAscender * fontSize / TEXT_SPACE_COEFF;
@@ -441,6 +441,7 @@ public class TextRenderer extends AbstractRenderer {
             Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
             Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
             Float horizontalScaling = getProperty(Property.HORIZONTAL_SCALING);
+            Float[] skew = getProperty(Property.SKEW);
             boolean italicSimulation = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION));
             boolean boldSimulation = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION));
             Float strokeWidth = null;
@@ -458,7 +459,9 @@ public class TextRenderer extends AbstractRenderer {
             }
             canvas.saveState().beginText().setFontAndSize(font, fontSize);
 
-            if (italicSimulation) {
+            if (skew != null && skew.length == 2) {
+                canvas.setTextMatrix(1, skew[0], skew[1], 1, leftBBoxX, getYLine());
+            } else if (italicSimulation) {
                 canvas.setTextMatrix(1, 0, ITALIC_ANGLE, 1, leftBBoxX, getYLine());
             } else {
                 canvas.moveText(leftBBoxX, getYLine());
@@ -506,7 +509,7 @@ public class TextRenderer extends AbstractRenderer {
 
             Object underlines = getProperty(Property.UNDERLINE);
             if (underlines instanceof List) {
-                for (Object underline : (List)underlines) {
+                for (Object underline : (List) underlines) {
                     if (underline instanceof Property.Underline) {
                         drawSingleUnderline((Property.Underline) underline, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
                     }
@@ -652,6 +655,7 @@ public class TextRenderer extends AbstractRenderer {
 
     /**
      * Gets char code at given position for the text belonging to this renderer.
+     *
      * @param pos the position in range [0; length())
      * @return Unicode char code
      */
@@ -659,7 +663,7 @@ public class TextRenderer extends AbstractRenderer {
         return text.glyphs.get(pos + text.start).getUnicode();
     }
 
-    public float getTabAnchorCharacterPosition(){
+    public float getTabAnchorCharacterPosition() {
         return tabAnchorCharacterPosition;
     }
 
@@ -731,7 +735,7 @@ public class TextRenderer extends AbstractRenderer {
      * Returns the length of the {@see line} which is the result of the layout call.
      */
     protected int lineLength() {
-        return line.end > 0 ? line.end - line.start: 0;
+        return line.end > 0 ? line.end - line.start : 0;
     }
 
     protected int baseCharactersCount() {
@@ -783,7 +787,7 @@ public class TextRenderer extends AbstractRenderer {
         overflowRenderer.otfFeaturesApplied = otfFeaturesApplied;
         overflowRenderer.parent = parent;
 
-        return new TextRenderer[] {splitRenderer, overflowRenderer};
+        return new TextRenderer[]{splitRenderer, overflowRenderer};
     }
 
     protected void drawSingleUnderline(Property.Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
@@ -865,7 +869,7 @@ public class TextRenderer extends AbstractRenderer {
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
         return g.getUnicode() != null && (Character.isLetter(g.getUnicode()) ||
-            Character.isDigit(g.getUnicode()) || '\u00ad' == g.getUnicode());
+                Character.isDigit(g.getUnicode()) || '\u00ad' == g.getUnicode());
     }
 
     private boolean isWhitespaceGlyph(Glyph g) {
