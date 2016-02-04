@@ -4,7 +4,6 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -118,7 +117,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         if (glyph != null) {
             return glyph;
         }
-        int code = fontEncoding.getFirstEmptyCode();
+        int code = getFirstEmptyCode();
         glyph = new Type3Glyph(getDocument(), wx, llx, lly, urx, ury, fontProgram.isColorized());
         fontProgram.addGlyph(code, c, wx, new int[]{llx, lly, urx, ury}, glyph);
         fontEncoding.addSymbol((byte) code, c);
@@ -172,5 +171,19 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
         super.flushFontData(null, PdfName.Type3);
         super.flush();
+    }
+
+    /**
+     * Gets first empty code, that could use with {@see addSymbol()}
+     * @return code from 1 to 255 or -1 if all slots are busy.
+     */
+    private int getFirstEmptyCode() {
+        final int startFrom = 1;
+        for (int i = startFrom; i < 256; i++) {
+            if (!fontEncoding.canDecode(i)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
