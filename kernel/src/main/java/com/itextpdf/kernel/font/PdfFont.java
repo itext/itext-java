@@ -321,7 +321,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
                     i=i+1;
                 }
             }
-
         }
 
         resultString.add(text.substring(startPos));

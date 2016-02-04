@@ -180,7 +180,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         getFields().add(fieldDic);
         fields.put(field.getFieldName().toUnicodeString(), field);
 
-        if (field.getFormType() != null && field.getFormType().equals(PdfName.Tx)) {
+        if (field.getFormType() != null && (field.getFormType().equals(PdfName.Tx) || field.getFormType().equals(PdfName.Ch))) {
             List<PdfDictionary> resources = getResources(field.getPdfObject());
             for (PdfDictionary resDict : resources) {
                 mergeResources(defaultResources, resDict, field);

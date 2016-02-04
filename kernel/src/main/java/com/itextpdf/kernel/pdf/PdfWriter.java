@@ -211,20 +211,22 @@ public class PdfWriter extends PdfOutputStream {
                 return copiedIndirectReference.getRefersTo();
         }
 
+        if (smartCopyMode) {
+            PdfObject copiedObject = smartCopyObject(object);
+            if (copiedObject != null) {
+                return copiedObjects.get(getCopyObjectKey(copiedObject)).getRefersTo();
+            }
+        }
+
         PdfObject newObject = object.newInstance();
         if (indirectReference != null) {
             if (copyObjectKey == 0)
                 copyObjectKey = getCopyObjectKey(object);
-            copiedObjects.put(copyObjectKey, newObject.makeIndirect(document).getIndirectReference());
+            PdfIndirectReference in = newObject.makeIndirect(document).getIndirectReference();
+            copiedObjects.put(copyObjectKey, in);
         }
         newObject.copyContent(object, document);
 
-        if (smartCopyMode) {
-            PdfObject copiedObject = smartCopyObject(newObject);
-            if (copiedObject != null) {
-                return copiedObject;
-            }
-        }
         return newObject;
     }
 
@@ -313,7 +315,13 @@ public class PdfWriter extends PdfOutputStream {
      * @return calculated hash code.
      */
     protected int getCopyObjectKey(PdfObject object) {
-        int result = object.getIndirectReference().hashCode();
+        PdfIndirectReference in;
+        if (object.isIndirectReference()) {
+            in = (PdfIndirectReference) object;
+        } else {
+            in = object.getIndirectReference();
+        }
+        int result = in.hashCode();
         result = 31 * result + object.getDocument().hashCode();
         return result;
     }
@@ -475,7 +483,13 @@ public class PdfWriter extends PdfOutputStream {
         }
 
         protected int getCopyObjectKey(PdfObject object) {
-            int result = object.getIndirectReference().hashCode();
+            PdfIndirectReference in;
+            if (object.isIndirectReference()) {
+                in = (PdfIndirectReference) object;
+            } else {
+                in = object.getIndirectReference();
+            }
+            int result = in.hashCode();
             result = 31 * result + object.getDocument().hashCode();
             return result;
         }

@@ -1,6 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 
@@ -8,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PdfOutline {
+
+    public static int FLAG_ITALIC = 1;
+    public static int FLAG_BOLD = 2;
 
     private List<PdfOutline> children = new ArrayList<>();
     private String title;
@@ -50,6 +54,16 @@ public class PdfOutline {
     public void setTitle(String title){
         this.title = title;
         this.content.put(PdfName.Title, new PdfString(title));
+    }
+
+    public void setColor(Color color) {
+        content.put(PdfName.C, new PdfArray(color.getColorValue()));
+    }
+
+    public void setStyle(int style) {
+        if (style == FLAG_BOLD || style == FLAG_ITALIC ) {
+            content.put(PdfName.F, new PdfNumber(style));
+        }
     }
 
     public PdfDictionary getContent() {

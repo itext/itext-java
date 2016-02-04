@@ -68,6 +68,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
 
     public <T extends PdfMarkupAnnotation> T setPopup(PdfPopupAnnotation popup) {
         this.popup = popup;
+        popup.put(PdfName.Parent, getPdfObject());
         return put(PdfName.Popup, popup);
     }
 

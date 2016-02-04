@@ -184,6 +184,15 @@ public class Rectangle implements Cloneable {
     }
 
     @Override
+    public String toString() {
+        StringBuffer buf = new StringBuffer("Rectangle: ");
+        buf.append(getWidth());
+        buf.append('x');
+        buf.append(getHeight());
+        return buf.toString();
+    }
+
+    @Override
     public Rectangle clone() {
         return new Rectangle(x, y, width, height);
     }

@@ -346,6 +346,12 @@ public class TextRenderer extends AbstractRenderer {
 
             occupiedArea.getBBox().moveDown(currentLineHeight);
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);
+
+//            Property.UnitValue textWidth = getProperty(Property.WIDTH);
+//            if (textWidth != null) {
+//                currentLineWidth = Math.max(textWidth.getValue(), currentLineWidth);
+//            }
+
             occupiedArea.getBBox().setWidth(Math.max(occupiedArea.getBBox().getWidth(), currentLineWidth));
             layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
 
