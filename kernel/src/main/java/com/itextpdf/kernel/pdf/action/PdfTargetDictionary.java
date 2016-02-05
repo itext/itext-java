@@ -6,9 +6,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
-/**
-* Created by chin on 2/23/2015.
-*/
 public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfTargetDictionary(PdfDictionary pdfObject) {

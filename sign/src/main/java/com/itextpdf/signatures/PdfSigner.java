@@ -17,6 +17,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
@@ -870,7 +871,7 @@ public class PdfSigner {
     /**
      * Gets the document bytes that are hashable when using external signatures.
      * The general sequence is:
-     * {@link #preClose(HashMap)}, {@link #getRangeStream()} and {@link #close(PdfDictionary)}.
+     * {@link #preClose(Map)}, {@link #getRangeStream()} and {@link #close(PdfDictionary)}.
      *
      * @return The {@link InputStream} of bytes to be signed.
      */
@@ -884,9 +885,9 @@ public class PdfSigner {
      * preClose(), getDocumentBytes() and close().
      * <p>
      * update is a PdfDictionary that must have exactly the
-     * same keys as the ones provided in {@link #preClose(HashMap)}.
+     * same keys as the ones provided in {@link #preClose(Map)}.
      * @param update a PdfDictionary with the key/value that will fill the holes defined
-     * in {@link #preClose(HashMap)}
+     * in {@link #preClose(Map)}
      * @throws IOException on error
      */
     protected void close(PdfDictionary update) throws IOException {
@@ -1045,16 +1046,12 @@ public class PdfSigner {
         if (pageDict != null) {
             pageNumber = document.getCatalog().getPageNumber(pageDict);
         } else {
-            for (int i = 1; i <= document.getNumberOfPages() && pageNumber == 0; ++i) {
-                PdfArray annots = document.getPage(i).getPdfObject().getAsArray(PdfName.Annots);
-                if (annots == null) continue;
-
-                for (PdfObject obj : annots) {
-                    if (obj.isIndirectReference()) {
-                        if (widget.getPdfObject().getIndirectReference().equals(obj)) {
-                            pageNumber = i;
-                            break;
-                        }
+            for (int i = 1; i <= document.getNumberOfPages(); i++) {
+                PdfPage page = document.getPage(i);
+                if (!page.isFlushed()) {
+                    if (page.containsAnnotation(widget)){
+                        pageNumber = i;
+                        break;
                     }
                 }
             }
