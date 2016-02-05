@@ -22,7 +22,7 @@ public class PdfNull extends PdfPrimitiveObject {
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return Null;
     }
 

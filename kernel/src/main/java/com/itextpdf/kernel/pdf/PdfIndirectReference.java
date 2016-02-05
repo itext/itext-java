@@ -144,7 +144,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return IndirectReference;
     }
 

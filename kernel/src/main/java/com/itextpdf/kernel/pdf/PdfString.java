@@ -76,7 +76,7 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return String;
     }
 

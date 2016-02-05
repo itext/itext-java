@@ -310,7 +310,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return Array;
     }
 

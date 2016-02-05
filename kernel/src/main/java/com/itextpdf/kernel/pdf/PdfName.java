@@ -794,7 +794,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return PdfObject.Name;
     }
 

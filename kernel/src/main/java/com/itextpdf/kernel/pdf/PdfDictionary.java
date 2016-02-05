@@ -310,7 +310,7 @@ public class PdfDictionary extends PdfObject {
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return Dictionary;
     }
 
