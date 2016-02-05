@@ -461,6 +461,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annotations;
     }
 
+    public boolean containsAnnotation(PdfAnnotation annotation) {
+        for (PdfAnnotation a : getAnnotations()) {
+            if (a.getPdfObject().equals(annotation.getPdfObject())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public PdfPage addAnnotation(PdfAnnotation annotation) {
         return addAnnotation(-1, annotation, true);
     }

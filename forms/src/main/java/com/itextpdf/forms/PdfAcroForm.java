@@ -16,6 +16,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
@@ -190,14 +191,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         if (fieldDic.containsKey(PdfName.Subtype) && page != null) {
-            PdfArray annots = page.getPdfObject().getAsArray(PdfName.Annots);
-            if (annots == null) {
-                annots = new PdfArray();
-                page.getPdfObject().put(PdfName.Annots, annots);
-            }
-            if (!annots.contains(fieldDic)) {
-                annots.add(fieldDic);
-            }
+            PdfAnnotation annot = PdfAnnotation.makeAnnotation(fieldDic);
+            addWidgetAnnotationToPage(page, annot);
         }
     }
 
@@ -218,21 +213,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary kidDict = (PdfDictionary) kids.get(0);
         PdfName type = kidDict.getAsName(PdfName.Subtype);
         if (type != null && type.equals(PdfName.Widget)) {
-            fieldDict.remove(PdfName.Kids);
-            kidDict.remove(PdfName.Parent);
-            fieldDict.mergeDifferent(kidDict);
-            PdfAnnotation annot = PdfAnnotation.makeAnnotation(fieldDict);
-            PdfDictionary pageDic = annot.getPdfObject().getAsDictionary(PdfName.P);
-            if (pageDic != null) {
-                PdfArray array = pageDic.getAsArray(PdfName.Annots);
-                if (array == null) {
-                    array = new PdfArray();
-                    pageDic.put(PdfName.Annots, array);
-                }
-                array.add(fieldDict);
-            } else {
-                page.addAnnotation(annot);
+            if (!kidDict.containsKey(PdfName.FT)) { // kid is not a merged field with widget
+                mergeWidgetWithParentField(fieldDict, kidDict);
             }
+            defineWidgetPageAndAddToIt(page, fieldDict, false);
         }
     }
 
@@ -612,7 +596,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 if (xObject != null) {
                     Rectangle box = field.getPdfObject().getAsRectangle(PdfName.Rect);
                     if (page.isFlushed()) {
-                        throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead);
+                        throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
                     }
                     PdfCanvas canvas = new PdfCanvas(page);
 
@@ -790,31 +774,19 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     private PdfDictionary processKids(PdfArray kids, PdfDictionary parent, PdfPage page){
         if (kids.size() == 1){
-            PdfDictionary dict = (PdfDictionary) kids.get(0);
-            PdfName type = dict.getAsName(PdfName.Subtype);
-            if (type != null && type.equals(PdfName.Widget)){
-                parent.remove(PdfName.Kids);
-                dict.remove(PdfName.Parent);
-                parent.mergeDifferent(dict);
-                PdfAnnotation annot = PdfAnnotation.makeAnnotation(parent);
-                PdfDictionary pageDic = annot.getPdfObject().getAsDictionary(PdfName.P);
-                if (pageDic != null) {
-                    if (pageDic.isFlushed()) {
-                        throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead);
-                    }
-                    PdfArray array = pageDic.getAsArray(PdfName.Annots);
-                    if (array == null) {
-                        array = new PdfArray();
-                        pageDic.put(PdfName.Annots, array);
-                    }
-                    array.add(parent);
+            PdfDictionary kidDict = (PdfDictionary) kids.get(0);
+            PdfName type = kidDict.getAsName(PdfName.Subtype);
+            if (type != null && type.equals(PdfName.Widget)) {
+                if (!kidDict.containsKey(PdfName.FT)) { // kid is not merged field with widget
+                    mergeWidgetWithParentField(parent, kidDict);
+                    defineWidgetPageAndAddToIt(page, parent, true);
                 } else {
-                    page.addAnnotation(-1, annot, false);
+                    defineWidgetPageAndAddToIt(page, kidDict, true);
                 }
             } else {
-                PdfArray otherKids = (dict).getAsArray(PdfName.Kids);
+                PdfArray otherKids = (kidDict).getAsArray(PdfName.Kids);
                 if (otherKids != null) {
-                    processKids(otherKids, dict, page);
+                    processKids(otherKids, kidDict, page);
                 }
             }
         } else {
@@ -830,6 +802,47 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
 
         return parent;
+    }
+
+    private void mergeWidgetWithParentField(PdfDictionary parent, PdfDictionary widgetDict) {
+        parent.remove(PdfName.Kids);
+        widgetDict.remove(PdfName.Parent);
+        parent.mergeDifferent(widgetDict);
+    }
+
+    private void defineWidgetPageAndAddToIt(PdfPage currentPage, PdfDictionary mergedFieldAndWidget, boolean warnIfPageFlushed) {
+        PdfAnnotation annot = PdfAnnotation.makeAnnotation(mergedFieldAndWidget);
+        PdfDictionary pageDic = annot.getPageObject();
+        if (pageDic != null) {
+            if (warnIfPageFlushed && pageDic.isFlushed()) {
+                throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
+            }
+            PdfDocument doc = pageDic.getDocument();
+            PdfPage widgetPage = doc.getCatalog().getPage(pageDic);
+            addWidgetAnnotationToPage(widgetPage, annot);
+        } else {
+            addWidgetAnnotationToPage(currentPage, annot);
+        }
+    }
+
+    private void addWidgetAnnotationToPage(PdfPage page, PdfAnnotation annot) {
+        if (page.containsAnnotation(annot)) {
+            return;
+        }
+
+        PdfTagStructure tagStructure = null;
+        boolean tagged = page.getDocument().isTagged();
+        if (tagged) {
+            tagStructure = page.getDocument().getTagStructure();
+            //TODO attributes?
+            tagStructure.addTag(PdfName.Form);
+        }
+
+        page.addAnnotation(annot);
+
+        if (tagged) {
+            tagStructure.moveToParent();
+        }
     }
 
     private List<PdfDictionary> getResources(PdfDictionary field) {
@@ -957,27 +970,16 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
-    private PdfPage getPage(PdfDictionary pageDic) {
-        PdfPage page;
-        for (int i = 1; i <= document.getNumberOfPages(); i++) {
-            page = document.getPage(i);
-            if (page.getPdfObject() == pageDic) {
-                return page;
-            }
-        }
-        return null;
-    }
-
-    private PdfPage getFieldPage(PdfDictionary annotation) {
-        PdfDictionary pageDic = annotation.getAsDictionary(PdfName.P);
+    private PdfPage getFieldPage(PdfDictionary annotDic) {
+        PdfDictionary pageDic = annotDic.getAsDictionary(PdfName.P);
         if (pageDic != null) {
-            return getPage(pageDic);
+            return document.getCatalog().getPage(pageDic);
         }
         for (int i = 1; i <= document.getNumberOfPages(); i++) {
             PdfPage page = document.getPage(i);
             if (!page.isFlushed()) {
-                PdfArray annotations = page.getPdfObject().getAsArray(PdfName.Annots);
-                if (annotations != null && annotations.contains(annotation.getIndirectReference())){
+                PdfAnnotation annotation = PdfAnnotation.makeAnnotation(annotDic);
+                if (annotation != null && page.containsAnnotation(annotation)){
                     return page;
                 }
             }

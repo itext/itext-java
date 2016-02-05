@@ -10,6 +10,7 @@ public class PdfException extends RuntimeException {
     public static final String _1IsAnUnknownGraphicsStateDictionary = "{0} is.an.unknown.graphics.state.dictionary";
     public static final String _1IsNotAValidPlaceableWindowsMetafile = "{0} is.not.a.valid.placeable.windows.metafile";
 
+    public static final String AnnotationHasInvalidStructParentValue = "annotation.has.invalid.struct.parent.value";
     public static final String AnnotShallHaveReferenceToPage = "annot.shall.have.reference.to.page";
     public static final String AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible = "append.mode.requires.a.document.without.errors.even.if.recovery.was.possible";
     public static final String AuthenticatedAttributeIsMissingTheDigest = "authenticated.attribute.is.missing.the.digest";
@@ -130,7 +131,7 @@ public class PdfException extends RuntimeException {
     public static final String Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3 = "page {0} cannot.be.added.to.document {1} because.it.belongs.to.document {2}";
     public static final String PageIsNotSetForThePdfTagStructure = "page.is.not.set.for.the.pdf.tag.structure";
     public static final String PageWasAlreadyFlushed = "the.page.was.already.flushed";
-    public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodInstead = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.instead";
+    public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.before.page.flushing";
     public static final String PdfEncodings = "pdf.encodings";
     public static final String PdfEncryption = "pdf.encryption";
     public static final String PdfDecryption = "pdf.decryption";
