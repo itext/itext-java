@@ -43,7 +43,7 @@ public class PdfMerger {
         for (int pageNum = fromPage; pageNum <= toPage; pageNum++){
             fillListOfPagesToCopy(from, pageNum, page2page);
         }
-        copyAnnotations(from, page2page);
+        copyLinkAnnotations(from, page2page);
         createStructTreeRoot(from, page2page);
     }
 
@@ -58,7 +58,7 @@ public class PdfMerger {
         for (Integer pageNum : pages){
             fillListOfPagesToCopy(from, pageNum, page2page);
         }
-        copyAnnotations(from, page2page);
+        copyLinkAnnotations(from, page2page);
         createStructTreeRoot(from, page2page);
     }
 
@@ -98,7 +98,7 @@ public class PdfMerger {
             structTreeRoot.copyToDocument(pdfDocument, page2page);
     }
 
-    private void copyAnnotations(PdfDocument fromDocument, Map<PdfPage, PdfPage> page2page) {
+    private void copyLinkAnnotations(PdfDocument fromDocument, Map<PdfPage, PdfPage> page2page) {
         List<PdfName> excludedKeys = new ArrayList<>();
         excludedKeys.add(PdfName.Dest);
         for (Map.Entry<PdfPage, PdfPage> entry : page2page.entrySet()) {
@@ -133,7 +133,7 @@ public class PdfMerger {
                         }
                     }
                     if (newAnnot.getPdfObject().containsKey(PdfName.Dest) || newAnnot.getPdfObject().containsKey(PdfName.A)) {
-                        entry.getValue().addAnnotation(newAnnot);
+                        entry.getValue().addAnnotation(-1, newAnnot, false);
                     }
                 }
             }

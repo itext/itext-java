@@ -922,7 +922,7 @@ public class PdfDocument implements IEventDispatcher {
                 getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
         }
 
-        copyAnnotations(toDocument, page2page);
+        copyLinkAnnotations(toDocument, page2page);
 
         if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2Outlines);
@@ -1258,7 +1258,7 @@ public class PdfDocument implements IEventDispatcher {
         }
     }
 
-    private void copyAnnotations(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
+    private void copyLinkAnnotations(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
         List<PdfName> excludedKeys = new ArrayList<>();
         excludedKeys.add(PdfName.Dest);
         for (Map.Entry<PdfPage, List<PdfLinkAnnotation>> entry : linkAnnotations.entrySet()) {
