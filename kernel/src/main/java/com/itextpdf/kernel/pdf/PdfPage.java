@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.tagging.*;
+import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -225,7 +226,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (annot.getSubtype().equals(PdfName.Link)) {
                 getDocument().storeLinkAnnotations(this, (PdfLinkAnnotation) annot);
             } else {
-                page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, false)));
+                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, false)), false);
             }
         }
         if (toDocument.isTagged()) {
@@ -488,6 +489,38 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             annots.add(annotation.setPage(this).getPdfObject());
         } else {
             annots.add(index, annotation.setPage(this).getPdfObject());
+        }
+        return this;
+    }
+
+    /**
+     * Removes an annotation from the page.
+     * <br><br>
+     * NOTE: If document is tagged, PdfDocument's PdfTagStructure instance will point at annotation tag parent after method call.
+     * @param annotation an annotation to be removed.
+     * @return this PdfPage instance.
+     */
+    public PdfPage removeAnnotation(PdfAnnotation annotation) {
+        PdfArray annots = getAnnots(false);
+        if (annots != null) {
+            if (!annots.remove(annotation.getPdfObject())) {
+                annots.remove(annotation.getPdfObject().getIndirectReference());
+            }
+
+            if (annots.isEmpty()) {
+                getPdfObject().remove(PdfName.Annots);
+            }
+        }
+
+        if (getDocument().isTagged()) {
+            PdfTagStructure tagStructure = getDocument().getTagStructure();
+            tagStructure.removeAnnotationTag(annotation, true);
+
+            boolean standardAnnotTagRole = tagStructure.getRole().equals(PdfName.Annot)
+                    || tagStructure.getRole().equals(PdfName.Form);
+            if (tagStructure.getListOfKidsRoles().isEmpty() && standardAnnotTagRole) {
+                tagStructure.removeTag();
+            }
         }
         return this;
     }

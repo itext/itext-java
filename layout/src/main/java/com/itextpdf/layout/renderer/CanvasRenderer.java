@@ -29,6 +29,9 @@ public class CanvasRenderer extends RootRenderer {
                 tagStructure.setContentStream(canvas.getPdfCanvas().getContentStream());
             }
             resultRenderer.draw(new DrawContext(canvas.getPdfDocument(), canvas.getPdfCanvas(), toTag));
+            if (toTag) {
+                canvas.getPdfDocument().getTagStructure().setContentStream(null);
+            }
         }
     }
 

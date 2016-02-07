@@ -39,6 +39,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "cannot.read.a.stream.in.order.to.append.new.bytes.reason {0}";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
     public static final String CannotRebuildTagStructureWhenItWasPartlyFlushed = "cannot.rebuild.tag.structure.when.it.was.partly.flushed";
+    public static final String CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed = "cannot.remove.tag.structure.elements.if.tag.structure.was.partially.flushed";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotSplitDocumentThatIsBeingWritten = "cannot.split.document.that.is.being.written";
     public static final String CannotWritePdfStream = "cannot.write.pdf.stream";
@@ -92,10 +93,7 @@ public class PdfException extends RuntimeException {
     public static final String IllegalVValue = "illegal.v.value";
     public static final String InvalidHttpResponse1 = "invalid.http.response {0}";
     public static final String InvalidTsa1ResponseCode2 = "invalid.tsa {0} response.code {1}";
-
-    public static final String IncorrectMcrParent = "incorrect.mcr.parent";
     public static final String IncorrectNumberOfComponents = "incorrect.number.of.components";
-
     public static final String InlineLevelOrIllustrationElementCannotContainKids = "inline.level.or.illustration.element.cannot.contain.kids";
     public static final String InvalidCodewordSize = "invalid.codeword.size";
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "invalid.cross.reference.entry.in.this.xref.subsection";

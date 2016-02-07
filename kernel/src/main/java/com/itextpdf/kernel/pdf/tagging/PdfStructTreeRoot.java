@@ -55,7 +55,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     /**
      * Indicates if any structure element was already flushed.
      * It is needed to prevent structure tree rebuilding (i.e. when new pages were copied and
-     * inserted between other pages).
+     * inserted between other pages) in case something was already flushed.
      */
     private boolean flushOccurred = false;
 
@@ -205,6 +205,10 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         super.flush();
     }
 
+    public boolean isStructTreeIsPartialFlushed() {
+        return flushOccurred;
+    }
+
     public void createParentTreeEntryForPage(PdfPage page) {
         registerAllMcrsIfNotRegistered();
 
@@ -320,6 +324,80 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         toDocument.getStructTreeRoot().unregisterAllMcrs();
     }
 
+    /**
+     * TODO this method is tremendously slow. Consider some improvements.
+     *
+     * For the given annotation removes it's object reference dictionary from the document logical structure.
+     * Be careful with this method, cause it might be slow. If document is opened in stamping mode and
+     * annotation already existed in it, obj ref will be found quickly. Otherwise the whole structure tree will be
+     * traversed.
+     * If annotation is not added to the document or is not tagged, nothing will happen.
+     * @param annotDic dictionary object which represents the annotation to remove from logical structure
+     * @return structure element which was the parent of the removed object reference dictionary
+     */
+    public PdfStructElem removeAnnotationObjectReference(PdfDictionary annotDic) {
+        if (isStructTreeIsPartialFlushed()) {
+            throw new PdfException(PdfException.CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed);
+        }
+
+        PdfNumber structParentIndex = (PdfNumber) annotDic.remove(PdfName.StructParent);
+        if (structParentIndex == null) {
+            return null;
+        }
+
+        PdfStructElem parentElem = null;
+        PdfObjRef objRef = null;
+
+        PdfDictionary parentTree = getParentTreeObject();
+        PdfObject elem = findAnnotParentElemInParentTree(parentTree, structParentIndex.getIntValue());
+        if (elem != null) {
+            if (elem.isArray()) {
+                throw new PdfException(PdfException.AnnotationHasInvalidStructParentValue);
+            }
+            parentElem = new PdfStructElem((PdfDictionary) elem);
+            for (IPdfStructElem kid : parentElem.getKids()) {
+                if (kid instanceof PdfObjRef) {
+                    PdfDictionary kidObject = (PdfDictionary) ((PdfObjRef) kid).getPdfObject();
+                    if (kidObject.get(PdfName.Obj) == annotDic) {
+                        objRef = new PdfObjRef(kidObject, parentElem);
+                    }
+                }
+            }
+        }
+
+
+        // parentTree doesn't contain given structParent index (which means that probably it's
+        // a new annotation in the document) or logical structure somehow changed and parentElem doesn't contain
+        // objRef to the given annotation anymore. In this case we will traverse the logical structure tree
+        // to try to find the obj reference.
+        if (parentElem == null || objRef == null) {
+            objRef = findAnnotObjRefInStructTree(this, annotDic);
+            if (objRef != null) {
+                parentElem = (PdfStructElem) objRef.getParent();
+            }
+        }
+
+        if (parentElem != null && objRef != null) {
+            PdfObject k = parentElem.getK();
+            if (k.isArray()) {
+                ((PdfArray) k).remove(objRef.getPdfObject());
+            } else {
+                parentElem.getPdfObject().remove(PdfName.K);
+            }
+
+            if (pageToPageMcrs != null) {
+                unregisterMcr(objRef);
+            }
+
+            // We don't remove the parent tree entry with given struct parent index here,
+            // because parent tree is fully rebuilt at document closing.
+
+            return parentElem;
+        }
+
+        return null;
+    }
+
     public void registerMcr(PdfMcr mcr) {
         if (pageToPageMcrs == null) {
             return;
@@ -336,6 +414,28 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
+    public void unregisterMcr(PdfMcr mcrToUnregister) {
+        if (pageToPageMcrs == null) {
+            return;
+        }
+
+        List<PdfMcr> pageMcrs = pageToPageMcrs.get(mcrToUnregister.getPageObject());
+        if (pageMcrs != null) {
+            PdfMcr mcrObjectToRemove = null;
+            for (PdfMcr mcr : pageMcrs) {
+                if (mcr.getPdfObject() == mcrToUnregister.getPdfObject()) {
+                    mcrObjectToRemove = mcr;
+                    break;
+                }
+            }
+            pageMcrs.remove(mcrObjectToRemove);
+
+            if (mcrToUnregister instanceof PdfObjRef) {
+                objRefs.remove(mcrToUnregister.getPdfObject());
+            }
+        }
+    }
+
     private void freeAllReferences(PdfStructElem elem) {
         for (IPdfStructElem kid : elem.getKids()) {
             if (kid instanceof PdfStructElem) {
@@ -346,11 +446,11 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     /**
-     * Is called when tag structure of document was rebuilt.
-     * This usually happens when pages were removed or copied to document
+     * It should be called when tag structure of document was rebuilt.
+     * This happens when new pages were inserted in between of old pages.
      */
     private void unregisterAllMcrs() {
-        if (flushOccurred) {
+        if (isStructTreeIsPartialFlushed()) {
             throw new PdfException(PdfException.CannotRebuildTagStructureWhenItWasPartlyFlushed);
         }
         pageToPageMcrs = null;
@@ -465,8 +565,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     private PdfDictionary getObjectsToCopy(PdfMcr mcr, Set<PdfDictionary> objectsToCopy) {
-        if (mcr instanceof PdfMcrDictionary)
+        if (mcr instanceof PdfMcrDictionary || mcr instanceof PdfObjRef) {
             objectsToCopy.add((PdfDictionary) mcr.getPdfObject());
+        }
         PdfDictionary elem = ((PdfStructElem) mcr.getParent()).getPdfObject();
         objectsToCopy.add(elem);
         for (; ; ) {
@@ -500,50 +601,45 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
         PdfObject k = source.get(PdfName.K);
         if (k != null) {
-            switch (k.getType()) {
-                case PdfObject.Number:
-                    copied.put(PdfName.K, k);
-                    break;
-                case PdfObject.Dictionary:
-                    PdfDictionary kDict = (PdfDictionary) k;
-                    if (objectsToCopy.contains(kDict)) {
-                        boolean hasParent = kDict.containsKey(PdfName.P);
-                        PdfDictionary copiedK = copyObject(kDict, objectsToCopy, toDocument, page2page, copyToCurrent);
-                        if (hasParent)
-                            copiedK.put(PdfName.P, copied);
-                        copied.put(PdfName.K, copiedK);
+            if (k.isArray()) {
+                PdfArray kArr = (PdfArray) k;
+                PdfArray newArr = new PdfArray();
+                for (int i = 0; i < kArr.size(); i++) {
+                    PdfObject copiedKid = copyObjectKid(kArr.get(i), copied, objectsToCopy, toDocument, page2page, copyToCurrent);
+                    if (copiedKid != null) {
+                        newArr.add(copiedKid);
                     }
-                    break;
-                case PdfObject.Array:
-                    PdfArray kArr = (PdfArray) k;
-                    PdfArray newArr = new PdfArray();
-                    for (int i = 0; i < kArr.size(); i++) {
-                        PdfObject kArrElem = kArr.get(i);
-                        switch (kArrElem.getType()) {
-                            case PdfObject.Number:
-                                newArr.add(kArrElem);
-                                break;
-                            case PdfObject.Dictionary:
-                                PdfDictionary kArrElemDict = (PdfDictionary) kArrElem;
-                                if (objectsToCopy.contains(kArrElemDict)) {
-                                    boolean hasParent = kArrElemDict.containsKey(PdfName.P);
-                                    PdfDictionary copiedK = copyObject(kArrElemDict, objectsToCopy, toDocument, page2page, copyToCurrent);
-                                    if (hasParent)
-                                        copiedK.put(PdfName.P, copied);
-                                    newArr.add(copiedK);
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    copied.put(PdfName.K, newArr);
-                    break;
-                default:
-                    break;
+                }
+                copied.put(PdfName.K, newArr);
+            } else {
+                PdfObject copiedKid = copyObjectKid(k, copied, objectsToCopy, toDocument, page2page, copyToCurrent);
+                if (copiedKid != null) {
+                    copied.put(PdfName.K, copiedKid);
+                }
             }
         }
         return copied;
+    }
+
+    private PdfObject copyObjectKid(PdfObject kid, PdfObject copiedParent, Set<PdfDictionary> objectsToCopy, PdfDocument toDocument, Map<PdfDictionary, PdfDictionary> page2page, boolean copyToCurrent) {
+        if (kid.isNumber()) {
+            return kid;
+        } else if (kid.isDictionary()) {
+            PdfDictionary kidAsDict = (PdfDictionary) kid;
+            if (objectsToCopy.contains(kidAsDict)) {
+                boolean hasParent = kidAsDict.containsKey(PdfName.P);
+                PdfDictionary copiedKid = copyObject(kidAsDict, objectsToCopy, toDocument, page2page, copyToCurrent);
+                if (hasParent)
+                    copiedKid.put(PdfName.P, copiedParent);
+
+                if (copiedKid.containsKey(PdfName.Obj)) {
+                    PdfDictionary contentItemObject = copiedKid.getAsDictionary(PdfName.Obj);
+                    contentItemObject.put(PdfName.StructParent, new PdfNumber(getDocument().getNextStructParentIndex()));
+                }
+                return copiedKid;
+            }
+        }
+        return null;
     }
 
     private void addKidObject(PdfDictionary structElem) {
@@ -567,5 +663,72 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
+    private PdfObject findAnnotParentElemInParentTree(PdfDictionary parentTreeNode, int structParentIndex) {
+        if (parentTreeNode.containsKey(PdfName.Limits)) {
+            PdfArray limits = parentTreeNode.getAsArray(PdfName.Limits);
+            if (structParentIndex < limits.getAsNumber(0).getIntValue()
+                    || structParentIndex > limits.getAsNumber(0).getIntValue()) {
+                return null;
+            }
+        }
+        if (parentTreeNode.containsKey(PdfName.Kids)) {
+            PdfArray kids = parentTreeNode.getAsArray(PdfName.Kids);
+            for (int i = 0; i < kids.size(); ++i) {
+                PdfDictionary kid = kids.getAsDictionary(i);
+                PdfObject parentElem = findAnnotParentElemInParentTree(kid, structParentIndex);
+                if (parentElem != null) {
+                    return parentElem;
+                }
+            }
 
+            return null;
+        }
+
+        PdfArray nums = parentTreeNode.getAsArray(PdfName.Nums);
+        if (nums != null) {
+            return findElemInNumsArray(nums, 0, nums.size(), structParentIndex);
+        }
+
+        return null;
+    }
+
+    private PdfObject findElemInNumsArray(PdfArray numsArray, int startIndex, int endIndex, int structParentIndex) {
+        int length = endIndex - startIndex; // a power of two
+        if (length == 2) {
+            if (numsArray.getAsNumber(startIndex).getIntValue() == structParentIndex) {
+                return numsArray.get(startIndex + 1);
+            } else {
+                return null;
+            }
+        }
+
+        int leastInSecondHalf = numsArray.getAsNumber(startIndex + (length / 2)).getIntValue();
+        if (leastInSecondHalf > structParentIndex) {
+            return findElemInNumsArray(numsArray, startIndex, startIndex + length / 2, structParentIndex);
+        } else {
+            return findElemInNumsArray(numsArray, startIndex + length / 2, endIndex, structParentIndex);
+        }
+    }
+
+    private PdfObjRef findAnnotObjRefInStructTree(IPdfStructElem structElem, PdfDictionary annotDic) {
+        if (structElem instanceof PdfObjRef) {
+            if (((PdfDictionary) ((PdfObjRef) structElem).getPdfObject()).get(PdfName.Obj) == annotDic) {
+                return (PdfObjRef) structElem;
+            } else {
+                return null;
+            }
+        }
+
+        List<IPdfStructElem> kids = structElem.getKids();
+        if (kids != null) {
+            for (IPdfStructElem kid : kids) {
+                PdfObjRef objRef = findAnnotObjRefInStructTree(kid, annotDic);
+                if (objRef != null) {
+                    return objRef;
+                }
+            }
+        }
+
+        return null;
+    }
 }

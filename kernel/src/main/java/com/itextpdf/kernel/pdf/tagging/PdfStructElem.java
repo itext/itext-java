@@ -200,9 +200,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public PdfMcr addKid(int index, PdfMcr kid) {
-        if (this != kid.getParent())
-            throw new PdfException(PdfException.IncorrectMcrParent);
-
         getDocument().getStructTreeRoot().registerMcr(kid);
         addKidObject(index, kid.getPdfObject());
         return kid;
@@ -251,23 +248,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     public PdfObject getK() {
         return getPdfObject().get(PdfName.K);
-    }
-
-    public PdfDictionary getParentObject() {
-        return getPdfObject().getAsDictionary(PdfName.P);
-    }
-
-    public void setParentObject(PdfDictionary parent) {
-        if (PdfName.MCR.equals(getPdfObject().getAsName(PdfName.Type)))
-            return;
-        // Remove current tag from previous parent element.
-        PdfDictionary oldParent = getParentObject();
-        if (oldParent != null) {
-            PdfArray oldChildren = oldParent.getAsArray(PdfName.K);
-            if (oldChildren != null)
-                oldChildren.remove(getPdfObject());
-        }
-        getPdfObject().put(PdfName.P, parent);
     }
 
     public static int identifyType(PdfDocument doc, PdfName role) {
