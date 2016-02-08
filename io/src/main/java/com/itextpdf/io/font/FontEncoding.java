@@ -96,6 +96,7 @@ public class FontEncoding {
             unicodeToCode.put(unicode, code);
             codeToUnicode[code] = unicode;
             differences[code] = glyphName;
+            unicodeDifferences.put(unicode, unicode);
             return true;
         } else {
             return false;

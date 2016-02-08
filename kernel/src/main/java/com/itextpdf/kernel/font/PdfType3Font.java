@@ -139,8 +139,15 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
 
     @Override
     public Glyph getGlyph(int unicode) {
-        if (fontEncoding.canEncode(unicode)) {
-            return getFontProgram().getGlyph(unicode);
+        if (fontEncoding.canEncode(unicode) || unicode < 33) {
+            Glyph glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode));
+                if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
+                    // Handle special layout characters like sfthyphen (00AD).
+                    // This glyphs will be skipped while converting to bytes
+                    glyph = new Glyph(-1, 0, unicode);
+                    notdefGlyphs.put(unicode, glyph);
+                }
+            return glyph;
         }
         return null;
     }
