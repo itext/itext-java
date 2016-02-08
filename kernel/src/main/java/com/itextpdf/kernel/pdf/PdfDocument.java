@@ -10,7 +10,6 @@ import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
@@ -28,6 +27,7 @@ import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
+import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class PdfDocument implements IEventDispatcher {
+public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Currently active page.
@@ -605,7 +605,9 @@ public class PdfDocument implements IEventDispatcher {
      * Close PDF document.
      */
     public void close() {
-        checkClosingStatus();
+        if (closed) {
+            return;
+        }
         isClosing = true;
         try {
             if (writer != null) {

@@ -2,9 +2,10 @@ package com.itextpdf.io.source;
 
 import com.itextpdf.io.IOException;
 
+import java.io.Closeable;
 import java.util.Arrays;
 
-public class PdfTokenizer {
+public class PdfTokenizer implements Closeable {
 
     public enum TokenType {
         Number,

@@ -15,6 +15,7 @@ import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.security.ExternalDecryptionProcess;
 
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Key;
@@ -30,7 +31,7 @@ import org.bouncycastle.cms.RecipientInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PdfReader {
+public class PdfReader implements Closeable {
 
     protected static boolean correctStreamLength = true;
 
