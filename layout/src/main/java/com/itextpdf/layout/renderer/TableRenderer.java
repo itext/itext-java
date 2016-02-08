@@ -298,6 +298,8 @@ public class TableRenderer extends AbstractRenderer {
 
                 occupiedArea.getBBox().moveDown(rowHeight);
                 occupiedArea.getBBox().increaseHeight(rowHeight);
+
+                layoutBox.decreaseHeight(rowHeight);
             }
 
             if (split) {
@@ -342,8 +344,6 @@ public class TableRenderer extends AbstractRenderer {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
             }
-
-            layoutBox.decreaseHeight(rowHeight);
         }
 
         if (isPositioned()) {
