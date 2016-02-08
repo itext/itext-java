@@ -184,7 +184,9 @@ public class TableRenderer extends AbstractRenderer {
                 LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 //width of BlockRenderer depends on child areas, while in cell case it is hardly define.
-                cell.getOccupiedArea().getBBox().setWidth(cellWidth);
+                if (cellResult.getStatus() != LayoutResult.NOTHING) {
+                    cell.getOccupiedArea().getBBox().setWidth(cellWidth);
+                }
 
                 if (currentCellHasBigRowspan) {
                     // cell from the future

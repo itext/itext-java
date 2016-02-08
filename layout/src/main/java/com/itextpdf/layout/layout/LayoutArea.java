@@ -47,4 +47,9 @@ public class LayoutArea implements Cloneable {
         LayoutArea that = (LayoutArea) obj;
         return pageNumber == that.pageNumber && bBox.equals(that.bBox);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s, page %s", bBox.toString(), pageNumber);
+    }
 }

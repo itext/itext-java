@@ -32,6 +32,12 @@ public class BlockRenderer extends AbstractRenderer {
         if (getProperty(Property.ROTATION_ANGLE) != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
+
+        Float blockHeight = retrieveHeight();
+        if (!isFixedLayout() && blockHeight != null && blockHeight > parentBBox.getHeight()) {
+            return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+        }
+
         applyMargins(parentBBox, false);
         applyBorderBox(parentBBox, false);
 
@@ -156,7 +162,6 @@ public class BlockRenderer extends AbstractRenderer {
             }
         }
 
-        Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
         applyPaddings(occupiedArea.getBBox(), true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
             occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);

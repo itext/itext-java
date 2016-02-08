@@ -109,8 +109,16 @@ public class ParagraphRenderer extends BlockRenderer {
             if (processedRenderer != null && processedRenderer.containsImage()){
                 leadingValue -= previousDescent;
             }
-            boolean doesNotFit = result.getStatus() == LayoutResult.NOTHING ||
-                    processedRenderer != null && leading != null && processedRenderer.getOccupiedArea().getBBox().getHeight() + processedRenderer.getLeadingValue(leading) - processedRenderer.getMaxAscent() > layoutBox.getHeight();
+            boolean doesNotFit = result.getStatus() == LayoutResult.NOTHING;
+            float deltaY = 0;
+            if (!doesNotFit) {
+                lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
+                deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
+                // for the first and last line in a paragraph, leading is smaller
+                if (firstLineInBox)
+                    deltaY = -(leadingValue - lastLineHeight) / 2;
+                doesNotFit = processedRenderer != null && leading != null && processedRenderer.getOccupiedArea().getBBox().getY() + deltaY < layoutBox.getY();
+            }
 
             if (doesNotFit) {
                 if (currentAreaPos + 1 < areas.size()) {
@@ -147,12 +155,7 @@ public class ParagraphRenderer extends BlockRenderer {
                     }
                 }
             } else {
-                lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
                 if (leading != null) {
-                    float deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
-                    // for the first and last line in a paragraph, leading is smaller
-                    if (firstLineInBox)
-                        deltaY = -(leadingValue - lastLineHeight) / 2;
                     processedRenderer.move(0, deltaY);
                     lastYLine = processedRenderer.getYLine();
                 }
@@ -169,8 +172,9 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         if (!isPositioned()) {
-            occupiedArea.getBBox().moveDown((leadingValue - lastLineHeight) / 2);
-            occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + (leadingValue - lastLineHeight) / 2);
+            float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
+            occupiedArea.getBBox().moveDown(moveDown);
+            occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
         Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
         applyPaddings(occupiedArea.getBBox(), true);

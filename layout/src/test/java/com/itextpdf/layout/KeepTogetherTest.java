@@ -48,7 +48,7 @@ public class KeepTogetherTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
-        for (int i = 0; i < 28; i++){
+        for (int i = 0; i < 29; i++){
             doc.add(new Paragraph("String number" + i));
         }
 
@@ -60,8 +60,6 @@ public class KeepTogetherTest extends ExtendedITextTest{
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
     }
-
-
 
     @Test
     @LogMessages(messages = {

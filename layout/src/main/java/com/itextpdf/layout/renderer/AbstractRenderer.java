@@ -1,10 +1,8 @@
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -12,6 +10,8 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.Property;
@@ -317,14 +317,21 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect;
     }
 
-
     protected Float retrieveWidth(float parentBoxWidth) {
-        Property.UnitValue width = getProperty(Property.WIDTH);
-        if (width != null) {
-            if (width.getUnitType() == Property.UnitValue.POINT) {
-                return width.getValue();
-            } else if (width.getUnitType() == Property.UnitValue.PERCENT) {
-                return width.getValue() * parentBoxWidth / 100;
+        return retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+    }
+
+    protected Float retrieveHeight() {
+        return getProperty(Property.HEIGHT);
+    }
+
+    protected Float retrieveUnitValue(float basePercentValue, Property property) {
+        Property.UnitValue value = getProperty(property);
+        if (value != null) {
+            if (value.getUnitType() == Property.UnitValue.POINT) {
+                return value.getValue();
+            } else if (value.getUnitType() == Property.UnitValue.PERCENT) {
+                return value.getValue() * basePercentValue / 100;
             } else {
                 throw new IllegalStateException("invalid unit type");
             }
