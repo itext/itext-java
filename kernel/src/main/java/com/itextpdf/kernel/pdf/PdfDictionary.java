@@ -404,7 +404,7 @@ public class PdfDictionary extends PdfObject {
      *
      * @param document    document to copy dictionary to.
      * @param excludeKeys list of objects to exclude when copying dictionary.
-     * @param allowDuplicating {@link PdfObject}
+     * @param allowDuplicating {@link PdfObject#copyToDocument(PdfDocument, boolean)}
      * @return copied dictionary.
      * @throws PdfException
      */

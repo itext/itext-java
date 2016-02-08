@@ -13,6 +13,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         add(PdfName.K);
         add(PdfName.P);
         add(PdfName.Pg);
+        add(PdfName.Obj);
     }};
 
     public PdfStructTreeRoot(PdfDocument document) {
@@ -592,6 +594,18 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
         else
             copied = source.copyToDocument(toDocument, ignoreKeysForCopy, true);
+
+        if (source.containsKey(PdfName.Obj)) {
+            PdfDictionary obj = source.getAsDictionary(PdfName.Obj);
+            if (!copyToCurrent && obj != null) {
+                // Link annotations could be not added to the toDocument, so we need to identify this case.
+                // When obj.copyToDocument is called, and annotation was already copied, we would get this already created copy.
+                // If it was already copied and added, /P key would be set. Otherwise /P won't be set.
+                obj = obj.copyToDocument(toDocument, Arrays.asList(PdfName.P), false);
+            }
+            copied.put(PdfName.Obj, obj);
+        }
+
         PdfDictionary pg = source.getAsDictionary(PdfName.Pg);
         if (pg != null) {
             //TODO It is possible, that pg will not be present in the page2page map. Consider the situation,
@@ -634,7 +648,12 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
                 if (copiedKid.containsKey(PdfName.Obj)) {
                     PdfDictionary contentItemObject = copiedKid.getAsDictionary(PdfName.Obj);
-                    contentItemObject.put(PdfName.StructParent, new PdfNumber(getDocument().getNextStructParentIndex()));
+                    if (!PdfName.Form.equals(contentItemObject.getAsName(PdfName.Subtype))
+                            && !contentItemObject.containsKey(PdfName.P)) {
+                        // Some link annotations could be not added to any page.
+                        return null;
+                    }
+                    contentItemObject.put(PdfName.StructParent, new PdfNumber(toDocument.getNextStructParentIndex()));
                 }
                 return copiedKid;
             }

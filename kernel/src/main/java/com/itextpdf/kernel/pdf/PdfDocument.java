@@ -10,6 +10,7 @@ import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
@@ -915,6 +916,11 @@ public class PdfDocument implements IEventDispatcher {
                 page2Outlines.put(newPage, pageOutlines);
             }
         }
+
+        copyLinkAnnotations(toDocument, page2page);
+
+        // It's important to copy tag structure after link annotations were copied, because object content items in tag
+        // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
         if (toDocument.isTagged()) {
             if (insertBeforePage > toDocument.getNumberOfPages())
                 getStructTreeRoot().copyToDocument(toDocument, page2page);
@@ -922,7 +928,6 @@ public class PdfDocument implements IEventDispatcher {
                 getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
         }
 
-        copyLinkAnnotations(toDocument, page2page);
 
         if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2Outlines);
@@ -1261,42 +1266,65 @@ public class PdfDocument implements IEventDispatcher {
     private void copyLinkAnnotations(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
         List<PdfName> excludedKeys = new ArrayList<>();
         excludedKeys.add(PdfName.Dest);
+        // It's important not to copy P key, as if the annotation won't be added to the page, P key could be used to identify this case
+        excludedKeys.add(PdfName.P);
         for (Map.Entry<PdfPage, List<PdfLinkAnnotation>> entry : linkAnnotations.entrySet()) {
             for (PdfLinkAnnotation annot : entry.getValue()) {
                 PdfDestination d = null;
-                PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, excludedKeys, false));
+                PdfDictionary a = null;
+
                 PdfObject dest = annot.getDestinationObject();
                 if (dest != null) {
-                    if (dest.isArray()) {
-                        PdfObject pageObject = ((PdfArray)dest).get(0);
-                        for (PdfPage oldPage : page2page.keySet()) {
-                            if (oldPage.getPdfObject() == pageObject) {
-                                PdfArray array = new PdfArray((PdfArray)dest);
-                                array.set(0, page2page.get(oldPage).getPdfObject());
-                                d = new PdfExplicitDestination(array);
-                                newAnnot.setDestination(d);
-                            }
-                        }
-                    } else if (dest.isString()) {
-                        PdfArray array = (PdfArray) getCatalog().getNamedDestinations().get(((PdfString) dest).toUnicodeString());
-                        if (array != null) {
-                            PdfObject pageObject = array.get(0);
-                            for (PdfPage oldPage : page2page.keySet()) {
-                                if (oldPage.getPdfObject() == pageObject) {
-                                    array.set(0, page2page.get(oldPage).getPdfObject());
-                                    d = new PdfExplicitDestination(array);
-                                    newAnnot.setDestination(d);
-                                }
-                            }
-                        }
-                    }
+                    d = transformToExplicitDestination(dest, page2page);
                 }
-                if (newAnnot.getPdfObject().containsKey(PdfName.Dest) || newAnnot.getPdfObject().containsKey(PdfName.A)) {
-                    page2page.get(entry.getKey()).addAnnotation(newAnnot);
+
+                boolean hasGoToAction = false;
+                a = annot.getAction();
+                if (a != null && PdfName.GoTo.equals(a.get(PdfName.S))) {
+                    if (d == null) {
+                        d = transformToExplicitDestination(a.get(PdfName.D), page2page);
+                    }
+                    hasGoToAction = true;
+                }
+
+                if (d != null ||  a != null && !hasGoToAction) {
+                    PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, excludedKeys, false));
+                    newAnnot.setDestination(d);
+                    if (hasGoToAction) {
+                        newAnnot.remove(PdfName.A);
+                    }
+                    page2page.get(entry.getKey()).addAnnotation(-1, newAnnot, false);
                 }
             }
         }
         linkAnnotations.clear();
+    }
+
+    private PdfDestination transformToExplicitDestination(PdfObject dest, Map<PdfPage, PdfPage> page2page) {
+        PdfDestination d = null;
+        if (dest.isArray()) {
+            PdfObject pageObject = ((PdfArray)dest).get(0);
+            for (PdfPage oldPage : page2page.keySet()) {
+                if (oldPage.getPdfObject() == pageObject) {
+                    PdfArray array = new PdfArray((PdfArray)dest);
+                    array.set(0, page2page.get(oldPage).getPdfObject());
+                    d = new PdfExplicitDestination(array);
+                }
+            }
+        } else if (dest.isString()) {
+            PdfArray array = (PdfArray) getCatalog().getNamedDestinations().get(((PdfString) dest).toUnicodeString());
+            if (array != null) {
+                PdfObject pageObject = array.get(0);
+                for (PdfPage oldPage : page2page.keySet()) {
+                    if (oldPage.getPdfObject() == pageObject) {
+                        array.set(0, page2page.get(oldPage).getPdfObject());
+                        d = new PdfExplicitDestination(array);
+                    }
+                }
+            }
+        }
+
+        return d;
     }
 
     /**

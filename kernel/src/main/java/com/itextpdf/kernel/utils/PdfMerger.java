@@ -2,6 +2,7 @@ package com.itextpdf.kernel.utils;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -18,6 +19,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * TODO: make PdfMerger use PdfDocument#copyPages to avoid code duplication as copyLinkAnnotations method
+ */
 public class PdfMerger {
 
     private PdfDocument pdfDocument;
@@ -101,42 +105,66 @@ public class PdfMerger {
     private void copyLinkAnnotations(PdfDocument fromDocument, Map<PdfPage, PdfPage> page2page) {
         List<PdfName> excludedKeys = new ArrayList<>();
         excludedKeys.add(PdfName.Dest);
+        // It's important not to copy P key, as if the annotation won't be added to the page, P key could be used to identify this case
+        excludedKeys.add(PdfName.P);
         for (Map.Entry<PdfPage, PdfPage> entry : page2page.entrySet()) {
             for (PdfAnnotation annot : entry.getKey().getAnnotations()) {
-                PdfDestination d;
+                PdfDestination d = null;
+                PdfDictionary a = null;
+
                 if (annot.getSubtype().equals(PdfName.Link)) {
-                    PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(pdfDocument, excludedKeys, false));
-                    PdfObject dest =((PdfLinkAnnotation)annot).getDestinationObject();
+                    PdfObject dest = ((PdfLinkAnnotation) annot).getDestinationObject();
+
                     if (dest != null) {
-                        if (dest.isArray()) {
-                            PdfObject pageObject = ((PdfArray)dest).get(0);
-                            for (PdfPage oldPage : page2page.keySet()) {
-                                if (oldPage.getPdfObject() == pageObject) {
-                                    PdfArray array = new PdfArray((PdfArray)dest);
-                                    array.set(0, page2page.get(oldPage).getPdfObject());
-                                    d = new PdfExplicitDestination(array);
-                                    newAnnot.setDestination(d);
-                                }
-                            }
-                        } else if (dest.isString()) {
-                            PdfArray array = (PdfArray) fromDocument.getCatalog().getNamedDestinations().get(((PdfString) dest).toUnicodeString());
-                            if (array != null) {
-                                PdfObject pageObject = array.get(0);
-                                for (PdfPage oldPage : page2page.keySet()) {
-                                    if (oldPage.getPdfObject() == pageObject) {
-                                        array.set(0, page2page.get(oldPage).getPdfObject());
-                                        d = new PdfExplicitDestination(array);
-                                        newAnnot.setDestination(d);
-                                    }
-                                }
-                            }
-                        }
+                        d = transformToExplicitDestination(fromDocument, dest, page2page);
                     }
-                    if (newAnnot.getPdfObject().containsKey(PdfName.Dest) || newAnnot.getPdfObject().containsKey(PdfName.A)) {
-                        entry.getValue().addAnnotation(-1, newAnnot, false);
+
+                    boolean hasGoToAction = false;
+                    a = annot.getAction();
+                    if (a != null && PdfName.GoTo.equals(a.get(PdfName.S))) {
+                        if (d == null) {
+                            d = transformToExplicitDestination(fromDocument, a.get(PdfName.D), page2page);
+                        }
+                        hasGoToAction = true;
+                    }
+
+                    if (d != null ||  a != null && !hasGoToAction) {
+                        PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(pdfDocument, excludedKeys, false));
+                        newAnnot.setDestination(d);
+                        if (hasGoToAction) {
+                            newAnnot.remove(PdfName.A);
+                        }
+                        page2page.get(entry.getKey()).addAnnotation(-1, newAnnot, false);
                     }
                 }
             }
         }
+    }
+
+    private PdfDestination transformToExplicitDestination(PdfDocument fromDocument, PdfObject dest, Map<PdfPage, PdfPage> page2page) {
+        PdfDestination d = null;
+        if (dest.isArray()) {
+            PdfObject pageObject = ((PdfArray)dest).get(0);
+            for (PdfPage oldPage : page2page.keySet()) {
+                if (oldPage.getPdfObject() == pageObject) {
+                    PdfArray array = new PdfArray((PdfArray)dest);
+                    array.set(0, page2page.get(oldPage).getPdfObject());
+                    d = new PdfExplicitDestination(array);
+                }
+            }
+        } else if (dest.isString()) {
+            PdfArray array = (PdfArray) fromDocument.getCatalog().getNamedDestinations().get(((PdfString) dest).toUnicodeString());
+            if (array != null) {
+                PdfObject pageObject = array.get(0);
+                for (PdfPage oldPage : page2page.keySet()) {
+                    if (oldPage.getPdfObject() == pageObject) {
+                        array.set(0, page2page.get(oldPage).getPdfObject());
+                        d = new PdfExplicitDestination(array);
+                    }
+                }
+            }
+        }
+
+        return d;
     }
 }
