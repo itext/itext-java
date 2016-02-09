@@ -80,14 +80,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     public boolean removePage(PdfPage page) {
         //TODO log removing flushed page
-        if(outlineMode)
+        if (outlineMode)
             removeOutlines(page);
         return pageTree.removePage(page);
     }
 
     public PdfPage removePage(int pageNum) {
         //TODO log removing flushed page
-        if(outlineMode)
+        if (outlineMode)
             removeOutlines(getPage(pageNum));
         return pageTree.removePage(pageNum);
     }
@@ -156,6 +156,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
+     *
      * @return
      */
     public boolean isOutlineMode() {
@@ -164,10 +165,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets a page mode of the document
+     *
      * @param pageMode
      * @return
      */
-    public PdfCatalog setPageMode(PdfName pageMode){
+    public PdfCatalog setPageMode(PdfName pageMode) {
         return put(PdfName.PageMode, pageMode);
     }
 
@@ -177,26 +179,30 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method gets Names tree from the catalog.
+     *
      * @return
-     * @throws PdfException
      */
+    //TODO optimize me! See PdfWriterSmartModeCopyTest#pdfWriterSmartModeCopyTest03()
+    //Map<Object, PdfObject> namesSaved = null;
     public Map<Object, PdfObject> getNamedDestinations() {
+        //if (namesSaved != null) return namesSaved;
         Map<Object, PdfObject> names = getNamedDestinatnionsFromNames();
         names.putAll(getNamedDestinatnionsFromStrings());
         isNamedDestinationsGot = true;
+        //namesSaved = names;
         return names;
     }
 
     /**
-    * An entry specifying the natural language, and optionally locale. Use this
-    * to specify the Language attribute on a Tagged Pdf element.
-    * For the content usage dictionary, use PdfName.Language
-    */
-    public void setLang(PdfString lang){
-        getPdfObject().put(PdfName.Lang,lang);
+     * An entry specifying the natural language, and optionally locale. Use this
+     * to specify the Language attribute on a Tagged Pdf element.
+     * For the content usage dictionary, use PdfName.Language
+     */
+    public void setLang(PdfString lang) {
+        getPdfObject().put(PdfName.Lang, lang);
     }
 
-    public PdfString getLang(PdfName lang){
+    public PdfString getLang(PdfName lang) {
         return getPdfObject().getAsString(PdfName.Lang);
     }
 
@@ -237,7 +243,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * this method return map containing all pages of the document with associated outlines.
-      * @return
+     *
+     * @return
      */
     Map<PdfObject, List<PdfOutline>> getPagesWithOutlines() {
         return pagesWithOutlines;
@@ -245,7 +252,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
-     * @param key Name of the destination.
+     *
+     * @param key   Name of the destination.
      * @param value An object destination refers to.
      * @throws PdfException
      */
@@ -255,7 +263,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (names.containsKey(key))
             throw new PdfException(PdfException.NameAlreadyExistsInTheNameTree);
 
-        if (destinationTree == null){
+        if (destinationTree == null) {
             destinationTree = new PdfNameTree(this, PdfName.Dests);
         }
         PdfDictionary destination = new PdfDictionary();
@@ -266,15 +274,16 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method returns a complete outline tree of the whole document.
+     *
      * @param updateOutlines - if this flag is true, the method read the whole document and creates outline tree.
      *                       If false the method gets cached outline tree (if it was cached via calling getOutlines method before).
      * @return
      * @throws PdfException
      */
     PdfOutline getOutlines(boolean updateOutlines) {
-        if (outlines!= null && !updateOutlines)
+        if (outlines != null && !updateOutlines)
             return outlines;
-        if (outlines != null){
+        if (outlines != null) {
             outlines.clear();
             pagesWithOutlines.clear();
         }
@@ -283,7 +292,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (!isNamedDestinationsGot)
             names = getNamedDestinations();
         PdfDictionary outlineRoot = getPdfObject().getAsDictionary(PdfName.Outlines);
-        if (outlineRoot == null){
+        if (outlineRoot == null) {
             return null;
         }
 
@@ -295,6 +304,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets the root outline element in the catalog.
+     *
      * @param outline
      * @throws PdfException
      */
@@ -309,11 +319,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method removes all outlines associated with a given page
+     *
      * @param page
      * @throws PdfException
      */
     private void removeOutlines(PdfPage page) {
-        for(PdfOutline outline: pagesWithOutlines.get(page.getPdfObject().getIndirectReference())){
+        for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject().getIndirectReference())) {
             outline.removeOutline();
         }
     }
@@ -334,7 +345,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (dest != null) {
             PdfDestination destination = PdfDestination.makeDestination(dest);
             outline.setDestination(destination);
-            if (replaceNamedDestinations){
+            if (replaceNamedDestinations) {
                 destination.replaceNamedDestination(names);
             }
             addOutlineToPage(outline, names);
@@ -342,11 +353,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         parent.getAllChildren().add(outline);
 
         PdfDictionary processItem = item.getAsDictionary(PdfName.First);
-        if (processItem != null){
+        if (processItem != null) {
             getNextItem(processItem, outline, names);
         }
         processItem = item.getAsDictionary(PdfName.Next);
-        if (processItem != null){
+        if (processItem != null) {
             getNextItem(processItem, parent, names);
         }
     }
@@ -354,11 +365,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private Map<Object, PdfObject> getNamedDestinatnionsFromNames() {
         Map<Object, PdfObject> names = new HashMap<Object, PdfObject>();
         PdfDictionary destinations = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Dests);
-        if(destinations != null){
+        if (destinations != null) {
             Set<PdfName> keys = destinations.keySet();
-            for (PdfName key : keys){
+            for (PdfName key : keys) {
                 PdfArray array = getNameArray(destinations.get(key));
-                if (array == null){
+                if (array == null) {
                     continue;
                 }
                 names.put(key, array);
@@ -370,11 +381,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     private Map<String, PdfObject> getNamedDestinatnionsFromStrings() {
         PdfDictionary dictionary = getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.Names);
-        if(dictionary != null){
+        if (dictionary != null) {
             dictionary = dictionary.getAsDictionary(PdfName.Dests);
-            if (dictionary != null){
+            if (dictionary != null) {
                 Map<String, PdfObject> names = readTree(dictionary);
-                for (Iterator<Map.Entry<String, PdfObject>> it = names.entrySet().iterator(); it.hasNext();) {
+                for (Iterator<Map.Entry<String, PdfObject>> it = names.entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry<String, PdfObject> entry = it.next();
                     PdfArray arr = getNameArray(entry.getValue());
                     if (arr != null)
@@ -386,12 +397,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             }
         }
 
-        return new HashMap<String, PdfObject>();
+        return new HashMap<>();
     }
 
     private Map<String, PdfObject> readTree(PdfDictionary dictionary) {
         Map<String, PdfObject> items = new HashMap<String, PdfObject>();
-        if (dictionary != null){
+        if (dictionary != null) {
             iterateItems(dictionary, items, null);
         }
         return items;
@@ -399,8 +410,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     private PdfString iterateItems(PdfDictionary dictionary, Map<String, PdfObject> items, PdfString leftOver) {
         PdfArray names = dictionary.getAsArray(PdfName.Names);
-        if (names != null){
-            for (int k = 0; k < names.size(); k++){
+        if (names != null) {
+            for (int k = 0; k < names.size(); k++) {
                 PdfString name;
                 if (leftOver == null)
                     name = names.getAsString(k++);
@@ -408,15 +419,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                     name = leftOver;
                     leftOver = null;
                 }
-                if(k < names.size()){
+                if (k < names.size()) {
                     items.put(name.toUnicodeString(), names.get(k));
-                }
-                else {
+                } else {
                     return name;
                 }
             }
-        } else if ((names = dictionary.getAsArray(PdfName.Kids)) != null){
-            for (int k = 0; k < names.size(); k++){
+        } else if ((names = dictionary.getAsArray(PdfName.Kids)) != null) {
+            for (int k = 0; k < names.size(); k++) {
                 PdfDictionary kid = names.getAsDictionary(k);
                 leftOver = iterateItems(kid, items, leftOver);
             }
@@ -425,12 +435,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private PdfArray getNameArray(PdfObject obj) {
-        if(obj == null)
+        if (obj == null)
             return null;
         if (obj.isArray())
-            return (PdfArray)obj;
+            return (PdfArray) obj;
         else if (obj.isDictionary()) {
-            PdfArray arr = ((PdfDictionary)obj).getAsArray(PdfName.D);
+            PdfArray arr = ((PdfDictionary) obj).getAsArray(PdfName.D);
             return arr;
         }
         return null;

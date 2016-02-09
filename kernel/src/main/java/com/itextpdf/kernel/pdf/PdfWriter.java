@@ -21,7 +21,7 @@ public class PdfWriter extends PdfOutputStream {
      * Indicates if the writer copy objects in a smart mode. If so PdfDictionary and PdfStream will be hashed
      * and reused if there's an object with the same content later.
      */
-    private boolean smartCopyMode;
+    private boolean smartMode;
 
     /**
      * Indicates if to use full compression (using object streams).
@@ -90,12 +90,16 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     /**
-     * Sets the smart copy mode.
-     * @param smartCopyMode
-     * @return
+     * Sets the smart mode.
+     * <p/>
+     * In smart mode when resources (such as fonts, images,...) are
+     * encountered, a reference to these resources is saved
+     * in a cache, so that they can be reused.
+     * This requires more memory, but reduces the file size
+     * of the resulting PDF document.
      */
-    public PdfWriter setSmartCopyMode(boolean smartCopyMode) {
-        this.smartCopyMode = smartCopyMode;
+    public PdfWriter setSmartMode(boolean smartMode) {
+        this.smartMode = smartMode;
         return this;
     }
 
@@ -211,7 +215,7 @@ public class PdfWriter extends PdfOutputStream {
                 return copiedIndirectReference.getRefersTo();
         }
 
-        if (smartCopyMode) {
+        if (smartMode) {
             PdfObject copiedObject = smartCopyObject(object);
             if (copiedObject != null) {
                 return copiedObjects.get(getCopyObjectKey(copiedObject)).getRefersTo();
