@@ -332,7 +332,7 @@ public class PdfA2Checker extends PdfA1Checker{
             if (needAppearances != null && needAppearances.getValue()) {
                 throw new PdfAConformanceException(PdfAConformanceException.NeedAppearancesFlagOfTheInteractiveFormDictionaryShallEitherNotBePresentedOrShallBeFalse);
             }
-            if (checkStructure(conformanceLevel) && form.containsKey(PdfName.XFA)) {
+            if (form.containsKey(PdfName.XFA)) {
                 throw new PdfAConformanceException(PdfAConformanceException.TheInteractiveFormDictionaryShallNotContainTheXfaKey);
             }
         }

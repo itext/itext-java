@@ -6,7 +6,7 @@ import com.itextpdf.kernel.PdfException;
  */
 public class PdfAConformanceException extends PdfException {
 
-    public static final String _1ActionsIsNotAllowed = "1.actions.is.not.allowed";
+    public static final String _1ActionsAreNotAllowed = "1.actions.are.not.allowed";
     public static final String AllFontsMustBeEmbeddedThisOneIsnt1 = "all.the.fonts.must.be.embedded.this.one.isn.t.1";
     public static final String AFormXobjectDictionaryShallNotContainOpiKey = "a.form.xobject.dictionary.shall.not.contain.opi.key";
     public static final String AFormXobjectDictionaryShallNotContainPSKey = "a.form.xobject.dictionary.shall.not.contain.PS.key";
@@ -66,6 +66,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String IfTheDocumentDoesNotContainAPdfAOutputIntentTransparencyIsForbidden = "if.the.document.does.not.contain.a.pdfa.outputintent.transparency.is.forbidden";
     public static final String Jpeg2000EnumeratedColourSpace19CIEJabShallNotBeUsed = "jpeg2000.enumerated.colour.space.19.(CIEJab).shall.not.be.used";
     public static final String LZWDecodeFilterIsNotPermitted = "lzwdecode.filter.is.not.permitted";
+    public static final String MimeTypeShallBeSpecifiedUsingTheSubtypeKeyOfTheFileSpecificationStreamDictionary = "mime.type.shall.be.specified.using.the.subtype.key.of.the.file.specification.stream.dictionary";
     public static final String NamedActionType1IsNotAllowed = "named.action.type.1.not.allowed";
     public static final String NameDictionaryShallNotContainTheEmbeddedFilesKey = "name.dictionary.shall.not.contain.the.EmbeddedFiles.key";
     public static final String NeedAppearancesFlagOfTheInteractiveFormDictionaryShallEitherNotBePresentedOrShallBeFalse = "needappearances.flag.of.the.interactive.form.dictionary.shall.either.not.be.presented.or.shall.be.false";

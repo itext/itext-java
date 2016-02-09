@@ -16,22 +16,43 @@ import com.itextpdf.kernel.pdf.annot.PdfMarkupAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfA1AnnotationCheckTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    static final public String cmpFolder = sourceFolder + "cmp/PdfA1AnnotationCheckTest/";
+    static final public String destinationFolder = "./target/test/PdfA1AnnotationCheckTest/";
 
-    @Test(expected = PdfAConformanceException.class)
+    @BeforeClass
+    static public void beforeClass() {
+        new File(destinationFolder).mkdirs();
+    }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
     public void annotationCheckTest01() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.AnnotationType1IsNotPermitted);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -44,8 +65,11 @@ public class PdfA1AnnotationCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void annotationCheckTest02() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.AnAnnotationDictionaryShallNotContainTheCaKeyWithAValueOtherThan1);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -61,8 +85,11 @@ public class PdfA1AnnotationCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void annotationCheckTest03() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -77,8 +104,11 @@ public class PdfA1AnnotationCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void annotationCheckTest04() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -94,8 +124,11 @@ public class PdfA1AnnotationCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void annotationCheckTest05() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -114,8 +147,11 @@ public class PdfA1AnnotationCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void annotationCheckTest06() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -133,8 +169,10 @@ public class PdfA1AnnotationCheckTest {
     }
 
     @Test
-    public void annotationCheckTest07() throws FileNotFoundException, XMPException {
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+    public void annotationCheckTest07() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA1b_annotationCheckTest07.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA1b_annotationCheckTest07.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
@@ -146,13 +184,19 @@ public class PdfA1AnnotationCheckTest {
 
         page.addAnnotation(annot);
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void annotationCheckTest08() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.AnnotationOfType1ShouldHaveContentsKey);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.setTagged();
+        doc.getCatalog().setLang(new PdfString("en-US"));
         doc.setXmpMetadata();
         PdfPage page = doc.addNewPage();
 
@@ -165,8 +209,11 @@ public class PdfA1AnnotationCheckTest {
     }
 
     @Test
-    public void annotationCheckTest09() throws FileNotFoundException, XMPException {
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+    public void annotationCheckTest09() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA1a_annotationCheckTest09.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA1a_annotationCheckTest09.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
@@ -181,5 +228,13 @@ public class PdfA1AnnotationCheckTest {
 
         page.addAnnotation(annot);
         doc.close();
+        compareResult(outPdf, cmpPdf);
+    }
+
+    private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
+        String result = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (result != null) {
+            fail(result);
+        }
     }
 }

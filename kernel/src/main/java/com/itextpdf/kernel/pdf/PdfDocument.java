@@ -1051,11 +1051,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) {
     }
 
-    public void addFileAttachment(String description, byte[] fileStore, String fileDisplay, String mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
+    public void addFileAttachment(String description, byte[] fileStore, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
         addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, fileStore, description, fileDisplay, mimeType, fileParameter, afRelationshipValue, true));
     }
 
-    public void addFileAttachment(String description, String file, String fileDisplay, String mimeType, PdfName afRelationshipValue) throws FileNotFoundException {
+    public void addFileAttachment(String description, String file, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue) throws FileNotFoundException {
         addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, file, description, fileDisplay, mimeType, afRelationshipValue, true));
     }
 
@@ -1069,6 +1069,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             catalog.put(PdfName.Names, names);
         }
         names.put(PdfName.EmbeddedFiles, fileAttachmentTree.getRoot().getPdfObject());
+
+        PdfArray afArray = catalog.getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray().makeIndirect(this);
+            catalog.put(PdfName.AF, afArray);
+        }
+        afArray.add(fs.getPdfObject());
     }
 
     protected void storeLinkAnnotations(PdfPage page, PdfLinkAnnotation annotation) {

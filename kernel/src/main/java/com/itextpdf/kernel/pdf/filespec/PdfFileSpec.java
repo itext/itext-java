@@ -26,7 +26,7 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         return fileSpec;
     }
 
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, String mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue, boolean isUnicodeFileName) {
+    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfStream stream = new PdfStream(fileStore).makeIndirect(doc);
         PdfDictionary params = new PdfDictionary();
 
@@ -43,17 +43,17 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, String mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) throws FileNotFoundException {
+    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) throws FileNotFoundException {
         PdfStream stream = new PdfStream(doc, new FileInputStream(filePath));
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, InputStream is, String description, String fileDisplay, String mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
+    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, InputStream is, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfStream stream = new PdfStream(doc, is);
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
-    private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String description, String fileDisplay, String mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
+    private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfDictionary dict = new PdfDictionary();
         stream.put(PdfName.Type, PdfName.EmbeddedFile);
         if (afRelationshipValue != null) {
@@ -63,7 +63,9 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         }
 
         if (mimeType != null) {
-            stream.put(PdfName.Subtype, new PdfName(mimeType));
+            stream.put(PdfName.Subtype, mimeType);
+        } else {
+            stream.put(PdfName.Subtype, PdfName.ApplicationOctetStream);
         }
 
         if (description != null) {
@@ -73,10 +75,10 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         dict.put(PdfName.F, new PdfString(fileDisplay));
         dict.put(PdfName.UF, new PdfString(fileDisplay, isUnicodeFileName ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
 
-        PdfDictionary EF = new PdfDictionary();
-        EF.put(PdfName.F, stream);
-        EF.put(PdfName.UF, stream);
-        dict.put(PdfName.EF, EF);
+        PdfDictionary ef = new PdfDictionary();
+        ef.put(PdfName.F, stream);
+        ef.put(PdfName.UF, stream);
+        dict.put(PdfName.EF, ef);
 
         return new PdfFileSpec<>(dict).makeIndirect(doc);
     }

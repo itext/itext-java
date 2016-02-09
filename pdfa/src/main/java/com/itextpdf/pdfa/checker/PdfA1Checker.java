@@ -398,7 +398,7 @@ public class PdfA1Checker extends PdfAChecker {
 
         PdfName s = action.getAsName(PdfName.S);
         if (getForbiddenActions().contains(s)) {
-            throw new PdfAConformanceException(PdfAConformanceException._1ActionsIsNotAllowed).setMessageParams(s.getValue());
+            throw new PdfAConformanceException(PdfAConformanceException._1ActionsAreNotAllowed).setMessageParams(s.getValue());
         }
         if (s.equals(PdfName.Named)) {
             PdfName n = action.getAsName(PdfName.N);

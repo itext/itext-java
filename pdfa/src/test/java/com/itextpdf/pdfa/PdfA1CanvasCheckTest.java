@@ -5,22 +5,34 @@ import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
+import static org.junit.Assert.fail;
+
 @Category(IntegrationTest.class)
 public class PdfA1CanvasCheckTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    static final public String cmpFolder = sourceFolder + "cmp/PdfA1CanvasCheckTest/";
+    static final public String destinationFolder = "./target/test/PdfA1CanvasCheckTest/";
+
+    @BeforeClass
+    static public void beforeClass() {
+        new File(destinationFolder).mkdirs();
+    }
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -51,9 +63,11 @@ public class PdfA1CanvasCheckTest {
     }
 
     @Test
-    public void canvasCheckTest2() throws IOException, XMPException {
+    public void canvasCheckTest2() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA1b_canvasCheckTest2.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA1b_canvasCheckTest2.pdf";
 
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
@@ -71,6 +85,11 @@ public class PdfA1CanvasCheckTest {
         }
 
         pdfDocument.close();
+
+        String result = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (result != null) {
+            fail(result);
+        }
     }
 
     @Test
