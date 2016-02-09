@@ -242,7 +242,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         pages.add(52);
         pages.add(102);
         PdfOutline outlines = pdfDoc.getOutlines(false);
-        pdfDoc.copyPages(pages, pdfDoc1);
+        pdfDoc.copyPagesTo(pages, pdfDoc1);
         pdfDoc.close();
 
         Assert.assertEquals(6, pdfDoc1.getNumberOfPages());

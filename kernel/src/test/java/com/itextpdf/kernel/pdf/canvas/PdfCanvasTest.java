@@ -786,7 +786,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         FileOutputStream fos2 = new FileOutputStream(file2);
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
-        PdfPage page2 = page1.copy(pdfDoc2);
+        PdfPage page2 = page1.copyTo(pdfDoc2);
         pdfDoc2.addPage(page2);
 
         page2.flush();
@@ -836,7 +836,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfWriter writer2 = new PdfWriter(new FileOutputStream(file2));
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         for (int i = 9; i >= 0; i--) {
-            PdfPage page2 = pdfDoc1.getPage(i + 1).copy(pdfDoc2);
+            PdfPage page2 = pdfDoc1.getPage(i + 1).copyTo(pdfDoc2);
             pdfDoc2.addPage(page2);
         }
 
@@ -892,7 +892,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfWriter writer2 = new PdfWriter(new FileOutputStream(file2));
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         for (int i = 0; i < 10; i++) {
-            PdfPage page2 = page1.copy(pdfDoc2);
+            PdfPage page2 = page1.copyTo(pdfDoc2);
             pdfDoc2.addPage(page2);
             if (i % 2 == 0)
                 page2.flush();
@@ -945,7 +945,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             FileOutputStream fos2 = new FileOutputStream(destinationFolder + String.format("copyPages4_%d.pdf", i + 2));
             PdfWriter writer2 = new PdfWriter(fos2);
             PdfDocument pdfDoc2 = new PdfDocument(writer2);
-            PdfPage page2 = pdfDoc1.getPage(i + 1).copy(pdfDoc2);
+            PdfPage page2 = pdfDoc1.getPage(i + 1).copyTo(pdfDoc2);
             pdfDoc2.addPage(page2);
             pdfDoc2.close();
         }
@@ -1003,7 +1003,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         for (int i = 0; i < 3; i++) {
-            pdfDoc2.addPage(docs.get(i).getPage(1).copy(pdfDoc2));
+            pdfDoc2.addPage(docs.get(i).getPage(1).copyTo(pdfDoc2));
         }
 
         pdfDoc2.close();
@@ -1054,7 +1054,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         FileOutputStream fos2 = new FileOutputStream(file2);
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
-        pdfDoc2.addPage(pdfDoc1.getPage(1).copy(pdfDoc2));
+        pdfDoc2.addPage(pdfDoc1.getPage(1).copyTo(pdfDoc2));
 
         pdfDoc2.close();
         pdfDoc2 = new PdfDocument(new PdfReader(new FileInputStream(file2)));
@@ -1062,7 +1062,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         FileOutputStream fos3 = new FileOutputStream(file3);
         PdfWriter writer3 = new PdfWriter(fos3);
         PdfDocument pdfDoc3 = new PdfDocument(writer3);
-        pdfDoc3.addPage(pdfDoc2.getPage(1).copy(pdfDoc3));
+        pdfDoc3.addPage(pdfDoc2.getPage(1).copyTo(pdfDoc3));
 
         pdfDoc3.close();
         pdfDoc3 = new PdfDocument(new PdfReader(new FileInputStream(file3)));
@@ -1071,7 +1071,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)),
                 new PdfWriter(new FileOutputStream(file1_upd)));
 
-        pdfDoc1.addPage(pdfDoc3.getPage(1).copy(pdfDoc1));
+        pdfDoc1.addPage(pdfDoc3.getPage(1).copyTo(pdfDoc1));
 
         pdfDoc1.close();
         pdfDoc2.close();
@@ -1289,7 +1289,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest04.pdf");
         writer = new PdfWriter(fos);
         PdfDocument newDocument = new PdfDocument(writer);
-        newDocument.addPage(document.getPage(1).copy(newDocument));
+        newDocument.addPage(document.getPage(1).copyTo(newDocument));
         newDocument.close();
         document.close();
 

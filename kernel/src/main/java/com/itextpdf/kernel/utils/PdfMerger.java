@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: make PdfMerger use PdfDocument#copyPages to avoid code duplication as copyLinkAnnotations method
+ * TODO: make PdfMerger use PdfDocument#copyPagesTo to avoid code duplication as copyLinkAnnotations method
  */
 public class PdfMerger {
 
@@ -85,7 +85,7 @@ public class PdfMerger {
      */
     private void fillListOfPagesToCopy(PdfDocument from, int pageNum, Map<PdfPage, PdfPage> page2page) {
         PdfPage originalPage = from.getPage(pageNum);
-        PdfPage newPage = originalPage.copy(pdfDocument);
+        PdfPage newPage = originalPage.copyTo(pdfDocument);
         page2page.put(originalPage, newPage);
         pagesToCopy.add(newPage);
     }
@@ -99,7 +99,7 @@ public class PdfMerger {
     private void createStructTreeRoot(PdfDocument from, Map<PdfPage, PdfPage> page2page) {
         PdfStructTreeRoot structTreeRoot = from.getStructTreeRoot();
         if (structTreeRoot != null)
-            structTreeRoot.copyToDocument(pdfDocument, page2page);
+            structTreeRoot.copyTo(pdfDocument, page2page);
     }
 
     private void copyLinkAnnotations(PdfDocument fromDocument, Map<PdfPage, PdfPage> page2page) {
@@ -129,7 +129,7 @@ public class PdfMerger {
                     }
 
                     if (d != null ||  a != null && !hasGoToAction) {
-                        PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(pdfDocument, excludedKeys, false));
+                        PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(pdfDocument, excludedKeys, false));
                         newAnnot.setDestination(d);
                         if (hasGoToAction) {
                             newAnnot.remove(PdfName.A);

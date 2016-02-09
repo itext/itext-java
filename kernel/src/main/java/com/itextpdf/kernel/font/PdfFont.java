@@ -291,9 +291,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     @Override
-    public PdfFont copy(PdfDocument document) {
+    public PdfFont copyTo(PdfDocument document) {
         throw new RuntimeException("Not implemented");
-        //return new PdfFont(document, (PdfDictionary) getPdfObject().copyToDocument(document));
+        //return new PdfFont(document, (PdfDictionary) getPdfObject().copyTo(document));
     }
 
     public List<String> splitString(String text, int fontSize, float maxWidth) {

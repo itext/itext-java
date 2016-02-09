@@ -54,8 +54,8 @@ public class PdfFormXObject extends PdfXObject {
     }
 
     @Override
-    public PdfFormXObject copy(PdfDocument document) {
-        return new PdfFormXObject((PdfStream)getPdfObject().copyToDocument(document));
+    public PdfFormXObject copyTo(PdfDocument document) {
+        return new PdfFormXObject(getPdfObject().copyTo(document));
     }
 
     @Override

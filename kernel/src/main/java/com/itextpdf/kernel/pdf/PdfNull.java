@@ -59,8 +59,8 @@ public class PdfNull extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfNull copyToDocument(PdfDocument document) {
-        return super.copyToDocument(document, true);
+    public PdfNull copyTo(PdfDocument document) {
+        return super.copyTo(document, true);
     }
 
     /**
@@ -75,8 +75,8 @@ public class PdfNull extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfNull copyToDocument(PdfDocument document, boolean allowDuplicating) {
-        return super.copyToDocument(document, allowDuplicating);
+    public PdfNull copyTo(PdfDocument document, boolean allowDuplicating) {
+        return super.copyTo(document, allowDuplicating);
     }
 
     @Override

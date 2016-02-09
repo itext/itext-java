@@ -73,7 +73,7 @@ public class PdfSplitter {
 
             PageRange currentPageRange = new PageRange().addPageSequence(currentPageNumber, nextPageNumber - 1);
             PdfDocument currentDocument = createPdfDocument(currentPageRange);
-            pdfDocument.copyPages(currentPageNumber, nextPageNumber - 1, currentDocument);
+            pdfDocument.copyPagesTo(currentPageNumber, nextPageNumber - 1, currentDocument);
             documentReady.documentReady(currentDocument, currentPageRange);
 
             currentPageNumber = nextPageNumber;
@@ -115,7 +115,7 @@ public class PdfSplitter {
 
             PageRange currentPageRange = new PageRange().addPageSequence(startPage, endPage);
             PdfDocument currentDocument = createPdfDocument(currentPageRange);
-            pdfDocument.copyPages(startPage, endPage, currentDocument);
+            pdfDocument.copyPagesTo(startPage, endPage, currentDocument);
             documentReady.documentReady(currentDocument, currentPageRange);
         }
     }
@@ -154,7 +154,7 @@ public class PdfSplitter {
         for (PageRange currentPageRange : pageRanges) {
             PdfDocument currentPdfDocument = createPdfDocument(currentPageRange);
             splitDocuments.add(currentPdfDocument);
-            pdfDocument.copyPages(currentPageRange.getAllPages(), currentPdfDocument);
+            pdfDocument.copyPagesTo(currentPageRange.getAllPages(), currentPdfDocument);
         }
 
         return splitDocuments;
@@ -329,7 +329,7 @@ public class PdfSplitter {
         if (startPage == -1 || endPage == -1) {
             return null;
         }
-        pdfDocument.copyPages(startPage, endPage, toDocument);
+        pdfDocument.copyPagesTo(startPage, endPage, toDocument);
 
         return toDocument;
     }

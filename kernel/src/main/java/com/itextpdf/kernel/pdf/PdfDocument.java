@@ -811,8 +811,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
-        return copyPages(pageFrom, pageTo, toDocument, insertBeforePage, null);
+    public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
+        return copyPagesTo(pageFrom, pageTo, toDocument, insertBeforePage, null);
     }
 
     /**
@@ -828,12 +828,12 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
+    public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         Set<Integer> pages = new TreeSet<>();
         for (int i = pageFrom; i <= pageTo; i++) {
             pages.add(i);
         }
-        return copyPages(pages, toDocument, insertBeforePage, copier);
+        return copyPagesTo(pages, toDocument, insertBeforePage, copier);
     }
 
     /**
@@ -847,8 +847,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument) {
-        return copyPages(pageFrom, pageTo, toDocument, null);
+    public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument) {
+        return copyPagesTo(pageFrom, pageTo, toDocument, null);
     }
 
     /**
@@ -859,12 +859,12 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @param pageFrom
      * @param pageTo
      * @param toDocument
-     * @param copier     a copier which bears a special copy logic. May be NULL
+     * @param copier a copier which bears a special copy logic. May be NULL
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumberOfPages() + 1, copier);
+    public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+        return copyPagesTo(pageFrom, pageTo, toDocument, toDocument.getNumberOfPages() + 1, copier);
     }
 
     /**
@@ -878,8 +878,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) {
-        return copyPages(pagesToCopy, toDocument, insertBeforePage, null);
+    public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) {
+        return copyPagesTo(pagesToCopy, toDocument, insertBeforePage, null);
     }
 
     /**
@@ -894,7 +894,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
+    public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         checkClosingStatus();
         List<PdfPage> copiedPages = new ArrayList<>();
         Map<PdfPage, PdfPage> page2page = new LinkedHashMap<>();
@@ -902,7 +902,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         Set<PdfOutline> outlinesToCopy = new HashSet<>();
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage(pageNum);
-            PdfPage newPage = page.copy(toDocument, copier);
+            PdfPage newPage = page.copyTo(toDocument, copier);
             copiedPages.add(newPage);
             page2page.put(page, newPage);
             if (insertBeforePage < toDocument.getNumberOfPages() + 1) {
@@ -925,16 +925,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
         if (toDocument.isTagged()) {
             if (insertBeforePage > toDocument.getNumberOfPages())
-                getStructTreeRoot().copyToDocument(toDocument, page2page);
+                getStructTreeRoot().copyTo(toDocument, page2page);
             else
-                getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
+                getStructTreeRoot().copyTo(toDocument, insertBeforePage, page2page);
         }
-
-
         if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2Outlines);
         }
-
         return copiedPages;
     }
 
@@ -948,8 +945,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument) {
-        return copyPages(pagesToCopy, toDocument, null);
+    public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument) {
+        return copyPagesTo(pagesToCopy, toDocument, null);
     }
 
     /**
@@ -963,9 +960,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+    public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
 
-        return copyPages(pagesToCopy, toDocument, toDocument.getNumberOfPages() + 1, copier);
+        return copyPagesTo(pagesToCopy, toDocument, toDocument.getNumberOfPages() + 1, copier);
     }
 
     public boolean isCloseReader() {
@@ -1290,7 +1287,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
 
                 if (d != null ||  a != null && !hasGoToAction) {
-                    PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, excludedKeys, false));
+                    PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, excludedKeys, false));
                     newAnnot.setDestination(d);
                     if (hasGoToAction) {
                         newAnnot.remove(PdfName.A);

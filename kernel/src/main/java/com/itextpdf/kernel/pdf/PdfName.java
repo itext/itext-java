@@ -847,8 +847,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfName copyToDocument(PdfDocument document) {
-        return super.copyToDocument(document, true);
+    public PdfName copyTo(PdfDocument document) {
+        return super.copyTo(document, true);
     }
 
     /**
@@ -863,8 +863,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfName copyToDocument(PdfDocument document, boolean allowDuplicating) {
-        return super.copyToDocument(document, allowDuplicating);
+    public PdfName copyTo(PdfDocument document, boolean allowDuplicating) {
+        return super.copyTo(document, allowDuplicating);
     }
 
     @Override

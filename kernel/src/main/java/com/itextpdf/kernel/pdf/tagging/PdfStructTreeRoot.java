@@ -235,8 +235,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param page2page  association between original page and copied page.
      * @throws PdfException
      */
-    public void copyToDocument(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
-        copyToDocument(toDocument, page2page, false);
+    public void copyTo(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
+        copyTo(toDocument, page2page, false);
     }
 
     /**
@@ -247,7 +247,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param copyToCurrent indicates if <code>page2page</code> keys and values represent pages from single document
      * @throws PdfException
      */
-    public void copyToDocument(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page, boolean copyToCurrent) {
+    public void copyTo(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page, boolean copyToCurrent) {
         if (!toDocument.isTagged())
             return;
         PdfDocument fromDocument = copyToCurrent ? toDocument : getDocument();
@@ -287,7 +287,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param page2page        association between original page and copied page.
      * @throws PdfException
      */
-    public void copyToDocument(PdfDocument toDocument, int insertBeforePage, Map<PdfPage, PdfPage> page2page) {
+    public void copyTo(PdfDocument toDocument, int insertBeforePage, Map<PdfPage, PdfPage> page2page) {
         if (!toDocument.isTagged())
             return;
 
@@ -302,16 +302,16 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             PdfPage page = toDocument.getPage(i);
             page2pageSource.put(page, page);
         }
-        copyToDocument(toDocument, page2pageSource, true);
+        copyTo(toDocument, page2pageSource, true);
 
-        copyToDocument(toDocument, page2page);
+        copyTo(toDocument, page2page);
 
         page2pageSource = new LinkedHashMap<>();
         for (int i = insertBeforePage; i <= toDocument.getNumberOfPages(); i++) {
             PdfPage page = toDocument.getPage(i);
             page2pageSource.put(page, page);
         }
-        copyToDocument(toDocument, page2pageSource, true);
+        copyTo(toDocument, page2pageSource, true);
         for (PdfObject k : kids) {
             toDocument.getStructTreeRoot().getKidsObject().remove(k);
         }
@@ -593,15 +593,15 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             }
         }
         else
-            copied = source.copyToDocument(toDocument, ignoreKeysForCopy, true);
+            copied = source.copyTo(toDocument, ignoreKeysForCopy, true);
 
         if (source.containsKey(PdfName.Obj)) {
             PdfDictionary obj = source.getAsDictionary(PdfName.Obj);
             if (!copyToCurrent && obj != null) {
                 // Link annotations could be not added to the toDocument, so we need to identify this case.
-                // When obj.copyToDocument is called, and annotation was already copied, we would get this already created copy.
+                // When obj.copyTo is called, and annotation was already copied, we would get this already created copy.
                 // If it was already copied and added, /P key would be set. Otherwise /P won't be set.
-                obj = obj.copyToDocument(toDocument, Arrays.asList(PdfName.P), false);
+                obj = obj.copyTo(toDocument, Arrays.asList(PdfName.P), false);
             }
             copied.put(PdfName.Obj, obj);
         }

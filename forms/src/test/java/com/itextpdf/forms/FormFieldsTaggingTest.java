@@ -66,7 +66,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         acroForm.addField(PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "TestCheck", "1"));
 
         PdfDocument docToCopyFrom = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms07.pdf"));
-        docToCopyFrom.copyPages(1, docToCopyFrom.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+        docToCopyFrom.copyPagesTo(1, docToCopyFrom.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
 
         pdfDoc.close();
 

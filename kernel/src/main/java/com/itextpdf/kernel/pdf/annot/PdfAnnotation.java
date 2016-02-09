@@ -16,7 +16,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.layer.PdfOCG;
 
-abstract public class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
+public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Annotation flags.

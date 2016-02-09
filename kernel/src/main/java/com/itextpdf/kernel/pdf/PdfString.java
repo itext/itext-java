@@ -183,8 +183,8 @@ public class PdfString extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfString copyToDocument(PdfDocument document) {
-        return super.copyToDocument(document, true);
+    public PdfString copyTo(PdfDocument document) {
+        return super.copyTo(document, true);
     }
 
     /**
@@ -199,8 +199,8 @@ public class PdfString extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfString copyToDocument(PdfDocument document, boolean allowDuplicating) {
-        return super.copyToDocument(document, allowDuplicating);
+    public PdfString copyTo(PdfDocument document, boolean allowDuplicating) {
+        return super.copyTo(document, allowDuplicating);
     }
 
     @Override

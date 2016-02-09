@@ -272,13 +272,13 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
 
-        source.copyPages(new TreeSet<Integer>() {{
+        source.copyPagesTo(new TreeSet<Integer>() {{
             add(3);
             add(4);
             add(10);
             add(11);
         }}, destination);
-        source.copyPages(50, 52, destination);
+        source.copyPagesTo(50, 52, destination);
 
 
         destination.close();
@@ -300,8 +300,8 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
 
-        source.copyPages(6, source.getNumberOfPages(), destination);
-        source.copyPages(1, 5, destination);
+        source.copyPagesTo(6, source.getNumberOfPages(), destination);
+        source.copyPagesTo(1, 5, destination);
 
         destination.close();
         source.close();
@@ -322,8 +322,8 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfDocument destination = new PdfDocument(writer);
 
 
-        source.copyPages(6, source.getNumberOfPages(), destination);
-        source.copyPages(1, 5, destination);
+        source.copyPagesTo(6, source.getNumberOfPages(), destination);
+        source.copyPagesTo(1, 5, destination);
 
         destination.close();
         source.close();
@@ -348,7 +348,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         destination.setTagged();
 
         for (int i = 1; i <= source.getNumberOfPages(); i++)
-            source.copyPages(i, i, destination);
+            source.copyPagesTo(i, i, destination);
 
         destination.close();
         source.close();
@@ -364,11 +364,11 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
         PdfDocument document1 = new PdfDocument(reader1);
-        document1.copyPages(1, 1, document, 2);
+        document1.copyPagesTo(1, 1, document, 2);
 
         PdfReader reader2 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox-table.pdf"));
         PdfDocument document2 = new PdfDocument(reader2);
-        document2.copyPages(1, 3, document, 4);
+        document2.copyPagesTo(1, 3, document, 4);
 
 
         document.close();
@@ -391,7 +391,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
 
-        source.copyPages(1, source.getNumberOfPages(), destination);
+        source.copyPagesTo(1, source.getNumberOfPages(), destination);
 
         destination.close();
         source.close();

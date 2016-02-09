@@ -230,8 +230,8 @@ abstract public class PdfObject {
      * @param document document to copy object to.
      * @return copied object.
      */
-    public <T extends PdfObject> T copyToDocument(PdfDocument document) {
-        return copyToDocument(document, true);
+    public <T extends PdfObject> T copyTo(PdfDocument document) {
+        return copyTo(document, true);
     }
 
     /**
@@ -244,7 +244,7 @@ abstract public class PdfObject {
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
      */
-    public  <T extends PdfObject> T copyToDocument(PdfDocument document, boolean allowDuplicating) {
+    public  <T extends PdfObject> T copyTo(PdfDocument document, boolean allowDuplicating) {
         if (document == null)
             throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
 
@@ -273,7 +273,7 @@ abstract public class PdfObject {
      */
     protected <T extends PdfObject> T processCopying(PdfDocument document, boolean allowDuplicating) {
         if (document != null) {
-            //copyToDocument case
+            //copyTo case
             PdfWriter writer = document.getWriter();
             if (writer == null)
                 throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);

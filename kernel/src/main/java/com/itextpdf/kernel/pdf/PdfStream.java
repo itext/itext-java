@@ -298,8 +298,8 @@ public class PdfStream extends PdfDictionary {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfStream copyToDocument(PdfDocument document) {
-        return (PdfStream) super.copyToDocument(document, true);
+    public PdfStream copyTo(PdfDocument document) {
+        return (PdfStream) super.copyTo(document, true);
     }
 
     /**
@@ -314,8 +314,8 @@ public class PdfStream extends PdfDictionary {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfStream copyToDocument(PdfDocument document, boolean allowDuplicating) {
-        return (PdfStream) super.copyToDocument(document, allowDuplicating);
+    public PdfStream copyTo(PdfDocument document, boolean allowDuplicating) {
+        return (PdfStream) super.copyTo(document, allowDuplicating);
     }
 
     @Override

@@ -208,8 +208,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return copied page.
      */
     @Override
-    public PdfPage copy(PdfDocument toDocument) {
-        return copy(toDocument, null);
+    public PdfPage copyTo(PdfDocument toDocument) {
+        return copyTo(toDocument, null);
     }
 
     /**
@@ -219,14 +219,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param copier a copier which bears a specific copy logic. May be NULL
      * @return copied page.
      */
-    public PdfPage copy(PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, excludedKeys, true);
+    public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
+        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
         PdfPage page = new PdfPage(dictionary, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
             if (annot.getSubtype().equals(PdfName.Link)) {
                 getDocument().storeLinkAnnotations(this, (PdfLinkAnnotation) annot);
             } else {
-                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, false)), false);
+                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, false)), false);
             }
         }
         if (toDocument.isTagged()) {
@@ -259,7 +259,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 PdfName.CropBox,
                 PdfName.Contents));
         excludedKeys.addAll(this.excludedKeys);
-        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, excludedKeys, true);
+        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
 
         xObject.getPdfObject().getOutputStream().write(getContentBytes());
         xObject.getPdfObject().mergeDifferent(dictionary);

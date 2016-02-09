@@ -45,6 +45,29 @@ public class PdfPagesTest extends ExtendedITextTest{
         verifyPagesOrder(destinationFolder + filename, pageCount);
     }
 
+//    @Test
+//    public void simpleClonePagesTest() throws IOException {
+//        String filename = "simpleClonePagesTest.pdf";
+//        int pageCount = 111;
+//
+//        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
+//        PdfWriter writer = new PdfWriter(fos);
+//        PdfDocument pdfDoc = new PdfDocument(writer);
+//
+//        for (int i = 0; i < pageCount; i++) {
+//            PdfPage page = pdfDoc.addNewPage();
+//            page.getPdfObject().put(PageNum, new PdfNumber(i + 1));
+//        }
+//        for (int i = 0; i < pageCount; i++) {
+//            PdfPage page = pdfDoc.addPage((PdfPage)pdfDoc.getPage(i + 1).clone());
+//            page.getPdfObject().put(PageNum, new PdfNumber(pageCount + i + 1));
+//            pdfDoc.getPage(i + 1).flush();
+//            page.flush();
+//        }
+//        pdfDoc.close();
+//        verifyPagesOrder(destinationFolder + filename, pageCount);
+//    }
+
     @Test
     public void reversePagesTest() throws IOException {
         String filename = "reversePagesTest.pdf";

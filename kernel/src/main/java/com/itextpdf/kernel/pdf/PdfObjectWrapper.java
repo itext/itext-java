@@ -1,6 +1,6 @@
 package com.itextpdf.kernel.pdf;
 
-public class PdfObjectWrapper<T extends PdfObject> {
+public abstract class PdfObjectWrapper<T extends PdfObject> {
 
     private T pdfObject = null;
 
@@ -52,13 +52,14 @@ public class PdfObjectWrapper<T extends PdfObject> {
         return pdfObject.getDocument();
     }
 
-    public <T1 extends PdfObjectWrapper> T1 copy(PdfDocument document) {
+    public <T1 extends PdfObjectWrapper> T1 copyTo(PdfDocument document) {
         throw new RuntimeException("Not implemented");
     }
 
-    public <T1 extends PdfObjectWrapper> T1 copy() {
-        return copy(getDocument());
-    }
+//    @Override
+//    public PdfObjectWrapper clone() {
+//        return copyTo(getDocument());
+//    }
 
     public <T1 extends PdfObjectWrapper<T>> T1 put(PdfName key, PdfObject value) {
         if (value != null) {

@@ -1337,7 +1337,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         pdfDoc2.addNewPage();
-        pdfDoc2.getInfo().getPdfObject().put(new PdfName("a"), pdfDoc1.getCatalog().getPdfObject().get(new PdfName("a")).copyToDocument(pdfDoc2));
+        pdfDoc2.getInfo().getPdfObject().put(new PdfName("a"), pdfDoc1.getCatalog().getPdfObject().get(new PdfName("a")).copyTo(pdfDoc2));
         pdfDoc2.close();
         pdfDoc1.close();
 
@@ -1374,7 +1374,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         for (int i = 0; i < 10; i++) {
             if (i % 2 == 0) {
-                pdfDoc2.addPage(pdfDoc1.getPage(i + 1).copy(pdfDoc2));
+                pdfDoc2.addPage(pdfDoc1.getPage(i + 1).copyTo(pdfDoc2));
             }
         }
         pdfDoc2.close();
@@ -1517,7 +1517,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         PdfDocument sourceDoc = new PdfDocument(reader);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        sourceDoc.copyPages(1, sourceDoc.getNumberOfPages(), pdfDoc);
+        sourceDoc.copyPagesTo(1, sourceDoc.getNumberOfPages(), pdfDoc);
 
         pdfDoc.close();
 
