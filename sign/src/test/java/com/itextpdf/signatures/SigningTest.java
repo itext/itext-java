@@ -9,6 +9,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -132,7 +133,7 @@ public class SigningTest {
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
-        PdfSigner signer = new PdfSigner(reader, new PdfWriter(dest), false);
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), false);
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance()
