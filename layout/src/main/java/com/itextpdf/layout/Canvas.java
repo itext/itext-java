@@ -51,14 +51,26 @@ public class Canvas extends RootElement<Canvas> {
         this.rootArea = formXObject.getBBox().toRectangle();
     }
 
+    /**
+     * Gets the {@link PdfDocument} for this canvas.
+     * @return the document that the resulting content stream will be written to
+     */
     public PdfDocument getPdfDocument() {
         return pdfDocument;
     }
 
+    /**
+     * Gets the root area rectangle.
+     * @return the maximum area that the Canvas may write upon
+     */
     public Rectangle getRootArea() {
         return rootArea;
     }
 
+    /**
+     * Gets the {@link PdfCanvas}.
+     * @return the low-level content stream writer
+     */
     public PdfCanvas getPdfCanvas() {
         return pdfCanvas;
     }
