@@ -45,7 +45,7 @@ public class PdfAFlushingTest extends ITextTest{
     @Test
     public void flushingTest01() throws IOException, XMPException, InterruptedException {
         String outPdf = destinationFolder + "pdfA1b_flushingTest01.pdf";
-        String cmpPdf = sourceFolder + "cmp/PdfAflushingTest/cmp_pdfA1b_flushingTest01.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA1b_flushingTest01.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -70,7 +70,7 @@ public class PdfAFlushingTest extends ITextTest{
     @Test
     public void flushingTest02() throws IOException, XMPException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_flushingTest02.pdf";
-        String cmpPdf = sourceFolder + "cmp/PdfAflushingTest/cmp_pdfA2b_flushingTest02.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA2b_flushingTest02.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -96,7 +96,7 @@ public class PdfAFlushingTest extends ITextTest{
     @Test
     public void flushingTest03() throws IOException, XMPException, InterruptedException {
         String outPdf = destinationFolder + "pdfA3b_flushingTest03.pdf";
-        String cmpPdf = sourceFolder + "cmp/PdfAflushingTest/cmp_pdfA3b_flushingTest03.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA3b_flushingTest03.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -121,7 +121,7 @@ public class PdfAFlushingTest extends ITextTest{
     @Test
     public void addUnusedStreamObjectsTest() throws IOException, InterruptedException, XMPException {
         String outPdf = destinationFolder + "pdfA1b_docWithUnusedObjects_3.pdf";
-        String cmpPdf = sourceFolder + "cmp/PdfAflushingTest/cmp_pdfA1b_docWithUnusedObjects_3.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA1b_docWithUnusedObjects_3.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
 
