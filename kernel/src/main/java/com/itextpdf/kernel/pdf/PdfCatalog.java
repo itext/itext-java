@@ -4,6 +4,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -182,14 +183,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return
      */
-    //TODO optimize me! See PdfWriterSmartModeCopyTest#pdfWriterSmartModeCopyTest03()
-    //Map<Object, PdfObject> namesSaved = null;
     public Map<Object, PdfObject> getNamedDestinations() {
-        //if (namesSaved != null) return namesSaved;
         Map<Object, PdfObject> names = getNamedDestinatnionsFromNames();
         names.putAll(getNamedDestinatnionsFromStrings());
         isNamedDestinationsGot = true;
-        //namesSaved = names;
         return names;
     }
 
@@ -315,6 +312,36 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (pagesWithOutlines.size() == 0) {
             put(PdfName.Outlines, outline.getContent());
         }
+    }
+
+    PdfDestination transformToExplicitDestination(PdfObject dest, Map<PdfPage, PdfPage> page2page) {
+        PdfDestination d = null;
+        if (dest.isArray()) {
+            PdfObject pageObject = ((PdfArray)dest).get(0);
+            for (PdfPage oldPage : page2page.keySet()) {
+                if (oldPage.getPdfObject() == pageObject) {
+                    PdfArray array = new PdfArray((PdfArray)dest);
+                    array.set(0, page2page.get(oldPage).getPdfObject());
+                    d = new PdfExplicitDestination(array);
+                }
+            }
+        } else if (dest.isString()) {
+            if (!isNamedDestinationsGot) {
+                names = getNamedDestinations();
+            }
+            PdfArray array = (PdfArray)names.get(((PdfString) dest).toUnicodeString());
+            if (array != null) {
+                PdfObject pageObject = array.get(0);
+                for (PdfPage oldPage : page2page.keySet()) {
+                    if (oldPage.getPdfObject() == pageObject) {
+                        array.set(0, page2page.get(oldPage).getPdfObject());
+                        d = new PdfExplicitDestination(array);
+                    }
+                }
+            }
+        }
+
+        return d;
     }
 
     /**

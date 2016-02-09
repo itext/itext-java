@@ -1281,14 +1281,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
                 PdfObject dest = annot.getDestinationObject();
                 if (dest != null) {
-                    d = transformToExplicitDestination(dest, page2page);
+                    d = getCatalog().transformToExplicitDestination(dest, page2page);
                 }
 
                 boolean hasGoToAction = false;
                 a = annot.getAction();
                 if (a != null && PdfName.GoTo.equals(a.get(PdfName.S))) {
                     if (d == null) {
-                        d = transformToExplicitDestination(a.get(PdfName.D), page2page);
+                        d = getCatalog().transformToExplicitDestination(a.get(PdfName.D), page2page);
                     }
                     hasGoToAction = true;
                 }
@@ -1304,33 +1304,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             }
         }
         linkAnnotations.clear();
-    }
-
-    private PdfDestination transformToExplicitDestination(PdfObject dest, Map<PdfPage, PdfPage> page2page) {
-        PdfDestination d = null;
-        if (dest.isArray()) {
-            PdfObject pageObject = ((PdfArray)dest).get(0);
-            for (PdfPage oldPage : page2page.keySet()) {
-                if (oldPage.getPdfObject() == pageObject) {
-                    PdfArray array = new PdfArray((PdfArray)dest);
-                    array.set(0, page2page.get(oldPage).getPdfObject());
-                    d = new PdfExplicitDestination(array);
-                }
-            }
-        } else if (dest.isString()) {
-            PdfArray array = (PdfArray) getCatalog().getNamedDestinations().get(((PdfString) dest).toUnicodeString());
-            if (array != null) {
-                PdfObject pageObject = array.get(0);
-                for (PdfPage oldPage : page2page.keySet()) {
-                    if (oldPage.getPdfObject() == pageObject) {
-                        array.set(0, page2page.get(oldPage).getPdfObject());
-                        d = new PdfExplicitDestination(array);
-                    }
-                }
-            }
-        }
-
-        return d;
     }
 
     /**

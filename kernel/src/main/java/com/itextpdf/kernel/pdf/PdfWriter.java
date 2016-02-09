@@ -355,7 +355,6 @@ public class PdfWriter extends PdfOutputStream {
         private final byte[] b;
         private final int hash;
         private MessageDigest md5;
-
         private void serObject(PdfObject obj, int level, ByteBuffer bb, HashMap<Integer, Integer> serialized) {
             if (level <= 0)
                 return;
@@ -420,7 +419,7 @@ public class PdfWriter extends PdfOutputStream {
                 if(keys[k].equals(PdfName.P) &&(dic.get((PdfName)keys[k]).isIndirectReference() || dic.get((PdfName)keys[k]).isDictionary()) || keys[k].equals(PdfName.Parent)) // ignore recursive call
                     continue;
                 serObject((PdfObject) keys[k], level, bb, serialized);
-                serObject(dic.get((PdfName) keys[k]), level, bb, serialized);
+                serObject(dic.get((PdfName) keys[k], false), level, bb, serialized);
 
             }
         }
@@ -430,7 +429,7 @@ public class PdfWriter extends PdfOutputStream {
             if (level <= 0)
                 return;
             for (int k = 0; k < array.size(); ++k) {
-                serObject(array.get(k), level, bb, serialized);
+                serObject(array.get(k, false), level, bb, serialized);
             }
         }
 
