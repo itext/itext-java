@@ -52,15 +52,6 @@ public abstract class PdfObjectWrapper<T extends PdfObject> {
         return pdfObject.getDocument();
     }
 
-    public <T1 extends PdfObjectWrapper> T1 copyTo(PdfDocument document) {
-        throw new RuntimeException("Not implemented");
-    }
-
-//    @Override
-//    public PdfObjectWrapper clone() {
-//        return copyTo(getDocument());
-//    }
-
     public <T1 extends PdfObjectWrapper<T>> T1 put(PdfName key, PdfObject value) {
         if (value != null) {
             if (getPdfObject().isDictionary() || getPdfObject().isStream())
@@ -135,14 +126,7 @@ public abstract class PdfObjectWrapper<T extends PdfObject> {
         this.pdfObject = pdfObject;
     }
 
-    protected void mustBeIndirect() {
-        if (pdfObject.getIndirectReference() == null) {
-            pdfObject.setState(PdfObject.MustBeIndirect);
-        }
-    }
-
-    //TODO or move that method to PdfObject?
-    protected void markObjectAsIndirect(PdfObject pdfObject) {
+    protected static void markObjectAsIndirect(PdfObject pdfObject) {
         if (pdfObject.getIndirectReference() == null) {
             pdfObject.setState(PdfObject.MustBeIndirect);
         }

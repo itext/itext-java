@@ -54,11 +54,6 @@ public class PdfFormXObject extends PdfXObject {
     }
 
     @Override
-    public PdfFormXObject copyTo(PdfDocument document) {
-        return new PdfFormXObject(getPdfObject().copyTo(document));
-    }
-
-    @Override
     public void flush() {
         resources = null;
         if (getPdfObject().get(PdfName.BBox) == null) {

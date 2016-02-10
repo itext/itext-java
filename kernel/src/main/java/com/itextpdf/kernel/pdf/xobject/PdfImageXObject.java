@@ -69,7 +69,7 @@ public class PdfImageXObject extends PdfXObject {
         super.flush();
     }
 
-    @Override
+    // TODO probably remove it. or may be not. images copying sounds not so bad.
     public PdfImageXObject copyTo(PdfDocument document) {
         PdfImageXObject image = new PdfImageXObject(getPdfObject().copyTo(document));
         image.width = width;

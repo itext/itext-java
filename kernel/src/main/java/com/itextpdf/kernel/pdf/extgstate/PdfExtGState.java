@@ -33,7 +33,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfExtGState(PdfDictionary pdfObject) {
         super(pdfObject);
-        mustBeIndirect();
+        markObjectAsIndirect(getPdfObject());
     }
 
     public PdfExtGState() {

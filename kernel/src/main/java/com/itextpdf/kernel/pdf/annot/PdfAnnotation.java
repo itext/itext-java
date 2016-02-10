@@ -68,7 +68,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
-        mustBeIndirect();
+        markObjectAsIndirect(getPdfObject());
     }
 
     abstract public PdfName getSubtype();

@@ -207,7 +207,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param toDocument a document to copy page to.
      * @return copied page.
      */
-    @Override
     public PdfPage copyTo(PdfDocument toDocument) {
         return copyTo(toDocument, null);
     }

@@ -49,7 +49,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfFont() {
         super(new PdfDictionary());
-        mustBeIndirect();
+        markObjectAsIndirect(getPdfObject());
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
@@ -288,12 +288,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             subsetRanges = new ArrayList<>();
         }
         subsetRanges.add(range);
-    }
-
-    @Override
-    public PdfFont copyTo(PdfDocument document) {
-        throw new RuntimeException("Not implemented");
-        //return new PdfFont(document, (PdfDictionary) getPdfObject().copyTo(document));
     }
 
     public List<String> splitString(String text, int fontSize, float maxWidth) {
