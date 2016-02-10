@@ -150,7 +150,11 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (anythingPlaced) {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
-                            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                            if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                                return new LayoutResult(LayoutResult.FULL, occupiedArea, null, this);
+                            } else {
+                                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                            }
                         }
                     }
                 }

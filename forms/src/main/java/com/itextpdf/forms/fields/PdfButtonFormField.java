@@ -1,9 +1,18 @@
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.io.codec.Base64;
+import com.itextpdf.io.image.Image;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * An interactive control on the screen that raises events and/or can retain data.
@@ -117,5 +126,24 @@ public class PdfButtonFormField extends PdfFormField {
      */
     public PdfButtonFormField setRadiosInUnison(boolean radiosInUnison) {
         return setFieldFlag(FF_RADIOS_IN_UNISON, radiosInUnison);
+    }
+
+    public PdfButtonFormField setImage(String image) throws IOException {
+        InputStream is = new FileInputStream(image);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int r = is.read();
+        while (r != -1) {
+            baos.write(r);
+            r = is.read();
+        }
+
+        String str = Base64.encodeBytes(baos.toByteArray());
+        return setValue(str);
+    }
+
+    public PdfButtonFormField setImageAsForm(PdfFormXObject form) {
+        this.form = form;
+        regenerateField();
+        return this;
     }
 }
