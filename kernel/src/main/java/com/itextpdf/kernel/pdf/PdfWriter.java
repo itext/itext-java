@@ -215,7 +215,7 @@ public class PdfWriter extends PdfOutputStream {
                 return copiedIndirectReference.getRefersTo();
         }
 
-        if (smartMode) {
+        if (smartMode && !(object.isDictionary() && PdfName.Page.equals(((PdfDictionary)object).getAsName(PdfName.Type)))) {
             PdfObject copiedObject = smartCopyObject(object);
             if (copiedObject != null) {
                 return copiedObjects.get(getCopyObjectKey(copiedObject)).getRefersTo();
