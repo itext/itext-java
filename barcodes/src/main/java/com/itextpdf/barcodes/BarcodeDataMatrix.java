@@ -75,6 +75,10 @@ public class BarcodeDataMatrix extends Barcode2D {
      */
     public static final int DM_TEST = 64;
 
+    public static final String DEFAULT_DATA_MATRIX_ENCODING = "iso-8859-1";
+
+    private String encoding;
+
     private final static DmParams[] dmSizes = {
             new DmParams(10, 10, 10, 10, 3, 3, 5),
             new DmParams(12, 12, 12, 12, 5, 5, 7),
@@ -120,6 +124,17 @@ public class BarcodeDataMatrix extends Barcode2D {
      * Creates an instance of this class.
      */
     public BarcodeDataMatrix() {
+        encoding = DEFAULT_DATA_MATRIX_ENCODING;
+    }
+
+    public BarcodeDataMatrix(String code) {
+        encoding = DEFAULT_DATA_MATRIX_ENCODING;
+        setCode(code);
+    }
+
+    public BarcodeDataMatrix(String code, String encoding) {
+        this.encoding = encoding;
+        setCode(code);
     }
 
     @Override
@@ -140,8 +155,8 @@ public class BarcodeDataMatrix extends Barcode2D {
     /**
      * Creates a PdfFormXObject with the barcode with given module width and module height.
      *
-     * @param foreground   the color of the pixels. It can be <CODE>null</CODE>
-     * @param moduleSide  the side (width and height) of the pixels.
+     * @param foreground the color of the pixels. It can be <CODE>null</CODE>
+     * @param moduleSide the side (width and height) of the pixels.
      * @return the XObject.
      */
     public PdfFormXObject createFormXObject(Color foreground, float moduleSide, PdfDocument document) {
@@ -236,7 +251,7 @@ public class BarcodeDataMatrix extends Barcode2D {
     public int setCode(String text) {
         byte[] t;
         try {
-            t = text.getBytes("iso-8859-1");
+            t = text.getBytes(encoding);
         } catch (UnsupportedEncodingException exc) {
             throw new IllegalArgumentException("text has to be encoded in iso-8859-1");
         }
@@ -436,6 +451,8 @@ public class BarcodeDataMatrix extends Barcode2D {
         return options;
     }
 
+
+
     /**
      * Sets the options for the barcode generation. The options can be:<p>
      * One of:<br>
@@ -467,6 +484,19 @@ public class BarcodeDataMatrix extends Barcode2D {
     public void setOptions(int options) {
         this.options = options;
     }
+
+    /**
+     * setting encoding for data matrix code ( default  encoding iso-8859-1)
+     * @param encoding encoding for data matrix code
+     */
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
 
 
     private static void makePadding(byte[] data, int position, int count) {

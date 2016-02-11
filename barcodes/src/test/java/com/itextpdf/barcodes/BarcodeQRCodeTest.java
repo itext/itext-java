@@ -14,6 +14,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class BarcodeQRCodeTest {
     static public void beforeClass() {
         File dir = new File(destinationFolder);
         dir.mkdirs();
-        for(File file: dir.listFiles())
+        for (File file : dir.listFiles())
             file.delete();
     }
 
@@ -53,6 +54,26 @@ public class BarcodeQRCodeTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void barcode02Test() throws IOException, PdfException, InterruptedException {
+        String filename ="barcodeQRCode02.pdf";
+        PdfWriter writer = new PdfWriter(new FileOutputStream( destinationFolder + filename));
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page1 = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+        Map<EncodeHintType, Object> hints = new HashMap<>();
+        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        BarcodeQRCode barcode1 = new BarcodeQRCode("дима", hints);
+        barcode1.placeBarcode(canvas, Color.GRAY, 12);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+
+
     }
 
 }
