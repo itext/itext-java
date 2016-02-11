@@ -11,6 +11,7 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.renderer.AbstractRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
 import com.itextpdf.layout.splitting.ISplitCharacters;
@@ -98,13 +99,13 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
                     }
                     return (T) defaultSplitCharacters;
                 case FONT_SIZE:
-                    return (T) new Integer(12);
+                    return (T) Integer.valueOf(12);
                 case TEXT_RENDERING_MODE:
                     return (T) Integer.valueOf(PdfCanvasConstants.TextRenderingMode.FILL);
                 case TEXT_RISE:
-                    return (T) new Float(0);
+                    return (T) Float.valueOf(0);
                 case SPACING_RATIO:
-                    return (T) new Float(0.75f);
+                    return (T) Float.valueOf(0.75f);
                 case FONT_KERNING:
                     return (T) Property.FontKerning.NO;
                 case BASE_DIRECTION:

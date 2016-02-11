@@ -203,6 +203,19 @@ public class Rectangle implements Cloneable {
         return x == that.x && y == that.y && width == that.width && height == that.height;
     }
 
+    @Override
+    public int hashCode() {
+        int hashCode = Float.floatToIntBits(x);
+        hashCode *= 31;
+        hashCode += Float.floatToIntBits(y);
+        hashCode *= 31;
+        hashCode += Float.floatToIntBits(width);
+        hashCode *= 31;
+        hashCode += Float.floatToIntBits(height);
+
+        return hashCode;
+    }
+
     private static boolean linesIntersect(double x1, double y1, double x2,
                                           double y2, double x3, double y3, double x4, double y4)
     {

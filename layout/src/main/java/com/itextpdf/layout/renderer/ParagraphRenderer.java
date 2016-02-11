@@ -117,7 +117,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 // for the first and last line in a paragraph, leading is smaller
                 if (firstLineInBox)
                     deltaY = -(leadingValue - lastLineHeight) / 2;
-                doesNotFit = processedRenderer != null && leading != null && processedRenderer.getOccupiedArea().getBBox().getY() + deltaY < layoutBox.getY();
+                doesNotFit = leading != null && processedRenderer.getOccupiedArea().getBBox().getY() + deltaY < layoutBox.getY();
             }
 
             if (doesNotFit) {

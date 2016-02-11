@@ -645,13 +645,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         PdfObject destinationRoot = catalog.destinationTree.generateTree();
 
                         if (catalog.getPdfObject().isModified() || destinationRoot.isModified()) {
-                            PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
-                            if (names == null) {
-                                names = new PdfDictionary();
-                                names.makeIndirect(this);
-                                names.put(PdfName.Dests, destinationRoot);
-                                catalog.getPdfObject().put(PdfName.Names, names);
-                            }
+                            ensureDestinationsAddedToNames(destinationRoot);
                         }
                     }
 
@@ -678,13 +672,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     if (catalog.destinationTree != null) {
                         PdfObject destinationRoot = catalog.destinationTree.generateTree();
                         if (destinationRoot != null) {
-                            PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
-                            if (names == null) {
-                                names = new PdfDictionary();
-                                names.makeIndirect(this);
-                                names.put(PdfName.Dests, destinationRoot);
-                                catalog.getPdfObject().put(PdfName.Names, names);
-                            }
+                            ensureDestinationsAddedToNames(destinationRoot);
                         }
                     }
 
@@ -1245,27 +1233,12 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * Replaces form fields with by simple content and removes them from the document
-     */
-    protected void flatFields() {
-        if (appendMode) {
-
-        }
-        PdfDictionary acroForm = catalog.getPdfObject().getAsDictionary(PdfName.AcroForm);
-        PdfArray fields = new PdfArray();
-        if (acroForm != null) {
-            fields = acroForm.getAsArray(PdfName.Fields);
-        }
-
-    }
-
-    /**
      * checks whether a method is invoked at the closed document
      * @throws PdfException
      */
-    protected void checkClosingStatus(){
-        if(closed){
-            throw  new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
+    protected void checkClosingStatus() {
+        if (closed) {
+            throw new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
         }
     }
 
@@ -1362,13 +1335,22 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @throws PdfException
      */
     private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfOutline newParent, PdfOutline oldParent) {
-
         for (PdfOutline outline : oldParent.getAllChildren()) {
             if (outlinesToCopy.contains(outline)) {
                 PdfOutline child = newParent.addOutline(outline.getTitle());
                 child.addDestination(outline.getDestination());
                 cloneOutlines(outlinesToCopy, child, outline);
             }
+        }
+    }
+
+    private void ensureDestinationsAddedToNames(PdfObject destinationRoot) {
+        PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
+        if (names == null) {
+            names = new PdfDictionary();
+            names.makeIndirect(this);
+            names.put(PdfName.Dests, destinationRoot);
+            catalog.getPdfObject().put(PdfName.Names, names);
         }
     }
 

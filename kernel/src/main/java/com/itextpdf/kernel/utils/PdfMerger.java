@@ -43,7 +43,7 @@ public class PdfMerger {
      * @throws PdfException
      */
     public void addPages(PdfDocument from, int fromPage, int toPage) {
-        Map<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
+        Map<PdfPage, PdfPage> page2page = new LinkedHashMap<>();
         for (int pageNum = fromPage; pageNum <= toPage; pageNum++){
             fillListOfPagesToCopy(from, pageNum, page2page);
         }
@@ -58,7 +58,7 @@ public class PdfMerger {
      * @throws PdfException
      */
     public void addPages(PdfDocument from, List<Integer> pages) {
-        Map<PdfPage, PdfPage> page2page = new LinkedHashMap<PdfPage, PdfPage>();
+        Map<PdfPage, PdfPage> page2page = new LinkedHashMap<>();
         for (Integer pageNum : pages){
             fillListOfPagesToCopy(from, pageNum, page2page);
         }
@@ -110,7 +110,6 @@ public class PdfMerger {
         for (Map.Entry<PdfPage, PdfPage> entry : page2page.entrySet()) {
             for (PdfAnnotation annot : entry.getKey().getAnnotations()) {
                 PdfDestination d = null;
-                PdfDictionary a = null;
 
                 if (annot.getSubtype().equals(PdfName.Link)) {
                     PdfObject dest = ((PdfLinkAnnotation) annot).getDestinationObject();
@@ -120,7 +119,7 @@ public class PdfMerger {
                     }
 
                     boolean hasGoToAction = false;
-                    a = annot.getAction();
+                    PdfDictionary a = annot.getAction();
                     if (a != null && PdfName.GoTo.equals(a.get(PdfName.S))) {
                         if (d == null) {
                             d = transformToExplicitDestination(fromDocument, a.get(PdfName.D), page2page);

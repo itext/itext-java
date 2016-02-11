@@ -631,7 +631,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .setFontAndSize(pdfType3Font, 12)
                 .moveText(50, 800)
-                .showText("AAAAAA EEEE ~ é ö")
+                .showText("AAAAAA EEEE ~ \u00E9 \u00F6") // é ö
                 .endText();
         page.flush();
         pdfDoc.close();
@@ -674,7 +674,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .beginText()
                 .setFontAndSize(pdfType3Font, 12)
                 .moveText(50, 800)
-                .showText("AAAAAA EEEE ~ é ö")
+                .showText("AAAAAA EEEE ~ \u00E9 \u00F6") // é ö
                 .endText();
         page.flush();
         outputPdfDoc.close();

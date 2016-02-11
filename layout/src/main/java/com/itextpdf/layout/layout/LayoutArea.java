@@ -49,6 +49,16 @@ public class LayoutArea implements Cloneable {
     }
 
     @Override
+    public int hashCode() {
+        int hashCode = pageNumber;
+        hashCode *= 31;
+        hashCode += bBox.hashCode();
+        hashCode *= 31;
+        hashCode += emptyArea ? 1 : 2;
+        return hashCode;
+    }
+
+    @Override
     public String toString() {
         return String.format("%s, page %s", bBox.toString(), pageNumber);
     }
