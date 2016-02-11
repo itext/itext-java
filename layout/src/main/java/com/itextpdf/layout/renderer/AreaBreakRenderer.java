@@ -9,10 +9,18 @@ import com.itextpdf.layout.layout.LayoutResult;
 
 import java.util.List;
 
+/**
+ * Renderer object for the {@link AreaBreak} layout element. Will terminate the
+ * current content area and initialize a new one.
+ */
 public class AreaBreakRenderer implements IRenderer {
 
     protected AreaBreak areaBreak;
 
+    /**
+     * Creates an AreaBreakRenderer.
+     * @param areaBreak the {@link AreaBreak} that will be rendered by this object
+     */
     public AreaBreakRenderer(AreaBreak areaBreak) {
         this.areaBreak = areaBreak;
     }
