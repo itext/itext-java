@@ -251,14 +251,27 @@ public class TextRenderInfo implements EventData {
      */
     protected String getActualText() {
         String lastActualText = null;
+        MarkedContentInfo lastSpan = getMCSpan();
+        if (lastSpan != null) {
+            lastActualText = lastSpan.getActualText();
+        }
+        return lastActualText;
+    }
+
+    /**
+     * Gets /Span marked content tag entry which wraps this text piece, or {@code null} if non found
+     * @return /Span {@link MarkedContentInfo} entry
+     */
+    protected MarkedContentInfo getMCSpan() {
+        MarkedContentInfo lastSpan = null;
         if (markedContentInfos != null) {
             for (MarkedContentInfo info : markedContentInfos) {
                 if (PdfName.Span.equals(info.getTag())) {
-                    lastActualText = info.getActualText();
+                    lastSpan = info;
                 }
             }
         }
-        return lastActualText;
+        return lastSpan;
     }
 
     /**
