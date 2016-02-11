@@ -341,18 +341,16 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     public String decode(PdfString content) {
         //TODO now we support only identity-h
         String cids = content.getValue();
+        if (cids.length() == 1) {
+            return "";
+        }
         StringBuilder builder = new StringBuilder(cids.length() / 2);
-        for (int i = 0; i < cids.length(); i++) {
-            int code = cids.charAt(i++);
-            if (i == cids.length()) {
-                //allowed only two bytes per code
-                continue;
-            }
-            code <<= 8;
-            code |= cids.charAt(i);
+        //number of cids must be even. With i < cids.length() - 1 we garantee, that we will not process the last odd index.
+        for (int i = 0; i < cids.length() - 1; i += 2) {
+            int code = (cids.charAt(i) << 8) + cids.charAt(i + 1);
             Glyph glyph = fontProgram.getGlyphByCode(code);
-            if (glyph != null && glyph.getUnicode() != null) {
-                builder.append((char) (int) glyph.getUnicode());
+            if (glyph != null && glyph.getChars() != null) {
+                builder.append(glyph.getChars());
             } else {
                 builder.append('?');
             }

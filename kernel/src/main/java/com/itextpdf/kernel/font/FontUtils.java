@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.font.cmap.CMapLocation;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
@@ -10,6 +11,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class FontUtils {
 
@@ -22,6 +25,8 @@ class FontUtils {
                 cMapToUnicode = new CMapToUnicode();
                 CMapParser.parseCid("", cMapToUnicode, lb);
             } catch (Exception e) {
+                Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
+                logger.error(LogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
                 cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
             }
         } else if (toUnicode instanceof PdfName) {

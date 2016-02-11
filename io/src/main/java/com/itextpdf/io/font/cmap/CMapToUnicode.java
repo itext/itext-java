@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class represents a CMap file.
@@ -19,30 +20,25 @@ public class CMapToUnicode extends AbstractCMap {
 
     public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
 
-    private Map<Integer, String> singleByteMappings;
-    private Map<Integer, String> doubleByteMappings;
+    private Map<Integer, char[]> byteMappings;
 
     private CMapToUnicode(boolean emptyCMap) {
-        singleByteMappings = Collections.emptyMap();
-        doubleByteMappings = Collections.emptyMap();
+        byteMappings = Collections.emptyMap();
     }
 
     /**
      * Creates a new instance of CMap.
      */
     public CMapToUnicode() {
-        //default constructor
-        singleByteMappings = new HashMap<>();
-        doubleByteMappings = new HashMap<>();
+        byteMappings = new HashMap<>();
     }
 
-    /**
-     * This will tell if this cmap has any one byte mappings.
-     *
-     * @return true If there are any one byte mappings, false otherwise.
-     */
-    public boolean hasOneByteMappings() {
-        return !singleByteMappings.isEmpty();
+    public static CMapToUnicode getIdentity() {
+        CMapToUnicode uni = new CMapToUnicode();
+        for (int i = 0; i < 65537; i++) {
+            uni.addChar(i, Utilities.convertFromUtf32(i));
+        }
+        return uni;
     }
 
     /**
@@ -50,8 +46,8 @@ public class CMapToUnicode extends AbstractCMap {
      *
      * @return true If there are any two byte mappings, false otherwise.
      */
-    public boolean hasTwoByteMappings() {
-        return !doubleByteMappings.isEmpty();
+    public boolean hasByteMappings() {
+        return !byteMappings.isEmpty();
     }
 
     /**
@@ -62,81 +58,77 @@ public class CMapToUnicode extends AbstractCMap {
      * @param length The length of the data we are getting.
      * @return The string that matches the lookup.
      */
-    //TODO change to char[]?
-    public String lookup(byte[] code, int offset, int length) {
-
-        String result = null;
+    public char[] lookup(byte[] code, int offset, int length) {
+        char[] result = null;
         Integer key;
         if (length == 1) {
             key = code[offset] & 0xff;
-            result = singleByteMappings.get(key);
+            result = byteMappings.get(key);
         } else if (length == 2) {
             int intKey = code[offset] & 0xff;
             intKey <<= 8;
             intKey += code[offset + 1] & 0xff;
             key = intKey;
-            result = doubleByteMappings.get(key);
+            result = byteMappings.get(key);
         }
-
         return result;
     }
 
     public char[] lookup(byte[] code) {
-        String result = lookup(code, 0, code.length);
-        return result != null ? result.toCharArray() : null;
+        return lookup(code, 0, code.length);
     }
 
-    public Map<Integer, Integer> createReverseMapping() throws java.io.IOException {
-        Map<Integer, Integer> result = new HashMap<>();
-        for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
-            result.put(convertToInt(entry.getValue()), entry.getKey());
-        }
-        for (Map.Entry<Integer, String> entry : doubleByteMappings.entrySet()) {
-            result.put(convertToInt(entry.getValue()), entry.getKey());
-        }
-        return result;
+    public char[] lookup(int code) {
+        return byteMappings.get(code);
+    }
+
+    public Set<Integer> getCodes() {
+        return byteMappings.keySet();
     }
 
     public IntHashtable createDirectMapping() {
         IntHashtable result = new IntHashtable();
-        for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
-            result.put(entry.getKey(), convertToInt(entry.getValue()));
-        }
-        for (Map.Entry<Integer, String> entry : doubleByteMappings.entrySet()) {
-            result.put(entry.getKey(), convertToInt(entry.getValue()));
+        for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {
+            if (entry.getValue().length <= 2) {
+                result.put(entry.getKey(), convertToInt(entry.getValue()));
+            }
         }
         return result;
     }
 
-    private int convertToInt(String s) {
+    public Map<Integer, Integer> createReverseMapping() throws java.io.IOException {
+        Map<Integer, Integer> result = new HashMap<>();
+        for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {
+            if (entry.getValue().length <= 2) {
+                result.put(convertToInt(entry.getValue()), entry.getKey());
+            }
+        }
+        return result;
+    }
+
+    private int convertToInt(char[] s) {
         int value = 0;
-        for (int i = 0; i < s.length() - 1; i++) {
-            value += s.charAt(i);
+        for (int i = 0; i < s.length - 1; i++) {
+            value += s[i];
             value <<= 8;
         }
-        value += s.charAt(s.length() - 1);
+        value += s[s.length - 1];
         return value;
     }
 
-    void addChar(int cid, String uni) {
-        doubleByteMappings.put(cid, uni);
-    }
-
     void addChar(int cid, char[] uni) {
-        doubleByteMappings.put(cid, new String(uni));
+        byteMappings.put(cid, uni);
     }
 
     @Override
     void addChar(String mark, CMapObject code) {
         try {
-            String dest = createStringFromBytes((byte[])code.getValue());
             if (mark.length() == 1) {
-                singleByteMappings.put((int) mark.charAt(0), dest);
+                char[] dest = createCharsFromSingleBytes((byte[]) code.getValue());
+                byteMappings.put((int) mark.charAt(0), dest);
             } else if (mark.length() == 2) {
-                int intSrc = mark.charAt(0);
-                intSrc <<= 8;
-                intSrc |= mark.charAt(1);
-                doubleByteMappings.put(intSrc, dest);
+                char[] dest = createCharsFromDoubleBytes((byte[]) code.getValue());
+                byteMappings.put((mark.charAt(0) << 8) + mark.charAt(1), dest);
             } else {
                 Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
                 logger.warn(LogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
@@ -144,25 +136,25 @@ public class CMapToUnicode extends AbstractCMap {
         } catch (java.io.IOException e) {
             throw new RuntimeException();
         }
-
     }
 
-    private String createStringFromBytes(byte[] bytes) throws java.io.IOException {
-        String retval;
+    private char[] createCharsFromSingleBytes(byte[] bytes) throws java.io.IOException {
         if (bytes.length == 1) {
-            retval = String.valueOf((char)(bytes[0] & 0xFF));
+            return new char[]{(char) (bytes[0] & 0xff)};
         } else {
-            char[] chars = new char[]{(char)(bytes[0] & 0xFF), (char)(bytes[1] & 0xFF)};
-            retval = new String(chars);
+            char[] chars = new char[bytes.length];
+            for (int i = 0; i < bytes.length; i++) {
+                chars[i] = (char) (bytes[i] & 0xff);
+            }
+            return chars;
         }
-        return retval;
     }
 
-    public static CMapToUnicode getIdentity() {
-        CMapToUnicode uni = new CMapToUnicode();
-        for (int i = 0; i < 65537; i++) {
-            uni.addChar(i, Utilities.convertFromUtf32(i));
+    private char[] createCharsFromDoubleBytes(byte[] bytes) throws java.io.IOException {
+        char[] chars = new char[bytes.length / 2];
+        for (int i = 0; i < bytes.length; i+=2) {
+            chars[i/2] = (char)(((bytes[i] & 0xff) << 8) + (bytes[i+1] & 0xff));
         }
-        return uni;
+        return chars;
     }
 }
