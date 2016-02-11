@@ -6,16 +6,13 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -148,8 +145,6 @@ public class KeepTogetherTest extends ExtendedITextTest{
            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherDivTest02() throws IOException, InterruptedException {
-
-
         String cmpFileName = sourceFolder + "cmp_keepTogetherDivTest02.pdf";
         String outFile  = destinationFolder + "keepTogetherDivTest02.pdf";
 
@@ -158,22 +153,8 @@ public class KeepTogetherTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
-        doc.setRenderer(new DocumentRenderer(doc) {
-            int nextAreaNumber = 0;
-            int currentPageNumber;
-
-            @Override
-            public LayoutArea updateCurrentArea(LayoutResult overflowResult) {
-                if (nextAreaNumber % 2 == 0) {
-                    currentPageNumber = super.updateCurrentArea(overflowResult).getPageNumber();
-                    nextAreaNumber++;
-                    return (currentArea = new LayoutArea(currentPageNumber, new Rectangle(100, 100, 100, 500)));
-                } else {
-                    nextAreaNumber++;
-                    return (currentArea = new LayoutArea(currentPageNumber, new Rectangle(400, 100, 100, 500)));
-                }
-            }
-        });
+        Rectangle[] columns = {new Rectangle(100, 100, 100, 500), new Rectangle(400, 100, 100, 500)};
+        doc.setRenderer(new ColumnDocumentRenderer(doc, columns));
         Div div = new Div();
         doc.add(new Paragraph("first string"));
         for (int i = 0; i < 130; i++){
