@@ -25,23 +25,23 @@ public class IndicTextExtractionTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "test01.pdf"));
 
         final String expectedText[] = new String[]{
-                "\u0928\u093F\u0930\u094D\u0935\u093E\u091A\u0915",
+//                "\u0928\u093F\u0930\u094D\u0935\u093E\u091A\u0915",
                 "\u0928\u0917\u0930\u0928\u093F\u0917\u092E / " +
                         "\u0928\u0917\u0930\u092A\u0930\u093F\u0937\u0926" +
                         " / \u0928\u0917\u0930\u092A\u093E\u0932\u093F\u0915\u093E \u0915\u093E \u0928\u093E\u092E",
-                "\u0935 " + "\u0938\u0902\u0916\u094D\u092F\u093E",
-                "\u0938\u0902\u0915\u094D\u0937\u093F\u092A\u094D\u0924 \u092A\u0941\u0928\u0930\u0940\u0915\u094D\u0937\u0923",
-                "\u092E\u0924\u0926\u093E\u0928 " + "\u0915\u0947\u0928\u094D\u0926\u094D\u0930" +
-                        "\u0915\u093E",
-                "\u0906\u0930\u0902\u092D\u093F\u0915 " + "\u0915\u094D\u0930\u092E\u0938\u0902\u0916\u094D\u092F\u093E"};
-
+//                "\u0935 " + "\u0938\u0902\u0916\u094D\u092F\u093E",
+//                "\u0938\u0902\u0915\u094D\u0937\u093F\u092A\u094D\u0924 \u092A\u0941\u0928\u0930\u0940\u0915\u094D\u0937\u0923",
+//                "\u092E\u0924\u0926\u093E\u0928 " + "\u0915\u0947\u0928\u094D\u0926\u094D\u0930" +
+//                        "\u0915\u093E",
+//                "\u0906\u0930\u0902\u092D\u093F\u0915 " + "\u0915\u094D\u0930\u092E\u0938\u0902\u0916\u094D\u092F\u093E"};
+        };
         final Rectangle[] regions = new Rectangle[]{
-                new Rectangle(30, 779, 45, 20),
+//                new Rectangle(30, 779, 45, 20),
                 new Rectangle(30, 745, 210, 20),
-                new Rectangle(30, 713, 42, 20),
-                new Rectangle(30, 679, 80, 20),
-                new Rectangle(30, 647, 73, 20),
-                new Rectangle(30, 612, 93, 20)
+//                new Rectangle(30, 713, 42, 20),
+//                new Rectangle(30, 679, 80, 20),
+//                new Rectangle(30, 647, 73, 20),
+//                new Rectangle(30, 612, 93, 20)
         };
 
         final TextRegionEventFilter[] regionFilters = new TextRegionEventFilter[regions.length];
