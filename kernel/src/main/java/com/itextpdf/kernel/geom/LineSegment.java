@@ -58,7 +58,6 @@ public class LineSegment {
         return new Rectangle(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2-x1), Math.abs(y2-y1));
     }
 
-
     /**
      * Transforms the segment by the specified matrix
      * @param m the matrix for the transformation
@@ -68,5 +67,38 @@ public class LineSegment {
         Vector newStart = startPoint.cross(m);
         Vector newEnd = endPoint.cross(m);
         return new LineSegment(newStart, newEnd);
+    }
+
+    /**
+     * Checks if a segment contains another segment in itself
+     * @param other a segment to be checked
+     * @return true if this segment contains other one, false otherwise
+     */
+    public boolean containsSegment(LineSegment other) {
+        return other != null && containsPoint(other.startPoint) && containsPoint(other.endPoint);
+
+    }
+
+    /**
+     * Checks if a segment contains a given point in itself
+     * @param point a point to be checked
+     * @return true if this segment contains given point, false otherwise
+     */
+    public boolean containsPoint(Vector point) {
+        if (point == null) {
+            return false;
+        }
+
+        Vector diff1 = point.subtract(startPoint);
+        if (diff1.get(0) < 0 || diff1.get(1) < 0 || diff1.get(2) < 0) {
+            return false;
+        }
+
+        Vector diff2 = endPoint.subtract(point);
+        if (diff2.get(0) < 0 || diff2.get(1) < 0 || diff2.get(2) < 0) {
+            return false;
+        }
+
+        return true;
     }
 }

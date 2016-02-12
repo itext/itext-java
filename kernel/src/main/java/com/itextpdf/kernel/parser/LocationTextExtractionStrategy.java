@@ -84,8 +84,14 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
                 if (lastMCSpan != null && lastMCSpan == renderInfo.getMCSpan() && lastMCSpan.getActualText() != null) {
                     // Merge two text pieces, assume they will be in the same line
                     TextChunk lastTextChunk = locationalResult.get(locationalResult.size() - 1);
-                    TextChunk merged = new TextChunk(lastTextChunk.getText(),
-                            tclStrat.createLocation(renderInfo, new LineSegment(lastTextChunk.getLocation().getStartLocation(), segment.getEndPoint())));
+                    Vector mergedStart = new Vector(Math.min(lastTextChunk.getLocation().getStartLocation().get(0), segment.getStartPoint().get(0)),
+                            Math.min(lastTextChunk.getLocation().getStartLocation().get(1), segment.getStartPoint().get(1)),
+                            Math.min(lastTextChunk.getLocation().getStartLocation().get(2), segment.getStartPoint().get(2)));
+                    Vector mergedEnd = new Vector(Math.max(lastTextChunk.getLocation().getEndLocation().get(0), segment.getEndPoint().get(0)),
+                            Math.max(lastTextChunk.getLocation().getEndLocation().get(1), segment.getEndPoint().get(1)),
+                            Math.max(lastTextChunk.getLocation().getEndLocation().get(2), segment.getEndPoint().get(2)));
+                    TextChunk merged = new TextChunk(lastTextChunk.getText(), tclStrat.createLocation(renderInfo,
+                            new LineSegment(mergedStart, mergedEnd)));
                     locationalResult.set(locationalResult.size() - 1, merged);
                 } else {
                     TextChunk tc = new TextChunk(renderInfo.getActualText() != null ? renderInfo.getActualText() : renderInfo.getText(),
@@ -374,6 +380,13 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         @Override
         public int compareTo(TextChunkLocation other) {
             if (this == other) return 0; // not really needed, but just in case
+
+            LineSegment mySegment = new LineSegment(startLocation, endLocation);
+            LineSegment otherSegment = new LineSegment(other.getStartLocation(), other.getEndLocation());
+            if (otherSegment.getLength() == 0 && mySegment.containsSegment(otherSegment) || mySegment.getLength() == 0 && otherSegment.containsSegment(mySegment)) {
+                // Return 0 to save order due to stable sort. This handles situation of mark glyphs that have zero width
+                return 0;
+            }
 
             int rslt;
             rslt = Integer.compare(orientationMagnitude(), other.orientationMagnitude());
