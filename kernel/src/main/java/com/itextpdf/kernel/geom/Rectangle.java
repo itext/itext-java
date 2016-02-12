@@ -1,5 +1,7 @@
 package com.itextpdf.kernel.geom;
 
+import com.itextpdf.io.util.HashCode;
+
 public class Rectangle implements Cloneable {
 
     protected float x;
@@ -205,15 +207,12 @@ public class Rectangle implements Cloneable {
 
     @Override
     public int hashCode() {
-        int hashCode = Float.floatToIntBits(x);
-        hashCode *= 31;
-        hashCode += Float.floatToIntBits(y);
-        hashCode *= 31;
-        hashCode += Float.floatToIntBits(width);
-        hashCode *= 31;
-        hashCode += Float.floatToIntBits(height);
-
-        return hashCode;
+        HashCode hashCode = new HashCode();
+        hashCode.append(x).
+            append(y).
+            append(width).
+            append(height);
+        return hashCode.hashCode();
     }
 
     private static boolean linesIntersect(double x1, double y1, double x2,

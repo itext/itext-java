@@ -388,12 +388,12 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
                 return 0;
             }
 
-            int rslt;
-            rslt = Integer.compare(orientationMagnitude(), other.orientationMagnitude());
-            if (rslt != 0) return rslt;
+            int result;
+            result = Integer.compare(orientationMagnitude(), other.orientationMagnitude());
+            if (result != 0) return result;
 
-            rslt = Integer.compare(distPerpendicular(), other.distPerpendicular());
-            if (rslt != 0) return rslt;
+            result = Integer.compare(distPerpendicular(), other.distPerpendicular());
+            if (result != 0) return result;
 
             return Float.compare(distParallelStart(), other.distParallelStart());
         }

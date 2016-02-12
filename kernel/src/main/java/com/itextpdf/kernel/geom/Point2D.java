@@ -1,6 +1,6 @@
 package com.itextpdf.kernel.geom;
 
-import com.itextpdf.kernel.geom.misc.HashCode;
+import com.itextpdf.io.util.HashCode;
 
 public abstract class Point2D implements Cloneable{
 

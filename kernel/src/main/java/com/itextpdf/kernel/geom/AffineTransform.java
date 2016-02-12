@@ -1,7 +1,5 @@
 package com.itextpdf.kernel.geom;
 
-import com.itextpdf.kernel.geom.misc.Messages;
-
 import java.io.Serializable;
 
 public class AffineTransform implements Cloneable, Serializable{
@@ -348,7 +346,7 @@ public class AffineTransform implements Cloneable, Serializable{
         float det = getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
-            throw new NoninvertibleTransformException(Messages.getString("awt.204")); //$NON-NLS-1$
+            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation"); //$NON-NLS-1$
         }
         return new AffineTransform(
                 m11 / det, // m00
@@ -475,7 +473,7 @@ public class AffineTransform implements Cloneable, Serializable{
         double det = getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
-            throw new NoninvertibleTransformException(Messages.getString("awt.204")); //$NON-NLS-1$
+            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation"); //$NON-NLS-1$
         }
 
         if (dst == null) {
@@ -499,7 +497,7 @@ public class AffineTransform implements Cloneable, Serializable{
         double det = getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
-            throw new NoninvertibleTransformException(Messages.getString("awt.204")); //$NON-NLS-1$
+            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation"); //$NON-NLS-1$
         }
 
         while (--length >= 0) {
@@ -513,17 +511,17 @@ public class AffineTransform implements Cloneable, Serializable{
     public void inverseTransform(float[] src, int srcOff, float[] dst, int dstOff, int length)
             throws NoninvertibleTransformException
     {
-        float det = (float)getDeterminant();
+        float det = getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
-            throw new NoninvertibleTransformException(Messages.getString("awt.204")); //$NON-NLS-1$
+            throw new NoninvertibleTransformException("Determinant is zero. Cannot invert transformation"); //$NON-NLS-1$
         }
 
         while (--length >= 0) {
-            float x = src[srcOff++] - (float)m02;
-            float y = src[srcOff++] - (float)m12;
-            dst[dstOff++] = (x * (float)m11 - y * (float)m01) / det;
-            dst[dstOff++] = (y * (float)m00 - x * (float)m10) / det;
+            float x = src[srcOff++] - m02;
+            float y = src[srcOff++] - m12;
+            dst[dstOff++] = (x * m11 - y * m01) / det;
+            dst[dstOff++] = (y * m00 - x * m10) / det;
         }
     }
 }

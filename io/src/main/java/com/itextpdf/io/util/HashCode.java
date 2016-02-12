@@ -1,4 +1,4 @@
-package com.itextpdf.kernel.geom.misc;
+package com.itextpdf.io.util;
 
 /**
  * This class is a convenience method to sequentially calculate hash code of the
@@ -56,6 +56,7 @@ public final class HashCode {
     /**
      * Returns accumulated hashCode
      */
+    @Override
     public final int hashCode() {
         return hashCode;
     }
