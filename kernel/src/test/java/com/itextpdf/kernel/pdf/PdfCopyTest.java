@@ -6,6 +6,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -26,6 +27,30 @@ public class PdfCopyTest extends ExtendedITextTest {
     @BeforeClass
     static public void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
+            @LogMessage(messageTemplate = LogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN)
+    })
+    public void copySignedDocuments() throws IOException {
+        FileInputStream fis1 = new FileInputStream(sourceFolder + "hello_signed.pdf");
+        PdfReader reader1 = new PdfReader(fis1);
+        PdfDocument pdfDoc1 = new PdfDocument(reader1);
+
+        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copySignedDocuments.pdf");
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(fos2));
+        pdfDoc1.copyPagesTo(1, 1, pdfDoc2);
+        pdfDoc2.close();
+        pdfDoc1.close();
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(destinationFolder + "copySignedDocuments.pdf"));
+
+        PdfDictionary sig = (PdfDictionary) pdfDocument.getPdfObject(13);
+        PdfDictionary sigRef = sig.getAsArray(PdfName.Reference).getAsDictionary(0);
+        Assert.assertTrue(PdfName.SigRef.equals(sigRef.getAsName(PdfName.Type)));
+        Assert.assertTrue(sigRef.get(PdfName.Data).isNull());
     }
 
     @Test

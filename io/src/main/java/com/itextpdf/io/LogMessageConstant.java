@@ -53,6 +53,11 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN = "Make copy of Catalog dictionary is forbidden.";
+
+    /**
+     * Log message.
+     */
     public static final String ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE = "Only one of artbox or trimbox can exist on the page. The trimbox will be deleted";
 
     /**

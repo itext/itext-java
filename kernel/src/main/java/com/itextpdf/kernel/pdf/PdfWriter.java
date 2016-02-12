@@ -1,6 +1,10 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -204,6 +208,12 @@ public class PdfWriter extends PdfOutputStream {
         if (object == null) {
             object = PdfNull.PdfNull;
         }
+        if (checkTypeOfPdfDictionary(object, PdfName.Catalog)) {
+            Logger logger = LoggerFactory.getLogger(PdfReader.class);
+            logger.warn(LogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN);
+            object = PdfNull.PdfNull;
+        }
+
         PdfIndirectReference indirectReference = object.getIndirectReference();
         PdfIndirectReference copiedIndirectReference;
 
@@ -215,7 +225,7 @@ public class PdfWriter extends PdfOutputStream {
                 return copiedIndirectReference.getRefersTo();
         }
 
-        if (smartMode && !(object.isDictionary() && PdfName.Page.equals(((PdfDictionary)object).getAsName(PdfName.Type)))) {
+        if (smartMode && !checkTypeOfPdfDictionary(object, PdfName.Page)) {
             PdfObject copiedObject = smartCopyObject(object);
             if (copiedObject != null) {
                 return copiedObjects.get(getCopyObjectKey(copiedObject)).getRefersTo();
@@ -349,6 +359,10 @@ public class PdfWriter extends PdfOutputStream {
         }
 
         return null;
+    }
+
+    private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {
+        return dictionary.isDictionary() && expectedType.equals(((PdfDictionary)dictionary).getAsName(PdfName.Type));
     }
 
     static class ByteStore {
