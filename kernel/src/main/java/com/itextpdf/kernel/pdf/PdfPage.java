@@ -78,6 +78,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return new Rectangle(Math.min(llx, urx), Math.min(lly, ury), Math.abs(urx - llx), Math.abs(ury - lly));
     }
 
+    /**
+     * Gets the rotated page.
+     * @return the rotated rectangle
+     */
+    public  Rectangle getPageSizeWithRotation() {
+        PageSize rect = new PageSize(getPageSize());
+        int rotation = getRotation();
+        while (rotation > 0) {
+            rect = rect.rotate();
+            rotation -= 90;
+        }
+        return rect;
+    }
+
     public int getRotation() {
         PdfNumber rotate = getPdfObject().getAsNumber(PdfName.Rotate);
 

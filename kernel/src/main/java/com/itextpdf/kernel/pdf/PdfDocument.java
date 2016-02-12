@@ -113,6 +113,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     protected boolean closed = false;
 
     /**
+     * automatically rotate new content if the page has a rotation
+     */
+    protected boolean isRotateContent = true;
+
+    /**
     * flag determines whether to write unused objects to result document
     */
     protected boolean flushUnusedObjects = false;
@@ -1064,6 +1069,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             catalog.put(PdfName.AF, afArray);
         }
         afArray.add(fs.getPdfObject());
+    }
+
+    public boolean isRotateContent() {
+        return isRotateContent;
+    }
+
+    public void setRotateContent(boolean isRotateContent) {
+        this.isRotateContent = isRotateContent;
     }
 
     protected void storeLinkAnnotations(PdfPage page, PdfLinkAnnotation annotation) {

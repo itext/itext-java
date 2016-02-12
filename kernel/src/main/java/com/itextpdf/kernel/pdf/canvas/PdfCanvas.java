@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import static java.lang.Math.*;
+
 /**
  * PdfCanvas class represents an algorithm for writing data into content stream.
  * To write into page content, create PdfCanvas from a page instance.
@@ -136,6 +138,7 @@ public class PdfCanvas {
     protected PdfStream contentStream;
     /**
      * the resources for the page that this canvas belongs to.
+     *
      * @see PdfResources
      */
     protected PdfResources resources;
@@ -148,7 +151,9 @@ public class PdfCanvas {
      */
     protected int mcDepth;
 
-    /** The list where we save/restore the layer depth. */
+    /**
+     * The list where we save/restore the layer depth.
+     */
     protected List<Integer> layerDepth;
 
     /**
@@ -160,8 +165,8 @@ public class PdfCanvas {
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
      *
      * @param contentStream @see PdfStream.
-     * @param resources the resources, a specialized dictionary that can be used by PDF instructions in the content stream
-     * @param document the document that the resulting content stream will be written to
+     * @param resources     the resources, a specialized dictionary that can be used by PDF instructions in the content stream
+     * @param document      the document that the resulting content stream will be written to
      */
     public PdfCanvas(PdfStream contentStream, PdfResources resources, PdfDocument document) {
         this.contentStream = contentStream;
@@ -182,7 +187,7 @@ public class PdfCanvas {
     /**
      * Convenience method for fast PdfCanvas creation by a certain page.
      *
-     * @param page page to create canvas from.
+     * @param page           page to create canvas from.
      * @param wrapOldContent true to wrap all old content streams into q/Q operators so that the state of old
      *                       content streams would not affect the new one
      */
@@ -192,13 +197,34 @@ public class PdfCanvas {
             // Wrap old content in q/Q in order not to get unexpected results because of the CTM
             page.newContentStreamBefore().getOutputStream().writeBytes(OutputStream.getIsoBytes("q\n"));
             contentStream.getOutputStream().writeBytes(OutputStream.getIsoBytes("Q\n"));
+            if (page.getRotation() != 0 && page.getDocument().isRotateContent()) {
+                applyRotation(page);
+            }
+        }
+
+
+    }
+
+    private void applyRotation(PdfPage page) {
+        Rectangle rectagle = page.getPageSizeWithRotation();
+        int rotation = page.getRotation();
+        switch (rotation) {
+            case 90:
+                concatMatrix(0, 1, -1, 0, rectagle.getTop(), 0);
+                break;
+            case 180:
+                concatMatrix(-1, 0, 0, -1, rectagle.getRight(), rectagle.getTop());
+                break;
+            case 270:
+                concatMatrix(0, -1, 1, 0, 0, rectagle.getRight());
+                break;
         }
     }
 
     /**
      * Creates a PdfCanvas from a PdfFormXObject.
      *
-     * @param xObj the PdfFormXObject used to create the PdfCanvas
+     * @param xObj     the PdfFormXObject used to create the PdfCanvas
      * @param document the document to which the resulting content stream will be written
      */
     public PdfCanvas(PdfFormXObject xObj, PdfDocument document) {
@@ -233,9 +259,10 @@ public class PdfCanvas {
     public void attachContentStream(PdfStream contentStream) {
         this.contentStream = contentStream;
     }
-    
+
     /**
      * Gets current {@link CanvasGraphicsState}.
+     *
      * @return container containing properties for the current state of the canvas.
      */
     public CanvasGraphicsState getGraphicsState() {
@@ -283,6 +310,7 @@ public class PdfCanvas {
      * Concatenates the 2x3 affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
      * Contrast with {@see PdfCanvas#setTextMatrix}
+     *
      * @param a operand 1,1 in the matrix.
      * @param b operand 1,2 in the matrix.
      * @param c operand 2,1 in the matrix.
@@ -306,6 +334,7 @@ public class PdfCanvas {
      * Concatenates the affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
      * See also {@link #concatMatrix(float, float, float, float, float, float)}
+     *
      * @return current canvas
      */
     public PdfCanvas concatMatrix(AffineTransform transform) {
@@ -692,12 +721,12 @@ public class PdfCanvas {
                 endMarkedContent();
             }
             if (glyphLinePart.end > sub && iterator.hasNext()) {
-                    contentStream.getOutputStream()
-                            .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.end - 1), true)
-                            .writeSpace()
-                            .writeFloat(0)
-                            .writeSpace()
-                            .writeBytes(Td);
+                contentStream.getOutputStream()
+                        .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.end - 1), true)
+                        .writeSpace()
+                        .writeFloat(0)
+                        .writeSpace()
+                        .writeBytes(Td);
             }
         }
         return this;
@@ -1060,7 +1089,8 @@ public class PdfCanvas {
 
     /**
      * Paints a shading object and adds it to the resources of this canvas
-     * @param shading 
+     *
+     * @param shading
      * @return current canvas.
      */
     public PdfCanvas paintShading(PdfShading shading) {
@@ -1246,7 +1276,7 @@ public class PdfCanvas {
      * @see PdfCanvasConstants.LineJoinStyle for possible values.
      */
     public PdfCanvas setLineJoinStyle(int lineJoinStyle) {
-        if (currentGs.getLineJoinStyle()  == lineJoinStyle)
+        if (currentGs.getLineJoinStyle() == lineJoinStyle)
             return this;
         ++gStateIndex;
         currentGs.setLineJoinStyle(lineJoinStyle);
@@ -1368,6 +1398,7 @@ public class PdfCanvas {
     /**
      * Set the rendering intent. possible values are: PdfName.AbsoluteColorimetric,
      * PdfName.RelativeColorimetric, PdfName.Saturation, PdfName.Perceptual.
+     *
      * @param renderingIntent a PdfName containing a color metric
      * @return current canvas.
      */
@@ -1427,7 +1458,7 @@ public class PdfCanvas {
      * Changes the current color for paths.
      *
      * @param color the new color.
-     * @param fill set fill color (<code>true</code>) or stroke color (<code>false</code>)
+     * @param fill  set fill color (<code>true</code>) or stroke color (<code>false</code>)
      * @return current canvas.
      */
     public PdfCanvas setColor(Color color, boolean fill) {
@@ -1437,13 +1468,13 @@ public class PdfCanvas {
             return setColor(color.getColorSpace(), color.getColorValue(), fill);
         }
     }
-    
+
     /**
      * Changes the current color for paths.
      *
      * @param colorSpace the color space of the new color
      * @param colorValue a list of numerical values with a length corresponding to the specs of the color space. Values should be in the range [0,1]
-     * @param fill set fill color (<code>true</code>) or stroke color (<code>false</code>)
+     * @param fill       set fill color (<code>true</code>) or stroke color (<code>false</code>)
      * @return current canvas.
      */
     public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, boolean fill) {
@@ -1455,8 +1486,8 @@ public class PdfCanvas {
      *
      * @param colorSpace the color space of the new color
      * @param colorValue a list of numerical values with a length corresponding to the specs of the color space. Values should be in the range [0,1]
-     * @param pattern a pattern for the colored line or area
-     * @param fill set fill color (<code>true</code>) or stroke color (<code>false</code>)
+     * @param pattern    a pattern for the colored line or area
+     * @param fill       set fill color (<code>true</code>) or stroke color (<code>false</code>)
      * @return current canvas.
      */
     public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern, boolean fill) {
@@ -1498,7 +1529,7 @@ public class PdfCanvas {
 
     /**
      * Changes the current color for filling paths to a grayscale value.
-     * 
+     *
      * @param g a grayscale value in the range [0,1]
      * @return current canvas.
      */
@@ -1508,7 +1539,7 @@ public class PdfCanvas {
 
     /**
      * Changes the current color for stroking paths to a grayscale value.
-     * 
+     *
      * @param g a grayscale value in the range [0,1]
      * @return current canvas.
      */
@@ -1557,6 +1588,7 @@ public class PdfCanvas {
     public PdfCanvas setStrokeColorRgb(float r, float g, float b) {
         return setColor(rgb, new float[]{r, g, b}, false);
     }
+
     /**
      * Adds or changes the shading of the current fill color path.
      *
@@ -1931,7 +1963,7 @@ public class PdfCanvas {
 
     /**
      * Sets the ExtGState dictionary for the current graphics state
-     * 
+     *
      * @param extGState a dictionary that maps resource names to graphics state parameter dictionaries
      * @return current canvas.
      */
@@ -1943,10 +1975,10 @@ public class PdfCanvas {
         contentStream.getOutputStream().write(name).writeSpace().writeBytes(gs);
         return this;
     }
-    
+
     /**
      * Sets the ExtGState dictionary for the current graphics state
-     * 
+     *
      * @param extGState a dictionary that maps resource names to graphics state parameter dictionaries
      * @return current canvas.
      */
@@ -1958,6 +1990,7 @@ public class PdfCanvas {
 
     /**
      * Manually start a Marked Content sequence. Used primarily for Tagged PDF
+     *
      * @param tag the type of content contained
      * @return current canvas
      */
@@ -1967,7 +2000,8 @@ public class PdfCanvas {
 
     /**
      * Manually start a Marked Content sequence with properties. Used primarily for Tagged PDF
-     * @param tag the type of content that will be contained
+     *
+     * @param tag        the type of content that will be contained
      * @param properties the properties of the content, including Marked Content ID. If null, the PDF marker is BMC, else it is BDC
      * @return current canvas
      */
@@ -1982,9 +2016,10 @@ public class PdfCanvas {
         }
         return this;
     }
-    
+
     /**
      * Manually end a Marked Content sequence. Used primarily for Tagged PDF
+     *
      * @return current canvas
      */
     public PdfCanvas endMarkedContent() {
@@ -1996,6 +2031,7 @@ public class PdfCanvas {
 
     /**
      * Manually open a canvas tag, beginning a Marked Content sequence. Used primarily for Tagged PDF
+     *
      * @param tag the type of content that will be contained
      * @return current canvas
      */
@@ -2013,6 +2049,7 @@ public class PdfCanvas {
      * <br>
      * CanvasTag will be automatically created with assigned mcid(Marked Content id) to it. Mcid serves as a reference
      * between Marked Content sequence and logical structure element.
+     *
      * @param tagReference reference to the tag from the document logical structure
      * @return current canvas
      */
@@ -2026,6 +2063,7 @@ public class PdfCanvas {
 
     /**
      * Manually close a tag, ending a Marked Content sequence. Used primarily for Tagged PDF
+     *
      * @return current canvas
      */
     public PdfCanvas closeTag() {
@@ -2068,6 +2106,7 @@ public class PdfCanvas {
     /**
      * Please, use this method with caution and only if you know what you are doing.
      * Manipulating with underlying stream object of canvas could lead to corruption of it's data.
+     *
      * @return the content stream to which this canvas object writes.
      */
     public PdfStream getContentStream() {
