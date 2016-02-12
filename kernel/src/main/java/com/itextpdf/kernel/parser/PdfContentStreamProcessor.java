@@ -126,7 +126,6 @@ public class PdfContentStreamProcessor {
      * @param xobjectSubType the XObject subtype this handler will process, or PdfName.DEFAULT for a catch-all handler
      * @param handler        the handler that will receive notification when the Do operator for the specified subtype is encountered
      * @return the existing registered handler, if any
-     * @since 5.0.1
      */
     public XObjectDoHandler registerXObjectDoHandler(PdfName xobjectSubType, XObjectDoHandler handler) {
         return xobjectDoHandlers.put(xobjectSubType, handler);
@@ -141,7 +140,6 @@ public class PdfContentStreamProcessor {
      * @param operatorString the operator id, or DEFAULT_OPERATOR for a catch-all operator
      * @param operator       the operator that will receive notification when the operator is encountered
      * @return the existing registered operator, if any
-     * @since 2.1.7
      */
     public ContentOperator registerContentOperator(String operatorString, ContentOperator operator) {
         return operators.put(operatorString, operator);
@@ -149,7 +147,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * @return {@link java.util.Collection} containing all the registered operators strings
-     * @since 5.5.6
      */
     public Collection<String> getRegisteredOperatorStrings() {
         return new ArrayList<String>(operators.keySet());
@@ -338,7 +335,6 @@ public class PdfContentStreamProcessor {
      *                  {@link com.itextpdf.kernel.parser.PathRenderInfo#NO_OP}
      * @param rule      Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}
      *                  In case it isn't applicable pass any <CODE>byte</CODE> value.
-     * @since 5.5.7
      */
     protected void paintPath(int operation, int rule) {
         PathRenderInfo renderInfo = new PathRenderInfo(currentPath, operation, rule, gs());
@@ -369,7 +365,6 @@ public class PdfContentStreamProcessor {
      *
      * @param fontDict
      * @return the font
-     * @since 5.0.6
      */
     private PdfFont getFont(PdfDictionary fontDict) {
         Integer n = fontDict.getIndirectReference().getObjNumber();
@@ -399,7 +394,6 @@ public class PdfContentStreamProcessor {
      *
      * @param tag  the tag of the marked content
      * @param dict the PdfDictionary associated with the marked content
-     * @since 5.0.2
      */
     private void beginMarkedContent(PdfName tag, PdfDictionary dict) {
         markedContentStack.push(new MarkedContentInfo(tag, dict));
@@ -408,7 +402,6 @@ public class PdfContentStreamProcessor {
     /**
      * Remove the latest marked content from the stack.  Keeps track of the BMC, BDC and EMC operators.
      *
-     * @since 5.0.2
      */
     private void endMarkedContent() {
         markedContentStack.pop();
@@ -944,7 +937,6 @@ public class PdfContentStreamProcessor {
     /**
      * A content operator implementation (BMC).
      *
-     * @since 5.0.2
      */
     private static class BeginMarkedContent implements ContentOperator {
         public void invoke(PdfContentStreamProcessor processor,
@@ -956,8 +948,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (BDC).
-     *
-     * @since 5.0.2
      */
     private static class BeginMarkedContentDictionary implements ContentOperator {
 
@@ -980,8 +970,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (EMC).
-     *
-     * @since 5.0.2
      */
     private static class EndMarkedContent implements ContentOperator {
         public void invoke(PdfContentStreamProcessor processor,
@@ -1131,8 +1119,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (m).
-     *
-     * @since 5.5.6
      */
     private static class MoveTo implements ContentOperator {
 
@@ -1145,8 +1131,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (l).
-     *
-     * @since 5.5.6
      */
     private static class LineTo implements ContentOperator {
 
@@ -1159,8 +1143,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (c).
-     *
-     * @since 5.5.6
      */
     private static class Curve implements ContentOperator {
 
@@ -1177,8 +1159,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (v).
-     *
-     * @since 5.5.6
      */
     private static class CurveFirstPointDuplicated implements ContentOperator {
 
@@ -1193,8 +1173,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (y).
-     *
-     * @since 5.5.6
      */
     private static class CurveFourhPointDuplicated implements ContentOperator {
 
@@ -1209,8 +1187,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (h).
-     *
-     * @since 5.5.6
      */
     private static class CloseSubpath implements ContentOperator {
 
@@ -1221,8 +1197,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (re).
-     *
-     * @since 5.5.6
      */
     private static class Rectangle implements ContentOperator {
 
@@ -1237,8 +1211,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (S, s, f, F, f*, B, B*, b, b*).
-     *
-     * @since 5.5.6
      */
     private static class PaintPath implements ContentOperator {
 
@@ -1273,8 +1245,6 @@ public class PdfContentStreamProcessor {
 
     /**
      * A content operator implementation (W, W*)
-     *
-     * @since 5.5.6
      */
     private static class ClipPath implements ContentOperator {
 

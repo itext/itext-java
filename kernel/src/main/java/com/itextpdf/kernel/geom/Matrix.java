@@ -145,7 +145,6 @@ public class Matrix {
     /**
      * Computes the determinant of the matrix.
      * @return the determinant of the matrix
-     * @since 5.0.3
      */
     public float getDeterminant(){
         // ref http://en.wikipedia.org/wiki/Determinant

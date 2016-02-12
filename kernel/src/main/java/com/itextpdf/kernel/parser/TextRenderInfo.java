@@ -32,7 +32,6 @@ public class TextRenderInfo implements EventData {
     private double[] fontMatrix = null;
     /**
      * Array containing marked content info for the text.
-     * @since 5.0.2
      */
     private final Collection<MarkedContentInfo> markedContentInfos;
 
@@ -56,7 +55,6 @@ public class TextRenderInfo implements EventData {
      * @param parent the parent TextRenderInfo
      * @param string the content of a TextRenderInfo
      * @param horizontalOffset the unscaled horizontal offset of the character that this TextRenderInfo represents
-     * @since 5.3.3
      */
     private TextRenderInfo(TextRenderInfo parent, PdfString string, float horizontalOffset){
         this.string = string;
@@ -85,7 +83,6 @@ public class TextRenderInfo implements EventData {
      * with a given mcid.
      * @param mcid a marked content id
      * @return true if the text is marked with this id
-     * @since 5.0.2
      */
     public boolean hasMcid(int mcid) {
         return hasMcid(mcid, false);
@@ -97,7 +94,6 @@ public class TextRenderInfo implements EventData {
      * @param mcid a marked content id
      * @param checkTheTopmostLevelOnly indicates whether to check the topmost level of marked content stack only
      * @return true if the text is marked with this id
-     * @since 5.3.5
      */
     public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
         if (checkTheTopmostLevelOnly) {
@@ -131,7 +127,6 @@ public class TextRenderInfo implements EventData {
      * Gets the baseline for the text (i.e. the line that the text 'sits' on)
      * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
      * @return the baseline line segment
-     * @since 5.0.2
      */
     public LineSegment getBaseline(){
         return getUnscaledBaselineWithOffset(0 + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
@@ -145,7 +140,6 @@ public class TextRenderInfo implements EventData {
      * Gets the ascentline for the text (i.e. the line that represents the topmost extent that a string of the current font could have)
      * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
      * @return the ascentline line segment
-     * @since 5.0.2
      */
     public LineSegment getAscentLine(){
         float ascent = gs.getFont().getFontProgram().getFontMetrics().getTypoAscender() * gs.getFontSize() / 1000f;
@@ -156,7 +150,6 @@ public class TextRenderInfo implements EventData {
      * Gets the descentline for the text (i.e. the line that represents the bottom most extent that a string of the current font could have).
      * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
      * @return the descentline line segment
-     * @since 5.0.2
      */
     public LineSegment getDescentLine(){
         // per getFontDescription() API, descent is returned as a negative number, so we apply that as a normal vertical offset
@@ -167,7 +160,6 @@ public class TextRenderInfo implements EventData {
     /**
      * Getter for the font
      * @return the font
-     * @since iText 5.0.2
      */
     public PdfFont getFont() {
         return gs.getFont();
@@ -177,7 +169,6 @@ public class TextRenderInfo implements EventData {
      * The rise represents how far above the nominal baseline the text should be rendered.  The {@link #getBaseline()}, {@link #getAscentLine()} and {@link #getDescentLine()} methods already include Rise.
      * This method is exposed to allow listeners to determine if an explicit rise was involved in the computation of the baseline (this might be useful, for example, for identifying superscript rendering)
      * @return The Rise for the text draw operation, in user space units (Ts value, scaled to user space)
-     * @since 5.3.3
      */
     public float getRise(){
         if (gs.getTextRise() == 0) return 0; // optimize the common case
@@ -188,7 +179,6 @@ public class TextRenderInfo implements EventData {
     /**
      * Provides detail useful if a listener needs access to the position of each individual glyph in the text render operation
      * @return  A list of {@link TextRenderInfo} objects that represent each glyph used in the draw operation. The next effect is if there was a separate Tj opertion for each character in the rendered string
-     * @since   5.3.3
      */
     public List<TextRenderInfo> getCharacterRenderInfos(){
         List<TextRenderInfo> rslt = new ArrayList<>(string.getValue().length());
@@ -225,7 +215,6 @@ public class TextRenderInfo implements EventData {
      *   <li>6 = Fill, then stroke text and add to path for clipping</li>
      *   <li>7 = Add text to padd for clipping</li>
      * </ul>
-     * @since iText 5.0.1
      */
     public int getTextRenderMode(){
         return gs.getTextRenderingMode();
@@ -298,7 +287,6 @@ public class TextRenderInfo implements EventData {
      *
      * @param width the width, in text space
      * @return the width in user space
-     * @since 5.3.3
      */
     private float convertWidthFromTextSpaceToUserSpace(float width){
         LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(width, 0, 1));
@@ -310,7 +298,6 @@ public class TextRenderInfo implements EventData {
      *
      * @param height the height, in text space
      * @return the height in user space
-     * @since 5.3.3
      */
     private float convertHeightFromTextSpaceToUserSpace(float height){
         LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(0, height, 1));

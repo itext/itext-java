@@ -8,8 +8,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 
 /**
  * Contains information relating to painting current path.
- *
- * @since 5.5.6
  */
 public class PathRenderInfo implements EventData {
 

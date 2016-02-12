@@ -724,7 +724,6 @@ public class PdfPKCS7 {
      * @param secondDigest the digest in the authenticatedAttributes
      * @param tsaClient TSAClient - null or an optional time stamp authority client
      * @return byte[] the bytes for the PKCS7SignedData object
-     * @since	2.1.6
      */
     public byte[] getEncodedPKCS7(byte secondDigest[], TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
@@ -1069,7 +1068,6 @@ public class PdfPKCS7 {
      * Checks if the timestamp refers to this document.
      * @return true if it checks false otherwise
      * @throws GeneralSecurityException on error
-     * @since	2.1.6
      */
     public boolean verifyTimestampImprint() throws GeneralSecurityException {
         if (timeStampToken == null)
@@ -1108,7 +1106,6 @@ public class PdfPKCS7 {
      * Only the certificates used for the main signature will be returned, with
      * the signing certificate first.
      * @return the X.509 certificates associated with this PKCS#7 object
-     * @since	2.1.6
      */
     public Certificate[] getSignCertificateChain() {
         return signCerts.toArray(new X509Certificate[signCerts.size()]);
@@ -1199,7 +1196,6 @@ public class PdfPKCS7 {
     /**
      * Gets the OCSP basic response if there is one.
      * @return the OCSP basic response or null
-     * @since	2.1.6
      */
     public BasicOCSPResp getOcsp() {
         return basicResp;
@@ -1208,7 +1204,6 @@ public class PdfPKCS7 {
     /**
      * Checks if OCSP revocation refers to the document signing certificate.
      * @return true if it checks, false otherwise
-     * @since	2.1.6
      */
     public boolean isRevocationValid() {
         if (basicResp == null)
@@ -1293,7 +1288,6 @@ public class PdfPKCS7 {
     /**
      * Gets the timestamp token if there is one.
      * @return the timestamp token or null
-     * @since	2.1.6
      */
     public TimeStampToken getTimeStampToken() {
         return timeStampToken;
@@ -1302,7 +1296,6 @@ public class PdfPKCS7 {
     /**
      * Gets the timestamp date
      * @return	a date
-     * @since	2.1.6
      */
     public Calendar getTimeStampDate() {
         if (timeStampToken == null)

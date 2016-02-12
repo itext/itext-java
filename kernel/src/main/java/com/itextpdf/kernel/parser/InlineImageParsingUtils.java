@@ -19,7 +19,6 @@ import java.util.Map;
 
 /**
  * Utility methods to help with processing of inline images
- * @since 5.0.4
  */
 public final class InlineImageParsingUtils {
     private InlineImageParsingUtils(){}
@@ -27,7 +26,6 @@ public final class InlineImageParsingUtils {
     /**
      * Simple class in case users need to differentiate an exception from processing
      * inline images vs other exceptions
-     * @since 5.0.4
      */
     public static class InlineImageParseException extends PdfException {
 

@@ -58,8 +58,6 @@ public class Jbig2SegmentReader {
 
     /**
      * Inner class that holds information about a JBIG2 segment.
-     *
-     * @since 2.1.5
      */
     public static class Jbig2Segment implements Comparable<Jbig2Segment> {
 
@@ -89,8 +87,6 @@ public class Jbig2SegmentReader {
 
     /**
      * Inner class that holds information about a JBIG2 page.
-     *
-     * @since 2.1.5
      */
     public static class Jbig2Page {
         public final int page;

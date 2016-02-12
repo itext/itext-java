@@ -260,7 +260,6 @@ public class SignatureUtil {
      *
      * @param name name of the field
      * @return boolean does the signature field exist
-     * @since 5.5.1
      */
     public boolean doesSignatureFieldExist(String name) {
         return getBlankSignatureNames().contains(name) || getSignatureNames().contains(name);

@@ -345,7 +345,6 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * Indicates that the group contains a pagination artifact.
      * @param pe one of the following names: "HF" (Header Footer),
      * "FG" (Foreground), "BG" (Background), or "L" (Logo).
-     * @since 5.0.2
      */
     public void setPageElement(String pe) {
         PdfDictionary usage = getUsage();

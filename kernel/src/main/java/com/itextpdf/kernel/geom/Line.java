@@ -5,8 +5,6 @@ import java.util.List;
 
 /**
  * Represents a line.
- *
- * @since 5.5.6
  */
 public class Line implements Shape {
 

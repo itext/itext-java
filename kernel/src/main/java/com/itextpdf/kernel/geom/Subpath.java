@@ -8,8 +8,6 @@ import java.util.Set;
 
 /**
  * As subpath is a part of a path comprising a sequence of connected segments.
- *
- * @since 5.5.6
  */
 public class Subpath {
 
@@ -140,7 +138,6 @@ public class Subpath {
      * (of course if you paint the path using <CODE>re</CODE> operator)
      *
      * @return <CODE>boolean</CODE> value indicating whether the path must be closed or not.
-     * @since 5.5.6
      */
     public boolean isClosed() {
         return closed;
@@ -159,7 +156,6 @@ public class Subpath {
      * two or more points at the same coordinates.
      *
      * @return <CODE>boolean</CODE> value indicating whether the path is degenerate or not.
-     * @since 5.5.6
      */
     public boolean isDegenerate() {
         if (segments.size() > 0 && closed) {
@@ -182,7 +178,6 @@ public class Subpath {
     /**
      * @return {@link java.util.List} containing points of piecewise linear approximation
      *         for this subpath.
-     * @since 5.5.6
      */
     public List<Point2D> getPiecewiseLinearApproximation() {
         List<Point2D> result = new ArrayList<Point2D>();

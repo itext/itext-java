@@ -296,7 +296,6 @@ public class Utilities {
      *
      * @param c the character
      * @return true if the character belongs to the interval
-     * @since 2.1.2
      */
     public static boolean isSurrogateHigh(char c) {
         return c >= '\ud800' && c <= '\udbff';
@@ -308,7 +307,6 @@ public class Utilities {
      *
      * @param c the character
      * @return true if the character belongs to the interval
-     * @since 2.1.2
      */
     public static boolean isSurrogateLow(char c) {
         return c >= '\udc00' && c <= '\udfff';
@@ -322,7 +320,6 @@ public class Utilities {
      * @param text the String with the high and low surrogate characters
      * @param idx  the index of the 'high' character in the pair
      * @return true if the characters are surrogate pairs
-     * @since 2.1.2
      */
     public static boolean isSurrogatePair(String text, int idx) {
         if (idx < 0 || idx > text.length() - 2) {
@@ -367,7 +364,6 @@ public class Utilities {
      * @param text a character array that has the unicode character(s)
      * @param idx  the index of the 'high' character
      * @return the code point value
-     * @since 2.1.2
      */
     public static int convertToUtf32(char[] text, int idx) {
         return (text[idx] - 0xd800) * 0x400 + text[idx + 1] - 0xdc00 + 0x10000;

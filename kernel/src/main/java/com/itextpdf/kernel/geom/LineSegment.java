@@ -36,7 +36,6 @@ public class LineSegment {
 
     /**
      * @return the length of this line segment
-     * @since 5.0.2
      */
     public float getLength(){
         return endPoint.subtract(startPoint).length();
@@ -48,7 +47,6 @@ public class LineSegment {
      * is 5 unit long and sits at a 37 degree angle from horizontal, the bounding rectangle will have
      * origin of the lower left hand end point of the segment, with width = 4 and height = 3.
      * @return the bounding rectangle
-     * @since 5.0.2
      */
     public Rectangle getBoundingRectange(){
         float x1 = getStartPoint().get(Vector.I1);

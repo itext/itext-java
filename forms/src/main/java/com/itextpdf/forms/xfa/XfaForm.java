@@ -104,7 +104,6 @@ public class XfaForm {
      *
      * @param pdfDocument a PdfDocument instance
      * @return the XFA object
-     * @since 2.1.3
      */
     public static PdfObject getXfaObject(PdfDocument pdfDocument) {
         PdfDictionary af = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
@@ -589,8 +588,6 @@ public class XfaForm {
 
     /**
      * Extracts the nodes from the domDocument.
-     *
-     * @since 2.1.5
      */
     private void extractNodes() {
         Map<String, Node> xfaNodes = extractXFANodes(domDocument);

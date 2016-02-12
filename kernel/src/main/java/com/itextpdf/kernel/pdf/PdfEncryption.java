@@ -104,8 +104,6 @@ public class PdfEncryption {
 
     /**
      * Indicates if the encryption is only necessary for embedded files.
-     *
-     * @since 2.1.3
      */
     private boolean embeddedFilesOnly;
 
@@ -188,7 +186,6 @@ public class PdfEncryption {
      * Indicates if only the embedded files have to be encrypted.
      *
      * @return if true only the embedded files will be encrypted
-     * @since 2.1.3
      */
     public boolean isEmbeddedFilesOnly() {
         return embeddedFilesOnly;

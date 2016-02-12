@@ -5,8 +5,6 @@ import java.util.List;
 
 /**
  * Represents a Bezier curve.
- *
- * @since 5.5.6
  */
 public class BezierCurve implements Shape {
 
@@ -62,7 +60,6 @@ public class BezierCurve implements Shape {
      *
      * @return {@link java.util.List} containing points of piecewise linear approximation
      *         for this bezier curve.
-     * @since 5.5.6
      */
     public List<Point2D> getPiecewiseLinearApproximation() {
         List<Point2D> points = new ArrayList<>();
