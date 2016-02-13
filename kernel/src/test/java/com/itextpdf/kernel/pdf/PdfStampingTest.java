@@ -2,9 +2,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,10 +10,14 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+import static org.junit.Assert.*;
+
+@Category(IntegrationTest.class)
 public class PdfStampingTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStampingTest/";
