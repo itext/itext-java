@@ -50,7 +50,7 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
 
         names.add(key);
         names.add(value.makeIndirect(getDocument()));
-        String keyValue = ((PdfString)key).toUnicodeString();
+        String keyValue = ((PdfString) key).toUnicodeString();
         if (limits != null) {
             PdfString limit = limits.getAsString(0);
             if (limit != null) {
@@ -78,6 +78,9 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
      * @param kid
      */
     protected void addKid(PdfNode kid) {
+        if (null == kids) {
+            kids = new PdfArray();
+        }
         kids.add(kid.getPdfObject());
         getPdfObject().put(PdfName.Kids, this.kids);
     }
