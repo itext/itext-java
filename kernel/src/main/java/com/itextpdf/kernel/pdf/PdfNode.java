@@ -7,18 +7,14 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
     private PdfArray kids;
     private PdfArray names;
     private PdfArray limits;
-    private PdfDocument document;
 
     /**
      * Creates a Node in the current document
      *
-     * @param pdfDocument
      * @throws PdfException
      */
-    public PdfNode(PdfDocument pdfDocument) {
+    public PdfNode() {
         super(new PdfDictionary());
-        this.document = pdfDocument;
-        getPdfObject().makeIndirect(document);
         kids = new PdfArray();
         names = new PdfArray();
         limits = new PdfArray();
@@ -49,7 +45,8 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
             limits.add(key);
 
         names.add(key);
-        names.add(value.makeIndirect(getDocument()));
+        names.add(value);
+        markObjectAsIndirect(value);
         String keyValue = ((PdfString) key).toUnicodeString();
         if (limits != null) {
             PdfString limit = limits.getAsString(0);
@@ -91,5 +88,10 @@ public class PdfNode extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfArray getNames() {
         return names;
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
     }
 }

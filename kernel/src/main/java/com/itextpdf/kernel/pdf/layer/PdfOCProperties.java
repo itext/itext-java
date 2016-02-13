@@ -20,20 +20,34 @@ import java.util.TreeMap;
 /**
  * This class represents /OCProperties entry if pdf catalog and manages
  * the layers of the pdf document.
+ *
+ * <br><br>
+ * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
+ * must be indirect.
  */
 public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     private List<PdfLayer> layers = new ArrayList<>();
 
     /**
-     * Creates a new PdfOCProperties instance by the dictionary it represents.
-     * @param ocPropertiesDict the dictionary of optional content properties
-     * @param pdfDocument the document the optional content belongs to
+     * Creates a new PdfOCProperties instance.
+     * @param document the document the optional content belongs to
      * @throws PdfException
      */
-    public PdfOCProperties(PdfDictionary ocPropertiesDict, PdfDocument pdfDocument) {
+    public PdfOCProperties(PdfDocument document) {
+        this(new PdfDictionary().makeIndirect(document));
+    }
+
+    /**
+     * Creates a new PdfOCProperties instance by the dictionary it represents,
+     * the dictionary must be an indirect object.
+     *
+     * @param ocPropertiesDict the dictionary of optional content properties, must have an indirect reference.
+     * @throws PdfException
+     */
+    public PdfOCProperties(PdfDictionary ocPropertiesDict) {
         super(ocPropertiesDict);
-        makeIndirect(pdfDocument);
+        ensureObjectIsAddedToDocument(ocPropertiesDict);
         readLayersFromDictionary();
     }
 
@@ -152,6 +166,11 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         return new ArrayList<>(layers);
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
     /**
      * This method registers a new layer in the OCProperties.
      * @param layer the new layer
@@ -160,6 +179,10 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         if (layer == null)
             throw new IllegalArgumentException("layer argument is null");
         layers.add(layer);
+    }
+
+    protected PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 
     /**
@@ -190,8 +213,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      */
     private void addASEvent(final PdfName event, final PdfName category) {
         PdfArray arr = new PdfArray();
-        for (Object element : layers) {
-            PdfLayer layer = (PdfLayer)element;
+        for (PdfLayer layer : layers) {
             if (layer.getTitle() == null) {
                 PdfDictionary usage = layer.getPdfObject().getAsDictionary(PdfName.Usage);
                 if (usage != null && usage.get(category) != null)
@@ -226,7 +248,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
         Map<PdfIndirectReference, PdfLayer> layerMap = new TreeMap<PdfIndirectReference, PdfLayer>();
         for (int ind = 0; ind < ocgs.size(); ind++) {
-            PdfLayer currentLayer = new PdfLayer(ocgs.getAsDictionary(ind), getDocument());
+            PdfLayer currentLayer = new PdfLayer(ocgs.getAsDictionary(ind).makeIndirect(getDocument()));
             // We will set onPanel to true later for the objects present in /D->/Order entry.
             currentLayer.onPanel = false;
             layerMap.put(currentLayer.getIndirectReference(), currentLayer);

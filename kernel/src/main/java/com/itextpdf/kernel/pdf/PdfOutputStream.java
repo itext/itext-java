@@ -377,10 +377,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             } else {
                 //When document is opened in stamping mode the output stream can be uninitialized.
                 //We have to initialize it and write all data from streams input to streams output.
-                if (pdfStream.getOutputStream() == null && pdfStream.getReader() != null) {
+                if (pdfStream.getOutputStream() == null && pdfStream.getIndirectReference().getReader() != null) {
                     // If new specific compression is set for stream,
                     // then compressed stream should be decoded and written with new compression settings
-                    byte[] bytes = pdfStream.getReader().readStreamBytes(pdfStream, false);
+                    byte[] bytes = pdfStream.getIndirectReference().getReader().readStreamBytes(pdfStream, false);
                     if (userDefinedCompression) {
                         bytes = decodeFlateBytes(pdfStream, bytes);
                     }

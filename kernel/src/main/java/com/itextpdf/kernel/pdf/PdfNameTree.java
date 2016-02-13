@@ -10,7 +10,6 @@ public class PdfNameTree {
 
     private List<PdfNode> parents;
     private PdfNode root;
-    private PdfDocument document;
 
     /**
      * Creates the NameTree of current Document
@@ -21,7 +20,6 @@ public class PdfNameTree {
      */
     public PdfNameTree(PdfCatalog catalog, PdfName treeType) {
         parents = new ArrayList<>();
-        document = catalog.getDocument();
 
         PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
         if (names != null) {
@@ -29,11 +27,11 @@ public class PdfNameTree {
             if (nameTree != null) {
                 root = new PdfNode(nameTree);
             } else {
-                root = new PdfNode(document);
+                root = new PdfNode();
             }
             parents.add(root);
         } else {
-            root = new PdfNode(document);
+            root = new PdfNode();
             parents.add(root);
         }
     }
@@ -55,7 +53,7 @@ public class PdfNameTree {
         if (kidsCount >= NodeSize || (node.getKids() != null && node.getKids().size() != 0)) {
             PdfNode parentNode = parents.get(parents.size() - 1);
             if (parentNode.getPdfObject().containsKey(PdfName.Names)) {
-                PdfNode newKidNode = new PdfNode(document);
+                PdfNode newKidNode = new PdfNode();
                 PdfArray names = parentNode.getNames();
                 for (int i = 0; i < names.size(); i++) {
                     newKidNode.addName(names.get(i), names.get(++i));
@@ -63,7 +61,7 @@ public class PdfNameTree {
                 parentNode.addKid(newKidNode);
                 parentNode.remove(PdfName.Names);
             }
-            node = new PdfNode(document);
+            node = new PdfNode();
             parentNode.addKid(node);
         }
 
@@ -87,7 +85,7 @@ public class PdfNameTree {
                 for (int i = 0; i < parents.size(); i++) {
                     PdfNode node = parents.get(i);
                     if (i % NodeSize == 0) {
-                        current = new PdfNode(document);
+                        current = new PdfNode();
                         nextParents.add(current);
                     }
                     assert current != null;

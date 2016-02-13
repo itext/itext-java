@@ -1092,7 +1092,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     protected void markObjectAsMustBeFlushed(PdfObject pdfObject){
-        if (pdfObject.getIndirectReference() != null) {
+        if (pdfObject.isIndirect()) {
             pdfObject.getIndirectReference().setState(PdfObject.MustBeFlushed);
         }
     }
@@ -1158,7 +1158,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 reader.readPdf();
                 pdfVersion = reader.pdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
-                catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true), this);
+                catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
 
                 PdfObject infoDict = trailer.get(PdfName.Info, true);
                 info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ?
@@ -1166,7 +1166,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
-                    structTreeRoot = new PdfStructTreeRoot(str, this);
+                    structTreeRoot = new PdfStructTreeRoot(str);
                     structParentIndex = getStructTreeRoot().getStructParentIndex() + 1;
                 }
                 if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))

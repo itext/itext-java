@@ -223,6 +223,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 //    }
 
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
+
     protected PdfName addResource(PdfObjectWrapper resource, ResourceNameGenerator nameGen) {
         return addResource(resource.getPdfObject(), nameGen);
     }

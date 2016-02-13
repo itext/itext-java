@@ -321,6 +321,11 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return resultString;
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
     protected boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType) {
         return PdfFontFactory.checkFontDictionary(fontDic, fontType, true);
     }
@@ -365,7 +370,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         if (fontStreamBytes == null) {
             throw new PdfException(PdfException.FontEmbeddingIssue);
         }
-        PdfStream fontStream = new PdfStream(fontStreamBytes).makeIndirect(getDocument());
+        PdfStream fontStream = new PdfStream(fontStreamBytes);
         for (int k = 0; k < fontStreamLengths.length; ++k) {
             fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
         }

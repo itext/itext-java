@@ -29,18 +29,18 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private Map<Object, PdfObject> names = new HashMap<>();
     private boolean isNamedDestinationsGot = false;
 
-    protected PdfCatalog(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+    protected PdfCatalog(PdfDictionary pdfObject) {
         super(pdfObject);
         if (pdfObject == null) {
             throw new PdfException(PdfException.DocumentHasNoCatalogObject);
         }
-        getPdfObject().makeIndirect(pdfDocument);
+        ensureObjectIsAddedToDocument(pdfObject);
         getPdfObject().put(PdfName.Type, PdfName.Catalog);
         pageTree = new PdfPagesTree(this);
     }
 
     protected PdfCatalog(PdfDocument pdfDocument) {
-        this(new PdfDictionary(), pdfDocument);
+        this(new PdfDictionary().makeIndirect(pdfDocument));
     }
 
     public void addPage(PdfPage page) {
@@ -118,12 +118,19 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         else {
             PdfDictionary ocPropertiesDict = getPdfObject().getAsDictionary(PdfName.OCProperties);
             if (ocPropertiesDict != null) {
-                ocProperties = new PdfOCProperties(ocPropertiesDict, getDocument());
+                if (getDocument().getWriter() != null) {
+                    ocPropertiesDict.makeIndirect(getDocument());
+                }
+                ocProperties = new PdfOCProperties(ocPropertiesDict);
             } else if (createIfNotExists) {
-                ocProperties = new PdfOCProperties(new PdfDictionary(), getDocument());
+                ocProperties = new PdfOCProperties(getDocument());
             }
         }
         return ocProperties;
+    }
+
+    public PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 
     /**
@@ -228,6 +235,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     public PdfNameTree getNameTree(PdfName treeType) {
         PdfNameTree nameTree = new PdfNameTree(this, treeType);
         return nameTree;
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
     }
 
     /**

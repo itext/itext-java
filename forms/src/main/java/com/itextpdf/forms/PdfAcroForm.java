@@ -732,8 +732,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public PdfFormField copyField(String name) {
         PdfFormField oldField = getField(name);
         if (oldField != null) {
-            PdfFormField field = new PdfFormField((PdfDictionary) oldField.getPdfObject().clone());
-            field.makeIndirect(document);
+            PdfFormField field = new PdfFormField((PdfDictionary) oldField.getPdfObject().clone().makeIndirect(document));
             return field;
         }
 
@@ -759,6 +758,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     protected PdfArray getFields() {
         return getPdfObject().getAsArray(PdfName.Fields);
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
     }
 
     private Map<String, PdfFormField> iterateFields(PdfArray array) {
@@ -829,7 +833,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             if (warnIfPageFlushed && pageDic.isFlushed()) {
                 throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
             }
-            PdfDocument doc = pageDic.getDocument();
+            PdfDocument doc = pageDic.getIndirectReference().getDocument();
             PdfPage widgetPage = doc.getCatalog().getPage(pageDic);
             addWidgetAnnotationToPage(widgetPage, annot);
         } else {

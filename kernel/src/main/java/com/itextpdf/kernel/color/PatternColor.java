@@ -24,7 +24,7 @@ public class PatternColor extends Color {
     }
 
     public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfColorSpace underlyingCS, float[] colorValue) {
-        super(new PdfSpecialCs.UncoloredTilingPattern(uncoloredPattern.getDocument(), underlyingCS), colorValue);
+        super(new PdfSpecialCs.UncoloredTilingPattern(underlyingCS), colorValue);
         if (underlyingCS instanceof PdfSpecialCs.Pattern)
             throw new IllegalArgumentException("underlyingCS");
         this.pattern = uncoloredPattern;

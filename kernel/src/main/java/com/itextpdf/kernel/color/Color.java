@@ -26,7 +26,7 @@ public class Color {
     protected float[] colorValue;
 
     public Color(PdfObject pdfObject, float[] colorValue) {
-        this(PdfColorSpace.makeColorSpace(pdfObject, null), colorValue);
+        this(PdfColorSpace.makeColorSpace(pdfObject), colorValue);
     }
 
     public Color(PdfObject pdfObject) {

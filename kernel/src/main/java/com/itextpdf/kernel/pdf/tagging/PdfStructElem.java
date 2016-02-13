@@ -18,6 +18,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
+ * must be indirect.
+ */
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
     static public int Unknown = 0;
@@ -90,11 +94,12 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     protected int type = Unknown;
 
+    /**
+     * @param pdfObject must be an indirect object.
+     */
     public PdfStructElem(PdfDictionary pdfObject) {
         super(pdfObject);
-        if (pdfObject.getIndirectReference() == null) {
-            throw new PdfException(PdfException.StructElemDictionaryShallBeIndirectObject);
-        }
+        ensureObjectIsAddedToDocument(pdfObject);
         PdfName role = getPdfObject().getAsName(PdfName.S);
         type = identifyType(getDocument(), role);
     }
@@ -270,6 +275,15 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public void flush() {
         //TODO log that to prevent undefined behaviour, use StructTreeRoot#flushStructElem method
         super.flush();
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
+    protected PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 
     private void addKidObjectToStructElemList(PdfObject k, List<IPdfStructElem> list) {

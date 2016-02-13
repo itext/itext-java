@@ -22,4 +22,9 @@ public class PdfBorderArray extends PdfObjectWrapper<PdfArray> {
             }
         }
     }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 }

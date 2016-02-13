@@ -879,7 +879,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc1, "c:\\morph\\itext6\\itextpdf\\canvas\\src\\test\\resources\\com\\itextpdf\\canvas\\PdfAnnotationTest\\" + "sample.wav", true);
 
-        PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
+        PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
 
         screen.setAction(action);
@@ -919,7 +919,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
 
-        PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
+        PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
 
         screen.setAction(action);
@@ -959,7 +959,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, new FileInputStream(sourceFolder + "sample.wav"), null, "sample.wav", null, null, true);
 
-        PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
+        PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
 
         screen.setAction(action);
@@ -1008,7 +1008,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, baos.toByteArray(), null, "sample.wav", null, null, null, true);
 
-        PdfAction action = PdfAction.createRendition(pdfDoc1, sourceFolder+"sample.wav",
+        PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
 
         screen.setAction(action);
@@ -1039,7 +1039,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         float[] arr = {1, 0, 0, 1, 0, 0};
 
-        PdfFixedPrint fixedPrint = new PdfFixedPrint(pdfDoc1);
+        PdfFixedPrint fixedPrint = new PdfFixedPrint();
         fixedPrint.setMatrix(arr);
         fixedPrint.setHorizontalTranslation(0.5f);
         fixedPrint.setVerticalTranslation(0);

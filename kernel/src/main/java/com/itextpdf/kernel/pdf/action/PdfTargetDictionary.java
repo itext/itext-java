@@ -24,4 +24,8 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
                 put(PdfName.A, a).put(PdfName.T, t);
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 }

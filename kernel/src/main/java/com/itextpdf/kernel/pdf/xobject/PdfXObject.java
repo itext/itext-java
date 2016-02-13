@@ -34,4 +34,9 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
     public Float getWidth() {throw new NotImplementedException(); }
 
     public Float getHeight() { throw new NotImplementedException(); }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
 }

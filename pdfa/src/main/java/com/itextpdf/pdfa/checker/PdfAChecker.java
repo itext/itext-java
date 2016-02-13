@@ -161,7 +161,7 @@ public abstract class PdfAChecker {
         if (shadings != null) {
             for (PdfObject shading : shadings.values()) {
                 PdfDictionary shadingDict = (PdfDictionary) shading;
-                checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace), null), resources.getAsDictionary(PdfName.ColorSpace), true, null);
+                checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace)), resources.getAsDictionary(PdfName.ColorSpace), true, null);
             }
         }
     }

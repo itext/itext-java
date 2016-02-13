@@ -1517,7 +1517,7 @@ public class PdfCanvas {
         else if (colorSpace instanceof PdfSpecialCs.Pattern)
             contentStream.getOutputStream().write(PdfName.Pattern).writeSpace().writeBytes(fill ? cs : CS).
                     writeNewLine().write(resources.addPattern(pattern)).writeSpace().writeBytes(fill ? scn : SCN);
-        else if (colorSpace.getPdfObject().getIndirectReference() != null) {
+        else if (colorSpace.getPdfObject().isIndirect()) {
             if (!setColorValueOnly) {
                 PdfName name = resources.addColorSpace(colorSpace);
                 contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS);

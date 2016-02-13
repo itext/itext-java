@@ -121,6 +121,7 @@ public class PdfException extends RuntimeException {
     public static final String NotAValidPkcs7ObjectNotASequence = "not.a.valid.pkcs.7.object.not.a.sequence";
     public static final String NotAValidPkcs7ObjectNotSignedData = "not.a.valid.pkcs.7.object.not.signed.data";
     public static final String NoValidEncryptionMode = "no.valid.encryption.mode";
+    public static final String ObjectMustBeIndirectToWorkWithThisWrapper = "object.must.be.indirect.to.work.with.this.wrapper";
     public static final String ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound = "object.number.of.the.first.object.in.this.xref.subsection.not.found";
     public static final String OcspStatusIsRevoked = "ocsp.status.is.revoked";
     public static final String OcspStatusIsUnknown = "ocsp.status.is.unknown";
@@ -147,7 +148,6 @@ public class PdfException extends RuntimeException {
     public static final String RoleIsNotMappedWithAnyStandardRole = "role.is.not.mapped.with.any.standard.role";
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
-    public static final String StructElemDictionaryShallBeIndirectObject = "struct.elem.dictionary.shall.be.indirect.object";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String TextCannotBeNull = "text.cannot.be.null";
     public static final String TextIsTooBig = "text.is.too.big";

@@ -1,6 +1,5 @@
 package com.itextpdf.kernel.color;
 
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 public class CalRgb extends Color {
@@ -9,12 +8,12 @@ public class CalRgb extends Color {
         super(cs, value);
     }
 
-    public CalRgb(PdfDocument document, float[] whitePoint, float[] value) {
-        super(new PdfCieBasedCs.CalRgb(document, whitePoint), value);
+    public CalRgb(float[] whitePoint, float[] value) {
+        super(new PdfCieBasedCs.CalRgb(whitePoint), value);
     }
 
-    public CalRgb(PdfDocument document, float[] whitePoint, float[] blackPoint, float[] gamma, float[] matrix, float[] value) {
-        this(new PdfCieBasedCs.CalRgb(document, whitePoint, blackPoint, gamma, matrix), value);
+    public CalRgb(float[] whitePoint, float[] blackPoint, float[] gamma, float[] matrix, float[] value) {
+        this(new PdfCieBasedCs.CalRgb(whitePoint, blackPoint, gamma, matrix), value);
     }
 
 }

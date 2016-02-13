@@ -98,4 +98,9 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
     public PdfBoolean isVolatile() {
         return ((PdfDictionary)getPdfObject()).getAsBoolean(PdfName.Volatile);
     }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
 }

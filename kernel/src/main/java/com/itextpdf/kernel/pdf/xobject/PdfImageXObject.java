@@ -223,7 +223,7 @@ public class PdfImageXObject extends PdfXObject {
                     //@TODO Check inline images
                     PdfStream globalsStream = new PdfStream();
                     globalsStream.getOutputStream().writeBytes((byte[]) value);
-                    dictionary.put(PdfName.JBIG2Globals, globalsStream.getIndirectReference());
+                    dictionary.put(PdfName.JBIG2Globals, globalsStream);
                 } else if (value instanceof Boolean) {
                     dictionary.put(new PdfName(key), new PdfBoolean((Boolean) value));
                 } else if (value instanceof Object[]) {

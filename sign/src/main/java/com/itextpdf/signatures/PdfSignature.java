@@ -111,6 +111,20 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Sets the /ContactInfo value.
+     *
+     * @param contactInfo information to contact the person who signed this document
+     */
+    public void setContact(String contactInfo) {
+        put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UnicodeBig));
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
+    /**
      * Gets the {@link PdfSignatureBuildProperties} instance if it exists, if
      * not it adds a new one and returns this.
      *
@@ -125,14 +139,5 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
         }
 
         return new PdfSignatureBuildProperties(buildPropDict);
-    }
-
-    /**
-     * Sets the /ContactInfo value.
-     *
-     * @param contactInfo information to contact the person who signed this document
-     */
-    public void setContact(String contactInfo) {
-        put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UnicodeBig));
     }
 }

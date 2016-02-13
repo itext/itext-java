@@ -4,7 +4,6 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -212,10 +211,10 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return new PdfAction().put(PdfName.S, PdfName.SetOCGState).put(PdfName.State, stateArr).put(PdfName.PreserveRB, new PdfBoolean(preserveRb));
     }
 
-    public static PdfAction createRendition(PdfDocument pdfDocument, String file, PdfFileSpec fs, String mimeType, PdfAnnotation screenAnnotation) {
+    public static PdfAction createRendition(String file, PdfFileSpec fs, String mimeType, PdfAnnotation screenAnnotation) {
         return new PdfAction().put(PdfName.S, PdfName.Rendition).
                 put(PdfName.OP, new PdfNumber(0)).put(PdfName.AN, screenAnnotation).
-                put(PdfName.R, new PdfRendition(pdfDocument, file, fs, mimeType));
+                put(PdfName.R, new PdfRendition(file, fs, mimeType));
     }
 
     public static PdfAction createJavaScript(String javaScript) {
@@ -266,6 +265,11 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
     private static PdfArray getArrayFromWrappersList(PdfObjectWrapper[] wrappers) {
         PdfArray arr = new PdfArray();
         for (PdfObjectWrapper wrapper : wrappers) {
@@ -288,7 +292,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
             if (obj instanceof String)
                 array.add(new PdfString((String) obj));
             else if (obj instanceof PdfAnnotation)
-                array.add(((PdfAnnotation) obj).getPdfObject().getIndirectReference());
+                array.add(((PdfAnnotation) obj).getPdfObject());
             else
                 throw new PdfException("the.array.must.contain.string.or.pdfannotation");
         }

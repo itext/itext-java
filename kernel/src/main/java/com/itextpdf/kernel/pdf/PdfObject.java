@@ -80,7 +80,7 @@ abstract public class PdfObject {
             return;
         }
         try {
-            PdfDocument document = getDocument();
+            PdfDocument document = getIndirectReference().getDocument();
             if (document != null) {
                 document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
                 document.flushObject(this, canBeInObjStm && getType() != Stream
@@ -197,17 +197,6 @@ abstract public class PdfObject {
     }
 
     /**
-     * Gets the document the object belongs to.
-     *
-     * @return a document the object belongs to. If object is direct return null.
-     */
-    public PdfDocument getDocument() {
-        if (indirectReference != null)
-            return indirectReference.getDocument();
-        return null;
-    }
-
-    /**
      * Creates clone of the object which belongs to the same document as original object.
      * New object shall not be used in other documents.
      *
@@ -286,8 +275,7 @@ abstract public class PdfObject {
                 PdfObject refTo = ((PdfIndirectReference) obj).getRefersTo();
                 obj = refTo != null ? refTo : obj;
             }
-            boolean isIndirect = obj.getIndirectReference() != null || obj.checkState(MustBeIndirect);
-            if (isIndirect && !allowDuplicating) {
+            if (obj.isIndirect() && !allowDuplicating) {
                 return (T) obj;
             }
             return (T) obj.clone();
@@ -299,30 +287,6 @@ abstract public class PdfObject {
         return (T) this;
     }
 
-    /**
-     * Gets a PdfWriter associated with the document object belongs to.
-     *
-     * @return PdfWriter.
-     */
-    protected PdfWriter getWriter() {
-        PdfDocument doc = getDocument();
-        if (doc != null)
-            return doc.getWriter();
-        return null;
-    }
-
-    /**
-     * Gets a PdfReader associated with the document object belongs to.
-     *
-     * @return PdfReader.
-     */
-    protected PdfReader getReader() {
-        PdfDocument doc = getDocument();
-        if (doc != null)
-            return doc.getReader();
-        return null;
-    }
-
     //TODO comment! Add note about flush, modified flag and xref.
     public void setModified() {
         if (indirectReference != null)
@@ -330,7 +294,7 @@ abstract public class PdfObject {
     }
 
     public void release() {
-        if (getReader() != null && indirectReference != null
+        if (indirectReference != null && indirectReference.getReader() != null
                 && !indirectReference.checkState(Flushed)) {
             indirectReference.refersTo = null;
             indirectReference = null;

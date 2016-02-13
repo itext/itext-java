@@ -65,7 +65,7 @@ public class PdfA2GraphicsCheckTest {
         float[] whitePoint = {0.9505f, 1f, 1.089f};
         float[] gamma = {2.2f, 2.2f, 2.2f};
         float[] matrix = {0.4124f, 0.2126f, 0.0193f, 0.3576f, 0.7152f, 0.1192f, 0.1805f, 0.0722f, 0.9505f};
-        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(doc, whitePoint, null, gamma, matrix);
+        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(whitePoint, null, gamma, matrix);
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
@@ -92,9 +92,9 @@ public class PdfA2GraphicsCheckTest {
         float[] whitePoint = {0.9505f, 1f, 1.089f};
         float[] gamma = {2.2f, 2.2f, 2.2f};
         float[] matrix = {0.4124f, 0.2126f, 0.0193f, 0.3576f, 0.7152f, 0.1192f, 0.1805f, 0.0722f, 0.9505f};
-        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(doc, whitePoint, null, gamma, matrix);
+        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(whitePoint, null, gamma, matrix);
 
-        PdfCieBasedCs.CalGray calGray = new PdfCieBasedCs.CalGray(doc, whitePoint, null, 2.2f);
+        PdfCieBasedCs.CalGray calGray = new PdfCieBasedCs.CalGray(whitePoint, null, 2.2f);
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 

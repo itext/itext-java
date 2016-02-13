@@ -201,11 +201,16 @@ public class PdfStream extends PdfDictionary {
             } catch (IOException ioe) {
                 throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
             }
-        } else if (getReader() != null) {
-            try {
-                bytes = getReader().readStreamBytes(this, decoded);
-            } catch (IOException ioe) {
-                throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
+        } else if (getIndirectReference() != null){
+            // This logic makes sense only for the case when PdfStream was created by reader and in this
+            // case PdfStream instance always has indirect reference and is never in the MustBeIndirect state
+            PdfReader reader = getIndirectReference().getReader();
+            if (reader != null) {
+                try {
+                    bytes = reader.readStreamBytes(this, decoded);
+                } catch (IOException ioe) {
+                    throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
+                }
             }
         }
         return bytes;
@@ -239,7 +244,11 @@ public class PdfStream extends PdfDictionary {
         }
 
         if (append) {
-            if (outputStreamIsUninitialized && getReader() != null) {
+            if (outputStreamIsUninitialized
+                    && getIndirectReference() != null && getIndirectReference().getReader() != null) {
+                // here is the same as in the getBytes() method: this logic makes sense only when stream is created
+                // by reader and in this case indirect reference won't be null and stream is not in the MustBeIndirect state.
+
                 byte[] oldBytes;
                 try {
                     oldBytes = getBytes();

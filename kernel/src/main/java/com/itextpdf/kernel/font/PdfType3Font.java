@@ -9,6 +9,8 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 /**
  * Low-level API class for Type 3 fonts.
@@ -16,6 +18,10 @@ import com.itextpdf.kernel.pdf.PdfNumber;
  * In Type 3 fonts, glyphs are defined by streams of PDF graphics operators.
  * These streams are associated with character names. A separate encoding entry
  * maps character codes to the appropriate character names for the glyphs.
+ *
+ * <br><br>
+ * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
+ * must be indirect.
  */
 public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
 
@@ -36,12 +42,13 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
     }
 
     /**
-     * Creates a Type3 font based on an existing font dictionary.
+     * Creates a Type3 font based on an existing font dictionary, which must be an indirect object.
      *
-     * @param fontDictionary a dictionary of type <code>/Font</code>
+     * @param fontDictionary a dictionary of type <code>/Font</code>, must have an indirect reference.
      */
     PdfType3Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
+        ensureObjectIsAddedToDocument(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type3);
         subset = true;
         embedded = true;
@@ -69,7 +76,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
             Integer unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
             if (unicode != null && fontEncoding.canEncode(unicode)) {
                 int code = fontEncoding.convertToByte(unicode);
-                fontProgram.addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName)));
+                fontProgram.addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
             }
         }
     }
@@ -159,6 +166,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
 
     @Override
     protected void addFontStream(PdfDictionary fontDescriptor) {
+    }
+
+    protected PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 
     @Override

@@ -56,7 +56,7 @@ class PdfPagesTree {
         PdfPage pdfPage = pages.get(pageNum);
         if (pdfPage == null) {
             loadPage(pageNum);
-            pdfPage = new PdfPage(pageRefs.get(pageNum), document);
+            pdfPage = new PdfPage(pageRefs.get(pageNum));
             int parentIndex = findPageParent(pageNum);
             PdfPages parentPages = parents.get(parentIndex);
             pdfPage.parentPages = parentPages;

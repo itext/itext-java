@@ -175,7 +175,7 @@ public class PdfA1Checker extends PdfAChecker {
         }
         PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
         if (colorSpaceObj != null) {
-            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj, null);
+            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj);
             checkColorSpace(colorSpace, currentColorSpaces, true, null);
             checkedObjectsColorspace.put(image, colorSpace);
         }

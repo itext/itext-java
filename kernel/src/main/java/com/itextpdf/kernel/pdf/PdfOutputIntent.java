@@ -81,4 +81,9 @@ public class PdfOutputIntent extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.S, subtype);
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
+
 }

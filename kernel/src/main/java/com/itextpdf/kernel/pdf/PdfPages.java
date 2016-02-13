@@ -125,5 +125,8 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         return 0;
     }
 
-
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
 }

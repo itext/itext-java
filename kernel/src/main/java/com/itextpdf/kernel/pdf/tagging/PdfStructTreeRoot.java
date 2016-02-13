@@ -26,6 +26,10 @@ import java.util.TreeMap;
 
 import org.slf4j.LoggerFactory;
 
+/**
+ * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
+ * must be indirect.
+ */
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
     protected Map<PdfDictionary, Integer> objRefs = new HashMap<>();
@@ -68,13 +72,16 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }};
 
     public PdfStructTreeRoot(PdfDocument document) {
-        this(new PdfDictionary(), document);
+        this(new PdfDictionary().makeIndirect(document));
         getPdfObject().put(PdfName.Type, PdfName.StructTreeRoot);
     }
 
-    public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document) {
+    /**
+     * @param pdfObject must be an indirect object.
+     */
+    public PdfStructTreeRoot(PdfDictionary pdfObject) {
         super(pdfObject);
-        makeIndirect(document);
+        ensureObjectIsAddedToDocument(pdfObject);
     }
 
     public PdfStructElem addKid(PdfStructElem structElem) {
@@ -436,6 +443,15 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
                 objRefs.remove(mcrToUnregister.getPdfObject());
             }
         }
+    }
+
+    public PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
     }
 
     private void freeAllReferences(PdfStructElem elem) {

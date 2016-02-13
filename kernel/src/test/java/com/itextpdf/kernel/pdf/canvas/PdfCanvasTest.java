@@ -1235,12 +1235,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        CalGray calGray1 = new CalGray(document, new float[]{0.9505f, 1.0000f, 1.0890f}, 0.5f);
+        CalGray calGray1 = new CalGray(new float[]{0.9505f, 1.0000f, 1.0890f}, 0.5f);
         canvas.setFillColor(calGray1).rectangle(50, 500, 50, 50).fill();
-        CalGray calGray2 = new CalGray(document, new float[]{0.9505f, 1.0000f, 1.0890f}, null, 2.222f, 0.5f);
+        CalGray calGray2 = new CalGray(new float[]{0.9505f, 1.0000f, 1.0890f}, null, 2.222f, 0.5f);
         canvas.setFillColor(calGray2).rectangle(150, 500, 50, 50).fill();
 
-        CalRgb calRgb = new CalRgb(document,
+        CalRgb calRgb = new CalRgb(
                 new float[]{0.9505f, 1.0000f, 1.0890f},
                 null,
                 new float[]{1.8000f, 1.8000f, 1.8000f},
@@ -1248,7 +1248,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 new float[]{1f, 0.5f, 0f});
         canvas.setFillColor(calRgb).rectangle(50, 400, 50, 50).fill();
 
-        Lab lab1 = new Lab(document, new float[]{0.9505f, 1.0000f, 1.0890f}, null, new float[]{-128, 127, -128, 127}, new float[]{1f, 0.5f, 0f});
+        Lab lab1 = new Lab(new float[]{0.9505f, 1.0000f, 1.0890f}, null, new float[]{-128, 127, -128, 127}, new float[]{1f, 0.5f, 0f});
         canvas.setFillColor(lab1).rectangle(50, 300, 50, 50).fill();
         Lab lab2 = new Lab((PdfCieBasedCs.Lab) lab1.getColorSpace(), new float[]{0f, 0.5f, 0f});
         canvas.setFillColor(lab2).rectangle(150, 300, 50, 50).fill();
@@ -1272,9 +1272,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         FileInputStream streamGray = new FileInputStream(sourceFolder + "BlackWhite.icc");
         FileInputStream streamRgb = new FileInputStream(sourceFolder + "CIERGB.icc");
         FileInputStream streamCmyk = new FileInputStream(sourceFolder + "USWebUncoated.icc");
-        IccBased gray = new IccBased(document, streamGray, new float[]{0.5f});
-        IccBased rgb = new IccBased(document, streamRgb, new float[]{1.0f, 0.5f, 0f});
-        IccBased cmyk = new IccBased(document, streamCmyk, new float[]{1.0f, 0.5f, 0f, 0f});
+        IccBased gray = new IccBased(streamGray, new float[]{0.5f});
+        IccBased rgb = new IccBased(streamRgb, new float[]{1.0f, 0.5f, 0f});
+        IccBased cmyk = new IccBased(streamCmyk, new float[]{1.0f, 0.5f, 0f, 0f});
         canvas.setFillColor(gray).rectangle(50, 500, 50, 50).fill();
         canvas.setFillColor(rgb).rectangle(150, 500, 50, 50).fill();
         canvas.setFillColor(cmyk).rectangle(250, 500, 50, 50).fill();
@@ -1305,9 +1305,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         FileInputStream streamGray = new FileInputStream(sourceFolder + "BlackWhite.icc");
         FileInputStream streamRgb = new FileInputStream(sourceFolder + "CIERGB.icc");
         FileInputStream streamCmyk = new FileInputStream(sourceFolder + "USWebUncoated.icc");
-        PdfCieBasedCs.IccBased gray = (PdfCieBasedCs.IccBased) new IccBased(document, streamGray).getColorSpace();
-        PdfCieBasedCs.IccBased rgb = (PdfCieBasedCs.IccBased) new IccBased(document, streamRgb).getColorSpace();
-        PdfCieBasedCs.IccBased cmyk = (PdfCieBasedCs.IccBased) new IccBased(document, streamCmyk).getColorSpace();
+        PdfCieBasedCs.IccBased gray = (PdfCieBasedCs.IccBased) new IccBased(streamGray).getColorSpace();
+        PdfCieBasedCs.IccBased rgb = (PdfCieBasedCs.IccBased) new IccBased(streamRgb).getColorSpace();
+        PdfCieBasedCs.IccBased cmyk = (PdfCieBasedCs.IccBased) new IccBased(streamCmyk).getColorSpace();
         PdfResources resources = page.getResources();
         resources.setDefaultGray(gray);
         resources.setDefaultRgb(rgb);
@@ -1338,7 +1338,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(document, com.itextpdf.kernel.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes, Charset.forName("UTF-8"))));
+        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(com.itextpdf.kernel.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes, Charset.forName("UTF-8"))));
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.setFillColor(new Indexed(indexed, 85)).rectangle(50, 500, 50, 50).fill();
         canvas.setFillColor(new Indexed(indexed, 127)).rectangle(150, 500, 50, 50).fill();
@@ -1358,8 +1358,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(document, new PdfArray(new float[]{0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0 0}".getBytes());
-        PdfSpecialCs.Separation separation = new PdfSpecialCs.Separation(document, "MyRed", new PdfDeviceCs.Rgb(), function);
+        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(new PdfArray(new float[]{0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0 0}".getBytes());
+        PdfSpecialCs.Separation separation = new PdfSpecialCs.Separation("MyRed", new PdfDeviceCs.Rgb(), function);
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.setFillColor(new Separation(separation, 0.25f)).rectangle(50, 500, 50, 50).fill();
@@ -1379,8 +1379,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(document, new PdfArray(new float[]{0, 1, 0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes());
-        PdfSpecialCs.DeviceN deviceN = new PdfSpecialCs.DeviceN(document, new ArrayList<String>() {{
+        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(new PdfArray(new float[]{0, 1, 0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes());
+        PdfSpecialCs.DeviceN deviceN = new PdfSpecialCs.DeviceN(new ArrayList<String>() {{
             add("MyRed");
             add("MyGreen");
         }}, new PdfDeviceCs.Rgb(), function);

@@ -32,4 +32,9 @@ public class PdfNamedDestination extends PdfDestination<PdfName> {
         }
         return null;
     }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 }

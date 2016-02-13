@@ -407,5 +407,8 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return annotation;
     }
 
-
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
 }

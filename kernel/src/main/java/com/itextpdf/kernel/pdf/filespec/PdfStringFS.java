@@ -12,4 +12,9 @@ public class PdfStringFS extends PdfFileSpec<PdfString> {
         super(pdfObject);
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
+
 }

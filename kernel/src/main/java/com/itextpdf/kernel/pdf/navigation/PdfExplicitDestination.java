@@ -100,6 +100,11 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
         return new PdfExplicitDestination().add(--pageNum).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
+
     private PdfExplicitDestination add(float value) {
         if (!Float.isNaN(value))
             getPdfObject().add(new PdfNumber(value));

@@ -3,7 +3,6 @@ package com.itextpdf.kernel.pdf.colorspace;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
@@ -16,12 +15,12 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
         super(pdfObject);
     }
 
-    public static PdfPattern getPatternInstance(PdfDictionary pdfObject, PdfDocument document) {
+    public static PdfPattern getPatternInstance(PdfDictionary pdfObject) {
         PdfNumber type = pdfObject.getAsNumber(PdfName.PatternType);
         if (new PdfNumber(1).equals(type) && pdfObject instanceof PdfStream)
-            return new Tiling((PdfStream)pdfObject).makeIndirect(document);
+            return new Tiling((PdfStream)pdfObject);
         else if (new PdfNumber(2).equals(type))
-            return new Shading(pdfObject).makeIndirect(document);
+            return new Shading(pdfObject);
         throw new IllegalArgumentException("pdfObject");
     }
 
@@ -32,6 +31,11 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
     public void setMatrix(PdfArray matrix) {
         getPdfObject().put(PdfName.Matrix, matrix);
         setModified();
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
     }
 
     public static class Tiling extends PdfPattern<PdfStream> {

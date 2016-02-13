@@ -155,6 +155,11 @@ public class PdfDate extends PdfObjectWrapper<PdfString> {
         }
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
+
     private static String generateStringByCalendar(Calendar d) {
         StringBuilder date = new StringBuilder("D:");
         date.append(setLength(d.get(Calendar.YEAR), 4));

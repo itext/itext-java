@@ -336,7 +336,7 @@ public class PdfWriter extends PdfOutputStream {
             in = object.getIndirectReference();
         }
         int result = in.hashCode();
-        result = 31 * result + object.getDocument().hashCode();
+        result = 31 * result + in.getDocument().hashCode();
         return result;
     }
 
@@ -346,7 +346,7 @@ public class PdfWriter extends PdfOutputStream {
             streamKey = new ByteStore((PdfStream) object, serialized);
             PdfIndirectReference streamRef = streamMap.get(streamKey);
             if (streamRef != null) {
-                return  streamRef;
+                return streamRef;
             }
             streamMap.put(streamKey, object.getIndirectReference());
         } else if (object.isDictionary()) {
@@ -507,7 +507,7 @@ public class PdfWriter extends PdfOutputStream {
                 in = object.getIndirectReference();
             }
             int result = in.hashCode();
-            result = 31 * result + object.getDocument().hashCode();
+            result = 31 * result + in.getDocument().hashCode();
             return result;
         }
     }

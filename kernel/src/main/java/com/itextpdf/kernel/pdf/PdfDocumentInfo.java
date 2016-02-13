@@ -109,6 +109,11 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().flush(false);
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
     private String getStringValue(PdfName name) {
         PdfString pdfString = getPdfObject().getAsString(name);
         return pdfString != null ? pdfString.getValue() : null;

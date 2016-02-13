@@ -276,4 +276,9 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     public PdfExtGState setTextKnockoutFlag(boolean textKnockoutFlag) {
         return put(PdfName.TK, new PdfBoolean(textKnockoutFlag));
     }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
 }

@@ -23,7 +23,6 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.io.codec.Base64;
@@ -45,6 +44,10 @@ import java.util.List;
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
  * AcroForm}.
+ *
+ * <br><br>
+ * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
+ * must be indirect.
  */
 public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
@@ -119,11 +122,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a form field as a wrapper object around a {@link PdfDictionary}.
+     * This {@link PdfDictionary} must be an indirect object.
      *
-     * @param pdfObject the dictionary to be wrapped
+     * @param pdfObject the dictionary to be wrapped, must have an indirect reference.
      */
     public PdfFormField(PdfDictionary pdfObject) {
         super(pdfObject);
+        ensureObjectIsAddedToDocument(pdfObject);
     }
 
     /**
@@ -650,15 +655,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary dictionary = (PdfDictionary) pdfObject;
             PdfName formType = dictionary.getAsName(PdfName.FT);
             if (PdfName.Tx.equals(formType))
-                field = (T) new PdfTextFormField(dictionary).makeIndirect(document);
+                field = new PdfTextFormField(dictionary).makeIndirect(document);
             else if (PdfName.Btn.equals(formType))
-                field = (T) new PdfButtonFormField(dictionary).makeIndirect(document);
+                field = new PdfButtonFormField(dictionary).makeIndirect(document);
             else if (PdfName.Ch.equals(formType))
-                field = (T) new PdfChoiceFormField(dictionary).makeIndirect(document);
+                field = new PdfChoiceFormField(dictionary).makeIndirect(document);
             else if (PdfName.Sig.equals(formType))
-                field = (T) new PdfSignatureFormField(dictionary).makeIndirect(document);
+                field = new PdfSignatureFormField(dictionary).makeIndirect(document);
             else
-                field = (T) new PdfFormField(dictionary).makeIndirect(document);
+                field = new PdfFormField(dictionary).makeIndirect(document);
         }
 
         return field;
@@ -1764,6 +1769,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
 
         return (T) this;
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
+    protected PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 
     protected Rectangle getRect(PdfDictionary field) {

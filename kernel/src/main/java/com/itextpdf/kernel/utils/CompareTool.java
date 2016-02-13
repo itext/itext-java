@@ -701,6 +701,12 @@ public class CompareTool {
         } else if (cmpDirectObj == null) {
             compareResult.addError(currentPath, "Found object which was not expected to be found.");
             return false;
+        } else if (cmpObj.isIndirectReference() && !outObj.isIndirectReference()) {
+            compareResult.addError(currentPath, "Expected indirect object.");
+            return false;
+        } else if (!cmpObj.isIndirectReference() && outObj.isIndirectReference()) {
+            compareResult.addError(currentPath, "Expected direct object.");
+            return false;
         } else if (cmpDirectObj.getType() != outDirectObj.getType()) {
             compareResult.addError(currentPath, String.format("Types do not match. Expected: %s. Found: %s.", cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
             return false;
@@ -723,14 +729,14 @@ public class CompareTool {
             // References to the same page
             if (cmpPagesRef == null) {
                 cmpPagesRef = new ArrayList<>();
-                for (int i = 1; i <= cmpObj.getDocument().getNumberOfPages(); ++i) {
-                    cmpPagesRef.add(cmpObj.getDocument().getPage(i).getPdfObject().getIndirectReference());
+                for (int i = 1; i <= cmpObj.getIndirectReference().getDocument().getNumberOfPages(); ++i) {
+                    cmpPagesRef.add(cmpObj.getIndirectReference().getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
             if (outPagesRef == null) {
                 outPagesRef = new ArrayList<>();
-                for (int i = 1; i <= outObj.getDocument().getNumberOfPages(); ++i) {
-                    outPagesRef.add(outObj.getDocument().getPage(i).getPdfObject().getIndirectReference());
+                for (int i = 1; i <= outObj.getIndirectReference().getDocument().getNumberOfPages(); ++i) {
+                    outPagesRef.add(outObj.getIndirectReference().getDocument().getPage(i).getPdfObject().getIndirectReference());
                 }
             }
             if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey))

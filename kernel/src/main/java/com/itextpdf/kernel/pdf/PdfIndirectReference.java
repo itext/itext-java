@@ -148,9 +148,30 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return IndirectReference;
     }
 
-    @Override
     public PdfDocument getDocument() {
         return pdfDocument;
+    }
+
+    /**
+     * Gets a PdfWriter associated with the document object belongs to.
+     *
+     * @return PdfWriter.
+     */
+    protected PdfWriter getWriter() {
+        if (getDocument() != null)
+            return getDocument().getWriter();
+        return null;
+    }
+
+    /**
+     * Gets a PdfReader associated with the document object belongs to.
+     *
+     * @return PdfReader.
+     */
+    protected PdfReader getReader() {
+        if (getDocument() != null)
+            return getDocument().getReader();
+        return null;
     }
 
     @Override

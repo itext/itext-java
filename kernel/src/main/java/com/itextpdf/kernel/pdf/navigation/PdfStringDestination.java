@@ -32,4 +32,9 @@ public class PdfStringDestination extends PdfDestination<PdfString> {
         }
         return null;
     }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 }

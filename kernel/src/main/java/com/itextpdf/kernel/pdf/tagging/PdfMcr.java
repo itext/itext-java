@@ -38,4 +38,9 @@ abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper imple
         return null;
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
+
 }
