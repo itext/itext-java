@@ -1,6 +1,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.layout.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 
 /**
@@ -17,6 +18,11 @@ public class AreaBreak extends AbstractElement {
      * current one.
      */
     public AreaBreak() {
+        this(Property.AreaBreakType.NEW_AREA);
+    }
+
+    public AreaBreak(Property.AreaBreakType areaBreakType) {
+        setProperty(Property.AREA_BREAK_TYPE, areaBreakType);
     }
     
     /**
@@ -25,6 +31,7 @@ public class AreaBreak extends AbstractElement {
      * @param pageSize the size of the new content area
      */
     public AreaBreak(PageSize pageSize) {
+        this(Property.AreaBreakType.NEW_PAGE);
         this.pageSize = pageSize;
     }
 
@@ -42,6 +49,10 @@ public class AreaBreak extends AbstractElement {
      */
     public void setPageSize(PageSize pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public Property.AreaBreakType getType() {
+        return (Property.AreaBreakType) getProperty(Property.AREA_BREAK_TYPE);
     }
 
     @Override

@@ -25,8 +25,11 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
 
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
+        if (overflowResult != null && overflowResult.getAreaBreak() != null && overflowResult.getAreaBreak().getType() != Property.AreaBreakType.NEW_AREA) {
+            nextAreaNumber = 0;
+        }
         if (nextAreaNumber % columns.length == 0) {
-            currentPageNumber = super.updateCurrentArea(overflowResult).getPageNumber();
+            super.updateCurrentArea(overflowResult);
         }
         return (currentArea = new LayoutArea(currentPageNumber, columns[nextAreaNumber++ % columns.length].clone()));
     }

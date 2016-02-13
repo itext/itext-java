@@ -10,6 +10,7 @@ import com.itextpdf.kernel.color.Color;
 public enum Property {
 
     ACTION,
+    AREA_BREAK_TYPE,
     AUTO_SCALE,
     AUTO_SCALE_HEIGHT,
     AUTO_SCALE_WIDTH,
@@ -452,6 +453,12 @@ public enum Property {
         DEFAULT_BIDI,
         LEFT_TO_RIGHT,
         RIGHT_TO_LEFT
+    }
+
+    public enum AreaBreakType {
+        NEW_AREA,
+        NEW_PAGE,
+        LAST_PAGE
     }
 
 }
