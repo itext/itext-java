@@ -235,6 +235,16 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return action;
     }
 
+    public static PdfAction createResetForm(Object[] names, int flags) {
+        PdfAction action = new PdfAction();
+        action.put(PdfName.S, PdfName.ResetForm);
+        if (names != null) {
+            action.put(PdfName.Fields, buildArray(names));
+        }
+        action.put(PdfName.Flags, new PdfNumber(flags));
+        return action;
+    }
+
     public static void setAdditionalAction(PdfObjectWrapper<PdfDictionary> wrapper, PdfName key, PdfAction action) {
         PdfDictionary dic;
         PdfObject obj = wrapper.getPdfObject().get(PdfName.AA);
