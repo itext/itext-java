@@ -22,7 +22,6 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/***/
 public class TableRenderer extends AbstractRenderer {
 
     protected List<CellRenderer[]> rows = new ArrayList<>();

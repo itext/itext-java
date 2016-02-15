@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Table} is a layout element that represents data in a two-dimensional
- * grid. It is filled with cells, ordered in rows and columns.
+ * grid. It is filled with {@link Cell cells}, ordered in rows and columns.
  * 
  * It is an implementation of {@link ILargeElement}, which means it can be flushed
  * to the canvas, in order to reclaim memory that is locked up.
@@ -414,6 +414,12 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         return rendererRoot;
     }
 
+    /**
+     * Gets a table renderer for this element. Note that this method can be called more than once.
+     * By default each element should define its own renderer, but the renderer can be overridden by
+     * {@link #setNextRenderer(IRenderer)} method call.
+     * @return a table renderer for this element
+     */
     @Override
     public TableRenderer getRenderer() {
         if (nextRenderer != null) {
