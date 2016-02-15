@@ -39,6 +39,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
             // See DEVSIX-191
             PdfName.B));
+    /**
+     * automatically rotate new content if the page has a rotation ( is disabled by default )
+     */
+    private boolean ignoreContentRotation = true;
 
     protected PdfPage(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -559,6 +563,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public List<PdfOutline> getOutlines(boolean updateOutlines) {
         getDocument().getOutlines(updateOutlines);
         return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject().getIndirectReference());
+    }
+
+    public boolean isIgnoreContentRotation() {
+        return ignoreContentRotation;
+    }
+
+    public void setIgnoreContentRotation(boolean ignoreContentRotation) {
+        this.ignoreContentRotation = ignoreContentRotation;
     }
 
     @Override

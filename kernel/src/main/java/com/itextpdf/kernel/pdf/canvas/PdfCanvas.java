@@ -197,7 +197,7 @@ public class PdfCanvas {
             // Wrap old content in q/Q in order not to get unexpected results because of the CTM
             page.newContentStreamBefore().getOutputStream().writeBytes(OutputStream.getIsoBytes("q\n"));
             contentStream.getOutputStream().writeBytes(OutputStream.getIsoBytes("Q\n"));
-            if (page.getRotation() != 0 && page.getDocument().isRotateContent()) {
+            if (page.getRotation() != 0 && !page.isIgnoreContentRotation()) {
                 applyRotation(page);
             }
         }
