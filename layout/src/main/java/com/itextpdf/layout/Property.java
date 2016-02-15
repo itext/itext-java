@@ -44,6 +44,7 @@ public enum Property {
     KEEP_TOGETHER(true),
     LEADING,
     LEFT,
+    LINE_DRAWER,
     LIST_START,
     LIST_SYMBOL,
     LIST_SYMBOL_INDENT,

@@ -951,7 +951,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
-
         return copyPagesTo(pagesToCopy, toDocument, toDocument.getNumberOfPages() + 1, copier);
     }
 

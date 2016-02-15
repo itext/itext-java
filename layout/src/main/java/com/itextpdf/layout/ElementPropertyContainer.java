@@ -589,4 +589,13 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
         return setProperty(Property.FONT_SCRIPT, script);
     }
 
+    /**
+     * Sets a destination name that will be created when this element is drawn to content.
+     * @param destination the destination name to be created
+     * @return this Element.
+     */
+    public Type setDestination(String destination) {
+        return setProperty(Property.DESTINATION, destination);
+    }
+
 }
