@@ -15,6 +15,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A {@link Table} is a layout element that represents data in a two-dimensional
+ * grid. It is filled with cells, ordered in rows and columns.
+ * 
+ * It is an implementation of {@link ILargeElement}, which means it can be flushed
+ * to the canvas, in order to reclaim memory that is locked up.
+ */
 public class Table extends BlockElement<Table> implements ILargeElement<Table> {
 
     protected PdfName role = PdfName.Table;
@@ -41,6 +48,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * Constructs a {@code Table} with the relative column widths.
      *
      * @param columnWidths the relative column widths
+     * @param largeTable whether parts of the table will be written before all data is added.
      */
     public Table(float[] columnWidths, boolean largeTable) {
         this.isComplete = !largeTable;
@@ -60,6 +68,11 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         initializeRows();
     }
 
+    /**
+     * Constructs a {@code Table} with the relative column widths.
+     *
+     * @param columnWidths the relative column widths
+     */
     public Table(float[] columnWidths) {
         this(columnWidths, false);
     }
@@ -68,6 +81,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * Constructs a {@code Table} with {@code numColumns} columns.
      *
      * @param numColumns the number of columns
+     * @param largeTable whether parts of the table will be written before all data is added.
      */
     public Table(int numColumns, boolean largeTable) {
         this.isComplete = !largeTable;
@@ -82,6 +96,11 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         initializeRows();
     }
 
+    /**
+     * Constructs a {@code Table} with {@code numColumns} columns.
+     *
+     * @param numColumns the number of columns
+     */
     public Table(int numColumns) {
         this(numColumns, false);
     }
@@ -90,6 +109,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * Sets the full width of the table.
      *
      * @param width the full width of the table.
+     * @return this element
      */
     @Override
     public Table setWidth(Property.UnitValue width) {
@@ -255,6 +275,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * succession belonging to the same printed table aspect.
      *
      * @param skipFirstHeader New value of property skipFirstHeader.
+     * @return this element
      */
     public Table setSkipFirstHeader(final boolean skipFirstHeader) {
         this.skipFirstHeader = skipFirstHeader;
@@ -266,6 +287,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * succession belonging to the same printed table aspect.
      *
      * @param skipLastFooter New value of property skipLastFooter.
+     * @return this element
      */
     public Table setSkipLastFooter(final boolean skipLastFooter) {
         this.skipLastFooter = skipLastFooter;
@@ -275,7 +297,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     /**
      * Starts new row. This mean that next cell will be added at the beginning of next line.
      *
-     * @return the Table object.
+     * @return this element
      */
     public Table startNewRow() {
         currentColumn = 0;
@@ -287,6 +309,13 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         //TODO when rendering starts, make sure, that last row is not empty.
     }
 
+    /**
+     * Adds a new cell to the table. The implementation decides for itself which
+     * row the cell will be placed on.
+     * 
+     * @param cell
+     * @return this element
+     */
     public Table addCell(Cell cell) {
         // Try to find first empty slot in table.
         // We shall not use colspan or rowspan, 1x1 will be enough.
@@ -324,6 +353,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     /**
      * Adds a new cell with received blockElement as a content.
      * @param blockElement a blockElement to add to the cell and then to the table
+     * @return this element
      */
     public Table addCell(BlockElement blockElement) {
         return addCell(new Cell().add(blockElement));
@@ -332,6 +362,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     /**
      * Adds a new cell with received image as a content.
      * @param image an image to add to the cell and then to the table
+     * @return this element
      */
     public Table addCell(Image image) {
         return addCell(new Cell().add(image));
@@ -340,11 +371,20 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     /**
      * Adds a new cell with received string as a content.
      * @param content a string to add to the cell and then to the table
+     * @return this element
      */
     public Table addCell(String content) {
         return addCell(new Cell().add(new Paragraph(content)));
     }
 
+    /**
+     * Returns a cell as specified by its location. If the cell is in a col-span
+     * or row-span and is not the top left cell, then <code>null</code> is returned.
+     * 
+     * @param row the row of the cell. indexes are zero-based
+     * @param column the column of the cell. indexes are zero-based
+     * @return the cell at the specified position.
+     */
     public Cell getCell(int row, int column) {
         if (row - rowWindowStart < rows.size()) {
             Cell cell = rows.get(row - rowWindowStart)[column];
@@ -356,6 +396,12 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         return null;
     }
 
+    /**
+     * Creates a renderer subtree with root in the current table element.
+     * Compared to {@link #getRenderer()}, the renderer returned by this method should contain all the child
+     * renderers for children of the current element.
+     * @return a {@link TableRenderer} subtree for this element
+     */
     @Override
     public TableRenderer createRendererSubTree() {
         TableRenderer rendererRoot = getRenderer();
@@ -434,7 +480,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      */
     @Override
     public void flushContent() {
-        if (lastAddedRowGroups == null || lastAddedRowGroups.size() == 0)
+        if (lastAddedRowGroups == null || lastAddedRowGroups.isEmpty())
             return;
         int firstRow = lastAddedRowGroups.get(0).startRow;
         int lastRow = lastAddedRowGroups.get(lastAddedRowGroups.size() - 1).finishRow;
@@ -454,10 +500,16 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         lastAddedRowGroups = null;
     }
 
+    @Override
     public void setDocument(Document document) {
         this.document = document;
     }
 
+    /**
+     * Gets the markup properties of the bottom border of the (current) last row.
+     * 
+     * @return an array of {@link Border} objects
+     */
     public Border[] getLastRowBottomBorder() {
         Border[] horizontalBorder = new Border[getNumberOfColumns()];
         if (lastAddedRow != null) {
@@ -571,21 +623,37 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         }
     }
 
+    /**
+     * A simple object which holds the row numbers of a section of a table.
+     */
     public static class RowRange {
         // The start number of the row group, inclusive
         int startRow;
         // The finish number of the row group, inclusive
         int finishRow;
 
+        /**
+         * Creates a {@link RowRange}
+         * @param startRow the start number of the row group, inclusive 
+         * @param finishRow the finish number of the row group, inclusive
+         */
         public RowRange(int startRow, int finishRow) {
             this.startRow = startRow;
             this.finishRow = finishRow;
         }
 
+        /**
+         * Gets the starting row number of the table section
+         * @return the start number of the row group, inclusive 
+         */
         public int getStartRow() {
             return startRow;
         }
 
+        /**
+         * Gets the finishing row number of the table section
+         * @return the finish number of the row group, inclusive 
+         */
         public int getFinishRow() {
             return finishRow;
         }

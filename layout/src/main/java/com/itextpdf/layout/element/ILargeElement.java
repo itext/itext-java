@@ -39,6 +39,7 @@ public interface ILargeElement<Type extends ILargeElement> extends IElement<Type
      * Sets the document this element is bound to.
      * We cannot write a large element into several documents simultaneously because we would need
      * more bulky interfaces for this feature. For now we went for simplicity.
+     * @param document the document
      */
     void setDocument(Document document);
 }
