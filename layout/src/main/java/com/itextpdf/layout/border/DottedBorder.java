@@ -12,7 +12,7 @@ public class DottedBorder extends Border {
     private static final float gapModifier = 1.5f;
 
     /**
-     * Creates a DotterBorder instance with the specified width. The color is set to the default: black.
+     * Creates a DottedBorder instance with the specified width. The color is set to the default: black.
      * @param width width of the border
      */
     public DottedBorder(float width) {
