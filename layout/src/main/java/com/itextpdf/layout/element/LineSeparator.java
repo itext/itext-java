@@ -1,7 +1,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.canvas.draw.Drawable;
+import com.itextpdf.kernel.pdf.canvas.draw.LineDrawer;
 import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.renderer.BlockRenderer;
@@ -12,7 +12,7 @@ public class LineSeparator extends BlockElement<LineSeparator> {
     protected PdfName role = PdfName.Artifact;
     protected AccessibleElementProperties tagProperties;
 
-    public LineSeparator(Drawable lineDrawer) {
+    public LineSeparator(LineDrawer lineDrawer) {
         setProperty(Property.LINE_DRAWER, lineDrawer);
     }
 
@@ -38,4 +38,5 @@ public class LineSeparator extends BlockElement<LineSeparator> {
         }
         return tagProperties;
     }
+
 }

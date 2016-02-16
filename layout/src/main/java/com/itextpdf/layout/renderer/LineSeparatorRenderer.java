@@ -1,6 +1,6 @@
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.pdf.canvas.draw.Drawable;
+import com.itextpdf.kernel.pdf.canvas.draw.LineDrawer;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -14,13 +14,14 @@ public class LineSeparatorRenderer extends BlockRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        float height = 1;
+        LineDrawer lineDrawer = getProperty(Property.LINE_DRAWER);
+        float height = lineDrawer != null ? lineDrawer.getLineWidth() : 0;
         occupiedArea = layoutContext.getArea().clone();
         applyMargins(occupiedArea.getBBox(), false);
         if (occupiedArea.getBBox().getHeight() < height) {
             return new LayoutResult(LayoutResult.NOTHING, null, null, this);
         }
-        occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight() - 1).setHeight(1);
+        occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight() - height).setHeight(height);
         applyMargins(occupiedArea.getBBox(), true);
         return new LayoutResult(LayoutResult.FULL, occupiedArea, this, null);
     }
@@ -33,7 +34,7 @@ public class LineSeparatorRenderer extends BlockRenderer {
     @Override
     public void draw(DrawContext drawContext) {
         super.draw(drawContext);
-        Drawable lineDrawer = getProperty(Property.LINE_DRAWER);
+        LineDrawer lineDrawer = getProperty(Property.LINE_DRAWER);
         if (lineDrawer != null) {
             lineDrawer.draw(drawContext.getCanvas(), occupiedArea.getBBox());
         }

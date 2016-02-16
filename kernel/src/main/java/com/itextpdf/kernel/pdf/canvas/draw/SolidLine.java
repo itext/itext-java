@@ -4,12 +4,12 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
- * Implementation of {@link Drawable} which draws a solid horizontal line along
+ * Implementation of {@link LineDrawer} which draws a solid horizontal line along
  * the bottom edge of the specified rectangle.
  */
-public class SolidLine implements Drawable {
+public class SolidLine implements LineDrawer {
 
-    private float lineWidth = .5f;
+    private float lineWidth = 1;
 
     /**
      * Constructs an instance of solid line drawer
@@ -27,9 +27,8 @@ public class SolidLine implements Drawable {
 
     @Override
     public void draw(PdfCanvas canvas, Rectangle drawArea) {
-        canvas.saveState();
-        canvas.setLineWidth(lineWidth);
-        canvas
+        canvas.saveState()
+                .setLineWidth(lineWidth)
                 .moveTo(drawArea.getX(), drawArea.getY())
                 .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY())
                 .stroke()

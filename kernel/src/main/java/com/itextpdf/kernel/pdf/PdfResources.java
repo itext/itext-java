@@ -226,7 +226,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 //        return fonts;
 //    }
 
-
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;
