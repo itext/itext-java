@@ -264,7 +264,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     public void testImageCompressLevel() throws IOException {
         byte[] b = ImageFactory.getImage(sourceFolder+"berlin2013.jpg").getData();
         com.itextpdf.io.source.ByteArrayOutputStream image =  new com.itextpdf.io.source.ByteArrayOutputStream();
-        image.assignBytes(b,b.length);
+        image.assignBytes(b, b.length);
 
         ByteArrayOutputStream byteArrayStream1 = new com.itextpdf.io.source.ByteArrayOutputStream();
         Deflater deflater = new Deflater(9);
@@ -293,5 +293,15 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.getPage(1).getResources().getPdfObject().getAsArray(new PdfName("d")).add(pdfStream);
         pdfDocument.close();
         assertNull(new CompareTool().compareByContent(destinationFolder + "freeReference.pdf", sourceFolder + "cmp_freeReference.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void checkAndResolveCircularReferences() throws IOException, InterruptedException {
+        PdfReader pdfReader = new PdfReader(sourceFolder + "datasheet.pdf");
+        PdfDocument pdfDocument = new PdfDocument(pdfReader, new PdfWriter(destinationFolder + "datasheet_mode.pdf"));
+        PdfDictionary pdfObject = (PdfDictionary)pdfDocument.getPdfObject(53);
+        pdfDocument.getPage(1).getResources().addForm(pdfObject);
+        pdfDocument.close();
+        assertNull(new CompareTool().compareByContent(destinationFolder + "datasheet_mode.pdf", sourceFolder + "cmp_datasheet_mode.pdf", "d:/", "diff_"));
     }
 }
