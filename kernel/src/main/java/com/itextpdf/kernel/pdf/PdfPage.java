@@ -84,9 +84,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the rotated page.
+     *
      * @return the rotated rectangle
      */
-    public  Rectangle getPageSizeWithRotation() {
+    public Rectangle getPageSizeWithRotation() {
         PageSize rect = new PageSize(getPageSize());
         int rotation = getRotation();
         while (rotation > 0) {
@@ -166,12 +167,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             boolean readOnly = false;
             PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
             if (resources == null) {
-                if (parentPages == null) {
-                    PdfPagesTree pageTree = getDocument().getCatalog().pageTree;
-                    parentPages = pageTree.findPageParent(this);
-                }
-
-                resources = (PdfDictionary) getParentValue(parentPages, PdfName.Resources);
+                initParentPages();
+                resources = (PdfDictionary) getParentValue(this.parentPages, PdfName.Resources);
                 if (resources != null) {
                     readOnly = true;
                 }
@@ -183,7 +180,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             this.resources = new PdfResources(resources);
             this.resources.setReadOnly(readOnly);
         }
-        return resources;
+        return this.resources;
+    }
+
+    public void setResources(PdfResources pdfResources) {
+        getPdfObject().put(PdfName.Resources, pdfResources.getPdfObject());
+        this.resources = pdfResources;
     }
 
 
@@ -211,9 +213,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
-    public void setCropBox(){
-
-    }
 
     public PdfStream getXmpMetadata() throws XMPException {
         return getPdfObject().getAsStream(PdfName.Metadata);
@@ -233,12 +232,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Copies page to the specified document.
      *
      * @param toDocument a document to copy page to.
-     * @param copier a copier which bears a specific copy logic. May be NULL
+     * @param copier     a copier which bears a specific copy logic. May be NULL
      * @return copied page.
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
         PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
         PdfPage page = new PdfPage(dictionary);
+        copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
             if (annot.getSubtype().equals(PdfName.Link)) {
                 getDocument().storeLinkAnnotations(this, (PdfLinkAnnotation) annot);
@@ -267,6 +267,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Copies page as FormXObject to the specified document.
+     *
      * @param toDocument a document to copy to.
      * @return resultant XObject.
      */
@@ -314,6 +315,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * <br>
      * <br>
      * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushXObjects</code> is true.
+     *
      * @param flushXObjects if true the images and FormXObjects associated with this page will also be flushed.
      */
     public void flush(boolean flushXObjects) {
@@ -360,7 +362,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return mediaBox.toRectangle();
     }
 
-    public void setMediaBox(Rectangle rectangle){
+    public void setMediaBox(Rectangle rectangle) {
         getPdfObject().put(PdfName.MediaBox, new PdfArray(rectangle));
     }
 
@@ -376,7 +378,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return cropBox.toRectangle();
     }
 
-    public void setCropBox(Rectangle rectangle){
+    public void setCropBox(Rectangle rectangle) {
         getPdfObject().put(PdfName.CropBox, new PdfArray(rectangle));
     }
 
@@ -389,7 +391,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.ArtBox, new PdfArray(rectangle));
     }
 
-    public Rectangle getArtBox(){
+    public Rectangle getArtBox() {
         return getPdfObject().getAsRectangle(PdfName.ArtBox);
     }
 
@@ -402,7 +404,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.TrimBox, new PdfArray(rectangle));
     }
 
-    public Rectangle getTrimBox(){
+    public Rectangle getTrimBox() {
         return getPdfObject().getAsRectangle(PdfName.TrimBox);
     }
 
@@ -518,6 +520,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Removes an annotation from the page.
      * <br><br>
      * NOTE: If document is tagged, PdfDocument's PdfTagStructure instance will point at annotation tag parent after method call.
+     *
      * @param annotation an annotation to be removed.
      * @return this PdfPage instance.
      */
@@ -594,7 +597,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (value != null) {
                 return value;
             } else {
-                getParentValue(parentPages.getParent(), pdfName);
+                return getParentValue(parentPages.getParent(), pdfName);
             }
         }
         return null;
@@ -648,6 +651,34 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             obj.flush();
             if (innerXObjects != null) {
                 flushXObjects(innerXObjects);
+            }
+        }
+    }
+
+    /*
+    * initialization <code>parentPages</code> if needed
+    */
+    private void initParentPages() {
+        if (this.parentPages == null) {
+            PdfPagesTree pageTree = getDocument().getCatalog().pageTree;
+            this.parentPages = pageTree.findPageParent(this);
+        }
+    }
+
+    private void copyInheritedProperties(PdfPage copyPdfPage, PdfDocument pdfDocument) {
+        if (copyPdfPage.getPdfObject().get(PdfName.Resources) == null) {
+            PdfObject copyResource = pdfDocument.getWriter().copyObject(getResources().getPdfObject(), pdfDocument, false);
+            copyPdfPage.getPdfObject().put(PdfName.Resources, copyResource);
+        }
+        if (copyPdfPage.getPdfObject().get(PdfName.MediaBox) == null) {
+            initParentPages();
+            copyPdfPage.setMediaBox(getMediaBox());
+        }
+        if (copyPdfPage.getPdfObject().get(PdfName.CropBox) == null) {
+            initParentPages();
+            PdfArray cropBox = (PdfArray) getParentValue(parentPages, PdfName.CropBox);
+            if (cropBox != null) {
+                copyPdfPage.setCropBox(cropBox.toRectangle());
             }
         }
     }

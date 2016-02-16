@@ -108,7 +108,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        System.out.println(((System.nanoTime() - timeStart)/1000/1000));
+        System.out.println(((System.nanoTime() - timeStart) / 1000 / 1000));
 
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_copyLargeFile.pdf", destinationFolder, "diff_"));
     }
@@ -146,5 +146,18 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         destDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_copyFields05.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copyPagesWithInheritedResources() throws IOException, InterruptedException {
+        String sourceFile = sourceFolder +"AnnotationSampleStandard.pdf";
+        String destFile =   destinationFolder + "AnnotationSampleStandard_copy.pdf";
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFile));
+        PdfWriter writer = new PdfWriter(destFile);
+        PdfDocument source = new PdfDocument(reader);
+        PdfDocument target = new PdfDocument(writer);
+        source.copyPagesTo(1, source.getNumberOfPages(), target, new PdfPageFormCopier());
+        target.close();
+        Assert.assertNull(new CompareTool().compareByContent(destFile, sourceFolder + "cmp_AnnotationSampleStandard_copy.pdf", destinationFolder, "diff_"));
     }
 }
