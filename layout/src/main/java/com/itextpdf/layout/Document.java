@@ -205,7 +205,7 @@ public class Document extends RootElement<Document> {
      * @return a {@link Rectangle} with the required dimensions and origin point
      */
     public Rectangle getPageEffectiveArea(PageSize pageSize) {
-        return new Rectangle(leftMargin, bottomMargin, pageSize.getWidth() - leftMargin - rightMargin, pageSize.getHeight() - bottomMargin - topMargin);
+        return new Rectangle(pageSize.getLeft() + leftMargin, pageSize.getBottom() + bottomMargin, pageSize.getWidth() - leftMargin - rightMargin, pageSize.getHeight() - bottomMargin - topMargin);
     }
 
     /**
