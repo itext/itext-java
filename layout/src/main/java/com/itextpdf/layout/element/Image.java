@@ -101,7 +101,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     /**
      * Creates an {@link Image} from an image resource, read in from a file
-     * with the iText I/O module.
+     * with the iText I/O module, on a fixed position.
      * @param img an internal representation of the {@link com.itextpdf.io.image.Image image resource}
      * @param x a float value representing the horizontal offset of the lower left corner of the image
      * @param y a float value representing the vertical offset of the lower left corner of the image
@@ -117,6 +117,14 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         this(new PdfImageXObject(img), x, y);
     }
 
+    /**
+     * Creates an {@link Image} from an image resource, read in from a file
+     * with the iText I/O module, with a custom width and on a fixed position.
+     * @param img an internal representation of the {@link com.itextpdf.io.image.Image image resource}
+     * @param x a float value representing the horizontal offset of the lower left corner of the image
+     * @param y a float value representing the vertical offset of the lower left corner of the image
+     * @param width a float value
+     */
     public Image(com.itextpdf.io.image.Image img, float x, float y, float width) {
         //@TODO DEVSIX-329
 //        if (img instanceof WmfImage) {
@@ -128,6 +136,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         this(new PdfImageXObject(img), x, y, width);
     }
 
+    /**
+     * Gets the XObject contained in this image object
+     * @return a {@link PdfXObject}
+     */
     public PdfXObject getXObject() {
         return xObject;
     }
