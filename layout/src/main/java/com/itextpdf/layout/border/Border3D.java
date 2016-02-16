@@ -6,22 +6,47 @@ import com.itextpdf.kernel.color.DeviceCmyk;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.color.DeviceRgb;
 
+/**
+ * Represents a border that is displayed using a 3D effect.
+ */
 public abstract class Border3D extends Border{
     public static final DeviceRgb gray = new DeviceRgb(212, 208, 200);
 
-
+    /**
+     * Creates a Border3D instance with the specified width. Also sets the color to gray.
+     *
+     * @param width with of the border
+     */
     public Border3D(float width) {
         this(gray, width);
     }
 
+    /**
+     * Creates a Border3D instance with the specified width and color.
+     *
+     * @param color color of the border
+     * @param width with of the border
+     */
     public Border3D(DeviceRgb color, float width) {
         super(color, width);
     }
 
+    /**
+     * Creates a Border3D instance with the specified width and color.
+     *
+     * @param color color of the border
+     * @param width with of the border
+     */
     public Border3D(DeviceCmyk color, float width) {
         super(color, width);
     }
 
+    /**
+     * Creates a Border3D instance with the specified width and color.
+     *
+     * @param color color of the border
+     * @param width with of the border
+     */
     public Border3D(DeviceGray color, float width) {
         super(color, width);
     }
