@@ -124,6 +124,12 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         return this;
     }
 
+    /**
+     * Returns the column width for the specified column.
+     *
+     * @param column index of the column
+     * @return the width of the column
+     */
     public float getColumnWidth(int column) {
         return columnWidths[column];
     }

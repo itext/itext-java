@@ -202,6 +202,12 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
         return (T) setPaddingTop(paddingTop).setPaddingRight(paddingRight).setPaddingBottom(paddingBottom).setPaddingLeft(paddingLeft);
     }
 
+    /**
+     * Sets the vertical alignment of the element.
+     *
+     * @param verticalAlignment the vertical alignment setting
+     * @return this element
+     */
     public T setVerticalAlignment(Property.VerticalAlignment verticalAlignment) {
         return setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
     }
