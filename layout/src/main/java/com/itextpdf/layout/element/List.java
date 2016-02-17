@@ -6,10 +6,10 @@ import com.itextpdf.layout.Property;
 import com.itextpdf.layout.renderer.ListRenderer;
 
 /**
- * A List is a layout element representing a sequence of objects with the same
- * or very similar layout properties, giving it a sense of unity. It contains
- * {@link ListItem} objects that can optionally be prefixed with a symbol and/or
- * numbered.
+ * A List is a layout element representing a series of objects that are vertically
+ * outlined with the same or very similar layout properties, giving it a sense
+ * of unity. It contains {@link ListItem} objects that can optionally be prefixed
+ * with a symbol and/or numbered.
  */
 public class List extends BlockElement<List> {
 

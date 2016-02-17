@@ -232,7 +232,7 @@ public enum Property {
      * A specialized class that specifies the leading, "the vertical distance between
      * the baselines of adjacent lines of text" (ISO-32000-1, section 9.3.5).
      * Allows to use either an absolute (constant) leading value, or one
-     * determined by font size.
+     * determined by font size. Pronounce as 'ledding' (cfr. Led Zeppelin).
      * 
      * This class is meant to be used as the value for the
      * {@link Property#LEADING} key in an {@link IPropertyContainer}.
