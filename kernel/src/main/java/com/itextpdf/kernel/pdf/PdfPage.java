@@ -355,6 +355,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Rectangle getMediaBox() {
+        initParentPages();
         PdfArray mediaBox = getPdfObject().getAsArray(PdfName.MediaBox);
         if (mediaBox == null) {
             mediaBox = (PdfArray) getParentValue(parentPages, PdfName.MediaBox);
@@ -368,6 +369,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
 
     public Rectangle getCropBox() {
+        initParentPages();
         PdfArray cropBox = getPdfObject().getAsArray(PdfName.CropBox);
         if (cropBox == null) {
             cropBox = (PdfArray) getParentValue(parentPages, PdfName.CropBox);
@@ -671,7 +673,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             copyPdfPage.getPdfObject().put(PdfName.Resources, copyResource);
         }
         if (copyPdfPage.getPdfObject().get(PdfName.MediaBox) == null) {
-            initParentPages();
             copyPdfPage.setMediaBox(getMediaBox());
         }
         if (copyPdfPage.getPdfObject().get(PdfName.CropBox) == null) {
