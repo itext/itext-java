@@ -14,7 +14,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.pdfa.PdfAConformanceException;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,8 +22,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public abstract class PdfAChecker {
+
+    protected Logger LOGGER = Logger.getLogger(getClass().getName());
+
     public static final String ICC_COLOR_SPACE_RGB = "RGB ";
     public static final String ICC_COLOR_SPACE_CMYK = "CMYK";
     public static final String ICC_COLOR_SPACE_GRAY = "GRAY";

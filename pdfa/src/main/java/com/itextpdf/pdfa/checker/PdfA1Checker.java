@@ -229,7 +229,7 @@ public class PdfA1Checker extends PdfAChecker {
                 throw new PdfAConformanceException(PdfAConformanceException.CatalogShallIncludeMarkInfoDictionaryWithMarkedTrueValue);
             }
             if (!catalog.containsKey(PdfName.Lang)) {
-                throw new PdfAConformanceException(PdfAConformanceException.CatalogShallContainLangEntry);
+                LOGGER.warning(PdfAConformanceException.CatalogShallContainLangEntry);
             }
         }
     }
