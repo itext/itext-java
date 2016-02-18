@@ -15,7 +15,7 @@ public abstract class PdfDestination<T extends PdfObject> extends PdfObjectWrapp
         super(pdfObject);
     }
 
-    public abstract PdfObject getDestinationPage(Map<Object, PdfObject> names);
+    public abstract PdfObject getDestinationPage(Map<String, PdfObject> names);
 
     public abstract PdfDestination replaceNamedDestination(Map<Object, PdfObject> names);
 

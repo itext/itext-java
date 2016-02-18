@@ -1,16 +1,7 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNull;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfObjectWrapper;
-import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.slf4j.LoggerFactory;
 
@@ -34,10 +24,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     protected Map<PdfDictionary, Integer> objRefs = new HashMap<>();
 
-    /**
-     * Contains parent tree entries of the pages that were flushed.
-     */
-    private Map<Integer, PdfObject> parentTreeEntries = new TreeMap<>();
+    private PdfNumTree parentTree;
 
     /**
      * Contains marked content references lists of all pages.
@@ -82,6 +69,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     public PdfStructTreeRoot(PdfDictionary pdfObject) {
         super(pdfObject);
         ensureObjectIsAddedToDocument(pdfObject);
+        parentTree = new PdfNumTree(getDocument().getCatalog(), PdfName.ParentTree);
     }
 
     public PdfStructElem addKid(PdfStructElem structElem) {
@@ -208,7 +196,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         for (int i = 0; i < getDocument().getNumberOfPages(); ++i) {
             createParentTreeEntryForPage(getDocument().getPage(i + 1));
         }
-        createParentTree();
+        put(PdfName.ParentTree, parentTree.buildTree().makeIndirect(getDocument()));
         getDocument().getTagStructure().removeAllConnectionsToTags();
         flushAllKids(this);
         super.flush();
@@ -472,7 +460,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             throw new PdfException(PdfException.CannotRebuildTagStructureWhenItWasPartlyFlushed);
         }
         pageToPageMcrs = null;
-        parentTreeEntries = new TreeMap<>();
+        parentTree = new PdfNumTree(getDocument().getCatalog(), PdfName.ParentTree);
         getDocument().getTagStructure().removeAllConnectionsToTags();
     }
 
@@ -535,18 +523,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
     }
 
-    private void createParentTree() {
-        //nums is an array of pairs <PdfNumber, PdfObject> in which pairs shall be ordered by the PdfNumber values.
-        // See "Number trees" in pdf spec
-        PdfArray nums = new PdfArray();
-        for (Map.Entry<Integer, PdfObject> entry : parentTreeEntries.entrySet()) {
-            nums.add(new PdfNumber(entry.getKey()));
-            nums.add(entry.getValue());
-        }
-        getParentTreeObject().remove(PdfName.Kids);
-        getParentTreeObject().put(PdfName.Nums, nums);
-    }
-
     /**
      * Number and dictionary references in list shall be order by mcid ascending.
      * Number and dictionary references in list shall belong to the same page.
@@ -562,7 +538,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             if (mcr instanceof PdfObjRef) {
                 Integer structParent = this.objRefs.get(mcr.getPdfObject());
                 if (structParent != null) {
-                    parentTreeEntries.put(structParent, ((PdfStructElem) mcr.getParent()).getPdfObject());
+                    parentTree.addEntry(structParent, ((PdfStructElem) mcr.getParent()).getPdfObject());
                 }
             } else {
                 // if for some reason some mcr where not registered or don't exist, we ensure that the rest
@@ -577,7 +553,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
         if (!parentsOfPageMcrs.isEmpty()) {
             parentsOfPageMcrs.makeIndirect(getDocument());
-            parentTreeEntries.put(pageStructParentIndex, parentsOfPageMcrs);
+            parentTree.addEntry(pageStructParentIndex, parentsOfPageMcrs);
             parentsOfPageMcrs.flush();
         }
     }

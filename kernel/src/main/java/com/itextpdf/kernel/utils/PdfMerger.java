@@ -152,7 +152,7 @@ public class PdfMerger {
                 }
             }
         } else if (dest.isString()) {
-            PdfArray array = (PdfArray) fromDocument.getCatalog().getNamedDestinations().get(((PdfString) dest).toUnicodeString());
+            PdfArray array = (PdfArray) fromDocument.getCatalog().getNameTree(PdfName.Dests).getNames().get(((PdfString) dest).toUnicodeString());
             if (array != null) {
                 PdfObject pageObject = array.get(0);
                 for (PdfPage oldPage : page2page.keySet()) {

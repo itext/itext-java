@@ -19,7 +19,7 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
     }
 
     @Override
-    public PdfObject getDestinationPage(Map<Object, PdfObject> names) {
+    public PdfObject getDestinationPage(Map<String, PdfObject> names) {
         return getPdfObject().get(0, false);
     }
 

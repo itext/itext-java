@@ -938,8 +938,8 @@ public class CompareTool {
             else {
                 PdfArray explicitCmpDest = null;
                 PdfArray explicitOutDest = null;
-                Map<Object, PdfObject> cmpNamedDestinations = cmpDocument.getCatalog().getNamedDestinations();
-                Map<Object, PdfObject> outNamedDestinations = outDocument.getCatalog().getNamedDestinations();
+                Map<String, PdfObject> cmpNamedDestinations = cmpDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
+                Map<String, PdfObject> outNamedDestinations = outDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
                 switch (cmpDestObject.getType()) {
                     case PdfObject.Array:
                         explicitCmpDest = (PdfArray) cmpDestObject;

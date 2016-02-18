@@ -498,6 +498,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Padding = createDirectName("Padding");
     public static final PdfName Page = createDirectName("Page");
     public static final PdfName PageElement = createDirectName("PageElement");
+    public static final PdfName PageLabels = createDirectName("PageLabels");
     public static final PdfName PageMode = createDirectName("PageMode");
     public static final PdfName Pages = createDirectName("Pages");
     public static final PdfName PaintType = createDirectName("PaintType");

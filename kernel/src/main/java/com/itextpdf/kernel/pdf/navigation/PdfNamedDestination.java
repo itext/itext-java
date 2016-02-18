@@ -17,8 +17,8 @@ public class PdfNamedDestination extends PdfDestination<PdfName> {
     }
 
     @Override
-    public PdfObject getDestinationPage(final Map<Object, PdfObject> names) {
-        PdfArray array = (PdfArray) names.get(getPdfObject());
+    public PdfObject getDestinationPage(final Map<String, PdfObject> names) {
+        PdfArray array = (PdfArray) names.get(getPdfObject().getValue());
 
         return array != null ? array.get(0, false) : null;
     }

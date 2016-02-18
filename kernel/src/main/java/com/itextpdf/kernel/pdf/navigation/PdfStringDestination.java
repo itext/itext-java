@@ -17,7 +17,7 @@ public class PdfStringDestination extends PdfDestination<PdfString> {
     }
 
     @Override
-    public PdfObject getDestinationPage(Map<Object, PdfObject> names) {
+    public PdfObject getDestinationPage(Map<String, PdfObject> names) {
         PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());
 
         return array != null ? array.get(0, false) : null;
@@ -25,7 +25,6 @@ public class PdfStringDestination extends PdfDestination<PdfString> {
 
     @Override
     public PdfDestination replaceNamedDestination(final Map<Object, PdfObject> names) {
-
         PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());
         if (array != null){
             return PdfDestination.makeDestination(array);

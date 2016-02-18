@@ -643,11 +643,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         catalog.getPdfObject().flush(false);
                     }
 
-                    if (catalog.destinationTree != null) {
-                        PdfObject destinationRoot = catalog.destinationTree.generateTree();
-
-                        if (catalog.getPdfObject().isModified() || destinationRoot.isModified()) {
-                            ensureDestinationsAddedToNames(destinationRoot);
+                    for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
+                        PdfNameTree tree = entry.getValue();
+                        if (tree.isModified()) {
+                            ensureTreeRootAddedToNames(tree.buildTree().makeIndirect(this), entry.getKey());
                         }
                     }
 
@@ -671,10 +670,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
                     catalog.getPdfObject().put(PdfName.Pages, catalog.pageTree.generateTree());
 
-                    if (catalog.destinationTree != null) {
-                        PdfObject destinationRoot = catalog.destinationTree.generateTree();
-                        if (destinationRoot != null) {
-                            ensureDestinationsAddedToNames(destinationRoot);
+                    for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
+                        PdfNameTree tree = entry.getValue();
+                        if (tree.isModified()) {
+                            ensureTreeRootAddedToNames(tree.buildTree().makeIndirect(this), entry.getKey());
                         }
                     }
 
@@ -988,12 +987,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
      *
      * @param key   Name of the destination.
-     * @param value An object destination refers to.
+     * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
+     *              See PdfSpec 12.3.2.3 for more info.
      * @throws PdfException
      */
-    public void addNewName(PdfObject key, PdfObject value) {
+    public void addNameDestination(String key, PdfObject value) {
         checkClosingStatus();
-        catalog.addNewDestinationName(key, value);
+        catalog.addNamedDestination(key, value);
     }
 
     public List<PdfIndirectReference> listIndirectReferences() {
@@ -1050,14 +1050,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     public void addFileAttachment(String description, PdfFileSpec fs) {
         checkClosingStatus();
-        PdfNameTree fileAttachmentTree = new PdfNameTree(catalog, PdfName.EmbeddedFiles);
-        fileAttachmentTree.addNewName(new PdfString(description), fs.getPdfObject());
-        PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
-        if (names == null) {
-            names = new PdfDictionary();
-            catalog.put(PdfName.Names, names);
-        }
-        names.put(PdfName.EmbeddedFiles, fileAttachmentTree.getRoot().getPdfObject());
+        catalog.addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
 
         PdfArray afArray = catalog.getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null) {
@@ -1252,18 +1245,17 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         for (Map.Entry<PdfPage, List<PdfLinkAnnotation>> entry : linkAnnotations.entrySet()) {
             for (PdfLinkAnnotation annot : entry.getValue()) {
                 PdfDestination d = null;
-                PdfDictionary a = null;
 
                 PdfObject dest = annot.getDestinationObject();
                 if (dest != null) {
-                    d = getCatalog().transformToExplicitDestination(dest, page2page);
+                    d = getCatalog().copyDestination(dest, page2page, toDocument);
                 }
 
                 boolean hasGoToAction = false;
-                a = annot.getAction();
+                PdfDictionary a = annot.getAction();
                 if (a != null && PdfName.GoTo.equals(a.get(PdfName.S))) {
                     if (d == null) {
-                        d = getCatalog().transformToExplicitDestination(a.get(PdfName.D), page2page);
+                        d = getCatalog().copyDestination(a.get(PdfName.D), page2page, toDocument);
                     }
                     hasGoToAction = true;
                 }
@@ -1346,14 +1338,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         }
     }
 
-    private void ensureDestinationsAddedToNames(PdfObject destinationRoot) {
+    private void ensureTreeRootAddedToNames(PdfObject treeRoot, PdfName treeType) {
         PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
         if (names == null) {
             names = new PdfDictionary();
-            names.makeIndirect(this);
-            names.put(PdfName.Dests, destinationRoot);
             catalog.getPdfObject().put(PdfName.Names, names);
+            names.makeIndirect(this);
         }
+        names.put(treeType, treeRoot);
     }
 
 }

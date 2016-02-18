@@ -1,28 +1,21 @@
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -88,9 +81,9 @@ public class PdfDocumentTest extends ExtendedITextTest {
         array3.add(new PdfNumber(806));
         array3.add(new PdfNumber(1));
 
-        pdfDoc.addNewName(new PdfString("test1"), array2);
-        pdfDoc.addNewName(new PdfString("test2"), array3);
-        pdfDoc.addNewName(new PdfString("test3"), array1);
+        pdfDoc.addNameDestination("test1", array2);
+        pdfDoc.addNameDestination("test2", array3);
+        pdfDoc.addNameDestination("test3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
         if (root == null)
