@@ -5,9 +5,9 @@ import com.itextpdf.layout.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 
 /**
- * A layout object that terminates the current content area (by default, a page)
- * and creates a new one. If no {@link PageSize} is given, the new content area
- * will have the same size as the current one.
+ * A layout object that terminates the current content area and creates a new
+ * one. If no {@link PageSize} is given, the new content area will have the same
+ * size as the current one.
  */
 public class AreaBreak extends AbstractElement {
 
@@ -21,6 +21,10 @@ public class AreaBreak extends AbstractElement {
         this(Property.AreaBreakType.NEW_AREA);
     }
 
+    /**
+     * Creates an AreaBreak that terminates a specified area type.
+     * @param areaBreakType an {@link Property.AreaBreakType area break type}
+     */
     public AreaBreak(Property.AreaBreakType areaBreakType) {
         setProperty(Property.AREA_BREAK_TYPE, areaBreakType);
     }
@@ -51,6 +55,10 @@ public class AreaBreak extends AbstractElement {
         this.pageSize = pageSize;
     }
 
+    /**
+     * Gets the type of area that this AreaBreak will terminate.
+     * @return the current {@link Property.AreaBreakType area break type}
+     */
     public Property.AreaBreakType getType() {
         return (Property.AreaBreakType) getProperty(Property.AREA_BREAK_TYPE);
     }
