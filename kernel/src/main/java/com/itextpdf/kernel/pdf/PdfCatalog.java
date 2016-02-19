@@ -175,11 +175,53 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCatalog setPageMode(PdfName pageMode) {
+        if (!pageMode.equals(PdfName.UseNone) && !pageMode.equals(PdfName.OneColumn) &&
+                !pageMode.equals(PdfName.UseThumbs) && !pageMode.equals(PdfName.FullScreen) &&
+                !pageMode.equals(PdfName.UseOC) && !pageMode.equals(PdfName.UseAttachments)) {
+            return this;
+        }
         return put(PdfName.PageMode, pageMode);
     }
 
     public PdfName getPageMode() {
         return getPdfObject().getAsName(PdfName.PageMode);
+    }
+
+    /**
+     * This method sets a page layout of the document
+     * @param pageLayout
+     * @return
+     */
+    public PdfCatalog setPageLayout (PdfName pageLayout) {
+        if (!pageLayout.equals(PdfName.SinglePage) && !pageLayout.equals(PdfName.OneColumn) &&
+                !pageLayout.equals(PdfName.TwoColumnLeft) && !pageLayout.equals(PdfName.TwoColumnRight) &&
+                !pageLayout.equals(PdfName.TwoPageLeft) && !pageLayout.equals(PdfName.TwoPageRight)) {
+            return this;
+        }
+        return put(PdfName.PageLayout, pageLayout);
+    }
+
+    public PdfName getPageLayout(){
+        return getPdfObject().getAsName(PdfName.PageLayout);
+    }
+
+    /**
+     * This method sets the document viewer preferences, specifying the way the document shall be displayed on the
+     * screen
+     * @param preferences
+     * @return
+     */
+    public PdfCatalog setViewerPreferences(PdfViewerPreferences preferences) {
+        return put(PdfName.ViewerPreferences, preferences);
+    }
+
+    public PdfViewerPreferences getViewerPreferences() {
+        PdfDictionary viewerPreferences = getPdfObject().getAsDictionary(PdfName.ViewerPreferences);
+        if (viewerPreferences != null) {
+            return new PdfViewerPreferences(viewerPreferences);
+        } else {
+            return new PdfViewerPreferences();
+        }
     }
 
     /**

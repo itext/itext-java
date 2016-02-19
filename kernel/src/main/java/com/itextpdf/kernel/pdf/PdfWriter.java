@@ -40,7 +40,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected PdfObjectStream objectStream = null;
 
-    protected Hashtable<Integer, PdfIndirectReference> copiedObjects = new Hashtable<Integer, PdfIndirectReference>();
+    protected Hashtable<Integer, PdfIndirectReference> copiedObjects = new Hashtable<>();
 
     //forewarned is forearmed
     protected boolean isUserWarnedAboutAcroFormCopying;
