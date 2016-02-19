@@ -10,6 +10,7 @@ import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
@@ -26,6 +27,7 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import com.itextpdf.kernel.numbering.RomanNumbering;
 
 import java.io.Closeable;
 import java.io.FileNotFoundException;
@@ -637,6 +639,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
                         catalog.getOCProperties(false).flush();
                     }
+                    if (catalog.pageLabels != null) {
+                        catalog.put(PdfName.PageLabels, catalog.pageLabels.buildTree());
+                    }
+
                     PdfObject pageRoot = catalog.pageTree.generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
                         catalog.getPdfObject().put(PdfName.Pages, pageRoot);
@@ -668,6 +674,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                         catalog.getOCProperties(false).flush();
                     }
+                    if (catalog.pageLabels != null) {
+                        catalog.put(PdfName.PageLabels, catalog.pageLabels.buildTree());
+                    }
+
                     catalog.getPdfObject().put(PdfName.Pages, catalog.pageTree.generateTree());
 
                     for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
@@ -1060,6 +1070,65 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         afArray.add(fs.getPdfObject());
     }
 
+    /**
+     * This method retrieves the page labels from a document as an array of String objects.
+     * @return
+     */
+    public String[] getPageLabels() {
+        String[] labelStrings = new String[getNumberOfPages()];
+        Map<Integer, PdfObject> pageLabels = catalog.getPageLabelsTree().getNumbers();
+        if (pageLabels.size() == 0) {
+            return null;
+        }
+        int pageCount = 1;
+        String prefix = "";
+        String type = "D";
+        for (int i = 0; i < getNumberOfPages(); i++) {
+            if (pageLabels.containsKey(i)) {
+                PdfDictionary labelDictionary = (PdfDictionary) pageLabels.get(i);
+                PdfNumber pageRange = labelDictionary.getAsNumber(PdfName.St);
+                if (pageRange != null) {
+                    pageCount = pageRange.getIntValue();
+                } else {
+                    pageCount = 1;
+                }
+                PdfString p = labelDictionary.getAsString(PdfName.P);
+                if (p != null) {
+                    prefix = p.toUnicodeString();
+                } else {
+                    prefix = "";
+                }
+                PdfName t = labelDictionary.getAsName(PdfName.S);
+                if (t != null) {
+                    type = t.getValue();
+                } else {
+                    type = "e";
+                }
+            }
+            switch (type) {
+                case "R":
+                    labelStrings[i] = prefix + RomanNumbering.toRomanUpperCase(pageCount);
+                    break;
+                case "r":
+                    labelStrings[i] = prefix + RomanNumbering.toRomanLowerCase(pageCount);
+                    break;
+                case "A":
+                    labelStrings[i] = prefix + EnglishAlphabetNumbering.toLatinAlphabetNumberUpperCase(pageCount);
+                    break;
+                case "a":
+                    labelStrings[i] = prefix + EnglishAlphabetNumbering.toLatinAlphabetNumberLowerCase(pageCount);
+                    break;
+                case "e":
+                    labelStrings[i] = prefix;
+                    break;
+                default:
+                    labelStrings[i] = prefix + pageCount;
+                    break;
+            }
+            pageCount++;
+        }
+        return labelStrings;
+    }
 
     protected void storeLinkAnnotations(PdfPage page, PdfLinkAnnotation annotation) {
         List<PdfLinkAnnotation> pageAnnotations = linkAnnotations.get(page);

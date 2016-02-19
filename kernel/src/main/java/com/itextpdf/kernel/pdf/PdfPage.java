@@ -578,6 +578,62 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         this.ignoreContentRotation = ignoreContentRotation;
     }
 
+    /**
+     * This method adds or replace a page label.
+     * @param numberingStyle The numbering style that shall be used for the numeric portion of each page label.
+     *                       May be NULL
+     * @param labelPrefix The label prefix for page labels in this range. May be NULL
+     * @return
+     */
+    public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix) {
+        return setPageLabel(numberingStyle, labelPrefix, 1);
+    }
+
+    /**
+     * This method adds or replace a page label.
+     * @param numberingStyle The numbering style that shall be used for the numeric portion of each page label.
+     *                       May be NULL
+     * @param labelPrefix The label prefix for page labels in this range. May be NULL
+     * @param firstPage The value of the numeric portion for the first page label in the range. Must be greater or
+     *                  equal 1.
+     * @return
+     */
+    public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix, int firstPage) {
+        if (firstPage < 1)
+            throw new PdfException("in.a.page.label.the.page.numbers.must.be.greater.or.equal.to.1");
+        PdfDictionary pageLabel = new PdfDictionary();
+        if (numberingStyle != null) {
+            switch (numberingStyle) {
+                case DECIMAL_ARABIC_NUMERALS:
+                    pageLabel.put(PdfName.S, PdfName.D);
+                    break;
+                case UPPERCASE_ROMAN_NUMERALS:
+                    pageLabel.put(PdfName.S, PdfName.R);
+                    break;
+                case LOWERCASE_ROMAN_NUMERALS:
+                    pageLabel.put(PdfName.S, PdfName.r);
+                    break;
+                case UPPERCASE_LETTERS:
+                    pageLabel.put(PdfName.S, PdfName.A);
+                    break;
+                case LOWERCASE_LETTERS:
+                    pageLabel.put(PdfName.S, PdfName.a);
+                    break;
+                default:
+            }
+        }
+        if (labelPrefix != null) {
+            pageLabel.put(PdfName.P, new PdfString(labelPrefix));
+        }
+
+        if (firstPage != 1) {
+            pageLabel.put(PdfName.St, new PdfNumber(firstPage));
+        }
+        getDocument().getCatalog().getPageLabelsTree().addEntry(getDocument().getPageNumber(this) - 1, pageLabel);
+
+        return this;
+    }
+
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;

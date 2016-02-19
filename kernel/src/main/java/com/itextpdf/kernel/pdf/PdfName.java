@@ -24,6 +24,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     private static final byte[] numberSign = OutputStream.getIsoBytes("#23");           //  '#'
 
     public static final PdfName _3D = createDirectName("3D");
+    public static final PdfName a = createDirectName("a");
     public static final PdfName A = createDirectName("A");
     public static final PdfName A85 = createDirectName("A85");
     public static final PdfName AA = createDirectName("AA");
@@ -555,6 +556,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Q = createDirectName("Q");
     public static final PdfName Quote = createDirectName("Quote");
     public static final PdfName QuadPoints = createDirectName("QuadPoints");
+    public static final PdfName r = createDirectName("r");
     public static final PdfName R = createDirectName("R");
     public static final PdfName R2L = createDirectName("R2L");
     public static final PdfName Range = createDirectName("Range");
@@ -624,6 +626,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName SpaceAfter = createDirectName("SpaceAfter");
     public static final PdfName Square = createDirectName("Square");
     public static final PdfName Squiggly = createDirectName("Squiggly");
+    public static final PdfName St = createDirectName("St");
     public static final PdfName Stamp = createDirectName("Stamp");
     public static final PdfName Standard = createDirectName("Standard");
     public static final PdfName Start = createDirectName("Start");

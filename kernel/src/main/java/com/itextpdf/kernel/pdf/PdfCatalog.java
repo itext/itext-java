@@ -16,6 +16,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     protected final PdfPagesTree pageTree;
     protected Map<PdfName, PdfNameTree> nameTrees = new HashMap<>();
+    protected PdfNumTree pageLabels;
     protected PdfOCProperties ocProperties;
 
     private final static String OutlineRoot = "Outlines";
@@ -237,6 +238,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
 
         return tree;
+    }
+
+    public PdfNumTree getPageLabelsTree(){
+        if (pageLabels == null) {
+            pageLabels = new PdfNumTree(this, PdfName.PageLabels);
+        }
+
+        return pageLabels;
     }
 
     /**

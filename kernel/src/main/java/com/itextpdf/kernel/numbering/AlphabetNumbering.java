@@ -1,4 +1,4 @@
-package com.itextpdf.layout.numbering;
+package com.itextpdf.kernel.numbering;
 
 /**
  * This is a general class for alphabet numbering.

@@ -8,9 +8,9 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.numbering.EnglishAlphabetNumbering;
-import com.itextpdf.layout.numbering.GreekAlphabetNumbering;
-import com.itextpdf.layout.numbering.RomanNumbering;
+import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
+import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
+import com.itextpdf.kernel.numbering.RomanNumbering;
 
 import java.io.IOException;
 import java.util.ArrayList;

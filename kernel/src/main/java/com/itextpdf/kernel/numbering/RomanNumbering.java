@@ -1,4 +1,4 @@
-package com.itextpdf.layout.numbering;
+package com.itextpdf.kernel.numbering;
 
 /**
  * This class can produce String combinations representing a roman number.
