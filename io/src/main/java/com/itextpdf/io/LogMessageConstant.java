@@ -78,6 +78,11 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String UNKNOWN_CMAP = "Unknown CMap {0}";
+
+    /**
+     * Log message.
+     */
     public static final String UNKNOWN_ERROR_WHILE_PROCESSING_CMAP = "Unknown error while processing CMap.";
 
     /**

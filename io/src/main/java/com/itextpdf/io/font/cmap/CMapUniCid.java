@@ -28,13 +28,16 @@ public class CMapUniCid extends AbstractCMap {
         return map.get(character);
     }
 
-//    public CMapToUnicode exportToUnicode() {
-//        CMapToUnicode uni = new CMapToUnicode();
-//        int[] keys = map.toOrderedKeys();
-//        for (int key : keys) {
-//            uni.addChar(map.get(key), Utilities.convertFromUtf32(key));
-//        }
-//        return uni;
-//    }
-
+    public CMapToUnicode exportToUnicode() {
+        CMapToUnicode uni = new CMapToUnicode();
+        int[] keys = map.toOrderedKeys();
+        for (int key : keys) {
+            uni.addChar(map.get(key), Utilities.convertFromUtf32(key));
+        }
+        int spaceCid = lookup(32);
+        if (spaceCid != 0) {
+            uni.addChar(spaceCid, Utilities.convertFromUtf32(32));
+        }
+        return uni;
+    }
 }

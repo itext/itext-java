@@ -1,11 +1,14 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.IntHashtable;
+import com.itextpdf.io.font.FontCache;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.cmap.CMapLocation;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
+import com.itextpdf.io.font.cmap.CMapUniCid;
+import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -14,7 +17,11 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+
 class FontUtils {
+
+    private static final HashMap<String, CMapToUnicode> uniMaps = new HashMap<>();
 
     static CMapToUnicode processToUnicode(PdfObject toUnicode) {
         CMapToUnicode cMapToUnicode = null;
@@ -29,12 +36,32 @@ class FontUtils {
                 logger.error(LogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
                 cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
             }
-        } else if (toUnicode instanceof PdfName) {
-            if (toUnicode.equals(PdfName.IdentityH)) {
-                cMapToUnicode = CMapToUnicode.getIdentity();
-            }
+        } else if (PdfName.IdentityH.equals(toUnicode)) {
+            cMapToUnicode = CMapToUnicode.getIdentity();
         }
         return cMapToUnicode;
+    }
+
+    static CMapToUnicode getToUnicodeFromUniMap(String uniMap) {
+        if (uniMap == null)
+            return null;
+        synchronized (uniMaps) {
+            if (uniMaps.containsKey(uniMap)) {
+                return uniMaps.get(uniMap);
+            }
+            CMapToUnicode toUnicode;
+            if (PdfEncodings.IDENTITY_H.equals(uniMap)) {
+                toUnicode = CMapToUnicode.getIdentity();
+            } else {
+                CMapUniCid uni = FontCache.getUni2CidCmap(uniMap);
+                if (uni == null) {
+                    return null;
+                }
+                toUnicode = uni.exportToUnicode();
+            }
+            uniMaps.put(uniMap, toUnicode);
+            return toUnicode;
+        }
     }
 
     static String createRandomFontName() {

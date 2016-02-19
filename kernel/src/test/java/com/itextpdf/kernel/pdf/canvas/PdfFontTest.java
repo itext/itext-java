@@ -1,6 +1,7 @@
 package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.FontConstants;
@@ -60,7 +61,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithKozmin() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithKozmin.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin.pdf";
-        final String title = "Type3 test";
+        final String title = "Type 0 test";
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
@@ -71,6 +72,69 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         PdfFont type0Font = PdfFontFactory.createFont("KozMinPro-Regular", "UniJIS-UCS2-H");
+        Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
+        Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(type0Font, 72)
+                .showText("Hello World")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithStSongUni() throws IOException, InterruptedException {
+        String filename = destinationFolder + "DocumentWithStSongUni.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithStSongUni.pdf";
+        final String title = "Type0 test";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fos).setCompressionLevel(PdfOutputStream.NO_COMPRESSION));
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        PdfFont type0Font = PdfFontFactory.createFont("STSong-Light", "UniGB-UTF16-H");
+        Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
+        Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(type0Font, 72)
+                .showText("Hello World")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+
+    @Test
+    public void createDocumentWithStSong() throws IOException, InterruptedException {
+        String filename = destinationFolder + "DocumentWithStSong.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithStSong.pdf";
+        final String title = "Type0 test";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fos).setCompressionLevel(PdfOutputStream.NO_COMPRESSION));
+
+        pdfDoc.getInfo().setAuthor(author).
+                setCreator(creator).
+                setTitle(title);
+        PdfFont type0Font = PdfFontFactory.createFont("STSong-Light", "Adobe-GB1-4");
         Assert.assertTrue("Type0Font expected", type0Font instanceof PdfType0Font);
         Assert.assertTrue("CidFont expected", type0Font.getFontProgram() instanceof CidFont);
         PdfPage page = pdfDoc.addNewPage();
@@ -829,8 +893,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
-    public void testUpdateType0FontBasedExistingFont() throws IOException, InterruptedException {
+    public void testUpdateCjkFontBasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_update.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_update.pdf";
@@ -866,8 +929,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
-    public void testNewType0FontBasedExistingFont() throws IOException, InterruptedException {
+    public void testNewCjkFontBasedExistingFont() throws IOException, InterruptedException {
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_new.pdf";

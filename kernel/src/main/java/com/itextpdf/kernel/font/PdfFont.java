@@ -97,7 +97,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param unicode a certain character.
      * @return a width in Text Space.
      */
-    //TODO handle DW key
     public int getWidth(int unicode) {
         Glyph glyph = getGlyph(unicode);
         return glyph != null ? glyph.getWidth() : 0;
