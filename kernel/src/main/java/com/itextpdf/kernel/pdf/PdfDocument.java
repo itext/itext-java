@@ -1245,8 +1245,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     info.addModDate();
                 }
                 trailer = new PdfDictionary();
-                trailer.put(PdfName.Root, catalog.getPdfObject());
-                trailer.put(PdfName.Info, info.getPdfObject());
+                trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
+                trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
             }
             if (appendMode) {       // Due to constructor reader and writer not null.
                 assert reader != null;
