@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf.canvas.draw;
 
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
@@ -10,6 +11,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 public class DashedLine implements LineDrawer {
 
     private float lineWidth = 1;
+
+    private Color color = Color.BLACK;
 
     public DashedLine() {
     }
@@ -26,6 +29,7 @@ public class DashedLine implements LineDrawer {
     public void draw(PdfCanvas canvas, Rectangle drawArea) {
         canvas.saveState()
                 .setLineWidth(lineWidth)
+                .setStrokeColor(color)
                 .setLineDash(2, 2)
                 .moveTo(drawArea.getX(), drawArea.getY() + drawArea.getHeight() / 2)
                 .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY() + drawArea.getHeight() / 2)
@@ -47,6 +51,16 @@ public class DashedLine implements LineDrawer {
      */
     public void setLineWidth(float lineWidth) {
         this.lineWidth = lineWidth;
+    }
+
+    @Override
+    public Color getColor() {
+        return null;
+    }
+
+    @Override
+    public void setColor(Color color) {
+
     }
 
 }
