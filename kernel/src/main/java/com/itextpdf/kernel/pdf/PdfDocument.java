@@ -1130,6 +1130,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         return labelStrings;
     }
 
+    /**
+     * indicates if the document has any outlines
+     * @return
+     */
+    public boolean hasOutlines() {
+        return catalog.getPdfObject().containsKey(PdfName.Outlines);
+    }
+
     protected void storeLinkAnnotations(PdfPage page, PdfLinkAnnotation annotation) {
         List<PdfLinkAnnotation> pageAnnotations = linkAnnotations.get(page);
         if (pageAnnotations == null) {

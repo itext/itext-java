@@ -20,19 +20,6 @@ public class PdfOutline {
     private PdfOutline parent;
     private PdfDocument pdfDoc;
 
-    /**
-     * This constructor creates root outline in the document.
-     * @param doc
-     * @throws PdfException
-     */
-    public PdfOutline(PdfDocument doc) {
-        content = new PdfDictionary();
-        content.put(PdfName.Type, PdfName.Outlines);
-        this.pdfDoc = doc;
-        content.makeIndirect(doc);
-        doc.getCatalog().addRootOutline(this);
-    }
-
     public PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument){
         this.title = title;
         this.content = content;
@@ -45,6 +32,19 @@ public class PdfOutline {
         this.parent = parent;
         this.pdfDoc = parent.pdfDoc;
         content.makeIndirect(parent.pdfDoc);
+    }
+
+    /**
+     * This constructor creates root outline in the document.
+     * @param doc
+     * @throws PdfException
+     */
+    protected PdfOutline(PdfDocument doc) {
+        content = new PdfDictionary();
+        content.put(PdfName.Type, PdfName.Outlines);
+        this.pdfDoc = doc;
+        content.makeIndirect(doc);
+        doc.getCatalog().addRootOutline(this);
     }
 
     public String getTitle() {

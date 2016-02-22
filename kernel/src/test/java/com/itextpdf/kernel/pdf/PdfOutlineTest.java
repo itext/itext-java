@@ -180,8 +180,6 @@ public class PdfOutlineTest extends ExtendedITextTest{
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument pdfDoc = new PdfDocument(reader);
 
-        PdfOutline outlines = pdfDoc.getOutlines(false);
-
         List<PdfOutline> pageOutlines = pdfDoc.getPage(102).getOutlines(true);
         Assert.assertEquals(5, pageOutlines.size());
     }
@@ -197,9 +195,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         PdfPage firstPage = pdfDoc.addNewPage();
         PdfPage secondPage = pdfDoc.addNewPage();
 
-        PdfOutline outlines = pdfDoc.getOutlines(false);
-
-        PdfOutline rootOutline = new PdfOutline(pdfDoc);
+        PdfOutline rootOutline = pdfDoc.getOutlines(false);
         PdfOutline firstOutline = rootOutline.addOutline("First Page");
         PdfOutline secondOutline = rootOutline.addOutline("Second Page");
         firstOutline.addDestination(PdfExplicitDestination.createFit(firstPage));
@@ -241,7 +237,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         pages.add(5);
         pages.add(52);
         pages.add(102);
-        PdfOutline outlines = pdfDoc.getOutlines(false);
+        pdfDoc.getOutlines(false);
         pdfDoc.copyPagesTo(pages, pdfDoc1);
         pdfDoc.close();
 
@@ -285,8 +281,6 @@ public class PdfOutlineTest extends ExtendedITextTest{
         pdfDoc.addNameDestination("test3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
-        if (root == null)
-            root = new PdfOutline(pdfDoc);
 
         PdfOutline firstOutline = root.addOutline("Test1");
         firstOutline.addDestination(PdfDestination.makeDestination(new PdfString("test1")));
@@ -337,8 +331,6 @@ public class PdfOutlineTest extends ExtendedITextTest{
         pdfDoc.addNameDestination("page3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
-        if (root == null)
-            root = new PdfOutline(pdfDoc);
         PdfOutline firstOutline = root.addOutline("Test1");
         firstOutline.addDestination(PdfDestination.makeDestination(new PdfString("page1")));
         PdfOutline secondOutline = root.addOutline("Test2");

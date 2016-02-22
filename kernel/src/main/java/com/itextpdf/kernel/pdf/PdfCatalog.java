@@ -240,6 +240,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return tree;
     }
 
+    /**
+     * This method returns the NumberTree of Page Labels
+     * @return
+     */
     public PdfNumTree getPageLabelsTree(){
         if (pageLabels == null) {
             pageLabels = new PdfNumTree(this, PdfName.PageLabels);
@@ -349,11 +353,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary outlineRoot = getPdfObject().getAsDictionary(PdfName.Outlines);
         if (outlineRoot == null) {
-            return null;
+            outlines = new PdfOutline(getDocument());
+        } else {
+            outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
+            getNextItem(outlineRoot.getAsDictionary(PdfName.First), outlines, destsTree.getNames());
         }
-
-        outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
-        getNextItem(outlineRoot.getAsDictionary(PdfName.First), outlines, destsTree.getNames());
 
         return outlines;
     }
