@@ -221,7 +221,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (viewerPreferences != null) {
             return new PdfViewerPreferences(viewerPreferences);
         } else {
-            return new PdfViewerPreferences();
+            return null;
         }
     }
 
