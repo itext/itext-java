@@ -24,6 +24,11 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Defines the most common properties and behavior that are shared by most
+ * {@link IRenderer} implementations. All default Renderers are subclasses of
+ * this default implementation.
+ */
 public abstract class AbstractRenderer implements IRenderer {
 
     public static final float EPS = 1e-4f;
@@ -39,9 +44,17 @@ public abstract class AbstractRenderer implements IRenderer {
     protected Map<Property, Object> properties = new EnumMap<>(Property.class);
     protected boolean isLastRendererForModelElement = true;
 
+    /**
+     * Creates a renderer.
+     */
     public AbstractRenderer() {
     }
 
+    /**
+     * Creates a renderer for the specified layout element.
+     * 
+     * @param modelElement the layout element that will be drawn by this renderer
+     */
     public AbstractRenderer(IPropertyContainer modelElement) {
         this.modelElement = modelElement;
     }
@@ -138,23 +151,48 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * Returns a property with a certain key, as a font object.
+     * @param property an {@link Property enum value}
+     * @return a {@link PdfFont}
+     */
     public PdfFont getPropertyAsFont(Property property) {
         return getProperty(property);
     }
 
+    /**
+     * Returns a property with a certain key, as a color.
+     * @param property an {@link Property enum value}
+     * @return a {@link Color}
+     */
     public Color getPropertyAsColor(Property property) {
         return getProperty(property);
     }
 
+    /**
+     * Returns a property with a certain key, as a floating point value.
+     * @param property an {@link Property enum value}
+     * @return a {@link Float}
+     */
     public Float getPropertyAsFloat(Property property) {
         Number value = getProperty(property);
         return value != null ? value.floatValue() : null;
     }
 
+    /**
+     * Returns a property with a certain key, as a boolean value.
+     * @param property an {@link Property enum value}
+     * @return a {@link Boolean}
+     */
     public Boolean getPropertyAsBoolean(Property property) {
         return getProperty(property);
     }
 
+    /**
+     * Returns a property with a certain key, as an integer value.
+     * @param property an {@link Property enum value}
+     * @return a {@link Integer}
+     */
     public Integer getPropertyAsInteger(Property property) {
         Number value = getProperty(property);
         return value != null ? value.intValue() : null;
@@ -169,6 +207,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return sb.toString();
     }
 
+    @Override
     public LayoutArea getOccupiedArea() {
         return occupiedArea;
     }
@@ -194,6 +233,12 @@ public abstract class AbstractRenderer implements IRenderer {
         flushed = true;
     }
 
+    /**
+     * Draws a background layer if it is defined by a key {@link Property#BACKGROUND}
+     * in either the layout element or this {@link IRenderer} itself.
+     * 
+     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     */
     public void drawBackground(DrawContext drawContext) {
         Property.Background background = getProperty(Property.BACKGROUND);
         if (background != null) {
@@ -217,12 +262,25 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * Performs the drawing operation for all {@link IRenderer children}
+     * of this renderer.
+     * 
+     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     */
     public void drawChildren(DrawContext drawContext) {
         for (IRenderer child : childRenderers) {
             child.draw(drawContext);
         }
     }
 
+    /**
+     * Performs the drawing operation for the border of this renderer, if
+     * defined by any of the {@link Property#BORDER} values in either the layout
+     * element or this {@link IRenderer} itself.
+     * 
+     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     */
     public void drawBorder(DrawContext drawContext) {
         Border[] borders = getBorders();
         boolean gotBorders = false;
@@ -278,15 +336,18 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    @Override
     public boolean isFlushed() {
         return flushed;
     }
 
+    @Override
     public IRenderer setParent(IRenderer parent) {
         this.parent = parent;
         return this;
     }
 
+    @Override
     public void move(float dxRight, float dyUp) {
         occupiedArea.getBBox().moveRight(dxRight);
         occupiedArea.getBBox().moveUp(dyUp);
@@ -295,10 +356,20 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * Gets all rectangles that this {@link IRenderer} can draw upon in the given area.
+     * @param area a physical area on the {@link DrawingContext}
+     * @return a list of {@link Rectangle rectangles}
+     */
     public List<Rectangle> initElementAreas(LayoutArea area) {
         return Collections.singletonList(area.getBBox());
     }
 
+    /**
+     * Gets the bounding box that contains all content written to the
+     * {@link DrawingContext} by this {@link IRenderer}.
+     * @return the smallest {@link Rectangle} that surrounds the content
+     */
     protected Rectangle getOccupiedAreaBBox() {
         return occupiedArea.getBBox().clone();
     }
