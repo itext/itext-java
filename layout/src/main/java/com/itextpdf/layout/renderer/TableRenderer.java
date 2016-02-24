@@ -22,6 +22,11 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class represents the {@link IRenderer renderer} object for a {@link Table}
+ * object. It will delegate its drawing operations on to the {@link CellRenderer}
+ * instances associated with the {@link Cell table cells}.
+ */
 public class TableRenderer extends AbstractRenderer {
 
     protected List<CellRenderer[]> rows = new ArrayList<>();
@@ -38,11 +43,21 @@ public class TableRenderer extends AbstractRenderer {
     private float[] columnWidths = null;
     private List<Float> heights = new ArrayList<>();
 
+    /**
+     * Creates a TableRenderer from a {@link Table} which will partially render
+     * the table.
+     * @param modelElement the table to be rendered by this renderer
+     * @param rowRange the table rows to be rendered
+     */
     public TableRenderer(Table modelElement, Table.RowRange rowRange) {
         super(modelElement);
         setRowRange(rowRange);
     }
 
+    /**
+     * Creates a TableRenderer from a {@link Table}.
+     * @param modelElement the table to be rendered by this renderer
+     */
     public TableRenderer(Table modelElement) {
         this(modelElement, new Table.RowRange(0, modelElement.getNumberOfRows()));
     }
