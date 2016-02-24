@@ -97,6 +97,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      */
     public Image(com.itextpdf.io.image.Image img) {
         this(new PdfImageXObject(img));
+        // TODO flush this on renderer's draw DEVSIX-479
     }
 
     /**
