@@ -35,6 +35,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class represents the {@link IRenderer renderer} object for a {@link Text}
+ * object. It will draw the glyphs of the textual content on the {@link DrawingContext}.
+ */
 public class TextRenderer extends AbstractRenderer {
 
     protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
@@ -57,10 +61,20 @@ public class TextRenderer extends AbstractRenderer {
 
     protected float tabAnchorCharacterPosition = -1;
 
+    /**
+     * Creates a TextRenderer from its corresponding layout object.
+     * @param textElement the {@link Text} which this object should manage
+     */
     public TextRenderer(Text textElement) {
         this(textElement, textElement.getText());
     }
 
+    /**
+     * Creates a TextRenderer from its corresponding layout object, with a custom
+     * text to replace the contents of the {@link Text}.
+     * @param textElement the {@link Text} which this object should manage
+     * @param text the replacement text
+     */
     public TextRenderer(Text textElement, String text) {
         super(textElement);
         this.strToBeConverted = text;
@@ -565,6 +579,10 @@ public class TextRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * Trims any whitespace characters from the start of the {@link Glyphline}
+     * to be rendered.
+     */
     public void trimFirst() {
         convertWaitingStringToGlyphLine();
 
@@ -577,7 +595,9 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     /**
-     * Returns the amount of space in points which the text was trimmed by.
+     * Trims any whitespace characters from the end of the {@link Glyphline} to
+     * be rendered.
+     * @return the amount of space in points which the text was trimmed by
      */
     public float trimLast() {
         float trimmedSpace = 0;
@@ -610,29 +630,59 @@ public class TextRenderer extends AbstractRenderer {
         return trimmedSpace;
     }
 
+    /**
+     * Gets the maximum offset above the base line that this Text extends to.
+     * @return the upwards vertical offset of this {@link Text}
+     */
     public float getAscent() {
         return yLineOffset;
     }
-
+    
+    /**
+     * Gets the maximum offset below the base line that this Text extends to.
+     * @return the downwards vertical offset of this {@link Text}
+     */
     public float getDescent() {
         return -(occupiedArea.getBBox().getHeight() - yLineOffset - getPropertyAsFloat(Property.TEXT_RISE));
     }
 
+    /**
+     * Gets the position on the canvas of the imaginary horizontal line upon which
+     * the {@link Text}'s contents will be written.
+     * @return the y position of this text on the {@link DrawingContext}
+     */
     public float getYLine() {
         return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset - getPropertyAsFloat(Property.TEXT_RISE);
     }
 
+    /**
+     * Moves the vertical position to the parameter's value.
+     * @param y the new vertical position of the Text
+     */
     public void moveYLineTo(float y) {
         float curYLine = getYLine();
         float delta = y - curYLine;
         occupiedArea.getBBox().setY(occupiedArea.getBBox().getY() + delta);
     }
 
+    /**
+     * Manually sets the contents of the Text's representation on the canvas,
+     * regardless of the Text's own contents.
+     * @param text the replacement text
+     */
     public void setText(String text) {
         GlyphLine glyphLine = convertToGlyphLine(text);
         setText(glyphLine, glyphLine.start, glyphLine.end);
     }
 
+    /**
+     * Manually sets a GlyphLine to be rendered with a specific start and end
+     * point.
+     * 
+     * @param text a {@link GlyphLine}
+     * @param leftPos the leftmost end of the GlyphLine
+     * @param rightPos the rightmost end of the GlyphLine
+     */
     public void setText(GlyphLine text, int leftPos, int rightPos) {
         this.text = new GlyphLine(text);
         this.text.start = leftPos;
@@ -643,6 +693,7 @@ public class TextRenderer extends AbstractRenderer {
 
     /**
      * The length of the whole text assigned to this renderer.
+     * @return the text length
      */
     public int length() {
         return text == null ? 0 : text.end - text.start;
