@@ -395,6 +395,21 @@ public class PdfReader implements Closeable {
         this.unethicalReading = unethicalReading;
     }
 
+    public boolean isOpenedWithFullPermission() {
+        return !encrypted || ownerPasswordUsed || unethicalReading;
+    }
+
+    public long getPermissions() {
+        return pValue;
+    }
+
+    public int getCryptoMode() {
+        if (decrypt == null)
+            return -1;
+        else
+            return decrypt.getCryptoMode();
+    }
+
     /**
      * Parses the entire PDF
      */
@@ -411,10 +426,6 @@ public class PdfReader implements Closeable {
             rebuildXref();
         }
         readDecryptObj();
-    }
-
-    protected boolean isOpenedWithFullPermission() {
-        return !encrypted || ownerPasswordUsed || unethicalReading;
     }
 
     private void readDecryptObj() {

@@ -475,15 +475,17 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
                     Integer mcid1 = o1.getMcid();
                     Integer mcid2 = o2.getMcid();
 
-                    if (mcid1 == null || mcid2 == null) {
+                    if (mcid1 == null && mcid2 == null) {
                         return 0;
                     }
+                    if (mcid1 == null) {
+                        return -1;
+                    }
+                    if (mcid2 == null) {
+                        return 1;
+                    }
 
-                    return mcid1 > mcid2
-                            ? 1
-                            : mcid1 < mcid2
-                            ? -1
-                            : 0;
+                    return Integer.compare(mcid1, mcid2);
                 }
             };
             for (List<PdfMcr> pdfMcrs : pageToPageMcrs.values()) {
