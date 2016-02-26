@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 public class PdfTagStructureTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfTagStructureTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/PdfTagStructureTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfTagStructureTest/";
 
     @BeforeClass
     static public void beforeClass() {

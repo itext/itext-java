@@ -62,7 +62,7 @@ import org.junit.experimental.categories.Category;
 public class PdfAnnotationTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfAnnotationTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/PdfAnnotationTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfAnnotationTest/";
 
     @BeforeClass
     static public void beforeClass() {

@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
 public class PdfTaggingTest extends ExtendedITextTest {
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfTaggingTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/PdfTaggingTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfTaggingTest/";
 
     @BeforeClass
     static public void beforeClass() {
