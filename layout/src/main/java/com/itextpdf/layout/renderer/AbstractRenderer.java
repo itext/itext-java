@@ -24,6 +24,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.w3c.dom.css.Rect;
+
 /**
  * Defines the most common properties and behavior that are shared by most
  * {@link IRenderer} implementations. All default Renderers are subclasses of
@@ -294,10 +296,7 @@ public abstract class AbstractRenderer implements IRenderer {
             float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
             float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
 
-            Rectangle bBox = getOccupiedAreaBBox();
-
-            applyMargins(bBox, false);
-            applyBorderBox(bBox, false);
+            Rectangle bBox = getBorderAreaBBox();
             float x1 = bBox.getX();
             float y1 = bBox.getY();
             float x2 = bBox.getX() + bBox.getWidth();
@@ -370,19 +369,26 @@ public abstract class AbstractRenderer implements IRenderer {
      * {@link DrawingContext} by this {@link IRenderer}.
      * @return the smallest {@link Rectangle} that surrounds the content
      */
-    protected Rectangle getOccupiedAreaBBox() {
+    public Rectangle getOccupiedAreaBBox() {
         return occupiedArea.getBBox().clone();
     }
 
-    protected Rectangle getBorderBBox() {
+    /**
+     * Gets the border box of a renderer.
+     * This is a box used to draw borders.
+     * @return border box of a renderer
+     */
+    public Rectangle getBorderAreaBBox() {
         Rectangle rect = getOccupiedAreaBBox();
         applyMargins(rect, false);
         applyBorderBox(rect, false);
         return rect;
     }
 
-    protected Rectangle getInnerBBox() {
+    public Rectangle getInnerAreaBBox() {
         Rectangle rect = getOccupiedAreaBBox();
+        applyMargins(rect, false);
+        applyBorderBox(rect, false);
         applyPaddings(rect, false);
         return rect;
     }

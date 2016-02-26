@@ -87,6 +87,7 @@ public class TableRenderer extends AbstractRenderer {
             setProperty(Property.MARGIN_TOP, 0);
         }
         applyMargins(layoutBox, false);
+        applyBorderBox(layoutBox, false);
 
         if (isPositioned()) {
             float x = getPropertyAsFloat(Property.X);
@@ -349,7 +350,8 @@ public class TableRenderer extends AbstractRenderer {
                     adjustFooterAndFixOccupiedArea(layoutBox);
                 }
 
-
+                applyBorderBox(occupiedArea.getBBox(), true);
+                applyMargins(occupiedArea.getBBox(), true);
                 int status = childRenderers.isEmpty() && footerRenderer == null ? LayoutResult.NOTHING : LayoutResult.PARTIAL;
                 if (status == LayoutResult.NOTHING && getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
                     return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
@@ -367,6 +369,7 @@ public class TableRenderer extends AbstractRenderer {
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
+        applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
         if (tableModel.isSkipLastFooter() || !tableModel.isComplete()) {
             footerRenderer = null;

@@ -266,7 +266,7 @@ public class BlockRenderer extends AbstractRenderer {
     }
 
     @Override
-    protected Rectangle getOccupiedAreaBBox() {
+    public Rectangle getOccupiedAreaBBox() {
         Rectangle bBox = occupiedArea.getBBox().clone();
         Float rotationAngle = getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
