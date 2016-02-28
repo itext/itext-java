@@ -656,6 +656,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         }
                     }
 
+                    for(int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
+                        if (!getPage(pageNum).isFlushed()) {
+                            getPage(pageNum).setModified();
+                        }
+                        getPage(pageNum).flush();
+                    }
+
                     if (info.getPdfObject().isModified()) {
                         info.flush();
                     }

@@ -2,8 +2,6 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
@@ -13,6 +11,9 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfWriter extends PdfOutputStream {
 
@@ -310,9 +311,11 @@ public class PdfWriter extends PdfOutputStream {
         PdfXrefTable xref = document.getXref();
         for (int i = 1; i < xref.size(); i++) {
             PdfIndirectReference indirectReference = xref.get(i);
-            PdfObject object = indirectReference.getRefersTo(false);
-            if (object != null && !object.equals(objectStream) && object.isModified()) {
-                object.flush();
+            if (null != indirectReference) {
+                PdfObject object = indirectReference.getRefersTo(false);
+                if (object != null && !object.equals(objectStream) && object.isModified()) {
+                    object.flush();
+                }
             }
         }
         if (objectStream != null && objectStream.getSize() > 0) {

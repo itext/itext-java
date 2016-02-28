@@ -515,6 +515,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else {
             annots.add(index, annotation.setPage(this).getPdfObject());
         }
+
+        setModified();
+
         return this;
     }
 
