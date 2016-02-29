@@ -516,7 +516,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             annots.add(index, annotation.setPage(this).getPdfObject());
         }
 
-        setModified();
+        if (annots.getIndirectReference() == null) {
+            setModified();
+        }
 
         return this;
     }
@@ -647,6 +649,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots == null && create) {
             annots = new PdfArray();
             put(PdfName.Annots, annots);
+            setModified();
         }
         return annots;
     }
@@ -671,6 +674,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             array = new PdfArray();
             array.add(contents);
             getPdfObject().put(PdfName.Contents, array);
+            setModified();
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
         } else {
@@ -681,6 +685,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             array.add(0, contentStream);
         } else {
             array.add(contentStream);
+        }
+        if (null != array.getIndirectReference()) {
+            array.setModified();
+        } else {
+            setModified();
         }
         return contentStream;
     }
