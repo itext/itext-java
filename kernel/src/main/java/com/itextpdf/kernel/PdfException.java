@@ -74,7 +74,7 @@ public class PdfException extends RuntimeException {
 
     public static final String FieldNamesCannotContainADot = "field.names.cannot.contain.a.dot";
     public static final String FieldTypeIsNotASignatureFieldType = "the.field.type.is.not.a.signature.field.type";
-    public static final String Filter1IsNotSupported = "filter.1.is.not.supported";
+    public static final String Filter1IsNotSupported = "filter {0} is.not.supported";
     public static final String FilePosition0CrossReferenceEntryInThisXrefSubsection = "file.position {0} cross.reference.entry.in.this.xref.subsection";
     public static final String FilterCcittfaxdecodeIsOnlySupportedForImages = "filter.ccittfaxdecode.is.only.supported.for.images";
     public static final String FilterIsNotANameOrArray = "filter.is.not.a.name.or.array";
@@ -105,6 +105,7 @@ public class PdfException extends RuntimeException {
     public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String InvalidXrefStream = "invalid.xref.stream";
     public static final String IoException = "io.exception";
+    public static final String IsNotAnAcceptableValueForTheField = "{0}.is.not.an.acceptable.value.for.the.field.{1}";
     public static final String IsNotWmfImage = "is.not.wmf.image";
     public static final String LzwDecoderException = "lzw.decoder.exception";
     public static final String LzwFlavourNotSupported = "lzw.flavour.not.supported";
@@ -153,6 +154,7 @@ public class PdfException extends RuntimeException {
     public static final String TextIsTooBig = "text.is.too.big";
     public static final String TextMustBeEven = "the.text.length.must.be.even";
     public static final String TwoBarcodeMustBeExternally = "the.two.barcodes.must.be.composed.externally";
+    public static final String TheNumberOfBooleansInTheArrayDoesntCorrespondWithTheNumberOfFields = "the.number.of.booleans.in.the.array.doesn.t.correspond.with.the.number.of.fields";
     public static final String ThereAreIllegalCharactersForBarcode128In1 = "there.are.illegal.characters.for.barcode.128.in {0}";
     public static final String ThereIsNoAssociatePdfWriterForMakingIndirects = "there.is.no.associate.pdf.writer.for.making.indirects";
     public static final String ThereIsNoFieldInTheDocumentWithSuchName1 = "there.is.no.field.in.the.document.with.such.name {0}";
@@ -179,6 +181,9 @@ public class PdfException extends RuntimeException {
     public static final String WrongFormFieldAddAnnotationToTheField = "wrong.form.field.add.annotation.to.the.field";
     public static final String XrefSubsectionNotFound = "xref.subsection.not.found";
     public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
+    public static final String YouHaveToDefineABooleanArrayForThisCollectionSortDictionary = "you.have.to.define.a.boolean.array.for.this.collection.sort.dictionary";
+    public static final String YouMustSetAValueBeforeAddingAPrefix = "you.must.set.a.value.before.adding.a.prefix";
+    public static final String YouNeedASingleBooleanForThisCollectionSortDictionary = "you.need.a.single.boolean.for.this.collection.sort.dictionary";
 
     protected Object object;
     private List<Object> messageParams;

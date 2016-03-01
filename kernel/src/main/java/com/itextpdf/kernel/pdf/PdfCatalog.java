@@ -2,6 +2,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.collection.PdfCollection;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
@@ -285,6 +286,16 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
 
         extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
+    }
+
+    /**
+     * Sets collection dictionary that a conforming reader shall use to enhance the presentation of file attachments
+     * stored in the PDF document.
+     * @param collection
+     * @return
+     */
+    public PdfCatalog setCollection(PdfCollection collection) {
+        return put(PdfName.Collection, collection);
     }
 
     @Override

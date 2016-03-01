@@ -10,6 +10,7 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.BadPasswordException;
+import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.security.ExternalDecryptionProcess;
@@ -354,7 +355,8 @@ public class PdfReader implements Closeable {
             PdfName filterName = (PdfName) filters.get(j);
             FilterHandler filterHandler = filterHandlers.get(filterName);
             if (filterHandler == null)
-                throw new PdfException(PdfException.Filter1IsNotSupported).setMessageParams(filterName); //TODO replace with some kind of UnsupportedException
+                filterHandler =  new DoNothingFilter();
+                //throw new PdfException(PdfException.Filter1IsNotSupported).setMessageParams(filterName); //TODO replace with some kind of UnsupportedException
 
             PdfDictionary decodeParams;
             if (j < dp.size()) {

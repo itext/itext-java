@@ -106,6 +106,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     protected PdfStructTreeRoot structTreeRoot;
 
     protected Integer structParentIndex = null;
+    protected boolean userProperties;
 
     protected boolean closeReader = true;
     protected boolean closeWriter = true;
@@ -771,6 +772,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             catalog.getPdfObject().put(PdfName.StructTreeRoot, structTreeRoot.getPdfObject());
             catalog.getPdfObject().put(PdfName.MarkInfo, new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
                 put(PdfName.Marked, PdfBoolean.PdfTrue);
+                if (userProperties) {
+                    put(PdfName.UserProperties, new PdfBoolean(true));
+                }
             }}));
             structParentIndex = 0;
         }
@@ -1136,6 +1140,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public boolean hasOutlines() {
         return catalog.getPdfObject().containsKey(PdfName.Outlines);
+    }
+
+    /**
+     * Sets the flag indicating the presence of structure elements that contain user properties attributes.
+     * @param userProperties the user properties flag
+     */
+    public void setUserProperties(boolean userProperties) {
+        this.userProperties = userProperties;
     }
 
     protected void storeLinkAnnotations(PdfPage page, PdfLinkAnnotation annotation) {

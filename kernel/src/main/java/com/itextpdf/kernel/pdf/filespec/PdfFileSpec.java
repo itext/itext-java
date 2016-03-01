@@ -2,6 +2,7 @@ package com.itextpdf.kernel.pdf.filespec;
 
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.collection.PdfCollectionItem;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -97,6 +98,10 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
 
     public PdfBoolean isVolatile() {
         return ((PdfDictionary)getPdfObject()).getAsBoolean(PdfName.Volatile);
+    }
+
+    public PdfFileSpec setCollectionItem(PdfCollectionItem item) {
+        return put(PdfName.CI, item);
     }
 
     @Override
