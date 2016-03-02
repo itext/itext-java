@@ -70,8 +70,8 @@ public class PdfContentStreamProcessorTest extends ExtendedITextTest {
                         case CLIP_PATH_CHANGED:
                             System.out.println("-------- CLIPPING PATH CALLED-------");
 
-                            PathRenderInfo renderinfo3 = (PathRenderInfo) data;
-                            System.out.println("Clipping path: " + renderinfo3.getPath());
+                            ClippingPathInfo renderinfo3 = (ClippingPathInfo) data;
+                            System.out.println("Clipping path: " + renderinfo3.getClippingPath());
 
                             System.out.println("------------------------------------");
                             break;

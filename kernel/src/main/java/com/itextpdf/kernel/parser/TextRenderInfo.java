@@ -185,7 +185,7 @@ public class TextRenderInfo implements EventData {
         PdfString[] strings = splitString(string);
         float totalWidth = 0;
         for (PdfString str : strings) {
-            float[] widthAndWordSpacing = getWidthAndWordSpacing(str, true);
+            float[] widthAndWordSpacing = getWidthAndWordSpacing(str);
             TextRenderInfo subInfo = new TextRenderInfo(this, str, totalWidth);
             rslt.add(subInfo);
             totalWidth += (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * (gs.getHorizontalScaling() / 100f);
@@ -234,6 +234,14 @@ public class TextRenderInfo implements EventData {
         return gs.getStrokeColor();
     }
 
+    public float getFontSize() {
+        return gs.getFontSize();
+    }
+
+    public float getHorizontalScaling() {
+        return gs.getHorizontalScaling();
+    }
+
     /**
      * Gets /ActualText tag entry value if this text chunk is marked content.
      * @return /ActualText value
@@ -266,7 +274,7 @@ public class TextRenderInfo implements EventData {
     /**
      * @return the unscaled (i.e. in Text space) width of the text
      */
-    float getUnscaledWidth(){
+    public float getUnscaledWidth(){
         if (unscaledWidth == null)
             unscaledWidth = getPdfStringWidth(string, false);
         return unscaledWidth;
@@ -329,9 +337,9 @@ public class TextRenderInfo implements EventData {
         float totalWidth = 0;
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
-            float w = gs.getFont().getWidth(c) / 1000.0f;
+            float w = (float) (gs.getFont().getWidth(c) * fontMatrix[0]);
             float wordSpacing = c == 32 ? gs.getWordSpacing() : 0f;
-            totalWidth += (w * gs.getFontSize() + gs.getCharSpacing() + wordSpacing) * (gs.getHorizontalScaling() / 100f);
+            totalWidth += (w * gs.getFontSize() + gs.getCharSpacing() + wordSpacing) * gs.getHorizontalScaling()/100f;
         }
         return totalWidth;
     }
@@ -341,10 +349,10 @@ public class TextRenderInfo implements EventData {
      * @param string        the string that needs measuring
      * @return  the width of a String in text space units
      */
-    private float getPdfStringWidth(PdfString string, boolean singleCharString){
+    private float getPdfStringWidth(PdfString string, boolean singleCharString) {
         if (singleCharString) {
-            float[] widthAndWordSpacing = getWidthAndWordSpacing(string, singleCharString);
-            return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * (gs.getHorizontalScaling() / 100f);
+            float[] widthAndWordSpacing = getWidthAndWordSpacing(string);
+            return (widthAndWordSpacing[0] * gs.getFontSize() + gs.getCharSpacing() + widthAndWordSpacing[1]) * gs.getHorizontalScaling()/100f;
         } else {
             float totalWidth = 0;
             for (PdfString str : splitString(string)) {
@@ -356,13 +364,11 @@ public class TextRenderInfo implements EventData {
 
     /**
      * Calculates width and word spacing of a single character PDF string.
-     * @param string            a character to calculate width.
-     * @param singleCharString  true if PDF string represents single character, false otherwise.
-     * @return                  array of 2 items: first item is a character width, second item is a calculated word spacing.
+     * IMPORTANT: Shall ONLY be used for a single character pdf strings.
+     * @param string a character to calculate width.
+     * @return array of 2 items: first item is a character width, second item is a calculated word spacing.
      */
-    private float[] getWidthAndWordSpacing(PdfString string, boolean singleCharString) {
-        if (!singleCharString)
-            throw new UnsupportedOperationException();
+    private float[] getWidthAndWordSpacing(PdfString string) {
         float[] result = new float[2];
         result[0] = (float)((gs.getFont().getContentWidth(string) * fontMatrix[0]));
         result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;

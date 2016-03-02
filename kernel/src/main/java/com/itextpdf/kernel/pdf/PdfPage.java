@@ -40,7 +40,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             // See DEVSIX-191
             PdfName.B));
     /**
-     * automatically rotate new content if the page has a rotation ( is disabled by default )
+     * Automatically rotate new content if the page has a rotation ( is disabled by default )
      */
     private boolean ignoreContentRotation = true;
 
@@ -575,16 +575,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject().getIndirectReference());
     }
 
+    /**
+     * @return true - if in case the page has a rotation, then new content will be automatically rotated in the
+     * opposite direction. On the rotated page this would look like if new content ignores page rotation.
+     */
     public boolean isIgnoreContentRotation() {
         return ignoreContentRotation;
     }
 
+    /**
+     * If true - defines that in case the page has a rotation, then new content will be automatically rotated in the
+     * opposite direction. On the rotated page this would look like if new content ignores page rotation.
+     * Default value - {@code false}.
+     * @param ignoreContentRotation - true to ignore rotation of the new content on the rotated page.
+     */
     public void setIgnoreContentRotation(boolean ignoreContentRotation) {
         this.ignoreContentRotation = ignoreContentRotation;
     }
 
     /**
-     * This method adds or replace a page label.
+     * This method adds or replaces a page label.
      * @param numberingStyle The numbering style that shall be used for the numeric portion of each page label.
      *                       May be NULL
      * @param labelPrefix The label prefix for page labels in this range. May be NULL
@@ -595,7 +605,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This method adds or replace a page label.
+     * This method adds or replaces a page label.
      * @param numberingStyle The numbering style that shall be used for the numeric portion of each page label.
      *                       May be NULL
      * @param labelPrefix The label prefix for page labels in this range. May be NULL
@@ -605,7 +615,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix, int firstPage) {
         if (firstPage < 1)
-            throw new PdfException("in.a.page.label.the.page.numbers.must.be.greater.or.equal.to.1");
+            throw new PdfException(PdfException.InAPageLabelThePageNumbersMustBeGreaterOrEqualTo1);
         PdfDictionary pageLabel = new PdfDictionary();
         if (numberingStyle != null) {
             switch (numberingStyle) {

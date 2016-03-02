@@ -1,10 +1,11 @@
 package com.itextpdf.kernel.parser;
 
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
 
 /**
  * Contains information relating to painting current path.
@@ -31,29 +32,36 @@ public class PathRenderInfo implements EventData {
     private Path path;
     private int operation;
     private int rule;
+    private boolean isClip;
+    private int clippingRule;
     private CanvasGraphicsState gs;
 
     /**
      * @param path      The path to be rendered.
      * @param operation One of the possible combinations of {@link #STROKE} and {@link #FILL} values or {@link #NO_OP}
-     * @param rule      Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}.
+     * @param rule      Either {@link FillingRule#NONZERO_WINDING} or {@link FillingRule#EVEN_ODD}.
+     * @param isClip    True indicates that current path modifies the clipping path, false - if not.
+     * @param clipRule  Either {@link FillingRule#NONZERO_WINDING} or {@link FillingRule#EVEN_ODD}.
      * @param gs        The graphics state.
      */
-    public PathRenderInfo(Path path, int operation, int rule, CanvasGraphicsState gs) {
+    public PathRenderInfo(Path path, int operation, int rule, boolean isClip, int clipRule, CanvasGraphicsState gs) {
         this.path = path;
         this.operation = operation;
         this.rule = rule;
         this.gs = gs;
+        this.isClip = isClip;
+        this.clippingRule = clipRule;
     }
 
     /**
      * If the operation is {@link #NO_OP} then the rule is ignored,
-     * otherwise {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} is used by default.
+     * otherwise {@link FillingRule#NONZERO_WINDING} is used by default.
+     * With this constructor path is considered as not modifying clipping path.
      *
-     * See {@link #PathRenderInfo(Path, int, int, CanvasGraphicsState)}
+     * See {@link #PathRenderInfo(Path, int, int, boolean, int, CanvasGraphicsState)}
      */
     public PathRenderInfo(Path path, int operation, CanvasGraphicsState gs) {
-        this(path, operation, PdfCanvasConstants.FillingRule.NONZERO_WINDING, gs);
+        this(path, operation, FillingRule.NONZERO_WINDING, false, FillingRule.NONZERO_WINDING, gs);
     }
 
     /**
@@ -72,10 +80,24 @@ public class PathRenderInfo implements EventData {
     }
 
     /**
-     * @return Either {@link PdfCanvasConstants.FillingRule#NONZERO_WINDING} or {@link PdfCanvasConstants.FillingRule#EVEN_ODD}.
+     * @return Either {@link FillingRule#NONZERO_WINDING} or {@link FillingRule#EVEN_ODD}.
      */
     public int getRule() {
         return rule;
+    }
+
+    /**
+     * @return true indicates that current path modifies the clipping path, false - if not.
+     */
+    public boolean isPathModifiesClippingPath() {
+        return isClip;
+    }
+
+    /**
+     * @return Either {@link FillingRule#NONZERO_WINDING} or {@link FillingRule#EVEN_ODD}.
+     */
+    public int getClippingRule() {
+        return clippingRule;
     }
 
     /**
@@ -104,4 +126,8 @@ public class PathRenderInfo implements EventData {
     public PdfArray getLineDashPattern() {
         return gs.getDashPattern();
     }
+
+    public Color getStrokeColor() { return  gs.getStrokeColor(); }
+
+    public Color getFillColor() { return gs.getFillColor(); }
 }

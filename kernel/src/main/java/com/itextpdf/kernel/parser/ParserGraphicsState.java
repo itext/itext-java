@@ -19,17 +19,17 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Internal class which is essentially a CanvasGraphicState which supports tracking of
+ * Internal class which is essentially a {@link CanvasGraphicsState} which supports tracking of
  * clipping path state and changes.
  */
-class ParserGraphicState extends CanvasGraphicsState {
+public class ParserGraphicsState extends CanvasGraphicsState {
     // NOTE: From the spec default value of this field should be the boundary of the entire imageable portion of the output page.
     private Path clippingPath;
 
     /**
      * Internal empty & default constructor.
      */
-    ParserGraphicState() {
+    ParserGraphicsState() {
 
     }
 
@@ -37,7 +37,7 @@ class ParserGraphicState extends CanvasGraphicsState {
      * Copy constructor.
      * @param source the Graphics State to copy from
      */
-    ParserGraphicState(final ParserGraphicState source) {
+    ParserGraphicsState(final ParserGraphicsState source) {
         super(source);
 
         if (source.clippingPath != null) {
@@ -132,7 +132,7 @@ class ParserGraphicState extends CanvasGraphicsState {
     private Shape transformSegment(Shape segment, Matrix newCtm) {
         Shape newSegment;
         List<Point2D> segBasePts = segment.getBasePoints();
-        Point2D[] transformedPoints = transformPoints(newCtm, true, segBasePts.toArray(new Point2D[segBasePts.size()]));
+        Point2D[] transformedPoints = transformPoints(newCtm, segBasePts.toArray(new Point2D[segBasePts.size()]));
 
         if (segment instanceof BezierCurve) {
             newSegment = new BezierCurve(Arrays.asList(transformedPoints));
@@ -143,24 +143,22 @@ class ParserGraphicState extends CanvasGraphicsState {
         return newSegment;
     }
 
-    private Point2D[] transformPoints(Matrix transormationMatrix, boolean inverse, Point2D... points) {
-        AffineTransform t = new AffineTransform(
-                transormationMatrix.get(Matrix.I11), transormationMatrix.get(Matrix.I12),
-                transormationMatrix.get(Matrix.I21), transormationMatrix.get(Matrix.I22),
-                transormationMatrix.get(Matrix.I31), transormationMatrix.get(Matrix.I32)
-        );
-        Point2D[] transformed = new Point2D[points.length];
+    private Point2D[] transformPoints(Matrix transformationMatrix, Point2D... points) {
+        try {
 
-        if (inverse) {
-            try {
-                t = t.createInverse();
-            } catch (NoninvertibleTransformException e) {
-                throw new RuntimeException(e);
-            }
+            AffineTransform t = new AffineTransform(
+                    transformationMatrix.get(Matrix.I11), transformationMatrix.get(Matrix.I12),
+                    transformationMatrix.get(Matrix.I21), transformationMatrix.get(Matrix.I22),
+                    transformationMatrix.get(Matrix.I31), transformationMatrix.get(Matrix.I32)
+            );
+            t = t.createInverse();
+
+            Point2D[] transformed = new Point2D[points.length];
+            t.transform(points, 0, transformed, 0, points.length);
+            return transformed;
+
+        } catch (NoninvertibleTransformException e) {
+            throw new RuntimeException(e);
         }
-
-        t.transform(points, 0, transformed, 0, points.length);
-
-        return transformed;
     }
 }

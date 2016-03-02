@@ -24,8 +24,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.css.Rect;
-
 /**
  * Defines the most common properties and behavior that are shared by most
  * {@link IRenderer} implementations. All default Renderers are subclasses of

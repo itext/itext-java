@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.geom.Subpath;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -61,6 +62,39 @@ public class ClipperBridge {
     }
 
     /**
+     * Adds all iText {@link Subpath}s of the iText {@link Path} to the {@link ClipperOffset} object with one
+     * note: it doesn't add degenerate subpaths.
+     *
+     * @return {@link java.util.List} consisting of all degenerate iText {@link Subpath}s of the path.
+     */
+    public static List<Subpath> addPath(ClipperOffset offset, com.itextpdf.kernel.geom.Path path, Clipper.JoinType joinType, Clipper.EndType endType) {
+        List<Subpath> degenerateSubpaths = new ArrayList<>();
+
+        for (Subpath subpath : path.getSubpaths()) {
+            if (subpath.isDegenerate()) {
+                degenerateSubpaths.add(subpath);
+                continue;
+            }
+
+            if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
+                Clipper.EndType et;
+
+                if (subpath.isClosed()) {
+                    // Offsetting is never used for path being filled
+                    et = Clipper.EndType.CLOSED_LINE;
+                } else {
+                    et = endType;
+                }
+
+                List<Point2D> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
+                offset.addPath(new Path(convertToLongPoints(linearApproxPoints)), joinType, et);
+            }
+        }
+
+        return degenerateSubpaths;
+    }
+
+    /**
      * Converts list of {@link Point.LongPoint} objects into list of
      * {@link Point2D} objects.
      */
@@ -91,7 +125,7 @@ public class ClipperBridge {
             ));
         }
 
-        return new com.itextpdf.kernel.parser.clipper.Path(convertedPoints);
+        return convertedPoints;
     }
 
     /**
@@ -147,7 +181,7 @@ public class ClipperBridge {
         return fillType;
     }
 
-    private static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, Boolean close) {
+    public static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, Boolean close) {
         List<Point2D> floatContour = convertToFloatPoints(contour);
         Iterator<Point2D> iter = floatContour.iterator();
 
@@ -162,5 +196,9 @@ public class ClipperBridge {
         if (close) {
             path.closeSubpath();
         }
+    }
+
+    public static void addRectToClipper(Clipper clipper, Point2D[] rectVertices, Clipper.PolyType polyType) {
+        clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(rectVertices)))), polyType, true);
     }
 }

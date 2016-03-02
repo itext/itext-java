@@ -8,6 +8,7 @@ import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 
@@ -26,7 +27,7 @@ public class PdfContentStreamParser {
      */
     private PdfTokenizer tokeniser;
 
-    private PdfDictionary currentResources;
+    private PdfResources currentResources;
 
     /**
      * Creates a new instance of PdfContentParser
@@ -43,7 +44,7 @@ public class PdfContentStreamParser {
      *                         It is optional parameter, which is used for performance improvements of specific cases of
      *                         inline images parsing.
      */
-    public PdfContentStreamParser(PdfTokenizer tokeniser, PdfDictionary currentResources) {
+    public PdfContentStreamParser(PdfTokenizer tokeniser, PdfResources currentResources) {
         this.tokeniser = tokeniser;
         this.currentResources = currentResources;
     }
@@ -72,7 +73,7 @@ public class PdfContentStreamParser {
             ls.add(ob);
             if (tokeniser.getTokenType() == PdfTokenizer.TokenType.Other) {
                 if (ob.toString().equals("BI")) {
-                    PdfStream inlineImageAsStream = InlineImageParsingUtils.parse(this, currentResources);
+                    PdfStream inlineImageAsStream = InlineImageParsingUtils.parse(this, currentResources.getResource(PdfName.ColorSpace));
                     ls.clear();
                     ls.add(inlineImageAsStream);
                     ls.add(new PdfLiteral("EI"));

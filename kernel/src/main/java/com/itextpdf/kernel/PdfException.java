@@ -91,6 +91,7 @@ public class PdfException extends RuntimeException {
     public static final String IllegalPValue = "illegal.p.value";
     public static final String IllegalRValue = "illegal.r.value";
     public static final String IllegalVValue = "illegal.v.value";
+    public static final String InAPageLabelThePageNumbersMustBeGreaterOrEqualTo1 = "in.a.page.label.the.page.numbers.must.be.greater.or.equal.to.1";
     public static final String InvalidHttpResponse1 = "invalid.http.response {0}";
     public static final String InvalidTsa1ResponseCode2 = "invalid.tsa {0} response.code {1}";
     public static final String IncorrectNumberOfComponents = "incorrect.number.of.components";
@@ -135,6 +136,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfEncodings = "pdf.encodings";
     public static final String PdfEncryption = "pdf.encryption";
     public static final String PdfDecryption = "pdf.decryption";
+    public static final String PdfDocumentMustBeOpenedInStampingMode = "pdf.document.must.be.opened.in.stamping.mode";
     public static final String PdfFormXobjectHasInvalidBbox = "pdf.form.xobject.has.invalid.bbox";
     public static final String PdfObjectStreamReachMaxSize = "pdf.object.stream.reach.max.size";
     public static final String PdfPageShallHaveContent = "pdf.page.shall.have.content";

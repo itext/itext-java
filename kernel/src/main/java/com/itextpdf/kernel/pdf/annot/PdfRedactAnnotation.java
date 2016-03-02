@@ -4,6 +4,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfRedactAnnotation extends PdfMarkupAnnotation {
@@ -28,12 +29,12 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
         return getPdfObject().getAsString(PdfName.OverlayText);
     }
 
-    public PdfRedactAnnotation setRedactRolloverAppearance(PdfDictionary dictionary) {
-        return put(PdfName.RO, dictionary);
+    public PdfRedactAnnotation setRedactRolloverAppearance(PdfStream stream) {
+        return put(PdfName.RO, stream);
     }
 
-    public PdfDictionary getRedactRolloverAppearance() {
-        return getPdfObject().getAsDictionary(PdfName.RO);
+    public PdfStream getRedactRolloverAppearance() {
+        return getPdfObject().getAsStream(PdfName.RO);
     }
 
     public PdfRedactAnnotation setRepeat(PdfBoolean repeat) {

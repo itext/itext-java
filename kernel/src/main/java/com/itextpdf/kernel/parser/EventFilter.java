@@ -7,7 +7,7 @@ public interface EventFilter {
 
     /**
      * This method checks an event and decides whether it should be processed further (corresponds to {@code true}
-     * return value, or filtered out (corresponds to {@code false} return value.
+     * return value), or filtered out (corresponds to {@code false} return value).
      * @param data event data
      * @param type event type
      * @return true to process event further, false to filter event out
