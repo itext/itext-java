@@ -264,19 +264,14 @@ public class TableRenderer extends AbstractRenderer {
                                 }
                             }
                         }
-
                         split = true;
                         if (cellResult.getStatus() == LayoutResult.NOTHING) {
                             hasContent = false;
                         }
-
                         splits[col] = cellResult;
-                        currentRow[col] = (CellRenderer) cellResult.getSplitRenderer();
                     }
                 }
-
                 currChildRenderers.add(cell);
-
                 if (!currentCellHasBigRowspan && cellResult.getStatus() != LayoutResult.NOTHING) {
                     rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
                 }
@@ -302,8 +297,7 @@ public class TableRenderer extends AbstractRenderer {
                         horizontalBorders[rowN][col] = cell.getBorders()[2];
                     }
 
-
-                    // Coorrection of cell bbox only. We don't need #move() here.
+                    // Correcting cell bbox only. We don't need #move() here.
                     // This is because of BlockRenderer's specificity regarding occupied area.
                     float shift = height - cell.getOccupiedArea().getBBox().getHeight();
                     Rectangle bBox = cell.getOccupiedArea().getBBox();
@@ -319,20 +313,27 @@ public class TableRenderer extends AbstractRenderer {
             }
 
             if (split) {
-                TableRenderer splitResult[] = split(row, hasContent);
+                TableRenderer[] splitResult = split(row, hasContent);
                 for (int col = 0; col < currentRow.length; col++) {
                     if (splits[col] != null) {
-                        BlockRenderer cellSplit = currentRow[col];
-                        if (splits[col].getStatus() != LayoutResult.NOTHING) {
+                        CellRenderer cellSplit;
+                        if (splits[col].getStatus() != LayoutResult.FULL) {
+                            cellSplit = (CellRenderer) splits[col].getSplitRenderer();
+                        } else {
+                            cellSplit = currentRow[col];
+                        }
+                        if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
                             childRenderers.add(cellSplit);
                         }
-                        currentRow[col] = null;
-                        rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) splits[col].getOverflowRenderer().setParent(splitResult[1]);
+                        if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
+                            currentRow[col] = null;
+                            rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) splits[col].getOverflowRenderer().setParent(splitResult[1]);
+                        } else {
+                            rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);
+                        }
                     } else if (hasContent && currentRow[col] != null) {
-//                        Cell overflowCell = currentRow[col].getModelElement().clone(false);
-                        //TODO review and double check this logic
-                        // Here I use the same cell, but create a new renderer which doesn't have any children, therefore it won't have any content,
-                        // May be I'm missing something?
+                        // Here we use the same cell, but create a new renderer which doesn't have any children,
+                        // therefore it won't have any content.
                         Cell overflowCell = currentRow[col].getModelElement();
                         currentRow[col].isLastRendererForModelElement = false;
                         childRenderers.add(currentRow[col]);
@@ -352,6 +353,7 @@ public class TableRenderer extends AbstractRenderer {
 
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
+
                 int status = childRenderers.isEmpty() && footerRenderer == null ? LayoutResult.NOTHING : LayoutResult.PARTIAL;
                 if (status == LayoutResult.NOTHING && getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
                     return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);

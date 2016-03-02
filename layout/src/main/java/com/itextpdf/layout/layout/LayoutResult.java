@@ -54,4 +54,28 @@ public class LayoutResult {
         this.areaBreak = areaBreak;
         return this;
     }
+
+    @Override
+    public String toString() {
+        String status;
+        switch (getStatus()) {
+            case FULL:
+                status = "Full";
+                break;
+            case NOTHING:
+                status = "Nothing";
+                break;
+            case PARTIAL:
+                status = "Partial";
+                break;
+            default:
+                status = "None";
+                break;
+        }
+        return "LayoutResult{" +
+                status +
+                ", areaBreak=" + areaBreak +
+                ", occupiedArea=" + occupiedArea +
+                '}';
+    }
 }
