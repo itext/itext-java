@@ -37,7 +37,7 @@ import java.util.Stack;
 /**
  * Processor for a PDF content stream.
  */
-public class PdfContentStreamProcessor {
+public class PdfCanvasProcessor {
 
     public static final String DEFAULT_OPERATOR = "DefaultOperator";
 
@@ -107,7 +107,7 @@ public class PdfContentStreamProcessor {
      *
      * @param eventListener the {@link EventListener} that will receive rendering notifications
      */
-    public PdfContentStreamProcessor(EventListener eventListener) {
+    public PdfCanvasProcessor(EventListener eventListener) {
         this.eventListener = eventListener;
         this.supportedEvents = eventListener.getSupportedEvents();
         operators = new HashMap<>();
@@ -174,7 +174,7 @@ public class PdfContentStreamProcessor {
 
     /**
      * Processes PDF syntax.
-     * <b>Note:</b> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
+     * <b>Note:</b> If you re-use a given {@link PdfCanvasProcessor}, you must call {@link PdfCanvasProcessor#reset()}
      *
      * @param contentBytes the bytes of a content stream
      * @param resources    the resources of the content stream. Must not be null.
@@ -185,7 +185,7 @@ public class PdfContentStreamProcessor {
         }
         this.resourcesStack.push(resources);
         PdfTokenizer tokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
-        PdfContentStreamParser ps = new PdfContentStreamParser(tokeniser, resources);
+        PdfCanvasParser ps = new PdfCanvasParser(tokeniser, resources);
         List<PdfObject> operands = new ArrayList<>();
         try {
             while (ps.parse(operands).size() > 0) {
@@ -203,7 +203,7 @@ public class PdfContentStreamProcessor {
     /**
      * Processes PDF syntax.
      * <br/>
-     * <strong>Note:</strong> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
+     * <strong>Note:</strong> If you re-use a given {@link PdfCanvasProcessor}, you must call {@link PdfCanvasProcessor#reset()}
      *
      * @param page the page to process
      */
@@ -492,7 +492,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (unregistered).
      */
     private static class IgnoreOperator implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             // ignore the operator
         }
     }
@@ -501,7 +501,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (TJ).
      */
     private static class ShowTextArray implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfArray array = (PdfArray) operands.get(0);
             float tj = 0;
             for (PdfObject entryObj : array) {
@@ -531,7 +531,7 @@ public class PdfContentStreamProcessor {
             this.moveNextLineAndShowText = moveNextLineAndShowText;
         }
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber aw = (PdfNumber) operands.get(0);
             PdfNumber ac = (PdfNumber) operands.get(1);
             PdfString string = (PdfString) operands.get(2);
@@ -562,7 +562,7 @@ public class PdfContentStreamProcessor {
             this.showText = showText;
         }
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             textMoveNextLine.invoke(processor, null, new ArrayList<PdfObject>(0));
             showText.invoke(processor, null, operands);
         }
@@ -572,7 +572,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Tj).
      */
     private static class ShowText implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfString string = (PdfString) operands.get(0);
 
             processor.displayPdfString(string);
@@ -590,7 +590,7 @@ public class PdfContentStreamProcessor {
             this.moveStartNextLine = moveStartNextLine;
         }
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             List<PdfObject> tdoperands = new ArrayList<PdfObject>(2);
             tdoperands.add(0, new PdfNumber(0));
             tdoperands.add(1, new PdfNumber(-processor.getGraphicsState().getLeading()));
@@ -602,7 +602,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Tm).
      */
     private static class TextSetTextMatrix implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float a = ((PdfNumber) operands.get(0)).getFloatValue();
             float b = ((PdfNumber) operands.get(1)).getFloatValue();
             float c = ((PdfNumber) operands.get(2)).getFloatValue();
@@ -627,7 +627,7 @@ public class PdfContentStreamProcessor {
             this.setTextLeading = setTextLeading;
         }
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float ty = ((PdfNumber) operands.get(1)).getFloatValue();
 
             List<PdfObject> tlOperands = new ArrayList<PdfObject>(1);
@@ -641,7 +641,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Td).
      */
     private static class TextMoveStartNextLine implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float tx = ((PdfNumber) operands.get(0)).getFloatValue();
             float ty = ((PdfNumber) operands.get(1)).getFloatValue();
 
@@ -655,7 +655,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Tf).
      */
     private static class SetTextFont implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfName fontResourceName = (PdfName) operands.get(0);
             float size = ((PdfNumber) operands.get(1)).getFloatValue();
 
@@ -674,7 +674,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Tr).
      */
     private static class SetTextRenderMode implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber render = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setTextRenderingMode(render.getIntValue());
         }
@@ -684,7 +684,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Ts).
      */
     private static class SetTextRise implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber rise = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setTextRise(rise.getFloatValue());
         }
@@ -694,7 +694,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (TL).
      */
     private static class SetTextLeading implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber leading = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setLeading(leading.getFloatValue());
         }
@@ -704,7 +704,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Tz).
      */
     private static class SetTextHorizontalScaling implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber scale = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setHorizontalScaling(scale.getFloatValue());
         }
@@ -714,7 +714,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Tc).
      */
     private static class SetTextCharacterSpacing implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber charSpace = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setCharSpacing(charSpace.getFloatValue());
         }
@@ -724,7 +724,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Tw).
      */
     private static class SetTextWordSpacing implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber wordSpace = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setWordSpacing(wordSpace.getFloatValue());
         }
@@ -734,7 +734,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (gs).
      */
     private static class ProcessGraphicsStateResource implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
 
             PdfName dictionaryName = (PdfName) operands.get(0);
             PdfDictionary extGState = processor.resourcesStack.peek().getResource(PdfName.ExtGState);
@@ -760,7 +760,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (q).
      */
     private static class PushGraphicsState implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             ParserGraphicsState gs = processor.gsStack.peek();
             ParserGraphicsState copy = new ParserGraphicsState(gs);
             processor.gsStack.push(copy);
@@ -771,7 +771,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (cm).
      */
     private static class ModifyCurrentTransformationMatrix implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float a = ((PdfNumber) operands.get(0)).getFloatValue();
             float b = ((PdfNumber) operands.get(1)).getFloatValue();
             float c = ((PdfNumber) operands.get(2)).getFloatValue();
@@ -822,7 +822,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Q).
      */
     protected static class PopGraphicsState implements ContentOperator{
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.gsStack.pop();
             ParserGraphicsState gs = processor.getGraphicsState();
             processor.eventOccurred(new ClippingPathInfo(gs.getClippingPath(), gs.getCtm()), EventType.CLIP_PATH_CHANGED);
@@ -833,7 +833,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (g).
      */
     private static class SetGrayFill implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setFillColor(getColor(1, operands));
         }
     }
@@ -842,7 +842,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (G).
      */
     private static class SetGrayStroke implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setStrokeColor(getColor(1, operands));
         }
     }
@@ -851,7 +851,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (rg).
      */
     private static class SetRGBFill implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setFillColor(getColor(3, operands));
         }
     }
@@ -860,7 +860,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (RG).
      */
     private static class SetRGBStroke implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setStrokeColor(getColor(3, operands));
         }
     }
@@ -869,7 +869,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (k).
      */
     private static class SetCMYKFill implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setFillColor(getColor(4, operands));
         }
     }
@@ -878,7 +878,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (K).
      */
     private static class SetCMYKStroke implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setStrokeColor(getColor(4, operands));
         }
     }
@@ -888,7 +888,7 @@ public class PdfContentStreamProcessor {
      * TODO PdfContentStreamProcessor doesn't support color spaces other than DeviceRgb, DeviceCMYK and DeviceGray, which could be PdfArray object
      */
     private static class SetColorSpaceFill implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setFillColorSpace((PdfName) operands.get(0));
         }
     }
@@ -898,7 +898,7 @@ public class PdfContentStreamProcessor {
      * TODO PdfContentStreamProcessor doesn't support color spaces other than DeviceRgb, DeviceCMYK and DeviceGray, which could be PdfArray object
      */
     private static class SetColorSpaceStroke implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setStrokeColorSpace((PdfName) operands.get(0));
         }
     }
@@ -907,7 +907,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (sc / scn).
      */
     private static class SetColorFill implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setFillColor(getColor(processor.getGraphicsState().getFillColorSpace(), operands));
         }
     }
@@ -916,7 +916,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (SC / SCN).
      */
     private static class SetColorStroke implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setStrokeColor(getColor(processor.getGraphicsState().getStrokeColorSpace(), operands));
         }
     }
@@ -925,7 +925,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (BT).
      */
     private static class BeginText implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.textMatrix = new Matrix();
             processor.textLineMatrix = processor.textMatrix;
             processor.beginText();
@@ -936,7 +936,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (ET).
      */
     private static class EndText implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.textMatrix = null;
             processor.textLineMatrix = null;
             processor.endText();
@@ -948,7 +948,7 @@ public class PdfContentStreamProcessor {
      *
      */
     private static class BeginMarkedContent implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor,
+        public void invoke(PdfCanvasProcessor processor,
                            PdfLiteral operator, List<PdfObject> operands) {
             processor.beginMarkedContent((PdfName) operands.get(0), new PdfDictionary());
         }
@@ -960,7 +960,7 @@ public class PdfContentStreamProcessor {
      */
     private static class BeginMarkedContentDictionary implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor,
+        public void invoke(PdfCanvasProcessor processor,
                            PdfLiteral operator, List<PdfObject> operands) {
 
             PdfObject properties = operands.get(1);
@@ -981,7 +981,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (EMC).
      */
     private static class EndMarkedContent implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor,
+        public void invoke(PdfCanvasProcessor processor,
                            PdfLiteral operator, List<PdfObject> operands) {
             processor.endMarkedContent();
         }
@@ -991,7 +991,7 @@ public class PdfContentStreamProcessor {
      * A content operator implementation (Do).
      */
     private static class Do implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfName xobjectName = (PdfName) operands.get(0);
             processor.displayXObject(xobjectName);
         }
@@ -1003,7 +1003,7 @@ public class PdfContentStreamProcessor {
      * encapsulates inline image dictionary and bytes
      */
     private static class EndImage implements ContentOperator {
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfStream imageStream = (PdfStream) operands.get(0);
             processor.displayImage(imageStream, true);
         }
@@ -1014,7 +1014,7 @@ public class PdfContentStreamProcessor {
      */
     private static class SetLineWidth implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             float lineWidth = ((PdfNumber) operands.get(0)).getFloatValue();
             processor.getGraphicsState().setLineWidth(lineWidth);
         }
@@ -1025,7 +1025,7 @@ public class PdfContentStreamProcessor {
      */
     private class SetLineCap implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             int lineCap = ((PdfNumber) operands.get(0)).getIntValue();
             processor.getGraphicsState().setLineCapStyle(lineCap);
         }
@@ -1036,7 +1036,7 @@ public class PdfContentStreamProcessor {
      */
     private class SetLineJoin implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             int lineJoin = ((PdfNumber) operands.get(0)).getIntValue();
             processor.getGraphicsState().setLineJoinStyle(lineJoin);
         }
@@ -1047,7 +1047,7 @@ public class PdfContentStreamProcessor {
      */
     private class SetMiterLimit implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             float miterLimit = ((PdfNumber) operands.get(0)).getFloatValue();
             processor.getGraphicsState().setMiterLimit(miterLimit);
         }
@@ -1058,7 +1058,7 @@ public class PdfContentStreamProcessor {
      */
     private class SetLineDashPattern implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             processor.getGraphicsState().setDashPattern(new PdfArray(Arrays.asList(operands.get(0), operands.get(1))));
         }
     }
@@ -1067,7 +1067,7 @@ public class PdfContentStreamProcessor {
      * An XObject subtype handler for FORM
      */
     private static class FormXObjectDoHandler implements XObjectDoHandler {
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream) {
+        public void handleXObject(PdfCanvasProcessor processor, PdfStream stream) {
 
             PdfDictionary resourcesDic = stream.getAsDictionary(PdfName.Resources);
             PdfResources resources;
@@ -1110,7 +1110,7 @@ public class PdfContentStreamProcessor {
      */
     private static class ImageXObjectDoHandler implements XObjectDoHandler {
 
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream) {
+        public void handleXObject(PdfCanvasProcessor processor, PdfStream xobjectStream) {
             processor.displayImage(xobjectStream, false);
         }
     }
@@ -1119,7 +1119,7 @@ public class PdfContentStreamProcessor {
      * An XObject subtype handler that does nothing
      */
     private static class IgnoreXObjectDoHandler implements XObjectDoHandler {
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream) {
+        public void handleXObject(PdfCanvasProcessor processor, PdfStream xobjectStream) {
             // ignore XObject subtype
         }
     }
@@ -1129,7 +1129,7 @@ public class PdfContentStreamProcessor {
      */
     private static class MoveTo implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x = ((PdfNumber) operands.get(0)).getFloatValue();
             float y = ((PdfNumber) operands.get(1)).getFloatValue();
             processor.currentPath.moveTo(x, y);
@@ -1141,7 +1141,7 @@ public class PdfContentStreamProcessor {
      */
     private static class LineTo implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x = ((PdfNumber) operands.get(0)).getFloatValue();
             float y = ((PdfNumber) operands.get(1)).getFloatValue();
             processor.currentPath.lineTo(x, y);
@@ -1153,7 +1153,7 @@ public class PdfContentStreamProcessor {
      */
     private static class Curve implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x1 = ((PdfNumber) operands.get(0)).getFloatValue();
             float y1 = ((PdfNumber) operands.get(1)).getFloatValue();
             float x2 = ((PdfNumber) operands.get(2)).getFloatValue();
@@ -1169,7 +1169,7 @@ public class PdfContentStreamProcessor {
      */
     private static class CurveFirstPointDuplicated implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x2 = ((PdfNumber) operands.get(0)).getFloatValue();
             float y2 = ((PdfNumber) operands.get(1)).getFloatValue();
             float x3 = ((PdfNumber) operands.get(2)).getFloatValue();
@@ -1183,7 +1183,7 @@ public class PdfContentStreamProcessor {
      */
     private static class CurveFourhPointDuplicated implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x1 = ((PdfNumber) operands.get(0)).getFloatValue();
             float y1 = ((PdfNumber) operands.get(1)).getFloatValue();
             float x3 = ((PdfNumber) operands.get(2)).getFloatValue();
@@ -1197,7 +1197,7 @@ public class PdfContentStreamProcessor {
      */
     private static class CloseSubpath implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.currentPath.closeSubpath();
         }
     }
@@ -1207,7 +1207,7 @@ public class PdfContentStreamProcessor {
      */
     private static class Rectangle implements ContentOperator {
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x = ((PdfNumber) operands.get(0)).getFloatValue();
             float y = ((PdfNumber) operands.get(1)).getFloatValue();
             float w = ((PdfNumber) operands.get(2)).getFloatValue();
@@ -1241,7 +1241,7 @@ public class PdfContentStreamProcessor {
             this.close = close;
         }
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             if (close) {
                 processor.currentPath.closeSubpath();
             }
@@ -1261,7 +1261,7 @@ public class PdfContentStreamProcessor {
             this.rule = rule;
         }
 
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
+        public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.isClip = true;
             processor.clippingRule = rule;
         }

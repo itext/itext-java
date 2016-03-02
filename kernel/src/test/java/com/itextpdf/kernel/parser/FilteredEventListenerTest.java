@@ -47,7 +47,7 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
         for (int i = 0; i < regions.length; i++)
             extractionStrategies[i] = listener.attachEventListener(new LocationTextExtractionStrategy(), regionFilters[i]);
 
-        new PdfContentStreamProcessor(listener).processPageContent(pdfDocument.getPage(1));
+        new PdfCanvasProcessor(listener).processPageContent(pdfDocument.getPage(1));
 
         for (int i = 0; i < regions.length; i++) {
             String actualText = extractionStrategies[i].getResultantText();
@@ -68,7 +68,7 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
 
         FilteredEventListener listener = new FilteredEventListener();
         LocationTextExtractionStrategy extractionStrategy = listener.attachEventListener(new LocationTextExtractionStrategy(), regionFilters);
-        new PdfContentStreamProcessor(listener).processPageContent(pdfDocument.getPage(1));
+        new PdfCanvasProcessor(listener).processPageContent(pdfDocument.getPage(1));
         String actualText = extractionStrategy.getResultantText();
 
         String expectedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilters));

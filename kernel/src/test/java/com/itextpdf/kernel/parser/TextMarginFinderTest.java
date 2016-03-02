@@ -19,7 +19,7 @@ public class TextMarginFinderTest extends ExtendedITextTest {
     public void test() throws Exception {
         TextMarginFinder finder = new TextMarginFinder();
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "in.pdf"));
-        new PdfContentStreamProcessor(finder).processPageContent(pdfDocument.getPage(1));
+        new PdfCanvasProcessor(finder).processPageContent(pdfDocument.getPage(1));
 
         Rectangle textRect = finder.getTextRectangle();
         Assert.assertEquals(1.42f * 72f, textRect.getX(), 0.01f);

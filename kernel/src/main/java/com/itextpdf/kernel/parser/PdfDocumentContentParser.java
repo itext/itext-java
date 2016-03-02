@@ -28,7 +28,7 @@ public class PdfDocumentContentParser {
      * @return the provided renderListener
      */
     public <E extends EventListener> E processContent(int pageNumber, E renderListener, Map<String, ContentOperator> additionalContentOperators) {
-        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(renderListener);
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(renderListener);
         for (Map.Entry<String, ContentOperator> entry : additionalContentOperators.entrySet()) {
             processor.registerContentOperator(entry.getKey(), entry.getValue());
         }

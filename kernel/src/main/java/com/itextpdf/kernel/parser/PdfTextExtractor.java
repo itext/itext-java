@@ -17,7 +17,7 @@ public final class PdfTextExtractor {
      * @return the extracted text
      */
     public static String getTextFromPage(PdfPage page, TextExtractionStrategy strategy) {
-        PdfContentStreamProcessor parser = new PdfContentStreamProcessor(strategy);
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(strategy);
         parser.processPageContent(page);
         return strategy.getResultantText();
     }

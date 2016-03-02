@@ -6,5 +6,5 @@ import com.itextpdf.kernel.pdf.PdfStream;
  * @author Kevin Day
  */
 public interface XObjectDoHandler {
-    public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream);
+    public void handleXObject(PdfCanvasProcessor processor, PdfStream stream);
 }

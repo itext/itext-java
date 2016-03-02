@@ -27,7 +27,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
 
     @Test
     public void testCharacterRenderInfos() throws Exception {
-        PdfContentStreamProcessor parser = new PdfContentStreamProcessor(new CharacterPositionEventListener());
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(new CharacterPositionEventListener());
         parser.processPageContent(new PdfDocument(new PdfReader(sourceFolder + "simple_text.pdf")).getPage(FIRST_PAGE));
     }
 
@@ -64,7 +64,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inFile));
         TextPositionEventListener renderListener = new TextPositionEventListener();
-        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(renderListener);
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(renderListener);
 
         processor.processPageContent(pdfDocument.getPage(FIRST_PAGE));
 

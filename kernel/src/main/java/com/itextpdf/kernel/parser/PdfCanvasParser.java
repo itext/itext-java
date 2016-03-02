@@ -20,7 +20,7 @@ import java.util.List;
  * Parses the page or form XObject content.
  * @author Paulo Soares
  */
-public class PdfContentStreamParser {
+public class PdfCanvasParser {
 
     /**
      * Holds value of property tokeniser.
@@ -33,7 +33,7 @@ public class PdfContentStreamParser {
      * Creates a new instance of PdfContentParser
      * @param tokeniser the tokeniser with the content
      */
-    public PdfContentStreamParser(PdfTokenizer tokeniser) {
+    public PdfCanvasParser(PdfTokenizer tokeniser) {
         this.tokeniser = tokeniser;
     }
 
@@ -44,7 +44,7 @@ public class PdfContentStreamParser {
      *                         It is optional parameter, which is used for performance improvements of specific cases of
      *                         inline images parsing.
      */
-    public PdfContentStreamParser(PdfTokenizer tokeniser, PdfResources currentResources) {
+    public PdfCanvasParser(PdfTokenizer tokeniser, PdfResources currentResources) {
         this.tokeniser = tokeniser;
         this.currentResources = currentResources;
     }

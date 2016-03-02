@@ -63,7 +63,7 @@ import org.junit.experimental.categories.Category;
         TextExtractionStrategy region2Listener = listener.attachEventListener(new LocationTextExtractionStrategy(),
                 new TextRegionEventFilter(new Rectangle(x1, y1, x2, y2)));
 
-        PdfContentStreamProcessor parser = new PdfContentStreamProcessor(new GlyphEventListener(listener));
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(new GlyphEventListener(listener));
         parser.processPageContent(pdfDocument.getPage(1));
 
         Assert.assertEquals("Your", region1Listener.getResultantText());

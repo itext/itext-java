@@ -50,7 +50,7 @@ public class IndicTextExtractionTest extends ExtendedITextTest {
         for (int i = 0; i < regions.length; i++)
             extractionStrategies[i] = listener.attachEventListener(new LocationTextExtractionStrategy().setUseActualText(true), regionFilters[i]);
 
-        new PdfContentStreamProcessor(listener).processPageContent(pdfDocument.getPage(1));
+        new PdfCanvasProcessor(listener).processPageContent(pdfDocument.getPage(1));
 
         for (int i = 0; i < regions.length; i++) {
             String actualText = extractionStrategies[i].getResultantText();

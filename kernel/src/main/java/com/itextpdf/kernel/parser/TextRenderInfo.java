@@ -18,7 +18,7 @@ import java.util.List;
  * Provides information and calculations needed by render listeners
  * to display/evaluate text render operations.
  * <br><br>
- * This is passed between the {@link PdfContentStreamProcessor} and
+ * This is passed between the {@link PdfCanvasProcessor} and
  * {@link EventListener} objects as text rendering operations are
  * discovered
  */

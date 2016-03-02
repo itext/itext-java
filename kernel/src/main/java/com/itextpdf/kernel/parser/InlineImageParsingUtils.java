@@ -107,7 +107,7 @@ public final class InlineImageParsingUtils {
      * @throws IOException if anything goes wring with the parsing
      * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
      */
-    public static PdfStream parse(PdfContentStreamParser ps, PdfDictionary colorSpaceDic) throws IOException {
+    public static PdfStream parse(PdfCanvasParser ps, PdfDictionary colorSpaceDic) throws IOException {
         PdfStream inlineImageAsStreamObject = parseDictionary(ps);
         byte[] samples = parseSamples(inlineImageAsStreamObject, colorSpaceDic, ps);
         inlineImageAsStreamObject.setData(samples);
@@ -121,7 +121,7 @@ public final class InlineImageParsingUtils {
      * @return the dictionary for the inline image, with any abbreviations converted to regular image dictionary keys and values
      * @throws IOException if the parse fails
      */
-    private static PdfStream parseDictionary(PdfContentStreamParser ps) throws IOException {
+    private static PdfStream parseDictionary(PdfCanvasParser ps) throws IOException {
         // by the time we get to here, we have already parsed the BI operator
         PdfStream streamObject = new PdfStream();
 
@@ -235,7 +235,7 @@ public final class InlineImageParsingUtils {
      * @return the samples of the image
      * @throws IOException if anything bad happens during parsing
      */
-    private static byte[] parseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfContentStreamParser ps) throws IOException{
+    private static byte[] parseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfCanvasParser ps) throws IOException{
         // special case:  when no filter is specified, we just read the number of bits
         // per component, multiplied by the width and height.
         if (imageDictionary.containsKey(PdfName.Filter))
@@ -283,7 +283,7 @@ public final class InlineImageParsingUtils {
      * @return the samples of the image
      * @throws IOException if anything bad happens during parsing
      */
-    private static byte[] parseSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfContentStreamParser ps) throws IOException{
+    private static byte[] parseSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfCanvasParser ps) throws IOException{
         // by the time we get to here, we have already parsed the ID operator
 
         if (!imageDictionary.containsKey(PdfName.Filter) && imageColorSpaceIsKnown(imageDictionary, colorSpaceDic)){

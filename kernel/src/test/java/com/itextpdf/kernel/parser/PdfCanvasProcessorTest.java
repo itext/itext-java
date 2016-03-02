@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class PdfContentStreamProcessorTest extends ExtendedITextTest {
+public class PdfCanvasProcessorTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfContentStreamProcessorTest/";
 
@@ -27,7 +27,7 @@ public class PdfContentStreamProcessorTest extends ExtendedITextTest {
         for (int i = 1; i <= document.getNumberOfPages(); ++i) {
             PdfPage page = document.getPage(i);
 
-            PdfContentStreamProcessor processor = new PdfContentStreamProcessor(new EventListener() {
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(new EventListener() {
                 public void eventOccurred(EventData data, EventType type) {
                     switch (type) {
                         case BEGIN_TEXT:

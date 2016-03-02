@@ -16,5 +16,5 @@ public interface ContentOperator {
      * @param operator The literal PDF syntax of the operator.
      * @param operands The operands that come with the operator.
      */
-    void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, List<PdfObject> operands);
+    void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands);
 }
