@@ -105,8 +105,6 @@ public class PdfOutlineTest extends ExtendedITextTest{
         FileOutputStream fos = new FileOutputStream(destinationFolder+"removePagesWithOutlinesResult.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
-
-        PdfOutline outlines = pdfDoc.getOutlines(false);
         pdfDoc.removePage(102);
 
         pdfDoc.close();

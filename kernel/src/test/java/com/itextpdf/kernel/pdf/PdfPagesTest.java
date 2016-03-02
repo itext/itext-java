@@ -5,6 +5,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -327,6 +328,20 @@ public class PdfPagesTest extends ExtendedITextTest{
             Assert.assertEquals(pageDictionary, page.getPdfObject());
         }
         pdfDoc.close();
+    }
+
+    @Test
+    public void removePageWithFormFieldsTest() throws IOException {
+        String filename = sourceFolder + "docWithFields.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
+        pdfDoc.removePage(1);
+
+        PdfArray fields = pdfDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm).getAsArray(PdfName.Fields);
+        PdfDictionary field = (PdfDictionary) fields.get(0);
+        PdfDictionary kid = (PdfDictionary) field.getAsArray(PdfName.Kids).get(0);
+        Assert.assertEquals(6, kid.keySet().size());
+        Assert.assertEquals(3, fields.size());
     }
 
 

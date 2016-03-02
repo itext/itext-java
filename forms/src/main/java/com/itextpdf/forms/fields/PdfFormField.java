@@ -1467,10 +1467,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (PdfName.Tx.equals(type)) {
                     if (!isMultiline()) {
                         drawTextAppearance(bBox.toRectangle(), localFont, fontSz, value, appearance);
-//                        drawnAppearance = drawTextAppearance(bBox.toRectangle(), localFont, fontSz, value, appearance1);
                     } else {
                         drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSz, value, appearance);
-//                        drawnAppearance = drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSz, value, apResources);
                     }
 
                 } else {
@@ -1485,14 +1483,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         value = optionsArrayToString(options);
                     }
                     drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSz, value, appearance);
-//                    drawnAppearance = drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSz, value, apResources);
                 }
 
-                //appearance1.getPdfObject().setData(drawnAppearance);
-                //appearance1.getPdfObject().getOutputStream().writeBytes();
                 appearance.getResources().addFont(getDocument(), localFont);
-
-                //appearance.getResources().addFont(getDocument(), localFont);
                 PdfDictionary ap = new PdfDictionary();
                 ap.put(PdfName.N, appearance.getPdfObject());
                 put(PdfName.AP, ap);

@@ -2,16 +2,15 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.collection.PdfCollection;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
@@ -80,15 +79,16 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     public boolean removePage(PdfPage page) {
         //TODO log removing flushed page
-        if (outlineMode)
-            removeOutlines(page);
+        removeOutlines(page);
+        removeUnusedWidgetsFromFields(page);
         return pageTree.removePage(page);
     }
 
     public PdfPage removePage(int pageNum) {
         //TODO log removing flushed page
-        if (outlineMode)
-            removeOutlines(getPage(pageNum));
+        PdfPage page = getPage(pageNum);
+        removeOutlines(page);
+        removeUnusedWidgetsFromFields(page);
         return pageTree.removePage(pageNum);
     }
 
@@ -420,14 +420,36 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * This method removes all annotation entries from form fields associated with a given page.
+     * @param page
+     */
+    private void removeUnusedWidgetsFromFields(PdfPage page){
+        if (page.isFlushed()) {
+            return;
+        }
+        List<PdfAnnotation> annots = page.getAnnotations();
+        for (PdfAnnotation annot : annots) {
+            if (annot.getSubtype().equals(PdfName.Widget)) {
+                ((PdfWidgetAnnotation)annot).releaseFormFieldFromWidgetAnnotation();
+            }
+        }
+    }
+
+    /**
      * This method removes all outlines associated with a given page
      *
      * @param page
      * @throws PdfException
      */
     private void removeOutlines(PdfPage page) {
-        for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject().getIndirectReference())) {
-            outline.removeOutline();
+        if (getDocument().getWriter() == null) {
+            return;
+        }
+        getOutlines(false);
+        if (!pagesWithOutlines.isEmpty()) {
+            for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject().getIndirectReference())) {
+                outline.removeOutline();
+            }
         }
     }
 

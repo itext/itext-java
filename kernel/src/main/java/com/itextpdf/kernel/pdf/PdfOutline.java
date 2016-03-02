@@ -166,6 +166,11 @@ public class PdfOutline {
       * @throws PdfException
      */
     void removeOutline() {
+        PdfName type = content.getAsName(PdfName.Type);
+        if (type != null && type.equals(PdfName.Outlines)) {
+            pdfDoc.getCatalog().remove(PdfName.Outlines);
+            return;
+        }
         PdfOutline parent = this.parent;
         List<PdfOutline> children = parent.children;
         children.remove(this);
@@ -173,6 +178,9 @@ public class PdfOutline {
         if (!children.isEmpty()){
             parentContent.put(PdfName.First, children.get(0).content);
             parentContent.put(PdfName.Last, children.get(children.size()-1).content);
+        } else {
+            parent.removeOutline();
+            return;
         }
 
         PdfDictionary next = content.getAsDictionary(PdfName.Next);
