@@ -285,7 +285,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         //TODO different with type0 and type2 could be removed after simplifying longTag
         if (cidFontType == CidFontType0) {
             int len = content.length();
-            if (isIdentity()) {
+            if (cmapEncoding.isDirect()) {
                 for (int k = 0; k < len; ++k) {
                     Glyph glyph = fontProgram.getGlyphByCode((int) content.charAt(k));
                     if (glyph != null) {
@@ -397,11 +397,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         return fontDescriptor;
     }
 
-    public boolean isIdentity() {
-        //TODO strange property
-        return cmapEncoding.isDirect();
-    }
-
     @Override
     public void flush() {
         if (newFont) {
@@ -410,7 +405,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         super.flush();
     }
 
-    @Override //TODO
+    @Override //TODO remove
     protected void addFontStream(PdfDictionary fontDescriptor) {
     }
 
@@ -522,7 +517,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         PdfDictionary cidInfo = new PdfDictionary();
         cidInfo.put(PdfName.Registry, new PdfString(cmapEncoding.getRegistry()));
         cidInfo.put(PdfName.Ordering, new PdfString(cmapEncoding.getOrdering()));
-        cidInfo.put(PdfName.Supplement, new PdfNumber(cmapEncoding.getSupplement()));//0
+        cidInfo.put(PdfName.Supplement, new PdfNumber(cmapEncoding.getSupplement()));
         cidFont.put(PdfName.CIDSystemInfo, cidInfo);
         if (!vertical) {
             cidFont.put(PdfName.DW, new PdfNumber(FontProgram.DEFAULT_WIDTH));
