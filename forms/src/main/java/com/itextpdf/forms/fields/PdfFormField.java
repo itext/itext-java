@@ -2001,7 +2001,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
      * @param value    the initial value
-     * @return the {@link PdfFormXObject Form XObject} that was drawn
      */
     protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
