@@ -1,7 +1,9 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
 import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -96,8 +98,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @param img an internal representation of the {@link com.itextpdf.io.image.Image image resource}
      */
     public Image(com.itextpdf.io.image.Image img) {
-        this(new PdfImageXObject(img));
-        // TODO flush this on renderer's draw DEVSIX-479
+        this(new PdfImageXObject(checkImageType(img)));
+        setProperty(Property.FLUSH_ON_DRAW, true);
     }
 
     /**
@@ -108,14 +110,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @param y a float value representing the vertical offset of the lower left corner of the image
      */
     public Image(com.itextpdf.io.image.Image img, float x, float y) {
-        //@TODO DEVSIX-329
-//        if (img instanceof WmfImage) {
-//            this.xObject = new PdfFormXObject(new WmfImageHelper(img).createPdfForm());
-//        } else {
-//            this.xObject = new PdfImageXObject(img);
-//        }
-//        setProperty(Property.X, x).setProperty(Property.Y, y);
-        this(new PdfImageXObject(img), x, y);
+        this(new PdfImageXObject(checkImageType(img)), x, y);
     }
 
     /**
@@ -127,14 +122,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @param width a float value
      */
     public Image(com.itextpdf.io.image.Image img, float x, float y, float width) {
-        //@TODO DEVSIX-329
-//        if (img instanceof WmfImage) {
-//            this.xObject = new PdfFormXObject(new WmfImageHelper(img).createPdfForm());
-//        } else {
-//            this.xObject = new PdfImageXObject(img);
-//        }
-//        setProperty(Property.X, x).setProperty(Property.Y, y).setWidth(width).setProperty(Property.POSITION, LayoutPosition.FIXED);
-        this(new PdfImageXObject(img), x, y, width);
+        this(new PdfImageXObject(checkImageType(img)), x, y, width);
     }
 
     /**
@@ -421,5 +409,12 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     @Override
     protected IRenderer makeNewRenderer() {
         return new ImageRenderer(this);
+    }
+
+    private static com.itextpdf.io.image.Image checkImageType(com.itextpdf.io.image.Image image) {
+        if (image instanceof WmfImage) {
+            throw new PdfException(PdfException.CannotCreatePdfStreamByInputStreamWithoutPdfDocument);
+        }
+        return image;
     }
 }

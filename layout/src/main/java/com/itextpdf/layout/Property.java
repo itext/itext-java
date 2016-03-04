@@ -27,6 +27,7 @@ public enum Property {
     COLSPAN,
     DESTINATION,
     FIRST_LINE_INDENT(true),
+    FLUSH_ON_DRAW,
     FONT(true),
     FONT_COLOR(true),
     FONT_KERNING(true),

@@ -7,6 +7,7 @@ import com.itextpdf.io.image.Image;
 import com.itextpdf.io.image.RawImage;
 import com.itextpdf.io.image.RawImageHelper;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -20,6 +21,7 @@ import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
@@ -48,7 +50,7 @@ public class PdfImageXObject extends PdfXObject {
     }
 
     public PdfImageXObject(Image image, PdfImageXObject imageMask) {
-        this(createPdfStream(image, imageMask));
+        this(createPdfStream(checkImageType(image), imageMask));
         mask = image.isMask();
         softMask = image.isSoftMask();
     }
@@ -424,5 +426,13 @@ public class PdfImageXObject extends PdfXObject {
             }
         }
     }
+
+    private static Image checkImageType(Image image) {
+        if (image instanceof WmfImage) {
+            throw new PdfException(PdfException.CannotCreatePdfImageXObjectByWmfImage);
+        }
+        return image;
+    }
+
 
 }

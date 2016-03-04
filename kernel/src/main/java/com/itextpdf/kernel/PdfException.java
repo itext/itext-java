@@ -26,6 +26,8 @@ public class PdfException extends RuntimeException {
     public static final String CannotCopyObjectContent = "cannot.copy.object.content";
     public static final String CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten = "cannot.copy.indirect.object.from.the.document.that.is.being.written";
     public static final String CannotCopyToDocumentOpenedInReadingMode = "cannot.copy.to.document.opened.in.reading.mode";
+    public static final String CannotCreateLayoutImageByWmfImage = "Cannot create layout image by WmfImage instance. First convert the image into FormXObject and then use the corresponding layout image constructor";
+    public static final String CannotCreatePdfImageXObjectByWmfImage = "Cannot create PdfImageXObject instance by WmfImage. Use PdfFormXObject constructor instead.";
     public static final String CannotCreatePdfStreamByInputStreamWithoutPdfDocument = "cannot.create.pdfstream.by.inputstream.without.pdfdocument";
     public static final String CannotGetContentBytes = "cannot.get.content.bytes";
     public static final String CannotGetPdfStreamBytes = "cannot.get.pdfstream.bytes";
