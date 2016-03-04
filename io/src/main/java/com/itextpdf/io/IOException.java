@@ -35,6 +35,8 @@ public class IOException extends RuntimeException {
     public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression {0} is.not.supported";
+    public static final String ColorDepthIsNotSupported = "the.color.depth {0} is.not.supported";
+    public static final String ColorSpaceIsNotSupported = "the.color.space {0} is.not.supported";
     public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "compression.jpeg.is.only.supported.with.a.single.strip.this.image.has {0} strips";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
     public static final String EolCodeWordEncounteredInBlackRun = "eol.code.word.encountered.in.black.run";
@@ -79,6 +81,7 @@ public class IOException extends RuntimeException {
     public static final String JpegImageException = "jpeg.image.exception";
     public static final String Jpeg2000ImageException = "jpeg2000.image.exception";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
+    public static final String NValueIsNotSupported = "N.value.1.is.not.supported";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq {0}";
     public static final String PdfEncodings = "pdf.encodings";
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
