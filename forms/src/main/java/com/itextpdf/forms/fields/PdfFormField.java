@@ -1947,9 +1947,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     protected void drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, appearance.getResources(), getDocument());
+        PdfResources resources = appearance.getResources();
+        PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
 
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, appearance.getResources()));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, resources));
 
         float height = rect.getHeight();
         float width = rect.getWidth();
@@ -2004,13 +2005,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
+        PdfResources resources = appearance.getResources();
+        PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
 
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, appearance.getResources()));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, resources));
 
         float width = rect.getWidth();
         float height = rect.getHeight();
-        //PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
 
         List<String> strings = font.splitString(value, fontSize, width - 6);
 
