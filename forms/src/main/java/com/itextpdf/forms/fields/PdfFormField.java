@@ -571,6 +571,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         check.setFieldName(name);
         check.setValue(value);
         annot.setAppearanceState(new PdfName(value));
+        if (value.equals("Off")) {
+            value = "Yes";
+        }
         check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
 
         return (PdfButtonFormField) check;

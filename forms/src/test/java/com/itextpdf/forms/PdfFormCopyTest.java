@@ -36,7 +36,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 13)
     })
-    @Ignore("Merging forms with the same name: widget annotation of old field is removed")
     public void copyFieldsTest01() throws IOException, InterruptedException {
         String srcFilename1 = sourceFolder + "appearances1.pdf";
         String srcFilename2 = sourceFolder + "fieldsOn2-sPage.pdf";

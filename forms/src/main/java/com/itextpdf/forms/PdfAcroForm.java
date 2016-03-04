@@ -762,7 +762,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
-        return true;
+        return false;
     }
 
     private Map<String, PdfFormField> iterateFields(PdfArray array) {
