@@ -84,15 +84,15 @@ public class CidFont extends FontProgram {
             IntHashtable metrics = (IntHashtable) fontDesc.get("W");
             CMapCidUni cid2Uni = FontCache.getCid2UniCmap(uniMap);
             avgWidth = 0;
-            for (int cid : metrics.getKeys()) {
+            for (int cid : cid2Uni.getCids()) {
                 int uni = cid2Uni.lookup(cid);
-                if (uni != 0) {
-                    Glyph glyph = new Glyph(cid, metrics.get(cid), uni);
-                    avgWidth += glyph.getWidth();
-                    codeToGlyph.put(cid, glyph);
-                    unicodeToGlyph.put(uni, glyph);
-                }
+                int width = metrics.containsKey(cid) ? metrics.get(cid) : DEFAULT_WIDTH;
+                Glyph glyph = new Glyph(cid, width, uni);
+                avgWidth += glyph.getWidth();
+                codeToGlyph.put(cid, glyph);
+                unicodeToGlyph.put(uni, glyph);
             }
+            fixSpaceIssue();
             if (codeToGlyph.size() != 0) {
                 avgWidth /= codeToGlyph.size();
             }

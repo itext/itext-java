@@ -100,7 +100,7 @@ public abstract class FontProgram {
     /**
      * Gets the kerning between two glyphs.
      *
-     * @param first the first unicode value
+     * @param first  the first unicode value
      * @param second the second unicode value
      * @return the kerning to be applied
      */
@@ -111,7 +111,7 @@ public abstract class FontProgram {
     /**
      * Gets the kerning between two glyphs.
      *
-     * @param first the first glyph
+     * @param first  the first glyph
      * @param second the second glyph
      * @return the kerning to be applied
      */
@@ -230,12 +230,19 @@ public abstract class FontProgram {
         fontNames.setFamilyName(fontFamily);
     }
 
-    protected  void checkFilePath(String path){
-        if(path != null) {
+    protected void checkFilePath(String path) {
+        if (path != null) {
             File f = new File(path);
             if (!FontConstants.BUILTIN_FONTS_14.contains(path) && (!f.exists() || !f.isFile())) {
                 throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);
             }
+        }
+    }
+
+    protected void fixSpaceIssue() {
+        Glyph space = unicodeToGlyph.get(32);
+        if (space != null) {
+            codeToGlyph.put(space.getCode(), space);
         }
     }
 }

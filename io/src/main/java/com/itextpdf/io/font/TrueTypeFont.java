@@ -278,12 +278,7 @@ public class TrueTypeFont extends FontProgram {
             codeToGlyph.put(index, glyph);
             avgWidth += glyph.getWidth();
         }
-
-        Glyph space = unicodeToGlyph.get(32);
-        if (space != null) {
-            codeToGlyph.put(space.getCode(), space);
-        }
-
+        fixSpaceIssue();
         for (int index = 0; index < glyphWidths.length; index++) {
             if (codeToGlyph.containsKey(index)) {
                 continue;
