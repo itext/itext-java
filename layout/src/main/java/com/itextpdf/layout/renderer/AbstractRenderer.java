@@ -59,6 +59,17 @@ public abstract class AbstractRenderer implements IRenderer {
         this.modelElement = modelElement;
     }
 
+    protected AbstractRenderer(AbstractRenderer other) {
+        this.childRenderers = other.childRenderers;
+        this.positionedRenderers = other.positionedRenderers;
+        this.modelElement = other.modelElement;
+        this.flushed = other.flushed;
+        this.occupiedArea = other.occupiedArea.clone();
+        this.parent = other.parent;
+        this.properties = other.properties;
+        this.isLastRendererForModelElement = other.isLastRendererForModelElement;
+    }
+
     @Override
     public void addChild(IRenderer renderer) {
         // https://www.webkit.org/blog/116/webcore-rendering-iii-layout-basics

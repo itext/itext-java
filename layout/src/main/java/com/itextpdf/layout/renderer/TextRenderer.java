@@ -46,12 +46,7 @@ public class TextRenderer extends AbstractRenderer {
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1 / 30f;
     private static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
 
-    private static final Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-    private static final String TYPOGRAPHY_PACKAGE = "com.itextpdf.typography.";
-    private static final boolean TYPOGRAPHY_MODULE_INITIALIZED = checkTypographyModulePresence();
-
     protected float yLineOffset;
-    protected byte[] levels;
 
     protected GlyphLine text;
     protected GlyphLine line;
@@ -80,6 +75,15 @@ public class TextRenderer extends AbstractRenderer {
         this.strToBeConverted = text;
     }
 
+    protected TextRenderer(TextRenderer other) {
+        super(other);
+        this.text = other.text;
+        this.line = other.line;
+        this.strToBeConverted = other.strToBeConverted;
+        this.otfFeaturesApplied = other.otfFeaturesApplied;
+        this.tabAnchorCharacterPosition = other.tabAnchorCharacterPosition;
+    }
+
     @Override
     public TextLayoutResult layout(LayoutContext layoutContext) {
         convertWaitingStringToGlyphLine();
@@ -99,81 +103,13 @@ public class TextRenderer extends AbstractRenderer {
         Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
         PdfFont font = getPropertyAsFont(Property.FONT);
         Float hScale = getProperty(Property.HORIZONTAL_SCALING);
-        Property.FontKerning fontKerning = getProperty(Property.FONT_KERNING);
         ISplitCharacters splitCharacters = getProperty(Property.SPLIT_CHARACTERS);
         float italicSkewAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
         float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
-        Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
-        Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
 
-        if (!otfFeaturesApplied && script != null && isOtfFont(font)) {
-            if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-                logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
-            } else {
-                callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyOtfScript", new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
-                        font.getFontProgram(), text, script);
-                //Shaper.applyOtfScript((TrueTypeFont)font.getFontProgram(), text, script);
-            }
-        }
-
-        if (!otfFeaturesApplied && fontKerning == Property.FontKerning.YES) {
-            if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-                logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
-            } else {
-                callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyKerning", new Class[]{FontProgram.class, GlyphLine.class},
-                        font.getFontProgram(), text);
-                //Shaper.applyKerning(font.getFontProgram(), text);
-            }
-        }
-
-        otfFeaturesApplied = true;
-
+        applyOtf();
         line = new GlyphLine(text);
         line.start = line.end = -1;
-
-        if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
-            if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-                logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
-            } else {
-                byte direction;
-                switch (baseDirection) {
-                    case LEFT_TO_RIGHT:
-                        direction = 0;
-                        break;
-                    case RIGHT_TO_LEFT:
-                        direction = 1;
-                        break;
-                    case DEFAULT_BIDI:
-                    default:
-                        direction = 2;
-                        break;
-                }
-
-                int[] unicodeIds = new int[text.end - text.start];
-                for (int i = text.start; i < text.end; i++) {
-                    assert text.glyphs.get(i).getChars().length > 0;
-                    // we assume all the chars will have the same bidi group
-                    // we also assume pairing symbols won't get merged with other ones
-                    int unicode = text.glyphs.get(i).getChars()[0];
-                    unicodeIds[i - text.start] = unicode;
-                }
-                byte[] types = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiCharacterMap", "getCharacterTypes", new Class[]{int[].class, int.class, int.class},
-                        unicodeIds, 0, text.end - text.start);
-                //byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start;
-                byte[] pairTypes = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getBracketTypes", new Class[]{int[].class, int.class, int.class},
-                        unicodeIds, 0, text.end - text.start);
-                //byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
-                int[] pairValues = (int[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getBracketValues", new Class[]{int[].class, int.class, int.class},
-                        unicodeIds, 0, text.end - text.start);
-                //int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
-                Object bidiReorder = callConstructor(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", new Class[]{byte[].class, byte[].class, int[].class, byte.class},
-                        types, pairTypes, pairValues, direction);
-                //BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
-                levels = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", "getLevels", bidiReorder, new Class[]{int[].class},
-                        new int[]{text.end - text.start});
-                //levels = bidiReorder.getLevels(new int[]{text.end - text.start});
-            }
-        }
 
         FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
         float ascender;
@@ -379,39 +315,22 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
-        if (baseDirection != Property.BaseDirection.NO_BIDI) {
-            if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-                logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
-            } else {
-                byte[] lineLevels = new byte[line.end - line.start];
-                System.arraycopy(levels, line.start, lineLevels, 0, line.end - line.start);
-                int[] reorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", "computeReordering", new Class[]{byte[].class},
-                        lineLevels);
-                //int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
-                List<Glyph> reorderedLine = new ArrayList<>(line.end - line.start);
-                for (int i = 0; i < line.end - line.start; i++) {
-                    reorderedLine.add(line.glyphs.get(line.start + reorder[i]));
+        return result;
+    }
 
-                    // Mirror RTL glyphs
-                    if (levels[line.start + reorder[i]] % 2 == 1) {
-                        if (reorderedLine.get(i).getUnicode() != null) {
-                            int pairedBracket = (int) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getPairedBracket", new Class[]{int.class},
-                                    reorderedLine.get(i).getUnicode());
-                            //BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())
-                            reorderedLine.set(i, font.getGlyph(pairedBracket));
-                        }
-                    }
-                }
-                line = new GlyphLine(reorderedLine, 0, line.end - line.start);
-
-                // Don't forget to update the line for the split renderer
-                if (result.getStatus() == LayoutResult.PARTIAL) {
-                    ((TextRenderer) result.getSplitRenderer()).line = line;
-                }
-            }
+    public void applyOtf() {
+        convertWaitingStringToGlyphLine();
+        Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
+        Property.FontKerning fontKerning = getProperty(Property.FONT_KERNING);
+        PdfFont font = getPropertyAsFont(Property.FONT);
+        if (!otfFeaturesApplied && script != null && isOtfFont(font)) {
+            TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
         }
 
-        return result;
+        if (!otfFeaturesApplied && fontKerning == Property.FontKerning.YES) {
+            TypographyUtils.applyKerning(font.getFontProgram(), text);
+        }
+        otfFeaturesApplied = true;
     }
 
     @Override
@@ -687,8 +606,12 @@ public class TextRenderer extends AbstractRenderer {
         this.text = new GlyphLine(text);
         this.text.start = leftPos;
         this.text.end = rightPos;
-        this.levels = null;
         this.otfFeaturesApplied = false;
+    }
+
+    public GlyphLine getText() {
+        convertWaitingStringToGlyphLine();
+        return text;
     }
 
     /**
@@ -732,37 +655,6 @@ public class TextRenderer extends AbstractRenderer {
         } catch (ClassNotFoundException ignored) {
         }
         return moduleFound;
-    }
-
-    private Object callMethod(String className, String methodName, Class[] parameterTypes, Object... args) {
-        return callMethod(className, methodName, null, parameterTypes, args);
-    }
-
-    private Object callMethod(String className, String methodName, Object target, Class[] parameterTypes, Object... args) {
-        try {
-            Method method = Class.forName(className).getMethod(methodName, parameterTypes);
-            return method.invoke(target, args);
-        } catch (NoSuchMethodException e) {
-            logger.warn(String.format("Cannot find method %s for class %s", methodName, className));
-        } catch (ClassNotFoundException e) {
-            logger.warn(String.format("Cannot find class %s", className));
-        } catch (Exception ignored) {
-        }
-        return null;
-    }
-
-    private Object callConstructor(String className, Class[] parameterTypes, Object... args) {
-        Constructor constructor = null;
-        try {
-            constructor = Class.forName(className).getConstructor(parameterTypes);
-            return constructor.newInstance(args);
-        } catch (NoSuchMethodException e) {
-            logger.warn(String.format("Cannot find constructor for class %s", className));
-        } catch (ClassNotFoundException e) {
-            logger.warn(String.format("Cannot find class %s", className));
-        } catch (Exception ignored) {
-        }
-        return null;
     }
 
     private boolean isNewLine(GlyphLine text, int ind) {
@@ -829,13 +721,11 @@ public class TextRenderer extends AbstractRenderer {
         splitRenderer.occupiedArea = occupiedArea.clone();
         splitRenderer.parent = parent;
         splitRenderer.yLineOffset = yLineOffset;
-        splitRenderer.levels = levels;
         splitRenderer.otfFeaturesApplied = otfFeaturesApplied;
         splitRenderer.isLastRendererForModelElement = false;
 
         TextRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.setText(text, initialOverflowTextPos, text.end);
-        overflowRenderer.levels = levels;
         overflowRenderer.otfFeaturesApplied = otfFeaturesApplied;
         overflowRenderer.parent = parent;
 
@@ -861,6 +751,11 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         canvas.restoreState();
+    }
+
+    protected float calculateLineWidth() {
+        return getGlyphLineWidth(line, getPropertyAsFloat(Property.FONT_SIZE), getPropertyAsFloat(Property.HORIZONTAL_SCALING),
+                getPropertyAsFloat(Property.CHARACTER_SPACING), getPropertyAsFloat(Property.WORD_SPACING));
     }
 
     private static boolean noPrint(Glyph g) {
