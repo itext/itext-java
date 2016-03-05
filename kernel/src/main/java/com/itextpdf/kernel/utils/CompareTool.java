@@ -786,7 +786,7 @@ public class CompareTool {
             if (cmpStreamBytes.length != outStreamBytes.length) {
                 errorMessage += String.format("PdfStream. Lengths are different. Expected: %s. Found: %s", cmpStreamBytes.length, outStreamBytes.length) + "\n";
             } else {
-                errorMessage += "PdfStream. Lengths are the same. But bytes are different:\n";
+                errorMessage += "PdfStream. Bytes are different.\n";
             }
             String bytesDifference = findBytesDifference(outStreamBytes, cmpStreamBytes);
             if (bytesDifference != null) {
@@ -805,7 +805,8 @@ public class CompareTool {
     private String findBytesDifference(byte[] outStreamBytes, byte[] cmpStreamBytes) {
         int numberOfDifferentBytes = 0;
         int firstDifferenceOffset = 0;
-        for (int i = 0; i < Math.min(cmpStreamBytes.length, outStreamBytes.length); i++) {
+        int minLength = Math.min(cmpStreamBytes.length, outStreamBytes.length);
+        for (int i = 0; i < minLength; i++) {
             if (cmpStreamBytes[i] != outStreamBytes[i]) {
                 ++numberOfDifferentBytes;
                 if (numberOfDifferentBytes == 1) {
@@ -826,7 +827,7 @@ public class CompareTool {
             errorMessage = String.format("First bytes difference is encountered at index %s. Expected: %s (%s). Found: %s (%s). Total number of different bytes: %s",
                     firstDifferenceOffset, cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
         } else { // lengths are different
-            errorMessage = "Lengths are different, but bytes of the shorter array are the same as the first bytes of the longer one.";
+            errorMessage = String.format("Bytes of the shorter array are the same as the first %s bytes of the longer one.", minLength);
         }
 
         return errorMessage;
