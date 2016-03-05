@@ -1070,10 +1070,6 @@ public class CompareTool {
         }
     }
 
-    //TODO: these helper classes for "compareTagStructures" method should be implemented after implementing of TaggedPdfReaderTool
-    //private class CmpTaggedPdfReaderTool extends TaggedPdfReaderTool { ... }
-    //private class CmpMarkedContentRenderFilter implements RenderListener { ... }
-
     private class CompareResult {
         // LinkedHashMap to retain order. HashMap has different order in Java6/7 and Java8
         protected Map<ObjectPath, String> differences = new LinkedHashMap<>();

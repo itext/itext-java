@@ -1,14 +1,24 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.parser.EventData;
+import com.itextpdf.kernel.parser.EventListener;
+import com.itextpdf.kernel.parser.EventType;
+import com.itextpdf.kernel.parser.LocationTextExtractionStrategy;
+import com.itextpdf.kernel.parser.PdfCanvasProcessor;
+import com.itextpdf.kernel.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.kernel.parser.TextExtractionStrategy;
+import com.itextpdf.kernel.parser.TextRenderInfo;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
+import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 
@@ -16,19 +26,22 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Converts a tagged PDF document into an XML file.
- * TODO Currently resultant xml file contains only pdf structure. See #parseTag method
- * TODO Also, this class should be moved to some other package in future
  */
  public class TaggedPdfReaderTool {
 
     protected PdfDocument document;
     protected PrintWriter out;
     protected String rootTag;
+
+    // key - page dictionary; value pairs of mcid and text in them
+    protected Map<PdfDictionary, Map<Integer, String> > parsedTags = new HashMap<>();
 
     public TaggedPdfReaderTool(PdfDocument document) {
         this.document = document;
@@ -109,8 +122,6 @@ import java.util.Map;
         PdfObject attrObj = kid.getAttributes(false);
 
         if (attrObj != null) {
-            //TODO may be improve attributes handling:
-            //there may be several attributes objects, and each of them may be followed by a number, which specifies revision
             PdfDictionary attrDict;
             if (attrObj instanceof PdfArray) {
                 attrDict = ((PdfArray) attrObj).getAsDictionary(0);
@@ -130,18 +141,32 @@ import java.util.Map;
 
     protected void parseTag(PdfMcr kid) {
         Integer mcid = kid.getMcid();
-        PdfDictionary page = kid.getPageObject();
+        PdfDictionary pageDic = kid.getPageObject();
 
+        String tagContent = "";
         if (mcid != null) {
-            //TODO extract content of the tag, when some analog of PdfContentStreamProcessor is implemented
+            if (!parsedTags.containsKey(pageDic)) {
+                MarkedContentEventListener listener = new MarkedContentEventListener();
 
-            //TODO also suggest implementing some caching logic, that will parse content stream only once:
-            // it will extract all page's tags content at same time, saving all this contents in some map
-            // see CmpTaggedPdfReaderTool in itext5
+                PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
+                PdfPage page = document.getCatalog().getPage(pageDic);
+                processor.processContent(page.getContentBytes(), page.getResources());
 
-            //temporary logic
-            out.println(String.format("Page %s MCID %s", page.getIndirectReference().toString(), mcid.toString()));
+                parsedTags.put(pageDic, listener.getMcidContent());
+            }
+
+            if (parsedTags.get(pageDic).containsKey(mcid))
+                tagContent = parsedTags.get(pageDic).get(mcid);
+
+        } else {
+            PdfObjRef objRef = (PdfObjRef) kid;
+            PdfObject object = objRef.getReferencedObject();
+            if (object.isDictionary()) {
+                PdfName subtype = ((PdfDictionary) object).getAsName(PdfName.Subtype);
+                tagContent = subtype.toString();
+            }
         }
+        out.print(escapeXML(tagContent, true));
     }
 
     protected static String fixTagName(String tag) {
@@ -183,5 +208,97 @@ import java.util.Map;
             sb.append(c);
         }
         return sb.toString();
+    }
+
+    /**
+     * NOTE: copied from itext5 XMLUtils class
+     *
+     * Escapes a string with the appropriated XML codes.
+     * @param s the string to be escaped
+     * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>
+     * @return the escaped string
+     * @since 5.0.6
+     */
+    protected static String escapeXML(final String s, final boolean onlyASCII) {
+        char cc[] = s.toCharArray();
+        int len = cc.length;
+        StringBuffer sb = new StringBuffer();
+        for (int k = 0; k < len; ++k) {
+            int c = cc[k];
+            switch (c) {
+                case '<':
+                    sb.append("&lt;");
+                    break;
+                case '>':
+                    sb.append("&gt;");
+                    break;
+                case '&':
+                    sb.append("&amp;");
+                    break;
+                case '"':
+                    sb.append("&quot;");
+                    break;
+                case '\'':
+                    sb.append("&apos;");
+                    break;
+                default:
+                    if (isValidCharacterValue(c)) {
+                        if (onlyASCII && c > 127)
+                            sb.append("&#").append(c).append(';');
+                        else
+                            sb.append((char)c);
+                    }
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Checks if a character value should be escaped/unescaped.
+     * @param	c	a character value
+     * @return	true if it's OK to escape or unescape this value
+     */
+    public static boolean isValidCharacterValue(int c) {
+        return (c == 0x9 || c == 0xA || c == 0xD
+                || c >= 0x20 && c <= 0xD7FF
+                || c >= 0xE000 && c <= 0xFFFD
+                || c >= 0x10000 && c <= 0x10FFFF);
+    }
+
+    private class MarkedContentEventListener implements EventListener {
+        private Map<Integer, TextExtractionStrategy> contentByMcid = new HashMap<>();
+
+        public Map<Integer, String> getMcidContent() {
+            Map<Integer, String> content = new HashMap<>();
+            for (int id : contentByMcid.keySet()) {
+                content.put(id, contentByMcid.get(id).getResultantText());
+            }
+            return content;
+        }
+
+        @Override
+        public void eventOccurred(EventData data, EventType type) {
+            switch (type) {
+                case RENDER_TEXT:
+                    TextRenderInfo textInfo = (TextRenderInfo) data;
+                    Integer mcid = textInfo.getMcid();
+                    if (mcid != null) {
+                        TextExtractionStrategy textExtractionStrategy = contentByMcid.get(mcid);
+                        if (textExtractionStrategy == null) {
+                            textExtractionStrategy = new LocationTextExtractionStrategy();
+                            contentByMcid.put(mcid, textExtractionStrategy);
+                        }
+                        textExtractionStrategy.eventOccurred(data, type);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public Set<EventType> getSupportedEvents() {
+            return null;
+        }
     }
 }

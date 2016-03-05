@@ -3,7 +3,7 @@ package com.itextpdf.kernel.parser;
 /**
  * This class expands each {@link TextRenderInfo} for {@link EventType#RENDER_TEXT} event types into
  * multiple {@link TextRenderInfo} instances for each glyph occurred.
- * The only difference from {@link FilteredEventListener} is that this class conveniently implements
+ * The only difference from {@link GlyphEventListener} is that this class conveniently implements
  * {@link TextExtractionStrategy} and can therefore used as a strategy on its own.
  */
 public class GlyphTextEventListener extends GlyphEventListener implements TextExtractionStrategy {

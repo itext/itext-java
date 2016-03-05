@@ -2,6 +2,7 @@ package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
 public class PdfObjRef extends PdfMcr<PdfDictionary> {
@@ -31,6 +32,10 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
         if (page == null)
             page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
         return page;
+    }
+
+    public PdfObject getReferencedObject() {
+        return ((PdfDictionary) getPdfObject()).get(PdfName.Obj);
     }
 
 }
