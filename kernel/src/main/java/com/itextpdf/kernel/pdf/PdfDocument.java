@@ -1071,10 +1071,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     public void checkIsoConformance(Object obj, IsoKey key) {
     }
 
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) {
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
     }
 
-    public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) {
+    public void checkShowTextIsoConformance(Object gState, PdfResources resources) {
     }
 
     public void addFileAttachment(String description, byte[] fileStore, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
