@@ -701,14 +701,14 @@ public class CompareTool {
         } else if (cmpDirectObj == null) {
             compareResult.addError(currentPath, "Found object which was not expected to be found.");
             return false;
+        } else if (cmpDirectObj.getType() != outDirectObj.getType()) {
+            compareResult.addError(currentPath, String.format("Types do not match. Expected: %s. Found: %s.", cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
+            return false;
         } else if (cmpObj.isIndirectReference() && !outObj.isIndirectReference()) {
             compareResult.addError(currentPath, "Expected indirect object.");
             return false;
         } else if (!cmpObj.isIndirectReference() && outObj.isIndirectReference()) {
             compareResult.addError(currentPath, "Expected direct object.");
-            return false;
-        } else if (cmpDirectObj.getType() != outDirectObj.getType()) {
-            compareResult.addError(currentPath, String.format("Types do not match. Expected: %s. Found: %s.", cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
             return false;
         }
 
@@ -782,27 +782,54 @@ public class CompareTool {
         if (Arrays.equals(outStreamBytes, cmpStreamBytes)) {
             return compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
         } else {
+            String errorMessage = "";
             if (cmpStreamBytes.length != outStreamBytes.length) {
-                if (compareResult != null && currentPath != null) {
-                    compareResult.addError(currentPath, String.format("PdfStream. Lengths are different. Expected: %s. Found: %s", cmpStreamBytes.length, outStreamBytes.length));
-                }
+                errorMessage += String.format("PdfStream. Lengths are different. Expected: %s. Found: %s", cmpStreamBytes.length, outStreamBytes.length) + "\n";
             } else {
-                for (int i = 0; i < cmpStreamBytes.length; i++) {
-                    if (cmpStreamBytes[i] != outStreamBytes[i]) {
-                        int l = Math.max(0, i - 10);
-                        int r = Math.min(cmpStreamBytes.length, i + 10);
-                        if (compareResult != null && currentPath != null) {
-                            currentPath.pushOffsetToPath(i);
-                            compareResult.addError(currentPath, String.format("PdfStream. The bytes differ at index %s. Expected: %s (%s). Found: %s (%s)",
-                                    i, new String(new byte[]{cmpStreamBytes[i]}), new String(cmpStreamBytes, l, r - l).replaceAll("\\r|\\n", ""),
-                                    new String(new byte[]{outStreamBytes[i]}), new String(outStreamBytes, l, r - l).replaceAll("\\r|\\n", "")));
-                            currentPath.pop();
-                        }
-                    }
-                }
+                errorMessage += "PdfStream. Lengths are the same. But bytes are different:\n";
+            }
+            String bytesDifference = findBytesDifference(outStreamBytes, cmpStreamBytes);
+            if (bytesDifference != null) {
+                errorMessage += bytesDifference;
+            }
+
+            if (compareResult != null && currentPath != null) {
+//            currentPath.pushOffsetToPath(firstDifferenceOffset);
+                compareResult.addError(currentPath, errorMessage);
+//            currentPath.pop();
             }
             return false;
         }
+    }
+
+    private String findBytesDifference(byte[] outStreamBytes, byte[] cmpStreamBytes) {
+        int numberOfDifferentBytes = 0;
+        int firstDifferenceOffset = 0;
+        for (int i = 0; i < Math.min(cmpStreamBytes.length, outStreamBytes.length); i++) {
+            if (cmpStreamBytes[i] != outStreamBytes[i]) {
+                ++numberOfDifferentBytes;
+                if (numberOfDifferentBytes == 1) {
+                    firstDifferenceOffset = i;
+                }
+            }
+        }
+        String errorMessage = null;
+        if (numberOfDifferentBytes > 0) {
+            int l = Math.max(0, firstDifferenceOffset - 10);
+            int r = Math.min(cmpStreamBytes.length, firstDifferenceOffset + 10);
+
+
+            String cmpByte = new String(new byte[]{cmpStreamBytes[firstDifferenceOffset]});
+            String cmpByteNeighbours = new String(cmpStreamBytes, l, r - l).replaceAll("\\r|\\n", " ");
+            String outByte = new String(new byte[]{outStreamBytes[firstDifferenceOffset]});
+            String outBytesNeighbours = new String(outStreamBytes, l, r - l).replaceAll("\\r|\\n", " ");
+            errorMessage = String.format("First bytes difference is encountered at index %s. Expected: %s (%s). Found: %s (%s). Total number of different bytes: %s",
+                    firstDifferenceOffset, cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
+        } else { // lengths are different
+            errorMessage = "Lengths are different, but bytes of the shorter array are the same as the first bytes of the longer one.";
+        }
+
+        return errorMessage;
     }
 
     private boolean compareArraysExtended(PdfArray outArray, PdfArray cmpArray, ObjectPath currentPath, CompareResult compareResult) throws IOException {
