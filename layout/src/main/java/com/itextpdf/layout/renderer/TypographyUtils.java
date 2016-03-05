@@ -9,6 +9,7 @@ import com.itextpdf.layout.Property;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -103,6 +104,19 @@ class TypographyUtils {
             return reorderedLine;
         }
         return null;
+    }
+
+    static Collection<Character.UnicodeScript> getSupportedScripts() {
+        if (!TYPOGRAPHY_MODULE_INITIALIZED) {
+            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            return null;
+        } else {
+            return (Collection<Character.UnicodeScript>)callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "getSupportedScripts", new Class[] {});
+        }
+    }
+
+    static boolean isTypographyModuleInitialized() {
+        return TYPOGRAPHY_MODULE_INITIALIZED;
     }
 
     private static boolean checkTypographyModulePresence() {

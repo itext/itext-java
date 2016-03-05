@@ -65,7 +65,7 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
 
     @Override
     public Set<EventType> getSupportedEvents() {
-        return new LinkedHashSet<>(Collections.singletonList(EventType.RENDER_TEXT));
+        return Collections.unmodifiableSet(new LinkedHashSet<>(Collections.singletonList(EventType.RENDER_TEXT)));
     }
 
     /**

@@ -5,14 +5,14 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
@@ -27,13 +27,11 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -323,14 +321,47 @@ public class TextRenderer extends AbstractRenderer {
         Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
         Property.FontKerning fontKerning = getProperty(Property.FONT_KERNING);
         PdfFont font = getPropertyAsFont(Property.FONT);
-        if (!otfFeaturesApplied && script != null && isOtfFont(font)) {
-            TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
-        }
+        if (!otfFeaturesApplied) {
+            if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
+                // Try to autodetect complex script.
+                Collection<Character.UnicodeScript> supportedScripts = TypographyUtils.getSupportedScripts();
+                if (supportedScripts != null) {
+                    Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<>(Character.UnicodeScript.class);
+                    for (int i = text.start; i < text.end; i++) {
+                        Integer unicode = text.get(i).getUnicode();
+                        Character.UnicodeScript glyphScript = unicode != null ? Character.UnicodeScript.of(unicode) : null;
+                        if (glyphScript != null && supportedScripts.contains(glyphScript)) {
+                            if (scriptFrequency.containsKey(glyphScript)) {
+                                scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript));
+                            } else {
+                                scriptFrequency.put(glyphScript, 1);
+                            }
+                        }
+                    }
+                    int max = 0;
+                    Character.UnicodeScript selectScript = null;
+                    for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
+                        if (entry.getValue() > max) {
+                            max = entry.getValue();
+                            selectScript = entry.getKey();
+                        }
+                    }
+                    if (selectScript != null) {
+                        script = selectScript;
+                    }
+                }
+            }
 
-        if (!otfFeaturesApplied && fontKerning == Property.FontKerning.YES) {
-            TypographyUtils.applyKerning(font.getFontProgram(), text);
+            if (isOtfFont(font) && script != null) {
+                TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
+            }
+
+            if (fontKerning == Property.FontKerning.YES) {
+                TypographyUtils.applyKerning(font.getFontProgram(), text);
+            }
+
+            otfFeaturesApplied = true;
         }
-        otfFeaturesApplied = true;
     }
 
     @Override
@@ -645,16 +676,6 @@ public class TextRenderer extends AbstractRenderer {
     @Override
     public TextRenderer getNextRenderer() {
         return new TextRenderer((Text) modelElement, null);
-    }
-
-    private static boolean checkTypographyModulePresence() {
-        boolean moduleFound = false;
-        try {
-            Class.forName("com.itextpdf.typography.shaping.Shaper");
-            moduleFound = true;
-        } catch (ClassNotFoundException ignored) {
-        }
-        return moduleFound;
     }
 
     private boolean isNewLine(GlyphLine text, int ind) {

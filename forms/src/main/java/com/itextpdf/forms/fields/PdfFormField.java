@@ -2278,7 +2278,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         // TODO this is temporary and will be replaced by script autodetection logic on layout level
         if (value != null && value.length() > 0) {
             Character.UnicodeScript script = Character.UnicodeScript.of(value.charAt(0));
-            paragraph.setFontScript(script);
             if (script == Character.UnicodeScript.ARABIC || script == Character.UnicodeScript.HEBREW) {
                 paragraph.setBaseDirection(Property.BaseDirection.RIGHT_TO_LEFT);
             }
