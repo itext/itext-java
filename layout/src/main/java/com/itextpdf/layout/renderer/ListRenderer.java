@@ -31,7 +31,7 @@ public class ListRenderer extends BlockRenderer {
         int listItemNum = getProperty(Property.LIST_START, 1);
         for (int i = 0; i < childRenderers.size(); i++) {
             if (childRenderers.get(i).getModelElement() instanceof ListItem) {
-                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++);
+                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
                 symbolRenderers.add(currentSymbolRenderer);
                 LayoutResult listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
                 if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
@@ -57,8 +57,8 @@ public class ListRenderer extends BlockRenderer {
         return super.layout(layoutContext);
     }
 
-    protected IRenderer makeListSymbolRenderer(int index) {
-        Object defaultListSymbol = modelElement.getProperty(Property.LIST_SYMBOL);
+    protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
+        Object defaultListSymbol = renderer.getProperty(Property.LIST_SYMBOL);
         if (defaultListSymbol instanceof Text) {
             return new TextRenderer((Text) defaultListSymbol).setParent(this);
         } else if (defaultListSymbol instanceof Image) {

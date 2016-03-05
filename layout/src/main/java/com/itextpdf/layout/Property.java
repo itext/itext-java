@@ -47,7 +47,7 @@ public enum Property {
     LEFT,
     LINE_DRAWER,
     LIST_START,
-    LIST_SYMBOL,
+    LIST_SYMBOL(true),
     LIST_SYMBOL_INDENT,
     MARGIN_BOTTOM,
     MARGIN_LEFT,
