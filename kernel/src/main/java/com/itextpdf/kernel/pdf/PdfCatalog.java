@@ -77,21 +77,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return pageTree.getPageNumber(pageDictionary);
     }
 
-    public boolean removePage(PdfPage page) {
-        //TODO log removing flushed page
-        removeOutlines(page);
-        removeUnusedWidgetsFromFields(page);
-        return pageTree.removePage(page);
-    }
-
-    public PdfPage removePage(int pageNum) {
-        //TODO log removing flushed page
-        PdfPage page = getPage(pageNum);
-        removeOutlines(page);
-        removeUnusedWidgetsFromFields(page);
-        return pageTree.removePage(pageNum);
-    }
-
     /**
      * Use this method to get the <B>Optional Content Properties Dictionary</B>.
      * Note that if you call this method, then the PdfDictionary with OCProperties will be
@@ -311,6 +296,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return ocProperties != null;
     }
 
+    PdfPage removePage(int pageNum) {
+        return pageTree.removePage(pageNum);
+    }
     /**
      * this method return map containing all pages of the document with associated outlines.
      *
@@ -374,6 +362,24 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * This method removes all outlines associated with a given page
+     *
+     * @param page
+     * @throws PdfException
+     */
+    void removeOutlines(PdfPage page) {
+        if (getDocument().getWriter() == null) {
+            return;
+        }
+        getOutlines(false);
+        if (!pagesWithOutlines.isEmpty()) {
+            for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject())) {
+                outline.removeOutline();
+            }
+        }
+    }
+
+    /**
      * This method sets the root outline element in the catalog.
      *
      * @param outline
@@ -419,48 +425,16 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return d;
     }
 
-    /**
-     * This method removes all annotation entries from form fields associated with a given page.
-     * @param page
-     */
-    private void removeUnusedWidgetsFromFields(PdfPage page){
-        if (page.isFlushed()) {
-            return;
-        }
-        List<PdfAnnotation> annots = page.getAnnotations();
-        for (PdfAnnotation annot : annots) {
-            if (annot.getSubtype().equals(PdfName.Widget)) {
-                ((PdfWidgetAnnotation)annot).releaseFormFieldFromWidgetAnnotation();
-            }
-        }
-    }
-
-    /**
-     * This method removes all outlines associated with a given page
-     *
-     * @param page
-     * @throws PdfException
-     */
-    private void removeOutlines(PdfPage page) {
-        if (getDocument().getWriter() == null) {
-            return;
-        }
-        getOutlines(false);
-        if (!pagesWithOutlines.isEmpty()) {
-            for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject().getIndirectReference())) {
-                outline.removeOutline();
-            }
-        }
-    }
-
     private void addOutlineToPage(PdfOutline outline, Map<String, PdfObject> names) {
-        PdfObject obj = outline.getDestination().getDestinationPage(names);
-        List<PdfOutline> outs = pagesWithOutlines.get(obj);
-        if (outs == null) {
-            outs = new ArrayList<>();
-            pagesWithOutlines.put(obj, outs);
+        PdfObject pageObj = outline.getDestination().getDestinationPage(names);
+        if (pageObj != null) {
+            List<PdfOutline> outs = pagesWithOutlines.get(pageObj);
+            if (outs == null) {
+                outs = new ArrayList<>();
+                pagesWithOutlines.put(pageObj, outs);
+            }
+            outs.add(outline);
         }
-        outs.add(outline);
     }
 
     private void getNextItem(PdfDictionary item, PdfOutline parent, Map<String, PdfObject> names) {

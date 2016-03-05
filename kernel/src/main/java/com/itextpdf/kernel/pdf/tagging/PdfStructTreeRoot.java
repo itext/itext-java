@@ -24,13 +24,16 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     protected Map<PdfDictionary, Integer> objRefs = new HashMap<>();
 
+    /**
+     * Represents parentTree in structTreeRoot. It contains only those entries that belong to the already flushed pages.
+     */
     private PdfNumTree parentTree;
 
     /**
      * Contains marked content references lists of all pages.
      * <p>
      * When this field is initialized all new mcrs added to the tag structure are also added to this map.
-     * The idea that this field is initialized only once, therefore the tree would be traversed only once.
+     * The idea that this field is initialized only once, therefore the struct tree would be traversed only once.
      * </p>
      * <p>
      * On this field initializing the whole tag structure is traversed; this is needed for example for stamping mode.
@@ -376,15 +379,14 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
         if (parentElem != null && objRef != null) {
             PdfObject k = parentElem.getK();
+            // TODO improve removing: what if it was the last element in array, what if it is an indRef in array instead of object itself
             if (k.isArray()) {
                 ((PdfArray) k).remove(objRef.getPdfObject());
             } else {
                 parentElem.getPdfObject().remove(PdfName.K);
             }
 
-            if (pageToPageMcrs != null) {
-                unregisterMcr(objRef);
-            }
+            unregisterMcr(objRef);
 
             // We don't remove the parent tree entry with given struct parent index here,
             // because parent tree is fully rebuilt at document closing.

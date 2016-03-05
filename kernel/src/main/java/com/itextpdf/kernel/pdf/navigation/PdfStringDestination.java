@@ -20,7 +20,7 @@ public class PdfStringDestination extends PdfDestination<PdfString> {
     public PdfObject getDestinationPage(Map<String, PdfObject> names) {
         PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());
 
-        return array != null ? array.get(0, false) : null;
+        return array != null ? array.get(0) : null;
     }
 
     @Override

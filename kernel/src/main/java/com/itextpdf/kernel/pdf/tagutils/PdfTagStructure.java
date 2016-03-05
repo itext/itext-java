@@ -232,19 +232,14 @@ public class PdfTagStructure {
         }
 
         PdfStructElem parent = (PdfStructElem) parentElem;
-        PdfObject parentK = parent.getK();
-        if (parentK.isArray()) {
-            removeObjectFromArray((PdfArray) parentK, currentStructElem.getPdfObject());
-        }
 
-        if (parentK.isDictionary() || parentK.isArray() && ((PdfArray)parentK).isEmpty()) {
-            parent.remove(PdfName.K);
-        }
+        removeKidFromParent(currentStructElem.getPdfObject(), parent.getPdfObject());
+        currentStructElem.getPdfObject().getIndirectReference().setFree();
 
         for (IPdfStructElem kid : kids) {
             if (kid instanceof PdfStructElem) {
                 PdfStructElem structElem = (PdfStructElem) kid;
-                structElem.getPdfObject().put(PdfName.P, parent.getPdfObject());
+                structElem.getPdfObject().put(PdfName.P, parent.getPdfObject()); // TODO it seems it is not needed, as it is set in addKid
                 parent.addKid(structElem);
             } else {
                 PdfMcr mcr = (PdfMcr) kid;
@@ -267,6 +262,35 @@ public class PdfTagStructure {
             }
         }
         currentStructElem = parent;
+        return this;
+    }
+
+    /**
+     * Removes all tags that belong only to this page. For the method which defines if tag belongs to the page see
+     * {@link #flushPageTags(PdfPage)}.
+     * @param page page that defines which tags are to be removed
+     * @return current tag structure instance.
+     */
+    public PdfTagStructure removePageTags(PdfPage page) {
+        if (document.getStructTreeRoot().isStructTreeIsPartialFlushed()) {
+            throw new PdfException(PdfException.CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed);
+        }
+
+        PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
+        List<PdfMcr> pageMcrs = structTreeRoot.getPageMarkedContentReferences(page);
+        if (pageMcrs != null) {
+            int mcrsCount = pageMcrs.size();
+            PdfMcr mcr;
+            // it's crucial to run this cycle backwards, because at each iteration we remove mcr
+            for (int i = mcrsCount - 1; i >= 0; --i) {
+                mcr = pageMcrs.get(i);
+                removePageTagFromParent(mcr.getPdfObject(), mcr.getParent());
+                document.getStructTreeRoot().unregisterMcr(mcr);
+            }
+        }
+        if (currentStructElem.getPdfObject().getIndirectReference() == null) { // currentStructElem element was removed
+            moveToRoot();
+        }
         return this;
     }
 
@@ -436,7 +460,7 @@ public class PdfTagStructure {
      * <br><br>
      * If some of the page's tags are still connected to the accessible elements, in this case these tags are considered
      * as not yet finished ones, and they won't be flushed immediately, but they will be flushed, when the connection
-     * is removed.
+     * is removed. TODO well, actually they won't.
      * @param page a page which tags will be flushed.
      */
     public void flushPageTags(PdfPage page) {
@@ -499,6 +523,31 @@ public class PdfTagStructure {
         }
     }
 
+    private void removeKidFromParent(PdfObject kid, PdfDictionary parent) {
+        PdfObject parentK = parent.get(PdfName.K);
+        if (parentK.isArray()) {
+            removeObjectFromArray((PdfArray) parentK, kid);
+        }
+
+        if (parentK.isDictionary() || parentK.isArray() && ((PdfArray)parentK).isEmpty()) {
+            parent.remove(PdfName.K);
+        }
+    }
+
+    private void removePageTagFromParent(PdfObject pageTagObject, IPdfStructElem parent) {
+        if (parent instanceof PdfStructElem) {
+            PdfDictionary parentObject = ((PdfStructElem) parent).getPdfObject();
+            removeKidFromParent(pageTagObject, parentObject);
+            if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().isEmpty()
+                    && parentObject != documentElem.getPdfObject()) { // TODO this could not solve the problems if there is several root elements under StructTreeRoot
+                removePageTagFromParent(parentObject, parent.getParent());
+                parentObject.getIndirectReference().setFree();
+            }
+        } else { // it is StructTreeRoot
+            // TODO don't know what to do here. remove from its kids or there should be some root tag like Document which I don't want to remove
+        }
+    }
+
     private void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
         if (parent.isFlushed() || connectedStructToModel.containsKey(parent.getPdfObject())) {
             return;
@@ -514,6 +563,8 @@ public class PdfTagStructure {
                     break;
                 }
             } else if (kid instanceof PdfStructElem) {
+                // if kid is structElem and was already flushed then in kids list there will be null for it instead of
+                // PdfStructElem
                 allKidsBelongToPage = false;
                 break;
             }

@@ -572,7 +572,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public List<PdfOutline> getOutlines(boolean updateOutlines) {
         getDocument().getOutlines(updateOutlines);
-        return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject().getIndirectReference());
+        return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject());
     }
 
     /**

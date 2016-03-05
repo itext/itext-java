@@ -13,6 +13,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
@@ -458,25 +459,47 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * Removes page from the document.
+     * Removes the first occurrence of the specified page from this document,
+     * if it is present. Returns <tt>true</tt> if this document
+     * contained the specified element (or equivalently, if this document
+     * changed as a result of the call).
      *
-     * @param page a page to remove.
+     * @param page page to be removed from this document, if present
+     * @return <tt>true</tt> if this document contained the specified page
      */
     public boolean removePage(PdfPage page) {
         checkClosingStatus();
-        boolean result = catalog.removePage(page);
-        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, page));
-        return result;
+        int pageNum = getPageNumber(page);
+        if (pageNum < 1)
+            return false;
+        return removePage(pageNum) != null;
     }
 
     /**
      * Removes page from the document by page number.
      *
-     * @param pageNum a number of page to remove.
+     * @param pageNum the one-based index of the PdfPage to be removed
+     * @return the page that was removed from the list
      */
     public PdfPage removePage(int pageNum) {
         checkClosingStatus();
-        return catalog.removePage(pageNum);
+        PdfPage removedPage = catalog.removePage(pageNum);
+
+        if (removedPage != null) {
+            catalog.removeOutlines(removedPage);
+            removeUnusedWidgetsFromFields(removedPage);
+            if (isTagged()) {
+                getTagStructure().removePageTags(removedPage);
+            }
+
+            if (!removedPage.getPdfObject().isFlushed()) {
+                removedPage.getPdfObject().remove(PdfName.Parent);
+            }
+            removedPage.getPdfObject().getIndirectReference().setFree();
+
+            dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, removedPage));
+        }
+        return removedPage;
     }
 
     /**
@@ -1323,6 +1346,22 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     protected void checkClosingStatus() {
         if (closed) {
             throw new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
+        }
+    }
+
+    /**
+     * This method removes all annotation entries from form fields associated with a given page.
+     * @param page
+     */
+    private void removeUnusedWidgetsFromFields(PdfPage page){
+        if (page.isFlushed()) {
+            return;
+        }
+        List<PdfAnnotation> annots = page.getAnnotations();
+        for (PdfAnnotation annot : annots) {
+            if (annot.getSubtype().equals(PdfName.Widget)) {
+                ((PdfWidgetAnnotation)annot).releaseFormFieldFromWidgetAnnotation();
+            }
         }
     }
 

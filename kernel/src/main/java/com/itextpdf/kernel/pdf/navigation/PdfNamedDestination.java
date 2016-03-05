@@ -20,7 +20,7 @@ public class PdfNamedDestination extends PdfDestination<PdfName> {
     public PdfObject getDestinationPage(final Map<String, PdfObject> names) {
         PdfArray array = (PdfArray) names.get(getPdfObject().getValue());
 
-        return array != null ? array.get(0, false) : null;
+        return array != null ? array.get(0) : null;
     }
 
     @Override

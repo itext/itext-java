@@ -56,49 +56,49 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page1);
 
         tagStructure.addTag(PdfName.P);
-        canvas.beginText();
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
-        canvas.setFontAndSize(standardFont, 24);
-        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        canvas.beginText()
+              .setFontAndSize(standardFont, 24)
+              .setTextMatrix(1, 0, 0, 1, 32, 512);
 
         tagStructure.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("Hello ");
-        canvas.closeTag();
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("Hello ")
+              .closeTag();
 
-        canvas.setFontAndSize(standardFont, 30);
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("World");
-        canvas.closeTag();
+        canvas.setFontAndSize(standardFont, 30)
+              .openTag(tagStructure.getTagReference())
+              .showText("World")
+              .closeTag();
 
         tagStructure.moveToParent().moveToParent();
 
-        canvas.endText();
-        canvas.release();
+        canvas.endText()
+              .release();
 
         PdfPage page2 = document.addNewPage();
         tagStructure.setPage(page2);
         canvas = new PdfCanvas(page2);
 
         tagStructure.addTag(PdfName.P);
-        canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24);
-        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        canvas.beginText()
+              .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24)
+              .setTextMatrix(1, 0, 0, 1, 32, 512);
         tagStructure.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("Hello ");
-        canvas.closeTag();
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("Hello ")
+              .closeTag();
 
         tagStructure.moveToParent().addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("World");
-        canvas.closeTag();
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("World")
+              .closeTag();
 
-        canvas.endText();
-        canvas.release();
+        canvas.endText()
+              .release();
         page1.flush();
         page2.flush();
 
@@ -122,8 +122,8 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         tagStructure.addTag(PdfName.P);
         canvas.beginText();
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
-        canvas.setFontAndSize(standardFont, 24);
-        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        canvas.setFontAndSize(standardFont, 24)
+              .setTextMatrix(1, 0, 0, 1, 32, 512);
 
         AccessibleElementProperties properties = new AccessibleElementProperties();
         PdfDictionary attributes = new PdfDictionary();
@@ -135,17 +135,17 @@ public class PdfTagStructureTest extends ExtendedITextTest {
                 .addAttributes(attributes);
         tagStructure.addTag(PdfName.Span).setProperties(properties);
 
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("Hello ");
-        canvas.closeTag();
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("Hello ")
+              .closeTag();
 
-        canvas.setFontAndSize(standardFont, 30);
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("World");
-        canvas.closeTag();
+        canvas.setFontAndSize(standardFont, 30)
+              .openTag(tagStructure.getTagReference())
+              .showText("World")
+              .closeTag();
 
-        canvas.endText();
-        canvas.release();
+        canvas.endText()
+              .release();
         page.flush();
 
         document.close();
@@ -264,19 +264,19 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         tagStructure.addTag(paragraphElement, true);
         canvas.beginText();
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
-        canvas.setFontAndSize(standardFont, 24);
-        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        canvas.setFontAndSize(standardFont, 24)
+              .setTextMatrix(1, 0, 0, 1, 32, 512);
 
         tagStructure.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("Hello ");
-        canvas.closeTag();
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("Hello ")
+              .closeTag();
 
-        canvas.setFontAndSize(standardFont, 30);
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("World");
-        canvas.closeTag();
+        canvas.setFontAndSize(standardFont, 30)
+              .openTag(tagStructure.getTagReference())
+              .showText("World")
+              .closeTag();
 
         tagStructure.moveToParent().moveToParent();
 
@@ -288,49 +288,185 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         tagStructure.moveToTag(paragraphElement);
         tagStructure.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("Hello ");
-        canvas.closeTag();
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("Hello ")
+              .closeTag();
 
-        canvas.setFontAndSize(standardFont, 30);
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("again");
-        canvas.closeTag();
+        canvas.setFontAndSize(standardFont, 30)
+              .openTag(tagStructure.getTagReference())
+              .showText("again")
+              .closeTag();
 
         tagStructure.removeConnectionToTag(paragraphElement);
         tagStructure.moveToRoot();
 
-        canvas.endText();
-        canvas.release();
+        canvas.endText()
+              .release();
 
         PdfPage page2 = document.addNewPage();
         tagStructure.setPage(page2);
         canvas = new PdfCanvas(page2);
 
         tagStructure.addTag(PdfName.P);
-        canvas.beginText();
-        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24);
-        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        canvas.beginText()
+              .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24)
+              .setTextMatrix(1, 0, 0, 1, 32, 512);
         tagStructure.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("Hello ");
-        canvas.closeTag();
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("Hello ")
+              .closeTag();
 
         tagStructure.moveToParent().addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference());
-        canvas.showText("World");
-        canvas.closeTag();
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("World")
+              .closeTag();
 
-        canvas.endText();
-        canvas.release();
+        canvas.endText()
+              .release();
         page1.flush();
         page2.flush();
 
         document.close();
 
         compareResult("tagStructureFlushingTest05.pdf", "cmp_tagStructureFlushingTest05.pdf", "diffFlushing05_");
+    }
+
+    @Test
+    public void tagStructureRemovingTest01() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureRemovingTest01.pdf");
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(reader, writer);
+        document.removePage(1);
+        document.close();
+
+        compareResult("tagStructureRemovingTest01.pdf", "cmp_tagStructureRemovingTest01.pdf", "diffRemoving01_");
+    }
+
+    @Test
+    public void tagStructureRemovingTest02() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureRemovingTest02.pdf");
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        PdfPage firstPage = document.getPage(1);
+        PdfPage secondPage = document.getPage(2);
+        document.removePage(firstPage);
+        document.removePage(secondPage);
+
+        PdfPage page = document.addNewPage();
+        PdfTagStructure tagStructure = new PdfTagStructure(document);
+        tagStructure.setPage(page);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        tagStructure.addTag(PdfName.P);
+        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
+        canvas.beginText()
+              .setFontAndSize(standardFont, 24)
+              .setTextMatrix(1, 0, 0, 1, 32, 512);
+
+        tagStructure.addTag(PdfName.Span);
+
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("Hello ")
+              .closeTag();
+
+        canvas.setFontAndSize(standardFont, 30)
+              .openTag(tagStructure.getTagReference())
+              .showText("World")
+              .closeTag()
+              .endText();
+
+        document.close();
+
+        compareResult("tagStructureRemovingTest02.pdf", "cmp_tagStructureRemovingTest02.pdf", "diffRemoving02_");
+    }
+
+    @Test
+    public void tagStructureRemovingTest03() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureRemovingTest03.pdf");
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+
+        PdfPage page = document.addNewPage();
+        PdfTagStructure tagStructure = document.getTagStructure();
+        tagStructure.setPage(page);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        //TODO refactor after the implementation of getting IAccessibleElement from current tag in TagStructure
+        IAccessibleElement paragraphElement = new IAccessibleElement() {
+            @Override
+            public PdfName getRole() {
+                return PdfName.P;
+            }
+
+            @Override
+            public void setRole(PdfName role) {
+            }
+
+            @Override
+            public AccessibleElementProperties getAccessibilityProperties() {
+                return null;
+            }
+        };
+
+        tagStructure.addTag(paragraphElement, true);
+        PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
+        canvas.beginText()
+              .setFontAndSize(standardFont, 24)
+              .setTextMatrix(1, 0, 0, 1, 32, 512);
+
+        tagStructure.addTag(PdfName.Span);
+
+        canvas.openTag(tagStructure.getTagReference())
+              .showText("Hello ")
+              .closeTag();
+
+        canvas.setFontAndSize(standardFont, 30)
+              .openTag(tagStructure.getTagReference())
+              .showText("World")
+              .closeTag()
+              .endText();
+
+        tagStructure.moveToParent().moveToParent();
+
+        document.removePage(1);
+
+        PdfPage newPage = document.addNewPage();
+        canvas = new PdfCanvas(newPage);
+        tagStructure.setPage(newPage);
+
+        tagStructure.moveToTag(paragraphElement)
+                    .addTag(PdfName.Span);
+
+        canvas.openTag(tagStructure.getTagReference())
+                .beginText()
+                .setFontAndSize(standardFont, 24)
+                .setTextMatrix(1, 0, 0, 1, 32, 512)
+                .showText("Hello.")
+                .endText()
+                .closeTag();
+
+        document.close();
+
+        compareResult("tagStructureRemovingTest03.pdf", "cmp_tagStructureRemovingTest03.pdf", "diffRemoving03_");
+    }
+
+    @Test
+    public void tagStructureRemovingTest04() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocumentWithAnnots.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureRemovingTest04.pdf").setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(reader, writer);
+        document.removePage(1);
+        document.close();
+
+        compareResult("tagStructureRemovingTest04.pdf", "cmp_tagStructureRemovingTest04.pdf", "diffRemoving04_");
     }
 
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)
