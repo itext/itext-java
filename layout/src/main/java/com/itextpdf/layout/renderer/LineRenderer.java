@@ -210,9 +210,10 @@ public class LineRenderer extends AbstractRenderer {
                         children.add(new TextRenderer((TextRenderer) renderer));
                         ((TextRenderer) children.get(children.size() - 1)).line = new GlyphLine(((TextRenderer) children.get(children.size() - 1)).line);
                         GlyphLine gl = ((TextRenderer) children.get(children.size() - 1)).line;
-                        gl.end = gl.start;
+                        gl.glyphs = new ArrayList<>();
+                        gl.end = gl.start = 0;
                         while (pos < reorderedLine.size() && reorderedLine.get(pos).renderer == renderer) {
-                            gl.set(gl.end, reorderedLine.get(pos).glyph);
+                            gl.add(reorderedLine.get(pos).glyph);
                             gl.end++;
                             pos++;
                         }
