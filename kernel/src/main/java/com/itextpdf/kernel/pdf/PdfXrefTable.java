@@ -4,12 +4,13 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-class PdfXrefTable {
+class PdfXrefTable implements Serializable{
 
     private static final int InitialCapacity = 32;
     private static final int MaxGeneration = 65535;

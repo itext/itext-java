@@ -1,9 +1,11 @@
 package com.itextpdf.io.source;
 
+import java.io.Serializable;
+
 /**
  * A RandomAccessSource that is based on an underlying byte array
  */
-class ArrayRandomAccessSource implements RandomAccessSource {
+class ArrayRandomAccessSource implements RandomAccessSource, Serializable {
     private byte[] array;
 
     public ArrayRandomAccessSource(byte[] array) {

@@ -1,13 +1,15 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Algorithm for construction {@see PdfPages} tree
  */
-class PdfPagesTree {
+class PdfPagesTree implements Serializable{
     private final int leafSize = 10;
 
     private List<PdfDictionary> pageRefs;

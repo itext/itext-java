@@ -3,8 +3,9 @@ package com.itextpdf.io.source;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.EOFException;
+import java.io.Serializable;
 
-public class RandomAccessFileOrArray implements DataInput {
+public class RandomAccessFileOrArray implements DataInput, Serializable {
 
     /**
      * When true the file access is not done through a memory mapped file. Use it if the file

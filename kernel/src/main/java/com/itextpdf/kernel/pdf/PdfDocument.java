@@ -30,9 +30,7 @@ import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.kernel.numbering.RomanNumbering;
 
-import java.io.Closeable;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class PdfDocument implements IEventDispatcher, Closeable {
+public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Currently active page.
@@ -521,6 +519,22 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public PageSize getDefaultPageSize() {
         return defaultPageSize;
+    }
+
+    public byte[] getSerializedBytes() {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = null;
+            oos = new ObjectOutputStream(bos);
+            oos.writeObject(this);
+            oos.flush();
+            oos.close();
+            bos.close();
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

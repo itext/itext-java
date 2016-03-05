@@ -7,13 +7,16 @@ import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.cert.Certificate;
 import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-public class PdfOutputStream extends OutputStream<PdfOutputStream> {
+public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Serializable{
 
     //TODO review location and use of the constants
     /**
@@ -124,6 +127,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
      * Contains the business logic for cryptography.
      */
     protected PdfEncryption crypto;
+
+    protected PdfOutputStream() {
+        super();
+    }
 
     public PdfOutputStream(java.io.OutputStream outputStream) {
         super(outputStream);

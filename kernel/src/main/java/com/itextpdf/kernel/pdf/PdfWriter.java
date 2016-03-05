@@ -4,10 +4,9 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
 
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,12 +15,15 @@ import java.util.Hashtable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PdfWriter extends PdfOutputStream {
+public class PdfWriter extends PdfOutputStream implements Serializable{
 
     private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
     private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
     private HashMap<ByteStore, PdfIndirectReference> streamMap = new HashMap<>();
     private final HashMap<Integer, Integer> serialized = new HashMap<>();
+
+    private PdfOutputStream content = null;
+    private byte[] buffer = null;
 
     /**
      * Indicates if the writer copy objects in a smart mode. If so PdfDictionary and PdfStream will be hashed
@@ -49,6 +51,7 @@ public class PdfWriter extends PdfOutputStream {
 
     public PdfWriter(java.io.OutputStream os) {
         super(new BufferedOutputStream(os));
+        content = new PdfOutputStream(new ByteArrayOutputStream());
     }
 
     public PdfWriter(String filename) throws FileNotFoundException {
@@ -84,6 +87,10 @@ public class PdfWriter extends PdfOutputStream {
         return compressionLevel;
     }
 
+    public ByteArrayOutputStream getByteArrayOutputStream() {
+        return (ByteArrayOutputStream)content.getOutputStream();
+    }
+
     /**
      * Sets default compression level for @see PdfStream.
      * For more details @see {@link java.util.zip.Deflater}.
@@ -107,6 +114,24 @@ public class PdfWriter extends PdfOutputStream {
     public PdfWriter setSmartMode(boolean smartMode) {
         this.smartMode = smartMode;
         return this;
+    }
+
+    @Override
+    public void write(int b) throws java.io.IOException {
+        super.write(b);
+        content.write(b);
+    }
+
+    @Override
+    public void write(byte[] b) throws java.io.IOException {
+        super.write(b);
+        content.write(b);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws java.io.IOException {
+        super.write(b, off, len);
+        content.write(b, off, len);
     }
 
     /**
@@ -344,6 +369,16 @@ public class PdfWriter extends PdfOutputStream {
         return result;
     }
 
+    //method invoking while deserialization
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.outputStream = new BufferedOutputStream(new ByteArrayOutputStream());
+        content = new PdfOutputStream(new ByteArrayOutputStream());
+        write(buffer);
+        buffer = null;
+    }
+
     private PdfObject smartCopyObject(PdfObject object) {
         ByteStore streamKey;
         if (object.isStream()) {
@@ -363,6 +398,14 @@ public class PdfWriter extends PdfOutputStream {
         }
 
         return null;
+    }
+
+    //method invoking while serialization
+    private void writeObject(java.io.ObjectOutputStream out)
+            throws java.io.IOException {
+        content.flush();
+        buffer = getByteArrayOutputStream().toByteArray();
+        out.defaultWriteObject();
     }
 
     private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {

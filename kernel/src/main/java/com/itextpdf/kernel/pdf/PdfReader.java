@@ -14,10 +14,7 @@ import com.itextpdf.kernel.pdf.filters.FilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.security.ExternalDecryptionProcess;
 
-import java.io.ByteArrayInputStream;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.Key;
 import java.security.cert.Certificate;
 import java.util.Map;
@@ -25,7 +22,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PdfReader implements Closeable {
+public class PdfReader implements Closeable, Serializable {
 
     protected static boolean correctStreamLength = true;
 

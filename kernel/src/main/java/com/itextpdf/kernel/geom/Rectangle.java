@@ -2,7 +2,9 @@ package com.itextpdf.kernel.geom;
 
 import com.itextpdf.io.util.HashCode;
 
-public class Rectangle implements Cloneable {
+import java.io.Serializable;
+
+public class Rectangle implements Cloneable, Serializable {
 
     protected float x;
     protected float y;

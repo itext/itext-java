@@ -5,11 +5,12 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract public class PdfObject {
+abstract public class PdfObject implements Serializable{
 
     static public final byte Array = 1;
     static public final byte Boolean = 2;

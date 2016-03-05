@@ -2,7 +2,9 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
 
-public abstract class PdfObjectWrapper<T extends PdfObject> {
+import java.io.Serializable;
+
+public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializable{
 
     private T pdfObject = null;
 

@@ -1,8 +1,9 @@
 package com.itextpdf.kernel.pdf;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class PdfNumTree {
+public class PdfNumTree implements Serializable{
     private static final int NodeSize = 40;
 
     private PdfCatalog catalog;

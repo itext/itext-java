@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.events;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Map;
  * IEventDispatcher implementation that forwards Events to registered {@link com.itextpdf.kernel.events.IEventHandler}
  * implementations.
  */
-public class EventDispatcher implements IEventDispatcher {
+public class EventDispatcher implements IEventDispatcher, Serializable {
 
     protected Map<String, List<IEventHandler>> eventHandlers = new HashMap<>();
 

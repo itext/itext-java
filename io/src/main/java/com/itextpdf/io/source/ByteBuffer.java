@@ -1,6 +1,8 @@
 package com.itextpdf.io.source;
 
-public class ByteBuffer {
+import java.io.Serializable;
+
+public class ByteBuffer implements Serializable{
 
     private static final byte[] bytes = new byte[]{48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
 
