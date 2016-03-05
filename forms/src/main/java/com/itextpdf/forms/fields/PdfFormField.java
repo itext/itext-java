@@ -1966,7 +1966,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 newPath();
 
         Paragraph paragraph = new Paragraph(value).setFont(font).setFontSize(fontSize).setMultipliedLeading(1).setPaddings(0, 2, 0, 2);
-        setParagraphProperties(paragraph, value);
         if (color != null) {
             paragraph.setFontColor(color);
         }
@@ -2025,7 +2024,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, Math.max(0, width - 6), Math.max(0, height - 2)));
         for (int index = 0; index < strings.size(); index++) {
             Paragraph paragraph = new Paragraph(strings.get(index)).setFont(font).setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
-            setParagraphProperties(paragraph, strings.get(index));
             if (color != null) {
                 paragraph.setFontColor(color);
             }
@@ -2227,7 +2225,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).
                 setVerticalAlignment(Property.VerticalAlignment.MIDDLE);
-        setParagraphProperties(paragraph, text);
         new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height)).showTextAligned(paragraph, width / 2, height / 2, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE);
     }
 
@@ -2272,16 +2269,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         for (int i = 0; i < text.length(); i++)
             pchar[i] = '*';
         return new String(pchar);
-    }
-
-    private void setParagraphProperties(Paragraph paragraph, String value) {
-        // TODO this is temporary and will be replaced by script autodetection logic on layout level
-        if (value != null && value.length() > 0) {
-            Character.UnicodeScript script = Character.UnicodeScript.of(value.charAt(0));
-            if (script == Character.UnicodeScript.ARABIC || script == Character.UnicodeScript.HEBREW) {
-                paragraph.setBaseDirection(Property.BaseDirection.RIGHT_TO_LEFT);
-            }
-        }
     }
 
     private void applyRotation(PdfFormXObject xObject, float height, float width) {

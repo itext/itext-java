@@ -1,18 +1,17 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.image.Image;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.Property;
 import com.itextpdf.layout.element.Paragraph;
 
 import java.io.IOException;
@@ -650,8 +649,7 @@ public class PdfSignatureAppearance {
                     }
 
                     PdfCanvas canvas = new PdfCanvas(n2, document);
-                    Paragraph paragraph = setParagraphProperties(new Paragraph(signedBy).
-                            setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f), signedBy);
+                    Paragraph paragraph = new Paragraph(signedBy).setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f);
                     new Canvas(canvas, document, signatureRect).add(paragraph);
 
                     break;
@@ -714,8 +712,7 @@ public class PdfSignatureAppearance {
 
             if (renderingMode != RenderingMode.GRAPHIC) {
                 PdfCanvas canvas = new PdfCanvas(n2, document);
-                Paragraph paragraph = setParagraphProperties(new Paragraph(text).
-                        setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f), text);
+                Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f);
                 new Canvas(canvas, document, dataRect).add(paragraph);
             }
         }
@@ -817,17 +814,6 @@ public class PdfSignatureAppearance {
 
         PdfCanvas canvas = new PdfCanvas(n0, document);
         canvas.writeLiteral("% DSBlank\n");
-    }
-
-    private Paragraph setParagraphProperties(Paragraph paragraph, String value) {
-        // TODO this is temporary and will be replaced by script autodetection logic on layout level
-        if (value != null && value.length() > 0) {
-            Character.UnicodeScript script = Character.UnicodeScript.of(value.charAt(0));
-            if (script == Character.UnicodeScript.ARABIC || script == Character.UnicodeScript.HEBREW) {
-                paragraph.setBaseDirection(Property.BaseDirection.RIGHT_TO_LEFT);
-            }
-        }
-        return paragraph;
     }
 
     /**

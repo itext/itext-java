@@ -105,7 +105,6 @@ public class TextRenderer extends AbstractRenderer {
         float italicSkewAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
         float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
 
-        applyOtf();
         line = new GlyphLine(text);
         line.start = line.end = -1;
 
@@ -325,30 +324,32 @@ public class TextRenderer extends AbstractRenderer {
             if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
                 // Try to autodetect complex script.
                 Collection<Character.UnicodeScript> supportedScripts = TypographyUtils.getSupportedScripts();
-                if (supportedScripts != null) {
-                    Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<>(Character.UnicodeScript.class);
-                    for (int i = text.start; i < text.end; i++) {
-                        Integer unicode = text.get(i).getUnicode();
-                        Character.UnicodeScript glyphScript = unicode != null ? Character.UnicodeScript.of(unicode) : null;
-                        if (glyphScript != null && supportedScripts.contains(glyphScript)) {
-                            if (scriptFrequency.containsKey(glyphScript)) {
-                                scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript));
-                            } else {
-                                scriptFrequency.put(glyphScript, 1);
-                            }
+                Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<>(Character.UnicodeScript.class);
+                for (int i = text.start; i < text.end; i++) {
+                    Integer unicode = text.get(i).getUnicode();
+                    Character.UnicodeScript glyphScript = unicode != null ? Character.UnicodeScript.of(unicode) : null;
+                    if (glyphScript != null) {
+                        if (scriptFrequency.containsKey(glyphScript)) {
+                            scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript) + 1);
+                        } else {
+                            scriptFrequency.put(glyphScript, 1);
                         }
                     }
-                    int max = 0;
-                    Character.UnicodeScript selectScript = null;
-                    for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
-                        if (entry.getValue() > max) {
-                            max = entry.getValue();
-                            selectScript = entry.getKey();
-                        }
+                }
+                int max = 0;
+                Character.UnicodeScript selectScript = null;
+                for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
+                    Character.UnicodeScript entryScript = entry.getKey();
+                    if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)) {
+                        max = entry.getValue();
+                        selectScript = entryScript;
                     }
-                    if (selectScript != null) {
-                        script = selectScript;
-                    }
+                }
+                if (selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW && parent instanceof LineRenderer) {
+                    setProperty(Property.BASE_DIRECTION, Property.BaseDirection.DEFAULT_BIDI);
+                }
+                if (selectScript != null && supportedScripts != null && supportedScripts.contains(selectScript)) {
+                    script = selectScript;
                 }
             }
 

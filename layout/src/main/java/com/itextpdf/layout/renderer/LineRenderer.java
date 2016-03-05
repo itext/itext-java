@@ -36,12 +36,16 @@ public class LineRenderer extends AbstractRenderer {
         int childPos = 0;
 
         Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
-        if (levels == null && baseDirection != Property.BaseDirection.NO_BIDI) {
-            for (IRenderer renderer : childRenderers) {
-                if (renderer instanceof TextRenderer) {
-                    ((TextRenderer) renderer).applyOtf();
+        for (IRenderer renderer : childRenderers) {
+            if (renderer instanceof TextRenderer) {
+                ((TextRenderer) renderer).applyOtf();
+                if (baseDirection == null || baseDirection == Property.BaseDirection.NO_BIDI) {
+                    baseDirection = renderer.getOwnProperty(Property.BASE_DIRECTION);
                 }
             }
+        }
+
+        if (levels == null && baseDirection != null && baseDirection != Property.BaseDirection.NO_BIDI) {
             List<Integer> unicodeIdsLst = new ArrayList<>();
             for (IRenderer child : childRenderers) {
                 if (child instanceof TextRenderer) {
@@ -176,7 +180,7 @@ public class LineRenderer extends AbstractRenderer {
 
         // Consider for now that all the children have the same font, and that after reordering text pieces
         // can be reordered, but cannot be split.
-        if (baseDirection != Property.BaseDirection.NO_BIDI) {
+        if (baseDirection != null && baseDirection != Property.BaseDirection.NO_BIDI) {
             List<IRenderer> children = null;
             if (result.getStatus() == LayoutResult.PARTIAL) {
                 children = result.getSplitRenderer().getChildRenderers();
