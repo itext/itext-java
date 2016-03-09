@@ -311,7 +311,6 @@ public class TableRenderer extends AbstractRenderer {
 
                 layoutBox.decreaseHeight(rowHeight);
             }
-
             if (split) {
                 TableRenderer[] splitResult = split(row, hasContent);
                 for (int col = 0; col < currentRow.length; col++) {
@@ -343,9 +342,11 @@ public class TableRenderer extends AbstractRenderer {
                 }
 
                 if (row == rowRange.getFinishRow() && footerRenderer != null) {
-                    footerRenderer.getOccupiedAreaBBox().setY(splitResult[0].getOccupiedAreaBBox().getY() - footerRenderer.getOccupiedAreaBBox().getHeight());
+                    footerRenderer.getOccupiedAreaBBox().setY(splitResult[0].getOccupiedAreaBBox().getY()
+                            - footerRenderer.getOccupiedAreaBBox().getHeight());
                     for (IRenderer renderer : footerRenderer.getChildRenderers()) {
-                        renderer.move(0, splitResult[0].getOccupiedAreaBBox().getY() - renderer.getOccupiedArea().getBBox().getY() - renderer.getOccupiedArea().getBBox().getHeight());
+                        renderer.move(0, splitResult[0].getOccupiedAreaBBox().getY()
+                                - renderer.getOccupiedArea().getBBox().getY() - renderer.getOccupiedArea().getBBox().getHeight());
                     }
                 } else {
                     adjustFooterAndFixOccupiedArea(layoutBox);
@@ -353,13 +354,18 @@ public class TableRenderer extends AbstractRenderer {
 
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
-                int status = (childRenderers.isEmpty() && footerRenderer == null) || getPropertyAsBoolean(Property.KEEP_TOGETHER)
-                        ? LayoutResult.NOTHING
-                        : LayoutResult.PARTIAL;
-                if (status == LayoutResult.NOTHING && getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
-                    return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                if (getPropertyAsBoolean(Property.KEEP_TOGETHER) && !getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                } else {
+                    int status = (childRenderers.isEmpty() && footerRenderer == null)
+                            ? LayoutResult.NOTHING
+                            : LayoutResult.PARTIAL;
+                    if (status == LayoutResult.NOTHING && getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                    } else {
+                        return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1]);
+                    }
                 }
-                return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1]);
             } else {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
