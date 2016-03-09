@@ -108,10 +108,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @param fields a {@link PdfArray} of {@link PdfDictionary} objects
      */
     public PdfAcroForm(PdfArray fields) {
-        super(new PdfDictionary());
-        put(PdfName.Fields, fields);
-        getFormFields();
-        xfaForm = new XfaForm();
+        this(createAcroFormDictionaryByFields(fields));
+        setForbidRelease();
     }
 
     /**
@@ -984,6 +982,25 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return null;
+    }
+
+    /**
+     * Releases underlying pdf object and other pdf entities used by wrapper.
+     * This method should be called instead of direct call to {@link PdfObject#release()} if the wrapper is used.
+     */
+    public void release() {
+        unsetForbidRelease();
+        getPdfObject().release();
+        for (PdfFormField field : fields.values()) {
+            field.release();
+        }
+        fields = null;
+    }
+
+    private static PdfDictionary createAcroFormDictionaryByFields(PdfArray fields) {
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.Fields, fields);
+        return dictionary;
     }
 
     private PdfPage getFieldPage(PdfDictionary annotDic) {

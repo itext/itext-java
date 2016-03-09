@@ -11,6 +11,7 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         if (pdfDocument.getWriter() != null) {
             this.getPdfObject().makeIndirect(pdfDocument);
         }
+        setForbidRelease();
     }
 
     public PdfDocumentInfo(PdfDictionary pdfObject) {

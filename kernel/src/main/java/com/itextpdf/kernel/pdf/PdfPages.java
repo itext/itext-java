@@ -11,6 +11,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         if (pdfDocument.getWriter() != null) {
             getPdfObject().makeIndirect(pdfDocument);
         }
+        setForbidRelease();
         this.from = from;
         this.count = new PdfNumber(0);
         this.kids = new PdfArray();

@@ -129,6 +129,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public PdfFormField(PdfDictionary pdfObject) {
         super(pdfObject);
         ensureObjectIsAddedToDocument(pdfObject);
+        setForbidRelease();
     }
 
     /**
@@ -1787,6 +1788,64 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
+    /**
+     * Releases underlying pdf object and other pdf entities used by wrapper.
+     * This method should be called instead of direct call to {@link PdfObject#release()} if the wrapper is used.
+     */
+    public void release() {
+        unsetForbidRelease();
+        getPdfObject().release();
+    }
+
+    protected static Object[] splitDAelements(String da) {
+        PdfTokenizer tk = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(PdfEncodings.convertToBytes(da, null))));
+        List<String> stack = new ArrayList<>();
+        Object ret[] = new Object[3];
+        try {
+            while (tk.nextToken()) {
+                if (tk.getTokenType() == PdfTokenizer.TokenType.Comment)
+                    continue;
+                if (tk.getTokenType() == PdfTokenizer.TokenType.Other) {
+                    String operator = tk.getStringValue();
+                    if (operator.equals("Tf")) {
+                        if (stack.size() >= 2) {
+                            ret[DA_FONT] = stack.get(stack.size() - 2);
+                            ret[DA_SIZE] = new Integer(stack.get(stack.size() - 1));
+                        }
+                    } else if (operator.equals("g")) {
+                        if (stack.size() >= 1) {
+                            float gray = new Float(stack.get(stack.size() - 1));
+                            if (gray != 0) {
+                                ret[DA_COLOR] = new DeviceGray(gray);
+                            }
+                        }
+                    } else if (operator.equals("rg")) {
+                        if (stack.size() >= 3) {
+                            float red = new Float(stack.get(stack.size() - 3));
+                            float green = new Float(stack.get(stack.size() - 2));
+                            float blue = new Float(stack.get(stack.size() - 1));
+                            ret[DA_COLOR] = new DeviceRgb(red, green, blue);
+                        }
+                    } else if (operator.equals("k")) {
+                        if (stack.size() >= 4) {
+                            float cyan = new Float(stack.get(stack.size() - 4));
+                            float magenta = new Float(stack.get(stack.size() - 3));
+                            float yellow = new Float(stack.get(stack.size() - 2));
+                            float black = new Float(stack.get(stack.size() - 1));
+                            ret[DA_COLOR] = new DeviceCmyk(cyan, magenta, yellow, black);
+                        }
+                    }
+                    stack.clear();
+                } else {
+                    stack.add(tk.getStringValue());
+                }
+            }
+        } catch (IOException e) {
+
+        }
+        return ret;
+    }
+
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
@@ -1885,55 +1944,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
 
         return fontAndSize;
-    }
-
-    public static Object[] splitDAelements(String da) {
-        PdfTokenizer tk = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(PdfEncodings.convertToBytes(da, null))));
-        List<String> stack = new ArrayList<>();
-        Object ret[] = new Object[3];
-        try {
-            while (tk.nextToken()) {
-                if (tk.getTokenType() == PdfTokenizer.TokenType.Comment)
-                    continue;
-                if (tk.getTokenType() == PdfTokenizer.TokenType.Other) {
-                    String operator = tk.getStringValue();
-                    if (operator.equals("Tf")) {
-                        if (stack.size() >= 2) {
-                            ret[DA_FONT] = stack.get(stack.size() - 2);
-                            ret[DA_SIZE] = new Integer(stack.get(stack.size() - 1));
-                        }
-                    } else if (operator.equals("g")) {
-                        if (stack.size() >= 1) {
-                            float gray = new Float(stack.get(stack.size() - 1));
-                            if (gray != 0) {
-                                ret[DA_COLOR] = new DeviceGray(gray);
-                            }
-                        }
-                    } else if (operator.equals("rg")) {
-                        if (stack.size() >= 3) {
-                            float red = new Float(stack.get(stack.size() - 3));
-                            float green = new Float(stack.get(stack.size() - 2));
-                            float blue = new Float(stack.get(stack.size() - 1));
-                            ret[DA_COLOR] = new DeviceRgb(red, green, blue);
-                        }
-                    } else if (operator.equals("k")) {
-                        if (stack.size() >= 4) {
-                            float cyan = new Float(stack.get(stack.size() - 4));
-                            float magenta = new Float(stack.get(stack.size() - 3));
-                            float yellow = new Float(stack.get(stack.size() - 2));
-                            float black = new Float(stack.get(stack.size() - 1));
-                            ret[DA_COLOR] = new DeviceCmyk(cyan, magenta, yellow, black);
-                        }
-                    }
-                    stack.clear();
-                } else {
-                    stack.add(tk.getStringValue());
-                }
-            }
-        } catch (IOException e) {
-
-        }
-        return ret;
     }
 
     /**

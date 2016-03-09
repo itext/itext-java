@@ -46,12 +46,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfPage(PdfDictionary pdfObject) {
         super(pdfObject);
+        setForbidRelease();
         ensureObjectIsAddedToDocument(pdfObject);
     }
 
     protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
-        super(new PdfDictionary());
-        makeIndirect(pdfDocument);
+        this(new PdfDictionary().makeIndirect(pdfDocument));
         PdfStream contentStream = new PdfStream().makeIndirect(pdfDocument);
         getPdfObject().put(PdfName.Contents, contentStream);
         getPdfObject().put(PdfName.Type, PdfName.Page);

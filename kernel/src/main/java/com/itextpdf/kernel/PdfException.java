@@ -45,6 +45,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotSplitDocumentThatIsBeingWritten = "cannot.split.document.that.is.being.written";
     public static final String CannotWritePdfStream = "cannot.write.pdf.stream";
+    public static final String CannotWriteObjectAfterItWasReleased = "Cannot write object after it was released. In normal situation the object must be read once again before being written";
     public static final String CantDecodePkcs7SigneddataObject = "can.t.decode.pkcs7signeddata.object";
     public static final String CantFindSigningCertificateWithSerial1 = "can.t.find.signing.certificate.with.serial {0}";
     public static final String CfNotFoundEncryption = "cf.not.found.encryption";

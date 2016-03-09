@@ -133,6 +133,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             pdfObject.makeIndirect(document);
             pdfObject = pdfObject.getIndirectReference();
         }
+        if (pdfObject.checkState(PdfObject.ReadOnly)) {
+            throw new PdfException(PdfException.CannotWriteObjectAfterItWasReleased);
+        }
         switch (pdfObject.getType()) {
             case PdfObject.Array:
                 write((PdfArray) pdfObject);

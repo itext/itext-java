@@ -72,6 +72,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     public PdfStructTreeRoot(PdfDictionary pdfObject) {
         super(pdfObject);
         ensureObjectIsAddedToDocument(pdfObject);
+        setForbidRelease();
         parentTree = new PdfNumTree(getDocument().getCatalog(), PdfName.ParentTree);
     }
 
@@ -97,7 +98,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     @Override
     public List<IPdfStructElem> getKids() {
         PdfObject k = getPdfObject().get(PdfName.K);
-        List<IPdfStructElem> kids = new ArrayList<IPdfStructElem>();
+        List<IPdfStructElem> kids = new ArrayList<>();
 
         if (k != null) {
             if (k.isArray()) {

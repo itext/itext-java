@@ -144,6 +144,18 @@ public abstract class PdfObjectWrapper<T extends PdfObject> {
         this.pdfObject = pdfObject;
     }
 
+    protected void setForbidRelease() {
+        if (pdfObject != null) {
+            pdfObject.setState(PdfObject.ForbidRelease);
+        }
+    }
+
+    protected void unsetForbidRelease() {
+        if (pdfObject != null) {
+            pdfObject.clearState(PdfObject.ForbidRelease);
+        }
+    }
+
     protected static void markObjectAsIndirect(PdfObject pdfObject) {
         if (pdfObject.getIndirectReference() == null) {
             pdfObject.setState(PdfObject.MustBeIndirect);
