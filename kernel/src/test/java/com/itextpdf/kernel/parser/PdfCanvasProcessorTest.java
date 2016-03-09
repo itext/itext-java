@@ -17,7 +17,7 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfCanvasProcessorTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfContentStreamProcessorTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
 
     @Test
     public void contentStreamProcessorTest() throws IOException {
