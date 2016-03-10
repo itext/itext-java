@@ -56,7 +56,17 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public abstract Glyph getGlyph(int unicode);
 
     public boolean containsGlyph(char unicode) {
-        return getGlyph(unicode) != null;
+        Glyph glyph = getGlyph(unicode);
+        if (glyph != null) {
+            if (getFontProgram() != null && getFontProgram().isFontSpecific()) {
+                //if current is symbolic, zero code is valid value
+                return glyph.getCode() > -1;
+            } else {
+                return glyph.getCode() > 0;
+            }
+        } else {
+            return false;
+        }
     }
 
     public abstract GlyphLine createGlyphLine(String content);
