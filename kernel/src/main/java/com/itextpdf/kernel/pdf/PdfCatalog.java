@@ -35,6 +35,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
         ensureObjectIsAddedToDocument(pdfObject);
         getPdfObject().put(PdfName.Type, PdfName.Catalog);
+        setForbidRelease();
         pageTree = new PdfPagesTree(this);
     }
 
@@ -231,8 +232,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * This method returns the NumberTree of Page Labels
      * @return
      */
-    public PdfNumTree getPageLabelsTree(){
-        if (pageLabels == null) {
+    public PdfNumTree getPageLabelsTree(boolean createIfNotExists) {
+        if (pageLabels == null && createIfNotExists) {
             pageLabels = new PdfNumTree(this, PdfName.PageLabels);
         }
 

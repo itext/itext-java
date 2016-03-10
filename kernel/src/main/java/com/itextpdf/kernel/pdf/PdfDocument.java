@@ -1102,11 +1102,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @return
      */
     public String[] getPageLabels() {
-        String[] labelStrings = new String[getNumberOfPages()];
-        Map<Integer, PdfObject> pageLabels = catalog.getPageLabelsTree().getNumbers();
+        if (catalog.getPageLabelsTree(false) == null) {
+            return null;
+        }
+        Map<Integer, PdfObject> pageLabels = catalog.getPageLabelsTree(false).getNumbers();
         if (pageLabels.size() == 0) {
             return null;
         }
+        String[] labelStrings = new String[getNumberOfPages()];
         int pageCount = 1;
         String prefix = "";
         String type = "D";

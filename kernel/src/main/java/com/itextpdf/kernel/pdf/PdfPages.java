@@ -27,6 +27,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfPages(int from, int maxCount, PdfDictionary pdfObject, PdfPages parent) {
         super(pdfObject);
+        setForbidRelease();
         this.from = from;
         this.count = pdfObject.getAsNumber(PdfName.Count);
         this.parent = parent;

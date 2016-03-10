@@ -1,18 +1,17 @@
 package com.itextpdf.kernel.pdf.canvas;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.Image;
 import com.itextpdf.io.source.OutputStream;
-import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
+import com.itextpdf.io.util.Utilities;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -25,6 +24,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
@@ -44,8 +44,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
-import static java.lang.Math.*;
 
 /**
  * PdfCanvas class represents an algorithm for writing data into content stream.

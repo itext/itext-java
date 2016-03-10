@@ -644,7 +644,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (firstPage != 1) {
             pageLabel.put(PdfName.St, new PdfNumber(firstPage));
         }
-        getDocument().getCatalog().getPageLabelsTree().addEntry(getDocument().getPageNumber(this) - 1, pageLabel);
+        getDocument().getCatalog().getPageLabelsTree(true).addEntry(getDocument().getPageNumber(this) - 1, pageLabel);
 
         return this;
     }
