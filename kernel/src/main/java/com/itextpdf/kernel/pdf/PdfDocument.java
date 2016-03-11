@@ -1099,7 +1099,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * This method retrieves the page labels from a document as an array of String objects.
-     * @return
+     * @return {@link String} list of page labels if they were found, or {@code null} otherwise
      */
     public String[] getPageLabels() {
         if (catalog.getPageLabelsTree(false) == null) {

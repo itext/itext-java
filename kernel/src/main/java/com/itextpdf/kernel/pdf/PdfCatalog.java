@@ -233,7 +233,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfNumTree getPageLabelsTree(boolean createIfNotExists) {
-        if (pageLabels == null && createIfNotExists) {
+        if (pageLabels == null && (getPdfObject().containsKey(PdfName.PageLabels) || createIfNotExists)) {
             pageLabels = new PdfNumTree(this, PdfName.PageLabels);
         }
 
