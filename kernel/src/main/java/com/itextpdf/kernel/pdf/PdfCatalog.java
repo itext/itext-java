@@ -164,7 +164,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCatalog setPageMode(PdfName pageMode) {
-        if (!pageMode.equals(PdfName.UseNone) && !pageMode.equals(PdfName.OneColumn) &&
+        if (!pageMode.equals(PdfName.UseNone) && !pageMode.equals(PdfName.UseOutlines) &&
                 !pageMode.equals(PdfName.UseThumbs) && !pageMode.equals(PdfName.FullScreen) &&
                 !pageMode.equals(PdfName.UseOC) && !pageMode.equals(PdfName.UseAttachments)) {
             return this;
