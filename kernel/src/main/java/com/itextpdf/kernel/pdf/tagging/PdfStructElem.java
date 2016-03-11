@@ -100,6 +100,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public PdfStructElem(PdfDictionary pdfObject) {
         super(pdfObject);
         ensureObjectIsAddedToDocument(pdfObject);
+        setForbidRelease();
         PdfName role = getPdfObject().getAsName(PdfName.S);
         type = identifyType(getDocument(), role);
     }

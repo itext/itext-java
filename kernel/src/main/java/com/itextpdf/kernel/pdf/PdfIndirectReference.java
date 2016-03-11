@@ -195,6 +195,12 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         if (checkState(OriginalObjectStream)) {
             states.append("OriginalObjectStream; ");
         }
+        if (checkState(ForbidRelease)) {
+            states.append("ForbidRelease; ");
+        }
+        if (checkState(ReadOnly)) {
+            states.append("ReadOnly; ");
+        }
         return java.lang.String.format("%d %d R%s", getObjNumber(), getGenNumber(), states.substring(0, states.length() - 1));
     }
 

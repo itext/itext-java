@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 
 import java.io.IOException;
@@ -311,7 +312,7 @@ abstract public class PdfObject {
         // In case ForbidRelease flag is set, release will not be performed.
         if (checkState(ForbidRelease)) {
             Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn("ForbidRelease flag is set and release is called. Releasing will not be performed.");
+            logger.warn(LogMessageConstant.FORBID_RELEASE_IS_SET);
         } else {
             if (indirectReference != null && indirectReference.getReader() != null
                     && !indirectReference.checkState(Flushed)) {

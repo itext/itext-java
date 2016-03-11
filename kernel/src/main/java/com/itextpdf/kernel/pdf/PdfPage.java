@@ -308,7 +308,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Flushes page and it's content stream. If <code>flushXObjects</code> is true the images and FormXObjects
+     * Flushes page and its content stream. If <code>flushXObjects</code> is true the images and FormXObjects
      * associated with this page will also be flushed.
      * <br>
      * For notes about tag structure flushing see {@link PdfPage#flush() PdfPage#flush() method}.

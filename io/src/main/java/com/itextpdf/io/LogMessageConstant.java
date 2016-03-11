@@ -23,6 +23,11 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String FORBID_RELEASE_IS_SET = "ForbidRelease flag is set and release is called. Releasing will not be performed.";
+
+    /**
+     * Log message.
+     */
     public static final String IMAGE_HAS_AMBIGUOUS_SCALE = "The image cannot be auto scaled and scaled by a certain parameter simultaneously";
 
     /**
