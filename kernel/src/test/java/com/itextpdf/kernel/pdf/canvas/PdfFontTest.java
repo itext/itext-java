@@ -1,8 +1,6 @@
 package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontFactory;
@@ -10,6 +8,7 @@ import com.itextpdf.io.font.TrueTypeCollection;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.Utilities;
 import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -25,10 +24,10 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -1233,6 +1232,32 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    public void testNotoFont() throws IOException, InterruptedException {
+        String filename = destinationFolder + "testNotoFont.pdf";
+        String cmpFilename = sourceFolder + "cmp_testNotoFont.pdf";
+
+        String japanese = "\u713C";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H", true);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText(japanese)
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+
+    @Test
     @Ignore("Invalid subset")
     public void NotoSansCJKjpTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "NotoSansCJKjpTest.pdf";
@@ -1242,8 +1267,8 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(writer);
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
-        //font.setSubset(false);
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf"/*"san.otf"*/, "Identity-H");
+        // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .setFillColor(DeviceRgb.GREEN)
