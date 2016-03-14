@@ -635,6 +635,7 @@ public class PdfReader implements Closeable {
         if (filter.equals(PdfName.Standard)) {
             if (rValue == 5) {
                 ownerPasswordUsed = decrypt.readKey(enc, password);
+                decrypt.documentID = documentID;
                 pValue = decrypt.getPermissions();
             } else {
                 //check by owner password

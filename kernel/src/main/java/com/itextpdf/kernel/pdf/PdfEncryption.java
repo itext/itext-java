@@ -56,16 +56,6 @@ public class PdfEncryption {
     private byte[] mkey = new byte[0];
 
     /**
-     * Work area to prepare the object/generation bytes
-     */
-    private byte[] extra = new byte[5];
-
-    /**
-     * The message digest algorithm MD5
-     */
-    private MessageDigest md5;
-
-    /**
      * The encryption key for the owner
      */
     private byte[] ownerKey = new byte[32];
@@ -73,34 +63,45 @@ public class PdfEncryption {
     /**
      * The encryption key for the user
      */
-    byte[] userKey = new byte[32];
+    protected byte[] userKey = new byte[32];
 
     private byte[] oeKey;
     private byte[] ueKey;
     private byte[] perms;
 
-    /**
-     * The public key security handler for certificate encryption
-     */
-    protected PdfPublicKeySecurityHandler publicKeyHandler = null;
-
     private long permissions;
 
     byte[] documentID;
 
-    private static long seq = System.currentTimeMillis();
-
     private int revision;
-
-
-    private ARCFOUREncryption arcfour = new ARCFOUREncryption();
 
     /**
      * The generic key length. It may be 40 or 128.
      */
     private int keyLength;
 
+
+    /**
+     * The public key security handler for certificate encryption
+     */
+    protected PdfPublicKeySecurityHandler publicKeyHandler = null;
+
+    /**
+     * Work area to prepare the object/generation bytes
+     */
+    byte extra[] = new byte[5];
+
+    /**
+     * The message digest algorithm MD5
+     */
+    MessageDigest md5;
+
+
+    private ARCFOUREncryption arcfour = new ARCFOUREncryption();
+
     private boolean encryptMetadata;
+
+    static long seq = System.currentTimeMillis();
 
     /**
      * Indicates if the encryption is only necessary for embedded files.
@@ -134,6 +135,16 @@ public class PdfEncryption {
         encryptMetadata = enc.encryptMetadata;
         embeddedFilesOnly = enc.embeddedFilesOnly;
         publicKeyHandler = enc.publicKeyHandler;
+
+        if (enc.ueKey != null) {
+            ueKey = enc.ueKey.clone();
+        }
+        if (enc.oeKey != null) {
+            oeKey = enc.oeKey.clone();
+        }
+        if (enc.perms != null) {
+            perms = enc.perms.clone();
+        }
     }
 
     public void setCryptoMode(int mode, int kl) {
@@ -189,110 +200,6 @@ public class PdfEncryption {
      */
     public boolean isEmbeddedFilesOnly() {
         return embeddedFilesOnly;
-    }
-
-    /**
-     */
-    private byte[] padPassword(byte userPassword[]) {
-        byte userPad[] = new byte[32];
-        if (userPassword == null) {
-            System.arraycopy(pad, 0, userPad, 0, 32);
-        } else {
-            System.arraycopy(userPassword, 0, userPad, 0, Math.min(
-                    userPassword.length, 32));
-            if (userPassword.length < 32)
-                System.arraycopy(pad, 0, userPad, userPassword.length,
-                        32 - userPassword.length);
-        }
-
-        return userPad;
-    }
-
-    /**
-     */
-    private byte[] computeOwnerKey(byte userPad[], byte ownerPad[]) {
-        byte ownerKey[] = new byte[32];
-        byte digest[] = md5.digest(ownerPad);
-        if (revision == StandardEncryption128 || revision == Aes128) {
-            byte mkey[] = new byte[keyLength / 8];
-            // only use for the input as many bit as the key consists of
-            for (int k = 0; k < 50; ++k) {
-                md5.update(digest, 0, mkey.length);
-                System.arraycopy(md5.digest(), 0, digest, 0, mkey.length);
-            }
-            System.arraycopy(userPad, 0, ownerKey, 0, 32);
-            for (int i = 0; i < 20; ++i) {
-                for (int j = 0; j < mkey.length; ++j)
-                    mkey[j] = (byte) (digest[j] ^ i);
-                arcfour.prepareARCFOURKey(mkey);
-                arcfour.encryptARCFOUR(ownerKey);
-            }
-        } else {
-            arcfour.prepareARCFOURKey(digest, 0, 5);
-            arcfour.encryptARCFOUR(userPad, ownerKey);
-        }
-        return ownerKey;
-    }
-
-    /**
-     * ownerKey, documentID must be setup
-     */
-    private void setupGlobalEncryptionKey(byte[] documentID, byte userPad[],
-                                          byte ownerKey[], long permissions) {
-        this.documentID = documentID;
-        this.ownerKey = ownerKey;
-        this.permissions = permissions;
-        // use variable keylength
-        mkey = new byte[keyLength / 8];
-
-        // fixed by ujihara in order to follow PDF reference
-        md5.reset();
-        md5.update(userPad);
-        md5.update(ownerKey);
-
-        byte ext[] = new byte[4];
-        ext[0] = (byte) permissions;
-        ext[1] = (byte) (permissions >> 8);
-        ext[2] = (byte) (permissions >> 16);
-        ext[3] = (byte) (permissions >> 24);
-        md5.update(ext, 0, 4);
-        if (documentID != null)
-            md5.update(documentID);
-        if (!encryptMetadata)
-            md5.update(metadataPad);
-
-        byte digest[] = new byte[mkey.length];
-        System.arraycopy(md5.digest(), 0, digest, 0, mkey.length);
-        // only use the really needed bits as input for the hash
-        if (revision == StandardEncryption128 || revision == Aes128) {
-            for (int k = 0; k < 50; ++k)
-                System.arraycopy(md5.digest(digest), 0, digest, 0, mkey.length);
-        }
-
-        System.arraycopy(digest, 0, mkey, 0, mkey.length);
-    }
-
-    /**
-     * mkey must be setup
-     */
-    // use the revision to choose the setup method
-    private void setupUserKey() {
-        if (revision == StandardEncryption128 || revision == Aes128) {
-            md5.update(pad);
-            byte[] digest = md5.digest(documentID);
-            System.arraycopy(digest, 0, userKey, 0, 16);
-            for (int k = 16; k < 32; ++k)
-                userKey[k] = 0;
-            for (int i = 0; i < 20; ++i) {
-                for (int j = 0; j < mkey.length; ++j)
-                    digest[j] = (byte) (mkey[j] ^ i);
-                arcfour.prepareARCFOURKey(digest, 0, mkey.length);
-                arcfour.encryptARCFOUR(userKey, 0, 16);
-            }
-        } else {
-            arcfour.prepareARCFOURKey(mkey);
-            arcfour.encryptARCFOUR(pad, userKey);
-        }
     }
 
     // gets keylength and revision and uses revision to choose the initial values
@@ -372,11 +279,6 @@ public class PdfEncryption {
         }
     }
 
-    private static final int VALIDATION_SALT_OFFSET = 32;
-    private static final int KEY_SALT_OFFSET = 40;
-    private static final int SALT_LENGHT = 8;
-    private static final int OU_LENGHT = 48;
-
     public boolean readKey(PdfDictionary enc, byte[] password) {
         try {
             if (password == null)
@@ -386,6 +288,17 @@ public class PdfEncryption {
             byte[] oeValue = enc.getAsString(PdfName.OE).getIsoBytes();
             byte[] ueValue = enc.getAsString(PdfName.UE).getIsoBytes();
             byte[] perms = enc.getAsString(PdfName.Perms).getIsoBytes();
+            PdfNumber pValue = (PdfNumber) enc.get(PdfName.P);
+
+            this.oeKey = oeValue;
+            this.ueKey = ueValue;
+            this.perms = perms;
+
+            this.ownerKey = oValue;
+            this.userKey = uValue;
+
+            this.permissions = pValue.getLongValue();
+
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password, 0, Math.min(password.length, 127));
             md.update(oValue, VALIDATION_SALT_OFFSET, SALT_LENGHT);
@@ -426,15 +339,6 @@ public class PdfEncryption {
         }
     }
 
-    private static boolean compareArray(byte[] a, byte[] b, int len) {
-        for (int k = 0; k < len; ++k) {
-            if (a[k] != b[k]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static byte[] createDocumentId() {
         MessageDigest md5;
         try {
@@ -455,31 +359,6 @@ public class PdfEncryption {
                                     byte ownerKey[], long permissions) {
         setupByUserPad(documentID, padPassword(userPassword), ownerKey,
                 permissions);
-    }
-
-    /**
-     */
-    private void setupByUserPad(byte[] documentID, byte userPad[],
-                                byte ownerKey[], long permissions) {
-        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions);
-        setupUserKey();
-    }
-
-    /**
-     */
-    public void setupByOwnerPassword(byte[] documentID, byte[] ownerPassword,
-                                     byte[] userKey, byte[] ownerKey, long permissions) {
-        setupByOwnerPad(documentID, padPassword(ownerPassword), userKey,
-                ownerKey, permissions);
-    }
-
-    private void setupByOwnerPad(byte[] documentID, byte[] ownerPad,
-                                 byte[] userKey, byte[] ownerKey, long permissions) {
-        byte userPad[] = computeOwnerKey(ownerKey, ownerPad);
-        // userPad will be set in this.ownerKey
-        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions); // step
-        // 3
-        setupUserKey();
     }
 
     public void setKey(byte[] key) {
@@ -746,5 +625,148 @@ public class PdfEncryption {
             return userPassword;
         }
         return userPad;
+    }
+
+    /**
+     */
+    private byte[] padPassword(byte userPassword[]) {
+        byte userPad[] = new byte[32];
+        if (userPassword == null) {
+            System.arraycopy(pad, 0, userPad, 0, 32);
+        } else {
+            System.arraycopy(userPassword, 0, userPad, 0, Math.min(
+                    userPassword.length, 32));
+            if (userPassword.length < 32)
+                System.arraycopy(pad, 0, userPad, userPassword.length,
+                        32 - userPassword.length);
+        }
+
+        return userPad;
+    }
+
+    /**
+     */
+    private byte[] computeOwnerKey(byte userPad[], byte ownerPad[]) {
+        byte ownerKey[] = new byte[32];
+        byte digest[] = md5.digest(ownerPad);
+        if (revision == StandardEncryption128 || revision == Aes128) {
+            byte mkey[] = new byte[keyLength / 8];
+            // only use for the input as many bit as the key consists of
+            for (int k = 0; k < 50; ++k) {
+                md5.update(digest, 0, mkey.length);
+                System.arraycopy(md5.digest(), 0, digest, 0, mkey.length);
+            }
+            System.arraycopy(userPad, 0, ownerKey, 0, 32);
+            for (int i = 0; i < 20; ++i) {
+                for (int j = 0; j < mkey.length; ++j)
+                    mkey[j] = (byte) (digest[j] ^ i);
+                arcfour.prepareARCFOURKey(mkey);
+                arcfour.encryptARCFOUR(ownerKey);
+            }
+        } else {
+            arcfour.prepareARCFOURKey(digest, 0, 5);
+            arcfour.encryptARCFOUR(userPad, ownerKey);
+        }
+        return ownerKey;
+    }
+
+    /**
+     * ownerKey, documentID must be setup
+     */
+    private void setupGlobalEncryptionKey(byte[] documentID, byte userPad[],
+                                          byte ownerKey[], long permissions) {
+        this.documentID = documentID;
+        this.ownerKey = ownerKey;
+        this.permissions = permissions;
+        // use variable keylength
+        mkey = new byte[keyLength / 8];
+
+        // fixed by ujihara in order to follow PDF reference
+        md5.reset();
+        md5.update(userPad);
+        md5.update(ownerKey);
+
+        byte ext[] = new byte[4];
+        ext[0] = (byte) permissions;
+        ext[1] = (byte) (permissions >> 8);
+        ext[2] = (byte) (permissions >> 16);
+        ext[3] = (byte) (permissions >> 24);
+        md5.update(ext, 0, 4);
+        if (documentID != null)
+            md5.update(documentID);
+        if (!encryptMetadata)
+            md5.update(metadataPad);
+
+        byte digest[] = new byte[mkey.length];
+        System.arraycopy(md5.digest(), 0, digest, 0, mkey.length);
+        // only use the really needed bits as input for the hash
+        if (revision == StandardEncryption128 || revision == Aes128) {
+            for (int k = 0; k < 50; ++k)
+                System.arraycopy(md5.digest(digest), 0, digest, 0, mkey.length);
+        }
+
+        System.arraycopy(digest, 0, mkey, 0, mkey.length);
+    }
+
+    /**
+     * mkey must be setup
+     */
+    // use the revision to choose the setup method
+    private void setupUserKey() {
+        if (revision == StandardEncryption128 || revision == Aes128) {
+            md5.update(pad);
+            byte[] digest = md5.digest(documentID);
+            System.arraycopy(digest, 0, userKey, 0, 16);
+            for (int k = 16; k < 32; ++k)
+                userKey[k] = 0;
+            for (int i = 0; i < 20; ++i) {
+                for (int j = 0; j < mkey.length; ++j)
+                    digest[j] = (byte) (mkey[j] ^ i);
+                arcfour.prepareARCFOURKey(digest, 0, mkey.length);
+                arcfour.encryptARCFOUR(userKey, 0, 16);
+            }
+        } else {
+            arcfour.prepareARCFOURKey(mkey);
+            arcfour.encryptARCFOUR(pad, userKey);
+        }
+    }
+
+    private static final int VALIDATION_SALT_OFFSET = 32;
+    private static final int KEY_SALT_OFFSET = 40;
+    private static final int SALT_LENGHT = 8;
+    private static final int OU_LENGHT = 48;
+
+    private static boolean compareArray(byte[] a, byte[] b, int len) {
+        for (int k = 0; k < len; ++k) {
+            if (a[k] != b[k]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     */
+    private void setupByUserPad(byte[] documentID, byte userPad[],
+                                byte ownerKey[], long permissions) {
+        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions);
+        setupUserKey();
+    }
+
+    /**
+     */
+    public void setupByOwnerPassword(byte[] documentID, byte[] ownerPassword,
+                                     byte[] userKey, byte[] ownerKey, long permissions) {
+        setupByOwnerPad(documentID, padPassword(ownerPassword), userKey,
+                ownerKey, permissions);
+    }
+
+    private void setupByOwnerPad(byte[] documentID, byte[] ownerPad,
+                                 byte[] userKey, byte[] ownerKey, long permissions) {
+        byte userPad[] = computeOwnerKey(ownerKey, ownerPad);
+        // userPad will be set in this.ownerKey
+        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions); // step
+        // 3
+        setupUserKey();
     }
 }
