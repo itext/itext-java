@@ -105,4 +105,8 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
         }
     }
 
+    public boolean isEmpty() {
+        return 0 == childElements.size();
+    }
+
 }
