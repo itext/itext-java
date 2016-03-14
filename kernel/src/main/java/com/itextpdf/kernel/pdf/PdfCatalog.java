@@ -364,6 +364,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Indicates if the catalog has any outlines
+     * @return {@code true}, if there are outlines and {@code false} otherwise.
+     */
+    boolean hasOutlines() {
+        return getPdfObject().containsKey(PdfName.Outlines);
+    }
+
+    /**
      * This method removes all outlines associated with a given page
      *
      * @param page
@@ -373,10 +381,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().getWriter() == null) {
             return;
         }
-        getOutlines(false);
-        if (!pagesWithOutlines.isEmpty()) {
-            for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject())) {
-                outline.removeOutline();
+        if (hasOutlines()) {
+            getOutlines(false);
+            if (!pagesWithOutlines.isEmpty()) {
+                for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject())) {
+                    outline.removeOutline();
+                }
             }
         }
     }

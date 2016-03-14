@@ -1161,11 +1161,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * indicates if the document has any outlines
-     * @return
+     * Indicates if the document has any outlines
+     * @return {@code true}, if there are outlines and {@code false} otherwise.
      */
     public boolean hasOutlines() {
-        return catalog.getPdfObject().containsKey(PdfName.Outlines);
+        return catalog.hasOutlines();
     }
 
     /**

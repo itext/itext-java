@@ -127,7 +127,6 @@ public class Document extends RootElement<Document> {
      * Do not use when you have set {@link #immediateFlush} to <code>true</code>.
      */
     public void relayout() {
-
         if (immediateFlush) {
             throw new IllegalStateException("Operation not supported with immediate flush");
         }

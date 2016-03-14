@@ -26,15 +26,6 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -49,12 +40,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -284,7 +285,6 @@ public class CompareTool {
         System.out.flush();
         return message;
     }
-
 
     public String compareTagStructures(String outPdf, String cmpPdf) throws IOException, ParserConfigurationException, SAXException {
         System.out.print("[itext] INFO  Comparing tag structures......");
@@ -573,12 +573,11 @@ public class CompareTool {
                 equalPages.add(i);
         }
 
-
-        compareCatalogEntry(outDocument, cmpDocument, compareResult, PdfName.StructTreeRoot);
-        compareCatalogEntry(outDocument, cmpDocument, compareResult, PdfName.OCProperties);
-        compareCatalogEntry(outDocument, cmpDocument, compareResult, PdfName.Names);
-        compareCatalogEntry(outDocument, cmpDocument, compareResult, PdfName.AcroForm);
-
+        ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
+                outDocument.getCatalog().getPdfObject().getIndirectReference());
+        Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Pages, PdfName.Metadata));
+        compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
+                catalogPath, compareResult, ignoredCatalogEntries);
 
         outDocument.close();
         cmpDocument.close();
@@ -604,14 +603,6 @@ public class CompareTool {
                 return "Compare by content fails. No visual differences";
             return message;
         }
-    }
-
-    private void compareCatalogEntry(PdfDocument outDocument, PdfDocument cmpDocument, CompareResult compareResult, PdfName entryName) throws IOException {
-        PdfObject outEntry = outDocument.getCatalog().getPdfObject().get(entryName);
-        PdfObject cmpEntry = cmpDocument.getCatalog().getPdfObject().get(entryName);
-        PdfIndirectReference cmpStructTreeRef = cmpEntry == null ? null : cmpEntry.getIndirectReference();
-        PdfIndirectReference outStructTreeRef = outEntry == null ? null : outEntry.getIndirectReference();
-        compareObjects(outEntry, cmpEntry, new ObjectPath(cmpStructTreeRef, outStructTreeRef), compareResult);
     }
 
     private void loadPagesFromReader(PdfDocument doc, List<PdfDictionary> pages, List<PdfIndirectReference> pagesRef) {
@@ -640,8 +631,11 @@ public class CompareTool {
         return true;
     }
 
-
     private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult) throws IOException {
+        return compareDictionariesExtended(outDict, cmpDict, currentPath, compareResult, null);
+    }
+
+    private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult, Set<PdfName> excludedKeys) throws IOException {
         if (cmpDict != null && outDict == null || outDict != null && cmpDict == null) {
             compareResult.addError(currentPath, "One of the dictionaries is null, the other is not.");
             return false;
@@ -651,6 +645,9 @@ public class CompareTool {
         Set<PdfName> mergedKeys = new TreeSet<>(cmpDict.keySet());
         mergedKeys.addAll(outDict.keySet());
         for (PdfName key : mergedKeys) {
+            if (excludedKeys != null && excludedKeys.contains(key)) {
+                continue;
+            }
             if (key.equals(PdfName.Parent) || key.equals(PdfName.P) || key.equals(PdfName.ModDate)) continue;
             if (outDict.isStream() && cmpDict.isStream() && (key.equals(PdfName.Filter) || key.equals(PdfName.Length))) continue;
             if (key.equals(PdfName.BaseFont) || key.equals(PdfName.FontName)) {
