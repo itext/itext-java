@@ -228,7 +228,7 @@ public class TextRenderer extends AbstractRenderer {
                                     String pos = hyph.getPostHyphenText(i);
                                     float currentHyphenationChoicePreTextWidth =
                                             getGlyphLineWidth(convertToGlyphLine(pre + hyphenationConfig.getHyphenSymbol()), fontSize, hScale, characterSpacing, wordSpacing);
-                                    if (currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
+                                    if (currentLineWidth + currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
                                         hyphenationApplied = true;
 
                                         if (line.start == -1) {
