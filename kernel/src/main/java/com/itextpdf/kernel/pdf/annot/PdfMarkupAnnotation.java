@@ -166,11 +166,11 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.Name, name);
     }
 
-    public <T extends PdfMarkupAnnotation> T setDrawnAfter(PdfString appearanceString) {
+    public <T extends PdfMarkupAnnotation> T setDefaultAppearance(PdfString appearanceString) {
         return put(PdfName.DA, appearanceString);
     }
 
-    public PdfString getDrawnAfter() {
+    public PdfString getDefaultAppearance() {
         return getPdfObject().getAsString(PdfName.DA);
     }
 

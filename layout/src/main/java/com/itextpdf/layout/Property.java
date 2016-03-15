@@ -33,6 +33,7 @@ public enum Property {
     FONT_KERNING(true),
     FONT_SCRIPT(true),
     FONT_SIZE(true),
+    FULL,
     FORCED_PLACEMENT(true),
     HEIGHT,
     HORIZONTAL_ALIGNMENT,
