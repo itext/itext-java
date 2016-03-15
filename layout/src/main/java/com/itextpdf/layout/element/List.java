@@ -99,7 +99,7 @@ public class List extends BlockElement<List> {
     /**
      * Sets the list numbering type to be used. This will create an ordered list,
      * i.e. every {@link ListItem} will have a unique prefix.
-     * @param listNumberingType the {@link Property#ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}s.
+     * @param listNumberingType the {@link Property.ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}s.
      * @return this list.
      */
     public List setListSymbol(Property.ListNumberingType listNumberingType) {
@@ -109,6 +109,20 @@ public class List extends BlockElement<List> {
             postSymbolText = " ";
         }
         return setProperty(Property.LIST_SYMBOL, listNumberingType);
+    }
+
+    /**
+     * A specialized enum containing alignment properties for list symbols.
+     * {@link Property.ListSymbolAlignment#LEFT} means that the items will be aligned as follows:
+     * 9.  Item 9
+     * 10. Item 10
+     *
+     * Whereas {@link Property.ListSymbolAlignment#RIGHT} means the items will be aligned as follows:
+     *  9. Item 9
+     * 10. Item 10
+     */
+    public List setListSymbolAlignment(Property.ListSymbolAlignment alignment) {
+        return setProperty(Property.LIST_SYMBOL_ALIGNMENT, alignment);
     }
 
     /**

@@ -226,4 +226,25 @@ public class ListTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void listItemAlignmentTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listItemAlignmentTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemAlignmentTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+
+        Document document = new Document(pdfDocument);
+
+        List list = new List(Property.ListNumberingType.DECIMAL).setListSymbolAlignment(Property.ListSymbolAlignment.LEFT);
+
+        for (int i = 1; i <= 30; i++) {
+            list.add("Item #" + i);
+        }
+
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 }

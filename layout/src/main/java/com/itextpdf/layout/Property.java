@@ -49,6 +49,7 @@ public enum Property {
     LINE_DRAWER,
     LIST_START,
     LIST_SYMBOL(true),
+    LIST_SYMBOL_ALIGNMENT,
     LIST_SYMBOL_INDENT,
     MARGIN_BOTTOM,
     MARGIN_LEFT,
@@ -148,6 +149,20 @@ public enum Property {
         JUSTIFIED_ALL
     }
 
+    /**
+     * A specialized enum containing alignment properties for list symbols.
+     * {@link ListSymbolAlignment#LEFT} means that the items will be aligned as follows:
+     * 9.  Item 9
+     * 10. Item 10
+     *
+     * Whereas {@link ListSymbolAlignment#RIGHT} means the items will be aligned as follows:
+     *  9. Item 9
+     * 10. Item 10
+     */
+    public enum ListSymbolAlignment {
+        RIGHT,
+        LEFT
+    }
 
     /**
      * A specialized class holding configurable properties related to an {@link
