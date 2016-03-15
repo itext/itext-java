@@ -34,7 +34,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "emptyDocument.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor("Alexander Chingarev").
+        pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
         PdfPage page = pdfDoc.addNewPage();
@@ -599,7 +599,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
-        document.getInfo().setAuthor("Alexander Chingarev").
+        document.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
         PdfPage page = document.addNewPage();
@@ -614,7 +614,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 //        com.itextpdf.text.pdf.PdfReader reader = new PdfReader(filename);
 //        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
 //        Assert.assertNotNull(reader.getPageN(1));
-//        String date = reader.getInfo().get("CreationDate");
+//        String date = reader.getDocumentInfo().get("CreationDate");
 //        Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
 //        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
 //        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";

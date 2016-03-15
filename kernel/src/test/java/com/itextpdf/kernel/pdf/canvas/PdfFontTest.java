@@ -67,7 +67,7 @@ public class PdfFontTest extends ExtendedITextTest {
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         PdfFont type0Font = PdfFontFactory.createFont("KozMinPro-Regular", "UniJIS-UCS2-H");
@@ -98,7 +98,7 @@ public class PdfFontTest extends ExtendedITextTest {
         FileOutputStream fos = new FileOutputStream(filename);
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fos).setCompressionLevel(PdfOutputStream.NO_COMPRESSION));
 
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         PdfFont type0Font = PdfFontFactory.createFont("STSong-Light", "UniGB-UTF16-H");
@@ -130,7 +130,7 @@ public class PdfFontTest extends ExtendedITextTest {
         FileOutputStream fos = new FileOutputStream(filename);
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fos).setCompressionLevel(PdfOutputStream.NO_COMPRESSION));
 
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         PdfFont type0Font = PdfFontFactory.createFont("STSong-Light", "Adobe-GB1-4");
@@ -163,7 +163,7 @@ public class PdfFontTest extends ExtendedITextTest {
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         String font = fontsFolder + "abserif4_5.ttf";
@@ -262,7 +262,7 @@ public class PdfFontTest extends ExtendedITextTest {
         symbol233.lineTo(5, 340);
         symbol233.stroke();
 
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -294,7 +294,7 @@ public class PdfFontTest extends ExtendedITextTest {
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -327,7 +327,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -363,7 +363,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -398,7 +398,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -433,7 +433,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         PdfFont pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb"),
@@ -480,7 +480,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         PdfFont pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb"), "FontSpecific", true);
@@ -512,7 +512,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         String font = fontsFolder + "abserif4_5.ttf";
@@ -563,7 +563,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -618,7 +618,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -676,7 +676,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
 
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -718,7 +718,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument outputPdfDoc = new PdfDocument(pdfWriter);
 
 
-        outputPdfDoc.getInfo().setAuthor(author).
+        outputPdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -762,7 +762,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -799,7 +799,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
@@ -836,7 +836,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -903,7 +903,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -942,7 +942,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -980,7 +980,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -1015,7 +1015,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -1053,7 +1053,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         PdfFont pdfType1Font = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
@@ -1186,7 +1186,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
 
@@ -1267,23 +1267,23 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(writer);
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf"/*"san.otf"*/, "Identity-H");
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
         // font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.saveState()
-                .setFillColor(DeviceRgb.GREEN)
-                .beginText()
-                .moveText(36, 700)
-                .setFontAndSize(font, 12)
-                .showText(pangramme)
-                .endText()
-                .restoreState();
+//        canvas.saveState()
+//                .setFillColor(DeviceRgb.GREEN)
+//                .beginText()
+//                .moveText(36, 700)
+//                .setFontAndSize(font, 12)
+//                .showText(pangramme)
+//                .endText()
+//                .restoreState();
         canvas.saveState()
                 .setFillColor(DeviceRgb.RED)
                 .beginText()
                 .moveText(36, 680)
                 .setFontAndSize(font, 12)
-                .showText("1234567890")
+                .showText("1")
                 .endText()
                 .restoreState();
 

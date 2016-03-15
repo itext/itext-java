@@ -233,8 +233,8 @@ public class CompareTool {
         String message = null;
         PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf, outPass));
         PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf, cmpPass));
-        String[] cmpInfo = convertInfo(cmpDocument.getInfo());
-        String[] outInfo = convertInfo(outDocument.getInfo());
+        String[] cmpInfo = convertInfo(cmpDocument.getDocumentInfo());
+        String[] outInfo = convertInfo(outDocument.getDocumentInfo());
         for (int i = 0; i < cmpInfo.length; ++i) {
             if (!cmpInfo[i].equals(outInfo[i])){
                 message = "Document info fail";

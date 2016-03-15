@@ -98,7 +98,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         writer.setCompressionLevel(compression);
         writer.setEncryption(USER, OWNER, permissions, encryptionType);
         PdfDocument document = new PdfDocument(writer);
-        document.getInfo().setAuthor(author).
+        document.getDocumentInfo().setAuthor(author).
                 setCreator(creator);
         document.setXmpMetadata();
         PdfPage page = document.addNewPage();
@@ -128,8 +128,8 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         PdfPage page = document.getPage(1);
 
         Assert.assertTrue("Expected content: \n" + pageContent, new String(page.getStreamBytes(0)).contains(pageContent));
-        Assert.assertEquals("Encrypted author", author, document.getInfo().getAuthor());
-        Assert.assertEquals("Encrypted creator", creator, document.getInfo().getCreator());
+        Assert.assertEquals("Encrypted author", author, document.getDocumentInfo().getAuthor());
+        Assert.assertEquals("Encrypted creator", creator, document.getDocumentInfo().getCreator());
 
         document.close();
     }

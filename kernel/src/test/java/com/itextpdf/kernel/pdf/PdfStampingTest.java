@@ -36,7 +36,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        pdfDoc1.getInfo().setAuthor("Alexander Chingarev").
+        pdfDoc1.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
         PdfPage page1 = pdfDoc1.addNewPage();
@@ -49,7 +49,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         FileOutputStream fos2 = new FileOutputStream(filename2);
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
-        pdfDoc2.getInfo().setCreator("iText 7").setTitle("Empty iText 7 Document");
+        pdfDoc2.getDocumentInfo().setCreator("iText 7").setTitle("Empty iText 7 Document");
         pdfDoc2.close();
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
@@ -71,7 +71,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         assertEquals("iText 7", creator.toString());
         byte[] bytes = document.getPage(1).getContentBytes();
         assertEquals("%Hello World\n", new String(bytes));
-        String date = document.getInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
+        String date = document.getDocumentInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
         Calendar cl = PdfDate.decode(date);
         long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
         String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
@@ -843,7 +843,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         FileOutputStream fos1 = new FileOutputStream(filename1);
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        pdfDoc1.getInfo().setAuthor("Alexander Chingarev").
+        pdfDoc1.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
         PdfPage page1 = pdfDoc1.addNewPage();
@@ -856,8 +856,8 @@ public class PdfStampingTest extends ExtendedITextTest {
         FileOutputStream fos2 = new FileOutputStream(filename2);
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2, true);
-        pdfDoc2.getInfo().setCreator("iText 7").setTitle("Empty iText 7 Document");
-        pdfDoc2.getInfo().setModified();
+        pdfDoc2.getDocumentInfo().setCreator("iText 7").setTitle("Empty iText 7 Document");
+        pdfDoc2.getDocumentInfo().setModified();
         pdfDoc2.close();
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
@@ -879,7 +879,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         assertEquals("iText 7", creator.toString());
         byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         assertEquals("%Hello World\n", new String(bytes));
-        String date = pdfDocument.getInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
+        String date = pdfDocument.getDocumentInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
         Calendar cl = PdfDate.decode(date);
         long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
         String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";

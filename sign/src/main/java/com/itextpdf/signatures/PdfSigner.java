@@ -796,8 +796,9 @@ public class PdfSigner {
             exclusionLocations.put(key, lit);
             cryptoDictionary.put(key, lit);
         }
-        if (certificationLevel > 0)
+        if (certificationLevel > 0) {
             addDocMDP(cryptoDictionary);
+        }
         if (fieldLock != null)
             addFieldMDP(cryptoDictionary, fieldLock);
         if (signatureEvent != null)

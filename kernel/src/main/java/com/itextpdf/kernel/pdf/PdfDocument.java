@@ -507,7 +507,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      *
      * @return document information dictionary.
      */
-    public PdfDocumentInfo getInfo() {
+    public PdfDocumentInfo getDocumentInfo() {
         checkClosingStatus();
         return info;
     }
@@ -617,16 +617,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     public PdfCatalog getCatalog() {
         checkClosingStatus();
         return catalog;
-    }
-
-    /**
-     * Gets PDF document info.
-     *
-     * @return PDF document info.
-     */
-    public PdfDocumentInfo getDocumentInfo() {
-        checkClosingStatus();
-        return info;
     }
 
     /**

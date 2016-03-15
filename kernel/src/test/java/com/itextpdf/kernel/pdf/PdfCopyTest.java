@@ -58,7 +58,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copying1_1.pdf");
         PdfWriter writer1 = new PdfWriter(fos1);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        pdfDoc1.getInfo().setAuthor("Alexander Chingarev").
+        pdfDoc1.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
         pdfDoc1.getCatalog().getPdfObject().put(new PdfName("a"), new PdfName("b").makeIndirect(pdfDoc1));
@@ -74,7 +74,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
         pdfDoc2.addNewPage();
-        pdfDoc2.getInfo().getPdfObject().put(new PdfName("a"), pdfDoc1.getCatalog().getPdfObject().get(new PdfName("a")).copyTo(pdfDoc2));
+        pdfDoc2.getDocumentInfo().getPdfObject().put(new PdfName("a"), pdfDoc1.getCatalog().getPdfObject().get(new PdfName("a")).copyTo(pdfDoc2));
         pdfDoc2.close();
         pdfDoc1.close();
 
