@@ -12,6 +12,8 @@ import java.util.List;
  */
 abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper implements IPdfStructElem {
 
+    private static final long serialVersionUID = -6453225665665080940L;
+	
     protected PdfStructElem parent;
 
     public PdfMcr(T pdfObject, PdfStructElem parent) {

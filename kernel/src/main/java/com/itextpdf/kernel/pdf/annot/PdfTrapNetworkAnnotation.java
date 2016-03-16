@@ -14,7 +14,9 @@ import java.util.List;
 
 public class PdfTrapNetworkAnnotation extends PdfAnnotation {
 
-    public PdfTrapNetworkAnnotation(Rectangle rect, PdfFormXObject appearanceStream) {
+    private static final long serialVersionUID = 5118904991630303608L;
+
+	public PdfTrapNetworkAnnotation(Rectangle rect, PdfFormXObject appearanceStream) {
         super(rect);
         if (appearanceStream.getProcessColorModel() == null) {
             throw new PdfException("Process color model must be set in appearance stream for Trap Network annotation!");

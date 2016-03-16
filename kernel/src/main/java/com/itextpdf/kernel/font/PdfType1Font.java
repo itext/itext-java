@@ -11,7 +11,9 @@ import com.itextpdf.kernel.pdf.PdfStream;
 
 public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
-    PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
+    private static final long serialVersionUID = 7009919945291639441L;
+
+	PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
         super();
         setFontProgram(type1Font);
         this.embedded = embedded && !type1Font.isBuiltInFont();

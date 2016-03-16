@@ -8,7 +8,8 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
 
-    /**
+    private static final long serialVersionUID = -7835504102518915220L;
+	/**
      * Text justification options.
      */
     public static final int LeftJustified = 0;

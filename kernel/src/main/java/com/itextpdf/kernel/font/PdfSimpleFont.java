@@ -21,7 +21,9 @@ import java.util.List;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
-    protected T fontProgram;
+    private static final long serialVersionUID = -4942318223894676176L;
+
+	protected T fontProgram;
 
     protected FontEncoding fontEncoding;
 

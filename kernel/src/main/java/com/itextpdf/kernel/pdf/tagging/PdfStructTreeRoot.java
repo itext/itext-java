@@ -22,7 +22,9 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
-    protected Map<PdfDictionary, Integer> objRefs = new HashMap<>();
+    private static final long serialVersionUID = 2168384302241193868L;
+
+	protected Map<PdfDictionary, Integer> objRefs = new HashMap<>();
 
     /**
      * Represents parentTree in structTreeRoot. It contains only those entries that belong to the already flushed pages.

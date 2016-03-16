@@ -24,7 +24,9 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
-    PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
+    private static final long serialVersionUID = -8152778382960290571L;
+
+	PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
         super();
         setFontProgram(ttf);
         this.embedded = embedded;

@@ -14,6 +14,8 @@ abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrappe
 
     public static final Set<PdfName> directColorSpaces = new HashSet(Arrays.asList(PdfName.DeviceGray, PdfName.DeviceRGB, PdfName.DeviceCMYK, PdfName.Pattern));
 
+    private static final long serialVersionUID = 2553991039779429813L;
+
     public PdfColorSpace(T pdfObject) {
         super(pdfObject);
     }

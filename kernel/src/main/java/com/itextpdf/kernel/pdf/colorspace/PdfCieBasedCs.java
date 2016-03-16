@@ -14,7 +14,9 @@ import java.util.ArrayList;
 
 abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
 
-    @Override
+    private static final long serialVersionUID = 7803780450619297557L;
+
+	@Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
     }
@@ -24,7 +26,10 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class CalGray extends PdfCieBasedCs {
-        public CalGray(PdfArray pdfObject) {
+        
+    	private static final long serialVersionUID = -3974274460820215173L;
+
+		public CalGray(PdfArray pdfObject) {
             super(pdfObject);
         }
 
@@ -60,7 +65,10 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class CalRgb extends PdfCieBasedCs {
-        public CalRgb(PdfArray pdfObject) {
+        
+    	private static final long serialVersionUID = -2926074370411556426L;
+
+		public CalRgb(PdfArray pdfObject) {
             super(pdfObject);
         }
 
@@ -98,7 +106,10 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class Lab extends PdfCieBasedCs {
-        public Lab(PdfArray pdfObject) {
+        
+    	private static final long serialVersionUID = 7067722970343880433L;
+
+		public Lab(PdfArray pdfObject) {
             super(pdfObject);
         }
 
@@ -134,7 +145,10 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class IccBased extends PdfCieBasedCs {
-        public IccBased(PdfArray pdfObject) {
+        
+    	private static final long serialVersionUID = 3265273715107224067L;
+
+		public IccBased(PdfArray pdfObject) {
             super(pdfObject);
         }
 

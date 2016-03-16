@@ -7,7 +7,9 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfWin(PdfDictionary pdfObject) {
+    private static final long serialVersionUID = -3057526285278565800L;
+
+	public PdfWin(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

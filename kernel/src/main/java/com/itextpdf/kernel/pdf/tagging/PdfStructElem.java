@@ -24,6 +24,8 @@ import java.util.Set;
  */
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
+    private static final long serialVersionUID = 7204356181229674005L;
+	
     static public int Unknown = 0;
     static public int Grouping = 1;
     static public int BlockLevel = 2;

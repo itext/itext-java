@@ -7,7 +7,9 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfCaretAnnotation extends PdfMarkupAnnotation {
 
-    public PdfCaretAnnotation(Rectangle rect) {
+    private static final long serialVersionUID = 1542932123958535397L;
+
+	public PdfCaretAnnotation(Rectangle rect) {
         super(rect);
     }
 

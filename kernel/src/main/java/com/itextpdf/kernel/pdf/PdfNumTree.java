@@ -3,7 +3,10 @@ package com.itextpdf.kernel.pdf;
 import java.io.Serializable;
 import java.util.*;
 
-public class PdfNumTree implements Serializable{
+public class PdfNumTree implements Serializable {
+
+    private static final long serialVersionUID = 2636796232945164670L;
+
     private static final int NodeSize = 40;
 
     private PdfCatalog catalog;

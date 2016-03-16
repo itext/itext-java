@@ -8,7 +8,9 @@ import java.util.Map;
 
 public class PdfNamedDestination extends PdfDestination<PdfName> {
 
-    public PdfNamedDestination(String name) {
+    private static final long serialVersionUID = 5285810255133676086L;
+
+	public PdfNamedDestination(String name) {
         this(new PdfName(name));
     }
 

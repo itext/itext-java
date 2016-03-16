@@ -7,7 +7,9 @@ import com.itextpdf.kernel.pdf.PdfPage;
 
 public class PdfMcrDictionary extends PdfMcr<PdfDictionary> {
 
-    public PdfMcrDictionary(PdfDictionary pdfObject, PdfStructElem parent) {
+    private static final long serialVersionUID = 3562443854685749324L;
+
+	public PdfMcrDictionary(PdfDictionary pdfObject, PdfStructElem parent) {
         super(pdfObject, parent);
     }
 

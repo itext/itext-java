@@ -21,6 +21,8 @@ import java.util.List;
 
 public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final long serialVersionUID = -3945353673249710860L;
+	
     /**
      * a possible submitvalue
      */

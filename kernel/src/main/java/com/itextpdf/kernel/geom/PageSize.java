@@ -1,6 +1,10 @@
 package com.itextpdf.kernel.geom;
 
+import java.io.Serializable;
+
 public class PageSize extends Rectangle {
+
+    private static final long serialVersionUID = 485375591249386160L;
 
     static public PageSize A0 = new PageSize(2384, 3370);
     static public PageSize A1 = new PageSize(1684, 2384);

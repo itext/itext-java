@@ -10,6 +10,9 @@ import java.util.List;
  * Algorithm for construction {@see PdfPages} tree
  */
 class PdfPagesTree implements Serializable{
+
+    private static final long serialVersionUID = 4189501363348296036L;
+
     private final int leafSize = 10;
 
     private List<PdfDictionary> pageRefs;

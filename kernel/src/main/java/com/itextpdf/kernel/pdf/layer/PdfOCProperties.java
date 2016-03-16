@@ -27,7 +27,8 @@ import java.util.TreeMap;
  */
 public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
-    private List<PdfLayer> layers = new ArrayList<>();
+    private static final long serialVersionUID = 1137977454824741350L;
+	private List<PdfLayer> layers = new ArrayList<>();
 
     /**
      * Creates a new PdfOCProperties instance.

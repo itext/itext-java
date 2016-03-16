@@ -17,8 +17,14 @@ import org.slf4j.LoggerFactory;
 
 public class PdfWriter extends PdfOutputStream implements Serializable{
 
+<<<<<<< HEAD
     private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
     private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
+=======
+    private static final byte[] obj = getIsoBytes(" obj\n");
+    private static final byte[] endobj = getIsoBytes("\nendobj\n");
+    private static final long serialVersionUID = -6875544505477707103L;
+>>>>>>> Added serialVersionUID field in Serializable objects of module kernel.
     private HashMap<ByteStore, PdfIndirectReference> streamMap = new HashMap<>();
     private final HashMap<Integer, Integer> serialized = new HashMap<>();
 

@@ -10,7 +10,9 @@ import java.util.Set;
 
 public class PdfAnnotationAppearance extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfAnnotationAppearance(PdfDictionary pdfObject) {
+    private static final long serialVersionUID = 6989855812604521083L;
+
+	public PdfAnnotationAppearance(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

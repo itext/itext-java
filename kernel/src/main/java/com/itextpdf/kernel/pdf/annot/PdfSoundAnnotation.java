@@ -13,7 +13,9 @@ import java.io.InputStream;
 
 public class PdfSoundAnnotation extends PdfMarkupAnnotation {
 
-    /*
+    private static final long serialVersionUID = -2319779211858842136L;
+
+	/*
         There is a problem playing *.wav files via internal player in Acrobat.
         The first byte of the audio stream data should be deleted, then wav file will be played correctly.
         Otherwise it will be broken. Other supporting file types don't have such problem.

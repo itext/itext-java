@@ -5,6 +5,8 @@ import com.itextpdf.kernel.pdf.*;
 
 public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final long serialVersionUID = 4766153544105870238L;
+	
     /** A possible type of collection field. */
     public final static int TEXT = 0;
     /** A possible type of collection field. */

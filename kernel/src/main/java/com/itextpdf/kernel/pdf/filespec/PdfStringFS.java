@@ -4,7 +4,9 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfStringFS extends PdfFileSpec<PdfString> {
 
-    public PdfStringFS(String string) {
+    private static final long serialVersionUID = 3440302276954369264L;
+
+	public PdfStringFS(String string) {
         super(new PdfString(string));
     }
 

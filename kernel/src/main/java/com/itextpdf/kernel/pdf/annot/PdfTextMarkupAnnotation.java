@@ -7,7 +7,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
 
-    /**
+    private static final long serialVersionUID = 2189266742204503217L;
+	/**
      * Subtypes
      */
     public static final PdfName MarkupHighlight = PdfName.Highlight;

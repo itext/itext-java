@@ -9,6 +9,8 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 
 public class PdfLinkAnnotation extends PdfAnnotation {
 
+    private static final long serialVersionUID = 5795613340575331536L;
+	
     /**
      * Highlight modes.
      */

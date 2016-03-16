@@ -12,6 +12,9 @@ import java.util.TreeSet;
 
 class PdfXrefTable implements Serializable{
 
+    private static final long serialVersionUID = 4171655392492002944L;
+
+
     private static final int InitialCapacity = 32;
     private static final int MaxGeneration = 65535;
 

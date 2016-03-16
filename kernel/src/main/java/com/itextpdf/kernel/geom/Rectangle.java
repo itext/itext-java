@@ -6,6 +6,8 @@ import java.io.Serializable;
 
 public class Rectangle implements Cloneable, Serializable {
 
+    private static final long serialVersionUID = 8025677415569233446L;
+
     protected float x;
     protected float y;
     protected float width;

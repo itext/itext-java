@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
-    private PdfResources resources = null;
+    private static final long serialVersionUID = -952395541908379500L;
+	private PdfResources resources = null;
     private Integer mcid = null;
     private Integer structParents = null;
     PdfPages parentPages;

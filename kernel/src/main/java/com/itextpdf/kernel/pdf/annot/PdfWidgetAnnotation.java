@@ -10,7 +10,9 @@ import java.util.HashSet;
 
 public class PdfWidgetAnnotation extends PdfAnnotation {
 
-    public PdfWidgetAnnotation(Rectangle rect) {
+    private static final long serialVersionUID = 9013938639824707088L;
+
+	public PdfWidgetAnnotation(Rectangle rect) {
         super(rect);
     }
 

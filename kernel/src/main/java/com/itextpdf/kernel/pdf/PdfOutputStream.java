@@ -18,6 +18,8 @@ import java.util.zip.DeflaterOutputStream;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Serializable{
 
+    private static final long serialVersionUID = -548180479472231600L;
+
     //TODO review location and use of the constants
     /**
      * Type of encryption.

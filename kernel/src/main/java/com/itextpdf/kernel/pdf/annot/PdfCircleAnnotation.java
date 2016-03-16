@@ -6,7 +6,9 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 public class PdfCircleAnnotation extends PdfMarkupAnnotation {
 
-    public PdfCircleAnnotation(Rectangle rect) {
+    private static final long serialVersionUID = -4123774794612333746L;
+
+	public PdfCircleAnnotation(Rectangle rect) {
         super(rect);
     }
 

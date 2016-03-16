@@ -8,7 +8,9 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
 public class PdfRendition extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfRendition(PdfDictionary pdfObject) {
+    private static final long serialVersionUID = -726500192326824100L;
+
+	public PdfRendition(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

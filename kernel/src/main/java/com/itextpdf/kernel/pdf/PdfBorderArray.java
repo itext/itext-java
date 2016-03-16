@@ -2,7 +2,9 @@ package com.itextpdf.kernel.pdf;
 
 public class PdfBorderArray extends PdfObjectWrapper<PdfArray> {
 
-    public PdfBorderArray(float hRadius, float vRadius, float width) {
+    private static final long serialVersionUID = -4058970009483489460L;
+
+	public PdfBorderArray(float hRadius, float vRadius, float width) {
         this(hRadius, vRadius, width, null);
     }
 

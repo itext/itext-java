@@ -6,7 +6,9 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 public class PdfWatermarkAnnotation extends PdfAnnotation {
 
-    public PdfWatermarkAnnotation(Rectangle rect) {
+    private static final long serialVersionUID = -4490286782196827176L;
+
+	public PdfWatermarkAnnotation(Rectangle rect) {
         super(rect);
     }
 

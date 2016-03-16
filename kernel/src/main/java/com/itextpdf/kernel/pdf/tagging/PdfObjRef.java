@@ -7,7 +7,9 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
 public class PdfObjRef extends PdfMcr<PdfDictionary> {
 
-    public PdfObjRef(PdfDictionary pdfObject, PdfStructElem parent) {
+    private static final long serialVersionUID = 344098256404114906L;
+
+	public PdfObjRef(PdfDictionary pdfObject, PdfStructElem parent) {
         super(pdfObject, parent);
     }
 

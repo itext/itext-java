@@ -12,6 +12,9 @@ import java.util.Map;
  */
 public class EventDispatcher implements IEventDispatcher, Serializable {
 
+    private static final long serialVersionUID = -6701670578690210618L;
+
+
     protected Map<String, List<IEventHandler>> eventHandlers = new HashMap<>();
 
     @Override

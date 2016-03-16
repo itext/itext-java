@@ -6,6 +6,8 @@ import java.util.Arrays;
 
 public class PdfLiteral extends PdfPrimitiveObject {
 
+    private static final long serialVersionUID = -770215611509192403L;
+	
     private long position;
 
     public PdfLiteral(byte[] content) {

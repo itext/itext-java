@@ -14,7 +14,9 @@ import java.util.List;
 
 abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
-    public PdfSpecialCs(PdfArray pdfObject) {
+    private static final long serialVersionUID = -2725455900398492836L;
+
+	public PdfSpecialCs(PdfArray pdfObject) {
         super(pdfObject);
     }
 
@@ -24,7 +26,10 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class Indexed extends PdfSpecialCs {
-        public Indexed(PdfArray pdfObject) {
+        
+    	private static final long serialVersionUID = -1155418938167317916L;
+
+		public Indexed(PdfArray pdfObject) {
             super(pdfObject);
         }
 
@@ -58,7 +63,10 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class Separation extends PdfSpecialCs {
-        public Separation(PdfArray pdfObject) {
+        
+		private static final long serialVersionUID = 4259327393838350842L;
+
+		public Separation(PdfArray pdfObject) {
             super(pdfObject);
         }
 
@@ -104,6 +112,8 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     static public class DeviceN extends PdfSpecialCs {
 
+        private static final long serialVersionUID = 4051693146595260270L;
+		
         protected int numOfComponents = 0;
 
         public DeviceN(PdfArray pdfObject) {
@@ -156,7 +166,10 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class NChannel extends DeviceN {
-        public NChannel(PdfArray pdfObject) {
+        
+    	private static final long serialVersionUID = 5352964946869757972L;
+
+		public NChannel(PdfArray pdfObject) {
             super(pdfObject);
         }
 
@@ -181,7 +194,9 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     static public class Pattern extends PdfColorSpace<PdfObject> {
 
-        @Override
+        private static final long serialVersionUID = 8057478102447278706L;
+
+		@Override
         protected boolean isWrappedObjectMustBeIndirect() {
             return false;
         }
@@ -207,7 +222,9 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     static public class UncoloredTilingPattern extends Pattern {
 
-        @Override
+        private static final long serialVersionUID = -9030226298201261021L;
+
+		@Override
         protected boolean isWrappedObjectMustBeIndirect() {
             return true;
         }

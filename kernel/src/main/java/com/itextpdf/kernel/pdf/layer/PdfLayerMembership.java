@@ -26,7 +26,9 @@ import java.util.List;
  */
 public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implements PdfOCG {
 
-    /**
+    private static final long serialVersionUID = -597407628148657784L;
+
+	/**
      * Creates a new, empty membership layer.
      * @throws PdfException
      */

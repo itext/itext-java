@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 
 abstract public class PdfObject implements Serializable{
 
+    private static final long serialVersionUID = -3852543867469424720L;
+
+
     static public final byte Array = 1;
     static public final byte Boolean = 2;
     static public final byte Dictionary = 3;

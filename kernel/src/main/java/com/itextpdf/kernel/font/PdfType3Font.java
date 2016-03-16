@@ -25,7 +25,8 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
  */
 public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
 
-    private double[] fontMatrix = {0.001, 0, 0, 0.001, 0, 0};
+    private static final long serialVersionUID = 4940119184993066859L;
+	private double[] fontMatrix = {0.001, 0, 0, 0.001, 0, 0};
 
     /**
      * Creates a Type3 font.

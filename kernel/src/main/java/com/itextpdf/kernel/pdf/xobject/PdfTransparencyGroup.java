@@ -4,7 +4,9 @@ import com.itextpdf.kernel.pdf.*;
 
 public class PdfTransparencyGroup extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfTransparencyGroup() {
+    private static final long serialVersionUID = 753843601750097627L;
+
+	public PdfTransparencyGroup() {
         super(new PdfDictionary());
         put(PdfName.S, PdfName.Transparency);
     }

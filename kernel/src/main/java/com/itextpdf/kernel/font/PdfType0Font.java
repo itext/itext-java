@@ -42,7 +42,9 @@ import org.slf4j.LoggerFactory;
 
 public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
-    private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
+    private static final long serialVersionUID = -8033620300884193397L;
+
+	private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
 
     protected static final int CidFontType0 = 0;
     protected static final int CidFontType2 = 2;

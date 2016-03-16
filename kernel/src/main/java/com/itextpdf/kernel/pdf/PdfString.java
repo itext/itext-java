@@ -26,7 +26,9 @@ import java.nio.charset.Charset;
  */
 public class PdfString extends PdfPrimitiveObject {
 
-    private static String defaultCharset = "UTF-8";
+    private static final long serialVersionUID = 390789504287887010L;
+
+	private static String defaultCharset = "UTF-8";
 
     protected String value;
     protected String encoding;

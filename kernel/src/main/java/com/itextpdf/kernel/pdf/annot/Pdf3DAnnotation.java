@@ -5,7 +5,9 @@ import com.itextpdf.kernel.pdf.*;
 
 public class Pdf3DAnnotation extends PdfAnnotation {
 
-    public Pdf3DAnnotation(Rectangle rect, PdfObject artwork) {
+    private static final long serialVersionUID = 3823509772499230844L;
+
+	public Pdf3DAnnotation(Rectangle rect, PdfObject artwork) {
         super(rect);
         put(PdfName._3DD, artwork);
     }

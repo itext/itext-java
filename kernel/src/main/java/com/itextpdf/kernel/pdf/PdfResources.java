@@ -18,6 +18,9 @@ import java.util.TreeSet;
 
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
+    
+    private static final long serialVersionUID = 7160318458835945391L;
+	
     private static final String F = "F";
     private static final String Im = "Im";
     private static final String Fm = "Fm";

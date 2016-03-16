@@ -7,7 +7,9 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 public class PdfInkAnnotation extends PdfMarkupAnnotation {
 
-    public PdfInkAnnotation(Rectangle rect) {
+    private static final long serialVersionUID = 9110158515957708155L;
+
+	public PdfInkAnnotation(Rectangle rect) {
         super(rect);
     }
 

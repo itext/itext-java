@@ -23,7 +23,9 @@ import java.util.Map;
 
 public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
-    protected static final byte[] emptyBytes = new byte[0];
+    private static final long serialVersionUID = -7661159455613720321L;
+
+	protected static final byte[] emptyBytes = new byte[0];
 
     Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
 

@@ -6,7 +6,9 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 public class PdfRichMediaAnnotation extends PdfAnnotation {
 
-    public PdfRichMediaAnnotation(Rectangle rect) {
+    private static final long serialVersionUID = 5368329326723025646L;
+
+	public PdfRichMediaAnnotation(Rectangle rect) {
         super(rect);
     }
 

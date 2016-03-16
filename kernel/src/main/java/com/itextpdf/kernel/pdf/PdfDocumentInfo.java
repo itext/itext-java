@@ -6,7 +6,9 @@ import java.util.Map;
 
 public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+    private static final long serialVersionUID = -21957940280527123L;
+
+	public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject == null ? new PdfDictionary() : pdfObject);
         if (pdfDocument.getWriter() != null) {
             this.getPdfObject().makeIndirect(pdfDocument);

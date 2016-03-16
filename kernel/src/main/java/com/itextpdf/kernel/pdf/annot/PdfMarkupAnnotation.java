@@ -14,6 +14,8 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 abstract public class PdfMarkupAnnotation extends PdfAnnotation {
 
+    private static final long serialVersionUID = 239280278775576458L;
+	
     protected PdfAnnotation inReplyTo = null;
     protected PdfPopupAnnotation popup = null;
 

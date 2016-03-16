@@ -11,7 +11,9 @@ import java.io.InputStream;
 
 public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
 
-    public PdfFileSpec(T pdfObject) {
+    private static final long serialVersionUID = 126861971006090239L;
+
+	public PdfFileSpec(T pdfObject) {
         super(pdfObject);
     }
 

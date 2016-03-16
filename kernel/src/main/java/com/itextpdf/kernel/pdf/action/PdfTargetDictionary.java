@@ -4,7 +4,9 @@ import com.itextpdf.kernel.pdf.*;
 
 public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfTargetDictionary(PdfDictionary pdfObject) {
+    private static final long serialVersionUID = -5814265943827690509L;
+
+	public PdfTargetDictionary(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

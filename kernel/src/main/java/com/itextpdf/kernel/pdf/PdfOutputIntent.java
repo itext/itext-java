@@ -6,7 +6,9 @@ import java.io.InputStream;
 
 public class PdfOutputIntent extends PdfObjectWrapper<PdfDictionary> {
 
-    /**
+    private static final long serialVersionUID = -3814334679568337730L;
+
+	/**
      * Creates output intent dictionary. Null values are allowed to
      * suppress any key.
      * By default output intent subtype is GTS_PDFA1, use setter to change it.

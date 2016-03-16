@@ -2,7 +2,9 @@ package com.itextpdf.kernel.pdf;
 
 public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
-    public enum PdfViewerPreferencesConstants {
+    private static final long serialVersionUID = -6885879361985241602L;
+
+	public enum PdfViewerPreferencesConstants {
         /**
          * PageMode constants. Use them for NonFullScreenPageMode.
          */

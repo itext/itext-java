@@ -4,7 +4,8 @@ import com.itextpdf.io.source.ByteUtils;
 
 public class PdfNumber extends PdfPrimitiveObject {
 
-    protected static final byte Int = 1;
+    private static final long serialVersionUID = -250799718574024246L;
+	protected static final byte Int = 1;
     protected static final byte Double = 2;
 
     private double value;

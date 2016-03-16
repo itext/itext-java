@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfStream extends PdfDictionary {
 
+    private static final long serialVersionUID = -8259929152054328141L;
+	
     protected int compressionLevel;
     // Output stream associated with PDF stream.
     private PdfOutputStream outputStream;

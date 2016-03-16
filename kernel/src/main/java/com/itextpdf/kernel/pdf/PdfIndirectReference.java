@@ -2,7 +2,9 @@ package com.itextpdf.kernel.pdf;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
-    private static final int LengthOfIndirectsChain = 31;
+    private static final long serialVersionUID = -8293603068792908601L;
+
+	private static final int LengthOfIndirectsChain = 31;
 
     /**
      * Object number.

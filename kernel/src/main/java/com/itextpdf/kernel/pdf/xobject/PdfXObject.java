@@ -8,7 +8,9 @@ import com.itextpdf.kernel.pdf.layer.PdfOCG;
 
 public class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
-    public PdfXObject() {
+    private static final long serialVersionUID = -480702872582809954L;
+
+	public PdfXObject() {
         this(new PdfStream());
     }
 

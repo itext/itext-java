@@ -8,7 +8,8 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
 public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final PdfString TEMPACCESS = new PdfString("TEMPACCESS");
+    private static final long serialVersionUID = -7030377585169961523L;
+	private static final PdfString TEMPACCESS = new PdfString("TEMPACCESS");
 
     public PdfMediaClipData(PdfDictionary pdfObject) {
         super(pdfObject);

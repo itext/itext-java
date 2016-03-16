@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 public class PdfReader implements Closeable, Serializable {
 
+    private static final long serialVersionUID = -3584187443691964939L;
+
     protected static boolean correctStreamLength = true;
 
     protected PdfTokenizer tokens;

@@ -6,7 +6,9 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 public class PdfSquareAnnotation extends PdfMarkupAnnotation {
 
-    public PdfSquareAnnotation(Rectangle rect) {
+    private static final long serialVersionUID = 5577194318058336359L;
+
+	public PdfSquareAnnotation(Rectangle rect) {
         super(rect);
     }
 

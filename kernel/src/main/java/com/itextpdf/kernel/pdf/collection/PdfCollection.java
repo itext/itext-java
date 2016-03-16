@@ -4,6 +4,8 @@ import com.itextpdf.kernel.pdf.*;
 
 public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final long serialVersionUID = 5184499156015360355L;
+	
     /** A type of initial view */
     public static final int DETAILS = 0;
     /** A type of initial view */

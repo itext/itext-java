@@ -9,7 +9,9 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 
 public class PdfLineAnnotation extends PdfMarkupAnnotation {
 
-    public PdfLineAnnotation(Rectangle rect, float[] line) {
+    private static final long serialVersionUID = -6047928061827404283L;
+
+	public PdfLineAnnotation(Rectangle rect, float[] line) {
         super(rect);
         put(PdfName.L, new PdfArray(line));
     }

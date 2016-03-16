@@ -15,6 +15,8 @@ import java.util.ListIterator;
  */
 public class PdfArray extends PdfObject implements Collection<PdfObject> {
 
+    private static final long serialVersionUID = 1617495612878046869L;
+	
     private List<PdfObject> list;
 
     /**

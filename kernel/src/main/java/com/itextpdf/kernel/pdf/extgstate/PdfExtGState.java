@@ -10,6 +10,8 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final long serialVersionUID = 5205219918362853395L;
+	
     /**
      * Blend mode constants
      */

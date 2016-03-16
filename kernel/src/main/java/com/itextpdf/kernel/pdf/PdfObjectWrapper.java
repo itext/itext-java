@@ -6,6 +6,8 @@ import java.io.Serializable;
 
 public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializable{
 
+    private static final long serialVersionUID = 3516473712028588356L;
+
     private T pdfObject = null;
 
     public PdfObjectWrapper(T pdfObject) {

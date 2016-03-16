@@ -7,7 +7,9 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
-    /**
+    private static final long serialVersionUID = -9038993253308315792L;
+    
+	/**
      * Subtypes
      */
     public static final PdfName Polygon = PdfName.Polygon;
