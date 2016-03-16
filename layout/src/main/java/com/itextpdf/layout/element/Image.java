@@ -413,7 +413,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     private static com.itextpdf.io.image.Image checkImageType(com.itextpdf.io.image.Image image) {
         if (image instanceof WmfImage) {
-            throw new PdfException(PdfException.CannotCreatePdfStreamByInputStreamWithoutPdfDocument);
+            throw new PdfException(PdfException.CannotCreateLayoutImageByWmfImage);
         }
         return image;
     }
