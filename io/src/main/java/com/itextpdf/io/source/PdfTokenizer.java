@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 public class PdfTokenizer implements Closeable, Serializable {
 
+    private static final long serialVersionUID = -2949864233416670521L;
+
     public enum TokenType {
         Number,
         String,

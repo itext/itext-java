@@ -7,6 +7,9 @@ import java.io.Serializable;
 
 public class RandomAccessFileOrArray implements DataInput, Serializable {
 
+    private static final long serialVersionUID = -169314546265954851L;
+
+
     /**
      * When true the file access is not done through a memory mapped file. Use it if the file
      * is too big to be mapped in your address space.

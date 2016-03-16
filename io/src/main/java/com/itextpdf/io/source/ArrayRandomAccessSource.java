@@ -6,6 +6,9 @@ import java.io.Serializable;
  * A RandomAccessSource that is based on an underlying byte array
  */
 class ArrayRandomAccessSource implements RandomAccessSource, Serializable {
+
+    private static final long serialVersionUID = 8497059230517630513L;
+
     private byte[] array;
 
     public ArrayRandomAccessSource(byte[] array) {
