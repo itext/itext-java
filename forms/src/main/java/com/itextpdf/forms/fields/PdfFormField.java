@@ -427,7 +427,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
         field.drawMultiLineTextAppearance(rect, font, fontSize, value, xObject);
-//        PdfFormXObject xObject = field.drawMultiLineTextAppearance(rect, font, fontSize, value, new PdfResources());
         xObject.getResources().addFont(doc, font);
         annot.setNormalAppearance(xObject.getPdfObject());
 
@@ -484,7 +483,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
-        PdfFormField radio = new PdfFormField(annot, doc);
+        PdfFormField radio = new PdfButtonFormField(annot, doc);
+
         String name = radioGroup.getValue().toString().substring(1);
         if (name.equals(value)) {
             annot.setAppearanceState(new PdfName(value));

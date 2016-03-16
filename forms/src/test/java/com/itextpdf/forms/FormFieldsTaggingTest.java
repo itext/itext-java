@@ -112,7 +112,6 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
     /**
      * Form fields flattening in the tagged document (writer mode).
-     * TODO bug with forms flattening: radiobuttons are not flattened
      */
     @Test
     public void formFieldTaggingTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {

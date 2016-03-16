@@ -540,6 +540,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
         Set<PdfFormField> fields;
         if (fieldsForFlattening.isEmpty()) {
+            this.fields.clear();
             fields = new LinkedHashSet<>(getFormFields().values());
         } else {
             fields = new LinkedHashSet<>();
