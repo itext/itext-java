@@ -212,15 +212,6 @@ public class PdfString extends PdfPrimitiveObject {
         }
     }
 
-    /**
-     * Gets bytes of String-value without considering encoding.
-     *
-     * @return byte array
-     */
-    protected byte[] getIsoBytes() {
-        return com.itextpdf.io.source.OutputStream.getIsoBytes(getValue());
-    }
-
     protected void generateValue() {
         assert content != null : "No byte[] content to generate value";
         value = convertBytesToString(PdfTokenizer.decodeStringContent(content, hexWriting));
@@ -239,7 +230,7 @@ public class PdfString extends PdfPrimitiveObject {
             assert content != null : "No byte content to decrypt value";
             byte[] decodedContent = PdfTokenizer.decodeStringContent(content, hexWriting);
             content = null;
-            decrypt.setHashKey(decryptInfoNum, decryptInfoGen);
+            decrypt.setHashKeyForNextObject(decryptInfoNum, decryptInfoGen);
             value = new String(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
         }
         return this;

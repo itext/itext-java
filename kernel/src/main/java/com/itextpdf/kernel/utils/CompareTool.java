@@ -90,6 +90,8 @@ public class CompareTool {
     private int compareByContentErrorsLimit = 1;
     private boolean generateCompareByContentXmlReport = false;
 
+    private boolean encryptionCompareEnabled = false;
+
 
     public CompareTool() {
         gsExec = System.getProperty("gsExec");
@@ -107,9 +109,14 @@ public class CompareTool {
         return this;
     }
 
-    public void setGenerateCompareByContentXmlReport(boolean generateCompareByContentXmlReport) {
+    public CompareTool setGenerateCompareByContentXmlReport(boolean generateCompareByContentXmlReport) {
         this.generateCompareByContentXmlReport = generateCompareByContentXmlReport;
-        this.generateCompareByContentXmlReport = generateCompareByContentXmlReport;
+        return this;
+    }
+
+    public CompareTool enableEncryptionCompare() {
+        this.encryptionCompareEnabled = true;
+        return this;
     }
 
 
@@ -579,6 +586,10 @@ public class CompareTool {
         compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
                 catalogPath, compareResult, ignoredCatalogEntries);
 
+        if (encryptionCompareEnabled) {
+            compareDocumentsEncryption(outDocument, cmpDocument, compareResult);
+        }
+
         outDocument.close();
         cmpDocument.close();
 
@@ -611,6 +622,29 @@ public class CompareTool {
             pages.add(doc.getCatalog().getPage(i + 1).getPdfObject());
             pagesRef.add(pages.get(i).getIndirectReference());
         }
+    }
+
+    private void compareDocumentsEncryption(PdfDocument outDocument, PdfDocument cmpDocument, CompareResult compareResult) throws IOException {
+        PdfDictionary outEncrypt = outDocument.getTrailer().getAsDictionary(PdfName.Encrypt);
+        PdfDictionary cmpEncrypt = cmpDocument.getTrailer().getAsDictionary(PdfName.Encrypt);
+
+        if (outEncrypt == null && cmpEncrypt == null) {
+            return;
+        }
+
+        TrailerPath trailerPath = new TrailerPath(cmpDocument, outDocument);
+        if (outEncrypt == null) {
+            compareResult.addError(trailerPath, "Expected encrypted document.");
+            return;
+        }
+        if (cmpEncrypt == null) {
+            compareResult.addError(trailerPath, "Expected not encrypted document.");
+            return;
+        }
+
+        Set<PdfName> ignoredEncryptEntries = new LinkedHashSet<>(Arrays.asList(PdfName.O, PdfName.U, PdfName.OE, PdfName.UE, PdfName.Perms));
+        ObjectPath objectPath = new ObjectPath(outEncrypt.getIndirectReference(), cmpEncrypt.getIndirectReference());
+        compareDictionariesExtended(outEncrypt, cmpEncrypt, objectPath, compareResult, ignoredEncryptEntries);
     }
 
     private boolean compareStreams(InputStream is1, InputStream is2) throws IOException {
@@ -1273,7 +1307,7 @@ public class CompareTool {
             }
         }
 
-        private abstract class PathItem {
+        protected abstract class PathItem {
             protected abstract Node toXmlNode(Document document);
         }
 
@@ -1363,5 +1397,70 @@ public class CompareTool {
                 return element;
             }
         }
+    }
+
+    private class TrailerPath extends ObjectPath {
+        private PdfDocument outDocument;
+        private PdfDocument cmpDocument;
+
+        public TrailerPath(PdfDocument cmpDoc, PdfDocument outDoc) {
+            outDocument = outDoc;
+            cmpDocument = cmpDoc;
+        }
+
+
+        public TrailerPath(PdfDocument cmpDoc, PdfDocument outDoc, Stack<PathItem> path) {
+            this.outDocument = outDoc;
+            this.cmpDocument = cmpDoc;
+            this.path = path;
+        }
+
+        @Override
+        public Node toXmlNode(Document document) {
+            Element element = document.createElement("path");
+            Element baseNode = document.createElement("base");
+            baseNode.setAttribute("cmp", "trailer");
+            baseNode.setAttribute("out", "trailer");
+            element.appendChild(baseNode);
+            for (PathItem pathItem : path) {
+                element.appendChild(pathItem.toXmlNode(document));
+            }
+            return element;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Base cmp object: trailer. Base out object: trailer");
+            for (PathItem pathItem : path) {
+                sb.append("\n");
+                sb.append(pathItem.toString());
+            }
+            return sb.toString();
+        }
+
+        @Override
+        public int hashCode() {
+            int hashCode = outDocument.hashCode() * 31 + cmpDocument.hashCode();
+            for (PathItem pathItem : path) {
+                hashCode *= 31;
+                hashCode += pathItem.hashCode();
+            }
+            return hashCode;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof TrailerPath
+                    && outDocument.equals(((TrailerPath) obj).outDocument)
+                    && cmpDocument.equals(((TrailerPath) obj).cmpDocument)
+                    && path.equals(((ObjectPath) obj).path);
+        }
+
+        @Override
+        protected Object clone() {
+            return new TrailerPath(cmpDocument, outDocument, (Stack<PathItem>) path.clone());
+        }
+
     }
 }

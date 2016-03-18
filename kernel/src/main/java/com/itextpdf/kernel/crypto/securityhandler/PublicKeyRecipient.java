@@ -1,8 +1,8 @@
-package com.itextpdf.kernel.pdf;
+package com.itextpdf.kernel.crypto.securityhandler;
 
 import java.security.cert.Certificate;
 
-public class PdfPublicKeyRecipient {
+public class PublicKeyRecipient {
 
     private Certificate certificate = null;
 
@@ -10,7 +10,7 @@ public class PdfPublicKeyRecipient {
 
     protected byte[] cms = null;
 
-    public PdfPublicKeyRecipient(Certificate certificate, int permission) {
+    public PublicKeyRecipient(Certificate certificate, int permission) {
         this.certificate = certificate;
         this.permission = permission;
     }

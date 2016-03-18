@@ -677,8 +677,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
                     writer.flushModifiedWaitingObjects();
                     if (writer.crypto != null) {
-                        assert reader.getCryptoRef() != null : "Conflict with source encryption";
-                        crypto = reader.getCryptoRef();
+                        assert reader.getCryptoDict() == writer.crypto.getPdfObject() : "Conflict with source encryption";
+                        crypto = reader.getCryptoDict();
                     }
                 } else {
                     if (structTreeRoot != null) {
@@ -723,8 +723,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
                 byte[] originalFileID = null;
                 if (crypto == null && writer.crypto != null) {
-                    originalFileID = writer.crypto.documentID;
-                    crypto = writer.crypto.getEncryptionDictionary();
+                    originalFileID = writer.crypto.getDocumentId();
+                    crypto = writer.crypto.getPdfObject();
                     crypto.makeIndirect(this);
                     // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
                     // NOTE. No need in reverting, because it is the last operation with the document.
@@ -740,7 +740,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         isModified = true;
                     }
                     if (originalFileID == null) {
-                        originalFileID = PdfEncryption.createDocumentId();
+                        originalFileID = PdfEncryption.generateNewDocumentId();
                     }
                 }
                 // if originalFIleID comes from crypto, it means that no need in checking modified state.
@@ -1261,7 +1261,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             }
             if (writer != null) {
                 if (reader != null && !reader.isOpenedWithFullPermission()) {
-                    throw new BadPasswordException("pdfreader.not.opened.with.owner.password");
+                    throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
                 }
                 writer.document = this;
                 if (reader == null) {
@@ -1288,6 +1288,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 writer.write((byte) '\n');
                 //TODO log if full compression differs
                 writer.setFullCompression(reader.hasXrefStm());
+
+                if (writer.crypto != null) {
+                    // TODO log that writer crypto will be ignored
+                }
+                writer.crypto = reader.decrypt;
             } else if (writer != null) {
                 if (newPdfVersion != null) {
                     pdfVersion = newPdfVersion;
@@ -1468,5 +1473,4 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         }
         names.put(treeType, treeRoot);
     }
-
 }

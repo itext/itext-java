@@ -71,7 +71,7 @@ public class OcspClientBouncyCastle implements OcspClient {
 
         gen.addRequest(id);
 
-        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(new DEROctetString(PdfEncryption.createDocumentId()).getEncoded()));
+        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(new DEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded()));
         gen.setRequestExtensions(new Extensions(new Extension[]{ext}));
 
         return gen.build();

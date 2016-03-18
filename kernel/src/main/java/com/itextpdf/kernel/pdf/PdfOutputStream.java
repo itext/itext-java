@@ -189,9 +189,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     public void setEncryption(final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) {
         if (document != null)
             throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
-        crypto = new PdfEncryption();
-        crypto.setCryptoMode(encryptionType, 0);
-        crypto.setupAllKeys(userPassword, ownerPassword, permissions);
+        crypto = new PdfEncryption(userPassword, ownerPassword, permissions, encryptionType, PdfEncryption.generateNewDocumentId());
     }
 
     /**
@@ -211,14 +209,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     public void setEncryption(final Certificate[] certs, final int[] permissions, final int encryptionType) {
         if (document != null)
             throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
-        crypto = new PdfEncryption();
-        if (certs != null) {
-            for (int i = 0; i < certs.length; i++) {
-                crypto.addRecipient(certs[i], permissions[i]);
-            }
-        }
-        crypto.setCryptoMode(encryptionType, 0);
-        crypto.getEncryptionDictionary();
+        crypto = new PdfEncryption(certs, permissions, encryptionType);
     }
 
     PdfEncryption getEncryption() {

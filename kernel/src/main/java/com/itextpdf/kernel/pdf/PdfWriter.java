@@ -254,7 +254,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void writeToBody(PdfObject object) throws IOException {
         if (crypto != null) {
-            crypto.setHashKey(object.getIndirectReference().getObjNumber(), object.getIndirectReference().getGenNumber());
+            crypto.setHashKeyForNextObject(object.getIndirectReference().getObjNumber(), object.getIndirectReference().getGenNumber());
         }
         writeInteger(object.getIndirectReference().getObjNumber()).
                 writeSpace().

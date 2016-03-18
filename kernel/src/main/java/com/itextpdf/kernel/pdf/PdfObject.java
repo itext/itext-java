@@ -2,6 +2,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.crypto.BadPasswordException;
 
 import java.io.IOException;
 
@@ -250,8 +251,13 @@ abstract public class PdfObject {
         if (document == null)
             throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
 
-        if ((indirectReference != null && indirectReference.getWriter() != null) || checkState(MustBeIndirect)) {
-            throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
+        if (indirectReference != null) {
+            if (indirectReference.getWriter() != null || checkState(MustBeIndirect)) {
+                throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
+            }
+            if (!indirectReference.getReader().isOpenedWithFullPermission()) {
+                throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
+            }
         }
 
         return processCopying(document, allowDuplicating);
@@ -267,19 +273,19 @@ abstract public class PdfObject {
      * This two cases are distinguished by the state of <code>document</code> parameter:
      * the second case is processed if <code>document</code> is <code>null</code>.
      *
-     * @param document if not null: document to copy object to; otherwise indicates that object is to be cloned.
+     * @param documentTo if not null: document to copy object to; otherwise indicates that object is to be cloned.
      * @param allowDuplicating indicates if to allow copy objects which already have been copied.
      *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
      */
-    protected <T extends PdfObject> T processCopying(PdfDocument document, boolean allowDuplicating) {
-        if (document != null) {
+    protected <T extends PdfObject> T processCopying(PdfDocument documentTo, boolean allowDuplicating) {
+        if (documentTo != null) {
             //copyTo case
-            PdfWriter writer = document.getWriter();
+            PdfWriter writer = documentTo.getWriter();
             if (writer == null)
                 throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
-            return (T) writer.copyObject(this, document, allowDuplicating);
+            return (T) writer.copyObject(this, documentTo, allowDuplicating);
 
         } else {
             //clone case
