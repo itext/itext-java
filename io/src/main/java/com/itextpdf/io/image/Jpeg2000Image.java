@@ -47,7 +47,7 @@ public class Jpeg2000Image extends Image {
         }
     }
 
-    protected Parameters params;
+    protected Parameters parameters;
 
     protected Jpeg2000Image(URL url) {
         super(url, JPEG2000);
@@ -65,6 +65,6 @@ public class Jpeg2000Image extends Image {
     }
 
     public Jpeg2000Image.Parameters getParameters() {
-        return params;
+        return parameters;
     }
 }

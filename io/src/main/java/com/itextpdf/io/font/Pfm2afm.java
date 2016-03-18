@@ -147,34 +147,34 @@ import java.io.PrintWriter;
  * Converts a PFM file into an AFM file.
  */
 public final class Pfm2afm {
-    private RandomAccessFileOrArray in;
-    private PrintWriter out;
+    private RandomAccessFileOrArray input;
+    private PrintWriter output;
     
     /** Creates a new instance of Pfm2afm */
-    private Pfm2afm(RandomAccessFileOrArray in, OutputStream out) throws java.io.IOException {
-        this.in = in;
-        this.out = new PrintWriter(new OutputStreamWriter(out, "ISO-8859-1"));
+    private Pfm2afm(RandomAccessFileOrArray input, OutputStream output) throws java.io.IOException {
+        this.input = input;
+        this.output = new PrintWriter(new OutputStreamWriter(output, "ISO-8859-1"));
     }
     
     /**
      * Converts a PFM file into an AFM file.
-     * @param in the PFM file
-     * @param out the AFM file
+     * @param input the PFM file
+     * @param output the AFM file
      * @throws java.io.IOException on error
      */    
-    public static void convert(RandomAccessFileOrArray in, OutputStream out) throws java.io.IOException {
-        Pfm2afm p = new Pfm2afm(in, out);
+    public static void convert(RandomAccessFileOrArray input, OutputStream output) throws java.io.IOException {
+        Pfm2afm p = new Pfm2afm(input, output);
         p.openpfm();
         p.putheader();
         p.putchartab();
         p.putkerntab();
         p.puttrailer();
-        p.out.flush();
+        p.output.flush();
     }
     
     private String readString(int n) throws java.io.IOException {
         byte b[] = new byte[n];
-        in.readFully(b);
+        input.readFully(b);
         int k;
         for (k = 0; k < b.length; ++k) {
             if (b[k] == 0)
@@ -186,7 +186,7 @@ public final class Pfm2afm {
     private String readString() throws java.io.IOException {
         StringBuilder buf = new StringBuilder();
         while (true) {
-            int c = in.read();
+            int c = input.read();
             if (c <= 0)
                 break;
             buf.append((char)c);
@@ -195,130 +195,130 @@ public final class Pfm2afm {
     }
     
     private void outval(int n) {
-        out.print(' ');
-        out.print(n);
+        output.print(' ');
+        output.print(n);
     }
     
     /*
      *  Output a character entry
      */
     private void  outchar(int code, int width, String name) {
-        out.print("C ");
+        output.print("C ");
         outval(code);
-        out.print(" ; WX ");
+        output.print(" ; WX ");
         outval(width);
         if (name != null) {
-            out.print(" ; N ");
-            out.print(name);
+            output.print(" ; N ");
+            output.print(name);
         }
-        out.print(" ;\n");
+        output.print(" ;\n");
     }
     
     private void openpfm() throws java.io.IOException {
-        in.seek(0);
-        vers = in.readShortLE();
-        h_len = in.readIntLE();
+        input.seek(0);
+        vers = input.readShortLE();
+        h_len = input.readIntLE();
         copyright = readString(60);
-        type = in.readShortLE();
-        points = in.readShortLE();
-        verres = in.readShortLE();
-        horres = in.readShortLE();
-        ascent = in.readShortLE();
-        intleading = in.readShortLE();
-        extleading = in.readShortLE();
-        italic = (byte)in.read();
-        uline = (byte)in.read();
-        overs = (byte)in.read();
-        weight = in.readShortLE();
-        charset = (byte)in.read();
-        pixwidth = in.readShortLE();
-        pixheight = in.readShortLE();
-        kind = (byte)in.read();
-        avgwidth = in.readShortLE();
-        maxwidth = in.readShortLE();
-        firstchar = in.read();
-        lastchar = in.read();
-        defchar = (byte)in.read();
-        brkchar = (byte)in.read();
-        widthby = in.readShortLE();
-        device = in.readIntLE();
-        face = in.readIntLE();
-        bits = in.readIntLE();
-        bitoff = in.readIntLE();
-        extlen = in.readShortLE();
-        psext = in.readIntLE();
-        chartab = in.readIntLE();
-        res1 = in.readIntLE();
-        kernpairs = in.readIntLE();
-        res2 = in.readIntLE();
-        fontname = in.readIntLE();
-        if (h_len != in.length() || extlen != 30 || fontname < 75 || fontname > 512) {
+        type = input.readShortLE();
+        points = input.readShortLE();
+        verres = input.readShortLE();
+        horres = input.readShortLE();
+        ascent = input.readShortLE();
+        intleading = input.readShortLE();
+        extleading = input.readShortLE();
+        italic = (byte)input.read();
+        uline = (byte)input.read();
+        overs = (byte)input.read();
+        weight = input.readShortLE();
+        charset = (byte)input.read();
+        pixwidth = input.readShortLE();
+        pixheight = input.readShortLE();
+        kind = (byte)input.read();
+        avgwidth = input.readShortLE();
+        maxwidth = input.readShortLE();
+        firstchar = input.read();
+        lastchar = input.read();
+        defchar = (byte)input.read();
+        brkchar = (byte)input.read();
+        widthby = input.readShortLE();
+        device = input.readIntLE();
+        face = input.readIntLE();
+        bits = input.readIntLE();
+        bitoff = input.readIntLE();
+        extlen = input.readShortLE();
+        psext = input.readIntLE();
+        chartab = input.readIntLE();
+        res1 = input.readIntLE();
+        kernpairs = input.readIntLE();
+        res2 = input.readIntLE();
+        fontname = input.readIntLE();
+        if (h_len != input.length() || extlen != 30 || fontname < 75 || fontname > 512) {
             throw new java.io.IOException("not.a.valid.pfm.file");
         }
-        in.seek(psext + 14);
-        capheight = in.readShortLE();
-        xheight = in.readShortLE();
-        ascender = in.readShortLE();
-        descender = in.readShortLE();
+        input.seek(psext + 14);
+        capheight = input.readShortLE();
+        xheight = input.readShortLE();
+        ascender = input.readShortLE();
+        descender = input.readShortLE();
     }
     
     private void putheader() throws java.io.IOException {
-        out.print("StartFontMetrics 2.0\n");
+        output.print("StartFontMetrics 2.0\n");
         if (copyright.length() > 0)
-            out.print("Comment " + copyright + '\n');
-        out.print("FontName ");
-        in.seek(fontname);
+            output.print("Comment " + copyright + '\n');
+        output.print("FontName ");
+        input.seek(fontname);
         String fname = readString();
-        out.print(fname);
-        out.print("\nEncodingScheme ");
+        output.print(fname);
+        output.print("\nEncodingScheme ");
         if (charset != 0) {
-            out.print("FontSpecific\n");
+            output.print("FontSpecific\n");
         } else {
-            out.print("AdobeStandardEncoding\n");
+            output.print("AdobeStandardEncoding\n");
         }
         /*
          * The .pfm is missing full name, so construct from font name by
          * changing the hyphen to a space.  This actually works in a lot
          * of cases.
          */
-        out.print("FullName " + fname.replace('-', ' '));
+        output.print("FullName " + fname.replace('-', ' '));
         if (face != 0) {
-            in.seek(face);
-            out.print("\nFamilyName " + readString());
+            input.seek(face);
+            output.print("\nFamilyName " + readString());
         }
 
-        out.print("\nWeight ");
+        output.print("\nWeight ");
         if (weight > 475 || fname.toLowerCase().contains("bold")) {
-            out.print("Bold");
+            output.print("Bold");
         } else if ((weight < 325 && weight != 0) || fname.toLowerCase().contains("light")) {
-            out.print("Light");
+            output.print("Light");
         } else if (fname.toLowerCase().contains("black")) {
-            out.print("Black");
+            output.print("Black");
         } else {
-            out.print("Medium");
+            output.print("Medium");
         }
 
-        out.print("\nItalicAngle ");
+        output.print("\nItalicAngle ");
         if (italic != 0 || fname.toLowerCase().contains("italic")) {
-            out.print("-12.00");
+            output.print("-12.00");
             /* this is a typical value; something else may work better for a
                specific font */
         } else {
-            out.print("0");
+            output.print("0");
         }
 
         /*
          *  The mono flag in the pfm actually indicates whether there is a
          *  table of font widths, not if they are all the same.
          */
-        out.print("\nIsFixedPitch ");
+        output.print("\nIsFixedPitch ");
         if ((kind & 1) == 0 ||                  /* Flag for mono */
             avgwidth == maxwidth ) {  /* Avg width = max width */
-            out.print("true");
+            output.print("true");
             isMono = true;
         }
         else {
-            out.print("false");
+            output.print("false");
             isMono = false;
         }
 
@@ -327,7 +327,7 @@ public final class Pfm2afm {
          * Much of this is just guess work.  The bounding box is required in
          * the .afm, but is not used by the PM font installer.
          */
-        out.print("\nFontBBox");
+        output.print("\nFontBBox");
         if (isMono) {
             outval(-20);      /* Just guess at left bounds */
         } else {
@@ -340,23 +340,23 @@ public final class Pfm2afm {
         /*
          * Give other metrics that were kept
          */
-        out.print("\nCapHeight");
+        output.print("\nCapHeight");
         outval(capheight);
-        out.print("\nXHeight");
+        output.print("\nXHeight");
         outval(xheight);
-        out.print("\nDescender");
+        output.print("\nDescender");
         outval(-descender);
-        out.print("\nAscender");
+        output.print("\nAscender");
         outval(ascender);
-        out.print('\n');
+        output.print('\n');
     }
     
     private void putchartab() throws java.io.IOException {
         int count = lastchar - firstchar + 1;
         int ctabs[] = new int[count];
-        in.seek(chartab);
+        input.seek(chartab);
         for (int k = 0; k < count; ++k) {
-            ctabs[k] = in.readUnsignedShortLE();
+            ctabs[k] = input.readUnsignedShortLE();
         }
         int back[] = new int[256];
         if (charset == 0) {
@@ -367,9 +367,9 @@ public final class Pfm2afm {
             }
         }
         /* Put out the header */
-        out.print("StartCharMetrics");
+        output.print("StartCharMetrics");
         outval(count);
-        out.print('\n');
+        output.print('\n');
 
         /* Put out all encoded chars */
         if (charset != 0) {
@@ -398,7 +398,7 @@ public final class Pfm2afm {
             }
         }
         /* Put out the trailer */
-        out.print("EndCharMetrics\n");
+        output.print("EndCharMetrics\n");
         
     }
     
@@ -406,39 +406,39 @@ public final class Pfm2afm {
         if (kernpairs == 0) {
             return;
         }
-        in.seek(kernpairs);
-        int count = in.readUnsignedShortLE();
+        input.seek(kernpairs);
+        int count = input.readUnsignedShortLE();
         int nzero = 0;
         int kerns[] = new int[count * 3];
         for (int k = 0; k < kerns.length;) {
-            kerns[k++] = in.read();
-            kerns[k++] = in.read();
-            if ((kerns[k++] = in.readShortLE()) != 0) {
+            kerns[k++] = input.read();
+            kerns[k++] = input.read();
+            if ((kerns[k++] = input.readShortLE()) != 0) {
                 ++nzero;
             }
         }
         if (nzero == 0)
             return;
-        out.print("StartKernData\nStartKernPairs");
+        output.print("StartKernData\nStartKernPairs");
         outval(nzero);
-        out.print('\n');
+        output.print('\n');
         for (int k = 0; k < kerns.length; k += 3) {
             if (kerns[k + 2] != 0) {
-                out.print("KPX ");
-                out.print(WinChars[kerns[k]]);
-                out.print(' ');
-                out.print(WinChars[kerns[k + 1]]);
+                output.print("KPX ");
+                output.print(WinChars[kerns[k]]);
+                output.print(' ');
+                output.print(WinChars[kerns[k + 1]]);
                 outval(kerns[k + 2]);
-                out.print('\n');
+                output.print('\n');
             }
         }
         /* Put out trailer */
-        out.print("EndKernPairs\nEndKernData\n");
+        output.print("EndKernPairs\nEndKernData\n");
     }
     
 
     private void  puttrailer() {
-        out.print("EndFontMetrics\n");
+        output.print("EndFontMetrics\n");
     }
 
     private short  vers;

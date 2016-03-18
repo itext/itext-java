@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Jbig2ImageHelper {
 
     private byte[] globals;
@@ -46,25 +45,25 @@ public class Jbig2ImageHelper {
     private static void updateStream(ByteArrayOutputStream stream, Jbig2Image image) {
         byte[] data;
         if (image.getUrl() != null) {
-            InputStream is = null;
+            InputStream jbig2Stream = null;
             try {
-                is = image.getUrl().openStream();
+                jbig2Stream = image.getUrl().openStream();
                 int read;
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] bytes = new byte[4096];
-                while ((read = is.read(bytes)) != -1) {
+                while ((read = jbig2Stream.read(bytes)) != -1) {
                     baos.write(bytes, 0, read);
                 }
-                is.close();
+                jbig2Stream.close();
                 data = baos.toByteArray();
                 baos.flush();
                 baos.close();
             } catch (java.io.IOException e) {
                 throw new IOException(IOException.Jbig2ImageException, e);
             } finally {
-                if (is != null) {
+                if (jbig2Stream != null) {
                     try {
-                        is.close();
+                        jbig2Stream.close();
                     } catch (java.io.IOException ignored) { }
                 }
             }

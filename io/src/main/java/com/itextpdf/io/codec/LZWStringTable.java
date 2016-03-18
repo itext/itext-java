@@ -177,10 +177,10 @@ public class LZWStringTable {
             return expandLen;                    // indicate length of dat unpacked
     }
 
-    public void dump(PrintStream out) {
+    public void dump(PrintStream output) {
         int i;
         for (i = 258; i < numStrings_; ++i)
-            out.println(" strNxt_[" + i + "] = " + strNxt_[i]
+            output.println(" strNxt_[" + i + "] = " + strNxt_[i]
                     + " strChr_ " + Integer.toHexString(strChr_[i] & 0xFF)
                     + " strLen_ " + Integer.toHexString(strLen_[i]));
     }

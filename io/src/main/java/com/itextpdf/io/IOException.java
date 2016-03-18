@@ -12,7 +12,8 @@ public class IOException extends RuntimeException {
     public static final String _1IsNotAValidJpegFile = "{0} is.not.a.valid.jpeg.file";
     public static final String _1MustHave8BitsPerComponent = "{0} must.have.8.bits.per.component";
     public static final String _1UnsupportedJpegMarker2 = "{0} unsupported.jpeg.marker {1}";
-    public static final String _1IsNotAnAFMorPfmFontFile = "{0} is.not.an.afm.or.pfm.font.file";
+    public static final String _1IsNotAnAfmOrPfmFontFile = "{0} is.not.an.afm.or.pfm.font.file";
+    public static final String _1NotFoundAsFileOrResource = "{0} not found as file or resource.";
 
     public static final String AllFillBitsPrecedingEolCodeMustBe0 = "all.fill.bits.preceding.eol.code.must.be.0";
     public static final String BadEndiannessTagNot0x4949Or0x4d4d = "bad.endianness.tag.not.0x4949.or.0x4d4d";
@@ -104,7 +105,7 @@ public class IOException extends RuntimeException {
     public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";
     public static final String WrongNumberOfComponentsInIccProfile = "icc.profile.contains {0} components.the.image.data.contains {2} components";
 
-    protected Object object;
+    protected Object obj;
     private List<Object> messageParams;
 
     public IOException(String message) {
@@ -115,18 +116,18 @@ public class IOException extends RuntimeException {
         super(cause);
     }
 
-    public IOException(String message, Object object) {
+    public IOException(String message, Object obj) {
         this(message);
-        this.object = object;
+        this.obj = obj;
     }
 
     public IOException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public IOException(String message, Throwable cause, Object object) {
+    public IOException(String message, Throwable cause, Object obj) {
         this(message, cause);
-        this.object = object;
+        this.obj = obj;
     }
 
     @Override

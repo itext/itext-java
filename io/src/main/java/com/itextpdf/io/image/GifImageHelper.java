@@ -17,7 +17,7 @@ public final class GifImageHelper {
     static final int MaxStackSize = 4096;   // max decoder pixel stack size
 
     private static class GifParameters {
-        DataInputStream in;
+        DataInputStream input;
         boolean gctFlag;      // global color table used
 
         int bgIndex;          // background color index
@@ -78,28 +78,28 @@ public final class GifImageHelper {
 
         gif.image = image;
 
-        InputStream is = null;
+        InputStream gifStream = null;
         try {
             if (gif.image.getUrl() != null) {
-                is = gif.image.getUrl().openStream();
+                gifStream = gif.image.getUrl().openStream();
 
                 int read;
                 byte[] bytes = new byte[4096];
-                while ((read = is.read(bytes)) != -1) {
+                while ((read = gifStream.read(bytes)) != -1) {
                     stream.write(bytes, 0, read);
                 }
-                is.close();
-                is = new ByteArrayInputStream(stream.toByteArray());
+                gifStream.close();
+                gifStream = new ByteArrayInputStream(stream.toByteArray());
             } else {
-                is = new ByteArrayInputStream(gif.image.getBytes());
+                gifStream = new ByteArrayInputStream(gif.image.getBytes());
             }
-            process(is, gif, lastFrameNumber);
+            process(gifStream, gif, lastFrameNumber);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.GifImageException, e);
         } finally {
-            if (is != null) {
+            if (gifStream != null) {
                 try {
-                    is.close();
+                    gifStream.close();
                 } catch (java.io.IOException ignore) {
 
                 }
@@ -107,8 +107,8 @@ public final class GifImageHelper {
         }
     }
 
-    private static void process(InputStream is, GifParameters gif, int lastFrameNumber) throws java.io.IOException {
-        gif.in = new DataInputStream(new BufferedInputStream(is));
+    private static void process(InputStream stream, GifParameters gif, int lastFrameNumber) throws java.io.IOException {
+        gif.input = new DataInputStream(new BufferedInputStream(stream));
         readHeader(gif);
         readContents(gif, lastFrameNumber);
         if (gif.currentFrame <= lastFrameNumber)
@@ -121,7 +121,7 @@ public final class GifImageHelper {
     private static void readHeader(GifParameters gif) throws java.io.IOException {
         StringBuilder id = new StringBuilder("");
         for (int i = 0; i < 6; i++)
-            id.append((char)gif.in.read());
+            id.append((char)gif.input.read());
         if (!id.toString().startsWith("GIF8")) {
             throw new IOException(IOException.GifSignatureNotFound);
         }
@@ -142,11 +142,11 @@ public final class GifImageHelper {
         gif.image.setLogicalHeight(readShort(gif));
 
         // packed fields
-        int packed = gif.in.read();
+        int packed = gif.input.read();
         gif.gctFlag = (packed & 0x80) != 0;      // 1   : global color table flag
         gif.m_gbpc = (packed & 7) + 1;
-        gif.bgIndex = gif.in.read();        // background color index
-        gif.pixelAspect = gif.in.read();    // pixel aspect ratio
+        gif.bgIndex = gif.input.read();        // background color index
+        gif.pixelAspect = gif.input.read();    // pixel aspect ratio
     }
 
     /**
@@ -154,7 +154,7 @@ public final class GifImageHelper {
      */
     private static int readShort(GifParameters gif) throws java.io.IOException {
         // read 16-bit value, LSB first
-        return gif.in.read() | gif.in.read() << 8;
+        return gif.input.read() | gif.input.read() << 8;
     }
 
     /**
@@ -163,11 +163,11 @@ public final class GifImageHelper {
      * @return number of bytes stored in "buffer"
      */
     private static int readBlock(GifParameters gif) throws java.io.IOException {
-        gif.blockSize = gif.in.read();
+        gif.blockSize = gif.input.read();
         if (gif.blockSize <= 0)
             return gif.blockSize = 0;
 
-        gif.blockSize = gif.in.read(gif.block, 0, gif.blockSize);
+        gif.blockSize = gif.input.read(gif.block, 0, gif.blockSize);
 
         return gif.blockSize;
     }
@@ -177,7 +177,7 @@ public final class GifImageHelper {
         int nbytes = 3*ncolors;
         bpc = newBpc(bpc);
         byte table[] = new byte[(1 << bpc) * 3];
-        gif.in.readFully(table, 0, nbytes);
+        gif.input.readFully(table, 0, nbytes);
         return table;
     }
 
@@ -201,7 +201,7 @@ public final class GifImageHelper {
         boolean done = false;
         gif.currentFrame = 0;
         while (!done) {
-            int code = gif.in.read();
+            int code = gif.input.read();
             switch (code) {
                 case 0x2C:    // image separator
                     readFrame(gif);
@@ -211,7 +211,7 @@ public final class GifImageHelper {
                     gif.currentFrame++;
                     break;
                 case 0x21:    // extension
-                    code = gif.in.read();
+                    code = gif.input.read();
                     switch (code) {
 
                         case 0xf9:    // graphics control extension
@@ -243,7 +243,7 @@ public final class GifImageHelper {
         gif.iw = readShort(gif);
         gif.ih = readShort(gif);
 
-        int packed = gif.in.read();
+        int packed = gif.input.read();
         gif.lctFlag = (packed & 0x80) != 0;     // 1 - local color table flag
         gif.interlace = (packed & 0x40) != 0;   // 2 - interlace flag
         // 3 - sort flag
@@ -313,7 +313,7 @@ public final class GifImageHelper {
 
         //  Initialize GIF data stream decoder.
 
-        data_size = gif.in.read();
+        data_size = gif.input.read();
         clear = 1 << data_size;
         end_of_information = clear + 1;
         available = clear + 2;
@@ -458,15 +458,15 @@ public final class GifImageHelper {
      * Reads Graphics Control Extension values
      */
     private static void readGraphicControlExt(GifParameters gif) throws java.io.IOException {
-        gif.in.read();    // block size
-        int packed = gif.in.read();   // packed fields
+        gif.input.read();    // block size
+        int packed = gif.input.read();   // packed fields
         gif.dispose = (packed & 0x1c) >> 2;   // disposal method
         if (gif.dispose == 0)
             gif.dispose = 1;   // elect to keep old image if discretionary
         gif.transparency = (packed & 1) != 0;
         gif.delay = readShort(gif) * 10;   // delay in milliseconds
-        gif.transIndex = gif.in.read();        // transparent color index
-        gif.in.read();                     // block terminator
+        gif.transIndex = gif.input.read();        // transparent color index
+        gif.input.read();                     // block terminator
     }
 
     /**

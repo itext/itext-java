@@ -626,22 +626,22 @@ public final class ImageFactory {
     }
 
     private static <T> byte[] readImageType(T source) {
-        InputStream is = null;
+        InputStream stream = null;
         try {
             if (source instanceof URL) {
-                is = ((URL) source).openStream();
+                stream = ((URL) source).openStream();
             } else {
-                is = new ByteArrayInputStream((byte[])source);
+                stream = new ByteArrayInputStream((byte[])source);
             }
             byte[] bytes = new byte[8];
-            is.read(bytes);
+            stream.read(bytes);
             return bytes;
         } catch (java.io.IOException e) {
             throw new IOException(IOException.IoException, e);
         } finally {
-            if (is != null) {
+            if (stream != null) {
                 try {
-                    is.close();
+                    stream.close();
                 } catch (java.io.IOException ignored) { }
             }
         }

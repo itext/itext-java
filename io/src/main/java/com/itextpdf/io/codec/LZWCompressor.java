@@ -55,13 +55,13 @@ public class LZWCompressor {
     boolean tiffFudge_;
 
     /**
-     * @param out      destination for compressed data
+     * @param outputStream      destination for compressed data
      * @param codeSize the initial code size for the LZW compressor
      * @param TIFF     flag indicating that TIFF lzw fudge needs to be applied
      * @throws IOException if underlying output stream error
      **/
-    public LZWCompressor(OutputStream out, int codeSize, boolean TIFF) throws IOException {
-        bf_ = new BitFile(out, !TIFF);    // set flag for GIF as NOT tiff
+    public LZWCompressor(OutputStream outputStream, int codeSize, boolean TIFF) throws IOException {
+        bf_ = new BitFile(outputStream, !TIFF);    // set flag for GIF as NOT tiff
         codeSize_ = codeSize;
         tiffFudge_ = TIFF;
         clearCode_ = 1 << codeSize_;

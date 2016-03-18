@@ -124,8 +124,8 @@ class TrueTypeFontSubset {
         }
         fullFontSize += newLocaTableOut.length;
         fullFontSize += newGlyfTable.length;
-        int ref = 16 * tablesUsed + 12;
-        fullFontSize += ref;
+        int reference = 16 * tablesUsed + 12;
+        fullFontSize += reference;
         outFont = new byte[fullFontSize];
         fontPtr = 0;
         writeFontInt(0x00010000);
@@ -155,9 +155,9 @@ class TrueTypeFontSubset {
                     len = tableLocation[TABLE_LENGTH];
                     break;
             }
-            writeFontInt(ref);
+            writeFontInt(reference);
             writeFontInt(len);
-            ref += len + 3 & ~3;
+            reference += len + 3 & ~3;
         }
         for (String name : tableNames) {
             tableLocation = tableDirectory.get(name);

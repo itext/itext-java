@@ -41,22 +41,22 @@ public class TiffImageHelper {
         tiff.stream = stream;
         byte[] data;
         if (tiff.image.getUrl() != null) {
-            InputStream is = null;
+            InputStream tiffStream = null;
             try {
-                is = tiff.image.getUrl().openStream();
+                tiffStream = tiff.image.getUrl().openStream();
                 int read;
                 byte[] bytes = new byte[4096];
-                while ((read = is.read(bytes)) != -1) {
+                while ((read = tiffStream.read(bytes)) != -1) {
                     stream.write(bytes, 0, read);
                 }
-                is.close();
+                tiffStream.close();
                 data = stream.toByteArray();
             } catch (java.io.IOException e) {
                 throw new IOException(IOException.TiffImageException, e);
             } finally {
-                if (is != null) {
+                if (tiffStream != null) {
                     try {
-                        is.close();
+                        tiffStream.close();
                     } catch (java.io.IOException ignored) { }
                 }
             }
@@ -139,29 +139,29 @@ public class TiffImageHelper {
             if (fillOrderField != null)
                 fillOrder = fillOrderField.getAsInt(0);
             reverse = (fillOrder == TIFFConstants.FILLORDER_LSB2MSB);
-            int params = 0;
+            int parameters = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PHOTOMETRIC)) {
                 long photo = dir.getFieldAsLong(TIFFConstants.TIFFTAG_PHOTOMETRIC);
                 if (photo == TIFFConstants.PHOTOMETRIC_MINISBLACK)
-                    params |= RawImage.CCITT_BLACKIS1;
+                    parameters |= RawImage.CCITT_BLACKIS1;
             }
             int imagecomp = 0;
             switch (compression) {
                 case TIFFConstants.COMPRESSION_CCITTRLEW:
                 case TIFFConstants.COMPRESSION_CCITTRLE:
                     imagecomp = RawImage.CCITTG3_1D;
-                    params |= RawImage.CCITT_ENCODEDBYTEALIGN | RawImage.CCITT_ENDOFBLOCK;
+                    parameters |= RawImage.CCITT_ENCODEDBYTEALIGN | RawImage.CCITT_ENDOFBLOCK;
                     break;
                 case TIFFConstants.COMPRESSION_CCITTFAX3:
                     imagecomp = RawImage.CCITTG3_1D;
-                    params |= RawImage.CCITT_ENDOFLINE | RawImage.CCITT_ENDOFBLOCK;
+                    parameters |= RawImage.CCITT_ENDOFLINE | RawImage.CCITT_ENDOFBLOCK;
                     TIFFField t4OptionsField = dir.getField(TIFFConstants.TIFFTAG_GROUP3OPTIONS);
                     if (t4OptionsField != null) {
                         tiffT4Options = t4OptionsField.getAsLong(0);
                         if ((tiffT4Options & TIFFConstants.GROUP3OPT_2DENCODING) != 0)
                             imagecomp = RawImage.CCITTG3_2D;
                         if ((tiffT4Options & TIFFConstants.GROUP3OPT_FILLBITS) != 0)
-                            params |= RawImage.CCITT_ENCODEDBYTEALIGN;
+                            parameters |= RawImage.CCITT_ENCODEDBYTEALIGN;
                     }
                     break;
                 case TIFFConstants.COMPRESSION_CCITTFAX4:
@@ -175,7 +175,7 @@ public class TiffImageHelper {
                 byte im[] = new byte[(int) size[0]];
                 s.seek(offset[0]);
                 s.readFully(im);
-                RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, imagecomp, params, im, null);
+                RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, imagecomp, parameters, im, null);
                 tiff.image.setInverted(true);
             } else {
                 int rowsLeft = h;
@@ -212,7 +212,7 @@ public class TiffImageHelper {
                                     im = new byte[(int) size[0]];
                                     s.seek(offset[0]);
                                     s.readFully(im);
-                                    RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, imagecomp, params, im, null);
+                                    RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, imagecomp, parameters, im, null);
                                     tiff.image.setInverted(true);
                                     tiff.image.setDpi(dpiX, dpiY);
                                     tiff.image.setXYRatio(XYRatio);
@@ -238,7 +238,7 @@ public class TiffImageHelper {
                 }
                 byte g4pic[] = g4.close();
                 RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, RawImage.CCITTG4,
-                        params & RawImage.CCITT_BLACKIS1, g4pic, null);
+                        parameters & RawImage.CCITT_BLACKIS1, g4pic, null);
             }
             tiff.image.setDpi(dpiX, dpiY);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {

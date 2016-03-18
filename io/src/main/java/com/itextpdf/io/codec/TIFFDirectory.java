@@ -332,8 +332,9 @@ public class TIFFDirectory implements Serializable {
                         break;
 
                     case TIFFField.TIFF_RATIONAL:
-                        long[][] llvalues = new long[count][2];
+                        long[][] llvalues = new long[count][];
                         for (j = 0; j < count; j++) {
+                            llvalues[j] = new long[2];
                             llvalues[j][0] = readUnsignedInt(stream);
                             llvalues[j][1] = readUnsignedInt(stream);
                         }
@@ -357,8 +358,9 @@ public class TIFFDirectory implements Serializable {
                         break;
 
                     case TIFFField.TIFF_SRATIONAL:
-                        int[][] iivalues = new int[count][2];
+                        int[][] iivalues = new int[count][];
                         for (j = 0; j < count; j++) {
+                            iivalues[j] = new int[2];
                             iivalues[j][0] = readInt(stream);
                             iivalues[j][1] = readInt(stream);
                         }

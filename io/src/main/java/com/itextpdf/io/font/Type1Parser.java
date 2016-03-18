@@ -38,31 +38,30 @@ class Type1Parser {
     }
 
     public RandomAccessFileOrArray getMetricsFile() throws java.io.IOException {
-        InputStream is = null;
         isBuiltInFont = false;
-
         if (FontConstants.BUILTIN_FONTS_14.contains(afmPath)) {
             isBuiltInFont = true;
             byte[] buf = new byte[1024];
+            InputStream resource = null;
             try {
                 if (resourceAnchor == null) {
                     resourceAnchor = new FontsResourceAnchor();
                 }
                 String resourcePath = FontConstants.RESOURCE_PATH + "afm/" + afmPath + ".afm";
-                is = Utilities.getResourceStream(resourcePath, resourceAnchor.getClass().getClassLoader());
-                if (is == null) {
+                resource = Utilities.getResourceStream(resourcePath, resourceAnchor.getClass().getClassLoader());
+                if (resource == null) {
                     throw new IOException("1.not.found.as.resource").setMessageParams(resourcePath);
                 }
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 int read;
-                while ((read = is.read(buf)) >= 0) {
-                    out.write(buf, 0, read);
+                while ((read = resource.read(buf)) >= 0) {
+                    stream.write(buf, 0, read);
                 }
-                buf = out.toByteArray();
+                buf = stream.toByteArray();
             } finally {
-                if (is != null) {
+                if (resource != null) {
                     try {
-                        is.close();
+                        resource.close();
                     } catch (Exception ignore) { }
                 }
             }
@@ -77,7 +76,7 @@ class Type1Parser {
                 rf.close();
                 return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             } else {
-                throw new IOException(IOException._1IsNotAnAFMorPfmFontFile).setMessageParams(afmPath);
+                throw new IOException(IOException._1IsNotAnAfmOrPfmFontFile).setMessageParams(afmPath);
             }
         } else if (afmData != null) {
             RandomAccessFileOrArray rf = new RandomAccessFileOrArray(sourceFactory.createSource(afmData));
