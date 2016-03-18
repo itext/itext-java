@@ -142,6 +142,7 @@ class TypographyUtils {
         } catch (ClassNotFoundException e) {
             logger.warn(String.format("Cannot find class %s", className));
         } catch (Exception ignored) {
+            logger.error(ignored.toString());
         }
         return null;
     }
@@ -156,6 +157,7 @@ class TypographyUtils {
         } catch (ClassNotFoundException e) {
             logger.warn(String.format("Cannot find class %s", className));
         } catch (Exception ignored) {
+            logger.error(ignored.toString());
         }
         return null;
     }
