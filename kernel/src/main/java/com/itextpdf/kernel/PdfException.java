@@ -32,6 +32,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotGetContentBytes = "cannot.get.content.bytes";
     public static final String CannotGetPdfStreamBytes = "cannot.get.pdfstream.bytes";
     public static final String CannotFindImageDataOrEI = "cannot.find.image.data.or.EI";
+    public static final String CannotFlushDocumentRootTagBeforeDocumentIsClosed = "cannot.flush.document.root.tag.before.document.is.closed";
     public static final String CannotFlushObject = "cannot.flush.object";
     public static final String CannotMoveToFlushedKid = "cannot.move.to.flushed.kid";
     public static final String CannotMoveToMarkedContentReference = "cannot.move.to.marked.content.reference";
@@ -41,6 +42,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "cannot.read.a.stream.in.order.to.append.new.bytes.reason {0}";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
     public static final String CannotRebuildTagStructureWhenItWasPartlyFlushed = "cannot.rebuild.tag.structure.when.it.was.partly.flushed";
+    public static final String CannotRemoveDocumentRootTag = "cannot.remove.document.root.tag";
     public static final String CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed = "cannot.remove.tag.structure.elements.if.tag.structure.was.partially.flushed";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotSplitDocumentThatIsBeingWritten = "cannot.split.document.that.is.being.written";

@@ -219,13 +219,13 @@ public class TagTreePointer {
             throw new PdfException(PdfException.CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed);
         }
 
-        List<IPdfStructElem> kids = getCurrentStructElem().getKids();
-        PdfDictionary tagPage = getCurrentStructElem().getPdfObject().getAsDictionary(PdfName.Pg);
         IPdfStructElem parentElem = getCurrentStructElem().getParent();
         if (parentElem instanceof PdfStructTreeRoot) {
-            throw new PdfException(""); //TODO don't know what to do in this case yet
+            throw new PdfException(PdfException.CannotRemoveDocumentRootTag);
         }
 
+        List<IPdfStructElem> kids = getCurrentStructElem().getKids();
+        PdfDictionary tagPage = getCurrentStructElem().getPdfObject().getAsDictionary(PdfName.Pg);
         PdfStructElem parent = (PdfStructElem) parentElem;
 
         TagStructureContext.removeKidFromParent(getCurrentStructElem().getPdfObject(), parent.getPdfObject());
@@ -373,8 +373,11 @@ public class TagTreePointer {
      * is removed.
      */
     public void flushTag() {
+        if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
+            throw new PdfException(PdfException.CannotFlushDocumentRootTagBeforeDocumentIsClosed);
+        }
         IPdfStructElem parent = tagStructureContext.flushTag(getCurrentStructElem());
-        if (parent != null && !(parent instanceof PdfStructTreeRoot)) { // parent is not flushed
+        if (parent != null) { // parent is not flushed
             setCurrentStructElem((PdfStructElem) parent);
         } else {
             setCurrentStructElem(tagStructureContext.getRootTag());

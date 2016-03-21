@@ -21,10 +21,12 @@ import java.util.Set;
 
 public class TagStructureContext {
     private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>() {{
+        add(PdfName.Book);
         add(PdfName.Document);
         add(PdfName.Part);
         add(PdfName.Art);
         add(PdfName.Sect);
+        add(PdfName.Div);
     }};
 
     private PdfDocument document;
@@ -240,18 +242,19 @@ public class TagStructureContext {
             PdfDictionary parentObject = ((PdfStructElem) parent).getPdfObject();
             removeKidFromParent(pageTagObject, parentObject);
             if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().isEmpty()
-                    && parentObject != rootTagElement.getPdfObject() // TODO this could not solve the problems if there is several root elements under StructTreeRoot
-                    ) {
+                    && parentObject != rootTagElement.getPdfObject()) {
                 removePageTagFromParent(parentObject, parent.getParent());
                 parentObject.getIndirectReference().setFree();
             }
-        } else { // it is StructTreeRoot
-            // TODO don't know what to do here. remove from its kids or there should be some root tag like Document which I don't want to remove
+        } else {
+            // it is StructTreeRoot
+            // should never happen as we always should have only one root tag and we don't remove it
         }
     }
 
     private void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
-        if (parent.isFlushed() || connectedStructToModel.containsKey(parent.getPdfObject())) {
+        if (parent.isFlushed() || connectedStructToModel.containsKey(parent.getPdfObject())
+                || parent.getPdfObject() == rootTagElement.getPdfObject()) {
             return;
         }
 
@@ -297,14 +300,34 @@ public class TagStructureContext {
         document.getStructTreeRoot().flushStructElement(elem);
     }
 
+    /**
+     * PDF Reference
+     * 10.7.3 Grouping Elements:
+     *
+     * For most content extraction formats, the document must be a tree with a single top-level element;
+     * the structure tree root (identified by the StructTreeRoot entry in the document catalog) must have
+     * only one child in its K (kids) array. If the PDF file contains a complete document, the structure
+     * type Document is recommended for this top-level element in the logical structure hierarchy. If the
+     * file contains a well-formed document fragment, one of the structure types Part, Art, Sect, or Div
+     * may be used instead.
+     */
     private void normalizeDocumentRootTag() {
         List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
-        if (rootKids.isEmpty()) {
-            rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
-        }
 
-        if (rootTagElement == null) {
+        if (rootKids.size() == 1 && allowedRootTagRoles.contains(rootKids.get(0).getRole())) {
             rootTagElement = (PdfStructElem) rootKids.get(0);
+        } else {
+            document.getStructTreeRoot().remove(PdfName.K);
+            rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
+
+            for (IPdfStructElem elem : rootKids) {
+                // StructTreeRoot kids are always PdfStructElem, so we are save here to cast it
+                PdfStructElem kid = (PdfStructElem) elem;
+                if (PdfName.Document.equals(kid.getRole())) {
+                    kid.put(PdfName.S, PdfName.Part);
+                }
+                rootTagElement.addKid(kid);
+            }
         }
     }
 }

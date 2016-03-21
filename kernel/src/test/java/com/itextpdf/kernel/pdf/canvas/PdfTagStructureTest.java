@@ -1,6 +1,7 @@
 package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -164,10 +165,18 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         TagTreePointer tagPointer = new TagTreePointer(document);
         tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR).flushTag();
         tagPointer.moveToKid(3, PdfName.TR).moveToKid(PdfName.TD).flushTag();
-        tagPointer.moveToParent().moveToParent().flushTag();
+        tagPointer.moveToParent().flushTag();
+
+        String exceptionMessage = null;
+        try {
+            tagPointer.flushTag();
+        } catch(PdfException e) {
+            exceptionMessage = e.getMessage();
+        }
 
         document.close();
 
+        assertEquals(PdfException.CannotFlushDocumentRootTagBeforeDocumentIsClosed, exceptionMessage);
         compareResult("tagStructureFlushingTest01.pdf", "taggedDocument.pdf", "diffFlushing01_");
     }
 
@@ -203,7 +212,8 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         document.getPage(1).flush();
 
         PdfArray kids = document.getStructTreeRoot().getKidsObject();
-        assertTrue(kids.get(0).isFlushed());
+        assertFalse(kids.get(0).isFlushed());
+        assertTrue(kids.getAsDictionary(0).getAsDictionary(PdfName.K).isFlushed());
 
         document.close();
 
@@ -226,7 +236,8 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         document.getPage(2).flush();
 
         PdfArray kids = document.getStructTreeRoot().getKidsObject();
-        assertTrue(kids.get(0).isFlushed());
+        assertFalse(kids.get(0).isFlushed());
+        assertTrue(kids.getAsDictionary(0).getAsDictionary(PdfName.K).isFlushed());
 
         document.close();
 
