@@ -2,7 +2,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -34,17 +34,17 @@ public class ListItemRenderer extends BlockRenderer {
     @Override
     public void draw(DrawContext drawContext) {
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        PdfTagStructure tagStructure = null;
+        TagTreePointer tagPointer = null;
         if (isTagged) {
-            tagStructure = drawContext.getDocument().getTagStructure();
+            tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
             IAccessibleElement modelElement = (IAccessibleElement) getModelElement();
             PdfName role = modelElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
-                boolean lBodyTagIsCreated = tagStructure.isConnectedToTag(modelElement);
+                boolean lBodyTagIsCreated = tagPointer.isConnectedToTag(modelElement);
                 if (!lBodyTagIsCreated) {
-                    tagStructure.addTag(PdfName.LI);
+                    tagPointer.addTag(PdfName.LI);
                 } else {
-                    tagStructure.moveToTag(modelElement).moveToParent();
+                    tagPointer.moveToTag(modelElement).moveToParent();
                 }
             } else {
                 isTagged = false;
@@ -81,16 +81,16 @@ public class ListItemRenderer extends BlockRenderer {
             symbolRenderer.move(xPosition, 0);
 
             if (isTagged) {
-                tagStructure.addTag(0, PdfName.Lbl);
+                tagPointer.addTag(0, PdfName.Lbl);
             }
             symbolRenderer.draw(drawContext);
             if (isTagged) {
-                tagStructure.moveToParent();
+                tagPointer.moveToParent();
             }
         }
 
         if (isTagged) {
-            tagStructure.moveToParent();
+            tagPointer.moveToParent();
         }
     }
 

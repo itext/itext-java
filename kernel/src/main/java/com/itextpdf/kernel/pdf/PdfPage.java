@@ -9,7 +9,7 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.tagging.*;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -324,7 +324,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             return;
         }
         if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
-            getDocument().getTagStructure().flushPageTags(this);
+            getDocument().getTagStructureContext().flushPageTags(this);
             getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
         }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
@@ -502,10 +502,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfPage addAnnotation(int index, PdfAnnotation annotation, boolean tagAnnotation) {
         if (getDocument().isTagged() && tagAnnotation) {
-            PdfPage prevPage = getDocument().getTagStructure().getCurrentPage();
-            getDocument().getTagStructure().setPage(this).addAnnotationTag(annotation);
+            TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
+            PdfPage prevPage = tagPointer.getCurrentPage();
+            tagPointer.setPage(this).addAnnotationTag(annotation);
             if (prevPage != null) {
-                getDocument().getTagStructure().setPage(prevPage);
+                tagPointer.setPage(prevPage);
             }
         }
 
@@ -544,13 +545,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
 
         if (getDocument().isTagged()) {
-            PdfTagStructure tagStructure = getDocument().getTagStructure();
-            tagStructure.removeAnnotationTag(annotation, true);
-
-            boolean standardAnnotTagRole = tagStructure.getRole().equals(PdfName.Annot)
-                    || tagStructure.getRole().equals(PdfName.Form);
-            if (tagStructure.getListOfKidsRoles().isEmpty() && standardAnnotTagRole) {
-                tagStructure.removeTag();
+            TagTreePointer tagPointer = getDocument().getTagStructureContext().removeAnnotationTag(annotation);
+            if (tagPointer != null) {
+                boolean standardAnnotTagRole = tagPointer.getRole().equals(PdfName.Annot)
+                        || tagPointer.getRole().equals(PdfName.Form);
+                if (tagPointer.getListOfKidsRoles().isEmpty() && standardAnnotTagRole) {
+                    tagPointer.removeTag();
+                }
             }
         }
         return this;

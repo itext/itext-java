@@ -201,7 +201,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             createParentTreeEntryForPage(getDocument().getPage(i + 1));
         }
         put(PdfName.ParentTree, parentTree.buildTree().makeIndirect(getDocument()));
-        getDocument().getTagStructure().removeAllConnectionsToTags();
         flushAllKids(this);
         super.flush();
     }
@@ -464,7 +463,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
         pageToPageMcrs = null;
         parentTree = new PdfNumTree(getDocument().getCatalog(), PdfName.ParentTree);
-        getDocument().getTagStructure().removeAllConnectionsToTags();
     }
 
     private void registerAllMcrsIfNotRegistered() {

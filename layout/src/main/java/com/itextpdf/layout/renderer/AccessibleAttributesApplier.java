@@ -159,7 +159,7 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.TextAlign, transformTextAlignmentValueToName(textAlignment));
         }
 
-        boolean connectedToTag = doc.getTagStructure().isConnectedToTag((IAccessibleElement) renderer.getModelElement());
+        boolean connectedToTag = doc.getTagStructureContext().isConnectedToTag((IAccessibleElement) renderer.getModelElement());
         boolean elementIsOnSinglePage = !connectedToTag && renderer.isLastRendererForModelElement;
         if (elementIsOnSinglePage) {
             Rectangle bbox = renderer.getOccupiedArea().getBBox();

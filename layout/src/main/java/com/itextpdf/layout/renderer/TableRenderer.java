@@ -5,7 +5,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
@@ -394,10 +394,10 @@ public class TableRenderer extends AbstractRenderer {
         if (isTagged
                 && ((IAccessibleElement) getModelElement()).getRole() != null
                 && !((IAccessibleElement) getModelElement()).getRole().equals(PdfName.Artifact)) {
-            PdfTagStructure tagStructure = document.getTagStructure();
+            TagTreePointer tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
 
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+            if (!document.getTagStructureContext().isConnectedToTag(accessibleElement)) {
                 AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
             }
 
@@ -414,16 +414,16 @@ public class TableRenderer extends AbstractRenderer {
 
             //footer/header tags order processing
             if (accessibleElement.getRole().equals(PdfName.THead)) {
-                tagStructure.addTag(0, accessibleElement, true);
+                tagPointer.addTag(0, accessibleElement, true);
             } else {
-                tagStructure.addTag(accessibleElement, true);
+                tagPointer.addTag(accessibleElement, true);
             }
 
             super.draw(drawContext);
 
-            tagStructure.moveToParent();
+            tagPointer.moveToParent();
             if (toRemoveConnectionsWithTags) {
-                tagStructure.removeConnectionToTag(accessibleElement);
+                tagPointer.removeConnectionToTag(accessibleElement);
             }
         } else {
             super.draw(drawContext);
@@ -441,17 +441,17 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
-        PdfTagStructure tagStructure = null;
+        TagTreePointer tagPointer = null;
         if (isTagged) {
             PdfName role = modelElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
-                tagStructure = drawContext.getDocument().getTagStructure();
+                tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
 
                 if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
-                    if (tagStructure.getListOfKidsRoles().contains(PdfName.TBody)) {
-                        tagStructure.moveToKid(PdfName.TBody);
+                    if (tagPointer.getListOfKidsRoles().contains(PdfName.TBody)) {
+                        tagPointer.moveToKid(PdfName.TBody);
                     } else {
-                        tagStructure.addTag(PdfName.TBody);
+                        tagPointer.addTag(PdfName.TBody);
                     }
                 }
             } else {
@@ -462,24 +462,24 @@ public class TableRenderer extends AbstractRenderer {
         for (IRenderer child : childRenderers) {
             if (isTagged) {
                 int cellRow = ((Cell) child.getModelElement()).getRow();
-                int rowsNum = tagStructure.getListOfKidsRoles().size();
+                int rowsNum = tagPointer.getListOfKidsRoles().size();
                 if (cellRow < rowsNum) {
-                    tagStructure.moveToKid(cellRow);
+                    tagPointer.moveToKid(cellRow);
                 } else {
-                    tagStructure.addTag(PdfName.TR);
+                    tagPointer.addTag(PdfName.TR);
                 }
             }
 
             child.draw(drawContext);
 
             if (isTagged) {
-                tagStructure.moveToParent();
+                tagPointer.moveToParent();
             }
         }
 
         if (isTagged) {
             if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
-                tagStructure.moveToParent();
+                tagPointer.moveToParent();
             }
         }
 

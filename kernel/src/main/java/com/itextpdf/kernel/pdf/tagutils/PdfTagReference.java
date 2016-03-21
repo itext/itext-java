@@ -6,17 +6,17 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 
 public class PdfTagReference {
-    protected PdfTagStructure tagStructure;
+    protected TagTreePointer tagPointer;
     protected int insertIndex;
     protected PdfStructElem referencedTag;
 
     protected PdfName role;
     protected PdfDictionary properties;
 
-    protected PdfTagReference(PdfStructElem referencedTag, PdfTagStructure tagStructure, int insertIndex) {
+    protected PdfTagReference(PdfStructElem referencedTag, TagTreePointer tagPointer, int insertIndex) {
         this.role = referencedTag.getRole();
         this.referencedTag = referencedTag;
-        this.tagStructure = tagStructure;
+        this.tagPointer = tagPointer;
         this.insertIndex = insertIndex;
     }
 
@@ -25,7 +25,7 @@ public class PdfTagReference {
     }
 
     public Integer createNextMcid() {
-        return tagStructure.createNextMcidForStructElem(referencedTag, insertIndex);
+        return tagPointer.createNextMcidForStructElem(referencedTag, insertIndex);
     }
 
     public PdfTagReference addProperty(PdfName name, PdfObject value) {

@@ -17,7 +17,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagutils.PdfTagReference;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
@@ -569,8 +569,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
 
             PdfAnnotation annotation = PdfAnnotation.makeAnnotation(fieldObject);
+            TagTreePointer tagPointer = null;
             if (annotation != null && document.isTagged()) {
-                document.getTagStructure().removeAnnotationTag(annotation, true);
+                tagPointer = document.getTagStructureContext().removeAnnotationTag(annotation);
             }
 
             PdfDictionary appDic = fieldObject.getAsDictionary(PdfName.AP);
@@ -615,9 +616,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         xObject.getPdfObject().put(PdfName.Resources, initialPageResourceClones.get(document.getPageNumber(page)));
                     }
 
-                    if (document.isTagged()) {
-                        document.getTagStructure().setPage(page);
-                        PdfTagReference tagRef = document.getTagStructure().getTagReference();
+                    if (tagPointer != null) {
+                        tagPointer.setPage(page);
+                        PdfTagReference tagRef = tagPointer.getTagReference();
                         canvas.openTag(tagRef);
                     }
                     canvas.addXObject(xObject, box.getX(), box.getY());
@@ -845,18 +846,18 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             return;
         }
 
-        PdfTagStructure tagStructure = null;
+        TagTreePointer tagPointer = null;
         boolean tagged = page.getDocument().isTagged();
         if (tagged) {
-            tagStructure = page.getDocument().getTagStructure();
+            tagPointer = page.getDocument().getTagStructureContext().getAutoTaggingPointer();
             //TODO attributes?
-            tagStructure.addTag(PdfName.Form);
+            tagPointer.addTag(PdfName.Form);
         }
 
         page.addAnnotation(annot);
 
         if (tagged) {
-            tagStructure.moveToParent();
+            tagPointer.moveToParent();
         }
     }
 

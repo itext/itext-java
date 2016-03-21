@@ -1,6 +1,6 @@
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -24,14 +24,15 @@ public class CanvasRenderer extends RootRenderer {
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         if (!resultRenderer.isFlushed()) {
             boolean toTag = canvas.getPdfDocument().isTagged() && canvas.isAutoTaggingEnabled();
+            TagTreePointer tagPointer = null;
             if (toTag) {
-                PdfTagStructure tagStructure = canvas.getPdfDocument().getTagStructure();
-                tagStructure.setPage(canvas.getPage());
-                tagStructure.setContentStream(canvas.getPdfCanvas().getContentStream());
+                tagPointer = canvas.getPdfDocument().getTagStructureContext().getAutoTaggingPointer();
+                tagPointer.setPage(canvas.getPage());
+                tagPointer.setContentStream(canvas.getPdfCanvas().getContentStream());
             }
             resultRenderer.draw(new DrawContext(canvas.getPdfDocument(), canvas.getPdfCanvas(), toTag));
             if (toTag) {
-                canvas.getPdfDocument().getTagStructure().setContentStream(null);
+                tagPointer.setContentStream(null);
             }
         }
     }

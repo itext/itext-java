@@ -8,7 +8,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
@@ -123,14 +123,14 @@ public class ImageRenderer extends AbstractRenderer {
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         boolean isArtifact = false;
-        PdfTagStructure tagStructure = null;
+        TagTreePointer tagPointer = null;
         if (isTagged) {
-            tagStructure = document.getTagStructure();
+            tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
                 AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
-                tagStructure.addTag(accessibleElement);
+                tagPointer.addTag(accessibleElement);
             } else {
                 isTagged = false;
                 if (PdfName.Artifact.equals(role)) {
@@ -155,7 +155,7 @@ public class ImageRenderer extends AbstractRenderer {
 
         PdfCanvas canvas = drawContext.getCanvas();
         if (isTagged) {
-            canvas.openTag(tagStructure.getTagReference());
+            canvas.openTag(tagPointer.getTagReference());
         } else if (isArtifact) {
             canvas.openTag(new CanvasArtifact());
         }
@@ -177,7 +177,7 @@ public class ImageRenderer extends AbstractRenderer {
         applyMargins(occupiedArea.getBBox(), true);
 
         if (isTagged) {
-            document.getTagStructure().moveToParent();
+            tagPointer.moveToParent();
         }
     }
 

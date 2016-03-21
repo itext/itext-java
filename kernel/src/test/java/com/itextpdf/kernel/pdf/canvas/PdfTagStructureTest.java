@@ -15,7 +15,8 @@ import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
@@ -50,50 +51,50 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         document.setTagged();
 
         PdfPage page1 = document.addNewPage();
-        PdfTagStructure tagStructure = new PdfTagStructure(document);
-        tagStructure.setPage(page1);
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setPage(page1);
 
         PdfCanvas canvas = new PdfCanvas(page1);
 
-        tagStructure.addTag(PdfName.P);
+        tagPointer.addTag(PdfName.P);
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagStructure.addTag(PdfName.Span);
+        tagPointer.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
         canvas.setFontAndSize(standardFont, 30)
-              .openTag(tagStructure.getTagReference())
+              .openTag(tagPointer.getTagReference())
               .showText("World")
               .closeTag();
 
-        tagStructure.moveToParent().moveToParent();
+        tagPointer.moveToParent().moveToParent();
 
         canvas.endText()
               .release();
 
         PdfPage page2 = document.addNewPage();
-        tagStructure.setPage(page2);
+        tagPointer.setPage(page2);
         canvas = new PdfCanvas(page2);
 
-        tagStructure.addTag(PdfName.P);
+        tagPointer.addTag(PdfName.P);
         canvas.beginText()
               .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
-        tagStructure.addTag(PdfName.Span);
+        tagPointer.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
-        tagStructure.moveToParent().addTag(PdfName.Span);
+        tagPointer.moveToParent().addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("World")
               .closeTag();
 
@@ -114,12 +115,12 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         document.setTagged();
 
         PdfPage page = document.addNewPage();
-        PdfTagStructure tagStructure = new PdfTagStructure(document);
-        tagStructure.setPage(page);
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setPage(page);
 
         PdfCanvas canvas = new PdfCanvas(page);
 
-        tagStructure.addTag(PdfName.P);
+        tagPointer.addTag(PdfName.P);
         canvas.beginText();
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.setFontAndSize(standardFont, 24)
@@ -133,14 +134,14 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         properties.setActualText("Actual text for span is: Hello World")
                 .setLanguage("en-GB")
                 .addAttributes(attributes);
-        tagStructure.addTag(PdfName.Span).setProperties(properties);
+        tagPointer.addTag(PdfName.Span).setProperties(properties);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
         canvas.setFontAndSize(standardFont, 30)
-              .openTag(tagStructure.getTagReference())
+              .openTag(tagPointer.getTagReference())
               .showText("World")
               .closeTag();
 
@@ -160,10 +161,10 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
-        PdfTagStructure tagStructure = document.getTagStructure();
-        tagStructure.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR).flushTag();
-        tagStructure.moveToKid(3, PdfName.TR).moveToKid(PdfName.TD).flushTag();
-        tagStructure.moveToParent().moveToParent().flushTag();
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR).flushTag();
+        tagPointer.moveToKid(3, PdfName.TR).moveToKid(PdfName.TD).flushTag();
+        tagPointer.moveToParent().moveToParent().flushTag();
 
         document.close();
 
@@ -177,7 +178,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
-        PdfTagStructure tagStructure = document.getTagStructure();
+        TagStructureContext tagStructure = document.getTagStructureContext();
         tagStructure.flushPageTags(document.getPage(1));
 
         List<IPdfStructElem> kids = document.getStructTreeRoot().getKids();
@@ -216,10 +217,12 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
-        document.getTagStructure().moveToKid(PdfName.Table).moveToKid(2, PdfName.TR).flushTag();
-        document.getTagStructure().flushPageTags(document.getPage(1));
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR).flushTag();
+        // intended redundant call to flush page tags separately from page. Page tags are flushed when the page is flushed.
+        document.getTagStructureContext().flushPageTags(document.getPage(1));
         document.getPage(1).flush();
-        document.getTagStructure().moveToKid(5).flushTag();
+        tagPointer.moveToKid(5).flushTag();
         document.getPage(2).flush();
 
         PdfArray kids = document.getStructTreeRoot().getKidsObject();
@@ -238,12 +241,12 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         document.setTagged();
 
         PdfPage page1 = document.addNewPage();
-        PdfTagStructure tagStructure = new PdfTagStructure(document);
-        tagStructure.setPage(page1);
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setPage(page1);
 
         PdfCanvas canvas = new PdfCanvas(page1);
 
-        tagStructure.addTag(PdfName.Div);
+        tagPointer.addTag(PdfName.Div);
 
         //TODO refactor after the implementation of getting IAccessibleElement from current tag in TagStructure
         IAccessibleElement paragraphElement = new IAccessibleElement() {
@@ -261,65 +264,65 @@ public class PdfTagStructureTest extends ExtendedITextTest {
                 return null;
             }
         };
-        tagStructure.addTag(paragraphElement, true);
+        tagPointer.addTag(paragraphElement, true);
         canvas.beginText();
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagStructure.addTag(PdfName.Span);
+        tagPointer.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
         canvas.setFontAndSize(standardFont, 30)
-              .openTag(tagStructure.getTagReference())
+              .openTag(tagPointer.getTagReference())
               .showText("World")
               .closeTag();
 
-        tagStructure.moveToParent().moveToParent();
+        tagPointer.moveToParent().moveToParent();
 
         // Flushing /Div tag and it's children. /P tag shall not be flushed, as it is has connected paragraphElement
         // object. On removing connection between paragraphElement and /P tag, /P tag shall be flushed.
-        // When tag is flushed, tagStructure begins to point to tag's parent. If parent is also flushed - to the root.
-        tagStructure.flushTag();
+        // When tag is flushed, tagPointer begins to point to tag's parent. If parent is also flushed - to the root.
+        tagPointer.flushTag();
 
-        tagStructure.moveToTag(paragraphElement);
-        tagStructure.addTag(PdfName.Span);
+        tagPointer.moveToTag(paragraphElement);
+        tagPointer.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
         canvas.setFontAndSize(standardFont, 30)
-              .openTag(tagStructure.getTagReference())
+              .openTag(tagPointer.getTagReference())
               .showText("again")
               .closeTag();
 
-        tagStructure.removeConnectionToTag(paragraphElement);
-        tagStructure.moveToRoot();
+        tagPointer.removeConnectionToTag(paragraphElement);
+        tagPointer.moveToRoot();
 
         canvas.endText()
               .release();
 
         PdfPage page2 = document.addNewPage();
-        tagStructure.setPage(page2);
+        tagPointer.setPage(page2);
         canvas = new PdfCanvas(page2);
 
-        tagStructure.addTag(PdfName.P);
+        tagPointer.addTag(PdfName.P);
         canvas.beginText()
               .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
-        tagStructure.addTag(PdfName.Span);
+        tagPointer.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
-        tagStructure.moveToParent().addTag(PdfName.Span);
+        tagPointer.moveToParent().addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("World")
               .closeTag();
 
@@ -358,25 +361,25 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         document.removePage(secondPage);
 
         PdfPage page = document.addNewPage();
-        PdfTagStructure tagStructure = new PdfTagStructure(document);
-        tagStructure.setPage(page);
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setPage(page);
 
         PdfCanvas canvas = new PdfCanvas(page);
 
-        tagStructure.addTag(PdfName.P);
+        tagPointer.addTag(PdfName.P);
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagStructure.addTag(PdfName.Span);
+        tagPointer.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
         canvas.setFontAndSize(standardFont, 30)
-              .openTag(tagStructure.getTagReference())
+              .openTag(tagPointer.getTagReference())
               .showText("World")
               .closeTag()
               .endText();
@@ -394,8 +397,8 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         document.setTagged();
 
         PdfPage page = document.addNewPage();
-        PdfTagStructure tagStructure = document.getTagStructure();
-        tagStructure.setPage(page);
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setPage(page);
 
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -416,36 +419,35 @@ public class PdfTagStructureTest extends ExtendedITextTest {
             }
         };
 
-        tagStructure.addTag(paragraphElement, true);
+        tagPointer.addTag(paragraphElement, true);
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagStructure.addTag(PdfName.Span);
+        tagPointer.addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
 
         canvas.setFontAndSize(standardFont, 30)
-              .openTag(tagStructure.getTagReference())
+              .openTag(tagPointer.getTagReference())
               .showText("World")
               .closeTag()
               .endText();
 
-        tagStructure.moveToParent().moveToParent();
+        tagPointer.moveToParent().moveToParent();
 
         document.removePage(1);
 
         PdfPage newPage = document.addNewPage();
         canvas = new PdfCanvas(newPage);
-        tagStructure.setPage(newPage);
+        tagPointer.setPage(newPage);
 
-        tagStructure.moveToTag(paragraphElement)
-                    .addTag(PdfName.Span);
+        tagPointer.moveToTag(paragraphElement).addTag(PdfName.Span);
 
-        canvas.openTag(tagStructure.getTagReference())
+        canvas.openTag(tagPointer.getTagReference())
                 .beginText()
                 .setFontAndSize(standardFont, 24)
                 .setTextMatrix(1, 0, 0, 1, 32, 512)

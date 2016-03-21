@@ -470,7 +470,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
             if (i % 10 == 0) {
                 table.flush();
 
-                pdfDocument.getTagStructure().flushPageTags(pdfDocument.getPage(1));
+                pdfDocument.getTagStructureContext().flushPageTags(pdfDocument.getPage(1));
 
                 // This is a deliberate additional flush.
                 table.flush();

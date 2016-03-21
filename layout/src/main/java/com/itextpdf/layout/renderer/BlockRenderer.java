@@ -6,6 +6,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -215,12 +216,14 @@ public class BlockRenderer extends AbstractRenderer {
         applyAction(document);
 
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+        TagTreePointer tagPointer = null;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
             accessibleElement = (IAccessibleElement) getModelElement();
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
-                if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+                tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
+                if (!tagPointer.isConnectedToTag(accessibleElement)) {
                     AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
 
                     if (role.equals(PdfName.TD)) {
@@ -232,7 +235,7 @@ public class BlockRenderer extends AbstractRenderer {
                     }
 
                 }
-                document.getTagStructure().addTag(accessibleElement, true);
+                tagPointer.addTag(accessibleElement, true);
             } else {
                 isTagged = false;
             }
@@ -256,9 +259,9 @@ public class BlockRenderer extends AbstractRenderer {
         }
 
         if (isTagged) {
-            document.getTagStructure().moveToParent();
+            tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
-                document.getTagStructure().removeConnectionToTag(accessibleElement);
+                document.getTagStructureContext().removeConnectionToTag(accessibleElement);
             }
         }
 

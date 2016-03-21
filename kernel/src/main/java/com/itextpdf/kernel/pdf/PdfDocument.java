@@ -18,7 +18,7 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.xmp.PdfAXMPUtil;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
@@ -117,7 +117,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     protected boolean closed = false;
 
 
-
     /**
     * flag determines whether to write unused objects to result document
     */
@@ -125,7 +124,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     protected Set<PdfFont> documentFonts = new HashSet<>();
 
-    protected PdfTagStructure tagStructure;
+    protected TagStructureContext tagStructureContext;
 
     private LinkedHashMap<PdfPage, List<PdfLinkAnnotation>> linkAnnotations = new LinkedHashMap<>();
 
@@ -489,7 +488,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             catalog.removeOutlines(removedPage);
             removeUnusedWidgetsFromFields(removedPage);
             if (isTagged()) {
-                getTagStructure().removePageTags(removedPage);
+                getTagStructureContext().removePageTags(removedPage);
             }
 
             if (!removedPage.getPdfObject().isFlushed()) {
@@ -648,6 +647,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 PdfObject crypto = null;
                 if (appendMode) {
                     if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
+                        getTagStructureContext().removeAllConnectionsToTags();
                         structTreeRoot.flush();
                     }
                     if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
@@ -682,6 +682,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
                 } else {
                     if (structTreeRoot != null) {
+                        getTagStructureContext().removeAllConnectionsToTags();
                         structTreeRoot.flush();
                     }
                     if (catalog.isOCPropertiesMayHaveChanged()) {
@@ -801,18 +802,18 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         return structParentIndex++;
     }
 
-    public PdfTagStructure getTagStructure() {
+    public TagStructureContext getTagStructureContext() {
         checkClosingStatus();
-        if (tagStructure != null) {
-            return tagStructure;
+        if (tagStructureContext != null) {
+            return tagStructureContext;
         }
 
         if (!isTagged()) {
             throw new PdfException(PdfException.MustBeATaggedDocument);
         }
 
-        tagStructure = new PdfTagStructure(this);
-        return tagStructure;
+        tagStructureContext = new TagStructureContext(this);
+        return tagStructureContext;
     }
 
     /**
@@ -940,10 +941,13 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         // It's important to copy tag structure after link annotations were copied, because object content items in tag
         // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
         if (toDocument.isTagged()) {
-            if (insertBeforePage > toDocument.getNumberOfPages())
+            if (insertBeforePage > toDocument.getNumberOfPages()) {
                 getStructTreeRoot().copyTo(toDocument, page2page);
-            else
+                // TODO getTagStructureContext().reinitialize(); ??
+            } else {
                 getStructTreeRoot().copyTo(toDocument, insertBeforePage, page2page);
+                getTagStructureContext().reinitialize();
+            }
         }
         if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2Outlines);

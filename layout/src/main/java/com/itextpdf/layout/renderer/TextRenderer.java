@@ -15,7 +15,7 @@ import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.hyphenation.Hyphenation;
@@ -29,13 +29,12 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
- * object. It will draw the glyphs of the textual content on the {@link DrawingContext}.
+ * object. It will draw the glyphs of the textual content on the {@link DrawContext}.
  */
 public class TextRenderer extends AbstractRenderer {
 
@@ -372,17 +371,17 @@ public class TextRenderer extends AbstractRenderer {
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         boolean isArtifact = false;
-        PdfTagStructure tagStructure = null;
+        TagTreePointer tagPointer = null;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
             accessibleElement = (IAccessibleElement) getModelElement();
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
-                tagStructure = document.getTagStructure();
-                if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+                tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
+                if (!tagPointer.isConnectedToTag(accessibleElement)) {
                     AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
                 }
-                tagStructure.addTag(accessibleElement, true);
+                tagPointer.addTag(accessibleElement, true);
             } else {
                 isTagged = false;
                 if (PdfName.Artifact.equals(role)) {
@@ -419,7 +418,7 @@ public class TextRenderer extends AbstractRenderer {
 
             PdfCanvas canvas = drawContext.getCanvas();
             if (isTagged) {
-                canvas.openTag(tagStructure.getTagReference());
+                canvas.openTag(tagPointer.getTagReference());
             } else if (isArtifact) {
                 canvas.openTag(new CanvasArtifact());
             }
@@ -490,9 +489,9 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         if (isTagged) {
-            tagStructure.moveToParent();
+            tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
-                tagStructure.removeConnectionToTag(accessibleElement);
+                tagPointer.removeConnectionToTag(accessibleElement);
             }
         }
     }
@@ -531,7 +530,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     /**
-     * Trims any whitespace characters from the start of the {@link Glyphline}
+     * Trims any whitespace characters from the start of the {@link GlyphLine}
      * to be rendered.
      */
     public void trimFirst() {
@@ -546,7 +545,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     /**
-     * Trims any whitespace characters from the end of the {@link Glyphline} to
+     * Trims any whitespace characters from the end of the {@link GlyphLine} to
      * be rendered.
      * @return the amount of space in points which the text was trimmed by
      */
@@ -600,7 +599,7 @@ public class TextRenderer extends AbstractRenderer {
     /**
      * Gets the position on the canvas of the imaginary horizontal line upon which
      * the {@link Text}'s contents will be written.
-     * @return the y position of this text on the {@link DrawingContext}
+     * @return the y position of this text on the {@link DrawContext}
      */
     public float getYLine() {
         return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset - getPropertyAsFloat(Property.TEXT_RISE);
