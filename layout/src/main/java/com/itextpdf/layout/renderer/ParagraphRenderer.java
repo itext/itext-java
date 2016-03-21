@@ -2,6 +2,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.Property;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -63,6 +64,20 @@ public class ParagraphRenderer extends BlockRenderer {
         LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         for (IRenderer child : childRenderers) {
             currentRenderer.addChild(child);
+        }
+
+        if (0 == childRenderers.size()) {
+            anythingPlaced = true;
+            currentRenderer = null;
+            setProperty(Property.MARGIN_TOP, 0);
+            setProperty(Property.MARGIN_RIGHT, 0);
+            setProperty(Property.MARGIN_BOTTOM, 0);
+            setProperty(Property.MARGIN_LEFT, 0);
+            setProperty(Property.PADDING_TOP, 0);
+            setProperty(Property.PADDING_RIGHT, 0);
+            setProperty(Property.PADDING_BOTTOM, 0);
+            setProperty(Property.PADDING_LEFT, 0);
+            setProperty(Property.BORDER, Border.NO_BORDER);
         }
 
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();

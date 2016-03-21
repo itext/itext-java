@@ -1,5 +1,6 @@
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -18,11 +19,15 @@ import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -52,7 +57,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Creates a renderer for the specified layout element.
-     * 
+     *
      * @param modelElement the layout element that will be drawn by this renderer
      */
     public AbstractRenderer(IPropertyContainer modelElement) {
@@ -247,7 +252,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Draws a background layer if it is defined by a key {@link Property#BACKGROUND}
      * in either the layout element or this {@link IRenderer} itself.
-     * 
+     *
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
     public void drawBackground(DrawContext drawContext) {
@@ -261,6 +266,11 @@ public abstract class AbstractRenderer implements IRenderer {
                 drawContext.getCanvas().openTag(new CanvasArtifact());
             }
             Rectangle backgroundArea = applyMargins(bBox, false);
+            if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                return;
+            }
             drawContext.getCanvas().saveState().setFillColor(background.getColor()).
                     rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
                             backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
@@ -276,7 +286,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Performs the drawing operation for all {@link IRenderer children}
      * of this renderer.
-     * 
+     *
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
     public void drawChildren(DrawContext drawContext) {
@@ -289,7 +299,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Performs the drawing operation for the border of this renderer, if
      * defined by any of the {@link Property#BORDER} values in either the layout
      * element or this {@link IRenderer} itself.
-     * 
+     *
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
     public void drawBorder(DrawContext drawContext) {
@@ -306,6 +316,11 @@ public abstract class AbstractRenderer implements IRenderer {
             float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
 
             Rectangle bBox = getBorderAreaBBox();
+            if (bBox.getWidth() <= 0 || bBox.getHeight() <= 0) {
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "border"));
+                return;
+            }
             float x1 = bBox.getX();
             float y1 = bBox.getY();
             float x2 = bBox.getX() + bBox.getWidth();

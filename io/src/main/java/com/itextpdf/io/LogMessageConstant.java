@@ -68,6 +68,11 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES = "The {0} rectangle has negative or zero sizes. It will not be displayed.";
+
+    /**
+     * Log message.
+     */
     public static final String REGISTERING_DIRECTORY = "Registering directory";
 
     /**
